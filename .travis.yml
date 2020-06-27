@@ -1,0 +1,26 @@
+sudo: false
+language: java
+services:
+  - docker
+jdk:
+  - openjdk8
+
+script:
+  - "mvn versions:set -DnewVersion=$TRAVIS_TAG"
+  - "mvn versions:commit"
+  - "mvn clean"
+  - "mvn install"
+after_success:
+  - mkdir push
+  - cp ./backend/target/*.jar ./push
+
+deploy:
+  provider: releases
+  script: $GITHUB_TOKEN
+  file:
+    - ./push/*
+  file_glob: true
+  skip_cleanup: true
+  on:
+    tags: true
+  overwrite: true
