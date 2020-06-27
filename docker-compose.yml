@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: OwnStats
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+    - 8080:8080
