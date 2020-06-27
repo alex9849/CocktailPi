@@ -27,7 +27,7 @@ hs_err_pid*
 .idea/
 
 #Other
-/target
+target/
 .project
 .metadata
 bin/
