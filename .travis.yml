@@ -6,7 +6,7 @@ jdk:
   - openjdk8
 
 script:
-  - "mvn versions:set -DnewVersion=$TRAVIS_TAG"
+  - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
   - "mvn versions:commit"
   - "mvn clean"
   - "mvn install"
