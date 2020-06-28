@@ -9,7 +9,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Router);
 
-let router = new Router({
+const router = new Router({
   routes: routes,
   mode: 'history',
   scrollBehavior(to, from, savedPosition) {
