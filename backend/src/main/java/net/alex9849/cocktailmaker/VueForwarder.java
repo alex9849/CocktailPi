@@ -1,4 +1,4 @@
-package net.alex9849.ownstats;
+package net.alex9849.cocktailmaker;
 
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;

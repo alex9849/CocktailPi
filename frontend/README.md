@@ -1,4 +1,4 @@
-# ownstats
+# cocktailmaker
 
 > Make your own analytics
 
