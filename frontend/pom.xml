@@ -26,6 +26,7 @@
             </goals>
             <configuration>
               <nodeVersion>v9.11.1</nodeVersion>
+              <npmVersion>v12.16.1</npmVersion>
             </configuration>
           </execution>
           <execution>
