@@ -1,7 +1,7 @@
 {
-  "name": "ownstats",
+  "name": "CocktailMaker",
   "version": "1.0.0",
-  "description": "Make your own analytics",
+  "description": "CocktailMaker webinterface",
   "author": "alex9849 <alexander@liggesmeyer.de>",
   "private": true,
   "scripts": {
