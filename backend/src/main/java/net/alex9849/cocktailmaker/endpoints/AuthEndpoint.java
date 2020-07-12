@@ -46,7 +46,7 @@ public class AuthEndpoint {
     JwtUtils jwtUtils;
 
 
-    @RequestMapping(value = "signin", method = RequestMethod.POST)
+    @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
