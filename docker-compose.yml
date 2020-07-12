@@ -8,3 +8,10 @@ services:
       dockerfile: Dockerfile
     ports:
     - 8080:8080
+  db:
+    image: postgres:latest
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 'Chang3M3OnPr0duct1on'
+      POSTGRES_DB: 'cocktailmaker'
