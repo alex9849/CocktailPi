@@ -82,12 +82,9 @@ module.exports = function (/* ctx */) {
       open: true, // opens browser window automatically
       proxy: {
         // proxy all webpack dev-server requests starting with /api to our Spring Boot backend (localhost:8088)
-        '/api': {
-          target: 'http://localhost:8081',
-          changeOrigin: true,
-          pathRewrite: {
-            '^/api': ''
-          }
+        '/api/*': {
+          target: 'http://localhost:8080',
+          changeOrigin: true
         }
       }
     },
@@ -107,9 +104,9 @@ module.exports = function (/* ctx */) {
       plugins: []
     },
 
-    // animations: 'all', // --- includes all animations
+    animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
-    animations: [],
+    //animations: [],
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {

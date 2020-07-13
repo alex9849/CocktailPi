@@ -15,7 +15,8 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
-    "quasar": "^1.0.0"
+    "quasar": "^1.0.0",
+    "@mdi/js": "^4.9.95"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
@@ -27,7 +28,8 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.1.2"
+    "eslint-plugin-vue": "^6.1.2",
+    "@mdi/font": "^4.9.95"
   },
   "browserslist": [
     "last 10 Chrome versions",

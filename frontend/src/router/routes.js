@@ -7,9 +7,15 @@ const routes = [
       {
         path: '',
         component: () => import('pages/Index.vue')
-      }, {
-        path: '/login',
-        component: () => import('pages/Login.vue')
+      }
+    ]
+  }, {
+    path: '/login',
+    component: () => import('layouts/EmptyLayout'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Login')
       }
     ]
   },
