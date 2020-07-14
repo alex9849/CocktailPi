@@ -6,6 +6,7 @@ const initialState = function ()  {
   let status = { status: { loggedIn: false }, user: null };
   if(!user || !user.tokenExpiration)
     return status;
+  user.tokenExpiration = new Date(user.tokenExpiration);
   if(user.tokenExpiration < currentDate) {
     return status;
   }
@@ -30,6 +31,7 @@ export const auth = {
     login({ commit }, user) {
       return AuthService.login(user).then(
         user => {
+          user.tokenExpiration = new Date(user.tokenExpiration);
           commit('loginSuccess', user);
           return Promise.resolve(user);
         },
@@ -38,6 +40,18 @@ export const auth = {
           return Promise.reject(error);
         }
       );
+    },
+    refreshToken({ commit }) {
+      return AuthService.refreshToken()
+        .then(user => {
+          user.tokenExpiration = new Date(user.tokenExpiration);
+          commit('loginSuccess', user);
+          return Promise.resolve(user);
+        },
+        error => {
+          commit('loginFailure');
+          return Promise.reject(error);
+      });
     },
     logout({ commit }) {
       commit('logout');

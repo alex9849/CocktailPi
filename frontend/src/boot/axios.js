@@ -6,7 +6,6 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$axios.defaults.baseURL = window.location.origin;
 Vue.prototype.$axios.interceptors.request.use(cfg => {
   cfg.headers.Authorization = authHeader();
-  console.log(cfg.headers);
   return cfg;
 });
 

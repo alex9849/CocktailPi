@@ -13,6 +13,13 @@ class AuthService {
         return response.data;
       });
   }
+  refreshToken(token) {
+    return axios
+      .get(API_PATH + 'refreshToken')
+      .then(response => {
+        return response.data;
+      });
+  }
 }
 
 export default new AuthService();

@@ -6,7 +6,7 @@ import java.util.List;
 public class JwtResponse {
     private String token;
     private Date tokenExpiration;
-    private String type = "Bearer";
+    private String tokenType = "Bearer";
     private Long id;
     private String username;
     private String email;
@@ -38,11 +38,11 @@ public class JwtResponse {
     }
 
     public String getTokenType() {
-        return type;
+        return tokenType;
     }
 
     public void setTokenType(String tokenType) {
-        this.type = tokenType;
+        this.tokenType = tokenType;
     }
 
     public Long getId() {
