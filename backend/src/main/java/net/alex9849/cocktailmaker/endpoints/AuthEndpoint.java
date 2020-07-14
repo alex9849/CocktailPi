@@ -61,6 +61,7 @@ public class AuthEndpoint {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
+                jwtUtils.getExpirationDateFromJwtToken(jwt),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),

@@ -1,17 +1,20 @@
 package net.alex9849.cocktailmaker.payload.response;
 
+import java.util.Date;
 import java.util.List;
 
 public class JwtResponse {
     private String token;
+    private Date tokenExpiration;
     private String type = "Bearer";
     private Long id;
     private String username;
     private String email;
     private List<String> roles;
 
-    public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles) {
+    public JwtResponse(String accessToken, Date tokenExpiration, Long id, String username, String email, List<String> roles) {
         this.token = accessToken;
+        this.tokenExpiration = tokenExpiration;
         this.id = id;
         this.username = username;
         this.email = email;
@@ -24,6 +27,14 @@ public class JwtResponse {
 
     public void setAccessToken(String accessToken) {
         this.token = accessToken;
+    }
+
+    public Date getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(Date tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
     }
 
     public String getTokenType() {

@@ -59,7 +59,9 @@
 
 <script>
   import User from '../models/user';
-  import {mdiAlert, mdiEmail, mdiOnepassword} from '@quasar/extras/mdi-v5'
+  import {mdiAlert, mdiEmail, mdiOnepassword} from '@quasar/extras/mdi-v5';
+  import { mapGetters } from 'vuex';
+  import axios from 'axios';
 
   export default {
     name: "Login",
@@ -92,6 +94,11 @@
         this.passwordWrong = true;
         this.transitionTrigger = !this.transitionTrigger;
       }
+    },
+    computed: {
+      ...mapGetters({
+        isLoggedIn: 'auth/isLoggedIn'
+      })
     }
   }
 </script>
