@@ -33,7 +33,6 @@
               <q-icon :name="mdiEmail"/>
             </template>
           </q-input>
-          {{ isLoggedIn }}
           <q-input
             :disable="loading"
             filled
@@ -60,7 +59,6 @@
 <script>
   import User from '../models/user';
   import {mdiAlert, mdiEmail, mdiOnepassword} from '@quasar/extras/mdi-v5';
-  import {mapGetters} from 'vuex';
 
   export default {
     name: "Login",
@@ -93,9 +91,6 @@
         this.passwordWrong = true;
         this.transitionTrigger = !this.transitionTrigger;
       }
-    },
-    computed: {
-      ...mapGetters('auth', ['isLoggedIn', 'getUser'])
     }
   }
 </script>
