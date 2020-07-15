@@ -1,13 +1,13 @@
 import store from '../store/index';
 
-function ifNotAuthenticated(to, from, next) {
+function redirectIfNotAuthenticated(to, from, next) {
   if(!store().getters['auth/isLoggedIn']) {
     next({name: "login"})
   }
   next();
 }
 
-function ifAuthenticated(to, from, next) {
+function redirectIfAuthenticated(to, from, next) {
   if(store().getters['auth/isLoggedIn']) {
     next({name: "mycocktails"})
   }
@@ -18,6 +18,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    redirect: {name: 'login'},
     children: [
       {
         path: '',
@@ -26,7 +27,7 @@ const routes = [
         path: 'MyCocktails',
         component: () => import('pages/MyCocktails'),
         name: "mycocktails",
-        beforeEnter: ifNotAuthenticated
+        beforeEnter: redirectIfNotAuthenticated
       }
     ]
   }, {
@@ -37,7 +38,7 @@ const routes = [
         path: '',
         name: 'login',
         component: () => import('pages/Login'),
-        beforeEnter: ifAuthenticated
+        beforeEnter: redirectIfAuthenticated
       }
     ]
   },

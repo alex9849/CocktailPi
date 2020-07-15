@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh LpR fFf">
     <AppHeader>
       <template slot="left">
         <q-btn
@@ -13,22 +13,26 @@
         />
       </template>
     </AppHeader>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      :behavior="desktopMode? 'desktop':'mobile'"
-      persistent
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-      </q-list>
-    </q-drawer>
+      <q-drawer
+        :width="250"
+        v-model="leftDrawerOpen"
+        :behavior="desktopMode? 'desktop':'mobile'"
+        persistent
+        bordered
+        content-class="bg-grey-1"
+      >
+        <q-list>
+          <q-item-label
+            header
+            class="text-grey-8"
+          >
+            Essential Links
+          </q-item-label>
+        </q-list>
+        <p>hiui</p>
+        <p>hi</p>
+        <p>hi</p>
+      </q-drawer>
 
     <q-page-container>
       <router-view/>
@@ -67,7 +71,7 @@
       handleResize() {
         this.windowWidth = window.innerWidth;
         if(this.windowWidth > this.desktopModeBreakPoint) {
-          this.leftDrawerOpen = true;
+         this.leftDrawerOpen = true;
         }
       }
     }

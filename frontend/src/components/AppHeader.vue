@@ -1,5 +1,5 @@
 <template>
-  <q-header elevated>
+  <q-header reveal bordered>
     <q-toolbar>
       <slot name="left" />
 
@@ -11,6 +11,7 @@
         <q-btn-dropdown
           size="md"
           flat
+
           :label="user.username"
           :icon="mdiAccountBox"
         >
