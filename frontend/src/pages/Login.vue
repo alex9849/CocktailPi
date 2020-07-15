@@ -82,7 +82,11 @@
         this.$store.dispatch('auth/login', this.user)
           .then(() => {
             this.loading = false;
-            this.$router.push({name: 'dashboard'});
+            if(this.$route.query.redirectTo) {
+              this.$router.push(this.$route.query.redirectTo);
+            } else {
+              this.$router.push({name: 'dashboard'});
+            }
           }).catch(err => {
             this.loading = false;
             this.showPasswordWrong();

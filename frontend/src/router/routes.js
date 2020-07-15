@@ -2,7 +2,9 @@ import store from '../store/index';
 
 function redirectIfNotAuthenticated(to, from, next) {
   if (!store().getters['auth/isLoggedIn']) {
-    next({name: "login"})
+    next({name: "login", query: {
+      redirectTo: to.fullPath
+      }})
   }
   next();
 }
