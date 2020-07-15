@@ -1,5 +1,7 @@
 <template>
-
+  <q-page>
+    <p>Public recipes</p>
+  </q-page>
 </template>
 
 <script>

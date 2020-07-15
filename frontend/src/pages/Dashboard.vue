@@ -1,6 +1,6 @@
 <template>
     <q-page>
-
+      <p>Dashboard</p>
     </q-page>
 </template>
 

@@ -8,6 +8,7 @@
       </q-toolbar-title>
 
       <div>
+        <circular-cocktail-progress />
         <q-btn-dropdown
           size="md"
           flat
@@ -43,9 +44,11 @@
 <script>
   import {mapActions, mapGetters} from "vuex";
   import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
+  import CircularCocktailProgress from "./Circular-Cocktail-Progress";
 
   export default {
     name: "AppHeader",
+    components: {CircularCocktailProgress},
     methods: {
       ...mapActions({
         storeLogout: 'auth/logout'

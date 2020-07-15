@@ -1,5 +1,7 @@
 <template>
-
+  <q-page>
+    <p>Admin Settings</p>
+  </q-page>
 </template>
 
 <script>

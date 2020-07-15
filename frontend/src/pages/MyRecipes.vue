@@ -1,5 +1,7 @@
 <template>
-
+  <q-page>
+    <p>My Recipes</p>
+  </q-page>
 </template>
 
 <script>

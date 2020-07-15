@@ -1,5 +1,7 @@
 <template>
-
+  <q-page>
+    <p>User Management</p>
+  </q-page>
 </template>
 
 <script>

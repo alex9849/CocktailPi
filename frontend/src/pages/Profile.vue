@@ -1,5 +1,7 @@
 <template>
-
+  <q-page>
+    <p>Profile</p>
+  </q-page>
 </template>
 
 <script>
