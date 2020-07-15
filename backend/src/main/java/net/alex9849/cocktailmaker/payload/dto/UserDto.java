@@ -1,25 +1,35 @@
-package net.alex9849.cocktailmaker.payload.request;
+package net.alex9849.cocktailmaker.payload.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-public class SignupRequest {
+public class UserDto {
+    private Long id;
+
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;
 
-    @NotBlank
     @Size(max = 50)
+    @NotBlank
     @Email
     private String email;
-
-    private Set<String> role;
 
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
+
+    private Set<String> role;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -46,7 +56,7 @@ public class SignupRequest {
     }
 
     public Set<String> getRole() {
-        return this.role;
+        return role;
     }
 
     public void setRole(Set<String> role) {
