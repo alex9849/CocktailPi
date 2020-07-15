@@ -3,6 +3,7 @@
     <AppHeader>
       <template slot="left">
         <q-btn
+          v-if="!desktopMode"
           flat
           dense
           round
@@ -14,7 +15,8 @@
     </AppHeader>
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
+      :behavior="desktopMode? 'desktop':'mobile'"
+      persistent
       bordered
       content-class="bg-grey-1"
     >
@@ -29,7 +31,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
@@ -38,14 +40,36 @@
   import AppHeader from "../components/AppHeader";
 
   export default {
-  name: 'MainLayout',
+    name: 'MainLayout',
 
-  components: {AppHeader},
+    components: {AppHeader},
 
-  data () {
-    return {
-      leftDrawerOpen: false
+    data() {
+      return {
+        desktopModeBreakPoint: 1023,
+        leftDrawerOpen: false,
+        windowWidth: 0
+      }
+    },
+    created() {
+      window.addEventListener('resize', this.handleResize);
+      this.handleResize();
+    },
+    destroyed() {
+      window.removeEventListener('resize', this.handleResize);
+    },
+    computed: {
+      desktopMode() {
+        return this.windowWidth > this.desktopModeBreakPoint;
+      }
+    },
+    methods: {
+      handleResize() {
+        this.windowWidth = window.innerWidth;
+        if(this.windowWidth > this.desktopModeBreakPoint) {
+          this.leftDrawerOpen = true;
+        }
+      }
     }
   }
-}
 </script>
