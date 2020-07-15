@@ -13,7 +13,8 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.xml.ws.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -38,17 +39,23 @@ public class UserEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.POST)
-    public Response<?> updateUser(@PathVariable("id") int userId, @RequestBody User user) {
+    public ResponseEntity<?> updateUser(@PathVariable("id") long userId, @RequestBody User user) {
         return null;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Response<?> deleteUser() {
-        return null;
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Response<?> getUsers() {
-        return null;
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getUsers() {
+        List<UserDto> userDtoList = userService.getUsers()
+                .stream().map(UserDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userDtoList);
     }
 }

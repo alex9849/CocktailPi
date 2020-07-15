@@ -1,9 +1,14 @@
 package net.alex9849.cocktailmaker.payload.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import net.alex9849.cocktailmaker.model.User;
+import org.springframework.beans.BeanUtils;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserDto {
     private Long id;
@@ -19,9 +24,19 @@ public class UserDto {
 
     @NotBlank
     @Size(min = 6, max = 40)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private Set<String> role;
+
+    public UserDto() {}
+
+    public UserDto(User user) {
+        BeanUtils.copyProperties(user, this);
+        this.role = user.getRoles().stream()
+                .map(y -> y.getName().roleName())
+                .collect(Collectors.toSet());
+    }
 
     public Long getId() {
         return id;

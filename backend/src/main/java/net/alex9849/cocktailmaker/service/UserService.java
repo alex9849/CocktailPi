@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -26,6 +27,14 @@ public class UserService {
             throw new IllegalArgumentException("A user with that Email already exists!");
         }
         return userRepository.save(user);
+    }
+
+    public void deleteUser(long id) {
+        userRepository.deleteById(id);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     public Set<Role> toRoles(Set<String> stringRoles) {
