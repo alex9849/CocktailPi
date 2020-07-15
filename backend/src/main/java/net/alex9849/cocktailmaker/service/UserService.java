@@ -19,7 +19,7 @@ public class UserService {
     @Autowired
     RoleRepository roleRepository;
 
-    public User createUser(User user) {
+    public User createOrUpdateUser(User user) {
         if(userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already taken!");
         }

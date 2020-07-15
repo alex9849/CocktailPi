@@ -2,10 +2,12 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.User;
 import net.alex9849.cocktailmaker.payload.dto.UserDto;
+import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
 import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,16 +37,43 @@ public class UserEndpoint {
         BeanUtils.copyProperties(createUser, user);
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRoles(userService.toRoles(createUser.getRole()));
-        user = userService.createUser(user);
+        user.setId(null);
+        user = userService.createOrUpdateUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> updateUser(@PathVariable("id") long userId, @RequestBody User user) {
-        return null;
+    @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.PUT)
+    public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest, HttpServletRequest request) {
+        //TODO clean up (maybe outsource some code to the services)
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = new User();
+        BeanUtils.copyProperties(updateUserRequest.getUserDto(), user);
+        if(userId == null) {
+            userId = userDetails.getId();
+        } else {
+            user.setRoles(userService.toRoles(updateUserRequest.getUserDto().getRole()));
+            if(!request.isUserInRole("ADMIN")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        }
+        User beforeUpdate = userService.getUser(userId);
+        if(beforeUpdate == null) {
+            return ResponseEntity.notFound().build();
+        }
+        //If user wants to update his password update it. Otherwise fill in the old encrypted password
+        if(!updateUserRequest.isUpdatePassword()) {
+            user.setPassword(beforeUpdate.getPassword());
+        } else {
+            user.setPassword(encoder.encode(user.getPassword()));
+        }
+        user.setId(userId);
+        userService.createOrUpdateUser(user);
+        return ResponseEntity.ok(user);
     }
+
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -52,19 +82,16 @@ public class UserEndpoint {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(value = "current", method = RequestMethod.GET)
-    public ResponseEntity<?> getCurrentUser() {
+    @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getUser(@PathVariable(value = "id", required = false) Long userId, HttpServletRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.getUser(userDetails.getId());
-        if(user == null) {
-            return ResponseEntity.notFound().build();
+        if(userId == null) {
+            userId = userDetails.getId();
+        } else {
+            if(!request.isUserInRole("ADMIN")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
         }
-        return ResponseEntity.ok(new UserDto(user));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable("id") long userId) {
         User user = userService.getUser(userId);
         if(user == null) {
             return ResponseEntity.notFound().build();
