@@ -19,36 +19,31 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     redirect: {name: 'login'},
+    beforeEnter: redirectIfNotAuthenticated,
     children: [{
       path: 'dashboard',
       component: () => import('pages/Dashboard'),
-      name: "dashboard",
-      beforeEnter: redirectIfNotAuthenticated
+      name: "dashboard"
     }, {
       path: 'user/recipes',
       component: () => import('pages/MyRecipes'),
-      name: 'myrecipes',
-      beforeEnter: redirectIfNotAuthenticated
+      name: 'myrecipes'
     }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
-      name: 'myprofile',
-      beforeEnter: redirectIfNotAuthenticated
+      name: 'myprofile'
     }, {
       path: 'public/recipes',
       component: () => import('pages/PublicRecipes'),
-      name: 'publicrecipes',
-      beforeEnter: redirectIfNotAuthenticated
+      name: 'publicrecipes'
     }, {
       path: 'admin/usermanagement',
       component: () => import('pages/UserManagement'),
-      name: 'usermanagement',
-      beforeEnter: redirectIfNotAuthenticated
+      name: 'usermanagement'
     }, {
       path: 'admin/settings',
       component: () => import('pages/Settings'),
-      name: 'adminsettings',
-      beforeEnter: redirectIfNotAuthenticated
+      name: 'adminsettings'
     }
     ]
   }, {
