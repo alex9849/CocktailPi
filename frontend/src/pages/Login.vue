@@ -6,6 +6,7 @@
         <q-card-section style="text-align: center">
           <div class="text-h4">
             <img src="../assets/logo-full.svg" width="80px"/>
+            <p>Login</p>
           </div>
         </q-card-section>
         <q-card-section>

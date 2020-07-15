@@ -3,6 +3,8 @@ version: '3.7'
 services:
   app:
     container_name: Cocktailmaker
+    depends_on:
+      - db
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -15,3 +17,8 @@ services:
     environment:
       POSTGRES_PASSWORD: 'Chang3M3OnPr0duct1on'
       POSTGRES_DB: 'cocktailmaker'
+    volumes:
+      - type: volume
+        target: /var/lib/postgresql/data
+        volume:
+          nocopy: true

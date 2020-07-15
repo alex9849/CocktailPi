@@ -11,10 +11,10 @@ import net.alex9849.cocktailmaker.repository.RoleRepository;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import net.alex9849.cocktailmaker.security.jwt.JwtUtils;
 import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
+import net.alex9849.cocktailmaker.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,25 +44,21 @@ public class AuthEndpoint {
     PasswordEncoder encoder;
 
     @Autowired
+    AuthService authService;
+
+    @Autowired
     JwtUtils jwtUtils;
 
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword());
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                jwtUtils.getExpirationDateFromJwtToken(jwt),
+        return ResponseEntity.ok(new JwtResponse(token,
+                jwtUtils.getExpirationDateFromJwtToken(token),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
