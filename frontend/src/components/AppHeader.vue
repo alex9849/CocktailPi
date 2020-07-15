@@ -16,7 +16,7 @@
           :icon="mdiAccountBox"
         >
           <q-list separator bordered style="border-radius: 0px">
-            <q-item clickable>
+            <q-item clickable :to="{name: 'myprofile'}">
               <q-item-section avatar>
                 <q-icon :name="mdiAccountBox"/>
               </q-item-section>

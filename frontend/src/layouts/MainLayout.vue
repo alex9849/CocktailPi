@@ -82,10 +82,7 @@
                 to: {name: 'dashboard'}
               }, {
                 label: 'My recipes',
-                to: {name: 'myRecipes'}
-              }, {
-                label: 'Favorites',
-                to: {name: 'myFavorites'}
+                to: {name: 'myrecipes'}
               }
             ]
           }, {
@@ -93,11 +90,8 @@
             icon: mdiEarth,
             subSections: [
               {
-                label: 'Search',
-                to: {name: 'cocktailSearch'}
-              }, {
                 label: 'Public recipes',
-                to: {name: 'publicRecipes'}
+                to: {name: 'publicrecipes'}
               }
             ]
           }, {
@@ -105,11 +99,11 @@
             icon: mdiCogs,
             subSections: [
               {
-                label: 'Users',
-                to: {name: 'adminUsers'}
+                label: 'User management',
+                to: {name: 'usermanagement'}
               }, {
                 label: 'Settings',
-                to: {name: 'adminSettings'}
+                to: {name: 'adminsettings'}
               }
             ]
           }
