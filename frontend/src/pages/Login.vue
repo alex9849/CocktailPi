@@ -1,5 +1,5 @@
 <template>
-  <q-page class="window-height window-width row justify-center items-center">
+  <q-page class="backgroundImage window-height window-width row justify-center items-center">
     <q-card square bordered class="q-pa-lg shadow-1" style="min-width: 400px">
       <q-form
         @submit="onSubmit">
@@ -81,8 +81,8 @@
         this.loading = true;
         this.$store.dispatch('auth/login', this.user)
           .then(() => {
-            //this.$router.push('/start');
             this.loading = false;
+            this.$router.push({name: 'mycocktails'});
           }).catch(err => {
             this.loading = false;
             this.showPasswordWrong();
@@ -96,8 +96,8 @@
   }
 </script>
 
-<style>
-  body {
+<style scoped>
+  .backgroundImage {
     background: url('../assets/kobby-mendez-xBFTjrMIC0c-unsplash.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;

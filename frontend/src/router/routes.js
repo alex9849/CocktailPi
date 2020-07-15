@@ -1,3 +1,18 @@
+import store from '../store/index';
+
+function ifNotAuthenticated(to, from, next) {
+  if(!store().getters['auth/isLoggedIn']) {
+    next({name: "login"})
+  }
+  next();
+}
+
+function ifAuthenticated(to, from, next) {
+  if(store().getters['auth/isLoggedIn']) {
+    next({name: "mycocktails"})
+  }
+  next();
+}
 
 const routes = [
   {
@@ -7,6 +22,11 @@ const routes = [
       {
         path: '',
         component: () => import('pages/Index.vue')
+      }, {
+        path: 'MyCocktails',
+        component: () => import('pages/MyCocktails'),
+        name: "mycocktails",
+        beforeEnter: ifNotAuthenticated
       }
     ]
   }, {
@@ -15,7 +35,9 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/Login')
+        name: 'login',
+        component: () => import('pages/Login'),
+        beforeEnter: ifAuthenticated
       }
     ]
   },

@@ -1,0 +1,71 @@
+<template>
+  <q-header elevated>
+    <q-toolbar>
+      <slot name="left" />
+
+      <q-toolbar-title>
+        CocktailMaker
+      </q-toolbar-title>
+
+      <div>
+        <q-btn-dropdown
+          size="md"
+          flat
+          :label="user.username"
+          :icon="mdiAccountBox"
+        >
+          <q-list separator bordered style="border-radius: 0px">
+            <q-item clickable>
+              <q-item-section avatar>
+                <q-icon :name="mdiAccountBox"/>
+              </q-item-section>
+              <q-item-section>
+                Profil
+              </q-item-section>
+            </q-item>
+            <q-item clickable @click="logout()">
+              <q-item-section avatar>
+                <q-icon :name="mdiPower"/>
+              </q-item-section>
+              <q-item-section>
+                Logout
+              </q-item-section>
+            </q-item>
+          </q-list>
+
+        </q-btn-dropdown>
+      </div>
+    </q-toolbar>
+  </q-header>
+</template>
+
+<script>
+  import {mapActions, mapGetters} from "vuex";
+  import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
+
+  export default {
+    name: "AppHeader",
+    methods: {
+      ...mapActions({
+        storeLogout: 'auth/logout'
+      }),
+      logout() {
+        this.storeLogout();
+        this.$router.push({name: 'login'});
+      }
+    },
+    computed: {
+      ...mapGetters({
+        user: 'auth/getUser'
+      })
+    },
+    created() {
+      this.mdiAccountBox = mdiAccountBox;
+      this.mdiPower = mdiPower;
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
