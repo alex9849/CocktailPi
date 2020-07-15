@@ -19,7 +19,7 @@
         :behavior="desktopMode? 'desktop':'mobile'"
         persistent
         bordered
-        content-class="bg-grey-1"
+        content-class="bg-sidebar"
       >
         <q-list>
           <q-expansion-item
