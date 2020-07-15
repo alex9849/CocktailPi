@@ -19,6 +19,9 @@ services:
       POSTGRES_DB: 'cocktailmaker'
     volumes:
       - type: volume
+        source: cocktail-db-data
         target: /var/lib/postgresql/data
         volume:
           nocopy: true
+volumes:
+  cocktail-db-data:
