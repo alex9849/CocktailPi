@@ -60,4 +60,8 @@ public class UserService {
         }
         return roles;
     }
+
+    public User getUser(long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }
