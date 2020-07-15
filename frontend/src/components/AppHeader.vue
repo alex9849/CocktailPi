@@ -21,7 +21,7 @@
                 <q-icon :name="mdiAccountBox"/>
               </q-item-section>
               <q-item-section>
-                Profil
+                Profile
               </q-item-section>
             </q-item>
             <q-item clickable @click="logout()">

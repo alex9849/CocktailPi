@@ -9,7 +9,7 @@ function redirectIfNotAuthenticated(to, from, next) {
 
 function redirectIfAuthenticated(to, from, next) {
   if(store().getters['auth/isLoggedIn']) {
-    next({name: "mycocktails"})
+    next({name: "dashboard"})
   }
   next();
 }
@@ -19,14 +19,10 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     redirect: {name: 'login'},
-    children: [
-      {
-        path: '',
-        component: () => import('pages/Index.vue')
-      }, {
-        path: 'MyCocktails',
-        component: () => import('pages/MyCocktails'),
-        name: "mycocktails",
+    children: [{
+        path: 'Dashboard',
+        component: () => import('pages/Dashboard'),
+        name: "dashboard",
         beforeEnter: redirectIfNotAuthenticated
       }
     ]

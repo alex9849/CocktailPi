@@ -6,7 +6,7 @@
 
 <script>
     export default {
-        name: "MyCocktails"
+        name: "Dashboard"
     }
 </script>
 

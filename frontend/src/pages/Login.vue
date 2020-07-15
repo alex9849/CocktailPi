@@ -82,7 +82,7 @@
         this.$store.dispatch('auth/login', this.user)
           .then(() => {
             this.loading = false;
-            this.$router.push({name: 'mycocktails'});
+            this.$router.push({name: 'dashboard'});
           }).catch(err => {
             this.loading = false;
             this.showPasswordWrong();

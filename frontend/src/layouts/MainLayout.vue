@@ -22,16 +22,31 @@
         content-class="bg-grey-1"
       >
         <q-list>
-          <q-item-label
-            header
-            class="text-grey-8"
+          <q-expansion-item
+            v-for="section in sidebarItems"
+            :label="section.label"
+            :icon="section.icon"
+            expand-separator
+            default-opened
           >
-            Essential Links
-          </q-item-label>
+            <q-item
+              v-for="subsecion in section.subSections"
+              style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
+              active-class="bg-orange-2 text-dark"
+              :inset-level="0.4"
+              exact
+              clickable
+              :to="subsecion.to"
+            >
+              <q-item-section avatar style="min-width: 0">
+                <q-icon :name="mdiChevronRight"/>
+              </q-item-section>
+              <q-item-section>
+                {{ subsecion.label }}
+              </q-item-section>
+            </q-item>
+          </q-expansion-item>
         </q-list>
-        <p>hiui</p>
-        <p>hi</p>
-        <p>hi</p>
       </q-drawer>
 
     <q-page-container>
@@ -40,8 +55,12 @@
   </q-layout>
 </template>
 
+<style scoped>
+</style>
+
 <script>
   import AppHeader from "../components/AppHeader";
+  import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
 
   export default {
     name: 'MainLayout',
@@ -52,12 +71,55 @@
       return {
         desktopModeBreakPoint: 1023,
         leftDrawerOpen: false,
-        windowWidth: 0
+        windowWidth: 0,
+        sidebarItems: [
+          {
+            label: 'GENERAL',
+            icon: mdiAccount,
+            subSections: [
+              {
+                label: 'Dashboard',
+                to: {name: 'dashboard'}
+              }, {
+                label: 'My recipes',
+                to: {name: 'myRecipes'}
+              }, {
+                label: 'Favorites',
+                to: {name: 'myFavorites'}
+              }
+            ]
+          }, {
+            label: 'PUBLIC COCKTAILS',
+            icon: mdiEarth,
+            subSections: [
+              {
+                label: 'Search',
+                to: {name: 'cocktailSearch'}
+              }, {
+                label: 'Public recipes',
+                to: {name: 'publicRecipes'}
+              }
+            ]
+          }, {
+            label: 'ADMINISTRATION',
+            icon: mdiCogs,
+            subSections: [
+              {
+                label: 'Users',
+                to: {name: 'adminUsers'}
+              }, {
+                label: 'Settings',
+                to: {name: 'adminSettings'}
+              }
+            ]
+          }
+        ]
       }
     },
     created() {
       window.addEventListener('resize', this.handleResize);
       this.handleResize();
+      this.mdiChevronRight = mdiChevronRight;
     },
     destroyed() {
       window.removeEventListener('resize', this.handleResize);
