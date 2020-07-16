@@ -18,8 +18,7 @@
         v-model="leftDrawerOpen"
         :behavior="desktopMode? 'desktop':'mobile'"
         persistent
-        bordered
-        content-class="bg-sidebar"
+        content-class="bg-sidebar shadow-5"
       >
         <q-list>
           <q-expansion-item
