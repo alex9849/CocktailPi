@@ -1,4 +1,4 @@
-import AuthService from '../../services/auth.service';
+import AuthService from '../../../services/auth.service';
 
 const user = JSON.parse(localStorage.getItem('user'));
 const currentDate = new Date();
@@ -12,6 +12,7 @@ const initialState = function ()  {
   }
   status.user = user;
   status.status.loggedIn = true;
+  status.incr = 1;
   return status;
 }();
 
@@ -25,6 +26,9 @@ export const auth = {
     },
     getUser: state => {
       return state.user;
+    },
+    getInc: state => {
+      return state.incr;
     }
   },
   actions: {
@@ -72,6 +76,9 @@ export const auth = {
       state.status.loggedIn = false;
       state.user = null;
       localStorage.removeItem('user');
+    },
+    inc(state) {
+      state.incr += 1;
     }
   }
 };
