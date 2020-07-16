@@ -38,7 +38,7 @@ public class UserEndpoint {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRoles(userService.toRoles(createUser.getRole()));
         user.setId(null);
-        user = userService.createOrUpdateUser(user);
+        user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
@@ -53,7 +53,6 @@ public class UserEndpoint {
         if(userId == null) {
             userId = userDetails.getId();
         } else {
-            user.setRoles(userService.toRoles(updateUserRequest.getUserDto().getRole()));
             if(!request.isUserInRole("ADMIN")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
@@ -62,6 +61,11 @@ public class UserEndpoint {
         if(beforeUpdate == null) {
             return ResponseEntity.notFound().build();
         }
+        if(request.isUserInRole("ADMIN")) {
+            user.setRoles(userService.toRoles(updateUserRequest.getUserDto().getRole()));
+        } else {
+            user.setRoles(beforeUpdate.getRoles());
+        }
         //If user wants to update his password update it. Otherwise fill in the old encrypted password
         if(!updateUserRequest.isUpdatePassword()) {
             user.setPassword(beforeUpdate.getPassword());
@@ -69,8 +73,8 @@ public class UserEndpoint {
             user.setPassword(encoder.encode(user.getPassword()));
         }
         user.setId(userId);
-        userService.createOrUpdateUser(user);
-        return ResponseEntity.ok(user);
+        user.setUsername(beforeUpdate.getUsername());
+        return ResponseEntity.ok(new UserDto(userService.updateUser(user)));
     }
 
 
