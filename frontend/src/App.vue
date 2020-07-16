@@ -18,9 +18,9 @@
     },
     created() {
       this.tokenupdater = setInterval(() => {
-        if(this.getUser) {
-          const tokenExpiration = this.getUser.tokenExpiration;
-          const token = this.getUser.accessToken;
+        if(this.getAuthToken) {
+          const tokenExpiration = this.getAuthToken.tokenExpiration;
+          const token = this.getAuthToken.accessToken;
           const currentDate = new Date();
           let refreshTime = new Date();
           refreshTime.setTime(tokenExpiration.getTime() - extendTokenBeforeExpirationInMs);
@@ -29,8 +29,8 @@
           }
         }
       }, extendTokenBeforeExpirationInMs / 3);
-      if(this.getUser) {
-        const tokenExpiration = this.getUser.tokenExpiration;
+      if(this.getAuthToken) {
+        const tokenExpiration = this.getAuthToken.tokenExpiration;
         const currentDate = new Date();
         if(tokenExpiration > currentDate) {
           this.refreshToken();
@@ -46,7 +46,7 @@
       })
     },
     computed: {
-      ...mapGetters('auth', ['isLoggedIn', 'getUser'])
+      ...mapGetters('auth', ['isLoggedIn', 'getAuthToken'])
     }
   }
 </script>

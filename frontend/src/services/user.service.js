@@ -9,6 +9,11 @@ class UserService {
       .then(response => response.data);
   }
 
+  getUser(userId) {
+    return axios.get(API_PATH + userId)
+      .then(response => response.data);
+  }
+
   deleteUser(user) {
     return axios.delete(API_PATH + user.id);
   }

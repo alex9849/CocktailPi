@@ -36,6 +36,11 @@
               :inset-level="0.4"
               :key="subindex"
               clickable
+              @click="() => {
+                if(!desktopMode) {
+                  leftDrawerOpen = false;
+                }
+              }"
               :to="subsecion.to"
             >
               <q-item-section avatar style="min-width: 0">
