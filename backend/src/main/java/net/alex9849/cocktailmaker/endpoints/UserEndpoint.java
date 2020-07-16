@@ -82,6 +82,9 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId) {
+        if(userService.getUser(userId) == null) {
+            return ResponseEntity.notFound().build();
+        }
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }

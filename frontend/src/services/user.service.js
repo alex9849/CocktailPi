@@ -10,7 +10,7 @@ class UserService {
   }
 
   deleteUser(user) {
-
+    return axios.delete(API_PATH + user.id);
   }
 
   getUserBoard() {

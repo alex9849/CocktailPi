@@ -154,12 +154,32 @@
         this.deleteUsers = this.selected
       },
       closeDeleteDialog() {
-        this.deleteUsers = [];
+        this.deleteUsers.splice(0, this.deleteUsers.length);
         this.deleteDialog = false;
       },
       deleteSelected() {
         this.deleteLoading = true;
-
+        let toDelete = this.deleteUsers.length;
+        let deleted = 0;
+        let vm = this;
+        let afterDelete = function() {
+          if(deleted === toDelete) {
+            vm.closeDeleteDialog();
+            vm.deleteLoading = false;
+            vm.fetchUsers();
+          }
+        };
+        this.deleteUsers.forEach(user => {
+          userService.deleteUser(user)
+            .then(() => {
+              deleted++;
+              afterDelete();
+            }, err => {
+              vm.deleteLoading = false;
+              vm.fetchUsers();
+            })
+        });
+        afterDelete();
       },
       fetchUsers() {
         this.isLoading = true;
