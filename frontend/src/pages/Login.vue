@@ -26,7 +26,7 @@
             :disable="loading"
             filled
             label="Username"
-            v-model="user.username"
+            v-model="loginRequest.username"
             lazy-rules
             :rules="[ val => val && val.length > 0 || 'Username required']"
           >
@@ -39,7 +39,7 @@
             filled
             label="Password"
             type="password"
-            v-model="user.password"
+            v-model="loginRequest.password"
             lazy-rules
             :rules="[ val => val && val.length > 0 || 'Password required']"
           >
@@ -58,14 +58,14 @@
 </template>
 
 <script>
-  import User from '../models/user';
+  import LoginRequest from '../models/LoginRequest';
   import {mdiAlert, mdiEmail, mdiOnepassword} from '@quasar/extras/mdi-v5';
 
   export default {
     name: "Login",
     data() {
       return {
-        user: new User('', '', ''),
+        loginRequest: new LoginRequest('', '', ''),
         loading: false,
         passwordWrong: false,
         transitionTrigger: false
@@ -79,7 +79,7 @@
     methods: {
       onSubmit() {
         this.loading = true;
-        this.$store.dispatch('auth/login', this.user)
+        this.$store.dispatch('auth/login', this.loginRequest)
           .then(() => {
             this.loading = false;
             if(this.$route.query.redirectTo) {

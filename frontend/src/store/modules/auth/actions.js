@@ -1,11 +1,10 @@
 import AuthService from "src/services/auth.service";
 
-export const login = ({ commit }, user) => {
-  return AuthService.login(user).then(
-    user => {
-      user.tokenExpiration = new Date(user.tokenExpiration);
-      commit('loginSuccess', user);
-      return Promise.resolve(user);
+export const login = ({ commit }, loginRequest) => {
+  return AuthService.login(loginRequest).then(
+    jwtResponse => {
+      commit('loginSuccess', jwtResponse);
+      return Promise.resolve(jwtResponse);
     },
     error => {
       commit('loginFailure');
@@ -15,10 +14,9 @@ export const login = ({ commit }, user) => {
 };
 export const refreshToken = ({ commit }) => {
   return AuthService.refreshToken()
-    .then(user => {
-        user.tokenExpiration = new Date(user.tokenExpiration);
-        commit('loginSuccess', user);
-        return Promise.resolve(user);
+    .then(jwtResponse => {
+        commit('loginSuccess', jwtResponse);
+        return Promise.resolve(jwtResponse);
       },
       error => {
         commit('loginFailure');

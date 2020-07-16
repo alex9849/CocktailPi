@@ -1,24 +1,37 @@
+const authToken = JSON.parse(localStorage.getItem('authToken'));
 const user = JSON.parse(localStorage.getItem('user'));
+
 const currentDate = new Date();
-const initialUser = function ()  {
+
+const initialAuthToken = function ()  {
+
   let status = { status: { loggedIn: false }, user: null };
-  if(!user || !user.tokenExpiration)
+  if(!authToken || !authToken.tokenExpiration)
     return null;
-  user.tokenExpiration = new Date(user.tokenExpiration);
-  if(user.tokenExpiration < currentDate) {
+  authToken.tokenExpiration = new Date(authToken.tokenExpiration);
+  if(authToken.tokenExpiration < currentDate) {
     return null;
   }
-  return user;
+  return authToken;
 }();
-const inistialLoggedIn = function () {
-  return !!user
+
+const initialLoggedIn = function () {
+  return !!initialAuthToken
+}();
+
+const initialUser = function() {
+  if(initialAuthToken){
+    return user;
+  }
+  return null;
 }();
 
 export default function () {
   return {
     status: {
       user: initialUser,
-      loggedIn: inistialLoggedIn
+      authToken: initialAuthToken,
+      loggedIn: initialLoggedIn
     }
   }
 }

@@ -3,13 +3,11 @@ import axios from 'axios';
 const API_PATH = 'api/auth/';
 
 class AuthService {
-  login(user) {
+  login(loginRequest) {
     return axios
-      .post(API_PATH + 'login', {
-        username: user.username,
-        password: user.password
-      })
+      .post(API_PATH + 'login', loginRequest)
       .then(response => {
+        //JwtResponse
         return response.data;
       });
   }
@@ -17,6 +15,8 @@ class AuthService {
     return axios
       .get(API_PATH + 'refreshToken')
       .then(response => {
+        //JwtResponse
+        response.data.tokenExpiration = new Date(response.data.tokenExpiration);
         return response.data;
       });
   }

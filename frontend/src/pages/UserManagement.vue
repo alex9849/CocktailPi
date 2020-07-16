@@ -3,14 +3,20 @@
     <h5>User Management</h5>
     <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
       <q-btn
-        class="mr-4 mt-4"
         color="negative"
         label="Delete selected users"
         no-caps
+        @click="openDeleteDialog"
       />
       <q-btn
         color="positive"
         label="Create user"
+        no-caps
+      />
+      <q-btn
+        color="info"
+        label="Refresh"
+        @click="fetchUsers"
         no-caps
       />
     </div>
@@ -18,7 +24,7 @@
       :data="data"
       :columns="colums"
       hide-bottom
-
+      :loading="isLoading"
       selection="multiple"
       :selected.sync="selected"
       :pagination="{rowsPerPage: 0}"
@@ -78,41 +84,44 @@
         <td/>
         <td/>
       </template>
+      <template v-slot:loading>
+        <q-inner-loading showing color="info" />
+      </template>
     </q-table>
+    <c-question
+      :question="deleteQuestionMessage"
+      ok-color="red"
+      ok-button-text="Delete"
+      :loading="deleteLoading"
+      v-model="deleteDialog"
+      @clickOk="deleteSelected"
+      @clickAbort="closeDeleteDialog"
+    >
+      <ul>
+        <li :key="index" v-for="(user, index) in deleteUsers">
+          {{user.username}} ({{ user.email }})
+        </li>
+      </ul>
+    </c-question>
   </q-page>
 </template>
 
 <script>
   import {mdiCheckboxBlankCircleOutline, mdiCheckCircle} from '@mdi/js';
+  import userService from '../services/user.service'
+  import CQuestion from "../components/CQuestion";
 
   export default {
     name: "UserManagement",
-    created() {
-      this.mdiCheckCircle = mdiCheckCircle;
-      this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
-    },
+    components: {CQuestion},
     data() {
       return {
+        deleteDialog: false,
+        deleteUsers: [],
+        deleteLoading: false,
         selected: [],
-        data: [
-          {
-            "id": 1,
-            "username": "alex9849",
-            "email": "alexander@liggesmeyer.net",
-            "firstname": "Alexander",
-            "lastname": "Liggesmeyer",
-            "isLocked": false,
-            "role": ["admin", "user"]
-          }, {
-            "id": 2,
-            "username": "test",
-            "email": "test",
-            "firstname": "test",
-            "lastname": "test",
-            "isLocked": true,
-            "role": ["user"]
-          }
-        ],
+        isLoading: false,
+        data: [],
         colums: [
           {name: 'username', label: 'Username', field: 'username', align: 'left'},
           {name: 'isLocked', label: 'Active', field: 'isLocked', align: 'center'},
@@ -121,6 +130,46 @@
           {name: 'isadmin', label: 'Admin', field: '', align: 'center'},
           { name: 'actions', label: 'Actions', field: '', align:'center'}
         ]
+      }
+    },
+    created() {
+      this.mdiCheckCircle = mdiCheckCircle;
+      this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
+      this.fetchUsers();
+    },
+    computed: {
+      deleteQuestionMessage() {
+        if(this.deleteUsers.length === 0) {
+          return "No users selected!";
+        }
+        if(this.deleteUsers.length === 1) {
+          return "The following user will be deleted:";
+        }
+        return "The following users will be deleted:";
+      }
+    },
+    methods: {
+      openDeleteDialog() {
+        this.deleteDialog = true;
+        this.deleteUsers = this.selected
+      },
+      closeDeleteDialog() {
+        this.deleteUsers = [];
+        this.deleteDialog = false;
+      },
+      deleteSelected() {
+        this.deleteLoading = true;
+
+      },
+      fetchUsers() {
+        this.isLoading = true;
+        userService.getAllUsers()
+          .then(users => {
+            this.data = users;
+            this.isLoading = false;
+          }, err => {
+            this.loading = false;
+          })
       }
     }
   }

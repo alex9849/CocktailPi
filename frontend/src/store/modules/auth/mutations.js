@@ -1,15 +1,23 @@
-export const loginSuccess = (state, user) => {
+export const loginSuccess = (state, jwtResponse) => {
+  const onlyToken = Object.assign({}, jwtResponse);
+  onlyToken.user = undefined;
   state.status.loggedIn = true;
-  state.status.user = user;
-  localStorage.setItem('user', JSON.stringify(user));
+  state.status.authToken = onlyToken;
+  state.status.user = jwtResponse.user;
+  localStorage.setItem('authToken', JSON.stringify(onlyToken));
+  localStorage.setItem('user', JSON.stringify(jwtResponse.user));
 };
 export const loginFailure = (state) => {
   state.status.loggedIn = false;
   state.status.user = null;
+  state.status.authToken = null;
+  localStorage.removeItem('authToken');
   localStorage.removeItem('user');
 };
 export const logout = (state) => {
   state.status.loggedIn = false;
-  state.user = null;
+  state.status.user = null;
+  state.status.authToken = null;
+  localStorage.removeItem('authToken');
   localStorage.removeItem('user');
 };

@@ -1,7 +1,7 @@
 export default function authHeader() {
-  let user = JSON.parse(localStorage.getItem('user'));
-  if (user && user.accessToken) {
-    return user.tokenType + ' ' + user.accessToken;
+  let authToken = JSON.parse(localStorage.getItem('authToken'));
+  if (authToken && authToken.accessToken) {
+    return authToken.tokenType + ' ' + authToken.accessToken;
   } else {
     return '';
   }

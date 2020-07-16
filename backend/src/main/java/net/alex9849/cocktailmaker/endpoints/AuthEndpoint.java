@@ -1,12 +1,13 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.payload.dto.UserDto;
 import net.alex9849.cocktailmaker.payload.request.LoginRequest;
 import net.alex9849.cocktailmaker.payload.response.JwtResponse;
 import net.alex9849.cocktailmaker.repository.RoleRepository;
-import net.alex9849.cocktailmaker.repository.UserRepository;
 import net.alex9849.cocktailmaker.security.jwt.JwtUtils;
 import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.AuthService;
+import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +31,7 @@ public class AuthEndpoint {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Autowired
     RoleRepository roleRepository;
@@ -49,15 +50,8 @@ public class AuthEndpoint {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword());
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
         return ResponseEntity.ok(new JwtResponse(token,
-                jwtUtils.getExpirationDateFromJwtToken(token),
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+                jwtUtils.getExpirationDateFromJwtToken(token), new UserDto(userService.getUser(userDetails.getId()))));
     }
 
     @RequestMapping(value = "refreshToken", method = RequestMethod.GET)
@@ -70,10 +64,6 @@ public class AuthEndpoint {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                jwtUtils.getExpirationDateFromJwtToken(jwt),
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+                jwtUtils.getExpirationDateFromJwtToken(jwt), new UserDto(userService.getUser(userDetails.getId()))));
     }
 }

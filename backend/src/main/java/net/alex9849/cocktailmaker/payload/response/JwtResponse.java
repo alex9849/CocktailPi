@@ -1,32 +1,27 @@
 package net.alex9849.cocktailmaker.payload.response;
 
+import net.alex9849.cocktailmaker.payload.dto.UserDto;
+
 import java.util.Date;
-import java.util.List;
 
 public class JwtResponse {
-    private String token;
+    private String accessToken;
     private Date tokenExpiration;
     private String tokenType = "Bearer";
-    private Long id;
-    private String username;
-    private String email;
-    private List<String> roles;
+    private UserDto user;
 
-    public JwtResponse(String accessToken, Date tokenExpiration, Long id, String username, String email, List<String> roles) {
-        this.token = accessToken;
+    public JwtResponse(String accessToken, Date tokenExpiration, UserDto user) {
+        this.accessToken = accessToken;
         this.tokenExpiration = tokenExpiration;
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.roles = roles;
+        this.user = user;
     }
 
     public String getAccessToken() {
-        return token;
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        this.token = accessToken;
+        this.accessToken = accessToken;
     }
 
     public Date getTokenExpiration() {
@@ -45,31 +40,11 @@ public class JwtResponse {
         this.tokenType = tokenType;
     }
 
-    public Long getId() {
-        return id;
+    public UserDto getUser() {
+        return user;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public List<String> getRoles() {
-        return roles;
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 }
