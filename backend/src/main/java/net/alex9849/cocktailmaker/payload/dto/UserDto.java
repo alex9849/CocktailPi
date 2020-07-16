@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,6 +17,16 @@ public class UserDto {
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;
+
+    @NotNull
+    @Size(max = 20)
+    private String firstname;
+
+    @NotNull
+    @Size(max = 20)
+    private String lastname;
+
+    private boolean isLocked;
 
     @Size(max = 50)
     @NotBlank
@@ -52,6 +63,30 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 
     public String getEmail() {

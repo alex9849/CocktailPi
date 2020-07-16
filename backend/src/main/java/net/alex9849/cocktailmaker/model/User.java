@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.model;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,16 @@ public class User {
     @NotBlank
     @Size(max = 20)
     private String username;
+
+    @NotNull
+    @Size(max = 20)
+    private String firstname;
+
+    @NotNull
+    @Size(max = 20)
+    private String lastname;
+
+    private boolean isLocked;
 
     @NotBlank
     @Size(max = 50)
@@ -60,6 +71,30 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String surname) {
+        this.lastname = surname;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 
     public String getEmail() {
