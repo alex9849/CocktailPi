@@ -35,7 +35,6 @@
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
               :key="subindex"
-              exact
               clickable
               :to="subsecion.to"
             >

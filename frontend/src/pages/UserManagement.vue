@@ -103,6 +103,9 @@
               :icon="mdiPencilOutline"
               text-color="white"
               :style="{backgroundColor: '#31ccec'}"
+              @click="$router.push({name: 'usereditor', params: {
+                userId: props.row.id
+              }})"
               dense
               rounded
             />
