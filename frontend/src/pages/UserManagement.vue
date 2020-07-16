@@ -6,7 +6,7 @@
         color="negative"
         label="Delete selected users"
         no-caps
-        @click="openDeleteDialog"
+        @click="openDeleteDialog(true)"
       />
       <q-btn
         color="positive"
@@ -69,8 +69,9 @@
               :name="mdiCheckboxBlankCircleOutline"
             />
           </q-td>
-          <q-td key="actions" :props="props">
-            <q-btn label="test"/>
+          <q-td class="q-pa-md q-gutter-x-sm" key="actions" :props="props">
+            <q-btn :icon="mdiPencilOutline" text-color="white" :style="{backgroundColor: '#31ccec'}" dense rounded/>
+            <q-btn :icon="mdiDelete" @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}" color="red" dense rounded/>
           </q-td>
         </q-tr>
       </template>
@@ -107,7 +108,7 @@
 </template>
 
 <script>
-  import {mdiCheckboxBlankCircleOutline, mdiCheckCircle} from '@mdi/js';
+  import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@mdi/js';
   import userService from '../services/user.service'
   import CQuestion from "../components/CQuestion";
 
@@ -135,6 +136,8 @@
     created() {
       this.mdiCheckCircle = mdiCheckCircle;
       this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
+      this.mdiDelete = mdiDelete;
+      this.mdiPencilOutline = mdiPencilOutline;
       this.fetchUsers();
     },
     computed: {
@@ -149,9 +152,11 @@
       }
     },
     methods: {
-      openDeleteDialog() {
+      openDeleteDialog(forSelectedUsers) {
+        if(forSelectedUsers) {
+          this.deleteUsers.push(...this.selected);
+        }
         this.deleteDialog = true;
-        this.deleteUsers = this.selected
       },
       closeDeleteDialog() {
         this.deleteUsers.splice(0, this.deleteUsers.length);

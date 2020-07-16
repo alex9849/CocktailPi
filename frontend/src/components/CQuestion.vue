@@ -2,7 +2,7 @@
   <q-dialog
     :value="value"
     @input="event => {$emit('input', event);}"
-
+    @hide="$emit('clickAbort')"
   >
     <q-card style="width: 500px">
       <q-card-section class="text-center">
