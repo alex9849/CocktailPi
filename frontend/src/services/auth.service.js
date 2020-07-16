@@ -8,6 +8,7 @@ class AuthService {
       .post(API_PATH + 'login', loginRequest)
       .then(response => {
         //JwtResponse
+        response.data.tokenExpiration = new Date(response.data.tokenExpiration);
         return response.data;
       });
   }

@@ -1,5 +1,7 @@
 <template>
-  <q-form class="innerpadding q-gutter-y-sm">
+  <q-form
+    class="innerpadding q-gutter-y-sm"
+  >
     <q-input
       outlined
       :loading="loading"
@@ -57,6 +59,7 @@
       label="Locked"
       @input="$emit('input', value)"
     />
+    <slot name="below"/>
   </q-form>
 </template>
 

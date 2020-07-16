@@ -4,7 +4,25 @@
     <user-editor-form
       v-model="user"
       :loading="loading"
-    />
+    >
+      <template slot="below">
+        <div class="q-pa-md q-gutter-sm">
+          <q-btn
+            type="submit"
+            style="width: 100px"
+            color="negative"
+            label="Abort"
+            no-caps
+          />
+          <q-btn
+            style="width: 100px"
+            color="positive"
+            label="Save"
+            no-caps
+          />
+        </div>
+      </template>
+    </user-editor-form>
   </q-page>
 </template>
 
