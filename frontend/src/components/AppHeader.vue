@@ -12,8 +12,7 @@
         <q-btn-dropdown
           size="md"
           flat
-
-          :label="user.username"
+          :label="username"
           :icon="mdiAccountBox"
         >
           <q-list separator bordered style="border-radius: 0px">
@@ -60,8 +59,15 @@
     },
     computed: {
       ...mapGetters({
-        user: 'auth/getUser'
-      })
+        user: 'auth/getUser',
+        isLoggedIn: 'auth/isLoggedIn'
+      }),
+      username() {
+        if(this.isLoggedIn) {
+          return this.user.username;
+        }
+        return '';
+      }
     },
     created() {
       this.mdiAccountBox = mdiAccountBox;

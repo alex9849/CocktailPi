@@ -29,7 +29,13 @@
           }
         }
       }, extendTokenBeforeExpirationInMs / 3);
-      this.refreshToken();
+      if(this.getUser) {
+        const tokenExpiration = this.getUser.tokenExpiration;
+        const currentDate = new Date();
+        if(tokenExpiration > currentDate) {
+          this.refreshToken();
+        }
+      }
     },
     beforeDestroy() {
       clearInterval(this.tokenupdater);
