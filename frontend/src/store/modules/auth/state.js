@@ -19,7 +19,6 @@ export default function () {
     status: {
       user: initialUser,
       loggedIn: inistialLoggedIn
-    },
-    incr: 1
+    }
   }
 }

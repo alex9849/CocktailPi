@@ -22,17 +22,19 @@
       >
         <q-list>
           <q-expansion-item
-            v-for="section in sidebarItems"
+            v-for="(section, index) in sidebarItems"
             :label="section.label"
             :icon="section.icon"
+            :key="index"
             expand-separator
             default-opened
           >
             <q-item
-              v-for="subsecion in section.subSections"
+              v-for="(subsecion, subindex) in section.subSections"
               style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
+              :key="subindex"
               exact
               clickable
               :to="subsecion.to"

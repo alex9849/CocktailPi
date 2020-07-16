@@ -13,6 +13,3 @@ export const logout = (state) => {
   state.user = null;
   localStorage.removeItem('user');
 };
-export const inc = (state) => {
-  state.incr += 1;
-};

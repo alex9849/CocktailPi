@@ -66,7 +66,7 @@
         if(this.isLoggedIn) {
           return this.user.username;
         }
-        return 'test';
+        return '';
       }
     },
     created() {
