@@ -31,15 +31,31 @@
       :table-style="{margin: '15px'}"
       style="background-color: #f3f3fa"
     >
-      <template v-slot:body="props">
-        <q-tr :props="props" :class="(props.rowIndex % 2 === 0)? 'row1':'row2'">
-          <q-td auto-width style="text-align: center" >
-            <q-checkbox v-model="props.selected"/>
+      <template
+        v-slot:body="props"
+      >
+        <q-tr
+          :props="props"
+          :class="(props.rowIndex % 2 === 0)? 'row1':'row2'"
+        >
+          <q-td
+            auto-width
+            style="text-align: center"
+          >
+            <q-checkbox
+              v-model="props.selected"
+            />
           </q-td>
-          <q-td key="username" :props="props">
+          <q-td
+            key="username"
+            :props="props"
+          >
             {{ props.row.username}}
           </q-td>
-          <q-td key="isLocked" :props="props">
+          <q-td
+            key="isLocked"
+            :props="props"
+          >
             <q-icon
               v-if="!props.row.isLocked"
               size="sm"
@@ -51,13 +67,22 @@
               :name="mdiCheckboxBlankCircleOutline"
             />
           </q-td>
-          <q-td key="fullname" :props="props">
+          <q-td
+            key="fullname"
+            :props="props"
+          >
             {{ props.row.firstname }} {{ props.row.lastname }}
           </q-td>
-          <q-td key="email" :props="props">
+          <q-td
+            key="email"
+            :props="props"
+          >
             {{ props.row.email}}
           </q-td>
-          <q-td key="isadmin" :props="props">
+          <q-td
+            key="isadmin"
+            :props="props"
+          >
             <q-icon
               v-if="props.row.role.includes('admin')"
               size="sm"
@@ -69,24 +94,45 @@
               :name="mdiCheckboxBlankCircleOutline"
             />
           </q-td>
-          <q-td class="q-pa-md q-gutter-x-sm" key="actions" :props="props">
-            <q-btn :icon="mdiPencilOutline" text-color="white" :style="{backgroundColor: '#31ccec'}" dense rounded/>
-            <q-btn :icon="mdiDelete" @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}" color="red" dense rounded/>
+          <q-td
+            class="q-pa-md q-gutter-x-sm"
+            key="actions"
+            :props="props"
+          >
+            <q-btn
+              :icon="mdiPencilOutline"
+              text-color="white"
+              :style="{backgroundColor: '#31ccec'}"
+              dense
+              rounded
+            />
+            <q-btn
+              :icon="mdiDelete"
+              @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
+              color="red"
+              dense
+              rounded
+            />
           </q-td>
         </q-tr>
       </template>
-      <template v-slot:bottom-row>
-        <td style="color: #b5b5b5">
+      <template
+        v-slot:bottom-row
+      >
+        <td
+          style="color: #b5b5b5"
+        >
           {{ data.length }} Nutzer gesamt
         </td>
-        <td/>
-        <td/>
-        <td/>
-        <td/>
-        <td/>
+        <td rowspan="5"/>
       </template>
-      <template v-slot:loading>
-        <q-inner-loading showing color="info" />
+      <template
+        v-slot:loading
+      >
+        <q-inner-loading
+          showing
+          color="info"
+        />
       </template>
     </q-table>
     <c-question
@@ -99,7 +145,10 @@
       @clickAbort="closeDeleteDialog"
     >
       <ul>
-        <li :key="index" v-for="(user, index) in deleteUsers">
+        <li
+          :key="index"
+          v-for="(user, index) in deleteUsers"
+        >
           {{user.username}} ({{ user.email }})
         </li>
       </ul>
