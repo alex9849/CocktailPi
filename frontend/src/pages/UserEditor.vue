@@ -4,6 +4,8 @@
     <user-editor-form
       v-model="user"
       :loading="loading"
+      @validation-error="rulesInvalid = true"
+      @validation-success="rulesInvalid = false"
     >
       <template slot="below">
         <div class="q-pa-md q-gutter-sm">
@@ -20,7 +22,7 @@
             color="positive"
             label="Save"
             no-caps
-            :disable="loading"
+            :disable="loading || rulesInvalid"
             @click="sendUpdateUser()"
           />
         </div>
@@ -40,7 +42,8 @@
       return {
         user: {},
         userId: this.$route.params.userId,
-        loading: false
+        loading: false,
+        rulesInvalid: false
       }
     },
     methods: {
@@ -56,7 +59,17 @@
           userDto: updateUser
         }).then(() => {
           this.loading = false;
+          this.$q.notify({
+            type: 'positive',
+            message: 'User updated successfully'
+          });
           this.$router.push({name: 'usermanagement'})
+        }).catch(error => {
+          this.loading = false;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Couldn\' update user. Please try again later!'
+          });
         })
       },
       getRandomString(length) {

@@ -2,6 +2,8 @@
   <q-form
     class="innerpadding q-gutter-y-sm"
     @submit.prevent="$emit('submit')"
+    @validation-error="$emit('validation-error')"
+    @validation-success="$emit('validation-success')"
   >
     <q-input
       outlined
