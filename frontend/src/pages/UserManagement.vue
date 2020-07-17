@@ -1,6 +1,9 @@
 <template>
   <q-page padding>
-    <h5>User Management</h5>
+    <q-breadcrumbs>
+      <q-breadcrumbs-el label="User Management"/>
+    </q-breadcrumbs>
+    <h5 style="margin-bottom: 0">User Management</h5>
     <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
       <q-btn
         color="negative"
@@ -12,6 +15,7 @@
         color="positive"
         label="Create user"
         no-caps
+        :to="{name: 'usercreator'}"
       />
       <q-btn
         color="info"

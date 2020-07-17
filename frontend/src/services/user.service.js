@@ -18,7 +18,11 @@ class UserService {
   }
 
   updateUser(updateRequest) {
-    return axios.put(API_PATH+ updateRequest.userDto.id, updateRequest)
+    return axios.put(API_PATH + updateRequest.userDto.id, updateRequest);
+  }
+
+  createUser(createUser) {
+    return axios.post(API_PATH, createUser);
   }
 }
 

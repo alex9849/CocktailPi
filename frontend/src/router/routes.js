@@ -46,6 +46,10 @@ const routes = [
       component: () => import('pages/UserManagement'),
       name: 'usermanagement'
     }, {
+      path: 'admin/usermanagement/create',
+      component: () => import('pages/UserCreator'),
+      name: 'usercreator'
+    }, {
       path: 'admin/usermanagement/:userId/edit',
       component: () => import('pages/UserEditor'),
       name: 'usereditor'

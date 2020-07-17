@@ -1,33 +1,41 @@
 <template>
   <q-page padding>
-    <h5>User Management / Edit user</h5>
-    <user-editor-form
-      v-model="user"
-      :loading="loading"
-      @valid="isValid = true"
-      @invalid="isValid = false"
+    <q-breadcrumbs>
+      <q-breadcrumbs-el label="User Management" :to="{name: 'usermanagement'}"/>
+      <q-breadcrumbs-el label="Create user"/>
+    </q-breadcrumbs>
+    <h5>Edit user</h5>
+    <q-card
+      flat
     >
-      <template slot="below">
-        <div class="q-pa-md q-gutter-sm">
-          <q-btn
-            style="width: 100px"
-            color="negative"
-            label="Abort"
-            no-caps
-            :to="{name: 'usermanagement'}"
-          />
-          <q-btn
-            type="submit"
-            style="width: 100px"
-            color="positive"
-            label="Save"
-            no-caps
-            :disable="loading || !isValid"
-            @click="sendUpdateUser()"
-          />
-        </div>
-      </template>
-    </user-editor-form>
+      <user-editor-form
+        v-model="user"
+        :loading="loading"
+        @valid="isValid = true"
+        @invalid="isValid = false"
+      >
+        <template slot="below">
+          <div class="q-pa-md q-gutter-sm">
+            <q-btn
+              style="width: 100px"
+              color="negative"
+              label="Abort"
+              no-caps
+              :to="{name: 'usermanagement'}"
+            />
+            <q-btn
+              type="submit"
+              style="width: 100px"
+              color="positive"
+              label="Save"
+              no-caps
+              :disable="loading || !isValid"
+              @click="sendUpdateUser()"
+            />
+          </div>
+        </template>
+      </user-editor-form>
+    </q-card>
   </q-page>
 </template>
 
@@ -47,7 +55,7 @@
       }
     },
     methods: {
-      async sendUpdateUser() {
+      sendUpdateUser() {
         this.loading = true;
         let updateUser = Object.assign({}, this.user);
         let updatePassword = !!this.user.password || this.user.password !== '';
@@ -68,7 +76,7 @@
           this.loading = false;
           this.$q.notify({
             type: 'negative',
-            message: 'Couldn\' update user. Please try again later!'
+            message: 'Couldn\' create user. Please try again later!'
           });
         })
       },
