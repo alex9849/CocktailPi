@@ -65,6 +65,7 @@ public class UserEndpoint {
             user.setRoles(userService.toRoles(updateUserRequest.getUserDto().getRole()));
         } else {
             user.setRoles(beforeUpdate.getRoles());
+            user.setLocked(beforeUpdate.isLocked());
         }
         //If user wants to update his password update it. Otherwise fill in the old encrypted password
         if(!updateUserRequest.isUpdatePassword()) {
