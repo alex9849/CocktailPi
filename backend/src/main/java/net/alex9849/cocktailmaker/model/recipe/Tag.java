@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.recipe;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

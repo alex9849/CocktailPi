@@ -1,5 +1,6 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -44,6 +45,7 @@ public class User {
 
     @NotBlank
     @Size(max = 120)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

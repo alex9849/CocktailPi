@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.user;
 
 public enum ERole {
     ROLE_USER("user"), ROLE_ADMIN("admin");

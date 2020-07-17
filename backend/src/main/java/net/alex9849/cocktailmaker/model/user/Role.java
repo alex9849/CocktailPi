@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.user;
 
 import javax.persistence.*;
 

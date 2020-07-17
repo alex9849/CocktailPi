@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.security.services;
 
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

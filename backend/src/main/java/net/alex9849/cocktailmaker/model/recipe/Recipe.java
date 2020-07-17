@@ -1,5 +1,7 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.recipe;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import net.alex9849.cocktailmaker.model.user.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -22,16 +24,17 @@ public class Recipe {
 
     private boolean inPublic;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private User owner;
+
     @NotNull
     @Size(min = 0, max = 3000)
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "recipe")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinTable(name = "recipe_ingredients",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
-    private Set<Ingredient> ingredients;
+    private Set<RecipeIngredient> recipeIngredients;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -72,12 +75,20 @@ public class Recipe {
         this.description = description;
     }
 
-    public Set<Ingredient> getIngredients() {
-        return ingredients;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setIngredients(Set<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Set<RecipeIngredient> getRecipeIngredients() {
+        return recipeIngredients;
+    }
+
+    public void setRecipeIngredients(Set<RecipeIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 
     public Set<Tag> getTags() {

@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.security.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

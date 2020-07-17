@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.UserDto;
 import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
 import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;

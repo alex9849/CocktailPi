@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Email;

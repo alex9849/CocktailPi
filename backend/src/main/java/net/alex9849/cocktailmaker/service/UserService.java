@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.ERole;
-import net.alex9849.cocktailmaker.model.Role;
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.ERole;
+import net.alex9849.cocktailmaker.model.user.Role;
+import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.RoleRepository;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

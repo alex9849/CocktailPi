@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
 
-import net.alex9849.cocktailmaker.model.User;
+import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

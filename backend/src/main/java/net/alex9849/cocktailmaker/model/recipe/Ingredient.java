@@ -1,8 +1,9 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.recipe;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "ingredients")
@@ -15,6 +16,9 @@ public class Ingredient {
     @NotNull
     @Size(min = 1, max = 30)
     private String name;
+
+    @OneToMany(mappedBy = "ingredient")
+    Set<RecipeIngredient> recipeIngredients;
 
     public Long getId() {
         return id;
@@ -30,5 +34,13 @@ public class Ingredient {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<RecipeIngredient> getRecipeIngredients() {
+        return recipeIngredients;
+    }
+
+    public void setRecipeIngredients(Set<RecipeIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 }
