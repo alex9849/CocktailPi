@@ -96,7 +96,7 @@ module.exports = function (/* ctx */) {
       config: {
         notify: {
           progress: true,
-          position: 'bottom-right',
+          position: 'bottom',
           timeout: 2500
         }
       },
