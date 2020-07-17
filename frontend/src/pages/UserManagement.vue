@@ -151,14 +151,26 @@
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >
-      <ul>
-        <li
-          :key="index"
-          v-for="(user, index) in deleteUsers"
+      <template v-slot:buttons>
+        <q-btn
+          v-if="deleteUsers.length === 0"
+          color="grey"
+          style="width: 150px"
+          @click="closeDeleteDialog"
         >
-          {{user.username}} ({{ user.email }})
-        </li>
-      </ul>
+          Ok
+        </q-btn>
+      </template>
+      <template v-slot:default>
+        <ul>
+          <li
+            :key="index"
+            v-for="(user, index) in deleteUsers"
+          >
+            {{user.username}} ({{ user.email }})
+          </li>
+        </ul>
+      </template>
     </c-question>
   </q-page>
 </template>

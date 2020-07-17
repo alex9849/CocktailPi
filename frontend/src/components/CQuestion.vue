@@ -9,21 +9,23 @@
         <h5 style="margin: 5px">{{ question }}</h5>
         <slot />
         <div class="q-pa-md q-gutter-sm">
-          <q-btn
-            color="grey"
-            @click="() => {value = false; $emit('clickAbort');}"
-            style="width: 150px"
-          >
-            Abort
-          </q-btn>
-          <q-btn
-            :loading="loading"
-            :color="okColor"
-            style="width: 150px"
-            @click="$emit('clickOk')"
-          >
-            {{ okButtonText }}
-          </q-btn>
+          <slot name="buttons">
+            <q-btn
+              color="grey"
+              @click="() => {value = false; $emit('clickAbort');}"
+              style="width: 150px"
+            >
+              Abort
+            </q-btn>
+            <q-btn
+              :loading="loading"
+              :color="okColor"
+              style="width: 150px"
+              @click="$emit('clickOk')"
+            >
+              {{ okButtonText }}
+            </q-btn>
+          </slot>
         </div>
       </q-card-section>
     </q-card>
