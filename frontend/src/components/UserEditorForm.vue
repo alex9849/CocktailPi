@@ -1,12 +1,15 @@
 <template>
   <q-form
     class="innerpadding q-gutter-y-sm"
+    @submit.prevent="$emit('submit')"
   >
     <q-input
       outlined
       :loading="loading"
       :disable="loading"
       v-model="value.username"
+      :lazy-rules="true"
+      :rules="[v => minLengthString(v, 3), v => maxLengthString(v, 20), notEmptyString]"
       @input="$emit('input', value)"
       label="Username"
     />
@@ -14,7 +17,9 @@
       outlined
       :loading="loading"
       :disable="loading"
+      :lazy-rules="true"
       v-model="value.firstname"
+      :rules="[v => maxLengthString(v, 20),notEmptyString]"
       label="Firstname"
       @input="$emit('input', value)"
     />
@@ -23,6 +28,8 @@
       :loading="loading"
       :disable="loading"
       v-model="value.lastname"
+      :lazy-rules="true"
+      :rules="[v => maxLengthString(v, 20),notEmptyString]"
       label="Lastname"
       @input="$emit('input', value)"
     />
@@ -31,6 +38,8 @@
       :loading="loading"
       :disable="loading"
       v-model="value.email"
+      :lazy-rules="true"
+      :rules="[v => maxLengthString(v, 50), notEmptyString, emailString]"
       @input="$emit('input', value)"
       label="E-Mail"
     />
@@ -38,7 +47,9 @@
       outlined
       :loading="loading"
       :disable="loading"
+      :lazy-rules="true"
       v-model="value.password"
+      :rules="[v => minLengthString(v, 6), v => maxLengthString(v, 40)]"
       @input="$emit('input', value)"
       label="Password"
       :type="showPassword? 'text':'password'"
@@ -48,10 +59,10 @@
       </template>
     </q-input>
     <q-checkbox
-      v-model="value.adminPermissions"
+      :value="isAdmin"
+      @input="change => {if(value.role) {change? value.role.push('admin'):value.role = value.role.filter(e => e !== 'admin'); $emit('input', value)}}"
       :disable="loading"
       label="Admin-permissions"
-      @input="$emit('input', value)"
     />
     <q-checkbox
       v-model="value.locked"
@@ -64,6 +75,7 @@
 </template>
 
 <script>
+  import {emailString, maxLengthString, minLengthString, notEmptyString} from "../services/formRules";
   import {mdiEye, mdiEyeOff} from '@mdi/js';
 
   export default {
@@ -83,8 +95,19 @@
         showPassword: false
       }
     },
-    methods: {},
+    computed: {
+      isAdmin() {
+        if(!this.value.role) {
+          return undefined;
+        }
+        return this.value.role.includes('admin')
+      }
+    },
     created() {
+      this.notEmptyString = notEmptyString;
+      this.minLengthString = minLengthString;
+      this.maxLengthString = maxLengthString;
+      this.emailString = emailString;
       this.mdiEye = mdiEye;
       this.mdiEyeOff = mdiEyeOff;
     }

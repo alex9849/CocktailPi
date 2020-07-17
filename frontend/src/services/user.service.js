@@ -1,5 +1,4 @@
 import axios from 'axios';
-import authHeader from './auth-header';
 
 const API_PATH = 'api/user/';
 
@@ -18,12 +17,8 @@ class UserService {
     return axios.delete(API_PATH + user.id);
   }
 
-  getUserBoard() {
-    return axios.get(API_PATH + 'user', {headers: authHeader()});
-  }
-
-  getAdminBoard() {
-    return axios.get(API_PATH + 'admin', {headers: authHeader()});
+  updateUser(updateRequest) {
+    return axios.put(API_PATH+ updateRequest.userDto.id, updateRequest)
   }
 }
 
