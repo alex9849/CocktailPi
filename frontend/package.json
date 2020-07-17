@@ -12,14 +12,16 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@mdi/js": "^4.9.95",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
-    "quasar": "^1.0.0",
-    "@mdi/js": "^4.9.95"
+    "vuelidate": "^0.7.5",
+    "quasar": "^1.12.12"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0",
+    "@mdi/font": "^4.9.95",
+    "@quasar/app": "^2.0.6",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
@@ -28,8 +30,7 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.1.2",
-    "@mdi/font": "^4.9.95"
+    "eslint-plugin-vue": "^6.1.2"
   },
   "browserslist": [
     "last 10 Chrome versions",

@@ -57,7 +57,7 @@
             :props="props"
           >
             <q-icon
-              v-if="!props.row.isLocked"
+              v-if="!props.row.locked"
               size="sm"
               :name="mdiCheckCircle"
             />

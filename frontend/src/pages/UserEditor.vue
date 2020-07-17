@@ -4,8 +4,8 @@
     <user-editor-form
       v-model="user"
       :loading="loading"
-      @validation-error="rulesInvalid = true"
-      @validation-success="rulesInvalid = false"
+      @valid="isValid = true"
+      @invalid="isValid = false"
     >
       <template slot="below">
         <div class="q-pa-md q-gutter-sm">
@@ -22,7 +22,7 @@
             color="positive"
             label="Save"
             no-caps
-            :disable="loading || rulesInvalid"
+            :disable="loading || !isValid"
             @click="sendUpdateUser()"
           />
         </div>
@@ -43,11 +43,11 @@
         user: {},
         userId: this.$route.params.userId,
         loading: false,
-        rulesInvalid: false
+        isValid: false
       }
     },
     methods: {
-      sendUpdateUser() {
+      async sendUpdateUser() {
         this.loading = true;
         let updateUser = Object.assign({}, this.user);
         let updatePassword = !!this.user.password || this.user.password !== '';
