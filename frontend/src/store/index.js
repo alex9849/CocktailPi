@@ -14,17 +14,20 @@ Vue.use(Vuex);
  * async/await or return a Promise which resolves
  * with the Store instance.
  */
+const store = new Vuex.Store({
+  modules: {
+    auth: auth
+  },
+
+  // enable strict mode (adds overhead!)
+  // for dev mode only
+  strict: process.env.DEV
+});
 
 export default function (/* { ssrContext } */) {
-  const Store = new Vuex.Store({
-    modules: {
-      auth: auth
-    },
-
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: process.env.DEV
-  });
-
-  return Store
+  return store;
 }
+
+export {
+  store
+};

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 import routes from './routes'
 
 Vue.use(VueRouter);
@@ -14,7 +13,7 @@ Vue.use(VueRouter);
  * with the Router instance.
  */
 
-export default function (/* { store, ssrContext } */) {
+export default function ( { store } ) {
   const router = new VueRouter({
     scrollBehavior(to, from, savedPosition) {
       if(savedPosition) {

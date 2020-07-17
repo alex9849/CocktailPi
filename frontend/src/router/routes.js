@@ -1,17 +1,20 @@
-import store from '../store/index';
+import {store} from '../store'
+
 
 function redirectIfNotAuthenticated(to, from, next) {
-  if (!store().getters['auth/isLoggedIn']) {
+  if (!store.getters['auth/isLoggedIn']) {
     next({name: "login", query: {
       redirectTo: to.fullPath
-      }})
+      }});
+    return;
   }
   next();
 }
 
 function redirectIfAuthenticated(to, from, next) {
-  if (store().getters['auth/isLoggedIn']) {
-    next({name: "dashboard"})
+  if (store.getters['auth/isLoggedIn']) {
+    next({name: "dashboard"});
+    return;
   }
   next();
 }

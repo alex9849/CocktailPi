@@ -1,6 +1,6 @@
 export const loginSuccess = (state, jwtResponse) => {
   const onlyToken = Object.assign({}, jwtResponse);
-  onlyToken.user = undefined;
+  delete onlyToken.user;
   state.status.loggedIn = true;
   state.status.authToken = onlyToken;
   state.status.user = jwtResponse.user;
