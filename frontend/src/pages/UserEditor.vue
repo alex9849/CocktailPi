@@ -82,7 +82,7 @@
           this.error = error.response.data.message;
           this.$q.notify({
             type: 'negative',
-            message: 'Couldn\' create user. ' + error.response.data.message
+            message: 'Couldn\'t create user. ' + error.response.data.message
           });
         })
       },
