@@ -23,6 +23,7 @@
         <q-list>
           <q-expansion-item
             v-for="(section, index) in sidebarItems"
+            v-if="!section.onlyAdmins || isAdmin"
             :label="section.label"
             :icon="section.icon"
             :key="index"
@@ -31,6 +32,7 @@
           >
             <q-item
               v-for="(subsecion, subindex) in section.subSections"
+              v-if="!subsecion.onlyAdmins || isAdmin"
               style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
@@ -66,6 +68,7 @@
 <script>
   import AppHeader from "../components/AppHeader";
   import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'MainLayout',
@@ -81,11 +84,14 @@
           {
             label: 'GENERAL',
             icon: mdiAccount,
+            onlyAdmins: false,
             subSections: [
               {
+                onlyAdmins: false,
                 label: 'Dashboard',
                 to: {name: 'dashboard'}
               }, {
+                onlyAdmins: false,
                 label: 'My recipes',
                 to: {name: 'myrecipes'}
               }
@@ -93,6 +99,7 @@
           }, {
             label: 'PUBLIC COCKTAILS',
             icon: mdiEarth,
+            onlyAdmins: false,
             subSections: [
               {
                 label: 'Public recipes',
@@ -102,12 +109,15 @@
           }, {
             label: 'ADMINISTRATION',
             icon: mdiCogs,
+            onlyAdmins: true,
             subSections: [
               {
                 label: 'User management',
+                onlyAdmins: true,
                 to: {name: 'usermanagement'}
               }, {
                 label: 'Settings',
+                onlyAdmins: true,
                 to: {name: 'adminsettings'}
               }
             ]
@@ -124,6 +134,9 @@
       window.removeEventListener('resize', this.handleResize);
     },
     computed: {
+      ...mapGetters({
+        isAdmin: 'auth/isAdmin'
+      }),
       desktopMode() {
         return this.windowWidth > this.desktopModeBreakPoint;
       }
