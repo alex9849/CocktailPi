@@ -73,7 +73,6 @@ public class UserEndpoint {
             user.setPassword(encoder.encode(user.getPassword()));
         }
         user.setId(userId);
-        user.setUsername(beforeUpdate.getUsername());
         return ResponseEntity.ok(new UserDto(userService.updateUser(user)));
     }
 
