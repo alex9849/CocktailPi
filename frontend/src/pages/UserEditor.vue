@@ -2,9 +2,12 @@
   <q-page padding>
     <q-breadcrumbs>
       <q-breadcrumbs-el label="User Management" :to="{name: 'usermanagement'}"/>
-      <q-breadcrumbs-el label="Create user"/>
+      <q-breadcrumbs-el label="Edit user"/>
     </q-breadcrumbs>
     <h5>Edit user</h5>
+    <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
+      {{ error }}
+    </q-banner>
     <q-card
       flat
     >
@@ -13,6 +16,7 @@
         :loading="loading"
         @valid="isValid = true"
         @invalid="isValid = false"
+        :password-required="false"
       >
         <template slot="below">
           <div class="q-pa-md q-gutter-sm">
@@ -51,7 +55,8 @@
         user: {},
         userId: this.$route.params.userId,
         loading: false,
-        isValid: false
+        isValid: false,
+        error: ''
       }
     },
     methods: {
@@ -74,9 +79,10 @@
           this.$router.push({name: 'usermanagement'})
         }).catch(error => {
           this.loading = false;
+          this.error = error.response.data.message;
           this.$q.notify({
             type: 'negative',
-            message: 'Couldn\' create user. Please try again later!'
+            message: 'Couldn\' create user. ' + error.response.data.message
           });
         })
       },

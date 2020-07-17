@@ -5,6 +5,9 @@
       <q-breadcrumbs-el label="Create user" />
     </q-breadcrumbs>
     <h5>Create user</h5>
+    <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
+      {{ error }}
+    </q-banner>
     <q-card
       flat
     >
@@ -52,7 +55,8 @@
         newUser: new User('', '', '',
           '', false, '', '', ['user']),
         isValid: false,
-        loading: false
+        loading: false,
+        error: ''
       }
     },
     methods: {
@@ -68,9 +72,10 @@
             this.$router.push({name: 'usermanagement'})
           }).catch(error => {
           this.loading = false;
+          this.error = error.response.data.message;
           this.$q.notify({
             type: 'negative',
-            message: 'Couldn\'t create user. Please try again later!'
+            message: 'Couldn\'t create user. ' + error.response.data.message
           });
         })
       }

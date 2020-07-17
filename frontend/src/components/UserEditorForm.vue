@@ -58,6 +58,7 @@
       v-model="value.password"
       @input="() => {$emit('input', value); $v.value.password.$touch();}"
       :rules="[
+        val => !passwordRequired || $v.value.password.required || 'Required',
         val => $v.value.password.minLength || 'Minimal length 6',
         val => $v.value.password.minLength || 'Maximal length 40']"
       label="Password"
@@ -97,6 +98,10 @@
       loading: {
         type: Boolean,
         default: false
+      },
+      passwordRequired: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -104,35 +109,41 @@
         showPassword: false
       }
     },
-    validations: {
-      value: {
-        username: {
-          required,
-          minLength: minLength(3),
-          maxLength: maxLength(20)
-        },
-        firstname: {
-          required,
-          maxLength: maxLength(20)
-        },
-        lastname: {
-          required,
-          maxLength: maxLength(20)
-        },
-        email: {
-          required,
-          email,
-          maxLength: maxLength(50)
-        },
-        password: {
-          minLength: minLength(6),
-          maxLength: maxLength(40)
+    validations() {
+      let validations = {
+        value: {
+          username: {
+            required,
+            minLength: minLength(3),
+            maxLength: maxLength(20)
+          },
+          firstname: {
+            required,
+            maxLength: maxLength(20)
+          },
+          lastname: {
+            required,
+            maxLength: maxLength(20)
+          },
+          email: {
+            required,
+            email,
+            maxLength: maxLength(50)
+          },
+          password: {
+            minLength: minLength(6),
+            maxLength: maxLength(40)
+          }
         }
       }
+      if(this.passwordRequired) {
+        validations.value.password.required = required;
+      }
+      return validations;
     },
     watch: {
       '$v.value.$invalid': function _watch$vValue$invalid(value) {
-        if(!value) {
+        if (!value) {
           this.$emit('valid');
         } else {
           this.$emit('invalid');
