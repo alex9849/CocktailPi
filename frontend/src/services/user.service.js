@@ -18,6 +18,10 @@ class UserService {
       .then(response => response.data);
   }
 
+  updateMe(updateRequest) {
+    return axios.put(API_PATH + 'current', updateRequest);
+  }
+
   deleteUser(user) {
     return axios.delete(API_PATH + user.id);
   }

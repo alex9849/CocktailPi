@@ -16,7 +16,6 @@
         :loading="loading"
         @valid="isValid = true"
         @invalid="isValid = false"
-        :password-required="false"
       >
         <template slot="below">
           <div class="q-pa-md q-gutter-sm">
@@ -82,7 +81,7 @@
           this.error = error.response.data.message;
           this.$q.notify({
             type: 'negative',
-            message: 'Couldn\'t create user. ' + error.response.data.message
+            message: 'Couldn\'t update user. ' + error.response.data.message
           });
         })
       },

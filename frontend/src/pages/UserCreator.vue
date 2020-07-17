@@ -14,6 +14,7 @@
       <user-editor-form
         v-model="newUser"
         :loading="loading"
+        password-required
         @valid="isValid = true"
         @invalid="isValid = false"
       >

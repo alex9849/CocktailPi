@@ -8,7 +8,7 @@
     <q-input
       outlined
       :loading="loading"
-      :disable="loading"
+      :disable="loading || disabled"
       v-model="value.username"
       @input="() => {$emit('input', value); $v.value.username.$touch();}"
       label="Username"
@@ -20,7 +20,7 @@
     <q-input
       outlined
       :loading="loading"
-      :disable="loading"
+      :disable="loading || disabled"
       v-model="value.firstname"
       label="Firstname"
       @input="() => {$emit('input', value); $v.value.firstname.$touch();}"
@@ -31,7 +31,7 @@
     <q-input
       outlined
       :loading="loading"
-      :disable="loading"
+      :disable="loading || disabled"
       v-model="value.lastname"
       @input="() => {$emit('input', value); $v.value.lastname.$touch();}"
       label="Lastname"
@@ -42,7 +42,7 @@
     <q-input
       outlined
       :loading="loading"
-      :disable="loading"
+      :disable="loading || disabled"
       v-model="value.email"
       @input="() => {$emit('input', value); $v.value.email.$touch();}"
       :rules="[
@@ -54,7 +54,7 @@
     <q-input
       outlined
       :loading="loading"
-      :disable="loading"
+      :disable="loading || disabled"
       v-model="value.password"
       @input="() => {$emit('input', value); $v.value.password.$touch();}"
       :rules="[
@@ -69,14 +69,16 @@
       </template>
     </q-input>
     <q-checkbox
+      v-if="!isProfile"
       :value="isAdmin"
       @input="change => {if(value.role) {change? value.role.push('admin'):value.role = value.role.filter(e => e !== 'admin'); $emit('input', value)}}"
-      :disable="loading"
+      :disable="loading || disabled"
       label="Admin-permissions"
     />
     <q-checkbox
+      v-if="!isProfile"
       v-model="value.locked"
-      :disable="loading"
+      :disable="loading || disabled"
       label="Locked"
       @input="$emit('input', value)"
     />
@@ -85,7 +87,7 @@
 </template>
 
 <script>
-  import {mdiEye, mdiEyeOff} from '@mdi/js';
+  import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5';
   import {email, maxLength, minLength, required} from 'vuelidate/lib/validators'
 
   export default {
@@ -99,9 +101,17 @@
         type: Boolean,
         default: false
       },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      isProfile: {
+        type: Boolean,
+        default: false
+      },
       passwordRequired: {
         type: Boolean,
-        default: true
+        default: false
       }
     },
     data() {
@@ -135,7 +145,7 @@
             maxLength: maxLength(40)
           }
         }
-      }
+      };
       if(this.passwordRequired) {
         validations.value.password.required = required;
       }
@@ -159,7 +169,6 @@
       }
     },
     created() {
-      this.emailString = emailString;
       this.mdiEye = mdiEye;
       this.mdiEyeOff = mdiEyeOff;
     }

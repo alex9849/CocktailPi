@@ -176,7 +176,7 @@
 </template>
 
 <script>
-  import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@mdi/js';
+  import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
   import userService from '../services/user.service'
   import CQuestion from "../components/CQuestion";
 
