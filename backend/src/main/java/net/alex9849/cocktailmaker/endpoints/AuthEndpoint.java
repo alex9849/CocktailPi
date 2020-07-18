@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
-import net.alex9849.cocktailmaker.payload.dto.UserDto;
+import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.LoginRequest;
 import net.alex9849.cocktailmaker.payload.response.JwtResponse;
 import net.alex9849.cocktailmaker.repository.RoleRepository;

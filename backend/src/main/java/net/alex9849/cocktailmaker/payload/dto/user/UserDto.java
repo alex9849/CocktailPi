@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.payload.dto;
+package net.alex9849.cocktailmaker.payload.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.alex9849.cocktailmaker.model.user.User;

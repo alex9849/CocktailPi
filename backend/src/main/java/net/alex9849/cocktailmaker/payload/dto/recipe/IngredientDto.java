@@ -1,20 +1,24 @@
-package net.alex9849.cocktailmaker.model.recipe;
+package net.alex9849.cocktailmaker.payload.dto.recipe;
 
-import javax.persistence.*;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
-@Table(name = "ingredients")
-public class Ingredient {
+public class IngredientDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     @Size(min = 1, max = 30)
     private String name;
+
+    public IngredientDto() {}
+
+    public IngredientDto(Ingredient ingredient) {
+        this.id = ingredient.getId();
+        this.name = ingredient.getName();
+    }
 
     public Long getId() {
         return id;

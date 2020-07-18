@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.model.user;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 
 public class Role {
     @Id

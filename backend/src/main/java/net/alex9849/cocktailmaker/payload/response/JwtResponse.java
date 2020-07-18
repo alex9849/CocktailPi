@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.payload.response;
 
-import net.alex9849.cocktailmaker.payload.dto.UserDto;
+import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 
 import java.util.Date;
 

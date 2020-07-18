@@ -6,8 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "tags")
-public class Tag {
+@Table(name = "tags",
+        uniqueConstraints = @UniqueConstraint(columnNames = "name")) public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

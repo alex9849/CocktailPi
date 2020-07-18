@@ -24,4 +24,8 @@ public class RecipeService {
     public List<Recipe> getAll() {
         return recipeRepository.findAll();
     }
+
+    public List<Recipe> getByOwner(long ownerId) {
+        return recipeRepository.findAllByOwnerId(ownerId);
+    }
 }

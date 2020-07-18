@@ -1,12 +1,12 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/recipe")
@@ -16,13 +16,13 @@ public class RecipeEndpoint {
     RecipeService recipeService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipes() {
-        return ResponseEntity.ok().body(recipeService.getAll());
-    }
-
-    @RequestMapping(path = {"{userId}", "own"}, method = RequestMethod.GET)
-    ResponseEntity<?> getRecipeByUser(@PathVariable(value = "userId", required = false) Long userId) {
-        return null;
+    ResponseEntity<?> getRecipes(@RequestParam(value = "userId", required = false) Long userId) {
+        if(userId != null) {
+            return ResponseEntity.ok().body(recipeService.getByOwner(userId).stream()
+                    .map(RecipeDto::new).collect(Collectors.toList()));
+        }
+        return ResponseEntity.ok().body(recipeService.getAll().stream()
+                .map(RecipeDto::new).collect(Collectors.toList()));
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
