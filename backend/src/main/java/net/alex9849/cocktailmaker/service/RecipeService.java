@@ -69,6 +69,10 @@ public class RecipeService {
         return recipeRepository.findById(id).orElse(null);
     }
 
+    public void delete(long recipeId) {
+        recipeRepository.deleteById(recipeId);
+    }
+
     public Set<Tag> toTags(Set<String> stringTags) {
         Set<Tag> tags = new HashSet<>();
         stringTags.forEach(x -> {

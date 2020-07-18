@@ -54,4 +54,13 @@ public class RecipeEndpoint {
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
+
+    @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
+    ResponseEntity<?> createRecipe(@PathVariable("id") long recipeId) {
+        if(recipeService.getById(recipeId) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        recipeService.delete(recipeId);
+        return ResponseEntity.ok().build();
+    }
 }
