@@ -81,6 +81,9 @@ public class UserService {
     }
 
     public User fromDto(UserDto userDto) {
+        if(userDto == null) {
+            return null;
+        }
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
         user.setRoles(toRoles(userDto.getRole()));

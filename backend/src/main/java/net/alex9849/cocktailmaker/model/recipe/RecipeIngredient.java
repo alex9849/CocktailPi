@@ -9,13 +9,13 @@ public class RecipeIngredient {
     @EmbeddedId
     private RecipeIngredientId id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("recipe_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("RecipeId")
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("ingredient_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("IngredientId")
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 

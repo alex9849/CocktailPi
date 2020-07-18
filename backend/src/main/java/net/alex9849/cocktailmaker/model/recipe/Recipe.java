@@ -32,7 +32,7 @@ public class Recipe {
     @Size(min = 0, max = 3000)
     private String description;
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<RecipeIngredient> recipeIngredients;
 
