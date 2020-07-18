@@ -6,7 +6,10 @@ import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,5 +36,14 @@ public class RecipeEndpoint {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new RecipeDto(recipe));
+    }
+
+    @RequestMapping(path = "", method = RequestMethod.POST)
+    ResponseEntity<?> createRecipe(@Valid @RequestBody RecipeDto recipeDto, UriComponentsBuilder uriBuilder) {
+        recipeDto.setId(null);
+        Recipe recipe = recipeService.fromDto(recipeDto);
+        recipe = recipeService.createRecipe(recipe);
+        UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
+        return ResponseEntity.created(uriComponents.toUri()).build();
     }
 }

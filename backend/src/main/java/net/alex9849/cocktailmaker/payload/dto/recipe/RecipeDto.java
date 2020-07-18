@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -14,11 +15,8 @@ public class RecipeDto {
     public RecipeDto() {}
 
     public RecipeDto(Recipe recipe) {
-        this.id = recipe.getId();
-        this.name = recipe.getName();
-        this.inPublic = recipe.isInPublic();
+        BeanUtils.copyProperties(recipe, this);
         this.owner = new UserDto(recipe.getOwner());
-        this.description = recipe.getDescription();
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toSet());
         this.tags = recipe.getTags().stream().map(Tag::getName)

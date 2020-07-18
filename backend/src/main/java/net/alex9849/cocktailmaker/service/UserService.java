@@ -3,8 +3,10 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.Role;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.repository.RoleRepository;
 import net.alex9849.cocktailmaker.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User getUser(long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
     public Set<Role> toRoles(Set<String> stringRoles) {
         Set<Role> roles = new HashSet<>();
         if (stringRoles == null || stringRoles.isEmpty()) {
@@ -74,7 +80,10 @@ public class UserService {
         return roles;
     }
 
-    public User getUser(long userId) {
-        return userRepository.findById(userId).orElse(null);
+    public User fromDto(UserDto userDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        user.setRoles(toRoles(userDto.getRole()));
+        return user;
     }
 }
