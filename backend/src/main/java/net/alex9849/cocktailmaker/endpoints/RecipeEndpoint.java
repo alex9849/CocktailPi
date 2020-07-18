@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     ResponseEntity<?> getRecipe(@PathVariable("id") long id) {
-        return null;
+        Recipe recipe = recipeService.getById(id);
+        if(recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new RecipeDto(recipe));
     }
 }
