@@ -14,7 +14,12 @@ public class RecipeIngredientDto {
     public RecipeIngredientDto() {}
 
     public RecipeIngredientDto(RecipeIngredient recipeIngredient) {
-        this.ingredient = new IngredientDto(recipeIngredient.getIngredient());
+        if(recipeIngredient.getIngredient() != null) {
+            this.ingredient = new IngredientDto(recipeIngredient.getIngredient());
+        } else {
+            this.ingredient = null;
+        }
+
         this.amount = recipeIngredient.getAmount();
     }
 

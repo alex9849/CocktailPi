@@ -16,7 +16,11 @@ public class RecipeDto {
 
     public RecipeDto(Recipe recipe) {
         BeanUtils.copyProperties(recipe, this);
-        this.owner = new UserDto(recipe.getOwner());
+        if(recipe.getOwner() != null) {
+            this.owner = new UserDto(recipe.getOwner());
+        } else {
+            this.owner = null;
+        }
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toSet());
         this.tags = recipe.getTags().stream().map(Tag::getName)
