@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import net.alex9849.cocktailmaker.repository.TagRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,23 +47,24 @@ public class RecipeService {
             if(!Objects.equals(recipeIngredient.getId().getIngredientId(), recipeIngredient.getIngredient().getId())) {
                 throw new IllegalArgumentException("Malformed RecipeIngredient!");
             }
-            /*Ingredient ingredient = ingredientService.getIngredient(recipeIngredient.getIngredient().getId());
-            if(ingredient  == null) {
-                throw new IllegalArgumentException("Ingredient doesn't exist!");
-            }
-            recipeIngredient.setIngredient(ingredient);*/
             recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient()));
         }
 
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> getAll() {
-        return recipeRepository.findAll();
-    }
-
-    public List<Recipe> getByOwner(long ownerId) {
-        return recipeRepository.findAllByOwnerId(ownerId);
+    public List<Recipe> getRecipesByFilter(Integer ownerId, Boolean inPublic, Boolean system) {
+        Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
+        if(system != null) {
+            spec.and(new Recipe.RecipeFilterSystem(system));
+        }
+        if(inPublic != null) {
+            spec.and(new Recipe.RecipeFilterPublic(inPublic));
+        }
+        if(ownerId != null) {
+            spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
+        }
+        return recipeRepository.findAll(spec);
     }
 
     public Recipe getById(long id) {
@@ -120,4 +122,5 @@ public class RecipeService {
         BeanUtils.copyProperties(ingredientDto, ingredient);
         return ingredient;
     }
+
 }

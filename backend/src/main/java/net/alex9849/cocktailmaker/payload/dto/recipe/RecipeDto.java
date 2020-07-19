@@ -21,7 +21,6 @@ public class RecipeDto {
                 .map(RecipeIngredientDto::new).collect(Collectors.toSet());
         this.tags = recipe.getTags().stream().map(Tag::getName)
                 .collect(Collectors.toSet());
-
     }
 
     private Long id;

@@ -26,12 +26,10 @@ public class RecipeEndpoint {
     UserService userService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipes(@RequestParam(value = "userId", required = false) Long userId) {
-        if(userId != null) {
-            return ResponseEntity.ok().body(recipeService.getByOwner(userId).stream()
-                    .map(RecipeDto::new).collect(Collectors.toList()));
-        }
-        return ResponseEntity.ok().body(recipeService.getAll().stream()
+    ResponseEntity<?> getOwnRecipes(@RequestParam(value = "owner", required = false) Integer ownerId,
+            @RequestParam(value = "inPublic", required = false) Boolean inPublic,
+            @RequestParam(value = "system", required = false) Boolean system) {
+        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic, system).stream()
                 .map(RecipeDto::new).collect(Collectors.toList()));
     }
 

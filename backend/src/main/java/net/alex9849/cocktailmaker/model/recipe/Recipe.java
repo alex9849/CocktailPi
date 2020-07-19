@@ -4,8 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
@@ -97,5 +102,56 @@ public class Recipe {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public static class RecipeFilterNoFilter implements Specification<Recipe> {
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.and();
+        }
+    }
+
+    public static class RecipeFilterPublic implements Specification<Recipe> {
+        private boolean isPublic;
+
+        public RecipeFilterPublic(boolean isPublic) {
+            super();
+            this.isPublic = isPublic;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.equal(root.get("inPublic"), isPublic);
+        }
+    }
+
+    public static class RecipeFilterSystem implements Specification<Recipe> {
+        private boolean isSystem;
+
+        public RecipeFilterSystem(boolean isSystem) {
+            this.isSystem = isSystem;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            if(isSystem) {
+                return criteriaBuilder.equal(root.get("user"), null);
+            }
+            return criteriaBuilder.notEqual(root.get("user"), null);
+        }
+    }
+
+    public static class RecipeFilterOwnerId implements Specification<Recipe> {
+        private Integer userId;
+
+        public RecipeFilterOwnerId(int userId) {
+            this.userId = userId;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.equal(root.get("user").<String>get("id"), userId);
+        }
     }
 }
