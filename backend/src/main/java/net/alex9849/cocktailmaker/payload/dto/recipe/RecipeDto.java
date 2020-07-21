@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
+import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import org.springframework.beans.BeanUtils;
 
@@ -16,11 +17,13 @@ public class RecipeDto {
 
     public RecipeDto(Recipe recipe) {
         BeanUtils.copyProperties(recipe, this);
+        User owner = new User();
         if(recipe.getOwner() != null) {
-            this.owner = new UserDto(recipe.getOwner());
+            owner.setUsername(recipe.getOwner().getUsername());
         } else {
-            this.owner = null;
+            owner.setUsername("System");
         }
+        this.owner = new UserDto(owner);
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toSet());
         this.tags = recipe.getTags().stream().map(Tag::getName)
