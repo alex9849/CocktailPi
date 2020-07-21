@@ -72,16 +72,20 @@
       }
     },
     created() {
-      this.loading = true;
-      userService.getMe()
-        .then(user => {
-          user.password = '';
-          this.user = user;
-          this.editUser = Object.assign({}, user);
-          this.loading = false;
-        })
+      this.init();
     },
     methods: {
+      init() {
+        this.loading = true;
+        userService.getMe()
+          .then(user => {
+            user.password = '';
+            this.user = user;
+            this.editUser = Object.assign({}, user);
+            this.loading = false;
+            this.sending = false;
+          })
+      },
       getRandomString(length) {
         var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var result = '';
@@ -105,8 +109,8 @@
           updatePassword,
           userDto: updateUser
         }).then(() => {
-          this.sending = false;
           this.stopEditMode();
+          this.init();
           this.error = '';
           this.$q.notify({
             type: 'positive',
