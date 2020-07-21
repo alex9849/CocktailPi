@@ -4,16 +4,16 @@
       <q-breadcrumbs-el label="Public recipes"/>
     </q-breadcrumbs>
     <h5>Public recipes</h5>
-    <q-card v-for="recipe in recipes" >
+    <q-card v-for="recipe in recipes">
       <q-card-section>
         <div
           class="row"
         >
           <q-img
             src="../assets/triangle.jpg"
-            :ratio="9/12"
+            :ratio="16/9"
             class="col"
-            style="max-height: 300px; max-width: 225px"
+            style="max-width: 225px; max-height: 180px"
           />
           <div class="col" style="padding-left: 10px; position: relative">
             <h5
@@ -27,22 +27,11 @@
             <table style="width: auto; right: inherit; left: inherit" class="absolute-bottom">
               <tr>
                 <td class="min">
-                  Ingredients:
-                </td>
-                <td>
-                  <q-chip v-for="ingredient in recipe.recipeIngredients">
-                    {{ ingredient.ingredient.name }}
-                  </q-chip>
-                </td>
-                <td/>
-              </tr>
-              <tr>
-                <td class="min">
                   Tags:
                 </td>
                 <td>
-                  <q-chip v-for="tag in recipe.tags">
-                    {{ tag }}
+                  <q-chip v-if="index < 4" v-for="(ingredient, index) in recipe.recipeIngredients">
+                    {{ index !== 3?ingredient.ingredient.name:'...' }}
                   </q-chip>
                 </td>
                 <td style="text-align: right;">
