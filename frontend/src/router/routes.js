@@ -42,6 +42,10 @@ const routes = [
       component: () => import('pages/PublicRecipes'),
       name: 'publicrecipes'
     }, {
+      path: 'recipe/:id',
+      component: () => import('pages/RecipeDetails'),
+      name: 'recipedetails'
+    }, {
       path: 'admin/usermanagement',
       component: () => import('pages/UserManagement'),
       name: 'usermanagement'

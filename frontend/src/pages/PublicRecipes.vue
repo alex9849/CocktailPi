@@ -4,7 +4,11 @@
       <q-breadcrumbs-el label="Public recipes"/>
     </q-breadcrumbs>
     <h5>Public recipes</h5>
-    <q-card v-for="recipe in recipes">
+    <q-card
+      v-for="recipe in recipes"
+      @click="$router.push({name: 'recipedetails', params: {id: recipe.id}})"
+      style="cursor: pointer;"
+    >
       <q-card-section>
         <div
           class="row"
