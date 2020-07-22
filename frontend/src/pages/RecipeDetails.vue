@@ -12,6 +12,7 @@
       <div class="col q-gutter-sm" style="display: flex; justify-content: end">
         <q-btn
           color="grey"
+          :to="{name: 'recipeedit', params: {id: $route.params.id}}"
         >
           Edit
         </q-btn>
@@ -49,7 +50,7 @@
               <q-avatar color="grey">{{ index + 1}}.</q-avatar>
             </q-item-section>
             <q-item-section>
-              {{ ingridient.amount }}cl {{ ingridient.ingredient.name }}
+              {{ ingridient.amount }}ml {{ ingridient.ingredient.name }}
             </q-item-section>
           </q-item>
         </q-list>
