@@ -43,14 +43,14 @@
       </div>
       <div style="min-width: 200px" class="col">
         <q-list class="rounded-borders" bordered separator>
-          <q-item-label header>Ingridients</q-item-label>
+          <q-item-label header>Ingredients</q-item-label>
           <q-separator />
-          <q-item v-for="(ingridient, index) in recipe.recipeIngredients">
+          <q-item v-for="(ingredient, index) in recipe.recipeIngredients">
             <q-item-section avatar>
               <q-avatar color="grey">{{ index + 1}}.</q-avatar>
             </q-item-section>
             <q-item-section>
-              {{ ingridient.amount }}ml {{ ingridient.ingredient.name }}
+              {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
             </q-item-section>
           </q-item>
         </q-list>

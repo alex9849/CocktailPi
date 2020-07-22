@@ -20,7 +20,7 @@ public class IngredientEndpoint {
     IngredientService ingredientService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    ResponseEntity<?> getIngridients(@RequestParam(value = "autocomplete", required = false) String autocomplete) {
-        return ResponseEntity.ok(ingredientService.getIngridientByFilter(autocomplete));
+    ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete) {
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete));
     }
 }

@@ -18,7 +18,7 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngridientByFilter(String nameStartsWith) {
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith) {
         Specification<Ingredient> spec = new Ingredient.IngredientFilterNoFilter();
         if(nameStartsWith != null) {
             spec = spec.and(new Ingredient.IngredientFilterStartsWith(nameStartsWith, true));

@@ -33,13 +33,13 @@
       <q-list class="rounded-borders" bordered separator>
         <q-item>
           <q-item-section>
-            <q-item-label header>Ingridients</q-item-label>
+            <q-item-label header>Ingredients</q-item-label>
           </q-item-section>
 
           <q-item-section side>
             <q-btn
               :icon="mdiPlusCircleOutline"
-              @click="showIngridientEditor(null)"
+              @click="showIngredientEditor(null)"
               dense
               flat
               rounded
@@ -47,17 +47,17 @@
           </q-item-section>
         </q-item>
         <q-separator/>
-        <q-item v-for="(ingridient, index) in value.recipeIngredients">
+        <q-item v-for="(ingredient, index) in value.recipeIngredients">
           <q-item-section avatar>
             <q-avatar color="grey">{{ index + 1}}.</q-avatar>
           </q-item-section>
           <q-item-section>
-            {{ ingridient.amount }}ml {{ ingridient.ingredient.name }}
+            {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
           </q-item-section>
           <q-item-section side>
             <q-btn
               :icon="mdiPencilOutline"
-              @click="showIngridientEditor(ingridient)"
+              @click="showIngredientEditor(ingredient)"
               dense
               flat
               rounded
@@ -66,7 +66,7 @@
           <q-item-section side>
             <q-btn
               :icon="mdiDelete"
-              @click="value.recipeIngredients = value.recipeIngredients.filter(x => x !== ingridient)"
+              @click="value.recipeIngredients = value.recipeIngredients.filter(x => x !== ingredient)"
               dense
               flat
               rounded
@@ -85,23 +85,21 @@
 
 
     <q-dialog
-      v-model="showIngridientEditorDialog"
+      v-model="showIngredientEditorDialog"
     >
       <q-card style="width: 400px">
         <q-card-section class="text-center innerpadding">
-          <h5 style="margin: 5px">{{ addIngridient?"Add Ingridient":"Edit Ingridient" }}</h5>
+          <h5 style="margin: 5px">{{ addIngredient?"Add Ingredient":"Edit Ingredient" }}</h5>
           <q-select
             outlined
-            name="Ingridient"
+            name="Ingredient"
 
-          >
-
-          </q-select>
+          />
           <q-input
             label="Amount (in ml)"
             type="number"
             outlined
-            v-model="editIngridient.amount"
+            v-model="editIngredient.amount"
           />
           <div class="q-pa-md q-gutter-sm">
             <q-btn
@@ -149,16 +147,16 @@
     },
     data() {
       return {
-        showIngridientEditorDialog: false,
-        addIngridient: false,
-        newIngridient: {
+        showIngredientEditorDialog: false,
+        addIngredient: false,
+        newIngredient: {
           amount: '',
           ingredient: {
             id: '',
             name: ''
           }
         },
-        editIngridient: {
+        editIngredient: {
           amount: '',
           ingredient: {
             id: '',
@@ -168,20 +166,20 @@
       }
     },
     methods: {
-      showIngridientEditor() {
-        this.showIngridientEditor(null)
+      showIngredientEditor() {
+        this.showIngredientEditor(null)
       },
-      showIngridientEditor(ingridient) {
-        this.addIngridient = true;
-        if (ingridient) {
-          this.editIngridient = ingridient;
-          this.addIngridient = false;
+      showIngredientEditor(ingredient) {
+        this.addIngredient = true;
+        if (ingredient) {
+          this.editIngredient = ingredient;
+          this.addIngredient = false;
         }
-        this.showIngridientEditorDialog = true;
+        this.showIngredientEditorDialog = true;
       },
-      closeIngridientEditor() {
-        this.editIngridient = JSON.parse(JSON.stringify(this.newIngridient));
-        this.showIngridientEditorDialog = false;
+      closeIngredientEditor() {
+        this.editIngredient = JSON.parse(JSON.stringify(this.newIngredient));
+        this.showIngredientEditorDialog = false;
       }
     },
     validations() {
