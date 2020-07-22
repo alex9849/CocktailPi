@@ -24,6 +24,11 @@ class RecipeService {
     return axios.get(path)
       .then(response => response.data);
   }
+
+  getRecipe(id) {
+    return axios.get(API_PATH + id)
+      .then(response => response.data);
+  }
 }
 
 export default new RecipeService();

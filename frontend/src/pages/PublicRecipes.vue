@@ -14,9 +14,9 @@
           class="row"
         >
           <q-img
-            src="../assets/triangle.jpg"
+            src="../assets/cocktail-solid.png"
             :ratio="16/9"
-            class="col"
+            class="col rounded-borders"
             style="max-width: 225px; max-height: 180px"
           />
           <div class="col" style="padding-left: 10px; position: relative">
@@ -31,7 +31,7 @@
             <table style="width: auto; right: inherit; left: inherit" class="absolute-bottom">
               <tr>
                 <td class="min">
-                  Tags:
+                  Ingredients:
                 </td>
                 <td>
                   <q-chip v-if="index < 4" v-for="(ingredient, index) in recipe.recipeIngredients">
