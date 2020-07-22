@@ -1,6 +1,12 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import org.springframework.data.jpa.domain.Specification;
+
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,5 +36,32 @@ public class Ingredient {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static class IngredientFilterNoFilter implements Specification<Ingredient> {
+
+        @Override
+        public Predicate toPredicate(Root<Ingredient> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.and();
+        }
+    }
+
+    public static class IngredientFilterStartsWith implements Specification<Ingredient> {
+        private String startsWith;
+        private boolean ignoreCase;
+
+        public IngredientFilterStartsWith(String startwith, boolean ignoreCase) {
+            this.ignoreCase = ignoreCase;
+            this.startsWith = startwith;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Ingredient> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            if(ignoreCase) {
+                return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), startsWith.toLowerCase() + "%");
+            } else {
+                return criteriaBuilder.like(root.get("name"), startsWith + "%");
+            }
+        }
     }
 }

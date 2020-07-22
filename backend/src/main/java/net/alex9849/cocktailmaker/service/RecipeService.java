@@ -55,14 +55,15 @@ public class RecipeService {
 
     public List<Recipe> getRecipesByFilter(Integer ownerId, Boolean inPublic, Boolean system) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
+
         if(system != null) {
-            spec.and(new Recipe.RecipeFilterSystem(system));
+            spec = spec.and(new Recipe.RecipeFilterSystem(system));
         }
         if(inPublic != null) {
-            spec.and(new Recipe.RecipeFilterPublic(inPublic));
+            spec = spec.and(new Recipe.RecipeFilterPublic(inPublic));
         }
         if(ownerId != null) {
-            spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
+            spec = spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
         }
         return recipeRepository.findAll(spec);
     }
