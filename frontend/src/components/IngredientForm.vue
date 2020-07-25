@@ -13,6 +13,7 @@
       :options="ingredientOptions"
       option-label="name"
       option-value="id"
+      input-debounce="0"
       @filter="filterIngredients"
       @filter-abort="abortFilterIngredients"
       @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
@@ -56,6 +57,10 @@
     },
     methods: {
       filterIngredients(val, update, abort) {
+        if(val.length < 1) {
+          abort();
+          return;
+        }
         IngridientService.getIngredientsFilter(val)
           .then(ingridients => {
             update(() => {
@@ -64,7 +69,6 @@
           }, () => abort)
       },
       abortFilterIngredients() {
-
       },
       initialize() {
         this.$v.value.$touch();
