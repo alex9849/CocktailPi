@@ -17,7 +17,8 @@
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
     "vuelidate": "^0.7.5",
-    "quasar": "^1.12.12"
+    "quasar": "^1.12.12",
+    "vuedraggable": "~2.24.0"
   },
   "devDependencies": {
     "@mdi/font": "^4.9.95",

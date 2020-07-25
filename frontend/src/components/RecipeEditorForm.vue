@@ -47,32 +47,48 @@
           </q-item-section>
         </q-item>
         <q-separator/>
-        <q-item v-for="(ingredient, index) in value.recipeIngredients">
-          <q-item-section avatar>
-            <q-avatar color="grey">{{ index + 1}}.</q-avatar>
-          </q-item-section>
-          <q-item-section>
-            {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
-          </q-item-section>
-          <q-item-section side>
-            <q-btn
-              :icon="mdiPencilOutline"
-              @click="showIngredientEditor(ingredient)"
-              dense
-              flat
-              rounded
-            />
-          </q-item-section>
-          <q-item-section side>
-            <q-btn
-              :icon="mdiDelete"
-              @click="value.recipeIngredients = value.recipeIngredients.filter(x => x !== ingredient)"
-              dense
-              flat
-              rounded
-            />
-          </q-item-section>
-        </q-item>
+        <draggable
+          v-model="value.recipeIngredients"
+          @start="ingredientDrag = true"
+          @end="ingredientDrag = false"
+          v-bind="dragOptions"
+        >
+          <transition-group
+            type="transition"
+            :name="!ingredientDrag ? 'flip-list' : null"
+          >
+            <q-item
+              v-for="(ingredient, index) in value.recipeIngredients"
+              class="list-group-item"
+              :key="index"
+            >
+              <q-item-section avatar>
+                <q-avatar color="grey">{{ index + 1}}.</q-avatar>
+              </q-item-section>
+              <q-item-section>
+                {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  :icon="mdiPencilOutline"
+                  @click="showIngredientEditor(ingredient)"
+                  dense
+                  flat
+                  rounded
+                />
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  :icon="mdiDelete"
+                  @click="value.recipeIngredients = value.recipeIngredients.filter(x => x !== ingredient)"
+                  dense
+                  flat
+                  rounded
+                />
+              </q-item-section>
+            </q-item>
+          </transition-group>
+        </draggable>
       </q-list>
       <q-checkbox
         v-model="value.inPublic"
@@ -128,10 +144,11 @@
   import {maxLength, minLength, required} from "vuelidate/lib/validators";
   import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5';
   import IngredientForm from "./IngredientForm";
+  import draggable from 'vuedraggable';
 
   export default {
     name: "RecipeEditorForm",
-    components: {IngredientForm},
+    components: {IngredientForm, draggable},
     props: {
       value: {
         type: Object,
@@ -152,6 +169,7 @@
         addIngredient: false,
         ingridientValid: false,
         valid: false,
+        ingredientDrag: false,
         newIngredient: {
           amount: '',
           ingredient: null
@@ -182,7 +200,7 @@
         this.editIngredientIndex = -1;
       },
       saveEditIngredient() {
-        if(this.editIngredientIndex < 0) {
+        if (this.editIngredientIndex < 0) {
           this.value.recipeIngredients.push(this.editIngredient);
         } else {
           this.value.recipeIngredients[this.editIngredientIndex] = this.editIngredient;
@@ -218,9 +236,25 @@
       this.mdiPlusCircleOutline = mdiPlusCircleOutline;
       this.mdiPencilOutline = mdiPencilOutline;
       this.mdiDelete = mdiDelete;
+    },
+    computed: {
+      dragOptions() {
+        return {
+          animation: 200,
+          group: "description",
+          disabled: false,
+          ghostClass: "ghost"
+        };
+      }
     }
   }
 </script>
 
 <style scoped>
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .no-move {
+    transition: transform 0s;
+  }
 </style>
