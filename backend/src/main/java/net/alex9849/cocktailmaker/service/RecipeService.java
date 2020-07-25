@@ -137,8 +137,8 @@ public class RecipeService {
         RecipeIngredientId recipeIngredientId = new RecipeIngredientId();
         recipeIngredientId.setIngredientId(recipeIngredientDto.getIngredient().getId());
         recipeIngredientId.setRecipeId(recipe.getId());
+        recipeIngredientId.setIndex(index);
         recipeIngredient.setId(recipeIngredientId);
-        recipeIngredient.setIndex(index);
         return recipeIngredient;
     }
 

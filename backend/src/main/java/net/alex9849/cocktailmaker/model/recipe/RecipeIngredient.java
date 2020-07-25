@@ -19,8 +19,6 @@ public class RecipeIngredient {
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
-    private int index;
-
     private int amount;
 
     public RecipeIngredientId getId() {
@@ -29,14 +27,6 @@ public class RecipeIngredient {
 
     public void setId(RecipeIngredientId id) {
         this.id = id;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public Recipe getRecipe() {

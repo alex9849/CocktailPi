@@ -13,6 +13,17 @@ public class RecipeIngredientId implements Serializable {
     @Column(name = "ingredient_id")
     private Long IngredientId;
 
+    @Column(name = "index")
+    private int index;
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public Long getRecipeId() {
         return RecipeId;
     }

@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -28,7 +27,7 @@ public class RecipeDto {
             owner.setUsername("System");
         }
         this.owner = new UserDto(owner);
-        recipe.getRecipeIngredients().sort((Comparator.comparingInt(RecipeIngredient::getIndex)));
+        recipe.getRecipeIngredients().sort((Comparator.comparingInt(x -> x.getId().getIndex())));
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)
