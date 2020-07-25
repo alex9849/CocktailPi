@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.model.recipe;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "recipe_ingredients")
+@Table(name = "recipe_ingredients", uniqueConstraints = {@UniqueConstraint(columnNames = {"index", "recipe_id"})})
 public class RecipeIngredient {
 
     @EmbeddedId
@@ -19,6 +19,8 @@ public class RecipeIngredient {
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
+    private int index;
+
     private int amount;
 
     public RecipeIngredientId getId() {
@@ -27,6 +29,14 @@ public class RecipeIngredient {
 
     public void setId(RecipeIngredientId id) {
         this.id = id;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public Recipe getRecipe() {

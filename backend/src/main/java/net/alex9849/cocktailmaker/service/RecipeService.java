@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
+import net.alex9849.cocktailmaker.repository.RecipeIngredientRepository;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import net.alex9849.cocktailmaker.repository.TagRepository;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +33,9 @@ public class RecipeService {
 
     @Autowired
     IngredientService ingredientService;
+
+    @Autowired
+    RecipeIngredientRepository recipeIngredientRepository;
 
     @Autowired
     TagRepository tagRepository;
@@ -85,6 +90,10 @@ public class RecipeService {
             }
             recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient().getId()));
         }
+        recipeIngredientRepository.deleteAllByRecipeId(recipe.getId());
+        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
+            entityManager.merge(recipeIngredient);
+        }
         return recipeRepository.save(recipe);
     }
 
@@ -109,14 +118,15 @@ public class RecipeService {
         Recipe recipe = new Recipe();
         BeanUtils.copyProperties(recipeDto, recipe);
         recipe.setOwner(userService.fromDto(recipeDto.getOwner()));
+        AtomicInteger ingredientIndex = new AtomicInteger();
         recipe.setRecipeIngredients(recipeDto
                 .getRecipeIngredients().stream()
-                .map(x -> fromDto(x, recipe)).collect(Collectors.toSet()));
+                .map(x -> fromDto(x, recipe, ingredientIndex.getAndAdd(1))).collect(Collectors.toList()));
         recipe.setTags(toTags(recipeDto.getTags()));
         return recipe;
     }
 
-    public RecipeIngredient fromDto(RecipeIngredientDto recipeIngredientDto, Recipe recipe) {
+    public RecipeIngredient fromDto(RecipeIngredientDto recipeIngredientDto, Recipe recipe, int index) {
         if(recipeIngredientDto == null) {
             return null;
         }
@@ -128,6 +138,7 @@ public class RecipeService {
         recipeIngredientId.setIngredientId(recipeIngredientDto.getIngredient().getId());
         recipeIngredientId.setRecipeId(recipe.getId());
         recipeIngredient.setId(recipeIngredientId);
+        recipeIngredient.setIndex(index);
         return recipeIngredient;
     }
 

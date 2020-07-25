@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -8,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,8 +28,9 @@ public class RecipeDto {
             owner.setUsername("System");
         }
         this.owner = new UserDto(owner);
+        recipe.getRecipeIngredients().sort((Comparator.comparingInt(RecipeIngredient::getIndex)));
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
-                .map(RecipeIngredientDto::new).collect(Collectors.toSet());
+                .map(RecipeIngredientDto::new).collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)
                 .collect(Collectors.toSet());
     }
@@ -46,7 +50,7 @@ public class RecipeDto {
     private String description;
 
     @NotNull
-    private Set<RecipeIngredientDto> recipeIngredients;
+    private List<RecipeIngredientDto> recipeIngredients;
 
     @NotNull
     private Set<String> tags;
@@ -91,11 +95,11 @@ public class RecipeDto {
         this.description = description;
     }
 
-    public Set<RecipeIngredientDto> getRecipeIngredients() {
+    public List<RecipeIngredientDto> getRecipeIngredients() {
         return recipeIngredients;
     }
 
-    public void setRecipeIngredients(Set<RecipeIngredientDto> recipeIngredients) {
+    public void setRecipeIngredients(List<RecipeIngredientDto> recipeIngredients) {
         this.recipeIngredients = recipeIngredients;
     }
 

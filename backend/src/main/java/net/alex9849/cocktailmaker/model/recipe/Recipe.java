@@ -13,6 +13,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,7 +40,7 @@ public class Recipe {
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<RecipeIngredient> recipeIngredients;
+    private List<RecipeIngredient> recipeIngredients;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -88,11 +89,11 @@ public class Recipe {
         this.owner = owner;
     }
 
-    public Set<RecipeIngredient> getRecipeIngredients() {
+    public List<RecipeIngredient> getRecipeIngredients() {
         return recipeIngredients;
     }
 
-    public void setRecipeIngredients(Set<RecipeIngredient> recipeIngredients) {
+    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
         this.recipeIngredients = recipeIngredients;
     }
 
