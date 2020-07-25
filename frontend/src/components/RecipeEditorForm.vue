@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-form
-      class="innerpadding q-gutter-y-md"
+      class="q-gutter-y-md"
       greedy
       @submit.prevent="$emit('submit')"
     >
@@ -86,39 +86,38 @@
 
     <q-dialog
       v-model="showIngredientEditorDialog"
+      @hide="closeIngredientEditor"
     >
       <q-card style="width: 400px">
         <q-card-section class="text-center innerpadding">
           <h5 style="margin: 5px">{{ addIngredient?"Add Ingredient":"Edit Ingredient" }}</h5>
-          <q-select
-            outlined
-            name="Ingredient"
-
-          />
-          <q-input
-            label="Amount (in ml)"
-            type="number"
-            outlined
-            v-model="editIngredient.amount"
-          />
-          <div class="q-pa-md q-gutter-sm">
-            <q-btn
-              style="width: 100px"
-              color="negative"
-              label="Abort"
-              no-caps
-              :to="{name: 'recipedetails', params: {id: $route.params.id}}"
-            />
-            <q-btn
-              type="submit"
-              style="width: 100px"
-              color="positive"
-              label="Save"
-              no-caps
-              :disable="loading || !isValid"
-              @click=""
-            />
-          </div>
+          <ingredient-form
+            v-model="editIngredient"
+            :headline="addIngredient?'Add Ingredient':'Edit Ingredient'"
+            @valid="ingridientValid = true"
+            @invalid="ingridientValid = false"
+            @submit="saveEditIngredient"
+          >
+            <template slot="below">
+              <div class="q-pa-md q-gutter-sm">
+                <q-btn
+                  style="width: 100px"
+                  color="negative"
+                  label="Abort"
+                  no-caps
+                  @click="closeIngredientEditor"
+                />
+                <q-btn
+                  type="submit"
+                  style="width: 100px"
+                  color="positive"
+                  label="Save"
+                  no-caps
+                  :disable="!ingridientValid"
+                />
+              </div>
+            </template>
+          </ingredient-form>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -128,9 +127,11 @@
 <script>
   import {maxLength, minLength, required} from "vuelidate/lib/validators";
   import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5';
+  import IngredientForm from "./IngredientForm";
 
   export default {
     name: "RecipeEditorForm",
+    components: {IngredientForm},
     props: {
       value: {
         type: Object,
@@ -149,20 +150,17 @@
       return {
         showIngredientEditorDialog: false,
         addIngredient: false,
+        ingridientValid: false,
+        valid: false,
         newIngredient: {
           amount: '',
-          ingredient: {
-            id: '',
-            name: ''
-          }
+          ingredient: null
         },
         editIngredient: {
           amount: '',
-          ingredient: {
-            id: '',
-            name: ''
-          }
-        }
+          ingredient: null
+        },
+        editIngredientIndex: -1
       }
     },
     methods: {
@@ -172,14 +170,24 @@
       showIngredientEditor(ingredient) {
         this.addIngredient = true;
         if (ingredient) {
-          this.editIngredient = ingredient;
+          this.editIngredient = Object.assign({}, ingredient);
           this.addIngredient = false;
+          this.editIngredientIndex = this.value.recipeIngredients.indexOf(ingredient);
         }
         this.showIngredientEditorDialog = true;
       },
       closeIngredientEditor() {
         this.editIngredient = JSON.parse(JSON.stringify(this.newIngredient));
         this.showIngredientEditorDialog = false;
+        this.editIngredientIndex = -1;
+      },
+      saveEditIngredient() {
+        if(this.editIngredientIndex < 0) {
+          this.value.recipeIngredients.push(this.editIngredient);
+        } else {
+          this.value.recipeIngredients[this.editIngredientIndex] = this.editIngredient;
+        }
+        this.closeIngredientEditor();
       }
     },
     validations() {
@@ -215,7 +223,4 @@
 </script>
 
 <style scoped>
-  .innerpadding > * {
-    padding: 10px;
-  }
 </style>

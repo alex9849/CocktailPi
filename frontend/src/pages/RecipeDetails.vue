@@ -79,7 +79,7 @@
     name: "RecipeDetails",
     data() {
       return {
-        recipe: null
+        recipe: {}
       }
     },
     created() {

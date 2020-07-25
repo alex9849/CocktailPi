@@ -48,7 +48,7 @@
     components: {RecipeEditorForm},
     data() {
       return {
-        recipe: null,
+        recipe: {},
         error: '',
         isValid: false,
         loading: false
