@@ -26,7 +26,7 @@
               <b>{{ recipe.name }}</b>
             </h5>
             <div>
-              {{ recipe.description }}
+              {{ recipe.shortDescription }}
             </div>
             <table style="width: auto; right: inherit; left: inherit" class="absolute-bottom">
               <tr>

@@ -21,8 +21,22 @@
         outlined
         :loading="loading"
         :disable="loading || disabled"
+        v-model="value.shortDescription"
+        @input="() => {$emit('input', value); $v.value.shortDescription.$touch();}"
+        type="textarea"
+        input-style="height: 40px"
+        label="Short description"
+        counter
+        maxlength="100"
+        :rules="[
+        val => $v.value.shortDescription.maxLength || 'Maximal length 100']"
+      />
+      <q-input
+        outlined
+        :loading="loading"
+        :disable="loading || disabled"
         v-model="value.description"
-        @input="() => {$emit('input', value); $v.value.name.$touch();}"
+        @input="() => {$emit('input', value); $v.value.description.$touch();}"
         type="textarea"
         label="Description"
         counter
@@ -215,6 +229,9 @@
             required,
             minLength: minLength(3),
             maxLength: maxLength(20)
+          },
+          shortDescription: {
+            maxLength: maxLength(100)
           },
           description: {
             maxLength: maxLength(2000)

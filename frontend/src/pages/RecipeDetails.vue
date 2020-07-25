@@ -27,7 +27,7 @@
       <div class="col">
         <q-card flat bordered>
           <q-card-section>
-            Short description: {{ recipe.description }}
+            Short description: {{ recipe.shortDescription }}
           </q-card-section>
         </q-card>
       </div>
@@ -61,7 +61,7 @@
         <q-card flat bordered style="min-height: 100px">
           <q-card-section>
             <b>Description:</b>
-            <div style="min-width: 200px" class="col">
+            <div style="min-width: 200px; white-space: pre-line" class="col">
               {{ recipe.description }}
             </div>
           </q-card-section>
