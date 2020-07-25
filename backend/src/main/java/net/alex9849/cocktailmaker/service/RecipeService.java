@@ -47,7 +47,7 @@ public class RecipeService {
             if(!Objects.equals(recipeIngredient.getId().getIngredientId(), recipeIngredient.getIngredient().getId())) {
                 throw new IllegalArgumentException("Malformed RecipeIngredient!");
             }
-            recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient()));
+            recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient().getId()));
         }
 
         return recipeRepository.save(recipe);
@@ -70,6 +70,22 @@ public class RecipeService {
 
     public Recipe getById(long id) {
         return recipeRepository.findById(id).orElse(null);
+    }
+
+    public Recipe updateRecipe(Recipe recipe) {
+        if(!recipeRepository.findById(recipe.getId()).isPresent()) {
+            throw new IllegalArgumentException("Recipe doesn't exist!");
+        }
+        if(recipe.getOwner() != null) {
+            recipe.setOwner(userService.getUser(recipe.getOwner().getId()));
+        }
+        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
+            if(!Objects.equals(recipeIngredient.getId().getIngredientId(), recipeIngredient.getIngredient().getId())) {
+                throw new IllegalArgumentException("Malformed RecipeIngredient!");
+            }
+            recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient().getId()));
+        }
+        return recipeRepository.save(recipe);
     }
 
     public void delete(long recipeId) {
@@ -123,5 +139,4 @@ public class RecipeService {
         BeanUtils.copyProperties(ingredientDto, ingredient);
         return ingredient;
     }
-
 }

@@ -29,6 +29,10 @@ class RecipeService {
     return axios.get(API_PATH + id)
       .then(response => response.data);
   }
+
+  updateRecipe(recipe) {
+    return axios.put(API_PATH + recipe.id, recipe);
+  }
 }
 
 export default new RecipeService();

@@ -5,7 +5,7 @@
       <q-breadcrumbs-el label="Edit Recipe"/>
     </q-breadcrumbs>
     <h5>Edit Recipe</h5>
-    <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
+    <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin-bottom: 20px">
       {{ error }}
     </q-banner>
     <q-card
@@ -13,6 +13,8 @@
     >
       <recipe-editor-form
         v-model="recipe"
+        @valid="isValid = true"
+        @invalid="isValid = false"
       >
         <template slot="below">
           <div class="q-pa-md q-gutter-sm">
@@ -30,7 +32,8 @@
               label="Save"
               no-caps
               :disable="loading || !isValid"
-              @click=""
+              :loading="loading"
+              @click="updateRecipe"
             />
           </div>
         </template>
@@ -52,6 +55,27 @@
         error: '',
         isValid: false,
         loading: false
+      }
+    },
+    methods: {
+      updateRecipe() {
+        this.loading = true;
+        RecipeService.updateRecipe(this.recipe)
+          .then(response => {
+            this.loading = false;
+            this.$q.notify({
+              type: 'positive',
+              message: 'Recipe updated successfully'
+            });
+            this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
+          }, error => {
+            this.loading = false;
+            this.error = error.response.data.message;
+            this.$q.notify({
+              type: 'negative',
+              message: 'Couldn\'t update recipe. ' + error.response.data.message
+            });
+          })
       }
     },
     created() {

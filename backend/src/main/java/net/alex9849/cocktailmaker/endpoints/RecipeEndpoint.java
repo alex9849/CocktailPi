@@ -53,6 +53,17 @@ public class RecipeEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
+    @RequestMapping(path = "{id}", method = RequestMethod.PUT)
+    ResponseEntity<?> updateRecipe(@Valid @RequestBody RecipeDto recipeDto, @PathVariable("id") long id) {
+        recipeDto.setId(id);
+        Recipe recipe = recipeService.fromDto(recipeDto);
+        if(recipe.getOwner() == null || recipe.getOwner().getId() == null) {
+            recipe.setOwner(null);
+        }
+        recipeService.updateRecipe(recipe);
+        return ResponseEntity.ok().build();
+    }
+
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     ResponseEntity<?> createRecipe(@PathVariable("id") long recipeId) {
         if(recipeService.getById(recipeId) == null) {

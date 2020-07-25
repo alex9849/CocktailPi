@@ -7,7 +7,7 @@
     <q-card
       v-for="recipe in recipes"
       @click="$router.push({name: 'recipedetails', params: {id: recipe.id}})"
-      style="cursor: pointer;"
+      style="cursor: pointer; margin-bottom: 10px"
     >
       <q-card-section>
         <div

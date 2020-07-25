@@ -20,6 +20,7 @@ public class RecipeDto {
         User owner = new User();
         if(recipe.getOwner() != null) {
             owner.setUsername(recipe.getOwner().getUsername());
+            owner.setId(recipe.getOwner().getId());
         } else {
             owner.setUsername("System");
         }
