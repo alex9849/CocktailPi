@@ -34,8 +34,8 @@
                   Ingredients:
                 </td>
                 <td>
-                  <q-chip v-if="index < 4" v-for="(ingredient, index) in recipe.recipeIngredients">
-                    {{ index !== 3?ingredient.ingredient.name:'...' }}
+                  <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(recipe.recipeIngredients)">
+                    {{ index !== 3?name:'...' }}
                   </q-chip>
                 </td>
                 <td style="text-align: right;">
@@ -70,6 +70,13 @@
       fetchRecipes() {
         RecipeService.getRecipes(null, true, null)
           .then(recipes => this.recipes = recipes)
+      },
+      uniqueIngredientNames(ingredients) {
+        let unique = new Set();
+        for(let ing of ingredients) {
+          unique.add(ing.ingredient.name);
+        }
+        return Array.from(unique.values());
       }
     },
     created() {
