@@ -141,8 +141,7 @@
   import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
   import IngredientForm from "./IngredientForm";
   import draggable from 'vuedraggable';
-
-  const cloneDeep = require('lodash/clonedeep');
+  import cloneDeep from 'lodash/cloneDeep'
 
   export default {
     name: "IngredientList",
