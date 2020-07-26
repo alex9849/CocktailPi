@@ -27,7 +27,7 @@ public class RecipeDto {
             owner.setUsername("System");
         }
         this.owner = new UserDto(owner);
-        recipe.getRecipeIngredients().sort((Comparator.comparingInt(x -> x.getId().getIndex())));
+        recipe.getRecipeIngredients().sort((Comparator.comparingInt(x -> x.getId().getProductionStep())));
         this.recipeIngredients = recipe.getRecipeIngredients().stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)

@@ -27,7 +27,7 @@
       <div class="col">
         <q-card flat bordered>
           <q-card-section>
-            Short description: {{ recipe.shortDescription }}
+            <b>Short description:</b> {{ recipe.shortDescription }}
           </q-card-section>
         </q-card>
       </div>
@@ -43,7 +43,7 @@
       </div>
       <div style="min-width: 200px" class="col">
         <q-list class="rounded-borders" bordered separator>
-          <q-item-label header>Ingredients</q-item-label>
+          <q-item-label header class="text-black"><b>Ingredients</b></q-item-label>
           <q-separator />
           <q-item v-for="(ingredient, index) in recipe.recipeIngredients">
             <q-item-section avatar>
