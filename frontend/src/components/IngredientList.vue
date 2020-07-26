@@ -195,13 +195,29 @@
         if (updated.length === 0) {
           this.ingredients = this.ingredients.filter(x => x != group);
         } else {
+          //Merge complete productionsteps into others
           for (let updatedListItem of updated) {
             if (Array.isArray(updatedListItem)) {
               let updatedListItemIndex = updated.indexOf(updatedListItem);
               updated.splice(updatedListItemIndex, 1, ...updatedListItem);
+              //This is needed, because the updateOneElementProductionStepList()-Method
+              // would otherwise reset your ingredients, because it works with old data
               this.disableNextUpdateProductionStepList = true;
               this.ingredients = this.ingredients.filter(x => x != updatedListItem);
             }
+          }
+          //Search and merge duplicates
+          let iterationIndex = 0;
+          let ingredientIdsToIndex = new Map();
+          for (let updatedListItem of updated) {
+            if(ingredientIdsToIndex.has(updatedListItem.ingredient.id)) {
+              let index = ingredientIdsToIndex.get(updatedListItem.ingredient.id);
+              updated[index].amount += updatedListItem.amount;
+              updated.splice(iterationIndex, 1);
+            } else {
+              ingredientIdsToIndex.set(updatedListItem.ingredient.id, iterationIndex)
+            }
+            iterationIndex++;
           }
           let groupIndex = this.ingredients.indexOf(group);
           let newIngredients = Object.assign([], this.ingredients);
