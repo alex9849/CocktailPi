@@ -120,7 +120,7 @@ public class RecipeService {
         recipe.setOwner(userService.fromDto(recipeDto.getOwner()));
         AtomicInteger index = new AtomicInteger();
         recipe.setRecipeIngredients(recipeDto
-                .getRecipeIngridients().stream()
+                .getRecipeIngredients().stream()
                         .flatMap(x -> {
                             index.incrementAndGet();
                             return x.stream().map(y -> fromDto(y, recipe, index.get()));

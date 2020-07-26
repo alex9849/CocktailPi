@@ -44,8 +44,72 @@
         :rules="[
         val => $v.value.description.maxLength || 'Maximal length 2000']"
       />
-      <q-list class="rounded-borders" bordered separator>
-        <q-item>
+      <draggable
+        v-model="value.recipeIngredients"
+        @start="ingredientDrag = true"
+        @end="ingredientDrag = false"
+        tag="div"
+        class="rounded-borders q-list q-list--bordered q-list--separator"
+        :animation="200"
+      >
+          <q-item
+            v-for="(productionStep, index) in value.recipeIngredients"
+            :key="index"
+          >
+            <q-item-section avatar>
+              <q-avatar color="grey">{{ index + 1}}.</q-avatar>
+            </q-item-section>
+            <q-item-section v-if="productionStep.length === 1">
+              {{ productionStep[0].amount }}ml {{ productionStep[0].ingredient.name }}
+            </q-item-section>
+            <q-item-section v-if="productionStep.length === 1" side>
+              <q-btn
+                :icon="mdiPencilOutline"
+                @click="showIngredientEditor(productionStep, productionStep[0])"
+                dense
+                flat
+                rounded
+              />
+            </q-item-section>
+            <q-item-section v-if="productionStep.length === 1" side>
+              <q-btn
+                :icon="mdiDelete"
+                @click="removeIngredient(productionStep, productionStep[0])"
+                dense
+                flat
+                rounded
+              />
+            </q-item-section>
+
+            <q-item-section v-else>
+              <q-list bordered separator>
+                <q-item v-for="(ingredient, index) in productionStep" :key="index">
+                  <q-item-section>
+                    {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      :icon="mdiPencilOutline"
+                      @click="showIngredientEditor(productionStep, ingredient)"
+                      dense
+                      flat
+                      rounded
+                    />
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      :icon="mdiDelete"
+                      @click="removeIngredient(productionStep, ingredient)"
+                      dense
+                      flat
+                      rounded
+                    />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-item-section>
+          </q-item>
+        <q-item slot="header">
           <q-item-section>
             <q-item-label header>Ingredients</q-item-label>
           </q-item-section>
@@ -60,50 +124,7 @@
             />
           </q-item-section>
         </q-item>
-        <q-separator/>
-        <draggable
-          v-model="value.recipeIngredients"
-          @start="ingredientDrag = true"
-          @end="ingredientDrag = false"
-          v-bind="dragOptions"
-        >
-          <transition-group
-            type="transition"
-            :name="!ingredientDrag ? 'flip-list' : null"
-          >
-            <q-item
-              v-for="(ingredient, index) in value.recipeIngredients"
-              class="list-group-item"
-              :key="index"
-            >
-              <q-item-section avatar>
-                <q-avatar color="grey">{{ index + 1}}.</q-avatar>
-              </q-item-section>
-              <q-item-section>
-                {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  :icon="mdiPencilOutline"
-                  @click="showIngredientEditor(ingredient)"
-                  dense
-                  flat
-                  rounded
-                />
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  :icon="mdiDelete"
-                  @click="value.recipeIngredients = value.recipeIngredients.filter(x => x !== ingredient)"
-                  dense
-                  flat
-                  rounded
-                />
-              </q-item-section>
-            </q-item>
-          </transition-group>
-        </draggable>
-      </q-list>
+      </draggable>
       <q-checkbox
         v-model="value.inPublic"
         :disable="loading || disabled"
@@ -192,6 +213,7 @@
           amount: '',
           ingredient: null
         },
+        editIngredientGroupIndex: -1,
         editIngredientIndex: -1
       }
     },
@@ -199,25 +221,38 @@
       showIngredientEditor() {
         this.showIngredientEditor(null)
       },
-      showIngredientEditor(ingredient) {
+      showIngredientEditor(group, ingredient) {
         this.addIngredient = true;
         if (ingredient) {
           this.editIngredient = Object.assign({}, ingredient);
           this.addIngredient = false;
-          this.editIngredientIndex = this.value.recipeIngredients.indexOf(ingredient);
+          this.editIngredientGroupIndex = this.value.recipeIngredients.indexOf(group);
+          this.editIngredientIndex = this.value.recipeIngredients[this.editIngredientGroupIndex].indexOf(ingredient);
         }
         this.showIngredientEditorDialog = true;
+      },
+      removeIngredient(group, ingredient) {
+        let groupIndex = this.value.recipeIngredients.indexOf(group);
+        let newGroup = group.filter(x => x !== ingredient);
+        if(newGroup.length === 0) {
+          this.value.recipeIngredients = this.value.recipeIngredients.filter(x => x !== group)
+        } else {
+          let newIngredients = Object.assign([], this.value.recipeIngredients);
+          newIngredients[groupIndex] = newGroup;
+          this.value.recipeIngredients = newIngredients;
+        }
       },
       closeIngredientEditor() {
         this.editIngredient = JSON.parse(JSON.stringify(this.newIngredient));
         this.showIngredientEditorDialog = false;
         this.editIngredientIndex = -1;
+        this.editIngredientGroupIndex = -1;
       },
       saveEditIngredient() {
         if (this.editIngredientIndex < 0) {
-          this.value.recipeIngredients.push(this.editIngredient);
+          this.value.recipeIngredients.push([this.editIngredient]);
         } else {
-          this.value.recipeIngredients[this.editIngredientIndex] = this.editIngredient;
+          this.value.recipeIngredients[this.editIngredientGroupIndex][this.editIngredientIndex] = this.editIngredient;
         }
         this.closeIngredientEditor();
       }
@@ -254,24 +289,10 @@
       this.mdiPencilOutline = mdiPencilOutline;
       this.mdiDelete = mdiDelete;
     },
-    computed: {
-      dragOptions() {
-        return {
-          animation: 200,
-          group: "description",
-          disabled: false,
-          ghostClass: "ghost"
-        };
-      }
-    }
+    computed: {}
   }
 </script>
 
 <style scoped>
-  .flip-list-move {
-    transition: transform 0.5s;
-  }
-  .no-move {
-    transition: transform 0s;
-  }
+
 </style>

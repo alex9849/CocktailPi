@@ -31,7 +31,7 @@ public class RecipeDto {
                 .collect(Collectors.groupingBy(x -> x.getId().getProductionStep()));
         List<Integer> steps = new ArrayList<>(byProductionStep.keySet());
         steps.sort(Comparator.comparingInt(x -> x));
-        this.recipeIngridients = steps.stream().map(x -> byProductionStep.get(x).stream()
+        this.recipeIngredients = steps.stream().map(x -> byProductionStep.get(x).stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toList()))
                 .collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)
@@ -57,7 +57,7 @@ public class RecipeDto {
     private String shortDescription;
 
     @NotNull
-    private List<List<RecipeIngredientDto>> recipeIngridients;
+    private List<List<RecipeIngredientDto>> recipeIngredients;
 
     @NotNull
     private Set<String> tags;
@@ -110,12 +110,12 @@ public class RecipeDto {
         this.shortDescription = shortDescription;
     }
 
-    public List<List<RecipeIngredientDto>> getRecipeIngridients() {
-        return recipeIngridients;
+    public List<List<RecipeIngredientDto>> getRecipeIngredients() {
+        return recipeIngredients;
     }
 
-    public void setRecipeIngridients(List<List<RecipeIngredientDto>> recipeIngridients) {
-        this.recipeIngridients = recipeIngridients;
+    public void setRecipeIngredients(List<List<RecipeIngredientDto>> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 
     public Set<String> getTags() {
