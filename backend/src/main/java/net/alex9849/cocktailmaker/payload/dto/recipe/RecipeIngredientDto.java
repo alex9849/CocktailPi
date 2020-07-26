@@ -11,8 +11,6 @@ public class RecipeIngredientDto {
 
     private int amount;
 
-    private int productionStep;
-
     public RecipeIngredientDto() {}
 
     public RecipeIngredientDto(RecipeIngredient recipeIngredient) {
@@ -23,15 +21,6 @@ public class RecipeIngredientDto {
         }
 
         this.amount = recipeIngredient.getAmount();
-        this.productionStep = recipeIngredient.getId().getProductionStep();
-    }
-
-    public int getProductionStep() {
-        return productionStep;
-    }
-
-    public void setProductionStep(int productionStep) {
-        this.productionStep = productionStep;
     }
 
     public IngredientDto getIngredient() {

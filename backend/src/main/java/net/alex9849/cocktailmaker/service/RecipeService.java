@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -117,14 +118,18 @@ public class RecipeService {
         Recipe recipe = new Recipe();
         BeanUtils.copyProperties(recipeDto, recipe);
         recipe.setOwner(userService.fromDto(recipeDto.getOwner()));
+        AtomicInteger index = new AtomicInteger();
         recipe.setRecipeIngredients(recipeDto
-                .getRecipeIngredients().stream()
-                .map(x -> fromDto(x, recipe)).collect(Collectors.toList()));
+                .getRecipeIngridients().stream()
+                        .flatMap(x -> {
+                            index.incrementAndGet();
+                            return x.stream().map(y -> fromDto(y, recipe, index.get()));
+                        }).collect(Collectors.toList()));
         recipe.setTags(toTags(recipeDto.getTags()));
         return recipe;
     }
 
-    public RecipeIngredient fromDto(RecipeIngredientDto recipeIngredientDto, Recipe recipe) {
+    public RecipeIngredient fromDto(RecipeIngredientDto recipeIngredientDto, Recipe recipe, int productionStep) {
         if(recipeIngredientDto == null) {
             return null;
         }
@@ -135,7 +140,7 @@ public class RecipeService {
         RecipeIngredientId recipeIngredientId = new RecipeIngredientId();
         recipeIngredientId.setIngredientId(recipeIngredientDto.getIngredient().getId());
         recipeIngredientId.setRecipeId(recipe.getId());
-        recipeIngredientId.setProductionStep(recipeIngredientDto.getProductionStep());
+        recipeIngredientId.setProductionStep(productionStep);
         recipeIngredient.setId(recipeIngredientId);
         return recipeIngredient;
     }

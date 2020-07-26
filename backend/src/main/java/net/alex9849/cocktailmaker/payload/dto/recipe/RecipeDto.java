@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -8,9 +9,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RecipeDto {
@@ -27,9 +26,14 @@ public class RecipeDto {
             owner.setUsername("System");
         }
         this.owner = new UserDto(owner);
-        recipe.getRecipeIngredients().sort((Comparator.comparingInt(x -> x.getId().getProductionStep())));
-        this.recipeIngredients = recipe.getRecipeIngredients().stream()
-                .map(RecipeIngredientDto::new).collect(Collectors.toList());
+        Map<Integer, List<RecipeIngredient>> byProductionStep = recipe
+                .getRecipeIngredients().stream()
+                .collect(Collectors.groupingBy(x -> x.getId().getProductionStep()));
+        List<Integer> steps = new ArrayList<>(byProductionStep.keySet());
+        steps.sort(Comparator.comparingInt(x -> x));
+        this.recipeIngridients = steps.stream().map(x -> byProductionStep.get(x).stream()
+                .map(RecipeIngredientDto::new).collect(Collectors.toList()))
+                .collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)
                 .collect(Collectors.toSet());
     }
@@ -53,7 +57,7 @@ public class RecipeDto {
     private String shortDescription;
 
     @NotNull
-    private List<RecipeIngredientDto> recipeIngredients;
+    private List<List<RecipeIngredientDto>> recipeIngridients;
 
     @NotNull
     private Set<String> tags;
@@ -106,12 +110,12 @@ public class RecipeDto {
         this.shortDescription = shortDescription;
     }
 
-    public List<RecipeIngredientDto> getRecipeIngredients() {
-        return recipeIngredients;
+    public List<List<RecipeIngredientDto>> getRecipeIngridients() {
+        return recipeIngridients;
     }
 
-    public void setRecipeIngredients(List<RecipeIngredientDto> recipeIngredients) {
-        this.recipeIngredients = recipeIngredients;
+    public void setRecipeIngridients(List<List<RecipeIngredientDto>> recipeIngridients) {
+        this.recipeIngridients = recipeIngridients;
     }
 
     public Set<String> getTags() {
