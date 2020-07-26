@@ -71,10 +71,12 @@
         RecipeService.getRecipes(null, true, null)
           .then(recipes => this.recipes = recipes)
       },
-      uniqueIngredientNames(ingredients) {
+      uniqueIngredientNames(productionSteps) {
         let unique = new Set();
-        for(let ing of ingredients) {
-          unique.add(ing.ingredient.name);
+        for(let productionStep of productionSteps) {
+          for(let ingredient of productionStep) {
+            unique.add(ingredient.ingredient.name);
+          }
         }
         return Array.from(unique.values());
       }
