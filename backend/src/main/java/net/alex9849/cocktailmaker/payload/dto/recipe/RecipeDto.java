@@ -46,6 +46,7 @@ public class RecipeDto {
 
     private boolean inPublic;
 
+    @NotNull
     private UserDto owner;
 
     @NotNull

@@ -26,7 +26,7 @@ public class RecipeEndpoint {
     UserService userService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    ResponseEntity<?> getOwnRecipes(@RequestParam(value = "owner", required = false) Integer ownerId,
+    ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "owner", required = false) Integer ownerId,
             @RequestParam(value = "inPublic", required = false) Boolean inPublic,
             @RequestParam(value = "system", required = false) Boolean system) {
         return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic, system).stream()
@@ -65,11 +65,11 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    ResponseEntity<?> createRecipe(@PathVariable("id") long recipeId) {
-        if(recipeService.getById(recipeId) == null) {
+    ResponseEntity<?> deleteRecipe(@PathVariable("id") long id) {
+        if(recipeService.getById(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        recipeService.delete(recipeId);
+        recipeService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

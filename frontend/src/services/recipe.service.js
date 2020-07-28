@@ -38,6 +38,10 @@ class RecipeService {
   updateRecipe(recipe) {
     return axios.put(API_PATH + recipe.id, recipe);
   }
+
+  deleteRecipe(recipe) {
+    return axios.delete(API_PATH + recipe.id);
+  }
 }
 
 export default new RecipeService();

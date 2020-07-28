@@ -21,6 +21,13 @@
         >
           Make cocktail
         </q-btn>
+        <q-btn
+          color="red"
+          @click.native="deleteDialog = true"
+          :loading="deleting"
+        >
+          Delete
+        </q-btn>
       </div>
     </div>
     <div class="row innerpadding">
@@ -59,25 +66,58 @@
         </q-card>
       </div>
     </div>
+    <c-question
+      v-model="deleteDialog"
+      :loading="deleting"
+      ok-color="red"
+      ok-button-text="Delete"
+      question="The following recipe will be deleted:"
+      @clickOk="deleteRecipe"
+      @clickAbort="deleteDialog = false"
+    >
+      <ul>
+        <li>
+          {{ this.recipe.name }}
+        </li>
+      </ul>
+    </c-question>
 
   </q-page>
 </template>
 
 <script>
   import recipeService from '../services/recipe.service'
+  import RecipeService from '../services/recipe.service'
   import IngredientList from "../components/IngredientList";
+  import CQuestion from "../components/CQuestion";
 
   export default {
     name: "RecipeDetails",
-    components: {IngredientList},
+    components: {CQuestion, IngredientList},
     data() {
       return {
-        recipe: {}
+        recipe: {},
+        deleting: false,
+        deleteDialog: false
       }
     },
     created() {
       recipeService.getRecipe(this.$route.params.id)
         .then(recipe => this.recipe = recipe);
+    },
+    methods: {
+      deleteRecipe() {
+        this.deleting = true;
+        RecipeService.deleteRecipe(this.recipe)
+          .then(() => {
+            this.$router.push({name: 'publicrecipes'});
+            this.deleting = false;
+            this.$q.notify({
+              type: 'positive',
+              message: 'Recipe deleted successfully'
+            });
+          })
+      }
     }
   }
 </script>
@@ -86,6 +126,7 @@
   .innerpadding > * {
     padding: 10px;
   }
+
   .vcenter {
     display: inline-block;
     vertical-align: middle;

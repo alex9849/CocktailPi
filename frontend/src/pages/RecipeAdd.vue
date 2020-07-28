@@ -22,7 +22,7 @@
               color="negative"
               label="Abort"
               no-caps
-              @click.native="$router.back()"
+              :to="{name: 'publicrecipes'}"
             />
             <q-btn
               type="submit"
@@ -45,13 +45,14 @@
   import RecipeEditorForm from "../components/RecipeEditorForm";
   import RecipeService from "../services/recipe.service"
   import Recipe from "../models/Recipe";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "RecipeAdd",
     components: {RecipeEditorForm},
     data() {
       return {
-        recipe: new Recipe(0, '',true, null, '', '', [], []),
+        recipe: new Recipe(0, '',true, {}, '', '', [], []),
         error: '',
         isValid: false,
         loading: false
@@ -60,6 +61,7 @@
     methods: {
       createRecipe() {
         this.loading = true;
+        this.recipe.owner = this.user;
         RecipeService.createRecipe(this.recipe)
           .then((recipe) => {
             this.loading = false;
@@ -77,6 +79,11 @@
             });
           })
       }
+    },
+    computed: {
+      ...mapGetters({
+        user: 'auth/getUser'
+      })
     }
   }
 </script>

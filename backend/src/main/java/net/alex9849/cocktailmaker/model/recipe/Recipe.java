@@ -30,6 +30,7 @@ public class Recipe {
 
     private boolean inPublic;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User owner;
