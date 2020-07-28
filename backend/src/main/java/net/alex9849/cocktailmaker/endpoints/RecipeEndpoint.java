@@ -50,7 +50,7 @@ public class RecipeEndpoint {
         recipe.setOwner(userService.getUser(userDetails.getId()));
         recipe = recipeService.createRecipe(recipe);
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)

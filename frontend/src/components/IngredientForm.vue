@@ -23,7 +23,7 @@
       label="Amount (in ml)"
       type="number"
       outlined
-      v-model="value.amount"
+      v-model.number="value.amount"
       @input="() => {$emit('input', value); $v.value.amount.$touch();}"
       :rules="[
         val => $v.value.amount.required || 'Required',

@@ -30,16 +30,20 @@ const routes = [
       component: () => import('pages/Dashboard'),
       name: "dashboard"
     }, {
-      path: 'user/recipes',
-      component: () => import('pages/MyRecipes'),
-      name: 'myrecipes'
-    }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
       name: 'myprofile'
     }, {
-      path: 'public/recipes',
-      component: () => import('pages/PublicRecipes'),
+      path: 'recipe/add',
+      component: () => import('pages/RecipeAdd'),
+      name: 'recipeadd'
+    }, {
+      path: 'recipe/own',
+      component: () => import('pages/RecipesOwn'),
+      name: 'myrecipes'
+    }, {
+      path: 'recipe/public',
+      component: () => import('pages/RecipesPublic'),
       name: 'publicrecipes'
     }, {
       path: 'recipe/:id',

@@ -3,6 +3,11 @@ import axios from 'axios';
 const API_PATH = 'api/recipe/';
 
 class RecipeService {
+  createRecipe(recipe) {
+    return axios.post(API_PATH, recipe)
+      .then(response => response.data);
+  }
+
   getRecipes(ownerId, inPublic, system) {
     let path = API_PATH;
     let filterAdded = false;

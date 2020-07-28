@@ -29,7 +29,8 @@
         counter
         maxlength="100"
         :rules="[
-        val => $v.value.shortDescription.maxLength || 'Maximal length 100']"
+          val => $v.value.shortDescription.required || 'Required',
+          val => $v.value.shortDescription.maxLength || 'Maximal length 100']"
       />
       <q-input
         outlined
@@ -42,7 +43,8 @@
         counter
         maxlength="2000"
         :rules="[
-        val => $v.value.description.maxLength || 'Maximal length 2000']"
+          val => $v.value.description.required || 'Required',
+          val => $v.value.description.maxLength || 'Maximal length 2000']"
       />
       <IngredientList
         v-model="value.recipeIngredients"
@@ -89,9 +91,11 @@
             maxLength: maxLength(20)
           },
           shortDescription: {
+            required,
             maxLength: maxLength(100)
           },
           description: {
+            required,
             maxLength: maxLength(2000)
           }
         }

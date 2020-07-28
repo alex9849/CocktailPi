@@ -4,6 +4,14 @@
       <q-breadcrumbs-el label="Public recipes"/>
     </q-breadcrumbs>
     <h5>Public recipes</h5>
+    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+      <q-btn
+        color="positive"
+        label="Create recipe"
+        no-caps
+        :to="{name: 'recipeadd'}"
+      />
+    </div>
     <q-card
       v-for="recipe in recipes"
       @click="$router.push({name: 'recipedetails', params: {id: recipe.id}})"
