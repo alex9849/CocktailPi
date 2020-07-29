@@ -15,6 +15,7 @@
         v-model="recipe"
         @valid="isValid = true"
         @invalid="isValid = false"
+        :disabled="loading"
       >
         <template slot="below">
           <div class="q-pa-md q-gutter-sm">
@@ -31,8 +32,8 @@
               color="positive"
               label="Save"
               no-caps
-              :disable="loading || !isValid"
-              :loading="loading"
+              :disable="sending || !isValid"
+              :loading="sending"
               @click="updateRecipe"
             />
           </div>
@@ -54,22 +55,23 @@
         recipe: {},
         error: '',
         isValid: false,
+        sending: false,
         loading: false
       }
     },
     methods: {
       updateRecipe() {
-        this.loading = true;
+        this.sending = true;
         RecipeService.updateRecipe(this.recipe)
           .then(response => {
-            this.loading = false;
+            this.sending = false;
             this.$q.notify({
               type: 'positive',
               message: 'Recipe updated successfully'
             });
             this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
           }, error => {
-            this.loading = false;
+            this.sending = false;
             this.error = error.response.data.message;
             this.$q.notify({
               type: 'negative',
@@ -79,8 +81,12 @@
       }
     },
     created() {
+      this.loading = true;
       RecipeService.getRecipe(this.$route.params.id)
-        .then(recipe => this.recipe = recipe);
+        .then(recipe => {
+          this.recipe = recipe;
+          this.loading = false;
+        });
     }
   }
 </script>
