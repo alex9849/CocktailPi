@@ -41,7 +41,7 @@ public class Recipe {
     @Size(min = 0, max = 100)
     private String shortDescription;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
 

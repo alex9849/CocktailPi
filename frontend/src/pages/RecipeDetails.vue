@@ -71,16 +71,10 @@
       :loading="deleting"
       ok-color="red"
       ok-button-text="Delete"
-      question="The following recipe will be deleted:"
+      question="Are you shure, that you want to delete this recipe?"
       @clickOk="deleteRecipe"
       @clickAbort="deleteDialog = false"
-    >
-      <ul>
-        <li>
-          {{ this.recipe.name }}
-        </li>
-      </ul>
-    </c-question>
+    />
 
   </q-page>
 </template>
