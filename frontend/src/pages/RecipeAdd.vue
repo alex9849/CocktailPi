@@ -62,6 +62,7 @@
       createRecipe() {
         this.loading = true;
         this.recipe.owner = this.user;
+
         RecipeService.createRecipe(this.recipe)
           .then((recipe) => {
             this.loading = false;

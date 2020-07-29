@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,6 +39,10 @@ public class User {
     private String lastname;
 
     private boolean isLocked;
+
+    @OneToMany(mappedBy = "owner",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    List<Recipe> recipes;
 
     @NotBlank
     @Size(max = 50)

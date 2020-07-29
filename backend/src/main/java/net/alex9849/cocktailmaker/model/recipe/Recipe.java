@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -32,7 +31,6 @@ public class Recipe {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User owner;
 
     @NotNull
@@ -43,7 +41,7 @@ public class Recipe {
     @Size(min = 0, max = 100)
     private String shortDescription;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
 
