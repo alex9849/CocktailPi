@@ -20,6 +20,8 @@
           v-model="pagination.page"
           color="grey-8"
           :max="pagesNumber"
+          :max-pages="9"
+          :boundary-numbers="true"
           size="sm"
         />
       </div>
