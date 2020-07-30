@@ -3,7 +3,7 @@
     <q-breadcrumbs>
       <q-breadcrumbs-el label="My recipes"/>
     </q-breadcrumbs>
-    <h5 style="margin-bottom: 0">My Recipes</h5>
+    <h5>My Recipes</h5>
 
     <div class="q-pa-md">
       <q-table
@@ -95,6 +95,7 @@
 <script>
   import {mdiMagnify} from '@quasar/extras/mdi-v5';
   import RecipeService from "../services/recipe.service"
+  import {mapGetters} from "vuex";
 
   export default {
     data () {
@@ -124,7 +125,6 @@
     },
     methods: {
       uniqueIngredientNames(productionSteps) {
-        console.log(productionSteps);
         let unique = new Set();
         for(let productionStep of productionSteps) {
           for(let ingredient of productionStep) {
@@ -134,11 +134,14 @@
         return Array.from(unique.values());
       },
       fetchRecipes() {
-        RecipeService.getRecipes()
+        RecipeService.getRecipes(this.user.id, null)
           .then(recipes => this.recipes = recipes)
       }
     },
     computed: {
+      ...mapGetters({
+        user: 'auth/getUser'
+      }),
       pagesNumber () {
         return Math.ceil(this.recipes.length / this.pagination.rowsPerPage)
       }

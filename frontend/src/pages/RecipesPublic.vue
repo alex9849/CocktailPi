@@ -76,7 +76,7 @@
     },
     methods: {
       fetchRecipes() {
-        RecipeService.getRecipes(null, true, null)
+        RecipeService.getRecipes(null, true)
           .then(recipes => this.recipes = recipes)
       },
       uniqueIngredientNames(productionSteps) {

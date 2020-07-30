@@ -19,12 +19,8 @@ public class RecipeDto {
     public RecipeDto(Recipe recipe) {
         BeanUtils.copyProperties(recipe, this);
         User owner = new User();
-        if(recipe.getOwner() != null) {
-            owner.setUsername(recipe.getOwner().getUsername());
-            owner.setId(recipe.getOwner().getId());
-        } else {
-            owner.setUsername("System");
-        }
+        owner.setUsername(recipe.getOwner().getUsername());
+        owner.setId(recipe.getOwner().getId());
         this.owner = new UserDto(owner);
         Map<Integer, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()

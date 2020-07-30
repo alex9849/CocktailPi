@@ -5,7 +5,7 @@
     </q-breadcrumbs>
     <div class="row innerpadding" style="display: inline">
       <div class="col vcenter">
-        <h5 style="margin-bottom: 0">{{ recipe.name }}</h5>
+        <h5>{{ recipe.name }}</h5>
       </div>
     </div>
     <div class="row innerpadding">

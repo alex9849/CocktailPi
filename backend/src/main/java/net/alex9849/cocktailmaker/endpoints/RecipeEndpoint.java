@@ -28,10 +28,14 @@ public class RecipeEndpoint {
     UserService userService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "owner", required = false) Integer ownerId,
-            @RequestParam(value = "inPublic", required = false) Boolean inPublic,
-            @RequestParam(value = "system", required = false) Boolean system) {
-        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic, system).stream()
+    ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
+            @RequestParam(value = "inPublic", required = false) Boolean inPublic, HttpServletRequest request) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!userDetails.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic).stream()
                 .map(RecipeDto::new).collect(Collectors.toList()));
     }
 

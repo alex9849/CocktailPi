@@ -58,12 +58,9 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> getRecipesByFilter(Integer ownerId, Boolean inPublic, Boolean system) {
+    public List<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
 
-        if(system != null) {
-            spec = spec.and(new Recipe.RecipeFilterSystem(system));
-        }
         if(inPublic != null) {
             spec = spec.and(new Recipe.RecipeFilterPublic(inPublic));
         }

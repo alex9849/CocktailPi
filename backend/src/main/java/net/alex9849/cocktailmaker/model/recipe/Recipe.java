@@ -138,32 +138,16 @@ public class Recipe {
         }
     }
 
-    public static class RecipeFilterSystem implements Specification<Recipe> {
-        private boolean isSystem;
-
-        public RecipeFilterSystem(boolean isSystem) {
-            this.isSystem = isSystem;
-        }
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            if(isSystem) {
-                return criteriaBuilder.equal(root.get("user"), null);
-            }
-            return criteriaBuilder.notEqual(root.get("user"), null);
-        }
-    }
-
     public static class RecipeFilterOwnerId implements Specification<Recipe> {
-        private Integer userId;
+        private long userId;
 
-        public RecipeFilterOwnerId(int userId) {
+        public RecipeFilterOwnerId(long userId) {
             this.userId = userId;
         }
 
         @Override
         public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            return criteriaBuilder.equal(root.get("user").<String>get("id"), userId);
+            return criteriaBuilder.equal(root.get("owner").<String>get("id"), userId);
         }
     }
 }

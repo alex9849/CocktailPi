@@ -8,7 +8,7 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  getRecipes(ownerId, inPublic, system) {
+  getRecipes(ownerId, inPublic) {
     let path = API_PATH;
     let filterAdded = false;
     if(ownerId != null) {
@@ -19,11 +19,6 @@ class RecipeService {
     if(inPublic != null) {
       path += filterAdded?'&':'?';
       path += "inPublic=" + inPublic;
-      filterAdded = true;
-    }
-    if(system != null) {
-      path += filterAdded?'&':'?';
-      path += "system=" + system;
       filterAdded = true;
     }
     return axios.get(path)
