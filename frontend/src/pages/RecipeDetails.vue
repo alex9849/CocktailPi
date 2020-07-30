@@ -13,6 +13,7 @@
         <q-btn
           color="grey"
           :to="{name: 'recipeedit', params: {id: $route.params.id}}"
+          v-if="user.id === recipe.owner.id"
         >
           Edit
         </q-btn>
@@ -25,6 +26,7 @@
           color="red"
           @click.native="deleteDialog = true"
           :loading="deleting"
+          v-if="user.id === recipe.owner.id"
         >
           Delete
         </q-btn>
@@ -84,6 +86,7 @@
   import RecipeService from '../services/recipe.service'
   import IngredientList from "../components/IngredientList";
   import CQuestion from "../components/CQuestion";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "RecipeDetails",
@@ -112,6 +115,11 @@
             });
           })
       }
+    },
+    computed: {
+      ...mapGetters({
+        user: 'auth/getUser'
+      })
     }
   }
 </script>
