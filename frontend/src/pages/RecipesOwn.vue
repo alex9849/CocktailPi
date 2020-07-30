@@ -3,17 +3,80 @@
     <q-breadcrumbs>
       <q-breadcrumbs-el label="My recipes"/>
     </q-breadcrumbs>
-    <h5>My Recipes</h5>
+    <h5 style="margin-bottom: 0">My Recipes</h5>
 
     <div class="q-pa-md">
       <q-table
-        title="Cocktails"
-        :data="rows"
+        :data="recipes"
         :columns="columns"
         row-key="name"
+        :visible-columns="['name']"
+        flat
         :pagination.sync="pagination"
         hide-pagination
-      />
+        hide-header
+
+      >
+        <template v-slot:top-right>
+          <div class="q-gutter-x-sm"  style="display: inherit">
+            <q-input
+              v-model="searchName"
+              outlined
+              label="Search"
+              dense
+            />
+            <q-btn
+              text-color="black"
+              color="info"
+              :icon="mdiMagnify"
+              rounded
+            />
+          </div>
+        </template>
+        <template v-slot:body="props" >
+          <q-card
+            @click="$router.push({name: 'recipedetails', params: {id: props.row.id}})"
+            style="cursor: pointer; margin: 10px;"
+          >
+            <q-card-section
+              style="padding: 10px"
+            >
+              <div
+                class="row"
+              >
+                <q-img
+                  src="../assets/cocktail-solid.png"
+                  :ratio="16/9"
+                  class="col rounded-borders"
+                  style="max-width: 225px; max-height: 180px"
+                />
+                <div class="col" style="padding-left: 10px; position: relative">
+                  <h5
+                    style="margin: 0; padding-bottom: 10px;"
+                  >
+                    <b>{{ props.row.name }}</b>
+                  </h5>
+                  <div>
+                    {{ props.row.shortDescription }}
+                  </div>
+
+                  <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
+                    <div class="col">
+                      Ingredients:
+                      <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(props.row.recipeIngredients)">
+                        {{ index !== 3?name:'...' }}
+                      </q-chip>
+                    </div>
+                    <div class="col" style="text-align: right; max-width: max-content">
+                      by {{ props.row.owner.username }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </template>
+      </q-table>
 
       <div class="row justify-center q-mt-md">
         <q-pagination
@@ -30,112 +93,59 @@
 </template>
 
 <script>
+  import {mdiMagnify} from '@quasar/extras/mdi-v5';
+  import RecipeService from "../services/recipe.service"
+
   export default {
     data () {
       return {
+        searchName: '',
         pagination: {
-          sortBy: 'desc',
+          sortBy: 'name',
           descending: false,
-          page: 2,
-          rowsPerPage: 3
+          page: 1,
+          rowsPerPage: 8
           // rowsNumber: xx if getting data from a server
         },
-
         columns: [
           {
-            name: 'desc',
-            required: true,
-            label: 'Dessert (100g serving)',
+            name: 'name',
+            label: 'Name',
             align: 'left',
             field: row => row.name,
             format: val => `${val}`,
             sortable: true
           },
-          { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-          { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-          { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-          { name: 'protein', label: 'Protein (g)', field: 'protein' }
+          { name: 'shortDescription', align: 'center', label: 'Short description', field: 'shortDescription', sortable: true },
+          { name: 'owner', label: 'Owner', field: 'owner.username', sortable: true }
         ],
-
-        rows: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7
-          }
-        ]
+        recipes: []
       }
     },
-
+    methods: {
+      uniqueIngredientNames(productionSteps) {
+        console.log(productionSteps);
+        let unique = new Set();
+        for(let productionStep of productionSteps) {
+          for(let ingredient of productionStep) {
+            unique.add(ingredient.ingredient.name);
+          }
+        }
+        return Array.from(unique.values());
+      },
+      fetchRecipes() {
+        RecipeService.getRecipes()
+          .then(recipes => this.recipes = recipes)
+      }
+    },
     computed: {
       pagesNumber () {
-        return Math.ceil(this.rows.length / this.pagination.rowsPerPage)
+        return Math.ceil(this.recipes.length / this.pagination.rowsPerPage)
       }
+    },
+    created() {
+      this.mdiMagnify = mdiMagnify;
+      this.fetchRecipes();
     }
   }
 </script>
