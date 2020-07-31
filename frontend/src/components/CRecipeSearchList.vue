@@ -11,13 +11,13 @@
             outlined
             label="Search"
             dense
-            @keypress.enter="updateRecipes"
+            @keypress.enter="() => {pagination.page = 1; updateRecipes();}"
           />
           <q-btn
             text-color="black"
             color="info"
             :icon="mdiMagnify"
-            @click="updateRecipes"
+            @click="() => {pagination.page = 1; updateRecipes();}"
             rounded
           />
           <q-btn
@@ -32,7 +32,7 @@
     <div class="row justify-center q-mt-md">
       <q-pagination
         :value="pagination.page"
-        @input="page => {pagination.page = page; updateRecipes();}"
+        @input="page => {if(pagination.page !== page) {pagination.page = page; updateRecipes();}}"
         color="grey-8"
         :max="pagination.totalPages"
         :max-pages="9"
@@ -92,7 +92,6 @@
       },
       '$route.query.search'(newValue) {
         this.searchOptions.searchName = newValue?newValue:"";
-        this.pagination.page = 1;
         this.fetchRecipes();
       }
     },
@@ -102,7 +101,7 @@
         let query = {
           page: this.pagination.page
         };
-        if (this.searchOptions.searchName && this.searchOptions.searchName.length !== 0) {
+        if (this.searchOptions.searchName) {
           query.search = this.searchOptions.searchName;
         }
         this.$router.push({name: this.$route.name, query});
