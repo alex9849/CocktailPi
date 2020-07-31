@@ -9,7 +9,7 @@
     :pagination="{rowsPerPage: 0}"
     hide-pagination
     hide-header
-    hide-no-data
+    no-data-label="No cocktails found :("
   >
     <template v-slot:top-right>
       <slot name="top-right"/>
