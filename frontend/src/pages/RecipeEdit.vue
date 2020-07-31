@@ -1,8 +1,9 @@
 <template>
   <q-page padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el label="Recipe Details" :to="{name: 'recipedetails', params: {id: $route.params.id}}"/>
-      <q-breadcrumbs-el label="Edit Recipe"/>
+      <q-breadcrumbs-el label="Public recipes" :to="{name: 'publicrecipes'}"/>
+      <q-breadcrumbs-el label="Recipe details" :to="{name: 'recipedetails', params: {id: $route.params.id}}"/>
+      <q-breadcrumbs-el label="Edit recipe"/>
     </q-breadcrumbs>
     <h5>Edit Recipe</h5>
     <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin-bottom: 20px">

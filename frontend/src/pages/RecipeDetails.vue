@@ -1,7 +1,8 @@
 <template>
   <q-page padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el label="Recipe Details"/>
+      <q-breadcrumbs-el label="Public recipes" :to="{name: 'publicrecipes'}"/>
+      <q-breadcrumbs-el label="Recipe details"/>
     </q-breadcrumbs>
     <div class="row innerpadding" style="display: inline">
       <div class="col vcenter">
