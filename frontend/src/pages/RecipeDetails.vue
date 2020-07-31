@@ -13,7 +13,7 @@
         <q-btn
           color="grey"
           :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-          v-if="user.id === recipe.owner.id"
+          v-if="recipe.owner && user.id === recipe.owner.id"
         >
           Edit
         </q-btn>
@@ -26,7 +26,7 @@
           color="red"
           @click.native="deleteDialog = true"
           :loading="deleting"
-          v-if="user.id === recipe.owner.id"
+          v-if="recipe.owner && user.id === recipe.owner.id"
         >
           Delete
         </q-btn>

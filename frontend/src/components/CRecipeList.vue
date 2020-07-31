@@ -9,6 +9,7 @@
     :pagination="{rowsPerPage: 0}"
     hide-pagination
     hide-header
+    hide-no-data
   >
     <template v-slot:top-right>
       <slot name="top-right"/>
