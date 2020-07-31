@@ -50,7 +50,7 @@
               </div>
 
               <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
-                <div class="col">
+                <div class="col" style="overflow: hidden; max-height: 36px">
                   Ingredients:
                   <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(props.row.recipeIngredients)">
                     {{ index !== 3?name:'...' }}
