@@ -150,4 +150,17 @@ public class Recipe {
             return criteriaBuilder.equal(root.get("owner").<String>get("id"), userId);
         }
     }
+
+    public static class RecipeFilterNameContain implements Specification<Recipe> {
+        String searchName;
+
+        public RecipeFilterNameContain(String searchName) {
+            this.searchName = searchName.toLowerCase();
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + searchName + "%");
+        }
+    }
 }

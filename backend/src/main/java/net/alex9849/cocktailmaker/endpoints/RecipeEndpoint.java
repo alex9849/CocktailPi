@@ -29,13 +29,14 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
-            @RequestParam(value = "inPublic", required = false) Boolean inPublic, HttpServletRequest request) {
+            @RequestParam(value = "inPublic", required = false) Boolean inPublic,
+            @RequestParam(value = "searchName", required = false) String searchName) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!userDetails.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic).stream()
+        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic, searchName).stream()
                 .map(RecipeDto::new).collect(Collectors.toList()));
     }
 

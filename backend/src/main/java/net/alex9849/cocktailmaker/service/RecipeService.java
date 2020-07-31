@@ -58,7 +58,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic) {
+    public List<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, String searchName) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
 
         if(inPublic != null) {
@@ -66,6 +66,9 @@ public class RecipeService {
         }
         if(ownerId != null) {
             spec = spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
+        }
+        if(searchName != null) {
+            spec = spec.and(new Recipe.RecipeFilterNameContain(searchName));
         }
         return recipeRepository.findAll(spec);
     }
