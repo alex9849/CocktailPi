@@ -6,83 +6,41 @@
     <h5>My Recipes</h5>
 
     <div class="q-pa-md">
-      <q-table
-        :data="recipes"
-        :columns="columns"
-        row-key="name"
-        :visible-columns="['name']"
-        flat
-        :pagination.sync="pagination"
-        hide-pagination
-        hide-header
-
+      <c-recipe-list
+        :recipes="recipes"
+        :loading="loading"
       >
-        <template v-slot:top-right>
-          <div class="q-gutter-x-sm"  style="display: inherit">
+        <template slot="top-right">
+          <div class="q-gutter-x-sm" style="display: inherit">
             <q-input
               v-model="searchName"
               outlined
               label="Search"
               dense
+              @keypress.enter="fetchRecipes"
             />
             <q-btn
               text-color="black"
               color="info"
               :icon="mdiMagnify"
+              @click="fetchRecipes"
               rounded
+            />
+            <q-btn
+              color="positive"
+              label="Create recipe"
+              no-caps
+              :to="{name: 'recipeadd'}"
             />
           </div>
         </template>
-        <template v-slot:body="props" >
-          <q-card
-            @click="$router.push({name: 'recipedetails', params: {id: props.row.id}})"
-            style="cursor: pointer; margin: 10px;"
-          >
-            <q-card-section
-              style="padding: 10px"
-            >
-              <div
-                class="row"
-              >
-                <q-img
-                  src="../assets/cocktail-solid.png"
-                  :ratio="16/9"
-                  class="col rounded-borders"
-                  style="max-width: 225px; max-height: 180px"
-                />
-                <div class="col" style="padding-left: 10px; position: relative">
-                  <h5
-                    style="margin: 0; padding-bottom: 10px;"
-                  >
-                    <b>{{ props.row.name }}</b>
-                  </h5>
-                  <div>
-                    {{ props.row.shortDescription }}
-                  </div>
-
-                  <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
-                    <div class="col">
-                      Ingredients:
-                      <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(props.row.recipeIngredients)">
-                        {{ index !== 3?name:'...' }}
-                      </q-chip>
-                    </div>
-                    <div class="col" style="text-align: right; max-width: max-content">
-                      by {{ props.row.owner.username }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </template>
-      </q-table>
+      </c-recipe-list>
 
       <div class="row justify-center q-mt-md">
         <q-pagination
           v-model="pagination.page"
           color="grey-8"
-          :max="pagesNumber"
+          :max="pagination.totalPages"
           :max-pages="9"
           :boundary-numbers="true"
           size="sm"
@@ -96,55 +54,41 @@
   import {mdiMagnify} from '@quasar/extras/mdi-v5';
   import RecipeService from "../services/recipe.service"
   import {mapGetters} from "vuex";
+  import CRecipeList from "../components/CRecipeList";
 
   export default {
+    components: {CRecipeList},
     data () {
       return {
         searchName: '',
+        loading: false,
         pagination: {
           sortBy: 'name',
           descending: false,
           page: 1,
-          rowsPerPage: 8
+          totalPages: 1
           // rowsNumber: xx if getting data from a server
         },
-        columns: [
-          {
-            name: 'name',
-            label: 'Name',
-            align: 'left',
-            field: row => row.name,
-            format: val => `${val}`,
-            sortable: true
-          },
-          { name: 'shortDescription', align: 'center', label: 'Short description', field: 'shortDescription', sortable: true },
-          { name: 'owner', label: 'Owner', field: 'owner.username', sortable: true }
-        ],
         recipes: []
       }
     },
     methods: {
-      uniqueIngredientNames(productionSteps) {
-        let unique = new Set();
-        for(let productionStep of productionSteps) {
-          for(let ingredient of productionStep) {
-            unique.add(ingredient.ingredient.name);
-          }
-        }
-        return Array.from(unique.values());
-      },
       fetchRecipes() {
-        RecipeService.getRecipes(this.user.id, null)
-          .then(recipes => this.recipes = recipes)
+        this.loading = true;
+        RecipeService.getRecipes(this.pagination.page, this.user.id, null, this.searchName)
+          .then(pageable => {
+            this.recipes = pageable.content;
+            this.pagination.totalPages = pageable.totalPages;
+            this.loading = false;
+          }, error => {
+            this.loading = false;
+          })
       }
     },
     computed: {
       ...mapGetters({
         user: 'auth/getUser'
-      }),
-      pagesNumber () {
-        return Math.ceil(this.recipes.length / this.pagination.rowsPerPage)
-      }
+      })
     },
     created() {
       this.mdiMagnify = mdiMagnify;

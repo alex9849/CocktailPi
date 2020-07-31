@@ -9,13 +9,16 @@ import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import net.alex9849.cocktailmaker.repository.TagRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,7 +61,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public List<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, String searchName) {
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, String searchName, Integer startNumber, Integer pageSize, Sort sort) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
 
         if(inPublic != null) {
@@ -70,7 +73,10 @@ public class RecipeService {
         if(searchName != null) {
             spec = spec.and(new Recipe.RecipeFilterNameContain(searchName));
         }
-        return recipeRepository.findAll(spec);
+        if(startNumber != null && pageSize != null) {
+            return recipeRepository.findAll(spec, PageRequest.of(startNumber, pageSize, sort));
+        }
+        return new PageImpl<>(recipeRepository.findAll(spec, sort));
     }
 
     public Recipe getById(long id) {

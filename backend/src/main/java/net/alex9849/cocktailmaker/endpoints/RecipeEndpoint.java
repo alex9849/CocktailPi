@@ -6,6 +6,9 @@ import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,14 +34,24 @@ public class RecipeEndpoint {
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
             @RequestParam(value = "inPublic", required = false) Boolean inPublic,
-            @RequestParam(value = "searchName", required = false) String searchName) {
+            @RequestParam(value = "searchName", required = false) String searchName,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!userDetails.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        return ResponseEntity.ok().body(recipeService.getRecipesByFilter(ownerId, inPublic, searchName).stream()
-                .map(RecipeDto::new).collect(Collectors.toList()));
+        final int pageSize = 10;
+        page = Math.max(--page, 0);
+        Sort sort;
+        switch (orderBy){
+            default:
+                sort = Sort.by(Sort.Direction.ASC, "name");
+                break;
+        }
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, searchName, page, pageSize, sort);
+        List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
