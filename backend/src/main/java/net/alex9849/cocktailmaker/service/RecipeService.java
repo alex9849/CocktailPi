@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.recipe.*;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
 import net.alex9849.cocktailmaker.repository.RecipeIngredientRepository;
@@ -141,7 +140,7 @@ public class RecipeService {
         }
         RecipeIngredient recipeIngredient = new RecipeIngredient();
         BeanUtils.copyProperties(recipeIngredientDto, recipeIngredient);
-        recipeIngredient.setIngredient(fromDto(recipeIngredientDto.getIngredient()));
+        recipeIngredient.setIngredient(ingredientService.fromDto(recipeIngredientDto.getIngredient()));
         recipeIngredient.setRecipe(recipe);
         RecipeIngredientId recipeIngredientId = new RecipeIngredientId();
         recipeIngredientId.setIngredientId(recipeIngredientDto.getIngredient().getId());
@@ -149,14 +148,5 @@ public class RecipeService {
         recipeIngredientId.setProductionStep(productionStep);
         recipeIngredient.setId(recipeIngredientId);
         return recipeIngredient;
-    }
-
-    public Ingredient fromDto(IngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        Ingredient ingredient = new Ingredient();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
     }
 }
