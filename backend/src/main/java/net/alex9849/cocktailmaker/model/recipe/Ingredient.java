@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "ingredients", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
@@ -30,6 +33,10 @@ public class Ingredient implements Serializable {
     @NotNull
     @Min(0) @Max(100)
     private int alcoholContent;
+
+    @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<RecipeIngredient> recipeIngredients;
 
     public Long getId() {
         return id;

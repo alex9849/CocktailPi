@@ -119,7 +119,7 @@
       <template v-slot:error-area>
         <div>
           <q-banner v-if="deleteIngredients.length !== 0" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            This will also delete all associated recipes!
+            This also removes {{ (deleteIngredients.length > 1)? "these ingredients":"this ingredient" }} from all associated recipes!
           </q-banner>
           <q-banner v-if="deleteErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
             {{ deleteErrorMessage }}
@@ -249,6 +249,7 @@
       closeEditDialog() {
         this.editIngredient = Object.assign({}, this.newIngredient);
         this.editDialog = false;
+        this.editErrorMessage = "";
       },
       onClickSaveIngredient() {
         this.editIngredientSaving = true;
@@ -324,6 +325,7 @@
       closeDeleteDialog() {
         this.deleteIngredients.splice(0, this.deleteIngredients.length);
         this.deleteDialog = false;
+        this.deleteErrorMessage = "";
       },
       fetchAll() {
         this.loading = true;
