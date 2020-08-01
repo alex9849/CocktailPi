@@ -15,6 +15,7 @@
       v-for="(productionStep, index) in ingredients"
       :key="index"
       class="dragItem"
+      :style="'background-color: ' + ((index % 2 === 0)? row1Color:row2Color)"
     >
       <q-item-section avatar>
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
@@ -82,7 +83,14 @@
     </q-item>
     <q-item slot="header">
       <q-item-section>
-        <q-item-label header>Ingredients</q-item-label>
+        <q-item-label header style="padding: 0" class="text-black">
+          <b v-if="big">
+            Ingredients
+          </b>
+          <div v-else>
+            Ingredients
+          </div>
+        </q-item-label>
       </q-item-section>
 
       <q-item-section side v-if="editable">
@@ -155,6 +163,18 @@
       editable: {
         type: Boolean,
         default: false
+      },
+      big: {
+        type: Boolean,
+        default: false
+      },
+      row1Color: {
+        type: String,
+        default: "#FFFFFF"
+      },
+      row2Color: {
+        type: String,
+        default: "#FFFFFF"
       }
     },
     data() {

@@ -35,7 +35,7 @@
     </div>
     <div class="row innerpadding">
       <div class="col">
-        <q-card flat bordered>
+        <q-card bordered class="bg-grey-3 shadow-1">
           <q-card-section>
             <b>Short description:</b> {{ recipe.shortDescription }}
           </q-card-section>
@@ -47,19 +47,23 @@
         <q-img
           src="../assets/cocktail-solid.png"
           :ratio="16/9"
-          class="rounded-borders"
+          class="rounded-borders shadow-1"
           style="min-width: 250px"
         />
       </div>
       <div style="min-width: 200px" class="col">
         <ingredient-list
+          big
+          :row1-color="'#f3f3fa'"
+          :row2-color="'#fafafa'"
+          class="bg-grey-3 shadow-2"
           v-model="recipe.recipeIngredients"
         />
       </div>
     </div>
     <div class="row innerpadding">
       <div class="col">
-        <q-card flat bordered style="min-height: 100px">
+        <q-card  bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
           <q-card-section>
             <b>Description:</b>
             <div style="min-width: 200px; white-space: pre-line" class="col">
