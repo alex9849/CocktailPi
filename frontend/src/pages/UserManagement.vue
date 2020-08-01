@@ -3,24 +3,28 @@
     <q-breadcrumbs>
       <q-breadcrumbs-el label="User Management"/>
     </q-breadcrumbs>
-    <h5 style="margin-bottom: 0">User Management</h5>
+    <h5>User Management</h5>
     <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
       <q-btn
         color="negative"
         label="Delete selected users"
         no-caps
+        :disable="isLoading"
         @click="openDeleteDialog(true)"
       />
       <q-btn
         color="positive"
         label="Create user"
         no-caps
+        :disable="isLoading"
         :to="{name: 'usercreator'}"
       />
       <q-btn
         color="info"
         label="Refresh"
-        @click="fetchUsers"
+        :disable="isLoading"
+        :loading="isLoading"
+        @click="onRefreshButton"
         no-caps
       />
     </div>
@@ -220,6 +224,13 @@
       }
     },
     methods: {
+      onRefreshButton() {
+        this.isLoading = true;
+        let vm = this;
+        setTimeout(() => {
+          vm.fetchUsers()
+        }, 500);
+      },
       openDeleteDialog(forSelectedUsers) {
         if(forSelectedUsers) {
           this.deleteUsers.push(...this.selected);
