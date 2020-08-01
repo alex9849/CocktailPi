@@ -127,7 +127,7 @@
       },
       searchBarColor: {
         type: String,
-        default: '#f3f3fa'
+        default: '#fafafa'
       }
     },
     data() {
