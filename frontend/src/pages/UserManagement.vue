@@ -44,7 +44,7 @@
       >
         <q-tr
           :props="props"
-          :class="(props.rowIndex % 2 === 0)? 'row1':'row2'"
+          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
         >
           <q-td
             auto-width
@@ -133,7 +133,7 @@
         <td
           style="color: #b5b5b5"
         >
-          {{ data.length }} Nutzer gesamt
+          {{ data.length }} users in total
         </td>
         <td rowspan="5"/>
       </template>

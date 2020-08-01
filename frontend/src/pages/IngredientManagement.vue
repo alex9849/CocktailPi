@@ -23,6 +23,7 @@
         label="Refresh"
         :disable="loading"
         :loading="loading"
+        @click="onRefresh"
         no-caps
       />
     </div>
@@ -32,30 +33,76 @@
       :loading="loading"
       :selected.sync="selected"
       selection="multiple"
-      hide-pagination
+      hide-bottom
       :pagination="{rowsPerPage: 0}"
       no-data-label="No ingredients found"
+      :table-style="{margin: '15px'}"
+      style="background-color: #f3f3fa"
     >
-      <template v-slot:body-cell-actions="props">
-        <q-td
-          class="q-pa-md q-gutter-x-sm"
+      <template v-slot:body="props">
+        <q-tr
           :props="props"
+          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
         >
-          <q-btn
-            :icon="mdiPencilOutline"
-            text-color="white"
-            :style="{backgroundColor: '#31ccec'}"
-            dense
-            rounded
-          />
-          <q-btn
-            :icon="mdiDelete"
-            color="red"
-            @click="() => {deleteIngredients.push(props.row); openDeleteDialog(false);}"
-            dense
-            rounded
-          />
-        </q-td>
+          <q-td
+            auto-width
+            style="text-align: center"
+          >
+            <q-checkbox
+              v-model="props.selected"
+            />
+          </q-td>
+          <q-td
+            key="name"
+            :props="props"
+          >
+            {{ props.row.name }}
+          </q-td>
+          <q-td
+            key="alcoholContent"
+            :props="props"
+          >
+            {{ props.row.alcoholContent }}
+          </q-td>
+          <q-td
+            key="actions"
+            class="q-pa-md q-gutter-x-sm"
+            :props="props"
+          >
+            <q-btn
+              :icon="mdiPencilOutline"
+              text-color="white"
+              :style="{backgroundColor: '#31ccec'}"
+              dense
+              rounded
+            />
+            <q-btn
+              :icon="mdiDelete"
+              color="red"
+              @click="() => {deleteIngredients.push(props.row); openDeleteDialog(false);}"
+              dense
+              rounded
+            />
+          </q-td>
+        </q-tr>
+      </template>
+      <template
+        v-slot:bottom-row
+      >
+        <td
+          style="color: #b5b5b5"
+        >
+          {{ ingredients.length }} ingredients in total
+        </td>
+        <td rowspan="5"/>
+      </template>
+      <template
+        v-slot:loading
+      >
+        <q-inner-loading
+          showing
+          color="info"
+        />
       </template>
     </q-table>
     <c-question
@@ -115,6 +162,11 @@
       }
     },
     methods: {
+      onRefresh() {
+        this.loading = true;
+        let vm = this;
+        setTimeout(vm.fetchAll, 500);
+      },
       deleteSelected() {
 
       },
@@ -157,5 +209,10 @@
 </script>
 
 <style scoped>
-
+  .row1 {
+    background-color: #fafafa;
+  }
+  .row2 {
+    background-color: #f3f3fa;
+  }
 </style>
