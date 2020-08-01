@@ -7,6 +7,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -25,6 +27,10 @@ public class Ingredient implements Serializable {
     @Size(min = 1, max = 30)
     private String name;
 
+    @NotNull
+    @Min(0) @Max(100)
+    private int alcoholContent;
+
     public Long getId() {
         return id;
     }
@@ -39,6 +45,14 @@ public class Ingredient implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getAlcoholContent() {
+        return alcoholContent;
+    }
+
+    public void setAlcoholContent(int alcoholContent) {
+        this.alcoholContent = alcoholContent;
     }
 
     public static class IngredientFilterNoFilter implements Specification<Ingredient> {

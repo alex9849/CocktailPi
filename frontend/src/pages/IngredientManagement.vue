@@ -169,6 +169,7 @@
                 color="green"
                 label="Save"
                 style="width: 150px"
+                @click="saveEditIngredient"
               />
             </div>
           </q-form>
@@ -227,6 +228,9 @@
       closeEditDialog() {
         this.editIngredient = Object.assign({}, this.newIngredient);
         this.editDialog = false;
+      },
+      saveEditIngredient() {
+
       },
       deleteSelected() {
 
