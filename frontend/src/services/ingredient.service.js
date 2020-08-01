@@ -1,4 +1,4 @@
-const API_PATH = 'api/ingredient';
+const API_PATH = 'api/ingredient/';
 import axios from 'axios';
 
 class IngredientService {
@@ -17,6 +17,18 @@ class IngredientService {
     }
     return axios.get(path)
       .then(response => response.data);
+  }
+
+  updateIngredient(ingredient) {
+    return axios.put(API_PATH + ingredient.id, ingredient);
+  }
+
+  createIngredient(ingredient) {
+    return axios.post(API_PATH, ingredient);
+  }
+
+  deleteIngredient(ingredient) {
+    return axios.delete(API_PATH + ingredient.id);
   }
 }
 

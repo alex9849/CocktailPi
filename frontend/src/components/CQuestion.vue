@@ -7,6 +7,7 @@
     <q-card style="width: 500px">
       <q-card-section class="text-center">
         <h5>{{ question }}</h5>
+        <slot name="error-area" />
         <slot />
         <div class="q-pa-md q-gutter-sm">
           <slot name="buttons">
