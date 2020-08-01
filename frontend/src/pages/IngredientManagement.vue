@@ -16,6 +16,7 @@
         color="positive"
         label="Create ingredient"
         :disable="loading"
+        @click="showEditDialog(null)"
         no-caps
       />
       <q-btn
@@ -73,6 +74,7 @@
               :icon="mdiPencilOutline"
               text-color="white"
               :style="{backgroundColor: '#31ccec'}"
+              @click="showEditDialog(props.row)"
               dense
               rounded
             />
@@ -135,6 +137,44 @@
         </ul>
       </template>
     </c-question>
+    <q-dialog
+      :value="editDialog"
+      @hide="closeEditDialog"
+    >
+      <q-card style="width: 500px">
+        <q-card-section class="text-center">
+          <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
+          <q-form class="innerpadding">
+            <q-input
+              label="Name"
+              outlined
+              v-model="editIngredient.name"
+              filled
+            />
+            <q-input
+              label="Alcohol content"
+              outlined
+              v-model="editIngredient.alcoholContent"
+              filled
+              type="number"
+            />
+            <div class="q-pa-md q-gutter-sm">
+              <q-btn
+                color="grey"
+                label="Abort"
+                style="width: 150px"
+                @click="closeEditDialog"
+              />
+              <q-btn
+                color="green"
+                label="Save"
+                style="width: 150px"
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -157,6 +197,17 @@
         selected: [],
         deleteIngredients: [],
         loading: false,
+        editDialog: false,
+        editIngredient: {
+          id: -1,
+          name: "",
+          alcoholContent: 0
+        },
+        newIngredient: {
+          id: -1,
+          name: "",
+          alcoholContent: 0
+        },
         deleteLoading: false,
         deleteDialog: false
       }
@@ -166,6 +217,16 @@
         this.loading = true;
         let vm = this;
         setTimeout(vm.fetchAll, 500);
+      },
+      showEditDialog(ingredient) {
+        if(ingredient) {
+          this.editIngredient = Object.assign({}, ingredient);
+        }
+        this.editDialog = true;
+      },
+      closeEditDialog() {
+        this.editIngredient = Object.assign({}, this.newIngredient);
+        this.editDialog = false;
       },
       deleteSelected() {
 
@@ -203,6 +264,12 @@
           return "The following ingredient will be deleted:";
         }
         return "The following ingredients will be deleted:";
+      },
+      editDialogHeadline() {
+        if(this.editIngredient.id === -1) {
+          return "Create ingredient"
+        }
+        return "Edit ingredient"
       }
     }
   }

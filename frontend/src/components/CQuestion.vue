@@ -6,7 +6,7 @@
   >
     <q-card style="width: 500px">
       <q-card-section class="text-center">
-        <h5 style="margin: 5px">{{ question }}</h5>
+        <h5>{{ question }}</h5>
         <slot />
         <div class="q-pa-md q-gutter-sm">
           <slot name="buttons">
