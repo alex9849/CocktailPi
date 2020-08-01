@@ -158,7 +158,10 @@
           <q-banner v-if="editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
             {{ editErrorMessage }}
           </q-banner>
-          <q-form class="innerpadding">
+          <q-form
+            class="innerpadding"
+            @submit.prevent="onClickSaveIngredient"
+          >
             <q-input
               label="Name"
               outlined
@@ -185,9 +188,9 @@
               <q-btn
                 color="green"
                 label="Save"
+                type="submit"
                 style="width: 150px"
                 :loading="editIngredientSaving"
-                @click="onClickSaveIngredient"
               />
             </div>
           </q-form>
