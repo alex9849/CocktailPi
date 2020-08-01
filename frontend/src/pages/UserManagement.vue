@@ -162,7 +162,7 @@
         </q-btn>
       </template>
       <template v-slot:default>
-        <ul>
+        <ul style="padding: 0">
           <li
             :key="index"
             v-for="(user, index) in deleteUsers"

@@ -10,6 +10,8 @@
       :pagination="{rowsPerPage: 0}"
       hide-pagination
       hide-header
+      selection="multiple"
+      :selected.sync="selected"
       no-data-label="No cocktails found :("
       :style="'background-color: ' + listBodyColor"
     >
@@ -31,7 +33,14 @@
           >
             <div
               class="row"
+              style="position: relative"
             >
+              <q-checkbox
+                v-if="selectable"
+                v-model="props.selected"
+                keep-color
+                style="position: absolute; z-index: 1;"
+              />
               <q-img
                 src="../assets/cocktail-solid.png"
                 :ratio="16/9"
@@ -76,6 +85,10 @@
         type: Array,
         required: true
       },
+      selectable: {
+        type: Boolean,
+        default: false
+      },
       loading: {
         type: Boolean,
         default: false
@@ -95,6 +108,7 @@
     },
     data() {
       return {
+        selected: [],
         columns: [
           {
             name: 'name',
@@ -118,6 +132,14 @@
           }
         }
         return Array.from(unique.values());
+      }
+    },
+    watch: {
+      selected(newValue) {
+        this.$emit('selectionChange', newValue);
+      },
+      recipes() {
+        this.selected = [];
       }
     }
   }

@@ -3,6 +3,8 @@
     <c-recipe-list
       :recipes="recipes"
       :loading="loading"
+      @selectionChange="deleteRecipes = $event"
+      :selectable="isOwnRecipes"
     >
       <template slot="top">
         <div>
@@ -25,11 +27,12 @@
                 :to="{name: 'recipeadd'}"
               />
               <q-btn
+                v-if="isOwnRecipes"
                 color="negative"
                 label="Delete selected recipes"
                 no-caps
                 :disable="loading"
-                :to="{name: 'recipeadd'}"
+                @click="openDeleteDialog"
               />
             </div>
           </div>
@@ -75,6 +78,36 @@
         size="sm"
       />
     </div>
+    <c-question
+      :question="deleteQuestionMessage"
+      ok-color="red"
+      ok-button-text="Delete"
+      :loading="deleteLoading"
+      v-model="deleteDialog"
+      @clickOk="deleteSelected"
+      @clickAbort="closeDeleteDialog"
+    >
+      <template v-slot:buttons>
+        <q-btn
+          v-if="deleteRecipes.length === 0"
+          color="grey"
+          style="width: 150px"
+          @click="closeDeleteDialog"
+        >
+          Ok
+        </q-btn>
+      </template>
+      <template v-slot:default>
+        <ul style="padding: 0">
+          <li
+            :key="index"
+            v-for="(recipe, index) in deleteRecipes"
+          >
+            {{recipe.name}}
+          </li>
+        </ul>
+      </template>
+    </c-question>
   </div>
 </template>
 <script>
@@ -82,10 +115,11 @@
   import RecipeService from "../services/recipe.service"
   import {mapGetters} from "vuex";
   import CRecipeList from "../components/CRecipeList";
+  import CQuestion from "./CQuestion";
 
   export default {
     name: "CRecipeSearchList",
-    components: {CRecipeList},
+    components: {CRecipeList, CQuestion},
     props: {
       isOwnRecipes: {
         type: Boolean,
@@ -102,6 +136,9 @@
           searchName: '',
         },
         loading: false,
+        deleteLoading: false,
+        deleteDialog: false,
+        deleteRecipes: [],
         searchOptions: {
           searchName: '',
         },
@@ -135,6 +172,36 @@
       }
     },
     methods: {
+      closeDeleteDialog() {
+        this.deleteDialog = false;
+      },
+      openDeleteDialog() {
+        this.deleteDialog = true;
+      },
+      deleteSelected() {
+        this.deleteLoading = true;
+        let toDelete = this.deleteRecipes.length;
+        let deleted = 0;
+        let vm = this;
+        let afterDelete = function() {
+          if(deleted === toDelete) {
+            vm.closeDeleteDialog();
+            vm.deleteLoading = false;
+            vm.fetchRecipes();
+          }
+        };
+        this.deleteRecipes.forEach(recipe => {
+          RecipeService.deleteRecipe(recipe)
+            .then(() => {
+              deleted++;
+              afterDelete();
+            }, err => {
+              vm.deleteLoading = false;
+              vm.fetchRecipes();
+            })
+        });
+        afterDelete();
+      },
       onRefreshButton() {
         this.loading = true;
         let vm = this;
@@ -167,7 +234,16 @@
     computed: {
       ...mapGetters({
         user: 'auth/getUser'
-      })
+      }),
+      deleteQuestionMessage() {
+        if (this.deleteRecipes.length === 0) {
+          return "No recipes selected!";
+        }
+        if (this.deleteRecipes.length === 1) {
+          return "The following recipe will be deleted:";
+        }
+        return "The following recipes will be deleted:";
+      }
     }
   }
 </script>
