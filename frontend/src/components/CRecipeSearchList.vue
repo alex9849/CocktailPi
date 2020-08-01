@@ -4,28 +4,63 @@
       :recipes="recipes"
       :loading="loading"
     >
-      <template slot="top-right">
-        <div class="q-gutter-x-sm" style="display: inherit">
-          <q-input
-            v-model="unappliedSearchData.searchName"
-            outlined
-            label="Search"
-            dense
-            @keypress.enter="() => {pagination.page = 1; updateRecipes();}"
-          />
-          <q-btn
-            text-color="black"
-            color="info"
-            :icon="mdiMagnify"
-            @click="() => {pagination.page = 1; updateRecipes();}"
-            rounded
-          />
-          <q-btn
-            color="positive"
-            label="Create recipe"
-            no-caps
-            :to="{name: 'recipeadd'}"
-          />
+      <template slot="top">
+        <div>
+          <div class="row" style="padding: 10px">
+            <div class="col"/>
+            <div class="col q-gutter-x-sm" style="display: contents; max-width: max-content">
+              <q-btn
+                color="info"
+                label="Refresh"
+                no-caps
+                :disable="loading"
+                :loading="loading"
+                @click="onRefreshButton"
+              />
+              <q-btn
+                color="positive"
+                label="Create recipe"
+                no-caps
+                :disable="loading"
+                :to="{name: 'recipeadd'}"
+              />
+              <q-btn
+                color="negative"
+                label="Delete selected recipes"
+                no-caps
+                :disable="loading"
+                :to="{name: 'recipeadd'}"
+              />
+            </div>
+          </div>
+          <div
+            class="row searchBarSlot rounded-borders shadow-2"
+            :style="'background-color: ' + searchBarColor"
+          >
+            <div
+              class="col"
+              style="display: flex; align-items: center">
+              <b>Display-options</b>
+            </div>
+            <div class="col"/>
+            <div class="col q-gutter-x-sm" style="display: contents; max-width: max-content">
+              <q-input
+                v-model="unappliedSearchData.searchName"
+                outlined
+                label="Search"
+                dense
+                bg-color="white"
+                @keypress.enter="() => {pagination.page = 1; updateRecipes();}"
+              />
+              <q-btn
+                text-color="black"
+                color="white"
+                label="Search"
+                :icon="mdiMagnify"
+                @click="() => {pagination.page = 1; updateRecipes();}"
+              />
+            </div>
+          </div>
         </div>
       </template>
     </c-recipe-list>
@@ -55,6 +90,10 @@
       isOwnRecipes: {
         type: Boolean,
         default: false
+      },
+      searchBarColor: {
+        type: String,
+        default: '#fafafa'
       }
     },
     data() {
@@ -87,15 +126,22 @@
     },
     watch: {
       '$route.query.page'(newValue) {
-        this.pagination.page = newValue? Number(newValue):1;
+        this.pagination.page = newValue ? Number(newValue) : 1;
         this.fetchRecipes();
       },
       '$route.query.search'(newValue) {
-        this.searchOptions.searchName = newValue?newValue:"";
+        this.searchOptions.searchName = newValue ? newValue : "";
         this.fetchRecipes();
       }
     },
     methods: {
+      onRefreshButton() {
+        this.loading = true;
+        let vm = this;
+        setTimeout(() => {
+          vm.fetchRecipes()
+        }, 500);
+      },
       updateRecipes() {
         this.searchOptions.searchName = this.unappliedSearchData.searchName;
         let query = {
@@ -108,7 +154,7 @@
       },
       fetchRecipes() {
         this.loading = true;
-        RecipeService.getRecipes(this.pagination.page, this.isOwnRecipes?this.user.id:null, this.isOwnRecipes?null:true, this.searchOptions.searchName)
+        RecipeService.getRecipes(this.pagination.page, this.isOwnRecipes ? this.user.id : null, this.isOwnRecipes ? null : true, this.searchOptions.searchName)
           .then(pageable => {
             this.recipes = pageable.content;
             this.pagination.totalPages = pageable.totalPages;
@@ -127,5 +173,8 @@
 </script>
 
 <style scoped>
-
+  .searchBarSlot {
+    margin-block: 10px;
+    padding: 10px;
+  }
 </style>
