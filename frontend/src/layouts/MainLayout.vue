@@ -116,6 +116,10 @@
                 onlyAdmins: true,
                 to: {name: 'usermanagement'}
               }, {
+                label: 'Ingredients',
+                onlyAdmins: true,
+                to: {name: 'ingredientmanagement'}
+              }, {
                 label: 'Settings',
                 onlyAdmins: true,
                 to: {name: 'adminsettings'}

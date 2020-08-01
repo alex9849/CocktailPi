@@ -54,6 +54,10 @@ const routes = [
       component: () => import('pages/RecipeEdit'),
       name: 'recipeedit'
     }, {
+      path: 'admin/ingredient',
+      component: () => import('pages/IngredientManagement'),
+      name: 'ingredientmanagement'
+    }, {
       path: 'admin/usermanagement',
       component: () => import('pages/UserManagement'),
       name: 'usermanagement'
