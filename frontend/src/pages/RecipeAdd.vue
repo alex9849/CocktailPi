@@ -53,7 +53,8 @@
     data() {
       return {
         addRecipe: {
-          recipe: new Recipe(0, '',true, {}, '', '', [], [])
+          recipe: new Recipe(0, '', true, {}, '', '', [], []),
+          image: null
         },
         error: '',
         isValid: false,
@@ -63,9 +64,9 @@
     methods: {
       createRecipe() {
         this.loading = true;
-        this.recipe.owner = this.user;
+        this.addRecipe.recipe.owner = this.user;
 
-        RecipeService.createRecipe(this.addRecipe.recipe)
+        RecipeService.createRecipe(this.addRecipe.recipe, this.addRecipe.image)
           .then((recipe) => {
             this.loading = false;
             this.$q.notify({

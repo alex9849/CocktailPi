@@ -42,7 +42,7 @@
                 style="position: absolute; z-index: 1;"
               />
               <q-img
-                :src="'/api/recipe/' + props.row.id + '/image'"
+                :src="'/api/recipe/' + props.row.id + '/image?nocache=' + new Date().getTime()"
                 placeholder-src="../assets/cocktail-solid.png"
                 :ratio="16/9"
                 class="col rounded-borders"

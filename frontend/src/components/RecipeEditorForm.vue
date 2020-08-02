@@ -17,12 +17,40 @@
         val => $v.value.recipe.name.minLength || 'Minimal length 3',
         val => $v.value.recipe.name.maxLength || 'Maximal length 20']"
       />
+      <div v-if="allowImageRemoveing" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
+        <q-toggle
+          label="Remove image if existing"
+          v-model="value.removeImage"
+          @input="$emit('input', value)"
+        />
+        <q-file
+          v-if="!value.removeImage"
+          filled
+          bottom-slots
+          v-model="value.image"
+          @input="$emit('input', value)"
+          label="Image"
+          max-file-size="20971520"
+          counter
+          accept="image/*"
+          clearable
+        >
+          <template v-slot:prepend>
+          <q-icon
+            name="cloud_upload"
+            @click.stop
+          />
+        </template>
+        </q-file>
+      </div>
       <q-file
+        v-else
         filled
         bottom-slots
         v-model="value.image"
         @input="$emit('input', value)"
         label="Image"
+        max-file-size="20971520"
         counter
         accept="image/*"
         clearable
@@ -89,6 +117,10 @@
       value: {
         type: Object,
         required: true
+      },
+      allowImageRemoveing: {
+        type: Boolean,
+        default: false
       },
       loading: {
         type: Boolean,

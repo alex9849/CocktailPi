@@ -74,19 +74,35 @@ public class RecipeEndpoint {
         return ResponseEntity.ok(new RecipeDto(recipe));
     }
 
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    ResponseEntity<?> createRecipe(@Valid @RequestBody RecipeDto recipeDto, UriComponentsBuilder uriBuilder) {
+    @RequestMapping(path = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
+                                   @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
         recipeDto.setId(null);
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
         recipe.setOwner(userService.getUser(userDetails.getId()));
+        if(file != null) {
+            BufferedImage image;
+            try {
+                image = ImageIO.read(file.getInputStream());
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Invalid image format!");
+            }
+            image = ImageUtils.resizeImage(image, 500, 281);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", out);
+            recipe.setImage(out.toByteArray());
+        }
         recipe = recipeService.createRecipe(recipe);
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto, @RequestPart(value = "image", required = false) MultipartFile file, @PathVariable("id") long id, HttpServletRequest request) throws IOException {
+    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
+                                   @RequestPart(value = "image", required = false) MultipartFile file,
+                                   @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
+                                   @PathVariable("id") long id, HttpServletRequest request) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeDto.setId(id);
         Recipe recipe = recipeService.fromDto(recipeDto);
@@ -99,7 +115,9 @@ public class RecipeEndpoint {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if(file != null) {
+        if(removeImage) {
+            recipe.setImage(null);
+        } else if(file != null) {
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());

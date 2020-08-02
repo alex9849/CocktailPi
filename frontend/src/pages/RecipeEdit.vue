@@ -13,6 +13,7 @@
       flat
     >
       <recipe-editor-form
+        allowImageRemoveing
         v-model="editRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
@@ -54,7 +55,9 @@
     data() {
       return {
         editRecipe: {
-          recipe: {}
+          recipe: {},
+          image: null,
+          removeImage: false
         },
         error: '',
         isValid: false,
@@ -65,7 +68,7 @@
     methods: {
       updateRecipe() {
         this.sending = true;
-        RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image)
+        RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image, this.editRecipe.removeImage)
           .then(response => {
             this.sending = false;
             this.$q.notify({
