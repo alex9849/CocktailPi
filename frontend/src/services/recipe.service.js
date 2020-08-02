@@ -28,8 +28,17 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  updateRecipe(recipe) {
-    return axios.put(API_PATH + recipe.id, recipe);
+  updateRecipe(recipe, image) {
+    let uploadData = new FormData();
+    const stringRecipe = JSON.stringify(recipe);
+    const blobRecipe = new Blob([stringRecipe], {
+      type: 'application/json'
+    });
+    uploadData.append("recipe", blobRecipe);
+    if(image) {
+      uploadData.append("image", image);
+    }
+    return axios.put(API_PATH + recipe.id, uploadData, {headers:{'Content-Type' :'multipart/form-data'}});
   }
 
   deleteRecipe(recipe) {

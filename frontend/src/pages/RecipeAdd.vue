@@ -11,7 +11,7 @@
       flat
     >
       <recipe-editor-form
-        v-model="recipe"
+        v-model="addRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
       >
@@ -52,7 +52,9 @@
     components: {RecipeEditorForm},
     data() {
       return {
-        recipe: new Recipe(0, '',true, {}, '', '', [], []),
+        addRecipe: {
+          recipe: new Recipe(0, '',true, {}, '', '', [], [])
+        },
         error: '',
         isValid: false,
         loading: false
@@ -63,7 +65,7 @@
         this.loading = true;
         this.recipe.owner = this.user;
 
-        RecipeService.createRecipe(this.recipe)
+        RecipeService.createRecipe(this.addRecipe.recipe)
           .then((recipe) => {
             this.loading = false;
             this.$q.notify({

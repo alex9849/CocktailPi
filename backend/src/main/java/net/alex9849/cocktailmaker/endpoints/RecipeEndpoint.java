@@ -5,19 +5,26 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
+import net.alex9849.cocktailmaker.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,8 +85,8 @@ public class RecipeEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
 
-    @RequestMapping(path = "{id}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateRecipe(@Valid @RequestBody RecipeDto recipeDto, @PathVariable("id") long id, HttpServletRequest request) {
+    @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto, @RequestPart(value = "image", required = false) MultipartFile file, @PathVariable("id") long id, HttpServletRequest request) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeDto.setId(id);
         Recipe recipe = recipeService.fromDto(recipeDto);
@@ -92,6 +99,18 @@ public class RecipeEndpoint {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         recipeService.updateRecipe(recipe);
+        if(file != null) {
+            BufferedImage image;
+            try {
+                image = ImageIO.read(file.getInputStream());
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Invalid image format!");
+            }
+            image = ImageUtils.resizeImage(image, 500, 281);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", out);
+            return ResponseEntity.ok(out.toByteArray());
+        }
         return ResponseEntity.ok().build();
     }
 

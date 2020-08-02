@@ -13,7 +13,7 @@
       flat
     >
       <recipe-editor-form
-        v-model="recipe"
+        v-model="editRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
         :disabled="loading"
@@ -53,7 +53,9 @@
     components: {RecipeEditorForm},
     data() {
       return {
-        recipe: {},
+        editRecipe: {
+          recipe: {}
+        },
         error: '',
         isValid: false,
         sending: false,
@@ -63,7 +65,7 @@
     methods: {
       updateRecipe() {
         this.sending = true;
-        RecipeService.updateRecipe(this.recipe)
+        RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image)
           .then(response => {
             this.sending = false;
             this.$q.notify({
@@ -85,7 +87,7 @@
       this.loading = true;
       RecipeService.getRecipe(this.$route.params.id)
         .then(recipe => {
-          this.recipe = recipe;
+          this.editRecipe.recipe = recipe;
           this.loading = false;
         });
     }
