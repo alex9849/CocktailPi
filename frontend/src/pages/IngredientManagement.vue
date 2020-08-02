@@ -35,7 +35,7 @@
       :selected.sync="selected"
       selection="multiple"
       hide-bottom
-      :pagination="{rowsPerPage: 0}"
+      :pagination="{rowsPerPage: 0, sortBy: 'name'}"
       no-data-label="No ingredients found"
       :table-style="{margin: '15px'}"
       style="background-color: #f3f3fa"
