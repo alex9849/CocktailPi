@@ -170,6 +170,11 @@
               :disable="editOptions.editIngredientSaving"
               v-model="editOptions.editIngredient.name"
               filled
+              @input="$v.editOptions.editIngredient.name.$touch()"
+              :rules="[
+                val => $v.editOptions.editIngredient.name.required || 'Required',
+                val => $v.editOptions.editIngredient.name.maxLength || 'Max 30'
+              ]"
             />
             <q-input
               label="Alcohol content"
@@ -178,6 +183,12 @@
               v-model="editOptions.editIngredient.alcoholContent"
               filled
               type="number"
+              @input="$v.editOptions.editIngredient.alcoholContent.$touch()"
+              :rules="[
+                val => $v.editOptions.editIngredient.alcoholContent.required || 'Required',
+                val => $v.editOptions.editIngredient.alcoholContent.minValue || 'Must be positive',
+                val => $v.editOptions.editIngredient.alcoholContent.maxValue || 'Max 100'
+              ]"
             />
             <div class="q-pa-md q-gutter-sm">
               <q-btn
@@ -192,6 +203,7 @@
                 label="Save"
                 type="submit"
                 style="width: 150px"
+                :disable="!editOptions.valid"
                 :loading="editOptions.editIngredientSaving"
               />
             </div>
@@ -206,6 +218,7 @@
   import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
   import IngredientService from "../services/ingredient.service";
   import CQuestion from "../components/CQuestion";
+  import {maxLength, maxValue, minValue, required} from "vuelidate/lib/validators";
 
   export default {
     name: "IngredientManagement",
@@ -230,6 +243,7 @@
           editErrorMessage: "",
           editIngredientSaving: false,
           editDialog: false,
+          valid: false,
           editIngredient: {
             id: -1,
             name: "",
@@ -349,6 +363,29 @@
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
       this.fetchAll();
+    },
+    validations() {
+      let validations = {
+        editOptions: {
+          editIngredient: {
+            name: {
+              required,
+              maxLength: maxLength(30)
+            },
+            alcoholContent: {
+              required,
+              minValue: minValue(0),
+              maxValue: maxValue(100)
+            }
+          }
+        }
+      };
+      return validations;
+    },
+    watch: {
+      '$v.editOptions.editIngredient.$invalid': function _watch$vEditOptionsEditIngredient$invalid(value) {
+        this.editOptions.valid = !value;
+      }
     },
     computed: {
       deleteQuestionMessage() {
