@@ -81,7 +81,7 @@
             <q-btn
               :icon="mdiDelete"
               color="red"
-              @click="() => {deleteIngredients.push(props.row); openDeleteDialog(false);}"
+              @click="() => {deleteOptions.deleteIngredients.push(props.row); openDeleteDialog(false);}"
               dense
               rounded
             />
@@ -111,24 +111,26 @@
       :question="deleteQuestionMessage"
       ok-color="red"
       ok-button-text="Delete"
-      :loading="deleteLoading"
-      v-model="deleteDialog"
+      :loading="deleteOptions.deleteLoading"
+      v-model="deleteOptions.deleteDialog"
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >
       <template v-slot:error-area>
         <div>
-          <q-banner v-if="deleteIngredients.length !== 0" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            This also removes {{ (deleteIngredients.length > 1)? "these ingredients":"this ingredient" }} from all associated recipes!
+          <q-banner v-if="deleteOptions.deleteIngredients.length !== 0" rounded dense class="text-white bg-red-5"
+                    style="margin: 10px">
+            This also removes {{ (deleteOptions.deleteIngredients.length > 1)? "these ingredients":"this ingredient" }} from all
+            associated recipes!
           </q-banner>
-          <q-banner v-if="deleteErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            {{ deleteErrorMessage }}
+          <q-banner v-if="deleteOptions.deleteErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
+            {{ deleteOptions.deleteErrorMessage }}
           </q-banner>
         </div>
       </template>
       <template v-slot:buttons>
         <q-btn
-          v-if="deleteIngredients.length === 0"
+          v-if="deleteOptions.deleteIngredients.length === 0"
           color="grey"
           style="width: 150px"
           @click="closeDeleteDialog"
@@ -140,7 +142,7 @@
         <ul style="padding: 0">
           <li
             :key="index"
-            v-for="(ingredient, index) in deleteIngredients"
+            v-for="(ingredient, index) in deleteOptions.deleteIngredients"
           >
             {{ingredient.name}}
           </li>
@@ -148,15 +150,15 @@
       </template>
     </c-question>
     <q-dialog
-      :value="editDialog"
-      :persistent="editIngredientSaving"
+      :value="editOptions.editDialog"
+      :persistent="editOptions.editIngredientSaving"
       @hide="closeEditDialog"
     >
       <q-card style="width: 500px">
         <q-card-section class="text-center">
           <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
-          <q-banner v-if="editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            {{ editErrorMessage }}
+          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
+            {{ editOptions.editErrorMessage }}
           </q-banner>
           <q-form
             class="innerpadding"
@@ -165,15 +167,15 @@
             <q-input
               label="Name"
               outlined
-              :disable="editIngredientSaving"
-              v-model="editIngredient.name"
+              :disable="editOptions.editIngredientSaving"
+              v-model="editOptions.editIngredient.name"
               filled
             />
             <q-input
               label="Alcohol content"
               outlined
-              :disable="editIngredientSaving"
-              v-model="editIngredient.alcoholContent"
+              :disable="editOptions.editIngredientSaving"
+              v-model="editOptions.editIngredient.alcoholContent"
               filled
               type="number"
             />
@@ -182,7 +184,7 @@
                 color="grey"
                 label="Abort"
                 style="width: 150px"
-                :disable="editIngredientSaving"
+                :disable="editOptions.editIngredientSaving"
                 @click="closeEditDialog"
               />
               <q-btn
@@ -190,7 +192,7 @@
                 label="Save"
                 type="submit"
                 style="width: 150px"
-                :loading="editIngredientSaving"
+                :loading="editOptions.editIngredientSaving"
               />
             </div>
           </q-form>
@@ -213,28 +215,32 @@
         columns: [
           {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
           {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
-          { name: 'actions', label: 'Actions', field: '', align:'center'}
+          {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
         selected: [],
-        deleteIngredients: [],
         loading: false,
-        editErrorMessage: "",
-        editIngredientSaving: false,
-        editDialog: false,
-        editIngredient: {
-          id: -1,
-          name: "",
-          alcoholContent: 0
+        deleteOptions: {
+          deleteIngredients: [],
+          deleteErrorMessage: "",
+          deleteLoading: false,
+          deleteDialog: false
         },
-        newIngredient: {
-          id: -1,
-          name: "",
-          alcoholContent: 0
-        },
-        deleteErrorMessage: "",
-        deleteLoading: false,
-        deleteDialog: false
+        editOptions: {
+          editErrorMessage: "",
+          editIngredientSaving: false,
+          editDialog: false,
+          editIngredient: {
+            id: -1,
+            name: "",
+            alcoholContent: 0
+          },
+          newIngredient: {
+            id: -1,
+            name: "",
+            alcoholContent: 0
+          }
+        }
       }
     },
     methods: {
@@ -244,73 +250,73 @@
         setTimeout(vm.fetchAll, 500);
       },
       showEditDialog(ingredient) {
-        if(ingredient) {
-          this.editIngredient = Object.assign({}, ingredient);
+        if (ingredient) {
+          this.editOptions.editIngredient = Object.assign({}, ingredient);
         }
-        this.editDialog = true;
+        this.editOptions.editDialog = true;
       },
       closeEditDialog() {
-        this.editIngredient = Object.assign({}, this.newIngredient);
-        this.editDialog = false;
-        this.editErrorMessage = "";
+        this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient);
+        this.editOptions.editDialog = false;
+        this.editOptions.editErrorMessage = "";
       },
       onClickSaveIngredient() {
-        this.editIngredientSaving = true;
+        this.editOptions.editIngredientSaving = true;
         let vm = this;
         let onSuccess = function () {
-          vm.editIngredientSaving = false;
-          vm.editErrorMessage = "";
+          vm.editOptions.editIngredientSaving = false;
+          vm.editOptions.editErrorMessage = "";
           vm.$q.notify({
             type: 'positive',
-            message: "Ingredient " + (vm.isEditIngredientNew? "created": "updated") +  " successfully"
+            message: "Ingredient " + (vm.isEditIngredientNew ? "created" : "updated") + " successfully"
           });
           vm.closeEditDialog();
           vm.fetchAll();
         };
 
         let onError = function (error) {
-          vm.editIngredientSaving = false;
-          vm.editErrorMessage = error.response.data.message;
+          vm.editOptions.editIngredientSaving = false;
+          vm.editOptions.editErrorMessage = error.response.data.message;
           vm.$q.notify({
             type: 'negative',
             message: error.response.data.message
           });
         };
 
-        if(this.isEditIngredientNew) {
-          IngredientService.createIngredient(this.editIngredient)
+        if (this.isEditIngredientNew) {
+          IngredientService.createIngredient(this.editOptions.editIngredient)
             .then(onSuccess, error => onError(error));
         } else {
-          IngredientService.updateIngredient(this.editIngredient)
+          IngredientService.updateIngredient(this.editOptions.editIngredient)
             .then(onSuccess, error => onError(error));
         }
       },
       deleteSelected() {
-        this.deleteLoading = true;
-        let toDelete = this.deleteIngredients.length;
+        this.deleteOptions.deleteLoading = true;
+        let toDelete = this.deleteOptions.deleteIngredients.length;
         let deleted = 0;
         let vm = this;
-        let afterDelete = function() {
-          if(deleted === toDelete) {
+        let afterDelete = function () {
+          if (deleted === toDelete) {
             vm.closeDeleteDialog();
-            vm.deleteLoading = false;
-            vm.deleteErrorMessage = "";
+            vm.deleteOptions.deleteLoading = false;
+            vm.deleteOptions.deleteErrorMessage = "";
             vm.fetchAll();
             vm.$q.notify({
               type: 'positive',
-              message: (toDelete > 1? "Ingredients" : "Ingredient") + " deleted successfully"
+              message: (toDelete > 1 ? "Ingredients" : "Ingredient") + " deleted successfully"
             });
           }
         };
-        this.deleteIngredients.forEach(ingredient => {
+        this.deleteOptions.deleteIngredients.forEach(ingredient => {
           IngredientService.deleteIngredient(ingredient)
             .then(() => {
               deleted++;
               afterDelete();
             }, err => {
-              vm.deleteLoading = false;
+              vm.deleteOptions.deleteLoading = false;
               vm.fetchAll();
-              vm.deleteErrorMessage = err.response.data.message;
+              vm.deleteOptions.deleteErrorMessage = err.response.data.message;
               vm.$q.notify({
                 type: 'negative',
                 message: err.response.data.message
@@ -320,15 +326,15 @@
         afterDelete();
       },
       openDeleteDialog(forSelected) {
-        if(forSelected) {
-          this.deleteIngredients.push(...this.selected);
+        if (forSelected) {
+          this.deleteOptions.deleteIngredients.push(...this.selected);
         }
-        this.deleteDialog = true;
+        this.deleteOptions.deleteDialog = true;
       },
       closeDeleteDialog() {
-        this.deleteIngredients.splice(0, this.deleteIngredients.length);
-        this.deleteDialog = false;
-        this.deleteErrorMessage = "";
+        this.deleteOptions.deleteIngredients.splice(0, this.deleteOptions.deleteIngredients.length);
+        this.deleteOptions.deleteDialog = false;
+        this.deleteOptions.deleteErrorMessage = "";
       },
       fetchAll() {
         this.loading = true;
@@ -346,19 +352,19 @@
     },
     computed: {
       deleteQuestionMessage() {
-        if(this.deleteIngredients.length === 0) {
+        if (this.deleteOptions.deleteIngredients.length === 0) {
           return "No ingredients selected!";
         }
-        if(this.deleteIngredients.length === 1) {
+        if (this.deleteOptions.deleteIngredients.length === 1) {
           return "The following ingredient will be deleted:";
         }
         return "The following ingredients will be deleted:";
       },
       isEditIngredientNew() {
-        return this.editIngredient.id === -1;
+        return this.editOptions.editIngredient.id === -1;
       },
       editDialogHeadline() {
-        if(this.isEditIngredientNew) {
+        if (this.isEditIngredientNew) {
           return "Create ingredient"
         }
         return "Edit ingredient"
@@ -371,6 +377,7 @@
   .row1 {
     background-color: #fafafa;
   }
+
   .row2 {
     background-color: #f3f3fa;
   }
