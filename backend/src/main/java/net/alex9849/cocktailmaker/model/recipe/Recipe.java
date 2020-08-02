@@ -33,6 +33,9 @@ public class Recipe {
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
 
+    @Lob() @Basic(fetch = FetchType.LAZY)
+    private byte[] image;
+
     @NotNull
     @Size(min = 0, max = 3000)
     private String description;
@@ -58,6 +61,14 @@ public class Recipe {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String getName() {

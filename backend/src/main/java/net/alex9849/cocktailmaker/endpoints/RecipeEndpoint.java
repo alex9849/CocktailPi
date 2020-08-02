@@ -85,7 +85,7 @@ public class RecipeEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
 
-    @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
+    @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto, @RequestPart(value = "image", required = false) MultipartFile file, @PathVariable("id") long id, HttpServletRequest request) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeDto.setId(id);
@@ -98,7 +98,7 @@ public class RecipeEndpoint {
         if(!recipe.getOwner().getId().equals(userDetails.getId()) && !request.isUserInRole("ADMIN")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        recipeService.updateRecipe(recipe);
+
         if(file != null) {
             BufferedImage image;
             try {
@@ -109,9 +109,22 @@ public class RecipeEndpoint {
             image = ImageUtils.resizeImage(image, 500, 281);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
-            return ResponseEntity.ok(out.toByteArray());
+            recipe.setImage(out.toByteArray());
+        } else {
+            recipe.setImage(oldRecipe.getImage());
         }
+
+        recipeService.updateRecipe(recipe);
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
+        Recipe recipe = recipeService.getById(id);
+        if(recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(recipe.getImage());
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)

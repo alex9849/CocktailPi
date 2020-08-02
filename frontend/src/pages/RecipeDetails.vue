@@ -45,7 +45,8 @@
     <div class="row innerpadding">
       <div class="col" style="min-width: max-content">
         <q-img
-          src="../assets/cocktail-solid.png"
+          :src="(!!recipe.id)? ('/api/recipe/' + recipe.id + '/image'):null"
+          placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
           class="rounded-borders shadow-1"
           style="min-width: 250px"

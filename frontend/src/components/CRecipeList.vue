@@ -42,7 +42,8 @@
                 style="position: absolute; z-index: 1;"
               />
               <q-img
-                src="../assets/cocktail-solid.png"
+                :src="'/api/recipe/' + props.row.id + '/image'"
+                placeholder-src="../assets/cocktail-solid.png"
                 :ratio="16/9"
                 class="col rounded-borders"
                 style="max-width: 225px; max-height: 180px"
