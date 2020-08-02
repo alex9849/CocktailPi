@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -21,8 +22,7 @@ public class IngredientDto {
     public IngredientDto() {}
 
     public IngredientDto(Ingredient ingredient) {
-        this.id = ingredient.getId();
-        this.name = ingredient.getName();
+        BeanUtils.copyProperties(ingredient, this);
     }
 
     public Long getId() {

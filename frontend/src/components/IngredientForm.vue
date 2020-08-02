@@ -18,7 +18,21 @@
       @filter-abort="abortFilterIngredients"
       @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
       :rules="[val => $v.value.ingredient.required || 'Required']"
-    />
+    >
+      <template v-slot:option="scope">
+        <q-item
+          v-bind="scope.itemProps"
+          v-on="scope.itemEvents"
+        >
+          <q-item-section>
+            {{ scope.opt.name }}
+            <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
+              {{ scope.opt.alcoholContent }}% alcohol content
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-select>
     <q-input
       label="Amount (in ml)"
       type="number"

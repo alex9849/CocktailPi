@@ -22,6 +22,9 @@
       </q-item-section>
       <q-item-section v-if="productionStep.length === 1 && !ingredientDrag">
         {{ productionStep[0].amount }}ml {{ productionStep[0].ingredient.name }}
+        <q-item-label v-if="productionStep[0].ingredient.alcoholContent !== 0" caption>
+          {{ productionStep[0].ingredient.alcoholContent }}% alcohol content
+        </q-item-label>
       </q-item-section>
       <q-item-section v-if="productionStep.length === 1 && !ingredientDrag && editable" side>
         <q-btn
@@ -58,6 +61,9 @@
           <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
             <q-item-section>
               {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
+              <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
+                {{ ingredient.ingredient.alcoholContent }}% alcohol content
+              </q-item-label>
             </q-item-section>
             <q-item-section side v-if="editable">
               <q-btn
