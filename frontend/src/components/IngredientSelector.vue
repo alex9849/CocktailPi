@@ -3,15 +3,16 @@
     outlined
     v-model="selectedIngredient"
     use-input
-    clearable
+    :clearable="clearable"
     hide-dropdown-icon
-    label="Ingredient"
+    :label="label"
     :options="ingredientOptions"
     option-label="name"
     option-value="id"
     input-debounce="0"
     @filter="filterIngredients"
     @filter-abort="abortFilterIngredients"
+    :rules="rules"
   >
     <template v-slot:option="scope">
       <q-item
@@ -38,6 +39,18 @@
       value: {
         type: Object,
         required: true
+      },
+      label: {
+        type: String,
+        default: 'Ingredient'
+      },
+      clearable: {
+        type: Boolean,
+        default: false
+      },
+      rules: {
+        type: Array,
+        default: []
       }
     },
     data() {
