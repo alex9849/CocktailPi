@@ -52,6 +52,36 @@
             />
           </q-td>
           <q-td
+            key="nr"
+            :props="props"
+          >
+            {{ props.row.nr }}
+          </q-td>
+          <q-td
+            key="timePerClInMs"
+            :props="props"
+          >
+            {{ props.row.timePerClInMs }}
+          </q-td>
+          <q-td
+            key="tubeFillingQuantityInMl"
+            :props="props"
+          >
+            {{ props.row.tubeFillingQuantityInMl }}
+          </q-td>
+          <q-td
+            key="gpioPin"
+            :props="props"
+          >
+            {{ props.row.gpioPin }}
+          </q-td>
+          <q-td
+            key="currentIngredient"
+            :props="props"
+          >
+            {{ props.row.currentIngredient.name }}
+          </q-td>
+          <q-td
             key="actions"
             class="q-pa-md q-gutter-x-sm"
             :props="props"
@@ -97,27 +127,77 @@
 </template>
 
 <script>
-    export default {
-        name: "Settings",
-      data() {
-        return {
-          deleteDialog: false,
-          deleteUser: [],
-          deleteLoading: false,
-          isLoading: false,
-          pumps: [],
-          selected: [],
-          columns: [
-            {name: 'Nr', label: 'Nr', field: 'nr', align: 'left'},
-            {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
-            {name: 'tubeFillingQuantity', label: 'Tube filling quantity', field: 'tubeFillingQuantity', align: 'center'},
-            {name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center'},
-            {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
-            { name: 'actions', label: 'Actions', field: '', align:'center'}
-          ]
-        }
+
+  import {mdiDelete, mdiPencilOutline} from "@quasar/extras/mdi-v5";
+
+  export default {
+    name: "Settings",
+    data() {
+      return {
+        deleteDialog: false,
+        deleteUser: [],
+        deleteLoading: false,
+        isLoading: false,
+        editOtions: {
+          editErrorMessage: "",
+          editPumpSaving: false,
+          editDialog: false,
+          valid: false,
+          editPump: {
+            nr: -1,
+            timePerClInMs: 0,
+            tubeFillingQuantityInMl: 0,
+            gpioPin: 0,
+            currentIngredient: {
+              id: -1,
+              name: '',
+              alcoholContent: 0
+            }
+          },
+          newPump: {
+            nr: -1,
+            timePerClInMs: 0,
+            tubeFillingQuantityInMl: 0,
+            gpioPin: 0,
+            currentIngredient: {
+              id: -1,
+              name: '',
+              alcoholContent: 0
+            }
+          }
+        },
+        pumps: [{
+          nr: 1,
+          timePerClInMs: 1000,
+          tubeFillingQuantityInMl: 50,
+          gpioPin: 12,
+          currentIngredient: {
+            id: 1,
+            name: 'Jack-Daniels',
+            alcoholContent: 40
+          }
+        }],
+        selected: [],
+        columns: [
+          {name: 'nr', label: 'Nr', field: 'nr', align: 'left'},
+          {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
+          {
+            name: 'tubeFillingQuantityInMl',
+            label: 'Tube filling quantity',
+            field: 'tubeFillingQuantityInMl',
+            align: 'center'
+          },
+          {name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center'},
+          {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
+          {name: 'actions', label: 'Actions', field: '', align: 'center'}
+        ]
       }
+    },
+    created() {
+      this.mdiDelete = mdiDelete;
+      this.mdiPencilOutline = mdiPencilOutline;
     }
+  }
 </script>
 
 <style scoped>
