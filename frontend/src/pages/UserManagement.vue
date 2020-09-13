@@ -133,7 +133,7 @@
         <td
           style="color: #b5b5b5"
         >
-          {{ data.length }} users in total
+          {{ data.length }} user(s) in total
         </td>
         <td rowspan="5"/>
       </template>

@@ -94,7 +94,7 @@
         <td
           style="color: #b5b5b5"
         >
-          {{ ingredients.length }} ingredients in total
+          {{ ingredients.length }} ingredient(s) in total
         </td>
         <td rowspan="5"/>
       </template>
