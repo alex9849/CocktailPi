@@ -64,10 +64,10 @@
             {{ props.row.timePerClInMs }}
           </q-td>
           <q-td
-            key="tubeFillingQuantityInMl"
+            key="tubeCapacityInMl"
             :props="props"
           >
-            {{ props.row.tubeFillingQuantityInMl }}
+            {{ props.row.tubeCapacityInMl }}
           </q-td>
           <q-td
             key="gpioPin"
@@ -146,7 +146,7 @@
           editPump: {
             nr: -1,
             timePerClInMs: 0,
-            tubeFillingQuantityInMl: 0,
+            tubeCapacityInMl: 0,
             gpioPin: 0,
             currentIngredient: {
               id: -1,
@@ -157,7 +157,7 @@
           newPump: {
             nr: -1,
             timePerClInMs: 0,
-            tubeFillingQuantityInMl: 0,
+            tubeCapacityInMl: 0,
             gpioPin: 0,
             currentIngredient: {
               id: -1,
@@ -169,7 +169,7 @@
         pumps: [{
           nr: 1,
           timePerClInMs: 1000,
-          tubeFillingQuantityInMl: 50,
+          tubeCapacityInMl: 50,
           gpioPin: 12,
           currentIngredient: {
             id: 1,
@@ -182,9 +182,9 @@
           {name: 'nr', label: 'Nr', field: 'nr', align: 'left'},
           {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
           {
-            name: 'tubeFillingQuantityInMl',
-            label: 'Tube filling quantity',
-            field: 'tubeFillingQuantityInMl',
+            name: 'tubeCapacityInMl',
+            label: 'Tube capacity in ml',
+            field: 'tubeCapacityInMl',
             align: 'center'
           },
           {name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center'},

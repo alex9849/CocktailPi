@@ -3,7 +3,7 @@
     class="text-center innerpadding"
     @submit.prevent="$emit('submit')"
   >
-    <ingredient-selector
+    <c-ingredient-selector
       v-model="value.ingredient"
       clearable
       @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
@@ -27,11 +27,11 @@
 <script>
   import IngridientService from '../services/ingredient.service'
   import {minValue, required} from "vuelidate/lib/validators";
-  import IngredientSelector from "./IngredientSelector";
+  import CIngredientSelector from "./CIngredientSelector";
 
   export default {
     name: "IngredientForm",
-    components: {IngredientSelector},
+    components: {CIngredientSelector},
     props: {
       value: {
         type: Object,

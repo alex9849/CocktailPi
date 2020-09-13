@@ -1,26 +1,35 @@
 <template>
   <q-form>
     <q-input
+      label="Nr"
+      v-model="value.nr"
+    />
+    <q-input
+      label="Pump time per cl in ms"
       v-model="value.timePerClInMs"
     />
     <q-input
-      v-model="value.tubeFillingQuantityInMl"
+      label="tube capacity in ml"
+      v-model="value.tubeCapacityInMl"
     />
     <q-input
+      label="GPIO-Pin"
       v-model="value.gpioPin"
     />
-    <ingredient-selector
+    <c-ingredient-selector
+      label="Current ingredient"
       v-model="value.currentIngredient"
     />
   </q-form>
 </template>
 
 <script>
-  import IngredientSelector from "./IngredientSelector";
+
+  import CIngredientSelector from "./CIngredientSelector";
 
   export default {
     name: "PumpEditorForm",
-    components: {IngredientSelector},
+    components: {CIngredientSelector},
     props: {
       value: {
         type: Object,

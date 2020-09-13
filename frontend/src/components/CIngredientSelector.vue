@@ -34,7 +34,7 @@
   import IngridientService from "../services/ingredient.service";
 
   export default {
-    name: "IngredientSelector",
+    name: "CIngredientSelector",
     props: {
       value: {
         type: Object,
@@ -56,12 +56,15 @@
     data() {
       return {
         ingredientOptions: [],
-        selectedIngredient: null
+        selectedIngredient: this.value
       }
     },
     watch: {
       selectedIngredient() {
         this.$emit('input', this.selectedIngredient)
+      },
+      value() {
+        this.selectedIngredient = value;
       }
     },
     methods: {
