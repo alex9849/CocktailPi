@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
+import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,6 +21,9 @@ public class IngredientService {
 
     @Autowired
     private IngredientRepository ingredientRepository;
+
+    @Autowired
+    private PumpService pumpService;
 
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
@@ -62,6 +67,11 @@ public class IngredientService {
     }
 
     public void deleteIngredient(Ingredient ingredient) {
+        List<Pump> pumpsWithIngredient = pumpService.getPumpsWithIngredient(Arrays.asList(ingredient.getId()));
+        pumpsWithIngredient.forEach(x -> {
+            x.setCurrentIngredient(null);
+            pumpService.updatePump(x);
+        });
         ingredientRepository.deleteById(ingredient.getId());
     }
 }

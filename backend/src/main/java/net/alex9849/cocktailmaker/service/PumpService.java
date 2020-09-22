@@ -42,6 +42,10 @@ public class PumpService {
         return pumpRepository.save(pump);
     }
 
+    public List<Pump> getPumpsWithIngredient(List<Long> ingredientIds) {
+        return pumpRepository.findAllByCurrentIngredient_IdIn(ingredientIds);
+    }
+
     public Pump fromDto(PumpDto pumpDto) {
         if(pumpDto == null) {
             return null;
