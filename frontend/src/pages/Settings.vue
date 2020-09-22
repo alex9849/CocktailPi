@@ -35,7 +35,7 @@
       :selected.sync="selected"
       selection="multiple"
       hide-bottom
-      :pagination="{rowsPerPage: 0, sortBy: 'name'}"
+      :pagination="{rowsPerPage: 0, sortBy: 'id'}"
       :table-style="{margin: '15px'}"
       style="background-color: #f3f3fa"
     >
@@ -228,7 +228,7 @@
         }],
         selected: [],
         columns: [
-          {name: 'id', label: 'Nr', field: 'id', align: 'left'},
+          {name: 'id', label: 'Nr', field: 'id', align: 'left', sortable: true},
           {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
           {
             name: 'tubeCapacityInMl',
