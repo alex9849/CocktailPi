@@ -37,8 +37,7 @@
     name: "CIngredientSelector",
     props: {
       value: {
-        type: Object,
-        required: true
+        type: Object
       },
       label: {
         type: String,
@@ -50,7 +49,7 @@
       },
       rules: {
         type: Array,
-        default: []
+        default: () => []
       }
     },
     data() {
@@ -64,7 +63,7 @@
         this.$emit('input', this.selectedIngredient)
       },
       value() {
-        this.selectedIngredient = value;
+        this.selectedIngredient = this.value;
       }
     },
     methods: {

@@ -15,6 +15,7 @@
       <q-btn
         color="positive"
         label="Add pump"
+        @click="showEditDialog()"
         no-caps
         :disable="isLoading"
       />
@@ -52,22 +53,22 @@
             />
           </q-td>
           <q-td
-            key="nr"
+            key="id"
             :props="props"
           >
-            {{ props.row.nr }}
+            {{ props.row.id }}
           </q-td>
           <q-td
             key="timePerClInMs"
             :props="props"
           >
-            {{ props.row.timePerClInMs }}
+            {{ props.row.timePerClInMs }} ms
           </q-td>
           <q-td
             key="tubeCapacityInMl"
             :props="props"
           >
-            {{ props.row.tubeCapacityInMl }}
+            {{ props.row.tubeCapacityInMl }} ml
           </q-td>
           <q-td
             key="gpioPin"
@@ -79,7 +80,7 @@
             key="currentIngredient"
             :props="props"
           >
-            {{ props.row.currentIngredient.name }}
+            {{ props.row.currentIngredient? props.row.currentIngredient.name : "Leer" }}
           </q-td>
           <q-td
             key="actions"
@@ -87,10 +88,16 @@
             :props="props"
           >
             <q-btn
-              :icon="mdiPencilOutline"
-              text-color="white"
-              :style="{backgroundColor: '#31ccec'}"
+              :icon="mdiPlay"
+              color="green"
               @click=""
+              dense
+              rounded
+            />
+            <q-btn
+              :icon="mdiPencilOutline"
+              color="info"
+              @click="showEditDialog(props.row)"
               dense
               rounded
             />
@@ -123,51 +130,93 @@
         />
       </template>
     </q-table>
+    <q-dialog
+      v-model="editOptions.editDialog"
+      :persistent="editOptions.editIngredientSaving"
+      @hide="closeEditDialog"
+    >
+      <q-card style="width: 500px">
+        <q-card-section class="text-center">
+          <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
+          <q-splitter
+            horizontal
+            :value="10"
+          />
+          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
+            {{ editOptions.editErrorMessage }}
+          </q-banner>
+          <pump-editor-form
+            class="innerpadding"
+            v-model="editOptions.editPump"
+            :persistent="editOptions.editPumpSaving"
+            @hide="closeEditDialog"
+            @valid="editOptions.valid = true"
+            @invalid="editOptions.valid = false"
+          >
+            <template v-slot:below>
+              <div class="q-pa-md q-gutter-sm">
+                <q-btn
+                  style="width: 100px"
+                  color="negative"
+                  label="Abort"
+                  no-caps
+                  @click="closeEditDialog"
+                />
+                <q-btn
+                  type="submit"
+                  style="width: 100px"
+                  color="positive"
+                  label="Save"
+                  no-caps
+                  :disable="editOptions.editPumpSaving || !editOptions.valid"
+                  :loading="editOptions.editPumpSaving"
+                  @click=""
+                />
+              </div>
+            </template>
+          </pump-editor-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 
-  import {mdiDelete, mdiPencilOutline} from "@quasar/extras/mdi-v5";
+  import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
+  import PumpEditorForm from "../components/PumpEditorForm";
 
   export default {
     name: "Settings",
+    components: {PumpEditorForm},
     data() {
       return {
         deleteDialog: false,
         deleteUser: [],
         deleteLoading: false,
         isLoading: false,
-        editOtions: {
+        editOptions: {
           editErrorMessage: "",
           editPumpSaving: false,
           editDialog: false,
           valid: false,
           editPump: {
-            nr: -1,
-            timePerClInMs: 0,
-            tubeCapacityInMl: 0,
-            gpioPin: 0,
-            currentIngredient: {
-              id: -1,
-              name: '',
-              alcoholContent: 0
-            }
+            id: -1,
+            timePerClInMs: '',
+            tubeCapacityInMl: '',
+            gpioPin: '',
+            currentIngredient: null
           },
           newPump: {
-            nr: -1,
-            timePerClInMs: 0,
-            tubeCapacityInMl: 0,
-            gpioPin: 0,
-            currentIngredient: {
-              id: -1,
-              name: '',
-              alcoholContent: 0
-            }
+            id: -1,
+            timePerClInMs: '',
+            tubeCapacityInMl: '',
+            gpioPin: '',
+            currentIngredient: null
           }
         },
         pumps: [{
-          nr: 1,
+          id: 1,
           timePerClInMs: 1000,
           tubeCapacityInMl: 50,
           gpioPin: 12,
@@ -179,11 +228,11 @@
         }],
         selected: [],
         columns: [
-          {name: 'nr', label: 'Nr', field: 'nr', align: 'left'},
+          {name: 'id', label: 'Nr', field: 'id', align: 'left'},
           {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
           {
             name: 'tubeCapacityInMl',
-            label: 'Tube capacity in ml',
+            label: 'Tube capacity',
             field: 'tubeCapacityInMl',
             align: 'center'
           },
@@ -196,6 +245,31 @@
     created() {
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
+      this.mdiPlay = mdiPlay;
+    },
+    methods: {
+      closeEditDialog() {
+        this.editOptions.editPump = Object.assign({}, this.editOptions.newPump);
+        this.editOptions.editDialog = false;
+        this.editOptions.editErrorMessage = "";
+      },
+      showEditDialog(pump) {
+        if (pump) {
+          this.editOptions.editPump = Object.assign({}, pump);
+        }
+        this.editOptions.editDialog = true;
+      }
+    },
+    computed: {
+      isEditPumpNew() {
+        return this.editOptions.editPump.id === -1;
+      },
+      editDialogHeadline() {
+        if (this.isEditPumpNew) {
+          return "Create pump"
+        }
+        return "Edit pump"
+      }
     }
   }
 </script>
