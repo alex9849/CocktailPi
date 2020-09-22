@@ -19,7 +19,7 @@
               val => $v.value.timePerClInMs.minValue || 'Min 1']"
     />
     <q-input
-      label="tube capacity"
+      label="Tube capacity"
       v-model="value.tubeCapacityInMl"
       type="number"
       suffix="ml"
