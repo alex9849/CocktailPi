@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/ingredient")
@@ -26,7 +27,8 @@ public class IngredientEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete) {
-        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete));
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete)
+                .stream().map(IngredientDto::new).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
