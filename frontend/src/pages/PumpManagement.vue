@@ -24,7 +24,7 @@
         label="Refresh"
         :disable="isLoading"
         :loading="isLoading"
-        @click=""
+        @click="onRefreshButton"
         no-caps
       />
     </div>
@@ -185,6 +185,7 @@
 
   import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
   import PumpEditorForm from "../components/PumpEditorForm";
+  import PumpService from "../services/pump.service"
 
   export default {
     name: "PumpManagement",
@@ -215,17 +216,7 @@
             currentIngredient: null
           }
         },
-        pumps: [{
-          id: 1,
-          timePerClInMs: 1000,
-          tubeCapacityInMl: 50,
-          gpioPin: 12,
-          currentIngredient: {
-            id: 1,
-            name: 'Jack-Daniels',
-            alcoholContent: 40
-          }
-        }],
+        pumps: [],
         selected: [],
         columns: [
           {name: 'id', label: 'Nr', field: 'id', align: 'left', sortable: true},
@@ -246,8 +237,24 @@
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
       this.mdiPlay = mdiPlay;
+      this.initialize();
     },
     methods: {
+      onRefreshButton() {
+        this.isLoading = true;
+        let vm = this;
+        setTimeout(() => {
+          vm.initialize()
+        }, 500);
+      },
+      initialize() {
+        this.isLoading = true;
+        PumpService.getAllPumps()
+          .then(pumps => {
+            this.pumps = pumps;
+            this.isLoading = false;
+          })
+      },
       closeEditDialog() {
         this.editOptions.editPump = Object.assign({}, this.editOptions.newPump);
         this.editOptions.editDialog = false;

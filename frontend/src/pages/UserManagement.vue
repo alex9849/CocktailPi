@@ -210,7 +210,7 @@
       this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
-      this.fetchUsers();
+      this.initialize();
     },
     computed: {
       deleteQuestionMessage() {
@@ -265,7 +265,7 @@
         });
         afterDelete();
       },
-      fetchUsers() {
+      initialize() {
         this.isLoading = true;
         userService.getAllUsers()
           .then(users => {
