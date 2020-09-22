@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pumps", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "gpio_pin")})
+        @UniqueConstraint(columnNames = "gpioPin")})
 public class Pump {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     @NotNull
     @Min(1)
@@ -30,11 +30,11 @@ public class Pump {
     @ManyToOne(fetch = FetchType.LAZY)
     private Ingredient currentIngredient;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

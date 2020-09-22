@@ -9,6 +9,18 @@ class PumpService {
       .then(response => response.data);
   }
 
+  createPump(pump) {
+    return axios.post(API_PATH, pump);
+  }
+
+  updatePump(pump) {
+    return axios.put(API_PATH + pump.id, pump);
+  }
+
+  deletePump(pump) {
+    return axios.delete(API_PATH + pump.id);
+  }
+
 }
 
 export default new PumpService();

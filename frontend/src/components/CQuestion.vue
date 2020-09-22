@@ -13,7 +13,7 @@
           <slot name="buttons">
             <q-btn
               color="grey"
-              @click="() => {value = false; $emit('clickAbort');}"
+              @click="() => {$emit('clickAbort');}"
               style="width: 150px"
             >
               Abort

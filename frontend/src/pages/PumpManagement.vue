@@ -10,7 +10,7 @@
         label="Delete selected pumps"
         no-caps
         :disable="isLoading"
-        @click=""
+        @click="openDeleteDialog(true)"
       />
       <q-btn
         color="positive"
@@ -104,7 +104,7 @@
             <q-btn
               :icon="mdiDelete"
               color="red"
-              @click=""
+              @click="() => {deletePumps.push(props.row); openDeleteDialog(false);}"
               dense
               rounded
             />
@@ -142,7 +142,8 @@
             horizontal
             :value="10"
           />
-          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
+          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5"
+                    style="margin: 10px">
             {{ editOptions.editErrorMessage }}
           </q-banner>
           <pump-editor-form
@@ -170,7 +171,7 @@
                   no-caps
                   :disable="editOptions.editPumpSaving || !editOptions.valid"
                   :loading="editOptions.editPumpSaving"
-                  @click=""
+                  @click="onClickSavePump"
                 />
               </div>
             </template>
@@ -178,6 +179,36 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <c-question
+      :question="deleteQuestionMessage"
+      ok-color="red"
+      ok-button-text="Delete"
+      :loading="deleteLoading"
+      v-model="deleteDialog"
+      @clickOk="deleteSelected"
+      @clickAbort="closeDeleteDialog"
+    >
+      <template v-slot:buttons>
+        <q-btn
+          v-if="deletePumps.length === 0"
+          color="grey"
+          style="width: 150px"
+          @click="closeDeleteDialog"
+        >
+          Ok
+        </q-btn>
+      </template>
+      <template v-slot:default>
+        <ul style="padding: 0">
+          <li
+            :key="index"
+            v-for="(pump, index) in deletePumps"
+          >
+            Pump #{{ pump.id }}
+          </li>
+        </ul>
+      </template>
+    </c-question>
   </q-page>
 </template>
 
@@ -186,14 +217,15 @@
   import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
   import PumpEditorForm from "../components/PumpEditorForm";
   import PumpService from "../services/pump.service"
+  import CQuestion from "../components/CQuestion";
 
   export default {
     name: "PumpManagement",
-    components: {PumpEditorForm},
+    components: {PumpEditorForm, CQuestion},
     data() {
       return {
         deleteDialog: false,
-        deleteUser: [],
+        deletePumps: [],
         deleteLoading: false,
         isLoading: false,
         editOptions: {
@@ -255,6 +287,44 @@
             this.isLoading = false;
           })
       },
+      openDeleteDialog(forSelectedPumps) {
+        if (forSelectedPumps) {
+          this.deletePumps.push(...this.selected);
+        }
+        this.deleteDialog = true;
+      },
+      closeDeleteDialog() {
+        this.deletePumps.splice(0, this.deletePumps.length);
+        this.deleteDialog = false;
+      },
+      deleteSelected() {
+        this.deleteLoading = true;
+        let toDelete = this.deletePumps.length;
+        let deleted = 0;
+        let vm = this;
+        let afterDelete = function () {
+          if (deleted === toDelete) {
+            vm.$q.notify({
+              type: 'positive',
+              message: ((vm.deletePumps.length > 1)? "Pumps" : "Pump") + " deleted successfully"
+            });
+            vm.closeDeleteDialog();
+            vm.deleteLoading = false;
+            vm.initialize();
+          }
+        };
+        this.deletePumps.forEach(pump => {
+          PumpService.deletePump(pump)
+            .then(() => {
+              deleted++;
+              afterDelete();
+            }, err => {
+              vm.deleteLoading = false;
+              vm.initialize();
+            })
+        });
+        afterDelete();
+      },
       closeEditDialog() {
         this.editOptions.editPump = Object.assign({}, this.editOptions.newPump);
         this.editOptions.editDialog = false;
@@ -265,11 +335,51 @@
           this.editOptions.editPump = Object.assign({}, pump);
         }
         this.editOptions.editDialog = true;
+      },
+      onClickSavePump() {
+        this.editOptions.editIngredientSaving = true;
+        let vm = this;
+        let onSuccess = function () {
+          vm.editOptions.editPumpSaving = false;
+          vm.editOptions.editErrorMessage = "";
+          vm.$q.notify({
+            type: 'positive',
+            message: "Pump " + (vm.isEditIngredientNew ? "created" : "updated") + " successfully"
+          });
+          vm.closeEditDialog();
+          vm.initialize();
+        };
+
+        let onError = function (error) {
+          vm.editOptions.editPumpSaving = false;
+          vm.editOptions.editErrorMessage = error.response.data.message;
+          vm.$q.notify({
+            type: 'negative',
+            message: error.response.data.message
+          });
+        };
+
+        if (this.isEditPumpNew) {
+          PumpService.createPump(this.editOptions.editPump)
+            .then(onSuccess, error => onError(error));
+        } else {
+          PumpService.updatePump(this.editOptions.editPump)
+            .then(onSuccess, error => onError(error));
+        }
       }
     },
     computed: {
       isEditPumpNew() {
         return this.editOptions.editPump.id === -1;
+      },
+      deleteQuestionMessage() {
+        if (this.deletePumps.length === 0) {
+          return "No pumps selected!";
+        }
+        if (this.deletePumps.length === 1) {
+          return "The following pump will be deleted:";
+        }
+        return "The following pumps will be deleted:";
       },
       editDialogHeadline() {
         if (this.isEditPumpNew) {
@@ -285,6 +395,7 @@
   .row1 {
     background-color: #fafafa;
   }
+
   .row2 {
     background-color: #f3f3fa;
   }
