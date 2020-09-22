@@ -8,7 +8,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "pumps")
+@Table(name = "pumps", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "gpio_pin")})
 public class Pump {
     @Id
     @GeneratedValue
