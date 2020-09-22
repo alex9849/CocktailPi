@@ -70,9 +70,9 @@ const routes = [
       component: () => import('pages/UserEditor'),
       name: 'usereditor'
     }, {
-      path: 'admin/settings',
-      component: () => import('pages/Settings'),
-      name: 'adminsettings'
+      path: 'admin/pumpmanagement',
+      component: () => import('pages/PumpManagement'),
+      name: 'pumpmanagement'
     }
     ]
   }, {

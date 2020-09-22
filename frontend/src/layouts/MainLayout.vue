@@ -112,7 +112,7 @@
             onlyAdmins: true,
             subSections: [
               {
-                label: 'User management',
+                label: 'Users',
                 onlyAdmins: true,
                 to: {name: 'usermanagement'}
               }, {
@@ -120,9 +120,9 @@
                 onlyAdmins: true,
                 to: {name: 'ingredientmanagement'}
               }, {
-                label: 'Settings',
+                label: 'Pumps',
                 onlyAdmins: true,
-                to: {name: 'adminsettings'}
+                to: {name: 'pumpmanagement'}
               }
             ]
           }

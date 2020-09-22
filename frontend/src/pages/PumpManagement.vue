@@ -187,7 +187,7 @@
   import PumpEditorForm from "../components/PumpEditorForm";
 
   export default {
-    name: "Settings",
+    name: "PumpManagement",
     components: {PumpEditorForm},
     data() {
       return {
@@ -275,5 +275,10 @@
 </script>
 
 <style scoped>
-
+  .row1 {
+    background-color: #fafafa;
+  }
+  .row2 {
+    background-color: #f3f3fa;
+  }
 </style>
