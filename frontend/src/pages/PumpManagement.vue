@@ -157,7 +157,7 @@
             <template v-slot:below>
               <div class="q-pa-md q-gutter-sm">
                 <q-btn
-                  class="xs"
+                  style="width: 100px"
                   color="negative"
                   label="Abort"
                   no-caps
@@ -165,7 +165,7 @@
                 />
                 <q-btn
                   type="submit"
-                  class="xs"
+                  style="width: 100px"
                   color="positive"
                   label="Save"
                   no-caps

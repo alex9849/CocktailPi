@@ -6,7 +6,7 @@
     :full-height="$q.platform.is.mobile"
   >
     <q-card>
-      <q-card-section class="text-center">
+      <q-card-section class="text-center" style="width: 500px">
         <h5>{{ question }}</h5>
         <q-splitter
           horizontal

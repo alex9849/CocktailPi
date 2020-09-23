@@ -19,6 +19,9 @@ public class PumpService {
     private PumpRepository pumpRepository;
 
     @Autowired
+    private WebSocketService webSocketService;
+
+    @Autowired
     private IngredientService ingredientService;
 
     public List<Pump> getAllPumps() {
