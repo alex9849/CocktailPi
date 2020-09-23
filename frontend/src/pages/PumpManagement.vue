@@ -80,7 +80,7 @@
             key="currentIngredient"
             :props="props"
           >
-            {{ props.row.currentIngredient? props.row.currentIngredient.name : "Leer" }}
+            {{ props.row.currentIngredient? props.row.currentIngredient.name : "Empty" }}
           </q-td>
           <q-td
             key="actions"
@@ -157,7 +157,7 @@
             <template v-slot:below>
               <div class="q-pa-md q-gutter-sm">
                 <q-btn
-                  style="width: 100px"
+                  class="xs"
                   color="negative"
                   label="Abort"
                   no-caps
@@ -165,7 +165,7 @@
                 />
                 <q-btn
                   type="submit"
-                  style="width: 100px"
+                  class="xs"
                   color="positive"
                   label="Save"
                   no-caps
