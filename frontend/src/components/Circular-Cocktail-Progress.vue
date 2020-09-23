@@ -21,7 +21,7 @@
         <q-card-section
           style="padding-bottom: 0"
         >
-          <h5>Current prepared cocktail</h5>
+          <h5 style="margin: 0 0 10px 0">Current prepared cocktail</h5>
           <q-splitter
             horizontal
             :value="10"
@@ -54,9 +54,25 @@
                         </h5>
                       </div>
                       <div class="col">
-                        <q-btn
-
-                        />
+                        <div class="float-right">
+                          <q-btn
+                            dense
+                            round
+                            color="info"
+                            class="q-ml-sm"
+                            text-color="white"
+                            :icon="mdiMagnify"
+                            :to="{name: 'recipedetails', params: {id: currentCocktail.recipe.id}}"
+                          />
+                          <q-btn
+                            dense
+                            round
+                            color="red"
+                            class="q-ml-sm"
+                            text-color="white"
+                            :icon="mdiStop"
+                          />
+                        </div>
                       </div>
                     </div>
                     <div class="row">
@@ -120,7 +136,7 @@
 </template>
 
 <script>
-  import {mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+  import {mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
 
   export default {
     name: "Circular-Cocktail-Progress",
@@ -131,6 +147,8 @@
     },
     created() {
       this.mdiTimerSandEmpty = mdiTimerSandEmpty;
+      this.mdiMagnify = mdiMagnify;
+      this.mdiStop = mdiStop;
     },
     computed: {
       hasCurrenlyCocktail() {

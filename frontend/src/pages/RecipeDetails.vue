@@ -89,7 +89,6 @@
 </template>
 
 <script>
-  import recipeService from '../services/recipe.service'
   import RecipeService from '../services/recipe.service'
   import IngredientList from "../components/IngredientList";
   import CQuestion from "../components/CQuestion";
@@ -106,10 +105,13 @@
       }
     },
     created() {
-      recipeService.getRecipe(this.$route.params.id)
-        .then(recipe => this.recipe = recipe);
+      this.initialize();
     },
     methods: {
+      initialize() {
+        RecipeService.getRecipe(this.$route.params.id)
+          .then(recipe => this.recipe = recipe);
+      },
       deleteRecipe() {
         this.deleting = true;
         RecipeService.deleteRecipe(this.recipe)
@@ -121,6 +123,11 @@
               message: 'Recipe deleted successfully'
             });
           })
+      }
+    },
+    watch: {
+      '$route.params.id': function () {
+        this.initialize();
       }
     },
     computed: {
