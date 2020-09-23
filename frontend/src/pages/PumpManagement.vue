@@ -337,7 +337,7 @@
         this.editOptions.editDialog = true;
       },
       onClickSavePump() {
-        this.editOptions.editIngredientSaving = true;
+        this.editOptions.editPumpSaving = true;
         let vm = this;
         let onSuccess = function () {
           vm.editOptions.editPumpSaving = false;
