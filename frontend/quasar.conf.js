@@ -85,6 +85,10 @@ module.exports = function (/* ctx */) {
         '/api/*': {
           target: 'http://localhost:8080',
           changeOrigin: true
+        },
+        '/cocktailprogress/*': {
+          target: 'ws://localhost:8080',
+          ws: true
         }
       }
     },

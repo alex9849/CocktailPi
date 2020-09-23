@@ -40,6 +40,9 @@ public class RecipeService {
     RecipeIngredientRepository recipeIngredientRepository;
 
     @Autowired
+    private WebSocketService webSocketService;
+
+    @Autowired
     TagRepository tagRepository;
 
     @Autowired

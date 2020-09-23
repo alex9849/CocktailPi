@@ -27,7 +27,7 @@
             :value="10"
             style="padding-bottom: 10px"
           />
-          <div v-if="hasCurrenlyCocktail">
+          <div v-if="hasCocktailProgress">
             <q-card
               flat
               style="background-color: #f3f3fa"
@@ -38,7 +38,7 @@
                   class="row"
                 >
                   <q-img
-                    :src="'/api/recipe/' + currentCocktail.recipe.id + '/image?nocache=' + new Date().getTime()"
+                    :src="'/api/recipe/' + cocktailProgress.recipe.id + '/image?nocache=' + noCacheString"
                     placeholder-src="../assets/cocktail-solid.png"
                     :ratio="16/9"
                     class="col rounded-borders"
@@ -50,7 +50,7 @@
                         <h5
                           style="margin: 0; padding-bottom: 10px;"
                         >
-                          <b>{{ currentCocktail.recipe.name}}</b>
+                          <b>{{ cocktailProgress.recipe.name}}</b>
                         </h5>
                       </div>
                       <div class="col">
@@ -62,7 +62,7 @@
                             class="q-ml-sm"
                             text-color="white"
                             :icon="mdiMagnify"
-                            :to="{name: 'recipedetails', params: {id: currentCocktail.recipe.id}}"
+                            :to="{name: 'recipedetails', params: {id: cocktailProgress.recipe.id}}"
                           />
                           <q-btn
                             dense
@@ -76,13 +76,13 @@
                       </div>
                     </div>
                     <div class="row">
-                      {{ currentCocktail.recipe.shortDescription }}
+                      {{ cocktailProgress.recipe.shortDescription }}
                     </div>
 
                     <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
                       <div class="col"/>
                       <div class="col" style="text-align: right; max-width: max-content">
-                        by {{ currentCocktail.recipe.owner.username }}
+                        by {{ cocktailProgress.recipe.owner.username }}
                       </div>
                     </div>
                   </div>
@@ -92,7 +92,7 @@
                   class="row"
                 >
                   <q-linear-progress
-                    :value="currentCocktail.progress / 100"
+                    :value="cocktailProgress.progress / 100"
                     stripe
                     rounded
                     color="green-5"
@@ -101,7 +101,7 @@
                     <div class="absolute-full flex flex-center">
                       <q-badge
                         color="red-5"
-                        :label="currentCocktail.progress + '%'"
+                        :label="cocktailProgress.progress + '%'"
                       />
                     </div>
                   </q-linear-progress>
@@ -136,47 +136,53 @@
 </template>
 
 <script>
+  import {mapGetters, mapMutations} from "vuex";
   import {mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+  import SockJS from "sockjs-client";
+  import Stomp from "webstomp-client";
 
   export default {
     name: "Circular-Cocktail-Progress",
     data() {
       return {
-        showDialog: false
+        showDialog: false,
+        stompClient: null,
+        noCacheString: new Date().getTime()
       }
     },
     created() {
       this.mdiTimerSandEmpty = mdiTimerSandEmpty;
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
+      let socket = new SockJS("/cocktailprogress");
+      this.stompClient = Stomp.over(socket);
+      let vm  = this;
+      this.stompClient.connect({}, function (frame) {
+        vm.stompClient.subscribe('/topic/cocktailprogress', function(cocktailProgressMessage) {
+          vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+        });
+      });
+    },
+    destroyed() {
+      if(this.stompClient != null) {
+        this.stompClient.disconnect();
+      }
+    },
+    watch: {
+      'cocktailProgress.recipe.id': function () {
+        this.noCacheString = new Date().getTime()
+      }
     },
     computed: {
-      hasCurrenlyCocktail() {
-        return true;
-      },
-      currentCocktail() {
-        return {
-          recipe: {
-            id: 12,
-            name: 'Jacky-Cola',
-            inPublic: true,
-            owner: {
-              id: 2,
-              username: 'Testuser'
-            },
-            description: 'Description',
-            shortDescription: 'Short description',
-            recipeIngredients: [],
-            tags: []
-          },
-          progress: 75,
-          user: {
-            id: 1,
-            username: 'Cocktailuser'
-          },
-          aborted: false
-        }
-      }
+      ...mapGetters({
+        hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+        cocktailProgress: 'cocktailProgress/getCocktailProgress'
+      })
+    },
+    methods: {
+      ...mapMutations({
+        setCocktailProgress: 'cocktailProgress/setCocktailProgress'
+      })
     }
   }
 </script>

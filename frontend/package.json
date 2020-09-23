@@ -19,7 +19,9 @@
     "vuelidate": "^0.7.5",
     "quasar": "^1.12.12",
     "vuedraggable": "~2.24.0",
-    "lodash": "~4.17.19"
+    "lodash": "~4.17.19",
+    "sockjs-client": "1.5.0",
+    "webstomp-client": "1.2.6"
   },
   "devDependencies": {
     "@mdi/font": "^4.9.95",

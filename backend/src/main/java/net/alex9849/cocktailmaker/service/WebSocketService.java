@@ -13,7 +13,7 @@ public class WebSocketService {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-    private static final String WS_COCKTAIL_DESTINATION = "/topic/messages";
+    private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
 
     public void broadcastCurrentCocktail(Cocktailprogress cocktailprogress) {
         simpMessagingTemplate.convertAndSend(WS_COCKTAIL_DESTINATION, new CocktailprogressDto(cocktailprogress));

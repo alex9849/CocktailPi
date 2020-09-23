@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import auth from './modules/auth/index';
+import cocktailProgress from './modules/cocktailprogress/index'
 
 // import example from './module-example'
 
@@ -16,7 +17,8 @@ Vue.use(Vuex);
  */
 const store = new Vuex.Store({
   modules: {
-    auth: auth
+    auth: auth,
+    cocktailProgress: cocktailProgress
   },
 
   // enable strict mode (adds overhead!)
