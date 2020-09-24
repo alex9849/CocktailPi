@@ -1,8 +1,9 @@
-package net.alex9849.cocktailmaker.service;
+package net.alex9849.cocktailmaker.service.cocktailfactory;
 
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
