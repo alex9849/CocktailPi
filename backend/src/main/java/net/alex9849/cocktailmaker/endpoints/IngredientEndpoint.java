@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.endpoints;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.service.IngredientService;
-import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,9 +16,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/ingredient")
 public class IngredientEndpoint {
-
-    @Autowired
-    RecipeService recipeService;
 
     @Autowired
     IngredientService ingredientService;

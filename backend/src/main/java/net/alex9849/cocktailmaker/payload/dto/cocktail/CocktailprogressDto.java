@@ -15,9 +15,13 @@ public class CocktailprogressDto {
         BeanUtils.copyProperties(cocktailprogress, this);
         if(cocktailprogress.getRecipe() != null) {
             this.recipe = new RecipeDto(cocktailprogress.getRecipe());
+            this.recipe.setRecipeIngredients(null);
         }
         if(cocktailprogress.getUser() != null) {
-            this.user = new UserDto(cocktailprogress.getUser());
+            UserDto userDto = new UserDto();
+            userDto.setId(cocktailprogress.getUser().getId());
+            userDto.setUsername(cocktailprogress.getUser().getUsername());
+            this.user = userDto;
         }
     }
 
