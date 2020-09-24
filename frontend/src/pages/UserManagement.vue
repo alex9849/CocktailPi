@@ -251,6 +251,10 @@
             vm.closeDeleteDialog();
             vm.deleteLoading = false;
             vm.initialize();
+            vm.$q.notify({
+              type: 'positive',
+              message: 'User(s) deleted successfully'
+            });
           }
         };
         this.deleteUsers.forEach(user => {
@@ -261,6 +265,10 @@
             }, err => {
               vm.deleteLoading = false;
               vm.initialize();
+              vm.$q.notify({
+                type: 'negative',
+                message: 'Couldn\'t delete user(s). ' + error.response.data.message
+              });
             })
         });
         afterDelete();
