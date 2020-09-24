@@ -24,8 +24,17 @@ public class CocktailFactoryService {
         cocktailprogress.setUser(user);
         cocktailprogress.setRecipe(recipe);
         this.currentProgress = cocktailprogress;
-        this.webSocketService.broadcastCurrentCocktail(cocktailprogress);
+        this.webSocketService.broadcastCurrentCocktail(this.currentProgress);
         return cocktailprogress;
+    }
+
+    public synchronized boolean cancelOrder() {
+        if(this.currentProgress == null) {
+            return false;
+        }
+        this.currentProgress = null;
+        this.webSocketService.broadcastCurrentCocktail(this.currentProgress);
+        return true;
     }
 
     public Cocktailprogress getCurrentProgress() {

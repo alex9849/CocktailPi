@@ -177,13 +177,18 @@
         setCocktailProgress: 'cocktailProgress/setCocktailProgress'
       }),
       connectWebsocket() {
-        let socket = new SockJS("/cocktailprogress");
+        let socket = new SockJS("/ws/cocktailprogress");
         this.stompClient = Stomp.over(socket);
         let vm = this;
         let connectCallback = function () {
           vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
-            vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+            if(cocktailProgressMessage.body === "DELETE") {
+              vm.setCocktailProgress(null);
+            } else {
+              vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+            }
           });
+          vm.stompClient.send("/topic/cocktailprogress", {}, {name: 'Welcome'})
         };
         let disconnectCallback = function () {
           if (vm.websocketAutoreconnect) {

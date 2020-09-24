@@ -5,7 +5,7 @@ import net.alex9849.cocktailmaker.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Component
 public class WebSocketEventListener {
@@ -17,7 +17,7 @@ public class WebSocketEventListener {
     private CocktailFactoryService cocktailFactoryService;
 
     @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        webSocketService.sendCocktailProgress(cocktailFactoryService.getCurrentProgress(), event.getUser().getName());
+    public void handleWebSocketConnectListener(SessionSubscribeEvent event) {
+        webSocketService.broadcastCurrentCocktail(cocktailFactoryService.getCurrentProgress());
     }
 }

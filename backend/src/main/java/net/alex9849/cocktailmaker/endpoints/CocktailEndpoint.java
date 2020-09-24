@@ -40,8 +40,12 @@ public class CocktailEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     public ResponseEntity<?> cancelCocktail() {
-        return ResponseEntity.ok().build();
+        if(cocktailFactoryService.cancelOrder()) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

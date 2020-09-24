@@ -17,18 +17,10 @@ public class WebSocketService {
     private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
 
     public void broadcastCurrentCocktail(@Nullable Cocktailprogress cocktailprogress) {
-        Object cocktailprogressDto = "";
+        Object cocktailprogressDto = "DELETE";
         if(cocktailprogress != null) {
             cocktailprogressDto = new CocktailprogressDto(cocktailprogress);
         }
         simpMessagingTemplate.convertAndSend(WS_COCKTAIL_DESTINATION, cocktailprogressDto);
-    }
-
-    public void sendCocktailProgress(@Nullable Cocktailprogress cocktailprogress, String username) {
-        Object cocktailprogressDto = "";
-        if(cocktailprogress != null) {
-            cocktailprogressDto = new CocktailprogressDto(cocktailprogress);
-        }
-        simpMessagingTemplate.convertAndSendToUser(username, WS_COCKTAIL_DESTINATION, cocktailprogressDto);
     }
 }

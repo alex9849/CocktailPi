@@ -86,7 +86,7 @@ module.exports = function (/* ctx */) {
           target: 'http://localhost:8080',
           changeOrigin: true
         },
-        '/cocktailprogress/*': {
+        '/ws/*': {
           target: 'ws://localhost:8080',
           ws: true
         }
