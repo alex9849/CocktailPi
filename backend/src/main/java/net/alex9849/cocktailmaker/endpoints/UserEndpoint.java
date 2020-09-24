@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
@@ -50,7 +51,7 @@ public class UserEndpoint {
         if(userId == null) {
             userId = principal.getId();
         } else {
-            if(!request.isUserInRole("ADMIN")) {
+            if(!principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }
@@ -58,7 +59,7 @@ public class UserEndpoint {
         if(beforeUpdate == null) {
             return ResponseEntity.notFound().build();
         }
-        if(request.isUserInRole("ADMIN")) {
+        if(principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             updateUser.setAuthorities(userService.toRoles(updateUserRequest.getUserDto().getRoles()));
         } else {
             updateUser.setAuthorities(beforeUpdate.getAuthorities());
@@ -92,7 +93,7 @@ public class UserEndpoint {
         if(userId == null) {
             userId = principal.getId();
         } else {
-            if(!request.isUserInRole("ADMIN")) {
+            if(!principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }

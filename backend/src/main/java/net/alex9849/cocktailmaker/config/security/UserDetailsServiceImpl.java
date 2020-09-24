@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.security.services;
+package net.alex9849.cocktailmaker.config.security;
 
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.UserRepository;

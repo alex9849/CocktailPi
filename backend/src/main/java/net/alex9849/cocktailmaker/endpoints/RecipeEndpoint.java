@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.RecipeService;
@@ -111,7 +112,7 @@ public class RecipeEndpoint {
             return ResponseEntity.notFound().build();
         }
         recipe.setOwner(oldRecipe.getOwner());
-        if(!recipe.getOwner().getId().equals(principal.getId()) && !request.isUserInRole("ADMIN")) {
+        if(!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -152,7 +153,7 @@ public class RecipeEndpoint {
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.getOwner().getId().equals(principal.getId()) && !request.isUserInRole("ADMIN")) {
+        if(!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         recipeService.delete(id);

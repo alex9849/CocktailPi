@@ -1,10 +1,10 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.config.JwtUtils;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.LoginRequest;
 import net.alex9849.cocktailmaker.payload.response.JwtResponse;
-import net.alex9849.cocktailmaker.security.jwt.JwtUtils;
 import net.alex9849.cocktailmaker.service.AuthService;
 import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

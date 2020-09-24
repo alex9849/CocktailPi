@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.security.jwt.JwtUtils;
+import net.alex9849.cocktailmaker.config.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

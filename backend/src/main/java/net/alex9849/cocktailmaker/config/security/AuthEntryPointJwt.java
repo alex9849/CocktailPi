@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.security.jwt;
+package net.alex9849.cocktailmaker.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

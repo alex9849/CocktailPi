@@ -1,8 +1,5 @@
-package net.alex9849.cocktailmaker.security;
+package net.alex9849.cocktailmaker.config.security;
 
-import net.alex9849.cocktailmaker.security.jwt.AuthEntryPointJwt;
-import net.alex9849.cocktailmaker.security.jwt.AuthTokenFilter;
-import net.alex9849.cocktailmaker.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

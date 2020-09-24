@@ -1,12 +1,14 @@
-package net.alex9849.cocktailmaker.security.jwt;
+package net.alex9849.cocktailmaker.config;
 
 import io.jsonwebtoken.*;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
@@ -54,5 +56,12 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public String parseJwt(@Nullable String authHeaderContent) {
+        if (StringUtils.hasText(authHeaderContent) && authHeaderContent.startsWith("Bearer ")) {
+            return authHeaderContent.substring(7, authHeaderContent.length());
+        }
+        return null;
     }
 }

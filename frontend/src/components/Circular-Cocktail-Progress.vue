@@ -139,7 +139,8 @@
   import {mapGetters, mapMutations} from "vuex";
   import {mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
   import SockJS from "sockjs-client";
-  import Stomp from "webstomp-client";
+  import Stomp from "stompjs";
+  import authHeader from "../services/auth-header";
 
   export default {
     name: "Circular-Cocktail-Progress",
@@ -147,6 +148,7 @@
       return {
         showDialog: false,
         stompClient: null,
+        websocketAutoreconnect: true,
         noCacheString: new Date().getTime()
       }
     },
@@ -154,19 +156,10 @@
       this.mdiTimerSandEmpty = mdiTimerSandEmpty;
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
-      let socket = new SockJS("/cocktailprogress");
-      this.stompClient = Stomp.over(socket);
-      let vm  = this;
-      this.stompClient.connect({}, function (frame) {
-        vm.stompClient.subscribe('/topic/cocktailprogress', function(cocktailProgressMessage) {
-          vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
-        });
-      });
+      this.connectWebsocket();
     },
     destroyed() {
-      if(this.stompClient != null) {
-        this.stompClient.disconnect();
-      }
+      this.destroyWebsocket();
     },
     watch: {
       'cocktailProgress.recipe.id': function () {
@@ -182,7 +175,36 @@
     methods: {
       ...mapMutations({
         setCocktailProgress: 'cocktailProgress/setCocktailProgress'
-      })
+      }),
+      connectWebsocket() {
+        let socket = new SockJS("/cocktailprogress");
+        this.stompClient = Stomp.over(socket);
+        let vm = this;
+        let connectCallback = function () {
+          vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
+            vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+          });
+        };
+        let disconnectCallback = function () {
+          if (vm.websocketAutoreconnect) {
+            vm.connectWebsocket();
+          }
+        };
+
+        let headers = {
+          'Authorization': authHeader()
+        };
+        this.stompClient.connect(headers, connectCallback, disconnectCallback);
+      },
+      disconnectWebsocket() {
+        if (this.stompClient != null) {
+          this.stompClient.disconnect();
+        }
+      },
+      destroyWebsocket() {
+        this.websocketAutoreconnect = false;
+        this.disconnectWebsocket();
+      }
     }
   }
 </script>
