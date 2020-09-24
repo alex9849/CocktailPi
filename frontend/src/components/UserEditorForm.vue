@@ -71,16 +71,16 @@
     <q-checkbox
       v-if="!isProfile"
       :value="isAdmin"
-      @input="change => {if(value.role) {change? value.role.push('admin'):value.role = value.role.filter(e => e !== 'admin'); $emit('input', value)}}"
+      @input="change => {if(value.roles) {change? value.roles.push('ADMIN'):value.roles = value.roles.filter(e => e !== 'ADMIN'); $emit('input', value)}}"
       :disable="loading || disabled"
       label="Admin-permissions"
     />
     <q-checkbox
       v-if="!isProfile"
-      v-model="value.locked"
+      :value="!value.accountNonLocked"
+      @input="e => {value.accountNonLocked = !e; $emit('input', value)}"
       :disable="loading || disabled"
       label="Locked"
-      @input="$emit('input', value)"
     />
     <slot name="below"/>
   </q-form>
@@ -162,10 +162,10 @@
     },
     computed: {
       isAdmin() {
-        if (!this.value.role) {
+        if (!this.value.roles) {
           return undefined;
         }
-        return this.value.role.includes('admin')
+        return this.value.roles.includes('ADMIN')
       }
     },
     created() {

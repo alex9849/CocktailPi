@@ -61,11 +61,11 @@
             {{ props.row.username}}
           </q-td>
           <q-td
-            key="isLocked"
+            key="nonLocked"
             :props="props"
           >
             <q-icon
-              v-if="!props.row.locked"
+              v-if="props.row.accountNonLocked"
               size="sm"
               :name="mdiCheckCircle"
             />
@@ -92,7 +92,7 @@
             :props="props"
           >
             <q-icon
-              v-if="props.row.role.includes('admin')"
+              v-if="props.row.roles.includes('ADMIN')"
               size="sm"
               :name="mdiCheckCircle"
             />
@@ -197,7 +197,7 @@
         data: [],
         colums: [
           {name: 'username', label: 'Username', field: 'username', align: 'left'},
-          {name: 'isLocked', label: 'Active', field: 'isLocked', align: 'center'},
+          {name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center'},
           {name: 'fullname', label: 'Full name', field: '', align: 'left'},
           {name: 'email', label: 'E-Mail', field: 'email', align: 'left'},
           {name: 'isadmin', label: 'Admin', field: '', align: 'center'},
@@ -228,7 +228,7 @@
         this.isLoading = true;
         let vm = this;
         setTimeout(() => {
-          vm.fetchUsers()
+          vm.initialize()
         }, 500);
       },
       openDeleteDialog(forSelectedUsers) {
@@ -250,7 +250,7 @@
           if(deleted === toDelete) {
             vm.closeDeleteDialog();
             vm.deleteLoading = false;
-            vm.fetchUsers();
+            vm.initialize();
           }
         };
         this.deleteUsers.forEach(user => {
@@ -260,7 +260,7 @@
               afterDelete();
             }, err => {
               vm.deleteLoading = false;
-              vm.fetchUsers();
+              vm.initialize();
             })
         });
         afterDelete();

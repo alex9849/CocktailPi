@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.ImageUtils;
@@ -44,9 +44,9 @@ public class RecipeEndpoint {
             @RequestParam(value = "searchName", required = false) String searchName,
             @RequestParam(value = "page") int page,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!userDetails.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!principal.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
         page = Math.max(--page, 0);
@@ -63,13 +63,13 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     ResponseEntity<?> getRecipe(@PathVariable("id") long id, HttpServletRequest request) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.getOwner().getId().equals(userDetails.getId()) && !recipe.isInPublic()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!recipe.getOwner().getId().equals(principal.getId()) && !recipe.isInPublic()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(new RecipeDto(recipe));
     }
@@ -78,9 +78,9 @@ public class RecipeEndpoint {
     ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
         recipeDto.setId(null);
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
-        recipe.setOwner(userService.getUser(userDetails.getId()));
+        recipe.setOwner(userService.getUser(principal.getId()));
         if(file != null) {
             BufferedImage image;
             try {
@@ -103,7 +103,7 @@ public class RecipeEndpoint {
                                    @RequestPart(value = "image", required = false) MultipartFile file,
                                    @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
                                    @PathVariable("id") long id, HttpServletRequest request) throws IOException {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeDto.setId(id);
         Recipe recipe = recipeService.fromDto(recipeDto);
         Recipe oldRecipe = recipeService.getById(id);
@@ -111,8 +111,8 @@ public class RecipeEndpoint {
             return ResponseEntity.notFound().build();
         }
         recipe.setOwner(oldRecipe.getOwner());
-        if(!recipe.getOwner().getId().equals(userDetails.getId()) && !request.isUserInRole("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!recipe.getOwner().getId().equals(principal.getId()) && !request.isUserInRole("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         if(removeImage) {
@@ -147,13 +147,13 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     ResponseEntity<?> deleteRecipe(@PathVariable("id") long id, HttpServletRequest request) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.getOwner().getId().equals(userDetails.getId()) && !request.isUserInRole("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!recipe.getOwner().getId().equals(principal.getId()) && !request.isUserInRole("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         recipeService.delete(id);
         return ResponseEntity.ok().build();

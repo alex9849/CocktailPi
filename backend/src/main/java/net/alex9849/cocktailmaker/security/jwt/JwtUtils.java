@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.security.jwt;
 
 import io.jsonwebtoken.*;
-import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
+import net.alex9849.cocktailmaker.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +21,10 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
-
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        User principal = (User) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject(String.valueOf(userPrincipal.getId()))
+                .setSubject(String.valueOf(principal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

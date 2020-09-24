@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.beans.BeanUtils;
 
@@ -26,7 +27,8 @@ public class UserDto {
     @Size(max = 20)
     private String lastname;
 
-    private boolean isLocked;
+    @NotNull
+    private boolean isAccountNonLocked;
 
     @Size(max = 50)
     @NotBlank
@@ -38,14 +40,14 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private Set<String> role;
+    private Set<String> roles;
 
     public UserDto() {}
 
     public UserDto(User user) {
         BeanUtils.copyProperties(user, this);
-        this.role = user.getRoles().stream()
-                .map(y -> y.getName().roleName())
+        this.roles = user.getAuthorities().stream()
+                .map(ERole::getAuthority)
                 .collect(Collectors.toSet());
     }
 
@@ -81,12 +83,12 @@ public class UserDto {
         this.lastname = lastname;
     }
 
-    public boolean isLocked() {
-        return isLocked;
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
     }
 
-    public void setLocked(boolean locked) {
-        isLocked = locked;
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
     }
 
     public String getEmail() {
@@ -105,11 +107,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public Set<String> getRole() {
-        return role;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(Set<String> role) {
-        this.role = role;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

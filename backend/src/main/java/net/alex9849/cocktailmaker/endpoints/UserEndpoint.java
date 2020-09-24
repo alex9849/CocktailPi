@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.endpoints;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
-import net.alex9849.cocktailmaker.security.services.UserDetailsImpl;
 import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class UserEndpoint {
         User user = new User();
         BeanUtils.copyProperties(createUser, user);
         user.setPassword(encoder.encode(user.getPassword()));
-        user.setRoles(userService.toRoles(createUser.getRole()));
+        user.setAuthorities(userService.toRoles(createUser.getRoles()));
         user.setId(null);
         user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
@@ -46,15 +45,13 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest, HttpServletRequest request) {
-        //TODO clean up (maybe outsource some code to the services)
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = new User();
-        BeanUtils.copyProperties(updateUserRequest.getUserDto(), user);
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User updateUser = userService.fromDto(updateUserRequest.getUserDto());
         if(userId == null) {
-            userId = userDetails.getId();
+            userId = principal.getId();
         } else {
             if(!request.isUserInRole("ADMIN")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }
         User beforeUpdate = userService.getUser(userId);
@@ -62,19 +59,19 @@ public class UserEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(request.isUserInRole("ADMIN")) {
-            user.setRoles(userService.toRoles(updateUserRequest.getUserDto().getRole()));
+            updateUser.setAuthorities(userService.toRoles(updateUserRequest.getUserDto().getRoles()));
         } else {
-            user.setRoles(beforeUpdate.getRoles());
-            user.setLocked(beforeUpdate.isLocked());
+            updateUser.setAuthorities(beforeUpdate.getAuthorities());
+            updateUser.setAccountNonLocked(beforeUpdate.isAccountNonLocked());
         }
         //If user wants to update his password update it. Otherwise fill in the old encrypted password
         if(!updateUserRequest.isUpdatePassword()) {
-            user.setPassword(beforeUpdate.getPassword());
+            updateUser.setPassword(beforeUpdate.getPassword());
         } else {
-            user.setPassword(encoder.encode(user.getPassword()));
+            updateUser.setPassword(encoder.encode(updateUser.getPassword()));
         }
-        user.setId(userId);
-        return ResponseEntity.ok(new UserDto(userService.updateUser(user)));
+        updateUser.setId(userId);
+        return ResponseEntity.ok(new UserDto(userService.updateUser(updateUser)));
     }
 
 
@@ -91,12 +88,12 @@ public class UserEndpoint {
 
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable(value = "id", required = false) Long userId, HttpServletRequest request) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(userId == null) {
-            userId = userDetails.getId();
+            userId = principal.getId();
         } else {
             if(!request.isUserInRole("ADMIN")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }
         User user = userService.getUser(userId);

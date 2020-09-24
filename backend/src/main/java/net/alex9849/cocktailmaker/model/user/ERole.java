@@ -1,14 +1,18 @@
 package net.alex9849.cocktailmaker.model.user;
 
-public enum ERole {
-    ROLE_USER("user"), ROLE_ADMIN("admin");
+import org.springframework.security.core.GrantedAuthority;
+
+public enum ERole implements GrantedAuthority {
+    ROLE_USER("USER"), ROLE_ADMIN("ADMIN");
 
     private String roleName;
+
     ERole(String roleName) {
         this.roleName = roleName;
     }
 
-    public String roleName() {
-        return this.roleName;
+    @Override
+    public String getAuthority() {
+        return roleName;
     }
 }

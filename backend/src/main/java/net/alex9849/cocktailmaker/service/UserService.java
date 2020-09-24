@@ -1,10 +1,8 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.user.ERole;
-import net.alex9849.cocktailmaker.model.user.Role;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
-import net.alex9849.cocktailmaker.repository.RoleRepository;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import java.util.*;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
 
     public User createUser(User user) {
         if(userRepository.findByUsername(user.getUsername()).isPresent()) {
@@ -56,24 +52,18 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
-    public Set<Role> toRoles(Set<String> stringRoles) {
-        Set<Role> roles = new HashSet<>();
+    public Set<ERole> toRoles(Set<String> stringRoles) {
+        Set<ERole> roles = new HashSet<>();
         if (stringRoles == null || stringRoles.isEmpty()) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
+            roles.add(ERole.ROLE_USER);
         } else {
             stringRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+                    case "ADMIN":
+                        roles.add(ERole.ROLE_ADMIN);
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                        roles.add(ERole.ROLE_USER);
                 }
             });
         }
@@ -86,7 +76,7 @@ public class UserService {
         }
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setRoles(toRoles(userDto.getRole()));
+        user.setAuthorities(toRoles(userDto.getRoles()));
         return user;
     }
 }

@@ -4,5 +4,5 @@ export const getAuthToken = state => state.status.authToken;
 export const isAdmin = state => {
   if(!getUser(state))
     return false;
-  return state.status.user.role.includes('admin');
+  return state.status.user.roles.includes('ADMIN');
 };
