@@ -45,10 +45,18 @@ public class RecipeIngredient {
         this.ingredient = ingredient;
     }
 
+    /**
+     *
+     * @return amount in ml
+     */
     public int getAmount() {
         return amount;
     }
 
+    /**
+     *
+     * @param amount in ml
+     */
     public void setAmount(int amount) {
         this.amount = amount;
     }
