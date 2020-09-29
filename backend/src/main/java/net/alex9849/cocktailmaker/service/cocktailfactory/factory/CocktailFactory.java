@@ -108,14 +108,14 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
             PumpTimingStepCalculator pumpTimingStepCalculator = new PumpTimingStepCalculator(currentOffset, longestPumptime.getValue(),
                     longestPumptime.getKey(), otherPumpTimings, this.MINIMAL_PUMP_OPERATION_TIME_IN_MS, this.MINIMAL_PUMP_BREAK_TIME_IN_MS);
             currentOffset += longestPumptime.getValue();
-
-            for(Map.Entry<Pump, List<PumpPhase>> pumpPhases : pumpTimingStepCalculator.getPumpPhases().entrySet()) {
+            Map<Pump, List<PumpPhase>> stepPumpPhases = pumpTimingStepCalculator.getPumpPhases();
+            for(Map.Entry<Pump, List<PumpPhase>> pumpPhases : stepPumpPhases.entrySet()) {
                 if(recipePumpTimings.putIfAbsent(pumpPhases.getKey(), pumpPhases.getValue()) != null) {
                     recipePumpTimings.get(pumpPhases.getKey()).addAll(pumpPhases.getValue());
                 }
-                if(isLast) {
-                    this.preparationTime = pumpPhases.getValue().stream().mapToInt(PumpPhase::getStopTime).max().getAsInt();
-                }
+            }
+            if(isLast) {
+                this.preparationTime = stepPumpPhases.entrySet().stream().mapToInt(x -> x.getValue().stream().mapToInt(PumpPhase::getStopTime).max().getAsInt()).max().getAsInt();
             }
             i++;
         }
