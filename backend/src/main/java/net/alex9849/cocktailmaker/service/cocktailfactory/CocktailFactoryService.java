@@ -25,6 +25,10 @@ public class CocktailFactoryService implements Observer<Cocktailprogress> {
         if(this.cocktailFactory != null && this.cocktailFactory.isRunning()) {
             throw new IllegalArgumentException("A cocktail is already being prepared!");
         }
+        if(this.cocktailFactory != null) {
+            this.cocktailFactory.cancelCocktail();
+
+        }
         this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps());
         this.cocktailFactory.addListener(this);
         return this.cocktailFactory.makeCocktail();
