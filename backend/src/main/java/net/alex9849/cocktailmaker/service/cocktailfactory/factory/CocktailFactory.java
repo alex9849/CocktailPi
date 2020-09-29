@@ -7,29 +7,40 @@ import net.alex9849.cocktailmaker.model.exception.NotEnoughPumpsException;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.model.util.Observable;
+import net.alex9849.cocktailmaker.model.util.Observer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class CocktailFactory {
-    private Cocktailprogress cocktailprogress;
-    private Map<Long, Pump> ingredientIdToPumpMap;
-    private List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
+public class CocktailFactory implements Observable<Cocktailprogress> {
     private final int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
     private final int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
-    private ScheduledExecutorService pumpExecutor = Executors.newSingleThreadScheduledExecutor();
+
+    private Set<Observer<Cocktailprogress>> observers = new HashSet<>();
+    private List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
+    private Map<Long, Pump> ingredientIdToPumpMap;
+    private Recipe recipe;
+    private Collection<Pump> pumps;
+    private User user;
+    private boolean done = false;
+    private Map<Pump, List<PumpPhase>> pumpTimings;
+    private long preparationTime;
+    //Valid after start
+    private Cocktailprogress cocktailprogress;
+    private long startTime;
+    //Scheduling stuff
+    @Autowired
+    private ThreadPoolTaskScheduler scheduler;
     private Set<ScheduledFuture> scheduledFutures = new HashSet<>();
 
     public CocktailFactory(Recipe recipe, User user, Collection<Pump> pumps) {
-        this.cocktailprogress = new Cocktailprogress();
-        this.cocktailprogress.setRecipe(recipe);
-        this.cocktailprogress.setUser(user);
-        this.cocktailprogress.setProgress(0);
-        this.cocktailprogress.setAborted(false);
+        this.recipe = recipe;
+        this.user = user;
+        this.pumps = pumps;
         this.ingredientIdToPumpMap = pumps.stream().collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x-> x));
         Map<Integer, List<RecipeIngredient>> productionsStepMap = recipe.getRecipeIngredients().stream().collect(Collectors.groupingBy(x -> x.getId().getProductionStep()));
         List<Integer> steps = new ArrayList<>(productionsStepMap.keySet());
@@ -37,10 +48,11 @@ public class CocktailFactory {
         for(Integer step : steps) {
             this.productionSteps.add(productionsStepMap.get(step));
         }
+        this.calcPumpTimings();
     }
 
     private List<Long> getNeededIngredientIds() {
-        return cocktailprogress.getRecipe().getRecipeIngredients().stream().map(x -> x.getIngredient().getId()).collect(Collectors.toList());
+        return this.recipe.getRecipeIngredients().stream().map(x -> x.getIngredient().getId()).collect(Collectors.toList());
     }
 
     private List<Long> getAvailableIngredientIds() {
@@ -61,7 +73,7 @@ public class CocktailFactory {
         return neededIngredientIds.isEmpty();
     }
 
-    private Map<Pump, List<PumpPhase>> getPumpTimings() {
+    private void calcPumpTimings() {
         if(!areEnoughPumpsAvailable()) {
             throw new NotEnoughPumpsException("Not enough pumps");
         }
@@ -71,7 +83,9 @@ public class CocktailFactory {
         int currentOffset = 0;
         Map<Pump, List<PumpPhase>> recipePumpTimings = new HashMap<>();
 
+        int i = 0;
         for(List<RecipeIngredient> productionStep : this.productionSteps) {
+            boolean isLast = i == this.productionSteps.size() - 1;
             List<Map.Entry<Pump, Integer>> stepPumpTime = new ArrayList<>();
             if(productionStep.size() == 0) {
                 continue;
@@ -97,35 +111,86 @@ public class CocktailFactory {
             for(Map.Entry<Pump, List<PumpPhase>> pumpPhases : pumpTimingStepCalculator.getPumpPhases().entrySet()) {
                 if(recipePumpTimings.putIfAbsent(pumpPhases.getKey(), pumpPhases.getValue()) != null) {
                     recipePumpTimings.get(pumpPhases.getKey()).addAll(pumpPhases.getValue());
+                    if(isLast) {
+                        this.preparationTime = pumpPhases.getValue().stream().mapToInt(PumpPhase::getStopTime).max().getAsInt();
+                    }
                 }
             }
+            i++;
         }
-        return recipePumpTimings;
+        this.pumpTimings = recipePumpTimings;
     }
 
-    public void makeCocktail() {
+    public Cocktailprogress makeCocktail() {
         if(this.isRunning()) {
             throw new IllegalArgumentException("Already running!");
         }
-        Map<Pump, List<PumpPhase>> pumpPhases = this.getPumpTimings();
-        pumpExecutor = Executors.newSingleThreadScheduledExecutor();
-        for(Map.Entry<Pump, List<PumpPhase>> pumpPumpPhases : pumpPhases.entrySet()) {
+        if(this.done) {
+            throw new IllegalArgumentException("Did already run!");
+        }
+        this.startTime = System.currentTimeMillis();
+        for(Map.Entry<Pump, List<PumpPhase>> pumpPumpPhases : pumpTimings.entrySet()) {
             for(PumpPhase pumpPhase : pumpPumpPhases.getValue()) {
-                scheduledFutures.add(pumpExecutor.schedule(() -> {
+                scheduledFutures.add(scheduler.scheduleWithFixedDelay(() -> {
                     System.out.println(pumpPhase.getPump().getGpioPin() + " started!");
-                }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
-                scheduledFutures.add(pumpExecutor.schedule(() -> {
+                    this.notifyObservers();
+                }, pumpPhase.getStartTime()));
+                scheduledFutures.add(scheduler.scheduleWithFixedDelay(() -> {
                     System.out.println(pumpPhase.getPump().getGpioPin() + " stopped!");
-                }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
+                    this.notifyObservers();
+                }, pumpPhase.getStopTime()));
             }
         }
+        this.cocktailprogress = new Cocktailprogress();
+        this.cocktailprogress.setUser(this.user);
+        this.cocktailprogress.setRecipe(this.recipe);
+        this.updateCocktailProgress();
+        this.notifyObservers();
+        return cocktailprogress;
+    }
+
+    public void cancelCocktail() {
+        for(ScheduledFuture future : this.scheduledFutures) {
+            future.cancel(true);
+        }
+        for(Pump pump : this.ingredientIdToPumpMap.values()) {
+            //TODO turn off all pumps!
+        }
+    }
+
+    public boolean isDone() {
+        return done;
     }
 
     public boolean isRunning() {
         if(this.scheduledFutures.stream().anyMatch(x -> !x.isDone())) {
             return true;
         }
-        this.scheduledFutures = new HashSet<>();
         return false;
+    }
+
+    private void updateCocktailProgress() {
+        long runningSince = System.currentTimeMillis() - this.startTime;
+        int progress = (int) (((double) runningSince) / this.preparationTime) * 100;
+        progress = Math.min(progress, 100);
+        this.cocktailprogress.setProgress(progress);
+    }
+
+    @Override
+    public boolean addListener(Observer<Cocktailprogress> observer) {
+        return this.observers.add(observer);
+    }
+
+    @Override
+    public boolean removeListener(Observer<Cocktailprogress> observer) {
+        return this.observers.remove(observer);
+    }
+
+    public void notifyObservers() {
+        this.observers.forEach(x -> x.notify(this.cocktailprogress));
+    }
+
+    public Cocktailprogress getCocktailprogress() {
+        return this.cocktailprogress;
     }
 }

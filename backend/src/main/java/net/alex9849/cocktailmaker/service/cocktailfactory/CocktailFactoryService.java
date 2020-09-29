@@ -3,42 +3,51 @@ package net.alex9849.cocktailmaker.service.cocktailfactory;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.model.util.Observer;
+import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
+import net.alex9849.cocktailmaker.service.cocktailfactory.factory.CocktailFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CocktailFactoryService {
+public class CocktailFactoryService implements Observer<Cocktailprogress> {
 
-    private Cocktailprogress currentProgress = null;
+    private CocktailFactory cocktailFactory;
 
     @Autowired
     private WebSocketService webSocketService;
 
+    @Autowired
+    private PumpService pumpService;
+
     public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe) {
-        if(this.currentProgress != null) {
+        if(this.cocktailFactory != null && this.cocktailFactory.isRunning()) {
             throw new IllegalArgumentException("A cocktail is already being prepared!");
         }
-        Cocktailprogress cocktailprogress = new Cocktailprogress();
-        cocktailprogress.setAborted(false);
-        cocktailprogress.setProgress(0);
-        cocktailprogress.setUser(user);
-        cocktailprogress.setRecipe(recipe);
-        this.currentProgress = cocktailprogress;
-        this.webSocketService.broadcastCurrentCocktail(this.currentProgress);
-        return cocktailprogress;
+        this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps());
+        this.cocktailFactory.addListener(this);
+        return this.cocktailFactory.makeCocktail();
     }
 
     public synchronized boolean cancelOrder() {
-        if(this.currentProgress == null) {
+        if(this.cocktailFactory == null || this.cocktailFactory.isDone() || !this.cocktailFactory.isRunning()) {
             return false;
         }
-        this.currentProgress = null;
-        this.webSocketService.broadcastCurrentCocktail(this.currentProgress);
+        this.cocktailFactory.cancelCocktail();
+        this.webSocketService.broadcastCurrentCocktail(null);
         return true;
     }
 
     public Cocktailprogress getCurrentProgress() {
-        return currentProgress;
+        if(this.cocktailFactory == null) {
+            return null;
+        }
+        return this.cocktailFactory.getCocktailprogress();
+    }
+
+    @Override
+    public void notify(Cocktailprogress object) {
+        this.webSocketService.broadcastCurrentCocktail(object);
     }
 }

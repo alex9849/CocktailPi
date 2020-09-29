@@ -7,7 +7,6 @@ public class Cocktailprogress {
     private Recipe recipe;
     private int progress;
     private User user;
-    private boolean aborted;
 
     public Recipe getRecipe() {
         return recipe;
@@ -33,11 +32,4 @@ public class Cocktailprogress {
         this.user = user;
     }
 
-    public boolean isAborted() {
-        return aborted;
-    }
-
-    public void setAborted(boolean aborted) {
-        this.aborted = aborted;
-    }
 }
