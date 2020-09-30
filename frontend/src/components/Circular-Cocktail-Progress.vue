@@ -202,7 +202,7 @@
               vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
             }
           });
-          vm.stompClient.send("/topic/cocktailprogress", {}, {name: 'Welcome'})
+          //vm.stompClient.send("/topic/cocktailprogress", {}, {name: 'Welcome'})
         };
         let disconnectCallback = function () {
           if (vm.websocketAutoreconnect) {

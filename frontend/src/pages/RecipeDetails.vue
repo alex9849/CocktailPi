@@ -9,70 +9,76 @@
         <h5>{{ recipe.name }}</h5>
       </div>
     </div>
-    <div class="row innerpadding">
-      <div class="col q-gutter-sm" style="display: flex; justify-content: end">
-        <q-btn
-          color="grey"
-          :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-          v-if="recipe.owner && user.id === recipe.owner.id"
-        >
-          Edit
-        </q-btn>
-        <q-btn
-          color="green"
-        >
-          Make cocktail
-        </q-btn>
-        <q-btn
-          color="red"
-          @click.native="deleteDialog = true"
-          :loading="deleting"
-          v-if="recipe.owner && user.id === recipe.owner.id"
-        >
-          Delete
-        </q-btn>
+    <div class="q-col-gutter-md">
+      <div class="row">
+        <div class="col"/>
+        <div class="col q-gutter-sm" style="display: contents; max-width: max-content">
+          <q-btn
+            color="grey"
+            :to="{name: 'recipeedit', params: {id: $route.params.id}}"
+            v-if="recipe.owner && user.id === recipe.owner.id"
+          >
+            Edit
+          </q-btn>
+          <q-btn
+            color="green"
+          >
+            Make cocktail
+          </q-btn>
+          <q-btn
+            color="red"
+            @click.native="deleteDialog = true"
+            :loading="deleting"
+            v-if="recipe.owner && user.id === recipe.owner.id"
+          >
+            Delete
+          </q-btn>
+        </div>
       </div>
-    </div>
-    <div class="row innerpadding">
-      <div class="col">
-        <q-card bordered class="bg-grey-3 shadow-1">
-          <q-card-section>
-            <b>Short description:</b> {{ recipe.shortDescription }}
-          </q-card-section>
-        </q-card>
+      <div class="row">
+        <div class="col">
+          <q-card bordered class="bg-grey-3 shadow-1">
+            <q-card-section>
+              <b>Short description:</b> {{ recipe.shortDescription }}
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
-    </div>
-    <div class="row innerpadding">
-      <div class="col" style="min-width: max-content">
-        <q-img
-          :src="(!!recipe.id)? ('/api/recipe/' + recipe.id + '/image?nocache=' + new Date().getTime()):null"
-          placeholder-src="../assets/cocktail-solid.png"
-
-          :ratio="16/9"
-          class="rounded-borders shadow-1"
-          style="min-width: 250px"
-        />
+      <div class="row q-col-gutter-md">
+        <div class="col" style="min-width: max-content">
+          <div>
+            <q-img
+              :src="(!!recipe.id)? ('/api/recipe/' + recipe.id + '/image?nocache=' + new Date().getTime()):null"
+              placeholder-src="../assets/cocktail-solid.png"
+              :ratio="16/9"
+              class="rounded-borders shadow-1"
+              style="min-width: 250px"
+            />
+          </div>
+        </div>
+        <div style="min-width: 200px" class="col">
+          <div>
+            <ingredient-list
+              big
+              :row1-color="'#f3f3fa'"
+              :row2-color="'#fafafa'"
+              class="bg-grey-3 shadow-2"
+              v-model="recipe.recipeIngredients"
+            />
+          </div>
+        </div>
       </div>
-      <div style="min-width: 200px" class="col">
-        <ingredient-list
-          big
-          :row1-color="'#f3f3fa'"
-          :row2-color="'#fafafa'"
-          class="bg-grey-3 shadow-2"
-          v-model="recipe.recipeIngredients"
-        />
-      </div>
-    </div>
-    <div class="row innerpadding">
-      <div class="col">
-        <q-card  bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
-          <q-card-section>
-            <b>Description:</b>
-            <div style="min-width: 200px; white-space: pre-line" class="col">
-              {{ recipe.description }}
-            </div>
-          </q-card-section>
-        </q-card>
+      <div class="row">
+        <div class="col">
+          <q-card  bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
+            <q-card-section>
+              <b>Description:</b>
+              <div style="min-width: 200px; white-space: pre-line" class="col">
+                {{ recipe.description }}
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
     <c-question
