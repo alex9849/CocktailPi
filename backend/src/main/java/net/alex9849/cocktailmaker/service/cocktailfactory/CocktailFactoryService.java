@@ -10,10 +10,16 @@ import net.alex9849.cocktailmaker.service.cocktailfactory.factory.CocktailFactor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class CocktailFactoryService implements Observer<Cocktailprogress> {
 
     private CocktailFactory cocktailFactory;
+
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Autowired
     private WebSocketService webSocketService;
@@ -22,12 +28,8 @@ public class CocktailFactoryService implements Observer<Cocktailprogress> {
     private PumpService pumpService;
 
     public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe) {
-        if(this.cocktailFactory != null && this.cocktailFactory.isRunning()) {
-            throw new IllegalArgumentException("A cocktail is already being prepared!");
-        }
         if(this.cocktailFactory != null) {
-            this.cocktailFactory.cancelCocktail();
-
+            throw new IllegalArgumentException("A cocktail is already being prepared!");
         }
         this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps());
         this.cocktailFactory.addListener(this);
@@ -39,7 +41,6 @@ public class CocktailFactoryService implements Observer<Cocktailprogress> {
             return false;
         }
         this.cocktailFactory.cancelCocktail();
-        this.webSocketService.broadcastCurrentCocktail(null);
         return true;
     }
 
@@ -51,7 +52,14 @@ public class CocktailFactoryService implements Observer<Cocktailprogress> {
     }
 
     @Override
-    public void notify(Cocktailprogress object) {
-        this.webSocketService.broadcastCurrentCocktail(object);
+    public void notify(Cocktailprogress progress) {
+        if(progress.isCanceled() || progress.isDone()) {
+            this.scheduler.schedule(() -> {
+                this.cocktailFactory.shutDown();
+                this.cocktailFactory = null;
+                this.webSocketService.broadcastCurrentCocktail(null);
+            }, 5000, TimeUnit.MILLISECONDS);
+        }
+        this.webSocketService.broadcastCurrentCocktail(progress);
     }
 }

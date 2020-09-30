@@ -19,7 +19,8 @@ export default function () {
         id: Number,
         username: String
       },
-      aborted: Boolean
+      done: Boolean,
+      canceled: Boolean
     },
     hasCocktailProgress: false
   }

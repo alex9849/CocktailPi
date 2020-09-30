@@ -7,6 +7,7 @@ public class Cocktailprogress {
     private Recipe recipe;
     private int progress;
     private User user;
+    private boolean isCanceled;
 
     public Recipe getRecipe() {
         return recipe;
@@ -32,4 +33,15 @@ public class Cocktailprogress {
         this.user = user;
     }
 
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public boolean isDone() {
+        return progress >= 100;
+    }
+
+    public void setCanceled(boolean canceled) {
+        isCanceled = canceled;
+    }
 }

@@ -4,15 +4,16 @@
       show-value
       style="margin: 5px; position: marker"
       class="text-white cursor-pointer actionable"
-      :value="60"
+      :value="hasCocktailProgress? cocktailProgress.progress: 0"
       :thickness="0.13"
       color="positive"
-      center-color="info"
+      :center-color="hasCocktailProgress? (cocktailProgress.canceled? 'red' : 'green') : 'info'"
       track-color="transparent"
+      :instant-feedback="!hasCocktailProgress"
       size="lg"
       @click="showDialog = !showDialog"
     >
-      <q-icon :name="mdiTimerSandEmpty" size="20px"/>
+      <q-icon :name="hasCocktailProgress? (cocktailProgress.canceled? mdiStop : mdiTimerSandEmpty) : mdiPause" size="20px"/>
     </q-circular-progress>
     <q-dialog
       v-model="showDialog"
@@ -95,13 +96,13 @@
                     :value="cocktailProgress.progress / 100"
                     stripe
                     rounded
-                    color="green-5"
+                    :color="cocktailProgress.canceled? 'red-4' : 'green-4'"
                     size="20px"
                   >
                     <div class="absolute-full flex flex-center">
                       <q-badge
                         color="red-5"
-                        :label="cocktailProgress.progress + '%'"
+                        :label="cocktailProgressBarLabel"
                       />
                     </div>
                   </q-linear-progress>
@@ -137,7 +138,7 @@
 
 <script>
   import {mapGetters, mapMutations} from "vuex";
-  import {mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+  import {mdiMagnify, mdiPause, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
   import SockJS from "sockjs-client";
   import Stomp from "stompjs";
   import authHeader from "../services/auth-header";
@@ -156,6 +157,7 @@
       this.mdiTimerSandEmpty = mdiTimerSandEmpty;
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
+      this.mdiPause = mdiPause;
       this.connectWebsocket();
     },
     destroyed() {
@@ -170,7 +172,19 @@
       ...mapGetters({
         hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
         cocktailProgress: 'cocktailProgress/getCocktailProgress'
-      })
+      }),
+      cocktailProgressBarLabel() {
+        if(!this.hasCocktailProgress) {
+          return '';
+        }
+        if(this.cocktailProgress.done) {
+          return 'Done!';
+        }
+        if(this.cocktailProgress.canceled) {
+          return 'Canceled!';
+        }
+        return this.cocktailProgress.progress + '%'
+      }
     },
     methods: {
       ...mapMutations({

@@ -153,18 +153,30 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
         this.cocktailprogress = new Cocktailprogress();
         this.cocktailprogress.setUser(this.user);
         this.cocktailprogress.setRecipe(this.recipe);
+        this.cocktailprogress.setCanceled(false);
         this.updateCocktailProgress();
         this.notifyObservers();
         return cocktailprogress;
     }
 
-    public void cancelCocktail() {
+    public void shutDown() {
+        if(this.scheduler.isShutdown()) {
+            return;
+        }
         for(ScheduledFuture future : this.scheduledFutures) {
             future.cancel(true);
         }
+        this.scheduler.shutdown();
         for(Pump pump : this.ingredientIdToPumpMap.values()) {
             //TODO turn off all pumps!
         }
+        this.done = true;
+    }
+
+    public void cancelCocktail() {
+        this.shutDown();
+        this.cocktailprogress.setCanceled(true);
+        this.notifyObservers();
     }
 
     public boolean isDone() {
