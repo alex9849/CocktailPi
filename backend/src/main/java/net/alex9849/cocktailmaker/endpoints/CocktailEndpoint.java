@@ -33,7 +33,7 @@ public class CocktailEndpoint {
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+        if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         cocktailFactoryService.orderCocktail(user, recipe);

@@ -63,6 +63,7 @@
                             class="q-ml-sm"
                             text-color="white"
                             :icon="mdiMagnify"
+                            @click="showDialog = false"
                             :to="{name: 'recipedetails', params: {id: cocktailProgress.recipe.id}}"
                           />
                           <q-btn
@@ -72,6 +73,7 @@
                             class="q-ml-sm"
                             text-color="white"
                             :icon="mdiStop"
+                            v-if="isAdmin || currentUser.id === cocktailProgress.user.id"
                           />
                         </div>
                       </div>
@@ -171,7 +173,9 @@
     computed: {
       ...mapGetters({
         hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-        cocktailProgress: 'cocktailProgress/getCocktailProgress'
+        cocktailProgress: 'cocktailProgress/getCocktailProgress',
+        currentUser: 'auth/getUser',
+        isAdmin: 'auth/isAdmin'
       }),
       cocktailProgressBarLabel() {
         if(!this.hasCocktailProgress) {
@@ -202,7 +206,6 @@
               vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
             }
           });
-          //vm.stompClient.send("/topic/cocktailprogress", {}, {name: 'Welcome'})
         };
         let disconnectCallback = function () {
           if (vm.websocketAutoreconnect) {
