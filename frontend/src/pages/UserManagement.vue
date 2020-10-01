@@ -107,14 +107,22 @@
               }})"
               dense
               rounded
-            />
+            >
+              <q-tooltip>
+                Edit
+              </q-tooltip>
+            </q-btn>
             <q-btn
               :icon="mdiDelete"
               @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
               color="red"
               dense
               rounded
-            />
+            >
+              <q-tooltip>
+                Delete
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
@@ -192,7 +200,7 @@
           {name: 'fullname', label: 'Full name', field: '', align: 'left'},
           {name: 'email', label: 'E-Mail', field: 'email', align: 'left'},
           {name: 'role', label: 'Role', field: '', align: 'center'},
-          { name: 'actions', label: 'Actions', field: '', align:'center'}
+          {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         roles: [
           {
@@ -217,10 +225,10 @@
     },
     computed: {
       deleteQuestionMessage() {
-        if(this.deleteUsers.length === 0) {
+        if (this.deleteUsers.length === 0) {
           return "No users selected!";
         }
-        if(this.deleteUsers.length === 1) {
+        if (this.deleteUsers.length === 1) {
           return "The following user will be deleted:";
         }
         return "The following users will be deleted:";
@@ -235,7 +243,7 @@
         }, 500);
       },
       openDeleteDialog(forSelectedUsers) {
-        if(forSelectedUsers) {
+        if (forSelectedUsers) {
           this.deleteUsers.push(...this.selected);
         }
         this.deleteDialog = true;
@@ -249,8 +257,8 @@
         let toDelete = this.deleteUsers.length;
         let deleted = 0;
         let vm = this;
-        let afterDelete = function() {
-          if(deleted === toDelete) {
+        let afterDelete = function () {
+          if (deleted === toDelete) {
             vm.closeDeleteDialog();
             vm.deleteLoading = false;
             vm.initialize();
@@ -294,6 +302,7 @@
   .row1 {
     background-color: #fafafa;
   }
+
   .row2 {
     background-color: #f3f3fa;
   }

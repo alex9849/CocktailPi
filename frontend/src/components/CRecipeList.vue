@@ -66,17 +66,29 @@
                         v-if="doPumpsHaveAllIngredients(props.row)"
                         :name="mdiCheckBold"
                         size="md"
-                        color="positive"/>
+                        color="positive">
+                        <q-tooltip>
+                          Cocktail can be ordered!
+                        </q-tooltip>
+                      </q-icon>
                       <q-icon
                         v-else-if="areEnoughPumpsAvailable(props.row)"
                         :name="mdiAlert"
                         size="md"
-                        color="warning"/>
+                        color="warning">
+                        <q-tooltip>
+                          Missing ingredients!
+                        </q-tooltip>
+                      </q-icon>
                       <q-icon
                         v-else
                         :name="mdiClose"
                         size="md"
-                        color="negative"/>
+                        color="negative">
+                        <q-tooltip>
+                          Not enough pumps!
+                        </q-tooltip>
+                      </q-icon>
                     </div>
                   </div>
                 </div>

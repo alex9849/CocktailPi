@@ -93,21 +93,33 @@
               @click=""
               dense
               rounded
-            />
+            >
+              <q-tooltip>
+                pump up
+              </q-tooltip>
+            </q-btn>
             <q-btn
               :icon="mdiPencilOutline"
               color="info"
               @click="showEditDialog(props.row)"
               dense
               rounded
-            />
+            >
+              <q-tooltip>
+                Edit
+              </q-tooltip>
+            </q-btn>
             <q-btn
               :icon="mdiDelete"
               color="red"
               @click="() => {deletePumps.push(props.row); openDeleteDialog(false);}"
               dense
               rounded
-            />
+            >
+              <q-tooltip>
+                Delete
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
