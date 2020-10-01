@@ -30,6 +30,7 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
     private boolean done = false;
     private Map<Pump, List<PumpPhase>> pumpTimings;
     private long preparationTime;
+    private int requestedAmount;
     //Valid after start
     private Cocktailprogress cocktailprogress;
     private long startTime;
@@ -37,8 +38,12 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
     private ScheduledExecutorService scheduler;
     private Set<ScheduledFuture> scheduledFutures = new HashSet<>();
 
-    public CocktailFactory(Recipe recipe, User user, Collection<Pump> pumps) {
+    public CocktailFactory(Recipe recipe, User user, Collection<Pump> pumps, int amount) {
+        if(amount < 50 || amount > 1000) {
+            throw new IllegalArgumentException("Amount needs to be between 50 and 1000 ml");
+        }
         this.recipe = recipe;
+        this.requestedAmount = amount;
         this.user = user;
         this.pumps = pumps;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -74,6 +79,10 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
         return neededIngredientIds.isEmpty();
     }
 
+    public int getRecipeAmountOfLiquid() {
+        return this.recipe.getRecipeIngredients().stream().mapToInt(RecipeIngredient::getAmount).sum();
+    }
+
     private void calcPumpTimings() {
         if(!areEnoughPumpsAvailable()) {
             throw new NotEnoughPumpsException("Not enough pumps");
@@ -82,6 +91,7 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
             throw new BadIngredientAllocation("Bad ingredient allocation");
         }
         int currentOffset = 0;
+        int recipeAmountOfLiquid = getRecipeAmountOfLiquid();
         Map<Pump, List<PumpPhase>> recipePumpTimings = new HashMap<>();
 
         int i = 0;
@@ -94,7 +104,7 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
             //Calculate how long each pump needs to run
             for(RecipeIngredient ingredient : productionStep) {
                 Pump ingPump = this.ingredientIdToPumpMap.get(ingredient.getIngredient().getId());
-                double pumpTime = ingPump.getTimePerClInMs() * (ingredient.getAmount() / 10d);
+                double pumpTime = ingPump.getTimePerClInMs() * (ingredient.getAmount() / 10d) * this.requestedAmount / recipeAmountOfLiquid;
                 stepPumpTime.add(new AbstractMap.SimpleEntry<>(ingPump, (int) pumpTime));
             }
             //Sort pumps by the time they need to run in descending order

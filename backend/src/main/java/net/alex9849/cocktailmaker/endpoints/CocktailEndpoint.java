@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
@@ -28,7 +25,7 @@ public class CocktailEndpoint {
     private CocktailFactoryService cocktailFactoryService;
 
     @RequestMapping(value = "{recipeId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId) {
+    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", defaultValue = "250") int amount) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(recipeId);
         if(recipe == null) {
@@ -37,7 +34,7 @@ public class CocktailEndpoint {
         if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        cocktailFactoryService.orderCocktail(user, recipe);
+        cocktailFactoryService.orderCocktail(user, recipe, amount);
         return ResponseEntity.ok().build();
     }
 

@@ -27,11 +27,11 @@ public class CocktailFactoryService implements Observer<Cocktailprogress> {
     @Autowired
     private PumpService pumpService;
 
-    public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe) {
+    public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe, int amount) {
         if(this.cocktailFactory != null) {
             throw new IllegalArgumentException("A cocktail is already being prepared!");
         }
-        this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps());
+        this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps(), amount);
         this.cocktailFactory.addListener(this);
         return this.cocktailFactory.makeCocktail();
     }
