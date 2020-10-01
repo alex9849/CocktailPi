@@ -72,6 +72,7 @@ public class RecipeEndpoint {
         if(!recipe.getOwner().getId().equals(principal.getId()) && !recipe.isInPublic()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        System.out.println(recipe.canBeMade());
         return ResponseEntity.ok(new RecipeDto(recipe));
     }
 

@@ -32,7 +32,9 @@ public class PumpService {
         if(pumpRepository.findByGpioPin(pump.getGpioPin()).isPresent()) {
             throw new IllegalArgumentException("GPOI-Pin already in use!");
         }
-        return pumpRepository.save(pump);
+        Pump savedPump = pumpRepository.save(pump);
+        webSocketService.broadcastPumpLayout(getAllPumps());
+        return savedPump;
     }
 
     public Pump updatePump(Pump pump) {
@@ -42,7 +44,9 @@ public class PumpService {
                 throw new IllegalArgumentException("GPOI-Pin already in use!");
             }
         }
-        return pumpRepository.save(pump);
+        Pump savedPump = pumpRepository.save(pump);
+        webSocketService.broadcastPumpLayout(getAllPumps());
+        return savedPump;
     }
 
     public List<Pump> getPumpsWithIngredient(List<Long> ingredientIds) {
@@ -61,5 +65,6 @@ public class PumpService {
 
     public void deletePump(long id) {
         pumpRepository.deleteById(id);
+        webSocketService.broadcastPumpLayout(getAllPumps());
     }
 }
