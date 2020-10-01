@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.user.User;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,14 +40,6 @@ public class Recipe {
     @Size(min = 0, max = 3000)
     private String description;
 
-    @Formula("(select count(*) = 0 from recipes r\n" +
-            "    join recipe_ingredients ri on r.id = ri.recipe_id AND r.id = id\n" +
-            "    left outer join pumps p on p.current_ingredient_id = ri.ingredient_id\n" +
-            "where p.id IS NULL)")
-    @Basic(fetch = FetchType.LAZY)
-    @Transient
-    private Boolean canBeMade;
-
     @NotNull
     @Size(min = 0, max = 100)
     private String shortDescription;
@@ -71,10 +62,6 @@ public class Recipe {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean canBeMade() {
-        return canBeMade;
     }
 
     public byte[] getImage() {

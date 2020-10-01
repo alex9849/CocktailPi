@@ -49,15 +49,42 @@
                 style="max-width: 225px; max-height: 180px"
               />
               <div class="col" style="padding-left: 10px; position: relative">
-                <h5
-                  style="margin: 0; padding-bottom: 10px;"
-                >
-                  <b>{{ props.row.name}}</b>
-                </h5>
-                <div>
-                  {{ props.row.shortDescription }}
+                <div class="row">
+                  <div class="col">
+                    <h5
+                      style="margin: 0; padding-bottom: 10px;"
+                    >
+                      <b>{{ props.row.name}}</b>
+                    </h5>
+                  </div>
+                  <div class="row">
+                    <div class="col"/>
+                    <div
+                      class="col"
+                      style="display: contents; max-width: max-content;">
+                      <q-icon
+                        v-if="doPumpsHaveAllIngredients(props.row)"
+                        :name="mdiCheckBold"
+                        size="md"
+                        color="positive"/>
+                      <q-icon
+                        v-else-if="areEnoughPumpsAvailable(props.row)"
+                        :name="mdiAlert"
+                        size="md"
+                        color="warning"/>
+                      <q-icon
+                        v-else
+                        :name="mdiClose"
+                        size="md"
+                        color="negative"/>
+                    </div>
+                  </div>
                 </div>
-
+                <div class="row">
+                  <div class="col">
+                    {{ props.row.shortDescription }}
+                  </div>
+                </div>
                 <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
                   <div class="col" style="overflow: hidden; max-height: 36px">
                     Ingredients:
@@ -79,6 +106,9 @@
 </template>
 
 <script>
+  import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
+  import {mapGetters} from "vuex";
+
   export default {
     name: "CRecipeList",
     props: {
@@ -107,6 +137,11 @@
         default: '#fafafa'
       }
     },
+    created() {
+      this.mdiCheckBold = mdiCheckBold;
+      this.mdiAlert = mdiAlert;
+      this.mdiClose = mdiClose;
+    },
     data() {
       return {
         selected: [],
@@ -123,6 +158,12 @@
           { name: 'owner', label: 'Owner', field: 'owner.username', sortable: true }
         ]
       }
+    },
+    computed: {
+      ...mapGetters({
+        doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
+        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
+      })
     },
     methods: {
       uniqueIngredientNames(productionSteps) {

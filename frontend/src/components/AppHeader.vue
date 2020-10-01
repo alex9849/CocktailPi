@@ -59,7 +59,8 @@
     },
     methods: {
       ...mapMutations({
-        setCocktailProgress: 'cocktailProgress/setCocktailProgress'
+        setCocktailProgress: 'cocktailProgress/setCocktailProgress',
+        setPumpLayout: 'pumpLayout/setLayout'
       }),
       ...mapActions({
         storeLogout: 'auth/logout',
@@ -80,6 +81,9 @@
             } else {
               vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
             }
+          });
+          vm.stompClient.subscribe('/topic/pumplayout', function (layoutMessage) {
+            vm.setPumpLayout(JSON.parse(layoutMessage.body));
           });
         };
         let disconnectCallback = function () {

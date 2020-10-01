@@ -27,7 +27,7 @@ public class Pump {
     @Min(1) @Max(40)
     private int gpioPin;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     private Ingredient currentIngredient;
 
     public Long getId() {
