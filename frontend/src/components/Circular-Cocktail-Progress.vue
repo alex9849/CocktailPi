@@ -73,6 +73,9 @@
                             class="q-ml-sm"
                             text-color="white"
                             :icon="mdiStop"
+                            :loading="canceling"
+                            :disable="hasCocktailProgress && (cocktailProgress.canceled || cocktailProgress.done)"
+                            @click="onCancelCocktail()"
                             v-if="isAdmin || currentUser.id === cocktailProgress.user.id"
                           />
                         </div>
@@ -144,11 +147,13 @@
   import SockJS from "sockjs-client";
   import Stomp from "stompjs";
   import authHeader from "../services/auth-header";
+  import CocktailService from "../services/cocktail.service";
 
   export default {
     name: "Circular-Cocktail-Progress",
     data() {
       return {
+        canceling: false,
         showDialog: false,
         stompClient: null,
         websocketAutoreconnect: true,
@@ -212,7 +217,6 @@
             vm.connectWebsocket();
           }
         };
-
         let headers = {
           'Authorization': authHeader()
         };
@@ -226,6 +230,13 @@
       destroyWebsocket() {
         this.websocketAutoreconnect = false;
         this.disconnectWebsocket();
+      },
+      onCancelCocktail() {
+        this.canceling = true;
+        CocktailService.cancelCocktail()
+          .then(() => {
+            this.canceling = false;
+          })
       }
     }
   }
