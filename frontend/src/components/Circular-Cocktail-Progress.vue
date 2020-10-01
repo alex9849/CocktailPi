@@ -13,7 +13,7 @@
       size="lg"
       @click="showDialog = !showDialog"
     >
-      <q-icon :name="hasCocktailProgress? (cocktailProgress.canceled? mdiStop : mdiTimerSandEmpty) : mdiPause" size="20px"/>
+      <q-icon :name="hasCocktailProgress? (cocktailProgress.canceled? mdiStop : mdiTimerSandEmpty) : mdiCheckBold" size="20px"/>
     </q-circular-progress>
     <q-dialog
       v-model="showDialog"
@@ -143,7 +143,7 @@
 
 <script>
   import {mapGetters} from "vuex";
-  import {mdiMagnify, mdiPause, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+  import {mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
   import CocktailService from "../services/cocktail.service";
 
   export default {
@@ -159,7 +159,7 @@
       this.mdiTimerSandEmpty = mdiTimerSandEmpty;
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
-      this.mdiPause = mdiPause;
+      this.mdiCheckBold = mdiCheckBold;
     },
     watch: {
       'cocktailProgress.recipe.id': function () {
