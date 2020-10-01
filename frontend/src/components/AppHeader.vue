@@ -41,20 +41,65 @@
 </template>
 
 <script>
-  import {mapActions, mapGetters} from "vuex";
+  import {mapActions, mapGetters, mapMutations} from "vuex";
   import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
   import CircularCocktailProgress from "./Circular-Cocktail-Progress";
+  import SockJS from "sockjs-client";
+  import Stomp from "stompjs";
+  import authHeader from "../services/auth-header";
 
   export default {
     name: "AppHeader",
     components: {CircularCocktailProgress},
+    data() {
+      return {
+        websocketAutoreconnect: true,
+        stompClient: null
+      }
+    },
     methods: {
+      ...mapMutations({
+        setCocktailProgress: 'cocktailProgress/setCocktailProgress'
+      }),
       ...mapActions({
-        storeLogout: 'auth/logout'
+        storeLogout: 'auth/logout',
       }),
       logout() {
         this.storeLogout();
         this.$router.push({name: 'login'});
+      },
+      connectWebsocket() {
+        let socket = new SockJS("/ws/cocktailprogress");
+        this.stompClient = Stomp.over(socket);
+        this.websocketAutoreconnect = true;
+        let vm = this;
+        let connectCallback = function () {
+          vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
+            if(cocktailProgressMessage.body === "DELETE") {
+              vm.setCocktailProgress(null);
+            } else {
+              vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+            }
+          });
+        };
+        let disconnectCallback = function () {
+          if (vm.websocketAutoreconnect) {
+            vm.connectWebsocket();
+          }
+        };
+        let headers = {
+          'Authorization': authHeader()
+        };
+        this.stompClient.connect(headers, connectCallback, disconnectCallback);
+      },
+      disconnectWebsocket() {
+        if (this.stompClient != null) {
+          this.stompClient.disconnect();
+        }
+      },
+      destroyWebsocket() {
+        this.websocketAutoreconnect = false;
+        this.disconnectWebsocket();
       }
     },
     computed: {
@@ -69,9 +114,24 @@
         return '';
       }
     },
+    watch: {
+      isLoggedIn(val) {
+        if(val) {
+          this.connectWebsocket();
+        } else {
+          this.destroyWebsocket();
+        }
+      }
+    },
     created() {
       this.mdiAccountBox = mdiAccountBox;
       this.mdiPower = mdiPower;
+      if(this.isLoggedIn) {
+        this.connectWebsocket();
+      }
+    },
+    destroyed() {
+      this.destroyWebsocket();
     }
   }
 </script>

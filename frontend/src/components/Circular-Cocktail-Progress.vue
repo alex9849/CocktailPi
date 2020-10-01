@@ -142,11 +142,8 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from "vuex";
+  import {mapGetters} from "vuex";
   import {mdiMagnify, mdiPause, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
-  import SockJS from "sockjs-client";
-  import Stomp from "stompjs";
-  import authHeader from "../services/auth-header";
   import CocktailService from "../services/cocktail.service";
 
   export default {
@@ -155,8 +152,6 @@
       return {
         canceling: false,
         showDialog: false,
-        stompClient: null,
-        websocketAutoreconnect: true,
         noCacheString: new Date().getTime()
       }
     },
@@ -165,10 +160,6 @@
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
       this.mdiPause = mdiPause;
-      this.connectWebsocket();
-    },
-    destroyed() {
-      this.destroyWebsocket();
     },
     watch: {
       'cocktailProgress.recipe.id': function () {
@@ -196,45 +187,12 @@
       }
     },
     methods: {
-      ...mapMutations({
-        setCocktailProgress: 'cocktailProgress/setCocktailProgress'
-      }),
-      connectWebsocket() {
-        let socket = new SockJS("/ws/cocktailprogress");
-        this.stompClient = Stomp.over(socket);
-        let vm = this;
-        let connectCallback = function () {
-          vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
-            if(cocktailProgressMessage.body === "DELETE") {
-              vm.setCocktailProgress(null);
-            } else {
-              vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
-            }
-          });
-        };
-        let disconnectCallback = function () {
-          if (vm.websocketAutoreconnect) {
-            vm.connectWebsocket();
-          }
-        };
-        let headers = {
-          'Authorization': authHeader()
-        };
-        this.stompClient.connect(headers, connectCallback, disconnectCallback);
-      },
-      disconnectWebsocket() {
-        if (this.stompClient != null) {
-          this.stompClient.disconnect();
-        }
-      },
-      destroyWebsocket() {
-        this.websocketAutoreconnect = false;
-        this.disconnectWebsocket();
-      },
       onCancelCocktail() {
         this.canceling = true;
         CocktailService.cancelCocktail()
           .then(() => {
+            this.canceling = false;
+          }, err => {
             this.canceling = false;
           })
       }
