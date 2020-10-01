@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -55,22 +57,13 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
-    public Set<ERole> toRoles(Set<String> stringRoles) {
-        Set<ERole> roles = new HashSet<>();
-        if (stringRoles == null || stringRoles.isEmpty()) {
-            roles.add(ERole.ROLE_USER);
-        } else {
-            stringRoles.forEach(role -> {
-                switch (role) {
-                    case "ADMIN":
-                        roles.add(ERole.ROLE_ADMIN);
-                        break;
-                    default:
-                        roles.add(ERole.ROLE_USER);
-                }
-            });
+    public ERole toRole(int level) {
+        for(ERole role : ERole.values()) {
+            if(role.getLevel() == level) {
+                return role;
+            }
         }
-        return roles;
+        return ERole.ROLE_USER;
     }
 
     public User fromDto(UserDto userDto) {
@@ -79,7 +72,7 @@ public class UserService {
         }
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setAuthorities(toRoles(userDto.getRoles()));
+        user.setAuthority(toRole(userDto.getAdminLevel()));
         return user;
     }
 }

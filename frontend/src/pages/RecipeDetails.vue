@@ -30,8 +30,13 @@
           <q-btn
             v-else-if="areEnoughPumpsAvailable(recipe)"
             color="warning"
+            :disable="!isUserPumpIngredientEditor"
           >
             Change pumplayout & make cocktail
+            <q-tooltip
+              v-if="!isUserPumpIngredientEditor">
+              You are not permitted to change the pumplayout!
+            </q-tooltip>
           </q-btn>
           <q-btn
             v-else
@@ -40,7 +45,7 @@
           >
             Make cocktail
             <q-tooltip>
-              No enough pumps installed!
+              Not enough pumps installed!
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -161,6 +166,7 @@
     computed: {
       ...mapGetters({
         user: 'auth/getUser',
+        isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
       })

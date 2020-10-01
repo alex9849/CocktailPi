@@ -11,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,10 +57,9 @@ public class User implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @ElementCollection(targetClass = ERole.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private Set<ERole> roles = new HashSet<>();
+    @NotNull
+    private ERole role;
 
     public User() {}
 
@@ -95,7 +95,11 @@ public class User implements UserDetails {
 
     @Override
     public Set<ERole> getAuthorities() {
-        return roles;
+        return new HashSet<>(Arrays.asList(this.role));
+    }
+
+    public ERole getAuthority() {
+        return this.role;
     }
 
     @Override
@@ -142,8 +146,8 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void setAuthorities(Set<ERole> roles) {
-        this.roles = roles;
+    public void setAuthority(ERole role) {
+        this.role = role;
     }
 
     public void setAccountNonLocked(boolean isAccountNonLocked) {

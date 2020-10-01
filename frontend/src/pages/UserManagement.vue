@@ -35,7 +35,7 @@
       :loading="isLoading"
       selection="multiple"
       :selected.sync="selected"
-      :pagination="{rowsPerPage: 0}"
+      :pagination="{rowsPerPage: 0, sortBy: 'id'}"
       :table-style="{margin: '15px'}"
       style="background-color: #f3f3fa"
     >
@@ -88,19 +88,10 @@
             {{ props.row.email}}
           </q-td>
           <q-td
-            key="isadmin"
+            key="role"
             :props="props"
           >
-            <q-icon
-              v-if="props.row.roles.includes('ADMIN')"
-              size="sm"
-              :name="mdiCheckCircle"
-            />
-            <q-icon
-              v-else
-              size="sm"
-              :name="mdiCheckboxBlankCircleOutline"
-            />
+            {{ roles.find(x => x.value === props.row.adminLevel).label }}
           </q-td>
           <q-td
             class="q-pa-md q-gutter-x-sm"
@@ -200,8 +191,20 @@
           {name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center'},
           {name: 'fullname', label: 'Full name', field: '', align: 'left'},
           {name: 'email', label: 'E-Mail', field: 'email', align: 'left'},
-          {name: 'isadmin', label: 'Admin', field: '', align: 'center'},
+          {name: 'role', label: 'Role', field: '', align: 'center'},
           { name: 'actions', label: 'Actions', field: '', align:'center'}
+        ],
+        roles: [
+          {
+            value: 0,
+            label: 'User'
+          }, {
+            value: 1,
+            label: 'Pump-Ingredient-Editor'
+          }, {
+            value: 2,
+            label: 'Admin'
+          }
         ]
       }
     },

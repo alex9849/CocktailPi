@@ -36,7 +36,7 @@ public class UserEndpoint {
         User user = new User();
         BeanUtils.copyProperties(createUser, user);
         user.setPassword(encoder.encode(user.getPassword()));
-        user.setAuthorities(userService.toRoles(createUser.getRoles()));
+        user.setAuthority(userService.toRole(createUser.getAdminLevel()));
         user.setId(null);
         user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
@@ -60,9 +60,9 @@ public class UserEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            updateUser.setAuthorities(userService.toRoles(updateUserRequest.getUserDto().getRoles()));
+            updateUser.setAuthority(userService.toRole(updateUserRequest.getUserDto().getAdminLevel()));
         } else {
-            updateUser.setAuthorities(beforeUpdate.getAuthorities());
+            updateUser.setAuthority(beforeUpdate.getAuthority());
             updateUser.setAccountNonLocked(beforeUpdate.isAccountNonLocked());
         }
         //If user wants to update his password update it. Otherwise fill in the old encrypted password

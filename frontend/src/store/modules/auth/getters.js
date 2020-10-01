@@ -4,5 +4,11 @@ export const getAuthToken = state => state.status.authToken;
 export const isAdmin = state => {
   if(!getUser(state))
     return false;
-  return state.status.user.roles.includes('ADMIN');
+  return state.status.user.adminLevel >= 2;
 };
+export const isPumpIngredientEditor = state => {
+  if(!getUser(state))
+    return false;
+  return state.status.user.adminLevel >= 1;
+};
+

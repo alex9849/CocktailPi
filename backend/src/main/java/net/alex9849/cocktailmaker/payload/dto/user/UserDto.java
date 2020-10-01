@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.beans.BeanUtils;
 
@@ -9,8 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class UserDto {
     private Long id;
@@ -40,15 +37,15 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private Set<String> roles;
+    private int adminLevel;
 
     public UserDto() {}
 
     public UserDto(User user) {
         BeanUtils.copyProperties(user, this);
-        this.roles = user.getAuthorities().stream()
-                .map(ERole::getAuthority)
-                .collect(Collectors.toSet());
+        if(user.getAuthority() != null) {
+            this.adminLevel = user.getAuthority().getLevel();
+        }
     }
 
     public Long getId() {
@@ -107,11 +104,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    public int getAdminLevel() {
+        return adminLevel;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    public void setAdminLevel(int adminLevel) {
+        this.adminLevel = adminLevel;
     }
 }

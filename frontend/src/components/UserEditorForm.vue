@@ -68,12 +68,15 @@
         <q-icon :name="showPassword? mdiEyeOff:mdiEye" @click="showPassword = !showPassword"/>
       </template>
     </q-input>
-    <q-checkbox
+    <q-select
+      outlined
+      map-options
+      :value="value.adminLevel"
       v-if="!isProfile"
-      :value="isAdmin"
-      @input="change => {if(value.roles) {change? value.roles.push('ADMIN'):value.roles = value.roles.filter(e => e !== 'ADMIN'); $emit('input', value)}}"
+      :options="roles"
+      @input="e => {value.adminLevel = e.value; $emit('input', value); $v.value.adminLevel.$touch();}"
       :disable="loading || disabled"
-      label="Admin-permissions"
+      label="Role"
     />
     <q-checkbox
       v-if="!isProfile"
@@ -116,7 +119,19 @@
     },
     data() {
       return {
-        showPassword: false
+        showPassword: false,
+        roles: [
+          {
+            value: 0,
+            label: 'User'
+          }, {
+            value: 1,
+            label: 'Pump-Ingredient-Editor'
+          }, {
+            value: 2,
+            label: 'Admin'
+          }
+        ]
       }
     },
     validations() {
@@ -143,6 +158,9 @@
           password: {
             minLength: minLength(6),
             maxLength: maxLength(40)
+          },
+          adminLevel: {
+            required
           }
         }
       };
@@ -158,14 +176,6 @@
         } else {
           this.$emit('invalid');
         }
-      }
-    },
-    computed: {
-      isAdmin() {
-        if (!this.value.roles) {
-          return undefined;
-        }
-        return this.value.roles.includes('ADMIN')
       }
     },
     created() {
