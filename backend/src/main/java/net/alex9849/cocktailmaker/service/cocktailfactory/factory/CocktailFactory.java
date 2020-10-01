@@ -2,8 +2,6 @@ package net.alex9849.cocktailmaker.service.cocktailfactory.factory;
 
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
-import net.alex9849.cocktailmaker.model.exception.BadIngredientAllocation;
-import net.alex9849.cocktailmaker.model.exception.NotEnoughPumpsException;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
@@ -54,6 +52,12 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
         for(Integer step : steps) {
             this.productionSteps.add(productionsStepMap.get(step));
         }
+        if(!areEnoughPumpsAvailable()) {
+            throw new IllegalArgumentException("Not enough pumps");
+        }
+        if(!doPumpsHaveAllIngredients()) {
+            throw new IllegalArgumentException("Bad ingredient allocation");
+        }
         this.calcPumpTimings();
     }
 
@@ -84,12 +88,6 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
     }
 
     private void calcPumpTimings() {
-        if(!areEnoughPumpsAvailable()) {
-            throw new NotEnoughPumpsException("Not enough pumps");
-        }
-        if(!doPumpsHaveAllIngredients()) {
-            throw new BadIngredientAllocation("Bad ingredient allocation");
-        }
         int currentOffset = 0;
         int recipeAmountOfLiquid = getRecipeAmountOfLiquid();
         Map<Pump, List<PumpPhase>> recipePumpTimings = new HashMap<>();

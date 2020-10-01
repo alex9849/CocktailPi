@@ -21,9 +21,27 @@
             Edit
           </q-btn>
           <q-btn
-            color="green"
+            v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
+            color="positive"
+            :loading="!loaded"
           >
             Make cocktail
+          </q-btn>
+          <q-btn
+            v-else-if="areEnoughPumpsAvailable(recipe)"
+            color="warning"
+          >
+            Change pumplayout & make cocktail
+          </q-btn>
+          <q-btn
+            v-else
+            color="positive"
+            disable
+          >
+            Make cocktail
+            <q-tooltip>
+              No enough pumps installed!
+            </q-tooltip>
           </q-btn>
           <q-btn
             color="red"
@@ -107,7 +125,8 @@
       return {
         recipe: {},
         deleting: false,
-        deleteDialog: false
+        deleteDialog: false,
+        loaded: false
       }
     },
     created() {
@@ -116,7 +135,10 @@
     methods: {
       initialize() {
         RecipeService.getRecipe(this.$route.params.id)
-          .then(recipe => this.recipe = recipe);
+          .then(recipe => {
+            this.recipe = recipe
+            this.loaded = true;
+          });
       },
       deleteRecipe() {
         this.deleting = true;
@@ -138,7 +160,9 @@
     },
     computed: {
       ...mapGetters({
-        user: 'auth/getUser'
+        user: 'auth/getUser',
+        doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
+        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
       })
     }
   }
