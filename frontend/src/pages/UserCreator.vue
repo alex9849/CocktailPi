@@ -54,7 +54,7 @@
     data() {
       return {
         newUser: new User('', '', '',
-          '', true, '', '', ['user']),
+          '', true, '', '', 0),
         isValid: false,
         loading: false,
         error: ''
