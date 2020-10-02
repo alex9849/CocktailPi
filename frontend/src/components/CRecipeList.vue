@@ -24,105 +24,65 @@
         />
       </template>
       <template v-slot:body="props">
-        <q-card
-          @click="$router.push({name: 'recipedetails', params: {id: props.row.id}})"
-          :style="'cursor: pointer; margin: 10px; background-color: ' + ((props.rowIndex % 2 === 0)? listItem1Color : listItem2Color)"
+        <router-link
+          :to="{name: 'recipedetails', params: {id: props.row.id}}"
+          class=""
         >
-          <q-card-section
-            style="padding: 10px"
+          <c-recipe-card
+            :recipe="props.row"
+            :background-color="(props.rowIndex % 2 === 0)? listItem1Color : listItem2Color"
           >
-            <div
-              class="row"
-              style="position: relative"
-            >
+            <template slot="beforePicture">
               <q-checkbox
                 v-if="selectable"
                 v-model="props.selected"
                 keep-color
-                style="position: absolute; z-index: 1;"
               />
-              <q-img
-                :src="'/api/recipe/' + props.row.id + '/image?nocache=' + new Date().getTime()"
-                placeholder-src="../assets/cocktail-solid.png"
-                :ratio="16/9"
-                class="col rounded-borders"
-                style="max-width: 225px; max-height: 180px"
-              />
-              <div class="col" style="padding-left: 10px; position: relative">
-                <div class="row">
-                  <div class="col">
-                    <h5
-                      style="margin: 0; padding-bottom: 10px;"
-                    >
-                      <b>{{ props.row.name}}</b>
-                    </h5>
-                  </div>
-                  <div class="row">
-                    <div class="col"/>
-                    <div
-                      class="col"
-                      style="display: contents; max-width: max-content;">
-                      <q-icon
-                        v-if="doPumpsHaveAllIngredients(props.row)"
-                        :name="mdiCheckBold"
-                        size="md"
-                        color="positive">
-                        <q-tooltip>
-                          Cocktail can be ordered!
-                        </q-tooltip>
-                      </q-icon>
-                      <q-icon
-                        v-else-if="areEnoughPumpsAvailable(props.row)"
-                        :name="mdiAlert"
-                        size="md"
-                        color="warning">
-                        <q-tooltip>
-                          Missing ingredients!
-                        </q-tooltip>
-                      </q-icon>
-                      <q-icon
-                        v-else
-                        :name="mdiClose"
-                        size="md"
-                        color="negative">
-                        <q-tooltip>
-                          Not enough pumps!
-                        </q-tooltip>
-                      </q-icon>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    {{ props.row.shortDescription }}
-                  </div>
-                </div>
-                <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
-                  <div class="col" style="overflow: hidden; max-height: 36px">
-                    Ingredients:
-                    <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(props.row.recipeIngredients)">
-                      {{ index !== 3?name:'...' }}
-                    </q-chip>
-                  </div>
-                  <div class="col" style="text-align: right; max-width: max-content">
-                    by {{ props.row.owner.username }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+            </template>
+            <template slot="topRight">
+              <q-icon
+                v-if="doPumpsHaveAllIngredients(props.row)"
+                :name="mdiCheckBold"
+                size="md"
+                color="positive">
+                <q-tooltip>
+                  Cocktail can be ordered!
+                </q-tooltip>
+              </q-icon>
+              <q-icon
+                v-else-if="areEnoughPumpsAvailable(props.row)"
+                :name="mdiAlert"
+                size="md"
+                color="warning">
+                <q-tooltip>
+                  Missing ingredients!
+                </q-tooltip>
+              </q-icon>
+              <q-icon
+                v-else
+                :name="mdiClose"
+                size="md"
+                color="negative">
+                <q-tooltip>
+                  Not enough pumps!
+                </q-tooltip>
+              </q-icon>
+            </template>
+          </c-recipe-card>
+        </router-link>
       </template>
     </q-table>
   </div>
 </template>
 
 <script>
+  import CRecipeCard from "./CRecipeCard";
   import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
   import {mapGetters} from "vuex";
 
   export default {
     name: "CRecipeList",
+    components: {CRecipeCard},
     props: {
       recipes: {
         type: Array,
@@ -149,11 +109,6 @@
         default: '#fafafa'
       }
     },
-    created() {
-      this.mdiCheckBold = mdiCheckBold;
-      this.mdiAlert = mdiAlert;
-      this.mdiClose = mdiClose;
-    },
     data() {
       return {
         selected: [],
@@ -171,22 +126,16 @@
         ]
       }
     },
+    created() {
+      this.mdiCheckBold = mdiCheckBold;
+      this.mdiAlert = mdiAlert;
+      this.mdiClose = mdiClose;
+    },
     computed: {
       ...mapGetters({
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
       })
-    },
-    methods: {
-      uniqueIngredientNames(productionSteps) {
-        let unique = new Set();
-        for(let productionStep of productionSteps) {
-          for(let ingredient of productionStep) {
-            unique.add(ingredient.ingredient.name);
-          }
-        }
-        return Array.from(unique.values());
-      }
     },
     watch: {
       selected(newValue) {
@@ -200,4 +149,8 @@
 </script>
 
 <style scoped>
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 </style>

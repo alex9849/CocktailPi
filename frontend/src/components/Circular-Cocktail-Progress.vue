@@ -145,9 +145,11 @@
   import {mapGetters} from "vuex";
   import {mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
   import CocktailService from "../services/cocktail.service";
+  import CRecipeCard from "./CRecipeCard";
 
   export default {
     name: "Circular-Cocktail-Progress",
+    components: {CRecipeCard},
     data() {
       return {
         canceling: false,
