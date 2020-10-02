@@ -1,6 +1,6 @@
 <template>
   <q-card
-    :style="'margin: 10px; background-color: ' + backgroundColor"
+    :style="'background-color: ' + backgroundColor"
   >
     <q-card-section
       style="padding: 10px"
@@ -73,10 +73,6 @@
       backgroundColor: {
         type: String,
         default: '#fafafa'
-      },
-      to: {
-        type: Object,
-        required: false
       }
     },
     methods: {
