@@ -30,7 +30,7 @@ public class Recipe {
     private boolean inPublic;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     private User owner;
 
     @Lob() @Basic(fetch = FetchType.LAZY)
@@ -45,11 +45,11 @@ public class Recipe {
     private String shortDescription;
 
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinTable(name = "recipe_tags",
             joinColumns = @JoinColumn(name = "recipe_id"),

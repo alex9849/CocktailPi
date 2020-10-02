@@ -5,7 +5,6 @@ import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
 import net.alex9849.cocktailmaker.service.UserService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +32,9 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto createUser, UriComponentsBuilder uriBuilder) {
-        User user = new User();
-        BeanUtils.copyProperties(createUser, user);
+        User user = userService.fromDto(createUser);
         user.setPassword(encoder.encode(user.getPassword()));
         user.setAuthority(userService.toRole(createUser.getAdminLevel()));
-        user.setId(null);
         user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();

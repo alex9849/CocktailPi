@@ -155,6 +155,7 @@ public class CocktailFactory extends Observable {
                 this.notifyObservers();
             }, this.preparationTime, TimeUnit.MILLISECONDS));
         }
+        this.setChanged();
         this.cocktailprogress = new Cocktailprogress();
         this.cocktailprogress.setUser(this.user);
         this.cocktailprogress.setRecipe(this.recipe);
@@ -199,6 +200,7 @@ public class CocktailFactory extends Observable {
         long runningSince = System.currentTimeMillis() - this.startTime;
         double progress = ( runningSince / (double) this.preparationTime) * 100;
         progress = Math.min(progress, 100);
+        this.setChanged();
         this.cocktailprogress.setProgress((int) progress);
     }
 

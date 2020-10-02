@@ -14,7 +14,7 @@ public class RecipeIngredient {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("IngredientId")
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;

@@ -36,7 +36,7 @@ public class CocktailFactoryService implements Observer {
             throw new IllegalArgumentException("A cocktail is already being prepared!");
         }
         if(pumpCleanService.isAnyCleaning()) {
-            throw new IllegalArgumentException("There are pumps getting cleaned currently!");
+            throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
         this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps(), amount);
         this.cocktailFactory.addObserver(this);

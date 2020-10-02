@@ -34,7 +34,7 @@ public class Ingredient implements Serializable {
     @Min(0) @Max(100)
     private int alcoholContent;
 
-    @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
 
