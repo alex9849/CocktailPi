@@ -1,6 +1,8 @@
 <template>
   <q-select
     outlined
+    :loading="loading"
+    :dense="dense"
     v-model="selectedIngredient"
     use-input
     :clearable="clearable"
@@ -42,6 +44,14 @@
       label: {
         type: String,
         default: 'Ingredient'
+      },
+      dense: {
+        type: Boolean,
+        default: false
+      },
+      loading: {
+        type: Boolean,
+        default: false
       },
       clearable: {
         type: Boolean,

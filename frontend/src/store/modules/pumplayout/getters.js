@@ -39,3 +39,5 @@ export const isCleaning = (state) => {
     return false;
   }
 };
+
+export const getLayout = (state) => state.pumpLayout;

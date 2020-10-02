@@ -96,7 +96,7 @@
               :loading="isCleaning(props.row.id)"
             >
               <q-tooltip>
-                pump up
+                Pump up
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -265,7 +265,7 @@
         pumps: [],
         selected: [],
         columns: [
-          {name: 'id', label: 'Nr', field: 'id', align: 'left', sortable: true},
+          {name: 'id', label: 'Nr', field: 'id', align: 'left'},
           {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
           {
             name: 'tubeCapacityInMl',

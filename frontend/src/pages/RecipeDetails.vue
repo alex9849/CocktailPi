@@ -23,7 +23,7 @@
           <q-btn
             v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
             color="positive"
-            @click="showMakeCocktailDialog = true"
+            @click="makeCocktailDialog.showDialog = true"
             :loading="!loaded"
           >
             Make cocktail
@@ -31,7 +31,7 @@
           <q-btn
             v-else-if="areEnoughPumpsAvailable(recipe)"
             color="warning"
-            @click="showMakeCocktailDialog = true"
+            @click="makeCocktailDialog.showDialog = true"
             :disable="!isUserPumpIngredientEditor"
           >
             Change pumplayout & make cocktail
@@ -116,16 +116,75 @@
       @clickAbort="deleteDialog = false"
     />
     <q-dialog
-      v-model="showMakeCocktailDialog"
+      v-model="makeCocktailDialog.showDialog"
     >
-      <q-card>
-        <q-card-section>
+      <q-card class="text-center" style="width: 500px">
+        <q-card-section class="q-gutter-lg">
           <h5>{{ makeCocktailDialogHeadline }}</h5>
           <q-splitter
             horizontal
             :value="10"
           />
+          <q-table
+            :columns="makeCocktailDialog.columns"
+            :data="getPumpLayout"
+            :pagination="{rowsPerPage: 0, sortBy: 'id'}"
+            hide-bottom
+            flat
+            :table-style="{margin: '15px'}"
+            style="background-color: #f3f3fa"
+          >
+            <template v-slot:body-cell-currentIngredient="props">
+              <q-td
+                key="currentIngredient"
+                :props="props"
+              >
+                <c-ingredient-selector
+                  :value="props.row.currentIngredient"
+                  <!--@input="updatePumpIngredient(props.row, $event)"-->
+                  clearable
+                  dense
+                  :loading="makeCocktailDialog.loadingPumpIds.some(x => x === props.row.id)"
+                />
+              </q-td>
+            </template>
+            <template v-slot:body-cell-actions="props">
+              <q-td
+                key="actions"
+                class="q-pa-md q-gutter-x-sm"
+                :props="props"
+              >
+                <q-btn
+                  :icon="mdiPlay"
+                  color="green"
+                  @click="onClickCleanPump(props.row)"
+                  dense
+                  rounded
+                  :loading="isCleaning(props.row.id)"
+                >
+                  <q-tooltip>
+                    Pump up
+                  </q-tooltip>
+                </q-btn>
+              </q-td>
+            </template>
+          </q-table>
         </q-card-section>
+        <q-card-actions
+          align="center"
+        >
+          <q-btn
+            color="positive"
+            :disable="!loaded || !doPumpsHaveAllIngredients(recipe) || hasCocktailProgress"
+          >
+            Make cocktail
+          </q-btn>
+          <q-tooltip
+            v-if="loaded && (!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress)"
+          >
+            {{ hasCocktailProgress? "A cocktail is already being made!" : "Missing ingredients!" }}
+          </q-tooltip>
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </q-page>
@@ -136,29 +195,59 @@
   import IngredientList from "../components/IngredientList";
   import CQuestion from "../components/CQuestion";
   import {mapGetters} from "vuex";
+  import {mdiPlay} from "@quasar/extras/mdi-v5";
+  import PumpService from "../services/pump.service";
+  import CIngredientSelector from "../components/CIngredientSelector";
 
   export default {
     name: "RecipeDetails",
-    components: {CQuestion, IngredientList},
+    components: {CIngredientSelector, CQuestion, IngredientList},
     data() {
       return {
         recipe: {},
         deleting: false,
         deleteDialog: false,
         loaded: false,
-        showMakeCocktailDialog: false
+        makeCocktailDialog: {
+          showDialog: false,
+          columns: [
+            {name: 'id', label: 'Nr', field: 'id', align: 'left'},
+            {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
+            {name: 'actions', label: 'Actions', field: '', align: 'center'}
+          ],
+          loadingPumpIds: []
+        }
       }
     },
     created() {
       this.initialize();
+      this.mdiPlay = mdiPlay;
     },
     methods: {
       initialize() {
         RecipeService.getRecipe(this.$route.params.id)
           .then(recipe => {
-            this.recipe = recipe
+            this.recipe = recipe;
             this.loaded = true;
           });
+      },
+      updatePumpIngredient(pump, newIngredient) {
+        let newPump = Object.assign({}, pump);
+        newPump.currentIngredient = newIngredient;
+        this.makeCocktailDialog.loadingPumpIds.includes(newPump.id)
+        PumpService.updatePump(pump)
+          .finally(() => {
+
+          })
+      },
+      onClickCleanPump(pump) {
+        PumpService.cleanPump(pump)
+          .catch(error => {
+            this.$q.notify({
+              type: 'negative',
+              message: error.response.data.message
+            });
+          })
       },
       deleteRecipe() {
         this.deleting = true;
@@ -183,10 +272,13 @@
         user: 'auth/getUser',
         isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
+        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable',
+        hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+        getPumpLayout: 'pumpLayout/getLayout',
+        isCleaning: 'pumpLayout/isCleaning'
       }),
       makeCocktailDialogHeadline() {
-        if(!!this.recipe) {
+        if(!this.loaded) {
           return "";
         }
         if(!this.doPumpsHaveAllIngredients(this.recipe)) {
