@@ -5,8 +5,6 @@ import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.model.util.Observable;
-import net.alex9849.cocktailmaker.model.util.Observer;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -15,11 +13,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class CocktailFactory implements Observable<Cocktailprogress> {
+public class CocktailFactory extends Observable {
     private final int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
     private final int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
 
-    private Set<Observer<Cocktailprogress>> observers = new HashSet<>();
     private List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
     private Map<Long, Pump> ingredientIdToPumpMap;
     private Recipe recipe;
@@ -205,18 +202,9 @@ public class CocktailFactory implements Observable<Cocktailprogress> {
         this.cocktailprogress.setProgress((int) progress);
     }
 
-    @Override
-    public boolean addListener(Observer<Cocktailprogress> observer) {
-        return this.observers.add(observer);
-    }
-
-    @Override
-    public boolean removeListener(Observer<Cocktailprogress> observer) {
-        return this.observers.remove(observer);
-    }
 
     public void notifyObservers() {
-        this.observers.forEach(x -> x.notify(this.cocktailprogress));
+        this.notifyObservers(this.cocktailprogress);
     }
 
     public Cocktailprogress getCocktailprogress() {

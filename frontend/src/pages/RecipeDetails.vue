@@ -23,6 +23,7 @@
           <q-btn
             v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
             color="positive"
+            @click="showMakeCocktailDialog = true"
             :loading="!loaded"
           >
             Make cocktail
@@ -30,6 +31,7 @@
           <q-btn
             v-else-if="areEnoughPumpsAvailable(recipe)"
             color="warning"
+            @click="showMakeCocktailDialog = true"
             :disable="!isUserPumpIngredientEditor"
           >
             Change pumplayout & make cocktail
@@ -113,7 +115,19 @@
       @clickOk="deleteRecipe"
       @clickAbort="deleteDialog = false"
     />
-
+    <q-dialog
+      v-model="showMakeCocktailDialog"
+    >
+      <q-card>
+        <q-card-section>
+          <h5>{{ makeCocktailDialogHeadline }}</h5>
+          <q-splitter
+            horizontal
+            :value="10"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -131,7 +145,8 @@
         recipe: {},
         deleting: false,
         deleteDialog: false,
-        loaded: false
+        loaded: false,
+        showMakeCocktailDialog: false
       }
     },
     created() {
@@ -169,7 +184,16 @@
         isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
-      })
+      }),
+      makeCocktailDialogHeadline() {
+        if(!!this.recipe) {
+          return "";
+        }
+        if(!this.doPumpsHaveAllIngredients(this.recipe)) {
+          return "Change pumplayout & make cocktail"
+        }
+        return "Make cocktail"
+      }
     }
   }
 </script>

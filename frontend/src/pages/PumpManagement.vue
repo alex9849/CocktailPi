@@ -90,9 +90,10 @@
             <q-btn
               :icon="mdiPlay"
               color="green"
-              @click=""
+              @click="onClickCleanPump(props.row)"
               dense
               rounded
+              :loading="isCleaning(props.row.id)"
             >
               <q-tooltip>
                 pump up
@@ -227,6 +228,7 @@
 <script>
 
   import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
+  import {mapGetters} from "vuex";
   import PumpEditorForm from "../components/PumpEditorForm";
   import PumpService from "../services/pump.service"
   import CQuestion from "../components/CQuestion";
@@ -297,6 +299,15 @@
           .then(pumps => {
             this.pumps = pumps;
             this.isLoading = false;
+          })
+      },
+      onClickCleanPump(pump) {
+        PumpService.cleanPump(pump)
+          .catch(error => {
+            this.$q.notify({
+              type: 'negative',
+              message: error.response.data.message
+            });
           })
       },
       openDeleteDialog(forSelectedPumps) {
@@ -381,6 +392,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        isCleaning: 'pumpLayout/isCleaning'
+      }),
       isEditPumpNew() {
         return this.editOptions.editPump.id === -1;
       },

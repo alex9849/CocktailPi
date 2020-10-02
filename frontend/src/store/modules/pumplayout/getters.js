@@ -28,3 +28,14 @@ export const areEnoughPumpsAvailable = (state) => {
     return recipeIngredientIds.size <= state.pumpLayout.length;
   }
 };
+
+export const isCleaning = (state) => {
+  return (pumpId) => {
+    for(let pump of state.pumpLayout) {
+      if(pump.id === pumpId) {
+        return pump.cleaning;
+      }
+    }
+    return false;
+  }
+};

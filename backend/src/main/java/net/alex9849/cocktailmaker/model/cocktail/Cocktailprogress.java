@@ -38,7 +38,7 @@ public class Cocktailprogress {
     }
 
     public boolean isDone() {
-        return progress >= 100;
+        return progress > 99.99;
     }
 
     public void setCanceled(boolean canceled) {

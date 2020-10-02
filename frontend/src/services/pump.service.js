@@ -13,6 +13,10 @@ class PumpService {
     return axios.post(API_PATH, pump);
   }
 
+  cleanPump(pump) {
+    return axios.put(API_PATH + pump.id + '/clean');
+  }
+
   updatePump(pump) {
     return axios.put(API_PATH + pump.id, pump);
   }

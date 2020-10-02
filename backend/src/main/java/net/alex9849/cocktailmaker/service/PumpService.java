@@ -28,6 +28,10 @@ public class PumpService {
         return pumpRepository.findAll();
     }
 
+    public Pump getPump(long id) {
+        return pumpRepository.findById(id).orElse(null);
+    }
+
     public Pump createPump(Pump pump) {
         if(pumpRepository.findByGpioPin(pump.getGpioPin()).isPresent()) {
             throw new IllegalArgumentException("GPOI-Pin already in use!");
