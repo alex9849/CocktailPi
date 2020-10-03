@@ -9,7 +9,7 @@ script:
   - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
   - "mvn versions:commit"
   - "mvn clean"
-  - "mvn install"
+  - "mvn install -P prod"
 after_success:
   - mkdir push
   - cp ./backend/target/*.jar ./push
