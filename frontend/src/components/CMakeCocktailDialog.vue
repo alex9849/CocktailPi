@@ -35,8 +35,8 @@
         <q-table
           v-if="isUserPumpIngredientEditor"
           :columns="columns"
-          :data="getPumpLayout"
-          :pagination="{rowsPerPage: 0, sortBy: 'id'}"
+          :data="sortedPumpLayout"
+          :pagination="{rowsPerPage: 0}"
           hide-bottom
           flat
           :table-style="{margin: '15px'}"
