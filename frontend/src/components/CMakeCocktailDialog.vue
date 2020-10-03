@@ -13,11 +13,17 @@
         />
         <q-input
           v-model.number="amountToProduce"
+          @input="$v.amountToProduce.$touch()"
           label="Amount to produce"
           outlined
           input-class="text-center text-weight-medium"
           rounded
           type="number"
+          :rules="[
+            val => $v.amountToProduce.required || 'Required',
+            val => $v.amountToProduce.minValue || 'Min 50ml',
+            val => $v.amountToProduce.maxValue || 'Max 1000ml'
+          ]"
         >
           <template slot="append">
             ml
@@ -75,7 +81,7 @@
         <q-btn
           color="positive"
           @click="onMakeCocktail()"
-          :disable="!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress"
+          :disable="!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress || $v.amountToProduce.$invalid"
         >
           Make cocktail
         </q-btn>
@@ -95,6 +101,7 @@
   import {mapGetters} from "vuex";
   import {mdiPlay} from "@quasar/extras/mdi-v5";
   import CIngredientSelector from "../components/CIngredientSelector";
+  import {maxValue, minValue, required} from "vuelidate/lib/validators";
 
   export default {
     name: "CMakeCocktailDialog",
@@ -160,7 +167,7 @@
         isCleaning: 'pumpLayout/isCleaning'
       }),
       makeCocktailDialogHeadline() {
-        if(!this.doPumpsHaveAllIngredients(this.recipe)) {
+        if (!this.doPumpsHaveAllIngredients(this.recipe)) {
           return "Change pumplayout & make cocktail"
         }
         return "Make cocktail"
@@ -173,6 +180,15 @@
           return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
         }
       }
+    },
+    validations() {
+      return {
+        amountToProduce: {
+          required,
+          minValue: minValue(50),
+          maxValue: maxValue(1000)
+        }
+      };
     }
   }
 </script>
