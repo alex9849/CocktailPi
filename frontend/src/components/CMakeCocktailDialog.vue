@@ -4,7 +4,10 @@
     ref="mcDialog"
     @input="$emit('input', $event)"
   >
-    <q-card class="text-center" style="width: 500px">
+    <q-card
+      class="text-center"
+      style="width: 500px"
+    >
       <q-card-section class="q-gutter-md">
         <p class="text-h5">{{ makeCocktailDialogHeadline }}</p>
         <q-splitter
@@ -136,6 +139,12 @@
         newPump.currentIngredient = newIngredient;
         this.loadingPumpIds.push(newPump.id)
         PumpService.updatePump(newPump)
+          .catch(error => {
+            this.$q.notify({
+              type: 'negative',
+              message: error.response.data.message
+            });
+          })
           .finally(() => {
             let array = this.loadingPumpIds;
             array.splice(array.indexOf(newPump.id), 1);
@@ -156,6 +165,12 @@
             this.$refs.mcDialog.hide();
             this.showProgressDialog = true;
           })
+          .catch(error => {
+          this.$q.notify({
+            type: 'negative',
+            message: error.response.data.message
+          });
+        })
       }
     },
     computed: {

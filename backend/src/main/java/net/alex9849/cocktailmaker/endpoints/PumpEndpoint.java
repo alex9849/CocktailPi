@@ -41,7 +41,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto pumpDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

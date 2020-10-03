@@ -1,11 +1,14 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,9 +23,11 @@ public class IngredientEndpoint {
     @Autowired
     IngredientService ingredientService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete) {
+        if(autocomplete == null && !SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(ERole.ROLE_ADMIN)) {
+            ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete)
                 .stream().map(IngredientDto::new).collect(Collectors.toList()));
     }
