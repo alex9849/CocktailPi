@@ -22,6 +22,7 @@ export default function () {
       done: Boolean,
       canceled: Boolean
     },
-    hasCocktailProgress: false
+    hasCocktailProgress: false,
+    currentProgressDialog: false
   }
 }

@@ -4,8 +4,12 @@ const API_PATH = 'api/cocktail/';
 
 class CocktailService {
 
-  order(recipeId) {
-    return axios.put(API_PATH + recipeId);
+  order(recipeId, amount) {
+    return axios.put(API_PATH + recipeId, null, {
+      params: {
+        amount: amount
+      }
+    });
   }
 
   cancelCocktail() {

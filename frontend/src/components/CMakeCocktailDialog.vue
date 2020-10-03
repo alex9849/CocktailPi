@@ -1,6 +1,7 @@
 <template>
   <q-dialog
     :value="value"
+    ref="mcDialog"
     @input="$emit('input', $event)"
   >
     <q-card class="text-center" style="width: 500px">
@@ -73,6 +74,7 @@
       >
         <q-btn
           color="positive"
+          @click="onMakeCocktail()"
           :disable="!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress"
         >
           Make cocktail
@@ -89,6 +91,7 @@
 
 <script>
   import PumpService from "../services/pump.service";
+  import CocktailService from "../services/cocktail.service"
   import {mapGetters} from "vuex";
   import {mdiPlay} from "@quasar/extras/mdi-v5";
   import CIngredientSelector from "../components/CIngredientSelector";
@@ -139,6 +142,13 @@
               message: error.response.data.message
             });
           })
+      },
+      onMakeCocktail() {
+        CocktailService.order(this.recipe.id, this.amountToProduce)
+          .then(() => {
+            this.$refs.mcDialog.hide();
+            this.showProgressDialog = true;
+          })
       }
     },
     computed: {
@@ -154,6 +164,14 @@
           return "Change pumplayout & make cocktail"
         }
         return "Make cocktail"
+      },
+      showProgressDialog: {
+        get() {
+          return this.$store.getters['cocktailProgress/isShowProgressDialog']
+        },
+        set(val) {
+          return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
+        }
       }
     }
   }

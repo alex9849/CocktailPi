@@ -153,7 +153,6 @@
     data() {
       return {
         canceling: false,
-        showDialog: false,
         noCacheString: new Date().getTime()
       }
     },
@@ -175,6 +174,14 @@
         currentUser: 'auth/getUser',
         isAdmin: 'auth/isAdmin'
       }),
+      showDialog: {
+        get() {
+          return this.$store.getters['cocktailProgress/isShowProgressDialog']
+        },
+        set(val) {
+          return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
+        }
+      },
       cocktailProgressBarLabel() {
         if(!this.hasCocktailProgress) {
           return '';
