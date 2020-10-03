@@ -8,6 +8,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    environment:
+      DB_HOST: 'db'
+      DB_PORT: 5432
+      DB_DATABASE: 'cocktailmaker'
+      DB_USER: 'postgres'
+      DB_PASSWORD: 'Chang3M3OnPr0duct1on'
+      JWT_SECRET: 'verySecret16456'
     ports:
     - 8080:8080
   db:
