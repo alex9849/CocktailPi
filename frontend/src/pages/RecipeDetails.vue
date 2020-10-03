@@ -141,10 +141,10 @@
               >
                 <c-ingredient-selector
                   :value="props.row.currentIngredient"
-                  <!--@input="updatePumpIngredient(props.row, $event)"-->
+                  @input="updatePumpIngredient(props.row, $event)"
                   clearable
                   dense
-                  :loading="makeCocktailDialog.loadingPumpIds.some(x => x === props.row.id)"
+                  :loading="makeCocktailDialog.loadingPumpIds.includes(props.row.id, 0)"
                 />
               </q-td>
             </template>
@@ -234,10 +234,11 @@
       updatePumpIngredient(pump, newIngredient) {
         let newPump = Object.assign({}, pump);
         newPump.currentIngredient = newIngredient;
-        this.makeCocktailDialog.loadingPumpIds.includes(newPump.id)
-        PumpService.updatePump(pump)
+        this.makeCocktailDialog.loadingPumpIds.push(newPump.id)
+        PumpService.updatePump(newPump)
           .finally(() => {
-
+            let array = this.makeCocktailDialog.loadingPumpIds;
+            array.splice(array.indexOf(newPump.id), 1);
           })
       },
       onClickCleanPump(pump) {

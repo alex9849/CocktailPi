@@ -3,7 +3,8 @@
     outlined
     :loading="loading"
     :dense="dense"
-    v-model="selectedIngredient"
+    :value="value"
+    @input="$emit('input', $event)"
     use-input
     :clearable="clearable"
     hide-dropdown-icon
@@ -69,12 +70,12 @@
       }
     },
     watch: {
-      selectedIngredient() {
+      /*selectedIngredient() {
         this.$emit('input', this.selectedIngredient)
       },
       value() {
         this.selectedIngredient = this.value;
-      }
+      }*/
     },
     methods: {
       filterIngredients(val, update, abort) {
