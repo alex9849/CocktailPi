@@ -47,6 +47,8 @@ public class PumpService {
             if(optPumpWithGpio.get().getId() != pump.getId()) {
                 throw new IllegalArgumentException("GPOI-Pin already in use!");
             }
+        } else {
+            throw new IllegalArgumentException("Pump doesn't exist!");
         }
         Pump savedPump = pumpRepository.save(pump);
         webSocketService.broadcastPumpLayout(getAllPumps());

@@ -7,6 +7,7 @@
     @input="$emit('input', $event)"
     use-input
     :clearable="clearable"
+    :disable="disable"
     hide-dropdown-icon
     :label="label"
     :options="ingredientOptions"
@@ -51,6 +52,10 @@
         default: false
       },
       loading: {
+        type: Boolean,
+        default: false
+      },
+      disable: {
         type: Boolean,
         default: false
       },
