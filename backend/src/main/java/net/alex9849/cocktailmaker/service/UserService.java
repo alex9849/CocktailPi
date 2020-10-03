@@ -6,6 +6,7 @@ import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,14 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder encoder;
+
+    /**
+     *
+     * @param user A user with a unencoded password
+     * @return the created user
+     */
     public User createUser(User user) {
         if(userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already taken!");
@@ -28,10 +37,17 @@ public class UserService {
             throw new IllegalArgumentException("A user with that Email already exists!");
         }
         user.setId(null);
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User updateUser(User user) {
+    /**
+     *
+     * @param user A user object
+     * @param encodePassword If true the password in the user-object will be encoded
+     * @return the updated user-object
+     */
+    public User updateUser(User user, boolean encodePassword) {
         if(!userRepository.findById(user.getId()).isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
@@ -42,6 +58,9 @@ public class UserService {
         Optional<User> userWithEMail = userRepository.findByEmail(user.getEmail());
         if(userWithEMail.isPresent() && !Objects.equals(userWithEMail.get().getId(), user.getId())) {
             throw new IllegalArgumentException("A user with that Email already exists!");
+        }
+        if(encodePassword) {
+            user.setPassword(encoder.encode(user.getPassword()));
         }
         return userRepository.save(user);
     }

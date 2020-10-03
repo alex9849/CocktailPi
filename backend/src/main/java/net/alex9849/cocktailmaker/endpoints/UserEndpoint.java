@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,14 +25,11 @@ public class UserEndpoint {
 
     @Autowired
     UserService userService;
-    @Autowired
-    PasswordEncoder encoder;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto createUser, UriComponentsBuilder uriBuilder) {
         User user = userService.fromDto(createUser);
-        user.setPassword(encoder.encode(user.getPassword()));
         user.setAuthority(userService.toRole(createUser.getAdminLevel()));
         user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
@@ -65,11 +61,9 @@ public class UserEndpoint {
         //If user wants to update his password update it. Otherwise fill in the old encrypted password
         if(!updateUserRequest.isUpdatePassword()) {
             updateUser.setPassword(beforeUpdate.getPassword());
-        } else {
-            updateUser.setPassword(encoder.encode(updateUser.getPassword()));
         }
         updateUser.setId(userId);
-        return ResponseEntity.ok(new UserDto(userService.updateUser(updateUser)));
+        return ResponseEntity.ok(new UserDto(userService.updateUser(updateUser, updateUserRequest.isUpdatePassword())));
     }
 
 
