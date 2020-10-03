@@ -51,7 +51,7 @@ public class CocktailEndpoint {
         if(!cocktailFactoryService.cancelOrder()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -173,8 +173,8 @@ public class CocktailFactory extends Observable {
             future.cancel(true);
         }
         this.scheduler.shutdown();
-        for(Pump pump : this.ingredientIdToPumpMap.values()) {
-            //TODO turn off all pumps!
+        for(Pump pump : this.pumpTimings.keySet()) {
+            System.out.println(pump.getGpioPin() + " stopped!");
         }
         this.done = true;
     }
@@ -182,6 +182,7 @@ public class CocktailFactory extends Observable {
     public void cancelCocktail() {
         this.shutDown();
         this.cocktailprogress.setCanceled(true);
+        this.setChanged();
         this.notifyObservers();
     }
 
