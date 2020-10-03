@@ -29,6 +29,16 @@ export const areEnoughPumpsAvailable = (state) => {
   }
 };
 
+export const getPumpIngredients = (state) => {
+  let pumpIngredients = [];
+  for(let pump of state.pumpLayout) {
+    if(pump.currentIngredient && !pumpIngredients.some(x => x.id === pump.currentIngredient.id)) {
+      pumpIngredients.push(pump.currentIngredient);
+    }
+  }
+  return pumpIngredients;
+};
+
 export const isCleaning = (state) => {
   return (pumpId) => {
     for(let pump of state.pumpLayout) {

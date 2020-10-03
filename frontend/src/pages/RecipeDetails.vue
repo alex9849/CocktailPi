@@ -31,7 +31,7 @@
           <q-btn
             v-else-if="areEnoughPumpsAvailable(recipe)"
             color="warning"
-            @click="makeCocktailDialog.showDialog = true"
+            @click="showMakeCocktailDialog = true"
             :disable="!isUserPumpIngredientEditor"
           >
             Change pumplayout & make cocktail

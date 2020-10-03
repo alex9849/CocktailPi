@@ -52,8 +52,23 @@
                 @input="updatePumpIngredient(props.row, $event)"
                 clearable
                 dense
+                :bg-color="(!!props.row.currentIngredient && isIngredientNeeded(props.row.currentIngredient.id))? 'green-3':undefined"
+                :no-input-options="missingIngredients"
                 :loading="loadingPumpIds.includes(props.row.id, 0)"
-              />
+              >
+                <template
+                  slot="afterIngredientName"
+                  slot-scope="{scope}"
+                >
+                  <q-item-label
+                    v-if="!!missingIngredients.some(x => x.id === scope.opt.id)"
+                    caption
+                    class="text-green"
+                  >
+                    Required ingredient
+                  </q-item-label>
+                </template>
+              </c-ingredient-selector>
             </q-td>
           </template>
           <template v-slot:body-cell-actions="props">
@@ -134,6 +149,9 @@
       this.mdiPlay = mdiPlay;
     },
     methods: {
+      isIngredientNeeded(ingredientId) {
+        return this.neededIngredients.some(x => x.id === ingredientId);
+      },
       updatePumpIngredient(pump, newIngredient) {
         let newPump = Object.assign({}, pump);
         newPump.currentIngredient = newIngredient;
@@ -179,8 +197,23 @@
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
         getPumpLayout: 'pumpLayout/getLayout',
+        getPumpIngredients: 'pumpLayout/getPumpIngredients',
         isCleaning: 'pumpLayout/isCleaning'
       }),
+      missingIngredients() {
+        return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
+      },
+      neededIngredients() {
+          let ingredients = [];
+          for(let productionstep of this.recipe.recipeIngredients) {
+            for(let ingredientstep of productionstep) {
+              if(!ingredients.some(x => x.id === ingredientstep.ingredient.id)) {
+                ingredients.push(ingredientstep.ingredient);
+              }
+            }
+          }
+          return ingredients;
+      },
       makeCocktailDialogHeadline() {
         if (!this.doPumpsHaveAllIngredients(this.recipe)) {
           return "Change pumplayout & make cocktail"

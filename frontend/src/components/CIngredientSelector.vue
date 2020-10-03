@@ -4,6 +4,7 @@
     :loading="loading"
     :dense="dense"
     :value="value"
+    :bg-color="bgColor"
     @input="$emit('input', $event)"
     use-input
     :clearable="clearable"
@@ -25,9 +26,11 @@
       >
         <q-item-section>
           {{ scope.opt.name }}
-          <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
-            {{ scope.opt.alcoholContent }}% alcohol content
-          </q-item-label>
+          <slot name="afterIngredientName" :scope="scope">
+            <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
+              {{ scope.opt.alcoholContent }}% alcohol content
+            </q-item-label>
+          </slot>
         </q-item-section>
       </q-item>
     </template>
@@ -66,32 +69,42 @@
       rules: {
         type: Array,
         default: () => []
+      },
+      bgColor: {
+        type: String,
+        default: undefined
+      },
+      noInputOptions: {
+        type: Array,
+        default: () => []
       }
     },
     data() {
       return {
-        ingredientOptions: [],
+        fetchedOptions: [],
+        stringInput: '',
         selectedIngredient: this.value
       }
     },
-    watch: {
-      /*selectedIngredient() {
-        this.$emit('input', this.selectedIngredient)
-      },
-      value() {
-        this.selectedIngredient = this.value;
-      }*/
+    computed: {
+      ingredientOptions() {
+        if(this.stringInput.length < 1) {
+          return this.noInputOptions;
+        }
+        return this.fetchedOptions;
+      }
     },
     methods: {
       filterIngredients(val, update, abort) {
+        this.stringInput = val;
         if(val.length < 1) {
-          abort();
+          update();
           return;
         }
         IngridientService.getIngredientsFilter(val)
           .then(ingridients => {
             update(() => {
-              this.ingredientOptions = ingridients;
+              this.fetchedOptions = ingridients;
             })
           }, () => abort)
       },
