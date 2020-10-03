@@ -52,7 +52,7 @@
                 @input="updatePumpIngredient(props.row, $event)"
                 clearable
                 dense
-                :bg-color="(!!props.row.currentIngredient && isIngredientNeeded(props.row.currentIngredient.id))? 'green-3':undefined"
+                :bg-color="markPump(props.row)? 'green-3':undefined"
                 :no-input-options="missingIngredients"
                 :loading="loadingPumpIds.includes(props.row.id, 0)"
               >
@@ -149,6 +149,15 @@
       this.mdiPlay = mdiPlay;
     },
     methods: {
+      markPump(pump) {
+        if(!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
+          return false;
+        }
+        return this.sortedPumpLayout.find(x => {
+          return !!x.currentIngredient &&
+          pump.currentIngredient.id === x.currentIngredient.id
+        }) === pump;
+      },
       isIngredientNeeded(ingredientId) {
         return this.neededIngredients.some(x => x.id === ingredientId);
       },
@@ -200,6 +209,11 @@
         getPumpIngredients: 'pumpLayout/getPumpIngredients',
         isCleaning: 'pumpLayout/isCleaning'
       }),
+      sortedPumpLayout() {
+        let sorted = [];
+        sorted.push(...this.getPumpLayout);
+        return sorted.sort((a, b) => a.id - b.id);
+      },
       missingIngredients() {
         return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
       },
