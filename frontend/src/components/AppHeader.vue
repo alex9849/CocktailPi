@@ -72,6 +72,7 @@
       connectWebsocket() {
         let socket = new SockJS("/ws/cocktailprogress");
         this.stompClient = Stomp.over(socket);
+        this.stompClient.debug = process.env.DEV;
         this.websocketAutoreconnect = true;
         let vm = this;
         let connectCallback = function () {
