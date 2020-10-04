@@ -2,10 +2,8 @@
   <draggable
     :value="ingredients"
     @input="updateOneElementProductionStepList"
-    @start="ingredientDrag = true"
-    @end="ingredientDrag = false"
     :disabled="!editable"
-    draggable=".dragItem"
+    :options="{handle: '.dragItemOuter'}"
     group="ingredients"
     tag="div"
     class="rounded-borders q-list q-list--bordered q-list--separator"
@@ -14,51 +12,25 @@
     <q-item
       v-for="(productionStep, index) in ingredients"
       :key="index"
-      class="dragItem"
+      class="dragItemOuter"
       :style="'background-color: ' + ((index % 2 === 0)? row1Color:row2Color)"
     >
       <q-item-section avatar>
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
       </q-item-section>
-      <q-item-section v-if="productionStep.length === 1 && !ingredientDrag">
-        {{ productionStep[0].amount }}ml {{ productionStep[0].ingredient.name }}
-        <q-item-label v-if="productionStep[0].ingredient.alcoholContent !== 0" caption>
-          {{ productionStep[0].ingredient.alcoholContent }}% alcohol content
-        </q-item-label>
-      </q-item-section>
-      <q-item-section v-if="productionStep.length === 1 && !ingredientDrag && editable" side>
-        <q-btn
-          :icon="mdiPencilOutline"
-          @click.native="showIngredientEditor(productionStep, productionStep[0])"
-          dense
-          flat
-          rounded
-        />
-      </q-item-section>
-      <q-item-section v-if="productionStep.length === 1 && !ingredientDrag && editable" side>
-        <q-btn
-          :icon="mdiDelete"
-          @click.native="removeIngredient(productionStep, productionStep[0])"
-          dense
-          flat
-          rounded
-        />
-      </q-item-section>
 
-      <q-item-section v-else-if="productionStep.length !== 1 || ingredientDrag">
+      <q-item-section>
         <draggable
           :value="productionStep"
           @input="updateProductionStepList(productionStep, $event)"
-          @start="ingredientDrag = true"
-          @end="ingredientDrag = false"
           :disabled="!editable"
-          draggable=".dragItem"
+          :options="{handle: '.dragItemInner'}"
           group="ingredients"
           tag="div"
           class="q-list q-list--bordered q-list--separator"
           :animation="200"
         >
-          <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
+          <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItemInner">
             <q-item-section>
               {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
               <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
@@ -190,7 +162,6 @@
         addIngredient: false,
         ingridientValid: false,
         valid: false,
-        ingredientDrag: false,
         newIngredient: {
           amount: '',
           ingredient: null
