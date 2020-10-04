@@ -178,7 +178,6 @@ public class CocktailFactory extends Observable {
         for(Pump pump : this.pumpTimings.keySet()) {
             System.out.println(pump.getGpioPin() + " stopped!");
         }
-        this.setDone();
     }
 
     public void cancelCocktail() {
