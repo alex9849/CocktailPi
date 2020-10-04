@@ -6,7 +6,7 @@
       style="padding: 10px"
     >
       <div
-        class="row"
+        class="row q-gutter-sm"
         style="position: relative"
       >
         <div
@@ -18,10 +18,9 @@
           :src="'/api/recipe/' + recipe.id + '/image?nocache=' + new Date().getTime()"
           placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
-          class="col rounded-borders"
-          style="max-width: 225px; max-height: 180px"
+          class="col rounded-borders max-picture-size"
         />
-        <div class="col" style="padding-left: 10px; position: relative">
+        <div class="col" style="min-width: 200px;">
           <div class="row">
             <div class="col">
               <h5
@@ -44,14 +43,20 @@
               {{ recipe.shortDescription }}
             </div>
           </div>
-          <div class="row" style="position: absolute; bottom: 0; left: 0; right: 0; padding-inline: 10px">
-            <div class="col" style="overflow: hidden; max-height: 36px">
+          <div class="row"/>
+          <q-splitter
+            horizontal
+            :value="10"
+          />
+          <div class="row">
+            <div class="col">
               Ingredients:
               <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(recipe.recipeIngredients)">
                 {{ index !== 3?name:'...' }}
               </q-chip>
             </div>
-            <div class="col" style="text-align: right; max-width: max-content">
+            <div class="col"/>
+            <div class="col" style="display: contents; max-width: max-content">
               by {{ recipe.owner.username }}
             </div>
           </div>
@@ -90,5 +95,15 @@
 </script>
 
 <style scoped>
+
+  .max-picture-size {
+    min-width: 200px
+  }
+
+  @media screen and (min-width: 500px) {
+    .max-picture-size {
+      max-width: 250px;
+    }
+  }
 
 </style>
