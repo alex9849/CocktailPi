@@ -15,7 +15,7 @@
           <slot name="beforePicture"/>
         </div>
         <q-img
-          :src="'/api/recipe/' + recipe.id + '/image?nocache=' + new Date().getTime()"
+          :src="'/api/recipe/' + recipe.id + '/image?nocache=' + noCacheString"
           placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
           class="col rounded-borders max-picture-size"
@@ -28,6 +28,10 @@
               >
                 <b>{{ recipe.name}}</b>
               </h5>
+            </div>
+            <div class="col/"/>
+            <div class="col" style="display: contents; max-width: max-content">
+              <slot name="headlineRight"/>
             </div>
             <div class="row">
               <div class="col"/>
@@ -46,7 +50,7 @@
           <div class="row" style="margin-top: 10px">
             <div
               class="col"
-              v-if="!$q.platform.is.mobile"
+              v-if="showIngredients"
             >
               Ingredients:
               <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(recipe.recipeIngredients)">
@@ -60,6 +64,7 @@
           </div>
         </div>
       </div>
+      <slot name="bottom"/>
     </q-card-section>
   </q-card>
 </template>
@@ -73,9 +78,23 @@
         type: Object,
         required: true
       },
+      showIngredients: {
+        type: Boolean,
+        default: false
+      },
       backgroundColor: {
         type: String,
         default: '#fafafa'
+      }
+    },
+    data() {
+      return {
+        noCacheString: new Date().getTime()
+      }
+    },
+    watch: {
+      'recipe.id': function () {
+        this.noCacheString = new Date().getTime()
       }
     },
     methods: {
