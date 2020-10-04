@@ -44,10 +44,6 @@
             </div>
           </div>
           <div class="row"/>
-          <q-splitter
-            horizontal
-            :value="10"
-          />
           <div class="row">
             <div class="col">
               Ingredients:
