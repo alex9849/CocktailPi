@@ -36,7 +36,6 @@ public class UserEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest, HttpServletRequest request) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
