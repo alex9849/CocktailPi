@@ -48,7 +48,7 @@ public class CocktailFactoryService implements Observer {
     }
 
     public synchronized boolean cancelOrder() {
-        if(this.cocktailFactory == null || this.cocktailFactory.isDone() || !this.cocktailFactory.isRunning()) {
+        if(this.cocktailFactory == null || this.cocktailFactory.isDone()) {
             return false;
         }
         this.cocktailFactory.cancelCocktail();

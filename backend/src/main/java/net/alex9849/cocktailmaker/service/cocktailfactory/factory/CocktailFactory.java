@@ -22,7 +22,8 @@ public class CocktailFactory extends Observable {
     private Recipe recipe;
     private Collection<Pump> pumps;
     private User user;
-    private boolean done = false;
+    private boolean isDone = false;
+    private boolean isCanceled = false;
     private Map<Pump, List<PumpPhase>> pumpTimings;
     private long preparationTime;
     private int requestedAmount;
@@ -131,7 +132,7 @@ public class CocktailFactory extends Observable {
         if(this.isRunning()) {
             throw new IllegalArgumentException("Already running!");
         }
-        if(this.done) {
+        if(this.isDone) {
             throw new IllegalArgumentException("Did already run!");
         }
         this.startTime = System.currentTimeMillis();
@@ -144,17 +145,18 @@ public class CocktailFactory extends Observable {
                     System.out.println(pumpPhase.getPump().getGpioPin() + " stopped!");
                 }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
-            for(long i = 0; i <= this.preparationTime; i += 1000) {
-                scheduledFutures.add(scheduler.schedule(() -> {
-                    this.updateCocktailProgress();
-                    this.notifyObservers();
-                }, i, TimeUnit.MILLISECONDS));
-            }
+        }
+        for(long i = 0; i <= this.preparationTime; i += 1000) {
             scheduledFutures.add(scheduler.schedule(() -> {
                 this.updateCocktailProgress();
                 this.notifyObservers();
-            }, this.preparationTime, TimeUnit.MILLISECONDS));
+            }, i, TimeUnit.MILLISECONDS));
         }
+        scheduledFutures.add(scheduler.schedule(() -> {
+            this.setDone();
+            this.notifyObservers();
+        }, this.preparationTime, TimeUnit.MILLISECONDS));
+
         this.setChanged();
         this.cocktailprogress = new Cocktailprogress();
         this.cocktailprogress.setUser(this.user);
@@ -176,18 +178,32 @@ public class CocktailFactory extends Observable {
         for(Pump pump : this.pumpTimings.keySet()) {
             System.out.println(pump.getGpioPin() + " stopped!");
         }
-        this.done = true;
+        this.setDone();
     }
 
     public void cancelCocktail() {
+        if(isDone()) {
+            throw new IllegalStateException("Cocktail already done!");
+        }
         this.shutDown();
-        this.cocktailprogress.setCanceled(true);
-        this.setChanged();
+        this.isCanceled = true;
+        this.updateCocktailProgress();
         this.notifyObservers();
     }
 
+    public void setDone() {
+        if(!this.isDone) {
+            this.isDone = true;
+            this.updateCocktailProgress();
+        }
+    }
+
     public boolean isDone() {
-        return done;
+        return isDone;
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
     }
 
     public boolean isRunning() {
@@ -198,11 +214,21 @@ public class CocktailFactory extends Observable {
     }
 
     private void updateCocktailProgress() {
-        long runningSince = System.currentTimeMillis() - this.startTime;
-        double progress = ( runningSince / (double) this.preparationTime) * 100;
-        progress = Math.min(progress, 100);
+        if(this.cocktailprogress == null) {
+            return;
+        }
+        this.cocktailprogress.setCanceled(this.isCanceled());
+        if(!this.isCanceled()) {
+            int intProgress = 100;
+            if(!this.isDone()) {
+                long runningSince = System.currentTimeMillis() - this.startTime;
+                double progress = ( runningSince / (double) this.preparationTime) * 100;
+                intProgress = (int) Math.min(progress, 100);
+            }
+            this.cocktailprogress.setDone(this.isDone());
+            this.cocktailprogress.setProgress(intProgress);
+        }
         this.setChanged();
-        this.cocktailprogress.setProgress((int) progress);
     }
 
 
