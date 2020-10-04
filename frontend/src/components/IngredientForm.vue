@@ -17,7 +17,7 @@
       @input="() => {$emit('input', value); $v.value.amount.$touch();}"
       :rules="[
         val => $v.value.amount.required || 'Required',
-        val => $v.value.amount.minValue || 'Min 1cl'
+        val => $v.value.amount.minValue || 'Min 1ml'
       ]"
     />
     <slot name="below"/>

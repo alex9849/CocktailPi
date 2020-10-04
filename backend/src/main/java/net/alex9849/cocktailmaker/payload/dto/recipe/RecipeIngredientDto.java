@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class RecipeIngredientDto {
@@ -9,6 +10,7 @@ public class RecipeIngredientDto {
     @NotNull
     private IngredientDto ingredient;
 
+    @Min(1)
     private int amount;
 
     public RecipeIngredientDto() {}

@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "recipe_ingredients")
@@ -19,6 +20,7 @@ public class RecipeIngredient {
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
+    @Min(1)
     private int amount;
 
     public RecipeIngredientId getId() {
