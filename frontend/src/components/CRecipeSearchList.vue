@@ -7,7 +7,7 @@
       :selectable="isOwnRecipes"
     >
       <template slot="top">
-        <div>
+        <div style="margin-bottom: 10px">
           <div class="row" style="padding: 10px">
             <div class="col"/>
             <div class="col q-gutter-x-sm" style="display: contents; max-width: max-content">
