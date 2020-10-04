@@ -148,7 +148,7 @@
       :persistent="editOptions.editIngredientSaving"
       @hide="closeEditDialog"
     >
-      <q-card style="width: 500px">
+      <q-card class="with-desktop">
         <q-card-section class="text-center">
           <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
           <q-splitter
@@ -420,6 +420,12 @@
 <style scoped>
   .row1 {
     background-color: #fafafa;
+  }
+
+  @media screen and (min-width: 600px) {
+    .with-desktop {
+      width: 500px;
+    }
   }
 
   .row2 {

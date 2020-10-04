@@ -5,8 +5,7 @@
     @input="$emit('input', $event)"
   >
     <q-card
-      class="text-center"
-      style="width: 500px"
+      class="text-center with-desktop"
     >
       <q-card-section class="q-gutter-md">
         <p class="text-h5">{{ makeCocktailDialogHeadline }}</p>
@@ -256,5 +255,11 @@
 </script>
 
 <style scoped>
+
+  @media screen and (min-width: 600px) {
+    .with-desktop {
+      width: 500px;
+    }
+  }
 
 </style>

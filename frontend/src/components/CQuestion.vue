@@ -6,7 +6,7 @@
     :full-height="$q.platform.is.mobile"
   >
     <q-card>
-      <q-card-section class="text-center" style="width: 500px">
+      <q-card-section class="text-center with-desktop">
         <h5>{{ question }}</h5>
         <q-splitter
           horizontal
@@ -67,5 +67,11 @@
 </script>
 
 <style scoped>
+
+  @media screen and (min-width: 600px) {
+    .with-desktop {
+      width: 500px;
+    }
+  }
 
 </style>
