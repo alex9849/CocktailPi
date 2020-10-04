@@ -3,7 +3,8 @@
     :value="ingredients"
     @input="updateOneElementProductionStepList"
     :disabled="!editable"
-    :options="{handle: '.dragItemOuter'}"
+    :options="{delay: 400, delayOnTouchOnly: true}"
+    draggable=".dragItem"
     group="ingredients"
     tag="div"
     class="rounded-borders q-list q-list--bordered q-list--separator"
@@ -12,7 +13,7 @@
     <q-item
       v-for="(productionStep, index) in ingredients"
       :key="index"
-      class="dragItemOuter"
+      class="dragItem"
       :style="'background-color: ' + ((index % 2 === 0)? row1Color:row2Color)"
     >
       <q-item-section avatar>
@@ -24,13 +25,14 @@
           :value="productionStep"
           @input="updateProductionStepList(productionStep, $event)"
           :disabled="!editable"
-          :options="{handle: '.dragItemInner'}"
+          :options="{delay: 400, delayOnTouchOnly: true}"
+          draggable=".dragItem"
           group="ingredients"
           tag="div"
           class="q-list q-list--bordered q-list--separator"
           :animation="200"
         >
-          <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItemInner">
+          <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
             <q-item-section>
               {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
               <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
