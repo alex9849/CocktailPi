@@ -3,7 +3,6 @@
     :value="value"
     @input="event => {$emit('input', event);}"
     @hide="$emit('clickAbort')"
-    :full-height="$q.platform.is.mobile"
   >
     <q-card>
       <q-card-section class="text-center with-desktop">

@@ -29,7 +29,7 @@
       <q-item-section v-if="productionStep.length === 1 && !ingredientDrag && editable" side>
         <q-btn
           :icon="mdiPencilOutline"
-          @click="showIngredientEditor(productionStep, productionStep[0])"
+          @click.native="showIngredientEditor(productionStep, productionStep[0])"
           dense
           flat
           rounded
@@ -38,7 +38,7 @@
       <q-item-section v-if="productionStep.length === 1 && !ingredientDrag && editable" side>
         <q-btn
           :icon="mdiDelete"
-          @click="removeIngredient(productionStep, productionStep[0])"
+          @click.native="removeIngredient(productionStep, productionStep[0])"
           dense
           flat
           rounded
@@ -68,7 +68,7 @@
             <q-item-section side v-if="editable">
               <q-btn
                 :icon="mdiPencilOutline"
-                @click="showIngredientEditor(productionStep, ingredient)"
+                @click.native="showIngredientEditor(productionStep, ingredient)"
                 dense
                 flat
                 rounded
@@ -77,7 +77,7 @@
             <q-item-section side v-if="editable">
               <q-btn
                 :icon="mdiDelete"
-                @click="removeIngredient(productionStep, ingredient)"
+                @click.native="removeIngredient(productionStep, ingredient)"
                 dense
                 flat
                 rounded

@@ -18,7 +18,7 @@
     "core-js": "^3.6.5",
     "vuelidate": "^0.7.5",
     "quasar": "^1.12.12",
-    "vuedraggable": "~2.24.0",
+    "vuedraggable": "2.24.1",
     "lodash": "~4.17.19",
     "sockjs-client": "1.5.0",
     "stompjs": "2.3.3"
