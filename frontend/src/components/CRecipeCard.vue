@@ -43,9 +43,11 @@
               {{ recipe.shortDescription }}
             </div>
           </div>
-          <div class="row"/>
-          <div class="row">
-            <div class="col">
+          <div class="row" style="margin-top: 10px">
+            <div
+              class="col"
+              v-if="!$q.platform.is.mobile"
+            >
               Ingredients:
               <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(recipe.recipeIngredients)">
                 {{ index !== 3?name:'...' }}
