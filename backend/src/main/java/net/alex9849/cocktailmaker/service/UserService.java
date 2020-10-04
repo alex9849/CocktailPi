@@ -30,7 +30,7 @@ public class UserService {
      * @return the created user
      */
     public User createUser(User user) {
-        if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+        if(userRepository.findByUsernameIgnoringCase(user.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already taken!");
         }
         if(userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -51,7 +51,7 @@ public class UserService {
         if(!userRepository.findById(user.getId()).isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
-        Optional<User> userWithUsername = userRepository.findByUsername(user.getUsername());
+        Optional<User> userWithUsername = userRepository.findByUsernameIgnoringCase(user.getUsername());
         if(userWithUsername.isPresent() && !Objects.equals(userWithUsername.get().getId(), user.getId())) {
             throw new IllegalArgumentException("Username already taken!");
         }
