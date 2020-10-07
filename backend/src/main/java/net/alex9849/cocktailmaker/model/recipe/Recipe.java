@@ -50,7 +50,6 @@ public class Recipe {
     private List<RecipeIngredient> recipeIngredients;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinTable(name = "recipe_tags",
             joinColumns = @JoinColumn(name = "recipe_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

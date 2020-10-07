@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
         @UniqueConstraint(columnNames = "gpioPin")})
 public class Pump {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
