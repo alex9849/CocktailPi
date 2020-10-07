@@ -46,7 +46,7 @@
               <b>Display-options</b>
             </div>
             <div class="col"/>
-            <div class="col q-gutter-x-sm" style="display: contents; max-width: max-content">
+            <div class="col q-gutter-x-sm" style="display: contents; min-width: fit-content">
               <q-input
                 v-model="unappliedSearchData.searchName"
                 outlined
