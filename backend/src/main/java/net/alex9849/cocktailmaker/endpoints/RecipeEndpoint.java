@@ -89,7 +89,7 @@ public class RecipeEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 562);
+            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             recipe.setImage(out.toByteArray());
@@ -125,7 +125,7 @@ public class RecipeEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 562);
+            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             recipe.setImage(out.toByteArray());
