@@ -40,7 +40,6 @@ create table recipes (
                          image oid,
                          in_public boolean not null,
                          name varchar(30) not null,
-                         short_description varchar(100) not null,
                          owner_id int8 not null references users on delete cascade,
                          primary key (id)
 );
