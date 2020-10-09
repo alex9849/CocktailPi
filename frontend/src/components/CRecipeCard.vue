@@ -44,19 +44,27 @@
           </div>
           <div class="row">
             <div class="col">
-              {{ recipe.shortDescription }}
+              {{ shortenedDescription }}
             </div>
           </div>
           <div class="row" style="margin-top: 10px">
-            <div
-              class="col"
-              v-if="showIngredients"
+            <q-chip
+              v-for="(ingredient) in uniqueIngredientNames(recipe.recipeIngredients)"
+              dense
+              style="margin-left: 0; margin-right: 5px"
+              square
+              outline
+              :color="hasPumpLayoutIngredient(ingredient.id)? 'green':'red'"
             >
-              Ingredients:
-              <q-chip v-if="index < 4" v-for="(name, index) in uniqueIngredientNames(recipe.recipeIngredients)">
-                {{ index !== 3?name:'...' }}
-              </q-chip>
-            </div>
+              <q-tooltip
+                v-if="!hasPumpLayoutIngredient(ingredient.id)"
+              >
+                {{ "Ingredient missing" }}
+              </q-tooltip>
+              {{ ingredient.name }}
+            </q-chip>
+          </div>
+          <div class="row">
             <div class="col"/>
             <div class="col" style="display: contents; max-width: max-content">
               by {{ recipe.owner.username }}
@@ -70,6 +78,8 @@
 </template>
 
 <script>
+
+  import {mapGetters} from "vuex";
 
   export default {
     name: "CRecipeCard",
@@ -97,12 +107,27 @@
         this.noCacheString = new Date().getTime()
       }
     },
+    computed: {
+      ...mapGetters({
+        getPumpIngredients: 'pumpLayout/getPumpIngredients'
+      }),
+      shortenedDescription() {
+        let sDesc = this.recipe.description.substring(0, Math.min(80, this.recipe.description.length));
+        if(sDesc.length < this.recipe.description.length) {
+          sDesc += " ...";
+        }
+        return sDesc;
+      }
+    },
     methods: {
+      hasPumpLayoutIngredient(ingredientId) {
+        return this.getPumpIngredients.some(x => x.id === ingredientId);
+      },
       uniqueIngredientNames(productionSteps) {
-        let unique = new Set();
+        let unique = new Map();
         for (let productionStep of productionSteps) {
           for (let ingredient of productionStep) {
-            unique.add(ingredient.ingredient.name);
+            unique.set(ingredient.ingredient.id, ingredient.ingredient);
           }
         }
         return Array.from(unique.values());

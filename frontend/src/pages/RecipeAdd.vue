@@ -53,7 +53,7 @@
     data() {
       return {
         addRecipe: {
-          recipe: new Recipe(0, '', true, {}, '', '', [], []),
+          recipe: new Recipe(0, '', true, {}, '',  [], []),
           image: null
         },
         error: '',

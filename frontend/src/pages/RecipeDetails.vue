@@ -60,15 +60,6 @@
           </q-btn>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <q-card bordered class="bg-grey-3 shadow-1">
-            <q-card-section>
-              <b>Short description:</b> {{ recipe.shortDescription }}
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
       <div class="row q-col-gutter-md">
         <div class="col" style="min-width: max-content">
           <div>

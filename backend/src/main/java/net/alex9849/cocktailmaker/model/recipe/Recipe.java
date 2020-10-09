@@ -40,10 +40,6 @@ public class Recipe {
     @Size(min = 0, max = 3000)
     private String description;
 
-    @NotNull
-    @Size(min = 0, max = 100)
-    private String shortDescription;
-
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -93,14 +89,6 @@ public class Recipe {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
     }
 
     public User getOwner() {

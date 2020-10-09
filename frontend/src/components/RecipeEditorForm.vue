@@ -66,21 +66,6 @@
         outlined
         :loading="loading"
         :disable="loading || disabled"
-        v-model="value.recipe.shortDescription"
-        @input="() => {$emit('input', value); $v.value.recipe.shortDescription.$touch();}"
-        type="textarea"
-        input-style="height: 40px"
-        label="Short description"
-        counter
-        maxlength="100"
-        :rules="[
-          val => $v.value.recipe.shortDescription.required || 'Required',
-          val => $v.value.recipe.shortDescription.maxLength || 'Maximal length 100']"
-      />
-      <q-input
-        outlined
-        :loading="loading"
-        :disable="loading || disabled"
         v-model="value.recipe.description"
         @input="() => {$emit('input', value); $v.value.recipe.description.$touch();}"
         type="textarea"
@@ -144,10 +129,6 @@
               required,
               minLength: minLength(3),
               maxLength: maxLength(20)
-            },
-            shortDescription: {
-              required,
-              maxLength: maxLength(100)
             },
             description: {
               required,

@@ -50,10 +50,6 @@ public class RecipeDto {
     private String description;
 
     @NotNull
-    @Size(min = 0, max = 100)
-    private String shortDescription;
-
-    @NotNull
     private List<List<RecipeIngredientDto>> recipeIngredients;
 
     @NotNull
@@ -97,14 +93,6 @@ public class RecipeDto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
     }
 
     public List<List<RecipeIngredientDto>> getRecipeIngredients() {

@@ -39,6 +39,8 @@ export const getPumpIngredients = (state) => {
   return pumpIngredients;
 };
 
+
+
 export const isCleaning = (state) => {
   return (pumpId) => {
     for(let pump of state.pumpLayout) {
