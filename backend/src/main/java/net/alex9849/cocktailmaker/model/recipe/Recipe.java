@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.hibernate.annotations.OnDelete;
@@ -42,6 +43,12 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
+
+    @ManyToMany
+    @JoinTable(name = "recipe_categories",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "categories_id"))
+    private List<Category> categories;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "recipe_tags",
@@ -103,6 +110,14 @@ public class Recipe {
 
     public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
         this.recipeIngredients = recipeIngredients;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public Set<Tag> getTags() {

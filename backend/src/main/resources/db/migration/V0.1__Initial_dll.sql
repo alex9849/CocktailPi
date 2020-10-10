@@ -65,3 +65,17 @@ create table recipe_tags (
                              tag_id int8 not null references tags,
                              primary key (recipe_id, tag_id)
 );
+
+create table categories
+(
+    id bigserial not null,
+    name varchar(15) NOT NULL,
+    primary key (id)
+);
+
+CREATE TABLE public.recipe_categories
+(
+    recipe_id int8 not null references recipes,
+    categories_id int8 not null references categories,
+    primary key (recipe_id, categories_id)
+);

@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import org.springframework.beans.BeanUtils;
 
@@ -32,6 +33,8 @@ public class RecipeDto {
                 .collect(Collectors.toList());
         this.tags = recipe.getTags().stream().map(Tag::getName)
                 .collect(Collectors.toSet());
+        this.categories = recipe.getCategories().stream().map(CategoryDto::new)
+                .collect(Collectors.toSet());
     }
 
     private Long id;
@@ -54,6 +57,9 @@ public class RecipeDto {
 
     @NotNull
     private Set<String> tags;
+
+    @NotNull
+    private Set<CategoryDto> categories;
 
     public Long getId() {
         return id;
@@ -109,5 +115,13 @@ public class RecipeDto {
 
     public void setTags(Set<String> tags) {
         this.tags = tags;
+    }
+
+    public Set<CategoryDto> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryDto> categories) {
+        this.categories = categories;
     }
 }

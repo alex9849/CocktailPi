@@ -46,6 +46,9 @@ public class RecipeService {
     TagRepository tagRepository;
 
     @Autowired
+    CategoryService categoryService;
+
+    @Autowired
     EntityManager entityManager;
 
     public Recipe createRecipe(Recipe recipe) {
@@ -136,6 +139,9 @@ public class RecipeService {
                             index.incrementAndGet();
                             return x.stream().map(y -> fromDto(y, recipe, index.get()));
                         }).collect(Collectors.toList()));
+        recipe.setCategories(recipeDto.getCategories()
+                .stream().map(x -> categoryService.fromDto(x))
+                .collect(Collectors.toList()));
         recipe.setTags(toTags(recipeDto.getTags()));
         return recipe;
     }

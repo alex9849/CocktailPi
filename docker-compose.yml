@@ -30,5 +30,19 @@ services:
         target: /var/lib/postgresql/data
         volume:
           nocopy: true
+  db2:
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_PASSWORD: 'Chang3M3OnPr0duct1on'
+      POSTGRES_DB: 'cocktailmaker'
+    volumes:
+      - type: volume
+        source: cocktail-db2-data
+        target: /var/lib/postgresql/data
+        volume:
+          nocopy: true
 volumes:
   cocktail-db-data:
+  cocktail-db2-data:

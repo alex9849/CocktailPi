@@ -1,0 +1,56 @@
+package net.alex9849.cocktailmaker.service;
+
+import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
+import net.alex9849.cocktailmaker.repository.CategoryRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional
+public class CategoryService {
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
+    }
+
+    public Category createCategory(Category category) {
+        if(categoryRepository.findAllByNameIgnoringCase(category.getName()).isPresent()) {
+            throw new IllegalArgumentException("Category already exists!");
+        }
+        category.setId(null);
+        return categoryRepository.save(category);
+    }
+
+    public Category updateCategory(Category category) {
+        if(!categoryRepository.findById(category.getId()).isPresent()) {
+            throw new IllegalArgumentException("Category doesn't exist!");
+        }
+        Optional<Category> categoryOptional = categoryRepository.findAllByNameIgnoringCase(category.getName());
+        if(categoryOptional.isPresent()
+                && !categoryOptional.get().getId().equals(category.getId())
+                && categoryOptional.get().getName().equalsIgnoreCase(category.getName())) {
+            throw new IllegalArgumentException("Category with this name already exists!");
+        }
+        return categoryRepository.save(category);
+    }
+
+    public void deleteCategory(long categoryId) {
+        categoryRepository.deleteById(categoryId);
+    }
+
+    public Category fromDto(CategoryDto categoryDto) {
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDto, category);
+        return category;
+    }
+
+}
