@@ -17,6 +17,16 @@
         val => $v.value.recipe.name.minLength || 'Minimal length 3',
         val => $v.value.recipe.name.maxLength || 'Maximal length 20']"
       />
+      <q-select
+        label="Categories"
+        v-model="value.recipe.categories"
+        :options="categories"
+        option-label="name"
+        :loading="loading || categoriesLoading"
+        :disable="loading || categoriesLoading"
+        multiple
+        outlined
+      />
       <div v-if="allowImageRemoveing" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
         <q-toggle
           label="Remove image if existing"
@@ -94,6 +104,7 @@
 <script>
   import {maxLength, minLength, required} from "vuelidate/lib/validators";
   import IngredientList from "./IngredientList";
+  import CategoryService from "../services/category-service";
 
   export default {
     name: "RecipeEditorForm",
@@ -118,7 +129,22 @@
     },
     data() {
       return {
-        image: null
+        image: null,
+        categories: [],
+        categoriesLoading: false
+      }
+    },
+    created() {
+      this.initialize();
+    },
+    methods: {
+      initialize() {
+        this.categoriesLoading = true;
+        CategoryService.getAllCategories()
+          .then(data => {
+            this.categories = data
+            this.categoriesLoading = false;
+          });
       }
     },
     validations() {

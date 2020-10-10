@@ -14,20 +14,20 @@ import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(name = "/api/category")
+@RequestMapping(value = "/api/category")
 public class CategoryEndpoint {
 
     @Autowired
     private CategoryService categoryService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories()
                 .stream().map(CategoryDto::new).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('Admin')")
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto, UriComponentsBuilder uriBuilder) {
         categoryDto.setId(null);
         Category category = categoryService.createCategory(categoryService.fromDto(categoryDto));

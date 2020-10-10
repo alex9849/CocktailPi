@@ -33,7 +33,7 @@ public class IngredientEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     ResponseEntity<?> createIngredient(@Valid @RequestBody IngredientDto ingredientDto, UriComponentsBuilder uriBuilder) {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
         ingredient.setId(null);
