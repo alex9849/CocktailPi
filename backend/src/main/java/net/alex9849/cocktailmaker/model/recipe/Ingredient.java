@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import net.alex9849.cocktailmaker.model.Pump;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +38,9 @@ public class Ingredient implements Serializable {
     @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
+
+    @OneToMany(mappedBy = "currentIngredient",fetch = FetchType.LAZY)
+    List<Pump> pumps;
 
     public Long getId() {
         return id;

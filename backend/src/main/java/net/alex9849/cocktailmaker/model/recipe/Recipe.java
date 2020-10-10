@@ -1,15 +1,13 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -161,5 +159,35 @@ public class Recipe {
         public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + searchName + "%");
         }
+    }
+
+    public static class RecipeFilterCurrentlyMakeable implements Specification<Recipe> {
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+
+            Subquery<Recipe> subquery = query.subquery(Recipe.class);
+            /* This would be better, because we wouldn't need an extra attribute to join
+               on in the Ingredient.class. The Problem is, that this solution would need a right-join
+               and right-joins are not supported by Spring-JPA / Hibernate
+
+            Root<Pump> pump = subquery.from(Pump.class);
+            Join<Pump, Ingredient> ingredient = pump.join("currentIngredient");
+            Join<Ingredient, RecipeIngredient> recipeIngredient = ingredient.join("recipeIngredients", JoinType.RIGHT);
+            Join<RecipeIngredient, Recipe> recipe = recipeIngredient.join("recipe");
+            */
+
+            Root<Recipe> recipe = subquery.from(Recipe.class);
+            Join<Recipe, RecipeIngredient> recipeIngredient = recipe.join("recipeIngredients");
+            Join<RecipeIngredient, Ingredient> ingredient = recipeIngredient.join("ingredient");
+            Join<Ingredient, Pump> pump = ingredient.join("pumps", JoinType.LEFT);
+
+            subquery.select(recipe)
+                    .groupBy(recipe.get("id"))
+                    .having(criteriaBuilder.equal(criteriaBuilder.count(pump.get("id")),
+                            criteriaBuilder.count(recipeIngredient.get("id").get("IngredientId"))));
+            return criteriaBuilder.in(root).value(subquery);
+        }
+
     }
 }

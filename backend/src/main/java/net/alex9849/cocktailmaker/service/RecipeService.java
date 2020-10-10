@@ -63,7 +63,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, String searchName, Integer startNumber, Integer pageSize, Sort sort) {
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, String searchName, boolean onlyCurrentlyMakeable, Integer startNumber, Integer pageSize, Sort sort) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
 
         if(inPublic != null) {
@@ -74,6 +74,9 @@ public class RecipeService {
         }
         if(searchName != null) {
             spec = spec.and(new Recipe.RecipeFilterNameContain(searchName));
+        }
+        if(onlyCurrentlyMakeable) {
+            spec = spec.and(new Recipe.RecipeFilterCurrentlyMakeable());
         }
         if(startNumber != null && pageSize != null) {
             return recipeRepository.findAll(spec, PageRequest.of(startNumber, pageSize, sort));
