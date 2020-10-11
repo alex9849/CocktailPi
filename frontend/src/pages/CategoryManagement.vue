@@ -96,7 +96,7 @@
         <td
           style="color: #b5b5b5"
         >
-          {{ categories.length }} categor(y/ies) in total
+          {{ categories.length + ' ' + ((categories.length === 1)? 'category' : 'categories')}} in total
         </td>
         <td rowspan="5"/>
       </template>
