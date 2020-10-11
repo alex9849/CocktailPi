@@ -1,7 +1,4 @@
 sudo: false
-language: java
-arch:
-  - amd64
 services:
   - docker
 jdk:
@@ -15,6 +12,7 @@ stages:
 jobs:
   include:
     - stage: build
+      language: java
       script:
         - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
         - "mvn versions:commit"
@@ -27,6 +25,7 @@ jobs:
           name: target
           paths:
             - ./backend/target/
+            - ./push/
     - stage: before_deploy
       arch: amd64
       before_deploy:
