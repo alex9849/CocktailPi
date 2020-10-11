@@ -74,21 +74,21 @@ public class Ingredient implements Serializable {
         }
     }
 
-    public static class IngredientFilterStartsWith implements Specification<Ingredient> {
-        private String startsWith;
+    public static class IngredientFilterNameIncludes implements Specification<Ingredient> {
+        private String includes;
         private boolean ignoreCase;
 
-        public IngredientFilterStartsWith(String startwith, boolean ignoreCase) {
+        public IngredientFilterNameIncludes(String includes, boolean ignoreCase) {
             this.ignoreCase = ignoreCase;
-            this.startsWith = startwith;
+            this.includes = includes;
         }
 
         @Override
         public Predicate toPredicate(Root<Ingredient> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             if(ignoreCase) {
-                return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), startsWith.toLowerCase() + "%");
+                return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + includes.toLowerCase() + "%");
             } else {
-                return criteriaBuilder.like(root.get("name"), startsWith + "%");
+                return criteriaBuilder.like(root.get("name"), "%" + includes + "%");
             }
         }
     }

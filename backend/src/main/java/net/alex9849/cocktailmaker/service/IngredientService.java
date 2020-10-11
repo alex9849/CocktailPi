@@ -32,7 +32,7 @@ public class IngredientService {
     public List<Ingredient> getIngredientByFilter(String nameStartsWith) {
         Specification<Ingredient> spec = new Ingredient.IngredientFilterNoFilter();
         if(nameStartsWith != null) {
-            spec = spec.and(new Ingredient.IngredientFilterStartsWith(nameStartsWith, true));
+            spec = spec.and(new Ingredient.IngredientFilterNameIncludes(nameStartsWith, true));
         }
         return ingredientRepository.findAll(Specification.where(spec));
     }

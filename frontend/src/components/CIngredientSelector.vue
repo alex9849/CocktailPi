@@ -89,7 +89,7 @@
     },
     computed: {
       ingredientOptions() {
-        if(this.stringInput.length < 1) {
+        if(this.stringInput.length < 2) {
           return this.noInputOptions;
         }
         return this.fetchedOptions;
@@ -98,7 +98,7 @@
     methods: {
       filterIngredients(val, update, abort) {
         this.stringInput = val;
-        if(val.length < 1) {
+        if(val.length < 2) {
           update();
           return;
         }
