@@ -2,7 +2,8 @@ FROM hypriot/rpi-java
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
-RUN apk --no-cache add tzdata
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tzdata
 
 COPY target/backend-*.jar /app.jar
 
