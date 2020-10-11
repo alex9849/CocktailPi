@@ -20,6 +20,7 @@
                 @click="onRefreshButton"
               />
               <q-btn
+                v-if="isPumpIngredientEditor"
                 color="positive"
                 label="Create recipe"
                 no-caps
@@ -27,7 +28,7 @@
                 :to="{name: 'recipeadd'}"
               />
               <q-btn
-                v-if="isOwnRecipes"
+                v-if="isOwnRecipes && isPumpIngredientEditor"
                 color="negative"
                 label="Delete selected recipes"
                 no-caps
@@ -244,6 +245,7 @@
     },
     computed: {
       ...mapGetters({
+        isPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         user: 'auth/getUser'
       }),
       deleteQuestionMessage() {

@@ -130,9 +130,12 @@
             label: 'User'
           }, {
             value: 1,
-            label: 'Pump-Ingredient-Editor'
+            label: 'Recipe-Creator'
           }, {
             value: 2,
+            label: 'Pump-Ingredient-Editor'
+          }, {
+            value: 3,
             label: 'Admin'
           }
         ]

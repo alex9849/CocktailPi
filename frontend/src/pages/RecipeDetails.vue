@@ -16,7 +16,7 @@
           <q-btn
             color="grey"
             :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-            v-if="recipe.owner && user.id === recipe.owner.id"
+            v-if="recipe.owner && user.id === recipe.owner.id && isPumpIngredientEditor"
           >
             Edit
           </q-btn>
@@ -54,7 +54,7 @@
             color="red"
             @click.native="deleteDialog = true"
             :loading="deleting"
-            v-if="recipe.owner && user.id === recipe.owner.id"
+            v-if="recipe.owner && user.id === recipe.owner.id && isPumpIngredientEditor"
           >
             Delete
           </q-btn>
@@ -165,6 +165,7 @@
     computed: {
       ...mapGetters({
         user: 'auth/getUser',
+        isPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'

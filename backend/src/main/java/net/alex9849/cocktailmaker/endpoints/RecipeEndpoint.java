@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,6 +78,7 @@ public class RecipeEndpoint {
         return ResponseEntity.ok(new RecipeDto(recipe));
     }
 
+    @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
@@ -101,6 +103,7 @@ public class RecipeEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
 
+    @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file,
@@ -148,6 +151,7 @@ public class RecipeEndpoint {
         return ResponseEntity.ok(recipe.getImage());
     }
 
+    @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     ResponseEntity<?> deleteRecipe(@PathVariable("id") long id, HttpServletRequest request) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

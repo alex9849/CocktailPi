@@ -23,7 +23,7 @@
         <q-list>
           <q-expansion-item
             v-for="(section, index) in sidebarItems"
-            v-if="!section.onlyAdmins || isAdmin"
+            v-if="section.reqLevel <= getUser.adminLevel"
             :label="section.label"
             :icon="section.icon"
             :key="index"
@@ -32,7 +32,7 @@
           >
             <q-item
               v-for="(subsecion, subindex) in section.subSections"
-              v-if="!subsecion.onlyAdmins || isAdmin"
+              v-if="section.reqLevel <= getUser.adminLevel"
               style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
@@ -86,15 +86,15 @@
           {
             label: 'GENERAL',
             icon: mdiAccount,
-            onlyAdmins: false,
+            reqLevel: 0,
             subSections: [
               {
-                onlyAdmins: false,
+                reqLevel: 0,
                 label: 'Dashboard',
                 to: {name: 'dashboard'},
                 exact: false
               }, {
-                onlyAdmins: false,
+                reqLevel: 1,
                 label: 'My recipes',
                 to: {name: 'myrecipes'},
                 exact: false
@@ -103,37 +103,38 @@
           }, {
             label: 'PUBLIC COCKTAILS',
             icon: mdiEarth,
-            onlyAdmins: false,
+            reqLevel: 0,
             subSections: [
               {
                 label: 'All',
                 to: {name: 'publicrecipes'},
-                exact: true
+                exact: true,
+                reqLevel: 0,
               }
             ]
           }, {
             label: 'ADMINISTRATION',
             icon: mdiCogs,
-            onlyAdmins: true,
+            reqLevel: 3,
             subSections: [
               {
                 label: 'Users',
-                onlyAdmins: true,
+                reqLevel: 3,
                 to: {name: 'usermanagement'},
                 exact: false
               }, {
                 label: 'Ingredients',
-                onlyAdmins: true,
+                reqLevel: 3,
                 to: {name: 'ingredientmanagement'},
                 exact: false
               }, {
                 label: 'Categories',
-                onlyAdmins: true,
+                reqLevel: 3,
                 to: {name: 'categorymanagement'},
                 exact: false
               }, {
                 label: 'Pumps',
-                onlyAdmins: true,
+                reqLevel: 3,
                 to: {name: 'pumpmanagement'},
                 exact: false
               }
@@ -153,7 +154,7 @@
     },
     computed: {
       ...mapGetters({
-        isAdmin: 'auth/isAdmin'
+        getUser: 'auth/getUser'
       }),
       desktopMode() {
         return this.windowWidth > this.desktopModeBreakPoint;
@@ -166,7 +167,7 @@
             for(let category of data) {
               this.sidebarItems[1].subSections.push({
                 label: category.name,
-                onlyAdmins: false,
+                hide: false,
                 to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
                 exact: true
               })

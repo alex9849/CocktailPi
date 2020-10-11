@@ -218,9 +218,12 @@
             label: 'User'
           }, {
             value: 1,
-            label: 'Pump-Ingredient-Editor'
+            label: 'Recipe-Creator'
           }, {
             value: 2,
+            label: 'Pump-Ingredient-Editor'
+          }, {
+            value: 3,
             label: 'Admin'
           }
         ]
@@ -247,11 +250,11 @@
         return "The following users will be deleted:";
       },
       isAllSelectedCeckboxState() {
-        if(this.selected.length === this.data.length - 1) {
-          return true;
-        }
         if(this.selected.length === 0) {
           return false;
+        }
+        if(this.selected.length === this.data.length - 1) {
+          return true;
         }
         return undefined;
       }
