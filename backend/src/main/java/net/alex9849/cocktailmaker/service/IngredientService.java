@@ -50,7 +50,7 @@ public class IngredientService {
         if(!ingredientRepository.findById(ingredient.getId()).isPresent()) {
             throw new IllegalArgumentException("Ingredient doesn't exist!");
         }
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findByName(ingredient.getName());
+        Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
         if(optionalIngredient.isPresent() && !Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
@@ -59,7 +59,7 @@ public class IngredientService {
 
     public Ingredient createIngredient(Ingredient ingredient) {
         ingredient.setId(null);
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findByName(ingredient.getName());
+        Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
         if(optionalIngredient.isPresent()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
