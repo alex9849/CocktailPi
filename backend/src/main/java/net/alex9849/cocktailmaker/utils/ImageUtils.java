@@ -6,24 +6,31 @@ import java.awt.image.BufferedImage;
 public class ImageUtils {
 
     public static BufferedImage resizeImage(BufferedImage image, int maxWidth, double aspectRatio) {
-        int maxHeight = (int) (maxWidth / aspectRatio);
-        int outWidth = Math.min(maxWidth, image.getWidth());
-        int outHeight = Math.min(maxHeight, image.getHeight());
-        int sourceRatioWidth = image.getWidth();
-        int sourceRatioHeight = image.getHeight();
-        if(outHeight * aspectRatio > outWidth) {
-            outHeight = (int) (outWidth / aspectRatio);
-            sourceRatioHeight = (int) (image.getWidth() / aspectRatio);
-        } else {
+        int outHeight = (int) (maxWidth / aspectRatio);
+        int outWidth = maxWidth;
+        int sourceWidth = image.getWidth();
+        int sourceHeight = image.getHeight();
+        //Output image should have a width of maxWidth or smaller
+        if(outHeight > image.getHeight()) {
+            outHeight = image.getHeight();
             outWidth = (int) (outHeight * aspectRatio);
-            sourceRatioWidth = (int) (image.getHeight() * aspectRatio);
         }
+        if(outWidth > image.getWidth()) {
+            outWidth = image.getWidth();
+            outHeight = (int) (outWidth / aspectRatio);
+        }
+        if(image.getWidth() > image.getHeight() * aspectRatio) {
+            sourceWidth = (int) (image.getHeight() * aspectRatio);
+        } else {
+            sourceHeight = (int) (image.getWidth() / aspectRatio);
+        }
+
         BufferedImage resized = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = resized.createGraphics();
-        int sourceImageX1 = (image.getWidth() - sourceRatioWidth) / 2;
-        int sourceImageY1 = (image.getHeight() - sourceRatioHeight) / 2;
-        int sourceImageX2 = sourceImageX1 + sourceRatioWidth;
-        int sourceImageY2 = sourceImageY1 + sourceRatioHeight;
+        int sourceImageX1 = (image.getWidth() - sourceWidth) / 2;
+        int sourceImageY1 = (image.getHeight() - sourceHeight) / 2;
+        int sourceImageX2 = sourceImageX1 + sourceWidth;
+        int sourceImageY2 = sourceImageY1 + sourceHeight;
         graphics.drawImage(image, 0, 0, outWidth, outHeight, sourceImageX1,
                 sourceImageY1, sourceImageX2, sourceImageY2, null);
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
