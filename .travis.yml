@@ -7,6 +7,11 @@ services:
 jdk:
   - openjdk8
 
+stages:
+  - script
+  - after_success
+  - before_deploy
+  - deploy
 
 script:
   - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
