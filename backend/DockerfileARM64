@@ -1,4 +1,4 @@
-FROM arm64v8/openjdk:8u212-jdk-alpine
+FROM hypriot/rpi-java
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
