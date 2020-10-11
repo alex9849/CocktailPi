@@ -34,6 +34,21 @@ jobs:
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
       workspaces:
         use: target
+      deploy:
+        - provider: releases
+          api_key: $GITHUB_TOKEN
+          file:
+            - ./push/*
+          file_glob: true
+          skip_cleanup: true
+          on:
+            tags: true
+          overwrite: true
+        - provider: script
+          script: bash ./.travis/docker_deploy.sh
+          on:
+            tags: true
+          overwrite: true
     - stage: before_deploy
       arch: arm64
       before_deploy:
@@ -41,19 +56,9 @@ jobs:
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 alex9849/pi-cocktailmaker:latest-arm64"
       workspaces:
         use: target
-
-deploy:
-  - provider: releases
-    api_key: $GITHUB_TOKEN
-    file:
-      - ./push/*
-    file_glob: true
-    skip_cleanup: true
-    on:
-      tags: true
-    overwrite: true
-  - provider: script
-    script: bash ./.travis/docker_deploy.sh
-    on:
-      tags: true
-    overwrite: true
+      deploy:
+        provider: script
+        script: bash ./.travis/docker_deploy.sh
+        on:
+          tags: true
+          overwrite: true
