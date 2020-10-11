@@ -27,6 +27,7 @@ jobs:
             - ./backend/target/
             - ./push/
     - stage: before_deploy
+      language: sh
       arch: amd64
       before_deploy:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG ./backend"
@@ -49,6 +50,7 @@ jobs:
             tags: true
           overwrite: true
     - stage: before_deploy
+      language: sh
       arch: arm64
       before_deploy:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 -f ./backend/DockerfileARM64 ./backend"
