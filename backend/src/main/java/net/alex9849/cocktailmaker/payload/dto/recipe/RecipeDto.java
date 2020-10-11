@@ -2,7 +2,6 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Tag;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -31,8 +30,6 @@ public class RecipeDto {
         this.recipeIngredients = steps.stream().map(x -> byProductionStep.get(x).stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toList()))
                 .collect(Collectors.toList());
-        this.tags = recipe.getTags().stream().map(Tag::getName)
-                .collect(Collectors.toSet());
         this.categories = recipe.getCategories().stream().map(CategoryDto::new)
                 .collect(Collectors.toSet());
     }
@@ -54,9 +51,6 @@ public class RecipeDto {
 
     @NotNull
     private List<List<RecipeIngredientDto>> recipeIngredients;
-
-    @NotNull
-    private Set<String> tags;
 
     @NotNull
     private Set<CategoryDto> categories;
@@ -107,14 +101,6 @@ public class RecipeDto {
 
     public void setRecipeIngredients(List<List<RecipeIngredientDto>> recipeIngredients) {
         this.recipeIngredients = recipeIngredients;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
     }
 
     public Set<CategoryDto> getCategories() {

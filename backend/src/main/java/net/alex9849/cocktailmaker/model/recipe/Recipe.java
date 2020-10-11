@@ -12,7 +12,6 @@ import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
@@ -44,17 +43,12 @@ public class Recipe {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(name = "recipe_categories",
             joinColumns = @JoinColumn(name = "recipe_id"),
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Category> categories;
-
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "recipe_tags",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags;
 
     public Long getId() {
         return id;
@@ -118,14 +112,6 @@ public class Recipe {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 
     public static class RecipeFilterNoFilter implements Specification<Recipe> {

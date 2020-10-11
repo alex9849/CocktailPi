@@ -54,18 +54,6 @@ create table recipe_ingredients (
                                         )
 );
 
-create table tags (
-                      id bigserial not null,
-                      name varchar(30) not null unique,
-                      primary key (id)
-);
-
-create table recipe_tags (
-                             recipe_id int8 not null references recipes,
-                             tag_id int8 not null references tags,
-                             primary key (recipe_id, tag_id)
-);
-
 create table categories
 (
     id bigserial not null,
@@ -76,6 +64,6 @@ create table categories
 CREATE TABLE public.recipe_categories
 (
     recipe_id int8 not null references recipes,
-    categories_id int8 not null references categories,
+    categories_id int8 not null references categories on delete cascade,
     primary key (recipe_id, categories_id)
 );

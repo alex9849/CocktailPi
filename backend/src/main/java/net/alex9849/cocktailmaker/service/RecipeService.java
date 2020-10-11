@@ -1,6 +1,9 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredientId;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
 import net.alex9849.cocktailmaker.repository.RecipeIngredientRepository;
@@ -17,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -118,16 +119,6 @@ public class RecipeService {
         recipeRepository.deleteById(recipeId);
     }
 
-    public Set<Tag> toTags(Set<String> stringTags) {
-        Set<Tag> tags = new HashSet<>();
-        stringTags.forEach(x -> {
-            Tag tag = tagRepository.findByName(x)
-                    .orElseThrow(() -> new RuntimeException("Error: Tag is not found."));
-            tags.add(tag);
-        });
-        return tags;
-    }
-
     public Recipe fromDto(RecipeDto recipeDto) {
         if(recipeDto == null) {
             return null;
@@ -145,7 +136,6 @@ public class RecipeService {
         recipe.setCategories(recipeDto.getCategories()
                 .stream().map(x -> categoryService.fromDto(x))
                 .collect(Collectors.toList()));
-        recipe.setTags(toTags(recipeDto.getTags()));
         return recipe;
     }
 

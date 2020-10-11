@@ -12,6 +12,18 @@ class CategoryService {
     return axios.get(API_PATH + id)
       .then(response => response.data);
   }
+
+  createCategory(category) {
+    return axios.post(API_PATH, category);
+  }
+
+  updateCategory(category) {
+    return axios.put(API_PATH + category.id, category);
+  }
+
+  deleteCategory(category) {
+    return axios.delete(API_PATH + category.id, category);
+  }
 }
 
 export default new CategoryService();
