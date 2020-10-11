@@ -8,35 +8,39 @@ jdk:
   - openjdk8
 
 stages:
-  - before_install
-  - script
-  - after_success
+  - build
   - before_deploy
   - deploy
 
-script:
-  - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
-  - "mvn versions:commit"
-  - "mvn clean"
-  - "mvn install -P prod"
-after_success:
-  - mkdir push
-  - cp ./backend/target/*.jar ./push
-
 jobs:
   include:
+    - stage: build
+      script:
+        - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
+        - "mvn versions:commit"
+        - "mvn clean"
+        - "mvn install -P prod"
+        - "mkdir push"
+        - "cp ./backend/target/*.jar ./push"
+      workspaces:
+        create:
+          name: target
+          paths:
+            - ./backend/target/
     - stage: before_deploy
       arch: amd64
       before_deploy:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG ./backend"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
+      workspaces:
+        use: target
     - stage: before_deploy
       arch: arm64
-      before_install:
-        - "sudo apt-get -yq install maven"
       before_deploy:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 -f ./backend/DockerfileARM64 ./backend"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 alex9849/pi-cocktailmaker:latest-arm64"
+      workspaces:
+        use: target
 
 deploy:
   - provider: releases
