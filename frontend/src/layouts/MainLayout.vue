@@ -38,6 +38,7 @@
               :inset-level="0.4"
               :key="subindex"
               clickable
+              :exact="subsecion.exact"
               @click="() => {
                 if(!desktopMode) {
                   leftDrawerOpen = false;
@@ -69,6 +70,7 @@
   import AppHeader from "../components/AppHeader";
   import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
   import {mapGetters} from 'vuex'
+  import CategoryService from "../services/category.service";
 
   export default {
     name: 'MainLayout',
@@ -89,11 +91,13 @@
               {
                 onlyAdmins: false,
                 label: 'Dashboard',
-                to: {name: 'dashboard'}
+                to: {name: 'dashboard'},
+                exact: false
               }, {
                 onlyAdmins: false,
                 label: 'My recipes',
-                to: {name: 'myrecipes'}
+                to: {name: 'myrecipes'},
+                exact: false
               }
             ]
           }, {
@@ -102,8 +106,9 @@
             onlyAdmins: false,
             subSections: [
               {
-                label: 'Public recipes',
-                to: {name: 'publicrecipes'}
+                label: 'All',
+                to: {name: 'publicrecipes'},
+                exact: true
               }
             ]
           }, {
@@ -114,15 +119,23 @@
               {
                 label: 'Users',
                 onlyAdmins: true,
-                to: {name: 'usermanagement'}
+                to: {name: 'usermanagement'},
+                exact: false
               }, {
                 label: 'Ingredients',
                 onlyAdmins: true,
-                to: {name: 'ingredientmanagement'}
+                to: {name: 'ingredientmanagement'},
+                exact: false
+              }, {
+                label: 'Categories',
+                onlyAdmins: true,
+                to: {name: 'categorymanagement'},
+                exact: false
               }, {
                 label: 'Pumps',
                 onlyAdmins: true,
-                to: {name: 'pumpmanagement'}
+                to: {name: 'pumpmanagement'},
+                exact: false
               }
             ]
           }
@@ -132,6 +145,7 @@
     created() {
       window.addEventListener('resize', this.handleResize);
       this.handleResize();
+      this.setCategories();
       this.mdiChevronRight = mdiChevronRight;
     },
     destroyed() {
@@ -146,6 +160,19 @@
       }
     },
     methods: {
+      setCategories() {
+        CategoryService.getAllCategories()
+          .then(data => {
+            for(let category of data) {
+              this.sidebarItems[1].subSections.push({
+                label: category.name,
+                onlyAdmins: false,
+                to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
+                exact: true
+              })
+            }
+          });
+      },
       handleResize() {
         this.windowWidth = window.innerWidth;
         if(this.windowWidth > this.desktopModeBreakPoint) {

@@ -128,6 +128,9 @@
       searchBarColor: {
         type: String,
         default: '#fafafa'
+      },
+      categoryId: {
+        type: Number
       }
     },
     data() {
@@ -168,6 +171,11 @@
       },
       '$route.query.search'(newValue) {
         this.searchOptions.searchName = newValue ? newValue : "";
+        this.fetchRecipes();
+      },
+      categoryId() {
+        this.recipes = [];
+        this.searchOptions.searchName = "";
         this.fetchRecipes();
       }
     },
@@ -221,7 +229,10 @@
       },
       fetchRecipes() {
         this.loading = true;
-        RecipeService.getRecipes(this.pagination.page, this.isOwnRecipes ? this.user.id : null, this.isOwnRecipes ? null : true, this.searchOptions.searchName)
+        RecipeService.getRecipes(this.pagination.page,
+          this.isOwnRecipes ? this.user.id : null,
+          this.isOwnRecipes ? null : true,
+          this.searchOptions.searchName, this.categoryId)
           .then(pageable => {
             this.recipes = pageable.content;
             this.pagination.totalPages = pageable.totalPages;

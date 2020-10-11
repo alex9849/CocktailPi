@@ -7,6 +7,11 @@ class CategoryService {
     return axios.get(API_PATH)
       .then(response => response.data);
   }
+
+  getCategory(id) {
+    return axios.get(API_PATH + id)
+      .then(response => response.data);
+  }
 }
 
 export default new CategoryService();

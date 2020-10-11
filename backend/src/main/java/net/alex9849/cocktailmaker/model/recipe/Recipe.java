@@ -205,4 +205,18 @@ public class Recipe {
         }
 
     }
+
+    public static class RecipeFilterCategory implements Specification<Recipe> {
+        private long categoryId;
+
+        public RecipeFilterCategory(long categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            Join<Recipe, Category> category = root.join("categories");
+            return criteriaBuilder.equal(category.get("id"), categoryId);
+        }
+    }
 }

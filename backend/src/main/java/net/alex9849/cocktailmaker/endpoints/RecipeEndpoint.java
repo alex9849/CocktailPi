@@ -44,6 +44,7 @@ public class RecipeEndpoint {
             @RequestParam(value = "inPublic", required = false) Boolean inPublic,
             @RequestParam(value = "onlyCurrentlyMakeable", defaultValue = "false") boolean onlyCurrentlyMakeable,
             @RequestParam(value = "searchName", required = false) String searchName,
+            @RequestParam(value = "inCategory", required = false) Long inCategory,
             @RequestParam(value = "page") int page,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -58,7 +59,7 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
-        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, searchName, onlyCurrentlyMakeable, page, pageSize, sort);
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, searchName, onlyCurrentlyMakeable, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }

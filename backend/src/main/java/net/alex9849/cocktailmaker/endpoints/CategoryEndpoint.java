@@ -26,6 +26,15 @@ public class CategoryEndpoint {
                 .stream().map(CategoryDto::new).collect(Collectors.toList()));
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllCategory(@PathVariable(value = "id") long id) {
+        Category category = categoryService.getCategory(id);
+        if(category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new CategoryDto(category));
+    }
+
     @PreAuthorize("hasRole('Admin')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto, UriComponentsBuilder uriBuilder) {

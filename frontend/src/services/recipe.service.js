@@ -17,18 +17,17 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  getRecipes(page, ownerId, inPublic, searchName) {
-    let path = API_PATH + "?page=" + page;
-    if(ownerId != null) {
-      path += "&ownerId=" + ownerId;
-    }
-    if(inPublic != null) {
-      path += "&inPublic=" + inPublic;
-    }
-    if(searchName != null) {
-      path += "&searchName=" + searchName;
-    }
-    return axios.get(path)
+  getRecipes(page, ownerId, inPublic, searchName, inCategoryId) {
+    let config = {
+      params: {
+        page,
+        ownerId,
+        inPublic,
+        searchName,
+        inCategory: inCategoryId
+      }
+    };
+    return axios.get(API_PATH, config)
       .then(response => response.data);
   }
 

@@ -22,6 +22,10 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    public Category getCategory(long id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
+
     public Category createCategory(Category category) {
         if(categoryRepository.findAllByNameIgnoringCase(category.getName()).isPresent()) {
             throw new IllegalArgumentException("Category already exists!");

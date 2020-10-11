@@ -46,6 +46,10 @@ const routes = [
       component: () => import('pages/RecipesPublic'),
       name: 'publicrecipes'
     }, {
+      path: 'recipe/public/category/:cid',
+      component: () => import('pages/RecipesPublic'),
+      name: 'publiccategoryrecipes'
+    }, {
       path: 'recipe/:id',
       component: () => import('pages/RecipeDetails'),
       name: 'recipedetails'
@@ -73,6 +77,10 @@ const routes = [
       path: 'admin/pumpmanagement',
       component: () => import('pages/PumpManagement'),
       name: 'pumpmanagement'
+    }, {
+      path: 'admin/categorymanagement',
+      component: () => import('pages/CategoryManagement'),
+      name: 'categorymanagement'
     }
     ]
   }, {

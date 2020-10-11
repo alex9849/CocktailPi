@@ -104,7 +104,7 @@
 <script>
   import {maxLength, minLength, required} from "vuelidate/lib/validators";
   import IngredientList from "./IngredientList";
-  import CategoryService from "../services/category-service";
+  import CategoryService from "../services/category.service";
 
   export default {
     name: "RecipeEditorForm",
