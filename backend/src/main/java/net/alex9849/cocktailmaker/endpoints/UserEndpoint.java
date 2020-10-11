@@ -52,7 +52,14 @@ public class UserEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            updateUser.setAuthority(userService.toRole(updateUserRequest.getUserDto().getAdminLevel()));
+            if(principal.getId().equals(userId)) {
+                if(updateUser.getAuthority() != beforeUpdate.getAuthority()) {
+                    throw new IllegalArgumentException("You can't edit your own role!");
+                }
+                if(updateUser.isAccountNonLocked() != beforeUpdate.isAccountNonLocked()) {
+                    throw new IllegalArgumentException("You can't lock / unlock yourself!");
+                }
+            }
         } else {
             updateUser.setAuthority(beforeUpdate.getAuthority());
             updateUser.setAccountNonLocked(beforeUpdate.isAccountNonLocked());
@@ -70,6 +77,10 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.getId().equals(userId)) {
+            throw new IllegalArgumentException("You can't delete yourself!");
+        }
         if(userService.getUser(userId) == null) {
             return ResponseEntity.notFound().build();
         }

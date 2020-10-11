@@ -72,14 +72,14 @@
       outlined
       map-options
       :value="value.adminLevel"
-      v-if="!isProfile"
+      v-if="!isProfile && !isSelf"
       :options="roles"
       @input="e => {value.adminLevel = e.value; $emit('input', value); $v.value.adminLevel.$touch();}"
       :disable="loading || disabled"
       label="Role"
     />
     <q-checkbox
-      v-if="!isProfile"
+      v-if="!isProfile && !isSelf"
       :value="!value.accountNonLocked"
       @input="e => {value.accountNonLocked = !e; $emit('input', value)}"
       :disable="loading || disabled"
@@ -109,6 +109,10 @@
         default: false
       },
       isProfile: {
+        type: Boolean,
+        default: false
+      },
+      isSelf: {
         type: Boolean,
         default: false
       },

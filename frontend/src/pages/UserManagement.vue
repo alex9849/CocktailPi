@@ -32,6 +32,7 @@
       :data="data"
       :columns="colums"
       hide-bottom
+      ref="userTable"
       :loading="isLoading"
       selection="multiple"
       :selected.sync="selected"
@@ -51,6 +52,7 @@
             style="text-align: center"
           >
             <q-checkbox
+              v-if="getUser.id !== props.row.id"
               v-model="props.selected"
             />
           </q-td>
@@ -114,6 +116,7 @@
             </q-btn>
             <q-btn
               :icon="mdiDelete"
+              v-if="getUser.id !== props.row.id"
               @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
               color="red"
               dense
@@ -125,6 +128,12 @@
             </q-btn>
           </q-td>
         </q-tr>
+      </template>
+      <template v-slot:header-selection="selected">
+        <q-checkbox
+          :value="isAllSelectedCeckboxState"
+          @input="v => v? selectAll() : $refs.userTable.clearSelection()"
+        />
       </template>
       <template
         v-slot:bottom-row
@@ -180,6 +189,7 @@
 
 <script>
   import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
+  import {mapGetters} from "vuex";
   import userService from '../services/user.service'
   import CQuestion from "../components/CQuestion";
 
@@ -224,6 +234,9 @@
       this.initialize();
     },
     computed: {
+      ...mapGetters({
+        getUser: 'auth/getUser'
+      }),
       deleteQuestionMessage() {
         if (this.deleteUsers.length === 0) {
           return "No users selected!";
@@ -232,9 +245,22 @@
           return "The following user will be deleted:";
         }
         return "The following users will be deleted:";
+      },
+      isAllSelectedCeckboxState() {
+        if(this.selected.length === this.data.length - 1) {
+          return true;
+        }
+        if(this.selected.length === 0) {
+          return false;
+        }
+        return undefined;
       }
     },
     methods: {
+      selectAll() {
+        let toSelect = this.data.filter(x => x.id !== this.getUser.id);
+        this.selected.push(...toSelect);
+      },
       onRefreshButton() {
         this.isLoading = true;
         let vm = this;

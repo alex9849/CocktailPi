@@ -14,6 +14,7 @@
       <user-editor-form
         v-model="user"
         :loading="loading"
+        :is-self="userId === getUser.id"
         @valid="isValid = true"
         @invalid="isValid = false"
       >
@@ -45,6 +46,7 @@
 <script>
   import UserEditorForm from "../components/UserEditorForm";
   import userService from "../services/user.service"
+  import {mapGetters} from "vuex";
 
   export default {
     name: "UserEditor",
@@ -57,6 +59,11 @@
         isValid: false,
         error: ''
       }
+    },
+    computed: {
+      ...mapGetters({
+        getUser: 'auth/getUser'
+      }),
     },
     methods: {
       sendUpdateUser() {

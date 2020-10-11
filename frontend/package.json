@@ -13,19 +13,19 @@
   },
   "dependencies": {
     "@mdi/js": "^4.9.95",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.9.8",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
-    "vuelidate": "^0.7.5",
-    "quasar": "^1.12.12",
-    "vuedraggable": "2.24.1",
     "lodash": "~4.17.19",
+    "quasar": "^1.14.1",
     "sockjs-client": "1.5.0",
-    "stompjs": "2.3.3"
+    "stompjs": "2.3.3",
+    "vuedraggable": "2.24.1",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "@mdi/font": "^4.9.95",
-    "@quasar/app": "^2.0.6",
+    "@quasar/app": "^2.1.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
