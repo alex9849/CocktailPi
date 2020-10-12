@@ -29,7 +29,7 @@ jobs:
     - stage: before_deploy
       language: sh
       arch: amd64
-      before_deploy:
+      script:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG ./backend"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
       workspaces:
@@ -52,7 +52,7 @@ jobs:
     - stage: before_deploy
       language: sh
       arch: arm64
-      before_deploy:
+      script:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 -f ./backend/DockerfileARM64 ./backend"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 alex9849/pi-cocktailmaker:latest-arm64"
       workspaces:
