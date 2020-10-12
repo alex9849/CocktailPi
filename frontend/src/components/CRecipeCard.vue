@@ -124,6 +124,9 @@
         return this.getPumpIngredients.some(x => x.id === ingredientId);
       },
       uniqueIngredientNames(productionSteps) {
+        if(!this.showIngredients) {
+          return [];
+        }
         let unique = new Map();
         for (let productionStep of productionSteps) {
           for (let ingredient of productionStep) {
