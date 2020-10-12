@@ -1,4 +1,5 @@
-FROM arm32v7/openjdk:8u212-jdk-alpine3.9
+FROM resin/rpi-raspbian
+RUN apt update && apt -yq install openjdk-8-jdk
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
