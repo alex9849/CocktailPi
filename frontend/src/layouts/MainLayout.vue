@@ -167,7 +167,7 @@
             for(let category of data) {
               this.sidebarItems[1].subSections.push({
                 label: category.name,
-                hide: false,
+                reqLevel: 0,
                 to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
                 exact: true
               })
