@@ -51,8 +51,8 @@ jobs:
       language: sh
       before_deploy:
         - "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
-        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 -f ./backend/DockerfileARM64 ./backend"
-        - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 alex9849/pi-cocktailmaker:latest-arm64"
+        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi -f ./backend/DockerfilePi ./backend"
+        - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi alex9849/pi-cocktailmaker:latest-pi"
       workspaces:
         use: target
       deploy:

@@ -1,4 +1,4 @@
-FROM resin/rpi-raspbian
+FROM balenalib/raspberry-pi-debian:latest
 RUN apt update && apt -yq install openjdk-8-jdk
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
