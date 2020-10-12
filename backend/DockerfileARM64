@@ -1,9 +1,7 @@
-FROM openjdk:16-ea-jdk-oraclelinux8
+FROM arm32v7/openjdk:8u212
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
-#ENV DEBIAN_FRONTEND=noninteractive
-#RUN apt-get install -y tzdata
 
 COPY target/backend-*.jar /app.jar
 
