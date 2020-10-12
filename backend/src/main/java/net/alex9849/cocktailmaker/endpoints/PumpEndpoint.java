@@ -65,7 +65,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/clean", method = RequestMethod.PUT)
     public ResponseEntity<?> cleanPump(@PathVariable("id") long id) {
         Pump pump = pumpService.getPump(id);

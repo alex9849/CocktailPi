@@ -79,7 +79,7 @@
             this.error = error.response.data.message;
             this.$q.notify({
               type: 'negative',
-              message: 'Couldn\'t update user. ' + error.response.data.message
+              message: 'Couldn\'t update recipe. ' + error.response.data.message
             });
           })
       }

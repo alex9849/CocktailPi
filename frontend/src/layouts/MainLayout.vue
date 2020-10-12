@@ -32,7 +32,7 @@
           >
             <q-item
               v-for="(subsecion, subindex) in section.subSections"
-              v-if="section.reqLevel <= getUser.adminLevel"
+              v-if="subsecion.reqLevel <= getUser.adminLevel"
               style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
@@ -94,8 +94,8 @@
                 to: {name: 'dashboard'},
                 exact: false
               }, {
-                reqLevel: 1,
                 label: 'My recipes',
+                reqLevel: 1,
                 to: {name: 'myrecipes'},
                 exact: false
               }

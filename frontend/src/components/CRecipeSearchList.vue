@@ -4,7 +4,7 @@
       :recipes="recipes"
       :loading="loading"
       @selectionChange="deleteRecipes = $event"
-      :selectable="isOwnRecipes"
+      :selectable="onlyOwnRecipes"
     >
       <template slot="top">
         <div style="margin-bottom: 10px">
@@ -20,7 +20,7 @@
                 @click="onRefreshButton"
               />
               <q-btn
-                v-if="isPumpIngredientEditor"
+                v-if="isRecipeCreatorRole"
                 color="positive"
                 label="Create recipe"
                 no-caps
@@ -28,7 +28,7 @@
                 :to="{name: 'recipeadd'}"
               />
               <q-btn
-                v-if="isOwnRecipes && isPumpIngredientEditor"
+                v-if="onlyOwnRecipes && isRecipeCreatorRole"
                 color="negative"
                 label="Delete selected recipes"
                 no-caps
@@ -122,7 +122,7 @@
     name: "CRecipeSearchList",
     components: {CRecipeList, CQuestion},
     props: {
-      isOwnRecipes: {
+      onlyOwnRecipes: {
         type: Boolean,
         default: false
       },
@@ -231,8 +231,8 @@
       fetchRecipes() {
         this.loading = true;
         RecipeService.getRecipes(this.pagination.page,
-          this.isOwnRecipes ? this.user.id : null,
-          this.isOwnRecipes ? null : true,
+          this.onlyOwnRecipes ? this.user.id : null,
+          this.onlyOwnRecipes ? null : true,
           this.searchOptions.searchName, this.categoryId)
           .then(pageable => {
             this.recipes = pageable.content;
@@ -245,7 +245,7 @@
     },
     computed: {
       ...mapGetters({
-        isPumpIngredientEditor: 'auth/isPumpIngredientEditor',
+        isRecipeCreatorRole: 'auth/isRecipeCreator',
         user: 'auth/getUser'
       }),
       deleteQuestionMessage() {

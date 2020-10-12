@@ -16,7 +16,7 @@
           <q-btn
             color="grey"
             :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-            v-if="recipe.owner && user.id === recipe.owner.id && isPumpIngredientEditor"
+            v-if="loaded && (isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole))"
           >
             Edit
           </q-btn>
@@ -32,11 +32,11 @@
             v-else-if="areEnoughPumpsAvailable(recipe)"
             color="warning"
             @click="showMakeCocktailDialog = true"
-            :disable="!isUserPumpIngredientEditor"
+            :disable="!isPumpIngredientEditorRole"
           >
             Change pumplayout & make cocktail
             <q-tooltip
-              v-if="!isUserPumpIngredientEditor">
+              v-if="!isPumpIngredientEditorRole">
               You are not permitted to change the pumplayout!
             </q-tooltip>
           </q-btn>
@@ -54,7 +54,7 @@
             color="red"
             @click.native="deleteDialog = true"
             :loading="deleting"
-            v-if="recipe.owner && user.id === recipe.owner.id && isPumpIngredientEditor"
+            v-if="loaded && (isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole))"
           >
             Delete
           </q-btn>
@@ -165,8 +165,9 @@
     computed: {
       ...mapGetters({
         user: 'auth/getUser',
-        isPumpIngredientEditor: 'auth/isPumpIngredientEditor',
-        isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
+        isAdminRole: 'auth/isAdmin',
+        isRecipeCreatorRole: 'auth/isRecipeCreator',
+        isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
         doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
         areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
       })

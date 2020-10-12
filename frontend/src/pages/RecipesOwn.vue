@@ -7,7 +7,8 @@
 
     <div class="q-pa-md">
       <c-recipe-search-list
-        :isOwnRecipes="true"
+        :only-own-recipes="true"
+        :show-delete-if-permitted="true"
       />
     </div>
   </q-page>
