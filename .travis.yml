@@ -1,4 +1,3 @@
-sudo: false
 services:
   - docker
 jdk:
@@ -51,7 +50,7 @@ jobs:
           overwrite: true
     - stage: before_deploy
       language: sh
-      arch: arm64
+      arch: arm32
       before_deploy:
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 -f ./backend/DockerfileARM64 ./backend"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-arm64 alex9849/pi-cocktailmaker:latest-arm64"
