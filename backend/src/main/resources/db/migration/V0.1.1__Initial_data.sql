@@ -28,12 +28,15 @@ VALUES (1, 0, 'Cola')
      , (27, 21, 'Malibu')
      , (28, 0, 'Sprite')
      , (29, 18, 'Peach Schnapps');
+SELECT setval('ingredients_id_seq', 29, true);
 
 INSERT INTO categories (id, name) VALUES (1, 'Classics');
+SELECT setval('categories_id_seq', 1, true);
 
 INSERT INTO users (id, email, firstname, is_account_non_locked, lastname, password, role, username)
 VALUES (1, 'admin@localhost.local', 'Admin', true, 'Example',
         '$2a$10$foQL7xSRCK53J/G.MIauWOnllOS9.vyIT5RtUQT25t5ref07MtCfe', 'ROLE_ADMIN', 'admin');
+SELECT setval('users_id_seq', 1, true);
 
 INSERT INTO recipes (id, description, image, in_public, name, owner_id)
 VALUES (1, 'Tasty Mix of Whatever you Have on Hand with a Caffeine Boost!', lo_from_bytea(0, decode(
@@ -70,3 +73,4 @@ INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amoun
 VALUES (5, 3, 1, 25)
      , (1, 3, 1, 75);
 INSERT INTO recipe_categories (recipe_id, categories_id) VALUES (3, 1);
+SELECT setval('recipes_id_seq', 3, true);
