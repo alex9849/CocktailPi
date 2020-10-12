@@ -21,6 +21,7 @@
             style="width: 100px"
             color="grey"
             no-caps
+            :disable="loading"
             v-if="!editMode"
             @click="editMode = true"
           >

@@ -31,7 +31,7 @@
           <c-recipe-card
             style="margin: 10px"
             :recipe="props.row"
-            :show-ingredients="!$q.platform.is.mobile"
+            show-ingredients
             :background-color="(props.rowIndex % 2 === 0)? listItem1Color : listItem2Color"
           >
             <template slot="beforePicture">
