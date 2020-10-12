@@ -84,7 +84,7 @@
         windowWidth: 0,
         sidebarItems: [
           {
-            label: 'GENERAL',
+            label: 'ME',
             icon: mdiAccount,
             reqLevel: 0,
             subSections: [
