@@ -1,4 +1,4 @@
-FROM arm32v7/openjdk:8u212
+FROM arm32v7/openjdk:8u212-jdk-alpine3.9
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
