@@ -1,9 +1,9 @@
-FROM hypriot/rpi-java
+FROM openjdk:16-ea-jdk-oraclelinux8
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y tzdata
+#ENV DEBIAN_FRONTEND=noninteractive
+#RUN apt-get install -y tzdata
 
 COPY target/backend-*.jar /app.jar
 
