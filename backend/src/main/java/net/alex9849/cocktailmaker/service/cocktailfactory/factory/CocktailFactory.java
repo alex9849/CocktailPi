@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.factory;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.*;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -38,6 +35,7 @@ public class CocktailFactory extends Observable {
     private ScheduledExecutorService scheduler;
     private Set<ScheduledFuture> scheduledFutures = new HashSet<>();
     private final GpioController gpioController;
+    private final Map<Pin, GpioPinDigitalOutput> knownPins = new HashMap<>();
 
     public CocktailFactory(Recipe recipe, User user, Collection<Pump> pumps, int amount) {
         if(amount < 50 || amount > 1000) {
@@ -145,13 +143,11 @@ public class CocktailFactory extends Observable {
         for(Map.Entry<Pump, List<PumpPhase>> pumpPumpPhases : pumpTimings.entrySet()) {
             for(PumpPhase pumpPhase : pumpPumpPhases.getValue()) {
                 scheduledFutures.add(scheduler.schedule(() -> {
-                    GpioPinDigitalOutput pin = gpioController.provisionDigitalOutputPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin()));
-                    pin.low();
+                    this.getPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin())).high();
                     System.out.println(pumpPhase.getPump().getGpioPin() + " started!");
                 }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
                 scheduledFutures.add(scheduler.schedule(() -> {
-                    GpioPinDigitalOutput pin = gpioController.provisionDigitalOutputPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin()));
-                    pin.low();
+                    this.getPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin())).low();
                     System.out.println(pumpPhase.getPump().getGpioPin() + " stopped!");
                 }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
@@ -186,10 +182,11 @@ public class CocktailFactory extends Observable {
         }
         this.scheduler.shutdown();
         for(Pump pump : this.pumpTimings.keySet()) {
-            GpioPinDigitalOutput pin = gpioController.provisionDigitalOutputPin(RaspiPin.getPinByAddress(pump.getGpioPin()));
-            pin.low();
+            this.getPin(RaspiPin.getPinByAddress(pump.getGpioPin())).low();
             System.out.println(pump.getGpioPin() + " stopped!");
         }
+        this.gpioController.shutdown();
+        this.knownPins.values().forEach(this.gpioController::unprovisionPin);
     }
 
     public void cancelCocktail() {
@@ -207,6 +204,15 @@ public class CocktailFactory extends Observable {
             this.isDone = true;
             this.updateCocktailProgress();
         }
+    }
+
+    private GpioPinDigitalOutput getPin(Pin pin) {
+        if(this.knownPins.containsKey(pin)) {
+            return this.knownPins.get(pin);
+        }
+        GpioPinDigitalOutput dPin = this.gpioController.provisionDigitalOutputPin(pin);
+        this.knownPins.put(pin, dPin);
+        return dPin;
     }
 
     public boolean isDone() {
