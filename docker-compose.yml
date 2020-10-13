@@ -6,8 +6,8 @@ services:
     depends_on:
       - db
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./docker/Dockerfile
     environment:
       DB_HOST: 'db'
       DB_PORT: 5432

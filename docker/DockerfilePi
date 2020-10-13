@@ -1,5 +1,5 @@
 FROM balenalib/raspberry-pi-debian:latest
-RUN apt update && apt -yq install openjdk-8-jdk
+RUN apt update && apt -yq install openjdk-8-jdk wiringpi
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
