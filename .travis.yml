@@ -28,7 +28,7 @@ jobs:
     - stage: before_deploy
       language: sh
       before_deploy:
-        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG ./docker/Dockerfile ./"
+        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG -f ./docker/Dockerfile ./"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
       workspaces:
         use: target
