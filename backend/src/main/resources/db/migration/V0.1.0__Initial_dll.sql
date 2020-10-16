@@ -26,7 +26,7 @@ create table pumps (
                        id bigserial not null,
                        gpio_pin int4 not null unique check (
                                    gpio_pin >= 1
-                               AND gpio_pin <= 40
+                               AND gpio_pin <= 30
                            ),
                        time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
                        tube_capacity_in_ml int4 not null check (tube_capacity_in_ml >= 1),
