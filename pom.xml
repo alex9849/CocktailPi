@@ -16,6 +16,9 @@
     <modules>
         <module>frontend</module>
         <module>backend</module>
+        <module>interface</module>
+        <module>demomode</module>
+        <module>productionmode</module>
     </modules>
 
     <properties>

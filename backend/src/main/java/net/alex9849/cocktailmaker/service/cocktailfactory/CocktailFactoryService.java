@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
+import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
@@ -31,6 +32,9 @@ public class CocktailFactoryService implements Observer {
     @Autowired
     private PumpCleanService pumpCleanService;
 
+    @Autowired
+    private IGpioController gpioController;
+
     public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe, int amount) {
         if(this.isMakingCocktail()) {
             throw new IllegalArgumentException("A cocktail is already being prepared!");
@@ -38,7 +42,7 @@ public class CocktailFactoryService implements Observer {
         if(pumpCleanService.isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
-        this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps(), amount);
+        this.cocktailFactory = new CocktailFactory(recipe, user, pumpService.getAllPumps(), gpioController, amount);
         this.cocktailFactory.addObserver(this);
         return this.cocktailFactory.makeCocktail();
     }
