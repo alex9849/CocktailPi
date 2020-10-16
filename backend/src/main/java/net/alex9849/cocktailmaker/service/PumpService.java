@@ -42,13 +42,14 @@ public class PumpService {
     }
 
     public Pump updatePump(Pump pump) {
+        if(!pumpRepository.findById(pump.getId()).isPresent()) {
+            throw new IllegalArgumentException("Pump doesn't exist!");
+        }
         Optional<Pump> optPumpWithGpio = pumpRepository.findByGpioPin(pump.getGpioPin());
         if(optPumpWithGpio.isPresent()) {
             if(optPumpWithGpio.get().getId() != pump.getId()) {
                 throw new IllegalArgumentException("GPOI-Pin already in use!");
             }
-        } else {
-            throw new IllegalArgumentException("Pump doesn't exist!");
         }
         Pump savedPump = pumpRepository.save(pump);
         webSocketService.broadcastPumpLayout(getAllPumps());

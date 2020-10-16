@@ -36,10 +36,7 @@
       @input="$v.value.gpioPin.$touch()"
       :rules="[val => $v.value.gpioPin.required || 'Required',
               val => $v.value.gpioPin.minValue || 'Min 1',
-              val => $v.value.gpioPin.maxValue || 'Max 40',
-              val => $v.value.gpioPin.notPowerSource || 'Pin is a powersource',
-              val => $v.value.gpioPin.notGround || 'Pin is ground',
-              val => $v.value.gpioPin.notIC2 || 'Pin is IC2-bus']"
+              val => $v.value.gpioPin.maxValue || 'Max 30']"
     />
     <slot name="below"/>
   </q-form>
@@ -86,17 +83,7 @@
           gpioPin: {
             required,
             minValue: minValue(1),
-            maxValue: maxValue(40),
-            notPowerSource: function(value) {
-              //We use == because we want implicite conversion. Value comes as a string
-              return ![1, 2, 4, 17].some(x => x == value)
-            },
-            notGround: function(value) {
-              return ![6, 9, 14, 20, 25, 30, 34, 39].some(x => x == value)
-            },
-            notIC2: function(value) {
-              return ![27, 28].some(x => x == value)
-            }
+            maxValue: maxValue(30)
           }
         }
       };
