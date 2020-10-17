@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
+import com.pi4j.io.gpio.RaspiPin;
+import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
@@ -24,6 +26,9 @@ public class PumpCleanService {
     @Autowired
     private PumpService pumpService;
 
+    @Autowired
+    private IGpioController gpioController;
+
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private Set<ScheduledFuture> scheduledFutures = new HashSet<>();
     private Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
@@ -46,9 +51,11 @@ public class PumpCleanService {
             throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
         }
         this.cleaningPumpIds.add(pump.getId());
+        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         System.out.println(pump.getGpioPin() + " started!");
         webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         scheduledFutures.add(scheduler.schedule(() -> {
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setLow();
             System.out.println(pump.getGpioPin() + " stopped!");
             this.cleaningPumpIds.remove(pump.getId());
             webSocketService.broadcastPumpLayout(pumpService.getAllPumps());

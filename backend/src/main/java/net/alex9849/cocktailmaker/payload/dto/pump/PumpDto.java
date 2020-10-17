@@ -5,14 +5,24 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpCleanService;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class PumpDto {
 
     private Long id;
 
+    @NotNull
+    @Min(1)
     private int timePerClInMs;
 
+    @NotNull
+    @Min(1)
     private int tubeCapacityInMl;
 
+    @NotNull
+    @Min(1) @Max(30)
     private int gpioPin;
 
     private IngredientDto currentIngredient;
