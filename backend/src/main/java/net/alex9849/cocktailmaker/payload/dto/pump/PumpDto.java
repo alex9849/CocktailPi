@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
-import net.alex9849.cocktailmaker.service.cocktailfactory.PumpCleanService;
+import net.alex9849.cocktailmaker.service.PumpService;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
@@ -33,7 +33,7 @@ public class PumpDto {
 
     public PumpDto(Pump pump) {
         BeanUtils.copyProperties(pump, this);
-        this.isCleaning = PumpCleanService.getInstance().isCleaning(pump);
+        this.isCleaning = PumpService.getInstance().isCleaning(pump);
         if(pump.getCurrentIngredient() != null) {
             this.currentIngredient = new IngredientDto(pump.getCurrentIngredient());
         }

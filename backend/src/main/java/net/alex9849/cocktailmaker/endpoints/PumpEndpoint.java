@@ -5,7 +5,6 @@ import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.cocktailmaker.service.cocktailfactory.PumpCleanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +22,6 @@ public class PumpEndpoint {
 
     @Autowired
     private PumpService pumpService;
-
-    @Autowired
-    private PumpCleanService pumpCleanService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllPumps() {
@@ -72,7 +68,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpCleanService.cleanPump(pump);
+        pumpService.cleanPump(pump);
         return ResponseEntity.ok().build();
     }
 }
