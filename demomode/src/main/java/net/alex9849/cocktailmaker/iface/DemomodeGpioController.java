@@ -9,7 +9,7 @@ public class DemomodeGpioController implements IGpioController {
 
     @Override
     public IGpioPin provideGpioPin(Pin pin) {
-        return pinMap.computeIfAbsent(pin, p -> new DemoModeGpioPin());
+        return pinMap.computeIfAbsent(pin, p -> new DemoModeGpioPin(pin));
     }
 
     @Override

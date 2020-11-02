@@ -144,11 +144,9 @@ public class CocktailFactory extends Observable {
             for(PumpPhase pumpPhase : pumpPumpPhases.getValue()) {
                 scheduledFutures.add(scheduler.schedule(() -> {
                     gpioController.provideGpioPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin())).setLow();
-                    System.out.println(pumpPhase.getPump().getGpioPin() + " started!");
                 }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
                 scheduledFutures.add(scheduler.schedule(() -> {
                     gpioController.provideGpioPin(RaspiPin.getPinByAddress(pumpPhase.getPump().getGpioPin())).setHigh();
-                    System.out.println(pumpPhase.getPump().getGpioPin() + " stopped!");
                 }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
         }
@@ -183,7 +181,6 @@ public class CocktailFactory extends Observable {
         this.scheduler.shutdown();
         for(Pump pump : this.pumpTimings.keySet()) {
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
-            System.out.println(pump.getGpioPin() + " stopped!");
         }
         this.gpioController.shutdown();
     }

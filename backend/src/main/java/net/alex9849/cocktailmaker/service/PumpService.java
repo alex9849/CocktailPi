@@ -47,6 +47,11 @@ public class PumpService implements Observer {
     @PostConstruct
     public void init() {
         PumpService.instance = this;
+        List<Pump> pumps = getAllPumps();
+        //Turn off all pumps
+        pumps.forEach(pump -> {
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+        });
     }
 
     public static PumpService getInstance() {
@@ -66,6 +71,8 @@ public class PumpService implements Observer {
             throw new IllegalArgumentException("GPOI-Pin already in use!");
         }
         Pump savedPump = pumpRepository.save(pump);
+        //Turn off pump
+        gpioController.provideGpioPin(RaspiPin.getPinByAddress(savedPump.getGpioPin())).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
         return savedPump;
     }
@@ -100,7 +107,13 @@ public class PumpService implements Observer {
     }
 
     public void deletePump(long id) {
+        Pump pump = getPump(id);
+        if(pump == null) {
+            throw new IllegalArgumentException("Pump doesn't exist!");
+        }
         pumpRepository.deleteById(id);
+        //Turn off pump
+        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
@@ -145,11 +158,9 @@ public class PumpService implements Observer {
         }
         this.cleaningPumpIds.add(pump.getId());
         gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setLow();
-        System.out.println(pump.getGpioPin() + " started!");
         webSocketService.broadcastPumpLayout(getAllPumps());
         scheduler.schedule(() -> {
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
-            System.out.println(pump.getGpioPin() + " stopped!");
             this.cleaningPumpIds.remove(pump.getId());
             webSocketService.broadcastPumpLayout(getAllPumps());
         }, runTime, TimeUnit.MILLISECONDS);
