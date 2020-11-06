@@ -55,6 +55,8 @@ public class RecipeDto {
     @NotNull
     private Set<CategoryDto> categories;
 
+    private Date lastUpdate;
+
     public Long getId() {
         return id;
     }
@@ -109,5 +111,9 @@ public class RecipeDto {
 
     public void setCategories(Set<CategoryDto> categories) {
         this.categories = categories;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
     }
 }

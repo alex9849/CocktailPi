@@ -41,6 +41,7 @@ create table recipes (
                          in_public boolean not null,
                          name varchar(30) not null,
                          owner_id int8 not null references users on delete cascade,
+                         last_update timestamp without time zone NOT NULL,
                          primary key (id)
 );
 

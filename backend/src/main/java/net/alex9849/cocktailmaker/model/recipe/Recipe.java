@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -38,6 +39,10 @@ public class Recipe {
     @Size(min = 0, max = 3000)
     private String description;
 
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @NotNull
+    private Date lastUpdate;
+
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -49,6 +54,16 @@ public class Recipe {
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Category> categories;
+
+    @PrePersist
+    protected void onCreate() {
+        lastUpdate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdate = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -112,6 +127,10 @@ public class Recipe {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
     }
 
     public static class RecipeFilterNoFilter implements Specification<Recipe> {
