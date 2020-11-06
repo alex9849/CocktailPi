@@ -21,6 +21,7 @@ public class RecipeDto {
         User owner = new User();
         owner.setUsername(recipe.getOwner().getUsername());
         owner.setId(recipe.getOwner().getId());
+        this.lastUpdate = recipe.getLastUpdate();
         this.owner = new UserDto(owner);
         Map<Integer, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()

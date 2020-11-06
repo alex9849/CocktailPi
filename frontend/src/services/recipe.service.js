@@ -28,12 +28,20 @@ class RecipeService {
       }
     };
     return axios.get(API_PATH, config)
-      .then(response => response.data);
+      .then(response => {
+        for(let recipe of response.data.content) {
+          recipe.lastUpdate = new Date(recipe.lastUpdate)
+        }
+        return response.data;
+      });
   }
 
   getRecipe(id) {
     return axios.get(API_PATH + id)
-      .then(response => response.data);
+      .then(response => {
+        response.data.lastUpdate = new Date(response.data.lastUpdate)
+        return response.data;
+      });
   }
 
   updateRecipe(recipe, image, removeImage) {

@@ -15,7 +15,7 @@
           <slot name="beforePicture"/>
         </div>
         <q-img
-          :src="'/api/recipe/' + recipe.id + '/image?nocache=' + noCacheString"
+          :src="'/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
           placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
           class="col rounded-borders max-picture-size"
@@ -95,16 +95,6 @@
       backgroundColor: {
         type: String,
         default: '#fafafa'
-      }
-    },
-    data() {
-      return {
-        noCacheString: new Date().getTime()
-      }
-    },
-    watch: {
-      'recipe.id': function () {
-        this.noCacheString = new Date().getTime()
       }
     },
     computed: {

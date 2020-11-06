@@ -64,7 +64,7 @@
         <div class="col" style="min-width: max-content">
           <div>
             <q-img
-              :src="(!!recipe.id)? ('/api/recipe/' + recipe.id + '/image?nocache=' + new Date().getTime()):null"
+              :src="(!!recipe.id)? ('/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()):null"
               placeholder-src="../assets/cocktail-solid.png"
               :ratio="16/9"
               class="rounded-borders shadow-1"
