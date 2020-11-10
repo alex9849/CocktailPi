@@ -84,7 +84,7 @@ export default {
             } else {
               let progress = JSON.parse(cocktailProgressMessage.body);
               progress.recipe.lastUpdate = new Date(progress.recipe.lastUpdate)
-              vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
+              vm.setCocktailProgress(progress);
             }
           });
           vm.stompClient.subscribe('/topic/pumplayout', function (layoutMessage) {
