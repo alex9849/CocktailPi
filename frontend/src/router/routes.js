@@ -30,6 +30,10 @@ const routes = [
       component: () => import('pages/Dashboard'),
       name: "dashboard"
     }, {
+      path: 'mybar',
+      component: () => import('pages/MyBar'),
+      name: "mybar"
+    }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
       name: 'myprofile'

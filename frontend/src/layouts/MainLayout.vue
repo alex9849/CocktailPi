@@ -67,12 +67,12 @@
 </style>
 
 <script>
-  import AppHeader from "../components/AppHeader";
-  import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
-  import {mapGetters} from 'vuex'
-  import CategoryService from "../services/category.service";
+import AppHeader from "../components/AppHeader";
+import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
+import {mapGetters} from 'vuex'
+import CategoryService from "../services/category.service";
 
-  export default {
+export default {
     name: 'MainLayout',
 
     components: {AppHeader},
@@ -92,6 +92,11 @@
                 reqLevel: 0,
                 label: 'Dashboard',
                 to: {name: 'dashboard'},
+                exact: false
+              }, {
+                reqLevel: 0,
+                label: 'My bar',
+                to: {name: 'mybar'},
                 exact: false
               }, {
                 label: 'My recipes',

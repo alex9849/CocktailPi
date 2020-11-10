@@ -29,7 +29,7 @@
               val => $v.value.tubeCapacityInMl.minValue || 'Min 1']"
     />
     <q-input
-      label="GPIO-Pin"
+      label="WiringPi-Pin"
       v-model="value.gpioPin"
       type="number"
       outlined
@@ -44,10 +44,10 @@
 
 <script>
 
-  import CIngredientSelector from "./CIngredientSelector";
-  import {maxValue, minValue, required,} from "vuelidate/lib/validators";
+import CIngredientSelector from "./CIngredientSelector";
+import {maxValue, minValue, required,} from "vuelidate/lib/validators";
 
-  export default {
+export default {
     name: "PumpEditorForm",
     components: {CIngredientSelector},
     props: {
