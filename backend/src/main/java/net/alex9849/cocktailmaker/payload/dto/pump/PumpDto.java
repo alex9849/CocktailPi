@@ -22,7 +22,7 @@ public class PumpDto {
     private int tubeCapacityInMl;
 
     @NotNull
-    @Min(1) @Max(30)
+    @Min(0) @Max(31)
     private int gpioPin;
 
     private IngredientDto currentIngredient;

@@ -24,7 +24,7 @@ public class Pump {
     private int tubeCapacityInMl;
 
     @NotNull
-    @Min(1) @Max(30)
+    @Min(0) @Max(31)
     private int gpioPin;
 
     @ManyToOne()
