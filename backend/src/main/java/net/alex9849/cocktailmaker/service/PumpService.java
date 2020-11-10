@@ -78,7 +78,8 @@ public class PumpService implements Observer {
     }
 
     public Pump updatePump(Pump pump) {
-        if(!pumpRepository.findById(pump.getId()).isPresent()) {
+        Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
+        if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
         Optional<Pump> optPumpWithGpio = pumpRepository.findByGpioPin(pump.getGpioPin());
@@ -88,6 +89,10 @@ public class PumpService implements Observer {
             }
         }
         Pump savedPump = pumpRepository.save(pump);
+        if(optPumpWithGpio.isPresent()) {
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(beforeUpdate.get().getGpioPin())).setLow();
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+        }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return savedPump;
     }
