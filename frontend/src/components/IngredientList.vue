@@ -83,57 +83,34 @@
         />
       </q-item-section>
 
-      <q-dialog
+      <c-edit-dialog
         v-model="showIngredientEditorDialog"
-        @hide="closeIngredientEditor"
+        :title="addIngredient?'Add Ingredient':'Edit Ingredient'"
+        :valid="ingridientValid"
+        @clickAbort="closeIngredientEditor"
+        @clickSave="saveEditIngredient"
       >
-        <q-card style="width: 400px">
-          <q-card-section class="text-center innerpadding">
-            <h5 style="margin: 5px">{{ addIngredient?"Add Ingredient":"Edit Ingredient" }}</h5>
-            <ingredient-form
-              v-model="editIngredient"
-              :headline="addIngredient?'Add Ingredient':'Edit Ingredient'"
-              @valid="ingridientValid = true"
-              @invalid="ingridientValid = false"
-              @submit="saveEditIngredient"
-            >
-              <template slot="below">
-                <div class="q-pa-md q-gutter-sm">
-                  <q-btn
-                    style="width: 100px"
-                    color="negative"
-                    label="Abort"
-                    no-caps
-                    @click="closeIngredientEditor"
-                  />
-                  <q-btn
-                    type="submit"
-                    style="width: 100px"
-                    color="positive"
-                    label="Save"
-                    no-caps
-                    :disable="!ingridientValid"
-                  />
-                </div>
-              </template>
-            </ingredient-form>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
+        <ingredient-form
+          v-model="editIngredient"
+          @valid="ingridientValid = true"
+          @invalid="ingridientValid = false"
+        />
+      </c-edit-dialog>
 
     </q-item>
   </draggable>
 </template>
 
 <script>
-  import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
-  import IngredientForm from "./IngredientForm";
-  import draggable from 'vuedraggable';
-  import cloneDeep from 'lodash/cloneDeep'
+import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
+import IngredientForm from "./IngredientForm";
+import draggable from 'vuedraggable';
+import cloneDeep from 'lodash/cloneDeep'
+import CEditDialog from "components/CEditDialog";
 
-  export default {
+export default {
     name: "IngredientList",
-    components: {IngredientForm, draggable},
+    components: {CEditDialog, IngredientForm, draggable},
     props: {
       value: {
         type: Array,

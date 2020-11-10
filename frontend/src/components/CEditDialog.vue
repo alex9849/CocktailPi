@@ -5,7 +5,7 @@
     :persistent="saving"
     @hide="$emit('clickAbort')"
   >
-    <q-card class="with-desktop">
+    <q-card class="width-desktop">
       <q-card-section class="text-center">
         <h5
           v-if="title !== ''"
@@ -26,7 +26,7 @@
           class="innerpadding"
           @submit.prevent="$emit('clickSave')"
         >
-          <slot />
+          <slot/>
           <div class="q-pa-md q-gutter-sm">
             <q-btn
               color="grey"
@@ -79,5 +79,9 @@ export default {
 </script>
 
 <style scoped>
-
+  @media screen and (min-width: 600px) {
+    .width-desktop {
+      width: 500px;
+    }
+  }
 </style>

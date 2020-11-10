@@ -25,20 +25,16 @@
 </template>
 
 <script>
-  import IngridientService from '../services/ingredient.service'
-  import {minValue, required} from "vuelidate/lib/validators";
-  import CIngredientSelector from "./CIngredientSelector";
+import IngridientService from '../services/ingredient.service'
+import {minValue, required} from "vuelidate/lib/validators";
+import CIngredientSelector from "./CIngredientSelector";
 
-  export default {
+export default {
     name: "IngredientForm",
     components: {CIngredientSelector},
     props: {
       value: {
         type: Object,
-        required: true
-      },
-      headline: {
-        type: String,
         required: true
       }
     },

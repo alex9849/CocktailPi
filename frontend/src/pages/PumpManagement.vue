@@ -143,55 +143,24 @@
         />
       </template>
     </q-table>
-    <q-dialog
+    <c-edit-dialog
       v-model="editOptions.editDialog"
-      :persistent="editOptions.editIngredientSaving"
-      @hide="closeEditDialog"
+      :error-message="editOptions.editErrorMessage"
+      :title="editDialogHeadline"
+      :saving="editOptions.editPumpSaving"
+      :valid="editOptions.valid"
+      @clickAbort="closeEditDialog"
+      @clickSave="onClickSavePump"
     >
-      <q-card class="with-desktop">
-        <q-card-section class="text-center">
-          <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
-          <q-splitter
-            horizontal
-            :value="10"
-          />
-          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5"
-                    style="margin: 10px">
-            {{ editOptions.editErrorMessage }}
-          </q-banner>
-          <pump-editor-form
-            class="innerpadding"
-            v-model="editOptions.editPump"
-            :persistent="editOptions.editPumpSaving"
-            @hide="closeEditDialog"
-            @valid="editOptions.valid = true"
-            @invalid="editOptions.valid = false"
-          >
-            <template v-slot:below>
-              <div class="q-pa-md q-gutter-sm">
-                <q-btn
-                  style="width: 100px"
-                  color="negative"
-                  label="Abort"
-                  no-caps
-                  @click="closeEditDialog"
-                />
-                <q-btn
-                  type="submit"
-                  style="width: 100px"
-                  color="positive"
-                  label="Save"
-                  no-caps
-                  :disable="editOptions.editPumpSaving || !editOptions.valid"
-                  :loading="editOptions.editPumpSaving"
-                  @click="onClickSavePump"
-                />
-              </div>
-            </template>
-          </pump-editor-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+      <pump-editor-form
+        class="innerpadding"
+        v-model="editOptions.editPump"
+        :persistent="editOptions.editPumpSaving"
+        @hide="closeEditDialog"
+        @valid="editOptions.valid = true"
+        @invalid="editOptions.valid = false"
+      />
+    </c-edit-dialog>
     <c-question
       :question="deleteQuestionMessage"
       ok-color="red"
@@ -227,15 +196,16 @@
 
 <script>
 
-  import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
-  import {mapGetters} from "vuex";
-  import PumpEditorForm from "../components/PumpEditorForm";
-  import PumpService from "../services/pump.service"
-  import CQuestion from "../components/CQuestion";
+import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
+import {mapGetters} from "vuex";
+import PumpEditorForm from "../components/PumpEditorForm";
+import PumpService from "../services/pump.service"
+import CQuestion from "../components/CQuestion";
+import CEditDialog from "components/CEditDialog";
 
-  export default {
+export default {
     name: "PumpManagement",
-    components: {PumpEditorForm, CQuestion},
+    components: {CEditDialog, PumpEditorForm, CQuestion},
     data() {
       return {
         deleteDialog: false,

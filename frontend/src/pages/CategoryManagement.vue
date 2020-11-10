@@ -146,66 +146,42 @@
         </ul>
       </template>
     </c-question>
-    <q-dialog
-      :value="editOptions.editDialog"
-      :persistent="editOptions.editCategorySaving"
-      @hide="closeEditDialog"
+    <c-edit-dialog
+      v-model="editOptions.editDialog"
+      :error-message="editOptions.editErrorMessage"
+      :title="editDialogHeadline"
+      :saving="editOptions.editCategorySaving"
+      :valid="editOptions.valid"
+      @clickAbort="closeEditDialog"
+      @clickSave="onClickSaveCategory"
     >
-      <q-card class="with-desktop">
-        <q-card-section class="text-center">
-          <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
-          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            {{ editOptions.editErrorMessage }}
-          </q-banner>
-          <q-form
-            class="innerpadding"
-            @submit.prevent="onClickSaveCategory"
-          >
-            <q-input
-              label="Name"
-              outlined
-              :disable="editOptions.editCategorySaving"
-              v-model="editOptions.editCategory.name"
-              filled
-              @input="$v.editOptions.editCategory.name.$touch()"
-              :rules="[
+      <q-input
+        label="Name"
+        outlined
+        :disable="editOptions.editCategorySaving"
+        v-model="editOptions.editCategory.name"
+        filled
+        @input="$v.editOptions.editCategory.name.$touch()"
+        :rules="[
                 val => $v.editOptions.editCategory.name.required || 'Required',
                 val => $v.editOptions.editCategory.name.maxLength || 'Max 15'
               ]"
-            />
-            <div class="q-pa-md q-gutter-sm">
-              <q-btn
-                color="grey"
-                label="Abort"
-                style="width: 150px"
-                :disable="editOptions.editCategorySaving"
-                @click="closeEditDialog"
-              />
-              <q-btn
-                color="green"
-                label="Save"
-                type="submit"
-                style="width: 150px"
-                :disable="!editOptions.valid"
-                :loading="editOptions.editCategorySaving"
-              />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+      />
+    </c-edit-dialog>
+
   </q-page>
 </template>
 
 <script>
-  import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-  import CategoryService from "../services/category.service";
-  import CQuestion from "../components/CQuestion";
-  import {maxLength, required} from "vuelidate/lib/validators";
+import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
+import CategoryService from "../services/category.service";
+import CQuestion from "../components/CQuestion";
+import {maxLength, required} from "vuelidate/lib/validators";
+import CEditDialog from "components/CEditDialog";
 
-  export default {
+export default {
     name: "CategoryManagement",
-    components: {CQuestion},
+    components: {CEditDialog, CQuestion},
     data() {
       return {
         columns: [
@@ -390,12 +366,6 @@
 <style scoped>
   .row1 {
     background-color: #fafafa;
-  }
-
-  @media screen and (min-width: 600px) {
-    .with-desktop {
-      width: 500px;
-    }
   }
 
   .row2 {

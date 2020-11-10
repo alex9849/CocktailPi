@@ -194,12 +194,6 @@ export default {
   background-color: #fafafa;
 }
 
-@media screen and (min-width: 600px) {
-  .with-desktop {
-    width: 500px;
-  }
-}
-
 .row2 {
   background-color: #f3f3fa;
 }
