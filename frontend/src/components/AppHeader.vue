@@ -41,14 +41,14 @@
 </template>
 
 <script>
-  import {mapActions, mapGetters, mapMutations} from "vuex";
-  import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
-  import CircularCocktailProgress from "./Circular-Cocktail-Progress";
-  import SockJS from "sockjs-client";
-  import Stomp from "stompjs";
-  import authHeader from "../services/auth-header";
+import {mapActions, mapGetters, mapMutations} from "vuex";
+import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
+import CircularCocktailProgress from "./Circular-Cocktail-Progress";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import authHeader from "../services/auth-header";
 
-  export default {
+export default {
     name: "AppHeader",
     components: {CircularCocktailProgress},
     data() {
@@ -82,6 +82,8 @@
             if(cocktailProgressMessage.body === "DELETE") {
               vm.setCocktailProgress(null);
             } else {
+              let progress = JSON.parse(cocktailProgressMessage.body);
+              progress.recipe.lastUpdate = new Date(progress.recipe.lastUpdate)
               vm.setCocktailProgress(JSON.parse(cocktailProgressMessage.body));
             }
           });
