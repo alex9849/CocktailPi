@@ -71,18 +71,6 @@
             :props="props"
           >
             <q-btn
-              :icon="mdiPencilOutline"
-              text-color="white"
-              :style="{backgroundColor: '#31ccec'}"
-              @click=""
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Edit
-              </q-tooltip>
-            </q-btn>
-            <q-btn
               :icon="mdiDelete"
               color="red"
               @click=""
@@ -134,7 +122,9 @@
 
     <h5
       style="padding-top: 15px"
-    >Ingredients you should buy</h5>
+    >
+      Ingredients you should buy
+    </h5>
   </q-page>
 </template>
 
