@@ -157,80 +157,55 @@
         </ul>
       </template>
     </c-question>
-    <q-dialog
-      :value="editOptions.editDialog"
-      :persistent="editOptions.editIngredientSaving"
-      @hide="closeEditDialog"
+    <c-edit-dialog
+      v-model="editOptions.editDialog"
+      :error-message="editOptions.editErrorMessage"
+      :title="editDialogHeadline"
+      :saving="editOptions.editIngredientSaving"
+      :valid="editOptions.valid"
+      @clickAbort="closeEditDialog"
+      @clickSave="onClickSaveIngredient"
     >
-      <q-card class="with-desktop">
-        <q-card-section class="text-center">
-          <h5 style="margin-bottom: 10px">{{ editDialogHeadline }}</h5>
-          <q-banner v-if="editOptions.editErrorMessage !== ''" rounded dense class="text-white bg-red-5" style="margin: 10px">
-            {{ editOptions.editErrorMessage }}
-          </q-banner>
-          <q-form
-            class="innerpadding"
-            @submit.prevent="onClickSaveIngredient"
-          >
-            <q-input
-              label="Name"
-              outlined
-              :disable="editOptions.editIngredientSaving"
-              v-model="editOptions.editIngredient.name"
-              filled
-              @input="$v.editOptions.editIngredient.name.$touch()"
-              :rules="[
+      <q-input
+        label="Name"
+        outlined
+        :disable="editOptions.editIngredientSaving"
+        v-model="editOptions.editIngredient.name"
+        filled
+        @input="$v.editOptions.editIngredient.name.$touch()"
+        :rules="[
                 val => $v.editOptions.editIngredient.name.required || 'Required',
                 val => $v.editOptions.editIngredient.name.maxLength || 'Max 30'
               ]"
-            />
-            <q-input
-              label="Alcohol content"
-              outlined
-              :disable="editOptions.editIngredientSaving"
-              v-model="editOptions.editIngredient.alcoholContent"
-              filled
-              type="number"
-              @input="$v.editOptions.editIngredient.alcoholContent.$touch()"
-              :rules="[
+      />
+      <q-input
+        label="Alcohol content"
+        outlined
+        :disable="editOptions.editIngredientSaving"
+        v-model="editOptions.editIngredient.alcoholContent"
+        filled
+        type="number"
+        @input="$v.editOptions.editIngredient.alcoholContent.$touch()"
+        :rules="[
                 val => $v.editOptions.editIngredient.alcoholContent.required || 'Required',
                 val => $v.editOptions.editIngredient.alcoholContent.minValue || 'Must be positive',
                 val => $v.editOptions.editIngredient.alcoholContent.maxValue || 'Max 100'
               ]"
-            />
-            <div class="q-pa-md q-gutter-sm">
-              <q-btn
-                color="grey"
-                label="Abort"
-                style="width: 150px"
-                :disable="editOptions.editIngredientSaving"
-                @click="closeEditDialog"
-              />
-              <q-btn
-                color="green"
-                label="Save"
-                type="submit"
-                style="width: 150px"
-                :disable="!editOptions.valid"
-                :loading="editOptions.editIngredientSaving"
-              />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+      />
+    </c-edit-dialog>
   </q-page>
 </template>
 
 <script>
-  import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-  import IngredientService from "../services/ingredient.service";
-  import CQuestion from "../components/CQuestion";
-  import {maxLength, maxValue, minValue, required} from "vuelidate/lib/validators";
+import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
+import IngredientService from "../services/ingredient.service";
+import CQuestion from "../components/CQuestion";
+import {maxLength, maxValue, minValue, required} from "vuelidate/lib/validators";
+import CEditDialog from "components/CEditDialog";
 
-  export default {
+export default {
     name: "IngredientManagement",
-    components: {CQuestion},
+    components: {CEditDialog, CQuestion},
     data() {
       return {
         columns: [
