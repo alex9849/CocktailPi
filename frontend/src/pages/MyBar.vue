@@ -6,13 +6,6 @@
     <h5>Ingredients you own</h5>
     <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
       <q-btn
-        color="negative"
-        label="Delete selected ingredients"
-        :disable="loading"
-        @click=""
-        no-caps
-      />
-      <q-btn
         color="positive"
         label="Add ingredient"
         :disable="loading"
@@ -32,8 +25,6 @@
       :columns="columns"
       :data="ingredients"
       :loading="loading"
-      :selected.sync="selected"
-      selection="multiple"
       hide-bottom
       :pagination="{rowsPerPage: 0, sortBy: 'name'}"
       no-data-label="No ingredients found"
@@ -45,14 +36,6 @@
           :props="props"
           :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
         >
-          <q-td
-            auto-width
-            style="text-align: center"
-          >
-            <q-checkbox
-              v-model="props.selected"
-            />
-          </q-td>
           <q-td
             key="name"
             :props="props"
@@ -147,14 +130,7 @@ export default {
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ],
       ingredients: [],
-      selected: [],
       loading: false,
-      deleteOptions: {
-        deleteIngredients: [],
-        deleteErrorMessage: "",
-        deleteLoading: false,
-        deleteDialog: false
-      },
       editOptions: {
         editErrorMessage: "",
         saving: false,
