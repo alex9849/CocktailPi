@@ -18,6 +18,19 @@ class UserService {
       .then(response => response.data);
   }
 
+  getMyOwnedIngredients() {
+    return axios.get(API_PATH + 'current/ownedingredients')
+      .then(response => response.data);
+  }
+
+  addToMyOwnedIngredients(ingredientId) {
+    return axios.put(API_PATH + 'current/ownedingredients/add', ingredientId, {headers: { 'Content-Type': 'application/json' }});
+  }
+
+  removeFromMyOwnedIngredients(ingredientId) {
+    return axios.delete(API_PATH + 'current/ownedingredients/' + ingredientId);
+  }
+
   updateMe(updateRequest) {
     return axios.put(API_PATH + 'current', updateRequest);
   }

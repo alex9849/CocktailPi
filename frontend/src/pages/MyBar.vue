@@ -24,7 +24,7 @@
         label="Refresh"
         :disable="loading"
         :loading="loading"
-        @click=""
+        @click="onRefresh"
         no-caps
       />
     </div>
@@ -109,7 +109,8 @@
       title="Add Ingredient"
       :saving="editOptions.saving"
       :valid="editOptions.valid"
-      @clickAbort="() => {editOptions.addIngredient = null}"
+      @clickAbort="closeEditDialog"
+      @clickSave="onAddIngredient"
     >
       <c-ingredient-selector
         label="Ingredient"
@@ -132,6 +133,8 @@
 import CIngredientSelector from "components/CIngredientSelector";
 import {required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
+import UserService from "../services/user.service";
+import {mdiDelete} from '@quasar/extras/mdi-v5';
 
 export default {
   name: "MyBar",
@@ -159,6 +162,55 @@ export default {
         valid: false,
         addIngredient: null
       }
+    }
+  },
+  created() {
+    this.loading = true;
+    this.updateOwnedIngredients()
+      .finally(() => this.loading = false);
+    this.mdiDelete = mdiDelete;
+  },
+  methods: {
+    onRefresh() {
+      this.loading = true;
+      this.updateOwnedIngredients()
+        .finally(() => this.loading = false);
+
+    },
+    updateOwnedIngredients() {
+      return UserService.getMyOwnedIngredients()
+        .then(ingredients => this.ingredients = ingredients)
+
+    },
+    closeEditDialog() {
+      this.editOptions.editDialog = false;
+      this.editOptions.addIngredient = null;
+    },
+    onAddIngredient() {
+      let vm = this;
+      let onSuccess = function () {
+        vm.editOptions.editErrorMessage = "";
+        vm.$q.notify({
+          type: 'positive',
+          message: "Ingredient added successfully"
+        });
+        vm.closeEditDialog();
+        vm.onRefresh();
+      };
+
+      let onError = function (error) {
+        vm.editOptions.editErrorMessage = error.response.data.message;
+        vm.$q.notify({
+          type: 'negative',
+          message: error.response.data.message
+        });
+      };
+
+      this.editOptions.saving = true
+      UserService.addToMyOwnedIngredients(this.editOptions.addIngredient.id)
+        .then(onSuccess, onError)
+        .finally(() => this.editOptions.saving = false);
+
     }
   },
   watch: {
