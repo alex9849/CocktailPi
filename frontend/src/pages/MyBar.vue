@@ -73,7 +73,7 @@
             <q-btn
               :icon="mdiDelete"
               color="red"
-              @click=""
+              @click="onRemoveOwnedIngredient(props.row.id)"
               dense
               rounded
             >
@@ -110,7 +110,7 @@
       :saving="editOptions.saving"
       :valid="editOptions.valid"
       @clickAbort="closeEditDialog"
-      @clickSave="onAddIngredient"
+      @clickSave="onAddOwnedIngredient"
     >
       <c-ingredient-selector
         label="Ingredient"
@@ -186,7 +186,7 @@ export default {
       this.editOptions.editDialog = false;
       this.editOptions.addIngredient = null;
     },
-    onAddIngredient() {
+    onAddOwnedIngredient() {
       let vm = this;
       let onSuccess = function () {
         vm.editOptions.editErrorMessage = "";
@@ -211,6 +211,21 @@ export default {
         .then(onSuccess, onError)
         .finally(() => this.editOptions.saving = false);
 
+    },
+    onRemoveOwnedIngredient(id) {
+      UserService.removeFromMyOwnedIngredients(id)
+        .then(() => {
+          this.onRefresh();
+          this.$q.notify({
+            type: 'positive',
+            message: "Ingredient removed successfully"
+          });
+          }, err => {
+          this.$q.notify({
+            type: 'negative',
+            message: err.response.data.message
+          });
+        });
     }
   },
   watch: {
