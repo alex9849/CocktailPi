@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +25,9 @@ public class UserService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    EntityManager entityManager;
 
     /**
      *
@@ -48,7 +53,8 @@ public class UserService {
      * @return the updated user-object
      */
     public User updateUser(User user, boolean encodePassword) {
-        if(!userRepository.findById(user.getId()).isPresent()) {
+        Optional<User> userWithId = userRepository.findById(user.getId());
+        if(!userWithId.isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
         Optional<User> userWithUsername = userRepository.findByUsernameIgnoringCase(user.getUsername());
@@ -62,7 +68,32 @@ public class UserService {
         if(encodePassword) {
             user.setPassword(encoder.encode(user.getPassword()));
         }
+        user.setOwnedIngredients(userWithId.get().getOwnedIngredients());
         return userRepository.save(user);
+    }
+
+    public void addOwnedIngredient(long userId, long id) {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()) {
+            throw new IllegalArgumentException("User doesn't exist!");
+        }
+        Ingredient addIngredient = entityManager.find(Ingredient.class, id);
+        if(addIngredient == null) {
+            throw new IllegalArgumentException("Ingredient doesn't exist!");
+        }
+        user.get().getOwnedIngredients().add(addIngredient);
+        userRepository.save(user.get());
+    }
+
+    public void removeOwnedIngredient(long userId, long ingredientId) {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()) {
+            throw new IllegalArgumentException("User doesn't exist!");
+        }
+        if(!user.get().getOwnedIngredients().removeIf(x -> x.getId() == ingredientId)) {
+            throw new IllegalArgumentException("User doesn't own ingredient!");
+        }
+        userRepository.save(user.get());
     }
 
     public void deleteUser(long id) {

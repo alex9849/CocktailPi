@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,6 +39,13 @@ public class Ingredient implements Serializable {
     @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_owned_ingredients",
+            joinColumns = @JoinColumn(name = "ingredient_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Category> owningUsers;
 
     @OneToMany(mappedBy = "currentIngredient",fetch = FetchType.LAZY)
     List<Pump> pumps;

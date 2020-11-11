@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,9 +43,16 @@ public class User implements UserDetails {
     @NotNull
     private boolean isAccountNonLocked;
 
-    @OneToMany(mappedBy = "owner",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner",fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<Recipe> recipes;
+    private Set<Recipe> recipes;
+
+    @ManyToMany()
+    @JoinTable(name = "user_owned_ingredients",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<Ingredient> ownedIngredients;
 
     @NotBlank
     @Size(max = 50)
@@ -120,6 +127,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Set<Ingredient> getOwnedIngredients() {
+        return ownedIngredients;
+    }
+
+    public void setOwnedIngredients(Set<Ingredient> ownedIngredients) {
+        this.ownedIngredients = ownedIngredients;
     }
 
     public void setId(Long id) {
