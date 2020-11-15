@@ -36,6 +36,9 @@ public class Ingredient implements Serializable {
     @Min(0) @Max(100)
     private int alcoholContent;
 
+    @NotNull
+    private boolean isSyrup;
+
     @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
@@ -60,6 +63,14 @@ public class Ingredient implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isSyrup() {
+        return isSyrup;
+    }
+
+    public void setSyrup(boolean syrup) {
+        isSyrup = syrup;
     }
 
     public void setName(String name) {

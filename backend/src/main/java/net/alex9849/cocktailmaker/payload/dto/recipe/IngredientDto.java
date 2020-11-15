@@ -16,6 +16,9 @@ public class IngredientDto {
     @Size(min = 1, max = 30)
     private String name;
 
+    @NotNull
+    private boolean isSyrup;
+
     @Min(0) @Max(100)
     private int alcoholContent;
 
@@ -31,6 +34,14 @@ public class IngredientDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isSyrup() {
+        return isSyrup;
+    }
+
+    public void setSyrup(boolean syrup) {
+        isSyrup = syrup;
     }
 
     public String getName() {

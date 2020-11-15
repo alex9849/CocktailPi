@@ -65,6 +65,12 @@
             {{ props.row.timePerClInMs }} ms
           </q-td>
           <q-td
+            key="syrupTimePerClInMs"
+            :props="props"
+          >
+            {{ props.row.syrupTimePerClInMs }} ms
+          </q-td>
+          <q-td
             key="tubeCapacityInMl"
             :props="props"
           >
@@ -220,6 +226,7 @@ export default {
           editPump: {
             id: -1,
             timePerClInMs: '',
+            syrupTimePerClInMs: '',
             tubeCapacityInMl: '',
             gpioPin: '',
             currentIngredient: null
@@ -227,6 +234,7 @@ export default {
           newPump: {
             id: -1,
             timePerClInMs: '',
+            syrupTimePerClInMs: '',
             tubeCapacityInMl: '',
             gpioPin: '',
             currentIngredient: null
@@ -237,6 +245,7 @@ export default {
         columns: [
           {name: 'id', label: 'Nr', field: 'id', align: 'left'},
           {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
+          {name: 'syrupTimePerClInMs', label: 'Time per Cl (Syrup)', field: 'syrupTimePerClInMs', align: 'center'},
           {
             name: 'tubeCapacityInMl',
             label: 'Tube capacity',

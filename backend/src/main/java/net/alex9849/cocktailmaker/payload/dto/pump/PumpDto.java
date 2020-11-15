@@ -22,6 +22,10 @@ public class PumpDto {
     private int tubeCapacityInMl;
 
     @NotNull
+    @Min(1)
+    private int syrupTimePerClInMs;
+
+    @NotNull
     @Min(0) @Max(31)
     private int gpioPin;
 
@@ -53,6 +57,14 @@ public class PumpDto {
 
     public void setTimePerClInMs(int timePerClInMs) {
         this.timePerClInMs = timePerClInMs;
+    }
+
+    public int getSyrupTimePerClInMs() {
+        return syrupTimePerClInMs;
+    }
+
+    public void setSyrupTimePerClInMs(int syrupTimePerClInMs) {
+        this.syrupTimePerClInMs = syrupTimePerClInMs;
     }
 
     public int getTubeCapacityInMl() {

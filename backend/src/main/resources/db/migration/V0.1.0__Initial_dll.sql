@@ -29,6 +29,7 @@ create table pumps (
                                AND gpio_pin <= 31
                            ),
                        time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
+                       syrup_time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
                        tube_capacity_in_ml int4 not null check (tube_capacity_in_ml >= 1),
                        current_ingredient_id int8 references ingredients,
                        primary key (id)
@@ -50,6 +51,7 @@ create table recipe_ingredients (
                                     recipe_id int8 not null references recipes on delete cascade,
                                     production_step int4 not null,
                                     amount int4 not null check (amount >= 1),
+                                    is_syrup boolean not null,
                                     primary key (
                                                  ingredient_id, recipe_id, production_step
                                         )

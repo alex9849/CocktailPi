@@ -66,6 +66,12 @@
             {{ props.row.alcoholContent }}%
           </q-td>
           <q-td
+            key="syrup"
+            :props="props"
+          >
+            {{ props.row.syrup? 'yes' : 'no' }}
+          </q-td>
+          <q-td
             key="actions"
             class="q-pa-md q-gutter-x-sm"
             :props="props"
@@ -192,6 +198,11 @@
                 val => $v.editOptions.editIngredient.alcoholContent.maxValue || 'Max 100'
               ]"
       />
+      <q-checkbox
+        :value="value.syrup"
+        :disable="editOptions.editIngredientSaving"
+        label="is syrup?"
+      />
     </c-edit-dialog>
   </q-page>
 </template>
@@ -211,6 +222,7 @@ export default {
         columns: [
           {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
           {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
+          {name: 'syrup', label: 'is syrup?', field: 'syrup', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
@@ -230,11 +242,13 @@ export default {
           editIngredient: {
             id: -1,
             name: "",
+            syrup: false,
             alcoholContent: 0
           },
           newIngredient: {
             id: -1,
             name: "",
+            syrup: false,
             alcoholContent: 0
           }
         }

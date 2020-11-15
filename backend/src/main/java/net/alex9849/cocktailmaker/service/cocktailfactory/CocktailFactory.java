@@ -104,7 +104,8 @@ public class CocktailFactory extends Observable {
             //Calculate how long each pump needs to run
             for(RecipeIngredient ingredient : productionStep) {
                 Pump ingPump = this.ingredientIdToPumpMap.get(ingredient.getIngredient().getId());
-                double pumpTime = ingPump.getTimePerClInMs() * (ingredient.getAmount() / 10d) * this.requestedAmount / recipeAmountOfLiquid;
+                int pumpTimePerClInMs = ingPump.getCurrentIngredient().isSyrup()? ingPump.getSyrupTimePerClInMs() : ingPump.getTimePerClInMs();
+                double pumpTime = pumpTimePerClInMs * (ingredient.getAmount() / 10d) * this.requestedAmount / recipeAmountOfLiquid;
                 stepPumpTime.add(new AbstractMap.SimpleEntry<>(ingPump, (int) pumpTime));
             }
             //Sort pumps by the time they need to run in descending order

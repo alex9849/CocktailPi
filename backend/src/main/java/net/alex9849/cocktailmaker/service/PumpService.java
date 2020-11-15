@@ -157,7 +157,8 @@ public class PumpService implements Observer {
         if(isCleaning(pump)) {
             throw new IllegalArgumentException("Pump is already cleaning!");
         }
-        int runTime = (int) (pump.getTimePerClInMs() / 10d) * pump.getTubeCapacityInMl();
+        int timePerClInMs = (pump.getCurrentIngredient() != null && pump.getCurrentIngredient().isSyrup())? pump.getSyrupTimePerClInMs() : pump.getTimePerClInMs();
+        int runTime = (int) (timePerClInMs / 10d) * pump.getTubeCapacityInMl();
         if (this.isMakingCocktail()) {
             throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
         }
