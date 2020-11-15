@@ -199,7 +199,7 @@
               ]"
       />
       <q-checkbox
-        :value="value.syrup"
+        v-model="editOptions.editIngredient.syrup"
         :disable="editOptions.editIngredientSaving"
         label="is syrup?"
       />
