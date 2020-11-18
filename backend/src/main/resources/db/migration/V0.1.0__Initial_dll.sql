@@ -23,6 +23,12 @@ create table ingredients (
                              primary key (id)
 );
 
+create table user_owned_ingredients (
+    user_id bigserial NOT NULL references users(id),
+    ingredient_id bigserial NOT NULL references ingredients(id) on delete cascade,
+    primary key (user_id, ingredient_id)
+);
+
 create table pumps (
                        id bigserial not null,
                        gpio_pin int4 not null unique check (
