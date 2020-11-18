@@ -13,7 +13,7 @@ VALUES (1, 0, 'Cola', false)
      , (12, 0, 'Lemon Juice', false)
      , (11, 0, 'Lime Juice', false)
      , (15, 0, 'Orange Juice', false)
-     , (13, 0, 'Simple Syrup', false)
+     , (13, 0, 'Simple Syrup', true)
      , (16, 16, 'Dry Vermouth', false)
      , (17, 38, 'Dark Rum', false)
      , (18, 40, 'Cognac', false)
@@ -34,12 +34,14 @@ VALUES (1, 0, 'Cola', false)
      , (33, 0, 'Cranberry Nectar', false)
      , (34, 24, 'Apricot Brandy', false)
      , (35, 0, 'Maracuja Nectar', false)
-     , (36, 0, 'Grenadine Syrup', false)
+     , (36, 0, 'Grenadine Syrup', true)
      , (37, 20, 'Kahlúa', false)
      , (38, 17, 'Baileys', false)
      , (39, 40, 'Cream', false)
-     , (40, 20, 'Peach Liquor', false);
-SELECT setval('ingredients_id_seq', 40, true);
+     , (40, 20, 'Peach Liquor', false)
+     , (41, 0, 'Lime Syrup', true)
+     , (42, 30, 'Amaretto', false);
+SELECT setval('ingredients_id_seq', 42, true);
 
 INSERT INTO categories (id, name)
 VALUES (1, 'Classics')
@@ -51,14 +53,3 @@ INSERT INTO users (id, email, firstname, is_account_non_locked, lastname, passwo
 VALUES (1, 'admin@localhost.local', 'Admin', true, 'Example',
         '$2a$10$foQL7xSRCK53J/G.MIauWOnllOS9.vyIT5RtUQT25t5ref07MtCfe', 'ROLE_ADMIN', 'admin');
 SELECT setval('users_id_seq', 1, true);
-
-INSERT INTO recipes (id, description, in_public, name, owner_id, last_update)
-VALUES (1, 'Tasty Mix of Whatever you Have on Hand with a Caffeine Boost!', true, 'Trash Can', 1, CURRENT_TIMESTAMP);
-INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount)
-VALUES (2, 1, 1, 15)
-     , (5, 1, 1, 15)
-     , (7, 1, 1, 15)
-     , (22, 1, 1, 15)
-     , (25, 1, 1, 220)
-     , (29, 1, 1, 15)
-     , (23, 1, 1, 15);

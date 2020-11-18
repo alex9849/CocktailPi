@@ -1,5 +1,16 @@
 
 INSERT INTO recipes (id, description, in_public, name, owner_id, last_update)
+VALUES (1, 'Tasty Mix of Whatever you Have on Hand with a Caffeine Boost!', true, 'Trash Can', 1, CURRENT_TIMESTAMP);
+INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount)
+VALUES (2, 1, 1, 15)
+     , (5, 1, 1, 15)
+     , (7, 1, 1, 15)
+     , (22, 1, 1, 15)
+     , (25, 1, 1, 220)
+     , (29, 1, 1, 15)
+     , (23, 1, 1, 15);
+
+INSERT INTO recipes (id, description, in_public, name, owner_id, last_update)
 VALUES (2,
         'Rum and Coke, or the Cuba libre, is a highball cocktail consisting of cola, rum, and in many recipes lime juice on ice. Traditionally, the cola ingredient is Coca-Cola ("Coke") and the alcohol is a light rum such as Bacardi. However, the drink may be made with various types of rums and cola brands, and lime juice may or may not be included.'
            , true, 'Cuba libre', 1, CURRENT_TIMESTAMP);
@@ -134,4 +145,12 @@ VALUES (7, 13, 1, 30)
 INSERT INTO recipe_categories (recipe_id, categories_id)
 VALUES (13, 3);
 
-SELECT setval('recipes_id_seq', 13, true);
+INSERT INTO recipes (id, description, in_public, name, owner_id, last_update)
+VALUES (14, 'The Godfather is a duo mixed drink made of Scotch whisky (especially smoky whisky) and amaretto. Typically, the drink is served with ice in an old fashioned glass.', true, 'Godfather', 1, CURRENT_TIMESTAMP);
+INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount)
+VALUES (4, 14, 1, 75)
+     , (42, 14, 1, 25);
+INSERT INTO recipe_categories (recipe_id, categories_id)
+VALUES (14, 1);
+
+SELECT setval('recipes_id_seq', 14, true);
