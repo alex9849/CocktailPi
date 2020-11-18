@@ -76,10 +76,11 @@ INSERT INTO recipes (id, description, in_public, name, owner_id, last_update)
 VALUES (9,
         'The Sex on the Beach cocktail is known as much for its provocative name as its fruity, refreshing taste. It’s unclear exactly when or where the drink was invented, but popular liquor-soaked lore points to a Florida bartender who created the drink in 1987 as part of a liquor distribution company’s promotion to sell peach schnapps. The only problem with that theory, however, is that the drink was already included in the 1982 "American Bartenders School Guide to Drinks."', true, 'Sex on the beach', 1, CURRENT_TIMESTAMP);
 INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount)
-VALUES (34, 9, 1, 40)
-     , (5, 9, 1, 40)
-     , (15, 9, 1, 40)
-     , (20, 9, 1, 80)
+VALUES (5, 9, 1, 40)
+     , (2, 9, 1, 20)
+     , (36, 9, 1, 5)
+     , (12, 9, 1, 5)
+     , (15, 9, 1, 60)
      , (33, 9, 1, 60);
 INSERT INTO recipe_categories (recipe_id, categories_id)
 VALUES (9, 2);
