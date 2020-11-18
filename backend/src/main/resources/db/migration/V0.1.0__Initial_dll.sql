@@ -19,6 +19,7 @@ create table ingredients (
                                      AND alcohol_content >= 0
                                  ),
                              name varchar(30) not null unique,
+                             is_syrup boolean not null,
                              primary key (id)
 );
 
@@ -51,7 +52,6 @@ create table recipe_ingredients (
                                     recipe_id int8 not null references recipes on delete cascade,
                                     production_step int4 not null,
                                     amount int4 not null check (amount >= 1),
-                                    is_syrup boolean not null,
                                     primary key (
                                                  ingredient_id, recipe_id, production_step
                                         )
