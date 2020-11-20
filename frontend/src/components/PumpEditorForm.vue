@@ -14,9 +14,9 @@
       type="number"
       suffix="ms"
       outlined
-      @input="$v.value.syrupTimePerClInMs.$touch()"
-      :rules="[val => $v.value.syrupTimePerClInMs.required || 'Required',
-              val => $v.value.syrupTimePerClInMs.minValue || 'Min 1']"
+      @input="$v.value.timePerClInMs.$touch()"
+      :rules="[val => $v.value.timePerClInMs.required || 'Required',
+              val => $v.value.timePerClInMs.minValue || 'Min 1']"
     />
     <q-input
       label="Pump time per cl (Syrup)"
@@ -86,11 +86,11 @@ export default {
             required,
             minValue: minValue(1)
           },
-          tubeCapacityInMl: {
+          syrupTimePerClInMs: {
             required,
             minValue: minValue(1)
           },
-          syrupTimePerClInMs: {
+          tubeCapacityInMl: {
             required,
             minValue: minValue(1)
           },
