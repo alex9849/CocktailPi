@@ -19,7 +19,7 @@ create table ingredients (
                                      AND alcohol_content >= 0
                                  ),
                              name varchar(30) not null unique,
-                             pump_time_multiplier numeric(2) not null,
+                             pump_time_multiplier float8 not null,
                              primary key (id)
 );
 
