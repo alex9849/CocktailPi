@@ -19,16 +19,6 @@
               val => $v.value.timePerClInMs.minValue || 'Min 1']"
     />
     <q-input
-      label="Pump time per cl (Syrup)"
-      v-model="value.syrupTimePerClInMs"
-      type="number"
-      suffix="ms"
-      outlined
-      @input="$v.value.syrupTimePerClInMs.$touch()"
-      :rules="[val => $v.value.syrupTimePerClInMs.required || 'Required',
-              val => $v.value.syrupTimePerClInMs.minValue || 'Min 1']"
-    />
-    <q-input
       label="Tube capacity"
       v-model="value.tubeCapacityInMl"
       type="number"
@@ -83,10 +73,6 @@ export default {
       let validations = {
         value: {
           timePerClInMs: {
-            required,
-            minValue: minValue(1)
-          },
-          syrupTimePerClInMs: {
             required,
             minValue: minValue(1)
           },

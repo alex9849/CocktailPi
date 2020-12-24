@@ -37,7 +37,8 @@ public class Ingredient implements Serializable {
     private int alcoholContent;
 
     @NotNull
-    private boolean isSyrup;
+    @Min(1)
+    private double pumpTimeMultiplier;
 
     @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -65,12 +66,12 @@ public class Ingredient implements Serializable {
         return name;
     }
 
-    public boolean isSyrup() {
-        return isSyrup;
+    public double getPumpTimeMultiplier() {
+        return pumpTimeMultiplier;
     }
 
-    public void setSyrup(boolean syrup) {
-        isSyrup = syrup;
+    public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
+        this.pumpTimeMultiplier = pumpTimeMultiplier;
     }
 
     public void setName(String name) {

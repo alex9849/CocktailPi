@@ -17,7 +17,8 @@ public class IngredientDto {
     private String name;
 
     @NotNull
-    private boolean isSyrup;
+    @Min(1)
+    private double pumpTimeMultiplier;
 
     @Min(0) @Max(100)
     private int alcoholContent;
@@ -36,12 +37,12 @@ public class IngredientDto {
         this.id = id;
     }
 
-    public boolean isSyrup() {
-        return isSyrup;
+    public double getPumpTimeMultiplier() {
+        return pumpTimeMultiplier;
     }
 
-    public void setSyrup(boolean syrup) {
-        isSyrup = syrup;
+    public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
+        this.pumpTimeMultiplier = pumpTimeMultiplier;
     }
 
     public String getName() {

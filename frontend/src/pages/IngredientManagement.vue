@@ -66,10 +66,10 @@
             {{ props.row.alcoholContent }}%
           </q-td>
           <q-td
-            key="syrup"
+            key="pumpTimeMultiplier"
             :props="props"
           >
-            {{ props.row.syrup? 'yes' : 'no' }}
+            {{ props.row.pumpTimeMultiplier }}
           </q-td>
           <q-td
             key="actions"
@@ -198,10 +198,19 @@
                 val => $v.editOptions.editIngredient.alcoholContent.maxValue || 'Max 100'
               ]"
       />
-      <q-checkbox
-        v-model="editOptions.editIngredient.syrup"
+      <q-input
+        label="Pump time multiplier"
+        outlined
         :disable="editOptions.editIngredientSaving"
-        label="is syrup?"
+        v-model="currentIngredientMultiplierString"
+        filled
+        mask="#.##"
+        @input="$v.editOptions.editIngredient.pumpTimeMultiplier.$touch()"
+        :rules="[
+                val => $v.editOptions.editIngredient.pumpTimeMultiplier.required || 'Required',
+                val => $v.editOptions.editIngredient.pumpTimeMultiplier.minValue || 'Must be positive',
+                val => $v.editOptions.editIngredient.pumpTimeMultiplier.maxValue || 'Max 10'
+              ]"
       />
     </c-edit-dialog>
   </q-page>
@@ -222,7 +231,7 @@ export default {
         columns: [
           {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
           {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
-          {name: 'syrup', label: 'is syrup?', field: 'syrup', align: 'center'},
+          {name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
@@ -242,13 +251,13 @@ export default {
           editIngredient: {
             id: -1,
             name: "",
-            syrup: false,
+            pumpTimeMultiplier: 1.0,
             alcoholContent: 0
           },
           newIngredient: {
             id: -1,
             name: "",
-            syrup: false,
+            pumpTimeMultiplier: 1.0,
             alcoholContent: 0
           }
         }
@@ -373,6 +382,11 @@ export default {
               required,
               minValue: minValue(0),
               maxValue: maxValue(100)
+            },
+            pumpTimeMultiplier: {
+              required,
+              minValue: minValue(0),
+              maxValue: maxValue(10)
             }
           }
         }
@@ -385,6 +399,27 @@ export default {
       }
     },
     computed: {
+      currentIngredientMultiplierString: {
+        get: function() {
+          const multiplier = this.editOptions.editIngredient.pumpTimeMultiplier;
+          if(multiplier === undefined
+            || multiplier === null) {
+            return null;
+          }
+          let stringVal = "" +  multiplier;
+          if(stringVal.match("^\\d+$")) {
+            stringVal += ".0"
+          }
+          return stringVal;
+        },
+        set: function(value) {
+          if(!value) {
+            this.editOptions.editIngredient.pumpTimeMultiplier = null;
+          } else {
+            this.editOptions.editIngredient.pumpTimeMultiplier = parseFloat(value);
+          }
+        }
+      },
       deleteQuestionMessage() {
         if (this.deleteOptions.deleteIngredients.length === 0) {
           return "No ingredients selected!";

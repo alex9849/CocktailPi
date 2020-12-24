@@ -19,7 +19,7 @@ create table ingredients (
                                      AND alcohol_content >= 0
                                  ),
                              name varchar(30) not null unique,
-                             is_syrup boolean not null,
+                             pump_time_multiplier numeric(2) not null,
                              primary key (id)
 );
 
@@ -36,7 +36,6 @@ create table pumps (
                                AND gpio_pin <= 31
                            ),
                        time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
-                       syrup_time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
                        tube_capacity_in_ml int4 not null check (tube_capacity_in_ml >= 1),
                        current_ingredient_id int8 references ingredients,
                        primary key (id)

@@ -21,10 +21,6 @@ public class Pump {
 
     @NotNull
     @Min(1)
-    private int syrupTimePerClInMs;
-
-    @NotNull
-    @Min(1)
     private int tubeCapacityInMl;
 
     @NotNull
@@ -48,14 +44,6 @@ public class Pump {
 
     public void setTimePerClInMs(int timePerClInMs) {
         this.timePerClInMs = timePerClInMs;
-    }
-
-    public int getSyrupTimePerClInMs() {
-        return syrupTimePerClInMs;
-    }
-
-    public void setSyrupTimePerClInMs(int syrupTimePerClInMs) {
-        this.syrupTimePerClInMs = syrupTimePerClInMs;
     }
 
     public int getTubeCapacityInMl() {
