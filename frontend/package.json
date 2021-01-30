@@ -14,7 +14,7 @@
   "dependencies": {
     "@mdi/js": "^4.9.95",
     "@quasar/extras": "^1.9.8",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",
     "quasar": "^1.14.1",
