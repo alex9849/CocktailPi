@@ -57,7 +57,7 @@
                 size="md"
                 color="warning">
                 <q-tooltip>
-                  Ingredients in bar, but no pumps assigned!
+                  All ingredients are in your bar, but some are not assigned to pumps!
                 </q-tooltip>
               </q-icon>
               <q-icon
