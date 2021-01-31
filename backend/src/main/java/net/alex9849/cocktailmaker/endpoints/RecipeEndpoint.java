@@ -42,25 +42,27 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
-            @RequestParam(value = "inPublic", required = false) Boolean inPublic,
-            @RequestParam(value = "onlyCurrentlyMakeable", defaultValue = "false") boolean onlyCurrentlyMakeable,
-            @RequestParam(value = "searchName", required = false) String searchName,
-            @RequestParam(value = "inCategory", required = false) Long inCategory,
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
+                                         @RequestParam(value = "inPublic", required = false) Boolean inPublic,
+                                         @RequestParam(value = "orderable", defaultValue = "false") boolean isOrderable,
+                                         @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
+                                         @RequestParam(value = "searchName", required = false) String searchName,
+                                         @RequestParam(value = "inCategory", required = false) Long inCategory,
+                                         @RequestParam(value = "page") int page,
+                                         @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!principal.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
+        if (!principal.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
         page = Math.max(--page, 0);
         Sort sort;
-        switch (orderBy){
+        switch (orderBy) {
             default:
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
-        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, searchName, onlyCurrentlyMakeable, page, pageSize, sort);
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, searchName,
+                isOrderable, isInBar, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
@@ -69,10 +71,10 @@ public class RecipeEndpoint {
     ResponseEntity<?> getRecipe(@PathVariable("id") long id, HttpServletRequest request) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
-        if(recipe == null) {
+        if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.getOwner().getId().equals(principal.getId()) && !recipe.isInPublic()) {
+        if (!recipe.getOwner().getId().equals(principal.getId()) && !recipe.isInPublic()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(new RecipeDto(recipe));
@@ -86,7 +88,7 @@ public class RecipeEndpoint {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
         recipe.setOwner(userService.getUser(principal.getId()));
-        if(file != null) {
+        if (file != null) {
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -113,17 +115,17 @@ public class RecipeEndpoint {
         recipeDto.setId(id);
         Recipe recipe = recipeService.fromDto(recipeDto);
         Recipe oldRecipe = recipeService.getById(id);
-        if(oldRecipe == null) {
+        if (oldRecipe == null) {
             return ResponseEntity.notFound().build();
         }
         recipe.setOwner(oldRecipe.getOwner());
-        if(!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+        if (!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if(removeImage) {
+        if (removeImage) {
             recipe.setImage(null);
-        } else if(file != null) {
+        } else if (file != null) {
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -145,7 +147,7 @@ public class RecipeEndpoint {
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
         Recipe recipe = recipeService.getById(id);
-        if(recipe == null) {
+        if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(recipe.getImage());
@@ -156,10 +158,10 @@ public class RecipeEndpoint {
     ResponseEntity<?> deleteRecipe(@PathVariable("id") long id, HttpServletRequest request) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
-        if(recipe == null) {
+        if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+        if (!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         recipeService.delete(id);

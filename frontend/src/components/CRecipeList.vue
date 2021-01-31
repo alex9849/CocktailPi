@@ -52,12 +52,12 @@
                 </q-tooltip>
               </q-icon>
               <q-icon
-                v-else-if="areEnoughPumpsAvailable(props.row)"
+                v-else-if="props.row.ingredientsInBar && areEnoughPumpsAvailable(props.row)"
                 :name="mdiAlert"
                 size="md"
                 color="warning">
                 <q-tooltip>
-                  Missing ingredients!
+                  Ingredients in bar, but no pumps assigned!
                 </q-tooltip>
               </q-icon>
               <q-icon
@@ -66,7 +66,7 @@
                 size="md"
                 color="negative">
                 <q-tooltip>
-                  Not enough pumps!
+                  Missing ingredients or not enough pumps!
                 </q-tooltip>
               </q-icon>
             </template>

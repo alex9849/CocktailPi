@@ -235,4 +235,12 @@ public class Recipe {
             return criteriaBuilder.equal(category.get("id"), categoryId);
         }
     }
+
+    public static class RecipeFilterInBar implements Specification<Recipe> {
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            return criteriaBuilder.equal(root.get("ingredientsInBar"), true);
+        }
+    }
 }
