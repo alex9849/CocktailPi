@@ -110,9 +110,6 @@
       }
     },
     methods: {
-      getIngredientColor(ingredientId) {
-
-      },
       hasPumpLayoutIngredient(ingredientId) {
         return this.getPumpIngredients.some(x => x.id === ingredientId);
       },
