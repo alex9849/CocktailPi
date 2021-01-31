@@ -22,6 +22,7 @@ public class RecipeDto {
         owner.setUsername(recipe.getOwner().getUsername());
         owner.setId(recipe.getOwner().getId());
         this.lastUpdate = recipe.getLastUpdate();
+        this.ingredientsInBar = recipe.isIngredientsInBar();
         this.owner = new UserDto(owner);
         Map<Integer, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()
@@ -57,6 +58,8 @@ public class RecipeDto {
     private Set<CategoryDto> categories;
 
     private Date lastUpdate;
+
+    private boolean ingredientsInBar;
 
     public Long getId() {
         return id;
@@ -116,5 +119,9 @@ public class RecipeDto {
 
     public Date getLastUpdate() {
         return lastUpdate;
+    }
+
+    public boolean isIngredientsInBar() {
+        return ingredientsInBar;
     }
 }

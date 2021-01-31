@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.model.recipe;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.user.User;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,7 +44,6 @@ public class Recipe {
     @NotNull
     private Date lastUpdate;
 
-
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RecipeIngredient> recipeIngredients;
@@ -54,6 +54,13 @@ public class Recipe {
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Category> categories;
+
+    @Formula("(select count(*) = count(uoi.ingredient_id)\n" +
+            "        from recipe_ingredients ri\n" +
+            "                 join ingredients i on ri.ingredient_id = i.id\n" +
+            "                 left join user_owned_ingredients uoi on i.id = uoi.ingredient_id\n" +
+            "        where ri.recipe_id = id)")
+    private boolean ingredientsInBar;
 
     @PrePersist
     protected void onCreate() {
@@ -131,6 +138,10 @@ public class Recipe {
 
     public Date getLastUpdate() {
         return lastUpdate;
+    }
+
+    public boolean isIngredientsInBar() {
+        return ingredientsInBar;
     }
 
     public static class RecipeFilterNoFilter implements Specification<Recipe> {
