@@ -55,6 +55,31 @@
             </q-item>
           </q-expansion-item>
         </q-list>
+        <q-card
+          class="bg-sidebar"
+          flat
+          square
+        >
+          <q-card-section>
+            <div class="text-h6">CocktailMaker</div>
+            <div class="text-subtitle2">©2021 Alexander Liggesmeyer</div>
+            <div class="row justify-center">
+              <a
+                v-for="link in projectLinks"
+                :href="link.link"
+                target="_blank"
+              >
+                <q-btn
+                  round
+                  dense
+                  flat
+                  :icon="link.icon"
+                />
+              </a>
+            </div>
+          </q-card-section>
+        </q-card>
+
       </q-drawer>
 
     <q-page-container>
@@ -64,11 +89,15 @@
 </template>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
 
 <script>
 import AppHeader from "../components/AppHeader";
-import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth} from "@quasar/extras/mdi-v5";
+import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth, mdiGithub, mdiDocker, mdiLinkedin, mdiWeb } from "@quasar/extras/mdi-v5";
 import {mapGetters} from 'vuex'
 import CategoryService from "../services/category.service";
 
@@ -145,6 +174,20 @@ export default {
               }
             ]
           }
+        ],
+        projectLinks: [{
+          icon: mdiGithub,
+          link: 'https://github.com/alex9849/pi-cocktail-maker/'
+        }, {
+          icon: mdiDocker,
+          link: 'https://hub.docker.com/repository/docker/alex9849/pi-cocktailmaker/'
+        }, {
+          icon: mdiLinkedin,
+          link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'
+        }, {
+          icon: mdiWeb,
+          link: 'https://alexander.liggesmeyer.net/'
+        }
         ]
       }
     },
