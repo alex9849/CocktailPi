@@ -66,7 +66,7 @@
                     :header-class="isFilterExpanded? 'bg-grey-2' : ''"
                   >
                     <div
-                      class="row justify-evenly"
+                      class="row justify-evenly q-col-gutter-sm"
                       style="padding: 10px"
                     >
                       <q-checkbox
@@ -98,6 +98,16 @@
                         dense
                         :options="orderByOptions"
                         style="min-width: 200px"
+                      />
+                    </div>
+                    <div
+                      class="row justify-center"
+                      style="padding-bottom: 10px"
+                    >
+                      <q-btn
+                        color="red"
+                        label="Reset filters"
+                        @click="resetFilters()"
                       />
                     </div>
                   </q-expansion-item>
@@ -279,6 +289,13 @@ export default {
       },
       openDeleteDialog() {
         this.deleteDialog = true;
+      },
+      resetFilters() {
+        this.unappliedSearchData.orderBy = null;
+        this.unappliedSearchData.containsIngredients = [];
+        this.unappliedSearchData.inBar = false;
+        this.unappliedSearchData.fabricable = false;
+        this.unappliedSearchData.query = "";
       },
       deleteSelected() {
         this.deleteLoading = true;

@@ -1,8 +1,5 @@
 <template>
-  <q-form
-    class="text-center innerpadding"
-    @submit.prevent="$emit('submit')"
-  >
+  <div>
     <c-ingredient-selector
       v-model="value.ingredient"
       clearable
@@ -21,7 +18,7 @@
       ]"
     />
     <slot name="below"/>
-  </q-form>
+  </div>
 </template>
 
 <script>
