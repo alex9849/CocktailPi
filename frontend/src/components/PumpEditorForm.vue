@@ -1,8 +1,5 @@
 <template>
-  <q-form
-    greedy
-    @submit.prevent="$emit('submit')"
-  >
+  <div>
     <c-ingredient-selector
       label="Current ingredient"
       v-model="value.currentIngredient"
@@ -39,7 +36,7 @@
               val => $v.value.gpioPin.maxValue || 'Max 30']"
     />
     <slot name="below"/>
-  </q-form>
+  </div>
 </template>
 
 <script>

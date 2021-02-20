@@ -10,19 +10,17 @@
       </div>
     </div>
     <div class="q-col-gutter-md">
-      <div class="row">
-        <div class="col"/>
-        <div class="col q-gutter-sm" style="display: contents; max-width: max-content">
-          <q-btn
-            color="grey"
-            :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-            v-if="loaded && (isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole))"
-          >
-            Edit
-          </q-btn>
-          <q-btn
-            v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
-            color="positive"
+      <TopButtonArranger>
+        <q-btn
+          color="grey"
+          :to="{name: 'recipeedit', params: {id: $route.params.id}}"
+          v-if="loaded && (isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole))"
+        >
+          Edit
+        </q-btn>
+        <q-btn
+          v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
+          color="positive"
             @click="showMakeCocktailDialog = true"
             :loading="!loaded"
           >
@@ -50,16 +48,15 @@
               Not enough pumps installed!
             </q-tooltip>
           </q-btn>
-          <q-btn
-            color="red"
-            @click.native="deleteDialog = true"
-            :loading="deleting"
-            v-if="loaded && (isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole))"
-          >
-            Delete
-          </q-btn>
-        </div>
-      </div>
+        <q-btn
+          color="red"
+          @click.native="deleteDialog = true"
+          :loading="deleting"
+          v-if="loaded && (isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole))"
+        >
+          Delete
+        </q-btn>
+      </TopButtonArranger>
       <div class="row q-col-gutter-md">
         <div class="col" style="min-width: max-content">
           <div>
@@ -102,7 +99,7 @@
       :loading="deleting"
       ok-color="red"
       ok-button-text="Delete"
-      question="Are you shure, that you want to delete this recipe?"
+      question="Are you sure, that you want to delete this recipe?"
       @clickOk="deleteRecipe"
       @clickAbort="deleteDialog = false"
     />
@@ -115,25 +112,26 @@
 </template>
 
 <script>
-  import RecipeService from '../services/recipe.service'
-  import IngredientList from "../components/IngredientList";
-  import CQuestion from "../components/CQuestion";
-  import {mapGetters} from "vuex";
-  import CMakeCocktailDialog from "../components/CMakeCocktailDialog";
+import RecipeService from '../services/recipe.service'
+import IngredientList from "../components/IngredientList";
+import CQuestion from "../components/CQuestion";
+import {mapGetters} from "vuex";
+import CMakeCocktailDialog from "../components/CMakeCocktailDialog";
+import TopButtonArranger from "components/TopButtonArranger";
 
-  export default {
-    name: "RecipeDetails",
-    components: {CMakeCocktailDialog, CQuestion, IngredientList},
-    data() {
-      return {
-        recipe: {},
-        deleting: false,
-        deleteDialog: false,
-        loaded: false,
-        showMakeCocktailDialog: false
-      }
-    },
-    created() {
+export default {
+  name: "RecipeDetails",
+  components: {TopButtonArranger, CMakeCocktailDialog, CQuestion, IngredientList},
+  data() {
+    return {
+      recipe: {},
+      deleting: false,
+      deleteDialog: false,
+      loaded: false,
+      showMakeCocktailDialog: false
+    }
+  },
+  created() {
       this.initialize();
     },
     methods: {
