@@ -61,8 +61,8 @@
           square
         >
           <q-card-section>
-            <div class="text-h6">CocktailMaker</div>
-            <div class="text-subtitle2">©2021 Alexander Liggesmeyer</div>
+            <div class="row justify-center text-h6">CocktailMaker</div>
+            <div class="row justify-center text-subtitle2">©2021 Alexander Liggesmeyer</div>
             <div class="row justify-center">
               <a
                 v-for="link in projectLinks"
