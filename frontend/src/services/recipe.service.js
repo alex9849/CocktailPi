@@ -17,14 +17,19 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  getRecipes(page, ownerId, inPublic, searchName, inCategoryId) {
+  getRecipes(page, ownerId, inPublic, orderable, inBar, searchName,
+             inCategoryId, orderBy) {
+    let inCategory = inCategoryId;
     let config = {
       params: {
         page,
         ownerId,
         inPublic,
+        orderable,
+        inBar,
         searchName,
-        inCategory: inCategoryId
+        inCategory,
+        orderBy
       }
     };
     return axios.get(API_PATH, config)

@@ -49,7 +49,7 @@
             <div class="col"/>
             <div class="col q-gutter-x-sm" style="display: contents; min-width: fit-content">
               <q-input
-                v-model="unappliedSearchData.searchName"
+                v-model="unappliedSearchData.query"
                 outlined
                 label="Search"
                 dense
@@ -137,14 +137,20 @@
     data() {
       return {
         unappliedSearchData: {
-          searchName: '',
+          query: '',
+          orderable: null,
+          inBar: null,
+          orderBy: null
         },
         loading: false,
         deleteLoading: false,
         deleteDialog: false,
         deleteRecipes: [],
         searchOptions: {
-          searchName: '',
+          query: '',
+          orderable: null,
+          inBar: null,
+          orderBy: null
         },
         pagination: {
           page: 1,
@@ -160,23 +166,24 @@
         this.pagination.totalPages = Number(this.$route.query.page);
       }
       if (this.$route.query.search) {
-        this.searchOptions.searchName = this.$route.query.search;
-        this.unappliedSearchData.searchName = this.$route.query.search;
+        this.searchOptions.query = this.$route.query.query;
+        this.unappliedSearchData.query = this.$route.query.query;
       }
       this.fetchRecipes();
     },
     watch: {
-      '$route.query.page'(newValue) {
-        this.pagination.page = newValue ? Number(newValue) : 1;
-        this.fetchRecipes();
-      },
-      '$route.query.search'(newValue) {
-        this.searchOptions.searchName = newValue ? newValue : "";
-        this.fetchRecipes();
+      '$route.query': {
+        deep: true,
+        handler: function (newValue) {
+          this.pagination.page = newValue.page ? Number(newValue.page) : 1;
+          delete newValue.page;
+          this.searchOptions = Object.assign({}, newValue);
+          this.fetchRecipes();
+        }
       },
       categoryId() {
         this.recipes = [];
-        this.searchOptions.searchName = "";
+        this.searchOptions.query = "";
         this.fetchRecipes();
       }
     },
@@ -219,12 +226,15 @@
         }, 500);
       },
       updateRecipes() {
-        this.searchOptions.searchName = this.unappliedSearchData.searchName;
         let query = {
           page: this.pagination.page
         };
-        if (this.searchOptions.searchName) {
-          query.search = this.searchOptions.searchName;
+        this.searchOptions = Object.assign({}, this.unappliedSearchData);
+        query = Object.assign(query, this.unappliedSearchData);
+        for (let propName in query) {
+          if (query.hasOwnProperty(propName) && !query[propName]) {
+            delete query[propName];
+          }
         }
         this.$router.push({name: this.$route.name, query});
       },
@@ -233,7 +243,12 @@
         RecipeService.getRecipes(this.pagination.page,
           this.onlyOwnRecipes ? this.user.id : null,
           this.onlyOwnRecipes ? null : true,
-          this.searchOptions.searchName, this.categoryId)
+          this.searchOptions.orderable,
+          this.searchOptions.inBar,
+          this.searchOptions.query,
+          this.categoryId,
+          this.searchOptions.orderBy
+        )
           .then(pageable => {
             this.recipes = pageable.content;
             this.pagination.totalPages = pageable.totalPages;
