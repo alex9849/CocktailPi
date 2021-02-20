@@ -124,7 +124,7 @@ public class PumpService implements Observer {
 
     public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe, int amount) {
         if(this.isMakingCocktail()) {
-            throw new IllegalArgumentException("A cocktail is already being prepared!");
+            throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
         if(isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");

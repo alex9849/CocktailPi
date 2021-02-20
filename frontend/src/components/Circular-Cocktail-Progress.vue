@@ -22,7 +22,7 @@
         <q-card-section
           style="padding-bottom: 0"
         >
-          <h5 style="margin: 0 0 10px 0">Current prepared cocktail</h5>
+          <h5 style="margin: 0 0 10px 0">Currently fabricated cocktail</h5>
           <q-splitter
             horizontal
             :value="10"
@@ -81,7 +81,7 @@
           </div>
           <div v-else>
             <p>
-              Currently no cocktail gets prepared!
+              Currently no cocktail gets fabricated!
             </p>
             <p style="margin-bottom: 0">
               Go to "My recipes" or "Public recipes" to put one in order.
