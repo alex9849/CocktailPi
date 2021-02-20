@@ -38,31 +38,70 @@
             </div>
           </div>
           <div
-            class="row searchBarSlot rounded-borders shadow-2"
+            class="searchBarSlot rounded-borders shadow-2 innerpadding"
             :style="'background-color: ' + searchBarColor"
           >
             <div
-              class="col"
-              style="display: flex; align-items: center">
-              <b>Display-options</b>
+              class="row"
+            >
+              <div
+                class="col"
+                style="display: flex; align-items: center">
+                <b>Display-options</b>
+              </div>
+              <div class="col"/>
             </div>
-            <div class="col"/>
-            <div class="col q-gutter-x-sm" style="display: contents; min-width: fit-content">
-              <q-input
-                v-model="unappliedSearchData.query"
-                outlined
-                label="Search"
-                dense
-                bg-color="white"
-                @keypress.enter="() => {pagination.page = 1; updateRecipes();}"
-              />
-              <q-btn
-                text-color="black"
-                color="white"
-                label="Search"
-                :icon="mdiMagnify"
-                @click="() => {pagination.page = 1; updateRecipes();}"
-              />
+            <div
+              class="row"
+            >
+              <q-card
+                flat bordered
+                style="width: 100%"
+              >
+                <q-card-section style="padding: 0px">
+                  <q-expansion-item
+                    style="width: 100%"
+                    label="Filter"
+                  >
+                    <div
+                      class="row justify-center"
+                    >
+                      <div
+                        v-for="i in 10"
+                      >
+                        <q-checkbox
+                          value="false"
+                        >
+                          Very complex checkbox
+                        </q-checkbox>
+                      </div>
+                    </div>
+                  </q-expansion-item>
+                </q-card-section>
+              </q-card>
+            </div>
+            <div
+              class="row"
+            >
+              <div class="col" style="display: block">
+                <q-input
+                  v-model="unappliedSearchData.query"
+                  outlined
+                  label="Search"
+                  dense
+                  bg-color="white"
+                  @keypress.enter="() => {pagination.page = 1; updateRecipes();}"
+                >
+                  <template slot="after">
+                    <q-btn
+                      text-color="black"
+                      color="white"
+                      :icon="mdiMagnify"
+                      @click="() => {pagination.page = 1; updateRecipes();}"
+                    />
+                  </template>
+                </q-input>
+              </div>
             </div>
           </div>
         </div>
@@ -112,23 +151,23 @@
   </div>
 </template>
 <script>
-  import {mdiMagnify} from '@quasar/extras/mdi-v5';
-  import RecipeService from "../services/recipe.service"
-  import {mapGetters} from "vuex";
-  import CRecipeList from "../components/CRecipeList";
-  import CQuestion from "./CQuestion";
+import {mdiMagnify} from '@quasar/extras/mdi-v5';
+import RecipeService from "../services/recipe.service"
+import {mapGetters} from "vuex";
+import CRecipeList from "../components/CRecipeList";
+import CQuestion from "./CQuestion";
 
-  export default {
-    name: "CRecipeSearchList",
-    components: {CRecipeList, CQuestion},
-    props: {
-      onlyOwnRecipes: {
-        type: Boolean,
-        default: false
-      },
-      searchBarColor: {
-        type: String,
-        default: '#fafafa'
+export default {
+  name: "CRecipeSearchList",
+  components: {CRecipeList, CQuestion},
+  props: {
+    onlyOwnRecipes: {
+      type: Boolean,
+      default: false
+    },
+    searchBarColor: {
+      type: String,
+      default: '#fafafa'
       },
       categoryId: {
         type: Number
