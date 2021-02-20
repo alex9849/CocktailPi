@@ -21,7 +21,8 @@
     "sockjs-client": "1.5.0",
     "stompjs": "2.3.3",
     "vuedraggable": "2.24.1",
-    "vuelidate": "^0.7.5"
+    "vuelidate": "^0.7.5",
+    "querystring": "^0.2.1"
   },
   "devDependencies": {
     "@mdi/font": "^4.9.95",

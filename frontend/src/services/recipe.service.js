@@ -17,8 +17,9 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  getRecipes(page, ownerId, inPublic, orderable, inBar, searchName,
-             inCategoryId, orderBy) {
+  getRecipes(page, ownerId, inPublic, orderable, inBar, containsIngredients,
+             searchName, inCategoryId, orderBy) {
+    let querystring = require('querystring');
     let inCategory = inCategoryId;
     let config = {
       params: {
@@ -27,10 +28,14 @@ class RecipeService {
         inPublic,
         orderable,
         inBar,
+        containsIngredients: containsIngredients,
         searchName,
         inCategory,
         orderBy
-      }
+      },
+      paramsSerializer: function (params) {
+        return querystring.stringify(params)
+      },
     };
     return axios.get(API_PATH, config)
       .then(response => {

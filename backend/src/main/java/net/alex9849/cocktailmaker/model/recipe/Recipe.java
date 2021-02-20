@@ -243,4 +243,26 @@ public class Recipe {
             return criteriaBuilder.equal(root.get("ingredientsInBar"), true);
         }
     }
+
+    public static class RecipeFilterContainsIngredients implements Specification<Recipe> {
+        private final Long[] containsIngredients;
+
+        public RecipeFilterContainsIngredients(Long[] containsIngredients) {
+            this.containsIngredients = containsIngredients;
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            Subquery<Recipe> subquery = query.subquery(Recipe.class);
+            Root<Recipe> recipe = subquery.from(Recipe.class);
+            Join<Recipe, RecipeIngredient> recipeIngredient = recipe.join("recipeIngredients");
+
+            subquery.select(recipe)
+                    .where(recipeIngredient.get("ingredient").in(containsIngredients))
+                    .groupBy(recipe.get("id"))
+                    .having(criteriaBuilder.equal(criteriaBuilder.countDistinct(recipeIngredient.get("ingredient")),
+                            containsIngredients.length));
+            return criteriaBuilder.in(root).value(subquery);
+        }
+    }
 }

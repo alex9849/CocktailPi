@@ -45,6 +45,7 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "inPublic", required = false) Boolean inPublic,
                                          @RequestParam(value = "orderable", defaultValue = "false") boolean isOrderable,
                                          @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
+                                         @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
                                          @RequestParam(value = "searchName", required = false) String searchName,
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
                                          @RequestParam(value = "page") int page,
@@ -76,8 +77,8 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
-        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, searchName,
-                isOrderable, isInBar, page, pageSize, sort);
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, containsIngredients,
+                searchName, isOrderable, isInBar, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }

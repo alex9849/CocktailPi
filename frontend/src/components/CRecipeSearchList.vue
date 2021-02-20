@@ -330,6 +330,7 @@ export default {
           this.onlyOwnRecipes ? null : true,
           this.searchOptions.orderable,
           this.searchOptions.inBar,
+          this.searchOptions.containsIngredients,
           this.searchOptions.query,
           this.categoryId,
           this.searchOptions.orderBy

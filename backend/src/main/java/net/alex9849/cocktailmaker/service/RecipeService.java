@@ -60,7 +60,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, String searchName, boolean isOrderable, boolean isInBar, Integer startNumber, Integer pageSize, Sort sort) {
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isOrderable, boolean isInBar, Integer startNumber, Integer pageSize, Sort sort) {
         Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
 
         if(inPublic != null) {
@@ -71,6 +71,9 @@ public class RecipeService {
         }
         if(ownerId != null) {
             spec = spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
+        }
+        if(containsIngredients != null) {
+            spec = spec.and(new Recipe.RecipeFilterContainsIngredients(containsIngredients));
         }
         if(searchName != null) {
             spec = spec.and(new Recipe.RecipeFilterNameContain(searchName));
