@@ -72,16 +72,17 @@
                       <q-checkbox
                         v-model="unappliedSearchData.inBar"
                       >
-                        Orderable with owned ingredients
+                        Fabricable with owned ingredients
                       </q-checkbox>
                       <q-checkbox
-                        v-model="unappliedSearchData.orderable"
+                        v-model="unappliedSearchData.fabricable"
                       >
-                        Orderable
+                        Fabricable
                       </q-checkbox>
                       <c-ingredient-selector
                         v-model="unappliedSearchData.containsIngredients"
                         dense
+                        label="Contained ingredients"
                         multiple
                         emit-value
                         map-options
@@ -220,7 +221,7 @@ export default {
         }],
         unappliedSearchData: {
           query: '',
-          orderable: false,
+          fabricable: false,
           containsIngredients: [],
           inBar: false,
           orderBy: null
@@ -232,7 +233,7 @@ export default {
         isFilterExpanded: false,
         searchOptions: {
           query: '',
-          orderable: null,
+          fabricable: null,
           inBar: null,
           containsIngredients: [],
           orderBy: null
@@ -328,7 +329,7 @@ export default {
         RecipeService.getRecipes(this.pagination.page,
           this.onlyOwnRecipes ? this.user.id : null,
           this.onlyOwnRecipes ? null : true,
-          this.searchOptions.orderable,
+          this.searchOptions.fabricable,
           this.searchOptions.inBar,
           this.searchOptions.containsIngredients,
           this.searchOptions.query,
