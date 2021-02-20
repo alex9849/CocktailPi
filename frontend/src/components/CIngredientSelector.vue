@@ -13,9 +13,13 @@
     hide-dropdown-icon
     :label="label"
     :options="ingredientOptions"
+    :emit-value="emitValue"
     option-label="name"
     option-value="id"
     input-debounce="0"
+    :map-options="mapOptions"
+    :use-chips="useChips"
+    :multiple="multiple"
     @filter="filterIngredients"
     @filter-abort="abortFilterIngredients"
     :rules="rules"
@@ -64,6 +68,22 @@
         default: false
       },
       clearable: {
+        type: Boolean,
+        default: false
+      },
+      multiple: {
+        type: Boolean,
+        default: false
+      },
+      emitValue: {
+        type: Boolean,
+        default: false
+      },
+      mapOptions: {
+        type: Boolean,
+        default: false
+      },
+      useChips: {
         type: Boolean,
         default: false
       },

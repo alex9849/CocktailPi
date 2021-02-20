@@ -79,6 +79,14 @@
                       >
                         Orderable
                       </q-checkbox>
+                      <c-ingredient-selector
+                        v-model="unappliedSearchData.containsIngredients"
+                        dense
+                        multiple
+                        emit-value
+                        map-options
+                        use-chips
+                      />
                       <q-select
                         v-model="unappliedSearchData.orderBy"
                         label="Order by"
@@ -171,10 +179,11 @@ import RecipeService from "../services/recipe.service"
 import {mapGetters} from "vuex";
 import CRecipeList from "../components/CRecipeList";
 import CQuestion from "./CQuestion";
+import CIngredientSelector from "components/CIngredientSelector";
 
 export default {
   name: "CRecipeSearchList",
-  components: {CRecipeList, CQuestion},
+  components: {CIngredientSelector, CRecipeList, CQuestion},
   props: {
     onlyOwnRecipes: {
       type: Boolean,
@@ -212,6 +221,7 @@ export default {
         unappliedSearchData: {
           query: '',
           orderable: false,
+          containsIngredients: [],
           inBar: false,
           orderBy: null
         },
@@ -224,6 +234,7 @@ export default {
           query: '',
           orderable: null,
           inBar: null,
+          containsIngredients: [],
           orderBy: null
         },
         pagination: {
