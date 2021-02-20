@@ -47,7 +47,7 @@
               <div
                 class="col"
                 style="display: flex; align-items: center">
-                <b>Display-options</b>
+                <b>Search-options</b>
               </div>
               <div class="col"/>
             </div>
@@ -61,20 +61,35 @@
                 <q-card-section style="padding: 0px">
                   <q-expansion-item
                     style="width: 100%"
-                    label="Filter"
+                    label="Expert-Search"
+                    v-model="isFilterExpanded"
+                    :header-class="isFilterExpanded? 'bg-grey-2' : ''"
                   >
                     <div
-                      class="row justify-center"
+                      class="row justify-evenly"
+                      style="padding: 10px"
                     >
-                      <div
-                        v-for="i in 10"
+                      <q-checkbox
+                        v-model="unappliedSearchData.inBar"
                       >
-                        <q-checkbox
-                          value="false"
-                        >
-                          Very complex checkbox
-                        </q-checkbox>
-                      </div>
+                        Orderable with owned ingredients
+                      </q-checkbox>
+                      <q-checkbox
+                        v-model="unappliedSearchData.orderable"
+                      >
+                        Orderable
+                      </q-checkbox>
+                      <q-select
+                        v-model="unappliedSearchData.orderBy"
+                        label="Order by"
+                        emit-value
+                        map-options
+                        round
+                        outlined
+                        dense
+                        :options="orderByOptions"
+                        style="min-width: 200px"
+                      />
                     </div>
                   </q-expansion-item>
                 </q-card-section>
@@ -175,16 +190,36 @@ export default {
     },
     data() {
       return {
+        orderByOptions: [{
+          label: 'Name asc',
+          value: 'nameAsc'
+        }, {
+          label: 'Name desc',
+          value: 'nameDesc'
+        }, {
+          label: 'Last update',
+          value: 'lastUpdateAsc'
+        }, {
+          label: 'Least update',
+          value: 'lastUpdateDesc'
+        }, {
+          label: 'Author asc',
+          value: 'authorAsc'
+        }, {
+          label: 'Author desc',
+          value: 'authorDesc'
+        }],
         unappliedSearchData: {
           query: '',
-          orderable: null,
-          inBar: null,
+          orderable: false,
+          inBar: false,
           orderBy: null
         },
         loading: false,
         deleteLoading: false,
         deleteDialog: false,
         deleteRecipes: [],
+        isFilterExpanded: false,
         searchOptions: {
           query: '',
           orderable: null,

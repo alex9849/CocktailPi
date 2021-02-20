@@ -4,11 +4,6 @@
       <q-breadcrumbs-el label="Ingredient Management"/>
     </q-breadcrumbs>
     <h5>Ingredients you own</h5>
-    <q-card flat class="bg-grey-4">
-      <q-card-section class="text-center">
-        This feature is work in progress and has no impact yet!
-      </q-card-section>
-    </q-card>
     <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
       <q-btn
         color="positive"
