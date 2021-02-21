@@ -19,7 +19,6 @@ jobs:
         - "mvn install -P prod"
         - "mkdir push"
         - "cp ./backend/target/*.jar ./push"
-        - "cp ./frontend/dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
       workspaces:
         create:
           name: target
@@ -35,7 +34,7 @@ jobs:
         - npm install -g cordova
         - npm install frontend
       install:
-        - "cd frontend && quasar build -m android"
+        - "cd frontend && npm run buildAndroid"
       before_deploy:
         - "cp ./dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
       workspaces:
