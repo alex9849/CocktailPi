@@ -1,5 +1,6 @@
 const authToken = JSON.parse(localStorage.getItem('authToken'));
 const user = JSON.parse(localStorage.getItem('user'));
+const serverAddress = JSON.parse(localStorage.getItem('serverAddress'));
 
 const currentDate = new Date();
 
@@ -31,7 +32,8 @@ export default function () {
     status: {
       user: initialUser,
       authToken: initialAuthToken,
-      loggedIn: initialLoggedIn
+      loggedIn: initialLoggedIn,
+      serverAddress
     }
   }
 }

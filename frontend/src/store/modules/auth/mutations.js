@@ -21,3 +21,7 @@ export const logout = (state) => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('user');
 };
+export const serverAddress = (state, serverAddress) => {
+  state.status.serverAddress = serverAddress;
+  localStorage.removeItem('serverAddress');
+};

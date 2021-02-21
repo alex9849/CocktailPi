@@ -8,6 +8,7 @@
     <icon src="www/logo/logo-128x128.png" />
     <content src="index.html" />
     <access origin="*" />
+    <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />

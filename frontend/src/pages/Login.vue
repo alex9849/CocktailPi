@@ -23,6 +23,20 @@
           </transition>
           <br/>
           <q-input
+            v-if="$q.platform.is.cordova"
+            label="Server address"
+            shadow-text="https://myserver.net/"
+            :disable="loading"
+            v-model="serverAddress"
+            filled
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Server address required']"
+          >
+            <template v-slot:prepend>
+              <q-icon :name="mdiServer"/>
+            </template>
+          </q-input>
+          <q-input
             :disable="loading"
             filled
             label="Username"
@@ -49,6 +63,7 @@
           </q-input>
           <q-checkbox
             label="Remember me"
+            v-if="!$q.platform.is.cordova"
             v-model="loginRequest.remember"
           />
         </q-card-section>
@@ -63,22 +78,24 @@
 
 <script>
   import LoginRequest from '../models/LoginRequest';
-  import {mdiAlert, mdiEmail, mdiOnepassword} from '@quasar/extras/mdi-v5';
+  import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5';
 
   export default {
     name: "Login",
     data() {
       return {
-        loginRequest: new LoginRequest('', '', false),
+        loginRequest: new LoginRequest('', '', this.$q.platform.is.cordova),
         loading: false,
         passwordWrong: false,
-        transitionTrigger: false
+        transitionTrigger: false,
+        test: ''
       }
     },
     created() {
       this.mdiEmail = mdiEmail;
       this.mdiOnepassword = mdiOnepassword;
       this.mdiAlert = mdiAlert;
+      this.mdiServer = mdiServer;
     },
     methods: {
       onSubmit() {
@@ -99,6 +116,16 @@
       showPasswordWrong() {
         this.passwordWrong = true;
         this.transitionTrigger = !this.transitionTrigger;
+      }
+    },
+    computed: {
+      serverAddress: {
+        get() {
+          return this.$store.getters['auth/getServerAddress'];
+        },
+        set(value) {
+          this.$store.commit('auth/serverAddress', value);
+        }
       }
     }
   }
