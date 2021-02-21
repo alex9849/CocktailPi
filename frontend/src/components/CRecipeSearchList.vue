@@ -141,7 +141,7 @@
     <div class="row justify-center q-mt-md">
       <q-pagination
         :value="pagination.page"
-        @input="page => {if(pagination.page !== page) {pagination.page = page; updateRecipes();}}"
+        @input="onPageClick"
         color="grey-8"
         :max="pagination.totalPages"
         :max-pages="9"
@@ -273,7 +273,6 @@ export default {
         }
       },
       categoryId() {
-        this.recipes = [];
         this.fetchRecipes();
       }
     },
@@ -317,6 +316,7 @@ export default {
       },
       onRefreshButton() {
         this.loading = true;
+        this.recipes = [];
         let vm = this;
         setTimeout(() => {
           vm.fetchRecipes()
@@ -331,9 +331,16 @@ export default {
         query = JsUtils.cleanObject(query);
         this.$router.push({name: this.$route.name, query});
       },
+      onPageClick(page) {
+        if(this.pagination.page !== page) {
+          this.pagination.page = page;
+          this.updateRecipes();
+        }
+      },
       fetchRecipes() {
+        this.recipes = [];
         this.loading = true;
-        RecipeService.getRecipes(this.pagination.page,
+        return RecipeService.getRecipes(this.pagination.page,
           this.onlyOwnRecipes ? this.user.id : null,
           this.onlyOwnRecipes ? null : true,
           this.searchOptions.fabricable,
@@ -348,7 +355,7 @@ export default {
           this.loading = false;
         }, error => {
           this.loading = false;
-        })
+        });
       }
     },
     computed: {
