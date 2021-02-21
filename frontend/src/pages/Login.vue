@@ -23,7 +23,7 @@
           </transition>
           <br/>
           <q-input
-            v-if="$q.platform.is.cordova"
+            v-if="!!$q.platform.is.cordova"
             label="Server address"
             shadow-text="https://myserver.net/"
             :disable="loading"
@@ -84,11 +84,10 @@
     name: "Login",
     data() {
       return {
-        loginRequest: new LoginRequest('', '', this.$q.platform.is.cordova),
+        loginRequest: new LoginRequest('', '', !!this.$q.platform.is.cordova),
         loading: false,
         passwordWrong: false,
         transitionTrigger: false,
-        test: ''
       }
     },
     created() {
