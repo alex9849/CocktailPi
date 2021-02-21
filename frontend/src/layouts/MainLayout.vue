@@ -77,10 +77,14 @@
                 />
               </a>
             </div>
-            <form class="row justify-center" action="https://www.paypal.com/donate" method="post" target="_top">
+            <form class="row justify-center" action="https://www.paypal.com/donate" method="post" target="_blank">
               <input type="hidden" name="hosted_button_id" value="B5YNFG7WH4D3S" />
-              <input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-              <img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+              <q-btn
+                type="submit"
+                label="Donate"
+                :icon="mdiPiggyBank"
+                color="orange-5"
+              />
             </form>
           </q-card-section>
         </q-card>
@@ -102,7 +106,8 @@ a {
 
 <script>
 import AppHeader from "../components/AppHeader";
-import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth, mdiGithub, mdiDocker, mdiLinkedin, mdiWeb } from "@quasar/extras/mdi-v5";
+import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth,
+  mdiGithub, mdiDocker, mdiLinkedin, mdiWeb, mdiPiggyBank } from "@quasar/extras/mdi-v5";
 import {mapGetters} from 'vuex'
 import CategoryService from "../services/category.service";
 
@@ -201,6 +206,7 @@ export default {
       this.handleResize();
       this.setCategories();
       this.mdiChevronRight = mdiChevronRight;
+      this.mdiPiggyBank = mdiPiggyBank;
     },
     destroyed() {
       window.removeEventListener('resize', this.handleResize);
