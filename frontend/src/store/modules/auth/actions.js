@@ -26,3 +26,8 @@ export const refreshToken = ({ commit }) => {
 export const logout = ({ commit }) => {
   commit('logout');
 };
+
+export const serverAddress = ({ commit }, serverAddress) => {
+  let trimmed = serverAddress.trim();
+  commit('serverAddress', serverAddress);
+};

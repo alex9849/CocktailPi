@@ -123,7 +123,7 @@
           return this.$store.getters['auth/getServerAddress'];
         },
         set(value) {
-          this.$store.commit('auth/serverAddress', value);
+          this.$store.dispatch('auth/serverAddress', value);
         }
       }
     }
