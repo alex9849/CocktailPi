@@ -13,12 +13,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,17 +40,19 @@ public class AuthEndpoint {
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword());
+        String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword(),
+                loginRequest.isRemember());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(new JwtResponse(token,
                 jwtUtils.getExpirationDateFromJwtToken(token), new UserDto(user)));
     }
 
     @RequestMapping(value = "refreshToken", method = RequestMethod.GET)
-    public ResponseEntity<?> authenticateUser() {
+    public ResponseEntity<?> authenticateUser(@RequestHeader("Authorization") String token) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        token = jwtUtils.parseJwt(token);
+        String jwt = jwtUtils.generateJwtToken(authentication, jwtUtils.isRemember(token));
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 jwtUtils.getExpirationDateFromJwtToken(jwt), new UserDto(user)));

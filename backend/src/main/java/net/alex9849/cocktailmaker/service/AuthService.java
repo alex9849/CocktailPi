@@ -27,11 +27,11 @@ public class AuthService {
      * @param password The password of the user
      * @return A JSON-Web-Token
      */
-    public String authUser(String username, String password) {
+    public String authUser(String username, String password, boolean remember) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtUtils.generateJwtToken(authentication);
+        return jwtUtils.generateJwtToken(authentication, remember);
     }
 
 }

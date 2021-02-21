@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 
 @Component
 public class JwtUtils {
@@ -22,13 +23,21 @@ public class JwtUtils {
     @Value("${alex9849.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    public String generateJwtToken(Authentication authentication) {
+    public String generateJwtToken(Authentication authentication, boolean remember) {
         User principal = (User) authentication.getPrincipal();
+        Date expirationDate;
+        if(remember) {
+            long tenYears = 10L * 365 * 24 * 60 * 60 * 1000;
+            expirationDate = new Date(new Date().getTime() + tenYears);
+        } else {
+            expirationDate = new Date((new Date()).getTime() + jwtExpirationMs);
+        }
 
         return Jwts.builder()
                 .setSubject(String.valueOf(principal.getId()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(expirationDate)
+                .claim("remember", remember)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
@@ -39,6 +48,10 @@ public class JwtUtils {
 
     public Date getExpirationDateFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getExpiration();
+    }
+
+    public boolean isRemember(String token) {
+        return (boolean) Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().get("remember");
     }
 
     public boolean validateJwtToken(String authToken) {

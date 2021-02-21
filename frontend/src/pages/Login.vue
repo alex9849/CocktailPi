@@ -47,6 +47,10 @@
               <q-icon :name="mdiOnepassword"/>
             </template>
           </q-input>
+          <q-checkbox
+            label="Remember me"
+            v-model="loginRequest.remember"
+          />
         </q-card-section>
         <q-separator/>
         <q-card-section align="center">
@@ -65,7 +69,7 @@
     name: "Login",
     data() {
       return {
-        loginRequest: new LoginRequest('', '', ''),
+        loginRequest: new LoginRequest('', '', false),
         loading: false,
         passwordWrong: false,
         transitionTrigger: false
