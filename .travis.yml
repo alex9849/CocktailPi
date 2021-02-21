@@ -28,7 +28,7 @@ jobs:
     - stage: before_deploy
       language: node_js
       node_js:
-        - 14
+        - 12
       before_install:
         - npm install -g @quasar/cli
         - npm install -g cordova
