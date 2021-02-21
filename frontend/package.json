@@ -18,12 +18,13 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",
+    "net.liggesmeyer.cocktailmaker": "file:src-cordova",
     "quasar": "^1.14.1",
+    "querystring": "^0.2.1",
     "sockjs-client": "1.5.0",
     "stompjs": "2.3.3",
     "vuedraggable": "2.24.1",
-    "vuelidate": "^0.7.5",
-    "querystring": "^0.2.1"
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "@mdi/font": "^4.9.95",

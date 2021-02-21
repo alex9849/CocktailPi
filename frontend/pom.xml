@@ -29,12 +29,21 @@
             </configuration>
           </execution>
           <execution>
-            <id>npm install</id>
+            <id>npm install webApp</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
               <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install app</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install src-cordova</arguments>
             </configuration>
           </execution>
           <execution>
