@@ -26,10 +26,16 @@ jobs:
             - ./backend/target/
             - ./push/
     - stage: before_deploy
-      language: sh
+      language: node_js
+      node_js:
+        - 14
+      before_install:
+        - npm install -g @quasar/cli
+        - npm install -g cordova
+      install:
+        - "cd frontend && quasar build -m android"
       before_deploy:
-        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG -f ./docker/Dockerfile ./"
-        - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
+        - "cp ./dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
       workspaces:
         use: target
       deploy:
@@ -51,6 +57,8 @@ jobs:
       language: sh
       before_deploy:
         - "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
+        - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG -f ./docker/Dockerfile ./"
+        - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest"
         - "docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi -f ./docker/DockerfilePi ./"
         - "docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi alex9849/pi-cocktailmaker:latest-pi"
       workspaces:
