@@ -27,4 +27,7 @@ Environment-Variables:
   - ``DB_PASSWORD`` Database-Password
   - ``JWT_SECRET`` A random String, that gets used to encrypt the JSON-Web-Tokens
 
-The webinterface starts on port 8080.
+The webinterface starts on port 8080. The default-login is:  
+User: Admin  
+Password: 123456  
+A demo can be found here: https://cocktailmaker-demo.liggesmeyer.net/
