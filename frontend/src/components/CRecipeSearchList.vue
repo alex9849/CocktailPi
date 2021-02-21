@@ -191,6 +191,7 @@ import {mapGetters} from "vuex";
 import CRecipeList from "../components/CRecipeList";
 import CQuestion from "./CQuestion";
 import CIngredientSelector from "components/CIngredientSelector";
+import JsUtils from "src/services/JsUtils";
 
 export default {
   name: "CRecipeSearchList",
@@ -203,21 +204,21 @@ export default {
     searchBarColor: {
       type: String,
       default: '#fafafa'
-      },
-      categoryId: {
-        type: Number
-      }
     },
-    data() {
-      return {
-        orderByOptions: [{
-          label: 'Name asc',
-          value: 'nameAsc'
-        }, {
-          label: 'Name desc',
-          value: 'nameDesc'
-        }, {
-          label: 'Last update',
+    categoryId: {
+      type: Number
+    }
+  },
+  data() {
+    return {
+      orderByOptions: [{
+        label: 'Name asc',
+        value: 'nameAsc'
+      }, {
+        label: 'Name desc',
+        value: 'nameDesc'
+      }, {
+        label: 'Last update',
           value: 'lastUpdateAsc'
         }, {
           label: 'Least update',
@@ -279,7 +280,6 @@ export default {
       },
       categoryId() {
         this.recipes = [];
-        this.searchOptions.query = "";
         this.fetchRecipes();
       }
     },
@@ -334,11 +334,7 @@ export default {
         };
         this.searchOptions = Object.assign({}, this.unappliedSearchData);
         query = Object.assign(query, this.unappliedSearchData);
-        for (let propName in query) {
-          if (query.hasOwnProperty(propName) && !query[propName]) {
-            delete query[propName];
-          }
-        }
+        query = JsUtils.cleanObject(query);
         this.$router.push({name: this.$route.name, query});
       },
       fetchRecipes() {
@@ -352,14 +348,13 @@ export default {
           this.searchOptions.query,
           this.categoryId,
           this.searchOptions.orderBy
-        )
-          .then(pageable => {
-            this.recipes = pageable.content;
-            this.pagination.totalPages = pageable.totalPages;
-            this.loading = false;
-          }, error => {
-            this.loading = false;
-          })
+        ).then(pageable => {
+          this.recipes = pageable.content;
+          this.pagination.totalPages = pageable.totalPages;
+          this.loading = false;
+        }, error => {
+          this.loading = false;
+        })
       }
     },
     computed: {

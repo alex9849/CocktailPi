@@ -1,4 +1,5 @@
 import axios from 'axios';
+import JsUtils from "./JsUtils";
 
 const API_PATH = 'api/recipe/';
 
@@ -21,18 +22,20 @@ class RecipeService {
              searchName, inCategoryId, orderBy) {
     let querystring = require('querystring');
     let inCategory = inCategoryId;
-    let config = {
-      params: {
-        page,
+    let params = {
+      page,
         ownerId,
         inPublic,
         fabricable,
         inBar,
-        containsIngredients: containsIngredients,
+        containsIngredients,
         searchName,
         inCategory,
         orderBy
-      },
+    };
+    params = JsUtils.cleanObject(params);
+    let config = {
+      params,
       paramsSerializer: function (params) {
         return querystring.stringify(params)
       },

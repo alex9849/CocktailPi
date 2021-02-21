@@ -49,7 +49,7 @@
     name: "CIngredientSelector",
     props: {
       value: {
-        type: Object
+        type: Object | Array
       },
       label: {
         type: String,

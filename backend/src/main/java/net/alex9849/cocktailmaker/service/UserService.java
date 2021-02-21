@@ -7,6 +7,7 @@ import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserService {
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
     @Autowired
     UserRepository userRepository;
@@ -56,6 +60,9 @@ public class UserService {
         Optional<User> userWithId = userRepository.findById(user.getId());
         if(!userWithId.isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
+        }
+        if(isDemoMode && user.getId() == 1) {
+            throw new IllegalArgumentException("The admin-user can't be edited in demomode!");
         }
         Optional<User> userWithUsername = userRepository.findByUsernameIgnoringCase(user.getUsername());
         if(userWithUsername.isPresent() && !Objects.equals(userWithUsername.get().getId(), user.getId())) {
@@ -97,6 +104,9 @@ public class UserService {
     }
 
     public void deleteUser(long id) {
+        if(isDemoMode && id == 1) {
+            throw new IllegalArgumentException("The admin-user can't be deleted in demomode!");
+        }
         userRepository.deleteById(id);
     }
 
