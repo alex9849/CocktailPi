@@ -4,7 +4,7 @@
       <q-breadcrumbs-el label="Ingredient Management"/>
     </q-breadcrumbs>
     <h5>Ingredient Management</h5>
-    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+    <TopButtonArranger style="padding: 10px">
       <q-btn
         color="negative"
         label="Delete selected ingredients"
@@ -27,7 +27,7 @@
         @click="onRefresh"
         no-caps
       />
-    </div>
+    </TopButtonArranger>
     <q-table
       :columns="columns"
       :data="ingredients"
@@ -222,10 +222,11 @@ import IngredientService from "../services/ingredient.service";
 import CQuestion from "../components/CQuestion";
 import {maxLength, maxValue, minValue, required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
+import TopButtonArranger from "components/TopButtonArranger";
 
 export default {
     name: "IngredientManagement",
-    components: {CEditDialog, CQuestion},
+    components: {CEditDialog, CQuestion, TopButtonArranger},
     data() {
       return {
         columns: [

@@ -4,7 +4,7 @@
       <q-breadcrumbs-el label="Pumps"/>
     </q-breadcrumbs>
     <h5>Pumps</h5>
-    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+    <TopButtonArranger style="padding: 10px">
       <q-btn
         color="negative"
         label="Delete selected pumps"
@@ -27,7 +27,7 @@
         @click="onRefreshButton"
         no-caps
       />
-    </div>
+    </TopButtonArranger>
     <q-table
       :columns="columns"
       :data="pumps"
@@ -202,10 +202,11 @@ import PumpEditorForm from "../components/PumpEditorForm";
 import PumpService from "../services/pump.service"
 import CQuestion from "../components/CQuestion";
 import CEditDialog from "components/CEditDialog";
+import TopButtonArranger from "components/TopButtonArranger";
 
 export default {
     name: "PumpManagement",
-    components: {CEditDialog, PumpEditorForm, CQuestion},
+    components: {TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion},
     data() {
       return {
         deleteDialog: false,

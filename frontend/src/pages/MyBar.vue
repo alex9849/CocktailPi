@@ -4,7 +4,7 @@
       <q-breadcrumbs-el label="Ingredient Management"/>
     </q-breadcrumbs>
     <h5>Ingredients you own</h5>
-    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+    <TopButtonArranger style="padding: 10px">
       <q-btn
         color="positive"
         label="Add ingredient"
@@ -20,7 +20,7 @@
         @click="onRefresh"
         no-caps
       />
-    </div>
+    </TopButtonArranger>
     <q-table
       :columns="columns"
       :data="ingredients"
@@ -123,10 +123,11 @@ import {required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
 import UserService from "../services/user.service";
 import {mdiDelete} from '@quasar/extras/mdi-v5';
+import TopButtonArranger from "components/TopButtonArranger";
 
 export default {
   name: "MyBar",
-  components: {CEditDialog, CIngredientSelector},
+  components: {TopButtonArranger, CEditDialog, CIngredientSelector},
   data() {
     return {
       columns: [

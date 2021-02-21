@@ -4,7 +4,7 @@
       <q-breadcrumbs-el label="User Management"/>
     </q-breadcrumbs>
     <h5>User Management</h5>
-    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+    <TopButtonArranger style="padding: 10px">
       <q-btn
         color="negative"
         label="Delete selected users"
@@ -27,7 +27,7 @@
         @click="onRefreshButton"
         no-caps
       />
-    </div>
+    </TopButtonArranger>
     <q-table
       :data="data"
       :columns="colums"
@@ -192,10 +192,11 @@
   import {mapGetters} from "vuex";
   import userService from '../services/user.service'
   import CQuestion from "../components/CQuestion";
+  import TopButtonArranger from "components/TopButtonArranger";
 
   export default {
     name: "UserManagement",
-    components: {CQuestion},
+    components: {TopButtonArranger, CQuestion},
     data() {
       return {
         deleteDialog: false,

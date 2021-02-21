@@ -4,7 +4,7 @@
       <q-breadcrumbs-el label="CategoryManagement"/>
     </q-breadcrumbs>
     <h5>CategoryManagement</h5>
-    <div class="q-pa-md q-gutter-sm" style="display: flex; flex-direction: row-reverse;">
+    <TopButtonArranger style="padding: 10px">
       <q-btn
         color="negative"
         label="Delete selected categories"
@@ -27,7 +27,7 @@
         @click="onRefresh"
         no-caps
       />
-    </div>
+    </TopButtonArranger>
     <q-table
       :columns="columns"
       :data="categories"
@@ -178,10 +178,11 @@ import CategoryService from "../services/category.service";
 import CQuestion from "../components/CQuestion";
 import {maxLength, required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
+import TopButtonArranger from "components/TopButtonArranger";
 
 export default {
     name: "CategoryManagement",
-    components: {CEditDialog, CQuestion},
+    components: {TopButtonArranger, CEditDialog, CQuestion},
     data() {
       return {
         columns: [

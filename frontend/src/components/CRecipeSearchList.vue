@@ -8,9 +8,7 @@
     >
       <template slot="top">
         <div style="margin-bottom: 10px">
-          <div class="row" style="padding: 10px">
-            <div class="col"/>
-            <div class="col q-gutter-x-sm" style="display: contents; max-width: max-content">
+            <TopButtonArranger style="padding: 10px">
               <q-btn
                 color="info"
                 label="Refresh"
@@ -35,11 +33,10 @@
                 :disable="loading"
                 @click="openDeleteDialog"
               />
-            </div>
-          </div>
+            </TopButtonArranger>
           <div
             class="searchBarSlot rounded-borders shadow-2 innerpadding"
-            :style="'background-color: ' + searchBarColor"
+            style="background-color: #fafafa; padding: 10px; margin-block: 10px"
           >
             <div
               class="row"
@@ -192,18 +189,15 @@ import CRecipeList from "../components/CRecipeList";
 import CQuestion from "./CQuestion";
 import CIngredientSelector from "components/CIngredientSelector";
 import JsUtils from "src/services/JsUtils";
+import TopButtonArranger from "components/TopButtonArranger";
 
 export default {
   name: "CRecipeSearchList",
-  components: {CIngredientSelector, CRecipeList, CQuestion},
+  components: {TopButtonArranger, CIngredientSelector, CRecipeList, CQuestion},
   props: {
     onlyOwnRecipes: {
       type: Boolean,
       default: false
-    },
-    searchBarColor: {
-      type: String,
-      default: '#fafafa'
     },
     categoryId: {
       type: Number
@@ -376,8 +370,4 @@ export default {
 </script>
 
 <style scoped>
-  .searchBarSlot {
-    margin-block: 10px;
-    padding: 10px;
-  }
 </style>
