@@ -19,25 +19,13 @@ jobs:
         - "mvn install -P prod"
         - "mkdir push"
         - "cp ./backend/target/*.jar ./push"
+        - "cp ./frontend/dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
       workspaces:
         create:
           name: target
           paths:
             - ./backend/target/
             - ./push/
-    - stage: before_deploy
-      language: node_js
-      node_js:
-        - 14
-      before_install:
-        - npm install -g @quasar/cli
-        - npm install -g cordova
-      install:
-        - "cd frontend && quasar build -m android"
-      before_deploy:
-        - "cp ./dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
-      workspaces:
-        use: target
       deploy:
         - provider: releases
           api_key: $GITHUB_TOKEN
@@ -45,11 +33,6 @@ jobs:
             - ./push/*
           file_glob: true
           skip_cleanup: true
-          on:
-            tags: true
-          overwrite: true
-        - provider: script
-          script: bash ./.travis/docker_deploy.sh
           on:
             tags: true
           overwrite: true
