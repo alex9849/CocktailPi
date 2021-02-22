@@ -24,8 +24,6 @@ jobs:
         - npm install -g @quasar/cli
         - npm install -g cordova
         - cd ./frontend/src-cordova
-        - cordova platform rm android
-        - cordova platform add android
         - cordova requirements
         - cd ../../
       script:
