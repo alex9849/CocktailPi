@@ -2,6 +2,8 @@ services:
   - docker
 jdk:
   - openjdk8
+node_js:
+  - 12.16.1
 
 stages:
   - build
@@ -12,7 +14,6 @@ jobs:
   include:
     - stage: build
       language: android
-      node_js: 12.16.1
       install:
         - npm cache clean
         - npm install -g @quasar/cli
