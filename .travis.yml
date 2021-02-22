@@ -43,11 +43,6 @@ jobs:
           on:
             tags: true
           overwrite: true
-        - provider: script
-          script: bash ./.travis/docker_deploy.sh
-          on:
-            tags: true
-          overwrite: true
       workspaces:
         create:
           name: target
