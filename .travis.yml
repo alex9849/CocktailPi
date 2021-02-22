@@ -20,7 +20,8 @@ jobs:
       - android-29
     before_install:
     - nvm install 12
-    - openssl aes-256-cbc -K $encrypted_94deb20f1609_key -iv $encrypted_94deb20f1609_iv -in googleplay-key.keystore.enc -out googleplay-key.keystore -d
+    - openssl aes-256-cbc -K $encrypted_94deb20f1609_key -iv $encrypted_94deb20f1609_iv
+      -in ././travis/googleplay-key.keystore.enc -out ././travis/googleplay-key.keystore -d
     install:
     - npm install -g @quasar/cli
     - npm install -g cordova
@@ -31,7 +32,7 @@ jobs:
     - mvn install -P prod
     - mkdir push
     - cp ./backend/target/*.jar ./push
-    - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore googleplay-key.keystore
+    - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ././travis/googleplay-key.keystore
       -storepass $GOOGLEPLAY_KEYSTORE_PASSPHRASE ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
       googleplay-key
     - "${ANDROID_HOME}/build-tools/29.0.2/zipalign -v 4 ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
