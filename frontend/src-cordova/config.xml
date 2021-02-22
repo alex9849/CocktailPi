@@ -5,7 +5,7 @@
     <author email="alexander@liggesmeyer.net" href="https://alexander.liggesmeyer.net/">
         Alexander Liggesmeyer
     </author>
-    <icon src="www/logo/logo-128x128.png" />
+    <icon src="logo/logo-128x128.png" />
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="*" />
