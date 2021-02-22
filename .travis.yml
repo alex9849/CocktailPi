@@ -23,7 +23,10 @@ jobs:
       install:
         - npm install -g @quasar/cli
         - npm install -g cordova
-        - npm install
+        - cd frontend/src-frontend
+        - cordova platform rm android
+        - cordova platform add android
+        - cordova requirements
       script:
         - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
         - "mvn versions:commit"
