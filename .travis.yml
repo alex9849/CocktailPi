@@ -16,6 +16,7 @@ jobs:
       language: android
       android:
         components:
+          - build-tools
           - platform-tools
           - android-29
       before_install:
