@@ -11,7 +11,13 @@ stages:
 jobs:
   include:
     - stage: build
-      language: java
+      language: android
+      node_js: 12.16.1
+      install:
+        - npm cache clean
+        - npm install -g @quasar/cli
+        - npm install -g cordova
+        - npm install
       script:
         - "mvn versions:set -DnewVersion=$TRAVIS_BRANCH"
         - "mvn versions:commit"
@@ -19,26 +25,7 @@ jobs:
         - "mvn install -P prod"
         - "mkdir push"
         - "cp ./backend/target/*.jar ./push"
-      workspaces:
-        create:
-          name: target
-          paths:
-            - ./backend/target/
-            - ./push/
-    - stage: before_deploy
-      language: node_js
-      node_js:
-        - 12
-      before_install:
-        - npm install -g @quasar/cli
-        - npm install -g cordova
-        - npm install frontend
-      install:
-        - "cd frontend && npm run buildAndroid"
-      before_deploy:
         - "cp ./dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
-      workspaces:
-        use: target
       deploy:
         - provider: releases
           api_key: $GITHUB_TOKEN
@@ -54,6 +41,12 @@ jobs:
           on:
             tags: true
           overwrite: true
+      workspaces:
+        create:
+          name: target
+          paths:
+            - ./backend/target/
+            - ./push/
     - stage: before_deploy
       language: sh
       before_deploy:
