@@ -32,7 +32,7 @@ jobs:
         - "mvn install -P prod"
         - "mkdir push"
         - "cp ./backend/target/*.jar ./push"
-        - "cp ./dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
+        - "cp ./frontend/dist/cordova/apk/app-release-unsigned.apk ./push/android-app.apk"
       deploy:
         - provider: releases
           api_key: $GITHUB_TOKEN
