@@ -21,7 +21,7 @@ jobs:
     before_install:
     - nvm install 12
     - openssl version
-    - openssl aes-256-cbc -k "$keystore_enc_password" -in ./.travis/googleplay.keystore.enc
+    - openssl aes-256-cbc -md sha256 -k "$keystore_enc_password" -in ./.travis/googleplay.keystore.enc
       -out ./.travis/googleplay.keystore -d
     install:
     - npm install -g @quasar/cli
