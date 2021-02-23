@@ -20,11 +20,11 @@ jobs:
       - android-29
     before_install:
     - nvm install 12
-    - openssl aes-256-cbc -K $encrypted_f2123cf90a35_key -iv $encrypted_f2123cf90a35_iv -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
     install:
     - npm install -g @quasar/cli
     - npm install -g cordova
     script:
+    - openssl aes-256-cbc -K $encrypted_f2123cf90a35_key -iv $encrypted_f2123cf90a35_iv -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
     - mvn versions:set -DnewVersion=$TRAVIS_BRANCH
     - mvn versions:commit
     - mvn clean
