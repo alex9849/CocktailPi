@@ -64,28 +64,23 @@
             <div class="row justify-center text-h6">CocktailMaker</div>
             <div class="row justify-center text-subtitle2">©2021 Alexander Liggesmeyer</div>
             <div class="row justify-center">
-              <a
-                v-for="link in projectLinks"
-                :href="link.link"
-                target="_blank"
-              >
-                <q-btn
-                  round
-                  dense
-                  flat
-                  :icon="link.icon"
-                />
-              </a>
-            </div>
-            <form class="row justify-center" action="https://www.paypal.com/donate" method="post" target="_blank">
-              <input type="hidden" name="hosted_button_id" value="B5YNFG7WH4D3S" />
               <q-btn
-                type="submit"
+                v-for="link in projectLinks"
+                round
+                dense
+                flat
+                @click="openURLInBrowser(link.link)"
+                :icon="link.icon"
+              />
+            </div>
+            <div class="row justify-center">
+              <q-btn
                 label="Donate"
                 :icon="mdiPiggyBank"
                 color="orange-5"
+                @click="openURLInBrowser('https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=B5YNFG7WH4D3S')"
               />
-            </form>
+            </div>
           </q-card-section>
         </q-card>
 
@@ -105,6 +100,7 @@ a {
 </style>
 
 <script>
+import { openURL } from 'quasar'
 import AppHeader from "../components/AppHeader";
 import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth,
   mdiGithub, mdiDocker, mdiLinkedin, mdiWeb, mdiPiggyBank } from "@quasar/extras/mdi-v5";
@@ -220,6 +216,9 @@ export default {
       }
     },
     methods: {
+      openURLInBrowser(url) {
+        openURL(url)
+      },
       setCategories() {
         CategoryService.getAllCategories()
           .then(data => {
