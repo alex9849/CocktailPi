@@ -1,7 +1,3 @@
-env:
-  global:
-    secure: vLhIQkEurHHN/csZ2rWFoznaDnOfmG+RNLq1Tk4Q3REf1ECpPbSLRflaeVH9rKzjZtLGmPLD1XxvWYrB9yptUvHQR5t0EKzLu3gItqySL19Rd4BJUuaQjvWOBXGPDHLbXJgZmgvfpzvOLtX01e89NjeuITOlvUbqd2DIiL2aQKYyWmnw0BYRsQsej8Q/F/CQRky9+JVZmOu0rqeQhclweUyDKGFDJ9e8IlsUEOMfx1q3IET4Rgqkb7wWFLLXEPxDaYsAsxNJCQpb4mqaYmOXLN9r88ajrqt1WEMqzzsKraL3NI3IchgNLLCRC35KVr24SH+nbQMKV1twsT8cRxfOKc0IQfMU59EINZ5XIHG8MWp3bCPJabjyxhJgbcF5eEcvgeevmi2QSa0fTk1Uc3S4d1bLQe9bch3iWN81BCpDg8XdGxcczWOmpDc4I2FmorNPfBBn6Z1oTNVpoaTIpwZ3lIpk9/STE77uCueHpkTzCvo9ugyHnRrjdcLwTqTggWsm2JW9H+CPnIsofg2rlnZIVY4xrikf6G78SFbeg6vIL4JnvVaS+wDkgXLKlS2RZJx1DiZQAlbZXciRzoHtaRQhbOxpZLMSmdOXk7NHP1AdLOtSvJE5cm5KhUAMUt7V3ARmOtbbOoMkeTn1dyIzE6HbTVof+tuOtgAWpjQwpnCGKNM=
-
 stages:
 - build
 - before_deploy
@@ -20,18 +16,18 @@ jobs:
       - android-29
     before_install:
     - nvm install 12
+    - openssl aes-256-cbc -K $encrypted_f2123cf90a35_key -iv $encrypted_f2123cf90a35_iv -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
     install:
     - npm install -g @quasar/cli
     - npm install -g cordova
     script:
-    - openssl aes-256-cbc -k 'CWvQqwwPWYDcsDRjeKaj' -in googleplay.keystore.enc -out googleplay.keystore -d
     - mvn versions:set -DnewVersion=$TRAVIS_BRANCH
     - mvn versions:commit
     - mvn clean
     - mvn install -P prod
     - mkdir push
     - cp ./backend/target/*.jar ./push
-    - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore googleplay.keystore
+    - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ./.travis/googleplay.keystore
       -storepass $GOOGLEPLAY_KEYSTORE_PASSPHRASE ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
       googleplay-key
     - "${ANDROID_HOME}/build-tools/29.0.2/zipalign -v 4 ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
