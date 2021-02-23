@@ -15,7 +15,7 @@
           <slot name="beforePicture"/>
         </div>
         <q-img
-          :src="'/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+          :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
           placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
           class="col rounded-borders max-picture-size"

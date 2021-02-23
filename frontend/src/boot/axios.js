@@ -7,10 +7,7 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$axios.defaults.baseURL = window.location.origin;
 Vue.prototype.$axios.interceptors.request.use(cfg => {
   cfg.headers.Authorization = authHeader();
-  let backendAddress = store.getters['auth/getServerAddress'];
-  if(backendAddress) {
-    cfg.baseURL = backendAddress;
-  }
+  cfg.baseURL = store.getters['auth/getFormattedServerAddress'];
   return cfg;
 });
 

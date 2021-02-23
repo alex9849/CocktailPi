@@ -1,6 +1,10 @@
 const authToken = JSON.parse(localStorage.getItem('authToken'));
 const user = JSON.parse(localStorage.getItem('user'));
-const serverAddress = JSON.parse(localStorage.getItem('serverAddress'));
+let serverAddress = JSON.parse(localStorage.getItem('serverAddress'));
+
+if(!!serverAddress) {
+  serverAddress = "";
+}
 
 const currentDate = new Date();
 

@@ -14,8 +14,8 @@
             appear
             enter-active-class="animated shakeX"
           >
-            <q-banner :key="transitionTrigger" v-if="passwordWrong" rounded dense class="text-white bg-red">
-              Username or password wrong!
+            <q-banner :key="transitionTrigger" v-if="!!error" rounded dense class="text-white bg-red">
+              {{ error }}
               <template v-slot:avatar>
                 <q-icon :name="mdiAlert" color="bg-red"/>
               </template>
@@ -25,12 +25,16 @@
           <q-input
             v-if="!!$q.platform.is.cordova"
             label="Server address"
-            shadow-text="https://myserver.net/"
+            placeholder="https://myserver.net/"
             :disable="loading"
             v-model="serverAddress"
+            @input="$v.serverAddress.$touch()"
             filled
             lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Server address required']"
+            :rules="[
+            val => $v.serverAddress.required || 'Required',
+            val => $v.serverAddress.isURL || 'Not a valid URL'
+            ]"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiServer"/>
@@ -42,7 +46,10 @@
             label="Username"
             v-model="loginRequest.username"
             lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Username required']"
+            @input="$v.loginRequest.username.$touch()"
+            :rules="[
+              val => $v.loginRequest.username.required || 'Required'
+            ]"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiEmail"/>
@@ -55,7 +62,10 @@
             type="password"
             v-model="loginRequest.password"
             lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Password required']"
+            @input="$v.loginRequest.password.$touch()"
+            :rules="[
+              val => $v.loginRequest.password.required || 'Required'
+            ]"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiOnepassword"/>
@@ -69,7 +79,15 @@
         </q-card-section>
         <q-separator/>
         <q-card-section align="center">
-          <q-btn :loading="loading" size="lg" class="full-width" type="submit" color="primary">Login</q-btn>
+          <q-btn
+            :loading="loading"
+            size="lg"
+            class="full-width"
+            type="submit"
+            color="primary"
+            :disable="disableLogin"
+          >Login
+          </q-btn>
         </q-card-section>
       </q-form>
     </q-card>
@@ -77,56 +95,88 @@
 </template>
 
 <script>
-  import LoginRequest from '../models/LoginRequest';
-  import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5';
+import LoginRequest from '../models/LoginRequest';
+import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5';
+import {helpers, required} from "vuelidate/lib/validators";
 
-  export default {
-    name: "Login",
-    data() {
-      return {
-        loginRequest: new LoginRequest('', '', !!this.$q.platform.is.cordova),
-        loading: false,
-        passwordWrong: false,
-        transitionTrigger: false,
-      }
-    },
-    created() {
-      this.mdiEmail = mdiEmail;
-      this.mdiOnepassword = mdiOnepassword;
-      this.mdiAlert = mdiAlert;
-      this.mdiServer = mdiServer;
-    },
-    methods: {
-      onSubmit() {
-        this.loading = true;
-        this.$store.dispatch('auth/login', this.loginRequest)
-          .then(() => {
-            this.loading = false;
-            if(this.$route.query.redirectTo) {
-              this.$router.push(this.$route.query.redirectTo);
-            } else {
-              this.$router.push({name: 'dashboard'});
-            }
-          }).catch(err => {
-            this.loading = false;
-            this.showPasswordWrong();
-        });
-      },
-      showPasswordWrong() {
-        this.passwordWrong = true;
-        this.transitionTrigger = !this.transitionTrigger;
-      }
-    },
-    computed: {
-      serverAddress: {
-        get() {
-          return this.$store.getters['auth/getServerAddress'];
+export default {
+  name: "Login",
+  data() {
+    return {
+      loginRequest: new LoginRequest('', '', !!this.$q.platform.is.cordova),
+      loading: false,
+      error: "",
+      disableLogin: true,
+      transitionTrigger: false,
+    }
+  },
+  created() {
+    this.mdiEmail = mdiEmail;
+    this.mdiOnepassword = mdiOnepassword;
+    this.mdiAlert = mdiAlert;
+    this.mdiServer = mdiServer;
+  },
+  validations() {
+    const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi);
+    let serverAddress = {
+      required,
+      isURL
+    }
+    let validations = {
+      loginRequest: {
+        username: {
+          required
         },
-        set(value) {
-          this.$store.dispatch('auth/serverAddress', value);
+        password: {
+          required
         }
       }
+    };
+    if (!!this.$q.platform.is.cordova) {
+      validations.serverAddress = serverAddress;
     }
+    return validations;
+  },
+  methods: {
+    onSubmit() {
+      this.loading = true;
+      this.$store.dispatch('auth/login', this.loginRequest)
+        .then(() => {
+          this.loading = false;
+          if (this.$route.query.redirectTo) {
+            this.$router.push(this.$route.query.redirectTo);
+          } else {
+            this.$router.push({name: 'dashboard'});
+          }
+        }).catch(err => {
+        this.loading = false;
+        if (!!err.response && err.response.status === 401) {
+          this.showError('Username or password wrong!');
+        } else {
+          this.showError('Couldn\'t contact server!');
+        }
+      });
+    },
+    showError(error) {
+      this.error = error;
+      this.transitionTrigger = !this.transitionTrigger;
+    }
+  },
+  watch: {
+    '$v.$invalid': function _watch$v$invalid(value) {
+      this.disableLogin = value;
+    }
+  },
+  computed: {
+    serverAddress: {
+      get() {
+        return this.$store.getters['auth/getServerAddress'];
+      },
+      set(value) {
+        this.$store.dispatch('auth/serverAddress', value);
+      }
+    }
+  }
   }
 </script>
 
