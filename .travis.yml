@@ -20,7 +20,7 @@ jobs:
       - android-29
     before_install:
     - nvm install 12
-    - openssl enc -aes-256-cbc -d -a -in ./.travis/googleplay-key.keystore.enc -out ./.travis/googleplay-key.keystore -k $KEYSTORE_ENC_PASS
+    - "openssl enc -aes-256-cbc -d -a -in ./.travis/googleplay-key.keystore.enc -out ./.travis/googleplay-key.keystore -k ${KEYSTORE_ENC_PASS}"
     install:
     - npm install -g @quasar/cli
     - npm install -g cordova
