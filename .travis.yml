@@ -35,7 +35,7 @@ jobs:
     - cp ./backend/target/*.jar ./push
     - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ./.travis/googleplay.keystore
       -storepass $GOOGLEPLAY_KEYSTORE_PASSPHRASE ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
-      googleplay-key
+      googleplay
     - "${ANDROID_HOME}/build-tools/29.0.2/zipalign -v 4 ./frontend/src-cordova/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
       ./push/android-app.apk"
     deploy:
