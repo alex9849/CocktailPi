@@ -1,6 +1,6 @@
 env:
   global:
-    secure: joiIZNdxbLNGa92mgz6pSHbXufFLlRaTGfZM1T+Nl45P5lxwjmNQUFuH8ENalvhmObyNRjQ1ZiyX9Tio51M51pFKZQHN81mzB/kKkGtWtBL4o+sYt2ZD1f/1mS0ihA9fA0zTUPJoNofFkihTD/OObknYVDQ8cCRgewbxu6FWcs+3WtNp4aNFvctqtgtH0M2+Vfn6N4b+Bl4mUSaqaUjBxUHzf8ScQiChbb4VwTur2XVtWZA9p1BXPKu9r3BKyScR85OjUeaTl3TGiWcRks+SYXOz9RPXyUwnVkuGxXoA0FMLk3hFOSdSNr2KLgVGWtXzWZh1u32eiAuI2Gmdkaz6MR/SiLIWlWIEouqFwx81iWByy/R7lGEzU3BCGFlt4taWr/Kntp9+aFovxfvqfoBGbqMXRxS4OcaSJwGE+0ZtQJKmM8tNJe/cewihnbtRUpgwsKf6ALibB2pqCtEFepSUmxnH+93ZJmUlodzdetCyS26Da+xtyt3YjxrOOrh0uwG2OsZk14ImOUkUtVFYjpiRKCag3L2rooti3s3sAytXXStNO/MOq5+v5hVU2GHjRyaLtSQ+W4AtXUzG4BHl4wg4ccMnGIvDttUL7I2PNiPM59h+1mT+Mle/ZSNVz75/j6CyNElZ99+2eqcC1YLcO+tsKI/MeqhMmBskNgOMeZDNgfw=
+    secure: SEjc0L38dukd242hJoqHkWFS56C4jh2473ygLHMLCugNbGxAc58k+ERZtHnNMVg5fUhvH+DgP84lSPbQY+pGK/EHQSfy7MGELeNZhxxfh/q9hXqxHHytHCMX8MfLPm1Eby4iHWKVbsIjh875gV01FLF6N+2d+RiWjqf4WOrH1NAMo3UL2lC1Dpw7tP5GOb2PQXyM9eVvZSG5hepAiT94mbOvztoHUU5Vdy7xX26NTTCpJQblY6M1FOfWZKMMdi7Xaoy+IEXWFze4mGr6eFsL1wqtwBk2RO68yo9/qBQEsPyOFVg+kljtAmMYpjpCs/Ie9P4ln1HahH9SgTvPbjhKKjFRQeGrObt3BWCrisoMbRbsgnYmqGPiu55EiXgmq7oyMysZnT8297v/xw+w+/abZHxd9d+49rp2V4lrrgo/sCzbl/i4o9pvI+HWhXOStKgCg+AGF766GQrfv2WrdhshxSqH6oR/ItEQsPc311HOFL4ll80q8uCAtoHT6wwxcwIxb8Ec0afn+3RLGiHmiF+1ab8utLKe9GhInFi4lh5SKfUehoMYBOu6LO6/sM3MpGbkDbkPie0+55208GUPYST2Tp6O2Yk0B51Eys0v0M7Aqo5Xgar+1OUHkADTfdG8lfs6R/Y/VT0/nbSd36KfYBFLs2xHXdr3BLg67tg9+sGr+/4=
 
 stages:
 - build
@@ -20,7 +20,8 @@ jobs:
       - android-29
     before_install:
     - nvm install 12
-    - openssl aes-256-cbc -k $KEYSTORE_ENC_PASSWORD -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
+    - openssl aes-256-cbc -k "$keystore_enc_password" -in ./.travis/googleplay.keystore.enc
+      -out ./.travis/googleplay.keystore -d
     install:
     - npm install -g @quasar/cli
     - npm install -g cordova
