@@ -24,7 +24,7 @@ jobs:
     - npm install -g @quasar/cli
     - npm install -g cordova
     script:
-    - openssl aes-256-cbc -k "$KEYSTORE_ENC_PASSWORD" -in googleplay.keystore.enc -out googleplay.keystore -d
+    - openssl aes-256-cbc -k "CWvQqwwPWYDcsDRjeKaj" -in googleplay.keystore.enc -out googleplay.keystore -d
     - mvn versions:set -DnewVersion=$TRAVIS_BRANCH
     - mvn versions:commit
     - mvn clean
