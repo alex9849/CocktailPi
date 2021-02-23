@@ -1,3 +1,7 @@
+env:
+  global:
+    secure: vLhIQkEurHHN/csZ2rWFoznaDnOfmG+RNLq1Tk4Q3REf1ECpPbSLRflaeVH9rKzjZtLGmPLD1XxvWYrB9yptUvHQR5t0EKzLu3gItqySL19Rd4BJUuaQjvWOBXGPDHLbXJgZmgvfpzvOLtX01e89NjeuITOlvUbqd2DIiL2aQKYyWmnw0BYRsQsej8Q/F/CQRky9+JVZmOu0rqeQhclweUyDKGFDJ9e8IlsUEOMfx1q3IET4Rgqkb7wWFLLXEPxDaYsAsxNJCQpb4mqaYmOXLN9r88ajrqt1WEMqzzsKraL3NI3IchgNLLCRC35KVr24SH+nbQMKV1twsT8cRxfOKc0IQfMU59EINZ5XIHG8MWp3bCPJabjyxhJgbcF5eEcvgeevmi2QSa0fTk1Uc3S4d1bLQe9bch3iWN81BCpDg8XdGxcczWOmpDc4I2FmorNPfBBn6Z1oTNVpoaTIpwZ3lIpk9/STE77uCueHpkTzCvo9ugyHnRrjdcLwTqTggWsm2JW9H+CPnIsofg2rlnZIVY4xrikf6G78SFbeg6vIL4JnvVaS+wDkgXLKlS2RZJx1DiZQAlbZXciRzoHtaRQhbOxpZLMSmdOXk7NHP1AdLOtSvJE5cm5KhUAMUt7V3ARmOtbbOoMkeTn1dyIzE6HbTVof+tuOtgAWpjQwpnCGKNM=
+
 stages:
 - build
 - before_deploy
@@ -20,7 +24,7 @@ jobs:
     - npm install -g @quasar/cli
     - npm install -g cordova
     script:
-    - openssl aes-256-cbc -K $encrypted_f2123cf90a35_key -iv $encrypted_f2123cf90a35_iv -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
+    - openssl aes-256-cbc -k "$KEYSTORE_ENC_PASSWORD" -in ./.travis/googleplay.keystore.enc -out ./.travis/googleplay.keystore -d
     - mvn versions:set -DnewVersion=$TRAVIS_BRANCH
     - mvn versions:commit
     - mvn clean
@@ -51,7 +55,7 @@ jobs:
   - stage: before_deploy
     language: sh
     services:
-      - docker
+    - docker
     before_deploy:
     - docker run --rm --privileged multiarch/qemu-user-static:register --reset
     - docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG -f ./docker/Dockerfile
