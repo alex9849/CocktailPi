@@ -1,6 +1,6 @@
 const authToken = JSON.parse(localStorage.getItem('authToken'));
 const user = JSON.parse(localStorage.getItem('user'));
-let serverAddress = JSON.parse(localStorage.getItem('serverAddress'));
+let serverAddress = localStorage.getItem('serverAddress');
 
 if(serverAddress === null || serverAddress === undefined) {
   serverAddress = "";

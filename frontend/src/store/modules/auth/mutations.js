@@ -23,5 +23,5 @@ export const logout = (state) => {
 };
 export const serverAddress = (state, serverAddress) => {
   state.status.serverAddress = serverAddress;
-  localStorage.removeItem('serverAddress');
+  localStorage.setItem('serverAddress', serverAddress);
 };
