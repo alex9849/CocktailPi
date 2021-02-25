@@ -14,6 +14,12 @@ export const getFormattedServerAddress = state => {
   }
   return address;
 };
+export const getAdminLevel = state => {
+  if(!getUser(state))
+    return 0;
+  return state.status.user.adminLevel;
+};
+
 export const isRecipeCreator = state => {
   if(!getUser(state))
     return false;

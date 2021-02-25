@@ -23,7 +23,7 @@
         <q-list>
           <q-expansion-item
             v-for="(section, index) in sidebarItems"
-            v-if="section.reqLevel <= getUser.adminLevel"
+            v-if="section.reqLevel <= getAdminLevel"
             :label="section.label"
             :icon="section.icon"
             :key="index"
@@ -32,7 +32,7 @@
           >
             <q-item
               v-for="(subsecion, subindex) in section.subSections"
-              v-if="subsecion.reqLevel <= getUser.adminLevel"
+              v-if="subsecion.reqLevel <= getAdminLevel"
               style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
               active-class="bg-orange-2 text-dark"
               :inset-level="0.4"
@@ -209,7 +209,8 @@ export default {
     },
     computed: {
       ...mapGetters({
-        getUser: 'auth/getUser'
+        getUser: 'auth/getUser',
+        getAdminLevel: 'auth/getAdminLevel'
       }),
       desktopMode() {
         return this.windowWidth > this.desktopModeBreakPoint;
