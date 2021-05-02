@@ -58,18 +58,17 @@
         </q-btn>
       </TopButtonArranger>
       <div class="row q-col-gutter-md">
-        <div class="col" style="min-width: max-content">
+        <div class="col-12 col-sm-6">
           <div>
             <q-img
               :src="(!!recipe.id)? ($store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()):null"
               placeholder-src="../assets/cocktail-solid.png"
               :ratio="16/9"
               class="rounded-borders shadow-1"
-              style="min-width: 250px"
             />
           </div>
         </div>
-        <div style="min-width: 200px" class="col">
+        <div class="col-12 col-sm-6">
           <div>
             <ingredient-list
               big
