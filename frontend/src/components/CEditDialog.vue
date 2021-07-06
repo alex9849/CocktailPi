@@ -23,7 +23,6 @@
           {{ errorMessage }}
         </q-banner>
         <q-form
-          class="innerpadding"
           @submit.prevent="$emit('clickSave')"
         >
           <slot/>

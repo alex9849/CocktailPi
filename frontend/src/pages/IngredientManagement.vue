@@ -172,61 +172,27 @@
       @clickAbort="closeEditDialog"
       @clickSave="onClickSaveIngredient"
     >
-      <q-input
-        label="Name"
-        outlined
+      <ingredient-form
+        v-model="editOptions.editIngredient"
         :disable="editOptions.editIngredientSaving"
-        v-model="editOptions.editIngredient.name"
-        filled
-        @input="$v.editOptions.editIngredient.name.$touch()"
-        :rules="[
-                val => $v.editOptions.editIngredient.name.required || 'Required',
-                val => $v.editOptions.editIngredient.name.maxLength || 'Max 30'
-              ]"
-      />
-      <q-input
-        label="Alcohol content"
-        outlined
-        :disable="editOptions.editIngredientSaving"
-        v-model="editOptions.editIngredient.alcoholContent"
-        filled
-        type="number"
-        @input="$v.editOptions.editIngredient.alcoholContent.$touch()"
-        :rules="[
-                val => $v.editOptions.editIngredient.alcoholContent.required || 'Required',
-                val => $v.editOptions.editIngredient.alcoholContent.minValue || 'Must be positive',
-                val => $v.editOptions.editIngredient.alcoholContent.maxValue || 'Max 100'
-              ]"
-      />
-      <q-input
-        label="Pump time multiplier"
-        outlined
-        :disable="editOptions.editIngredientSaving"
-        v-model="currentIngredientMultiplierString"
-        filled
-        mask="#.##"
-        @input="$v.editOptions.editIngredient.pumpTimeMultiplier.$touch()"
-        :rules="[
-                val => $v.editOptions.editIngredient.pumpTimeMultiplier.required || 'Required',
-                val => $v.editOptions.editIngredient.pumpTimeMultiplier.minValue || 'Must be positive',
-                val => $v.editOptions.editIngredient.pumpTimeMultiplier.maxValue || 'Max 10'
-              ]"
+        @valid="editOptions.valid = true"
+        @invalid="editOptions.valid = false"
       />
     </c-edit-dialog>
   </q-page>
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
+import {mdiDelete, mdiPencilOutline, mdiCogs, mdiHandRight } from '@quasar/extras/mdi-v5';
 import IngredientService from "../services/ingredient.service";
 import CQuestion from "../components/CQuestion";
-import {maxLength, maxValue, minValue, required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
 import TopButtonArranger from "components/TopButtonArranger";
+import IngredientForm from "components/IngredientForm";
 
 export default {
     name: "IngredientManagement",
-    components: {CEditDialog, CQuestion, TopButtonArranger},
+    components: {IngredientForm, CEditDialog, CQuestion, TopButtonArranger},
     data() {
       return {
         columns: [
@@ -253,13 +219,21 @@ export default {
             id: -1,
             name: "",
             pumpTimeMultiplier: 1.0,
-            alcoholContent: 0
+            alcoholContent: 0,
+            type: "PUMPABLE",
+            unit: null,
+            optional: false,
+            addToVolume: true
           },
           newIngredient: {
             id: -1,
             name: "",
             pumpTimeMultiplier: 1.0,
-            alcoholContent: 0
+            alcoholContent: 0,
+            type: "PUMPABLE",
+            unit: null,
+            optional: false,
+            addToVolume: true
           }
         }
       }
@@ -371,56 +345,7 @@ export default {
       this.mdiPencilOutline = mdiPencilOutline;
       this.fetchAll();
     },
-    validations() {
-      let validations = {
-        editOptions: {
-          editIngredient: {
-            name: {
-              required,
-              maxLength: maxLength(30)
-            },
-            alcoholContent: {
-              required,
-              minValue: minValue(0),
-              maxValue: maxValue(100)
-            },
-            pumpTimeMultiplier: {
-              required,
-              minValue: minValue(0),
-              maxValue: maxValue(10)
-            }
-          }
-        }
-      };
-      return validations;
-    },
-    watch: {
-      '$v.editOptions.editIngredient.$invalid': function _watch$vEditOptionsEditIngredient$invalid(value) {
-        this.editOptions.valid = !value;
-      }
-    },
     computed: {
-      currentIngredientMultiplierString: {
-        get: function() {
-          const multiplier = this.editOptions.editIngredient.pumpTimeMultiplier;
-          if(multiplier === undefined
-            || multiplier === null) {
-            return null;
-          }
-          let stringVal = "" +  multiplier;
-          if(stringVal.match("^\\d+$")) {
-            stringVal += ".0"
-          }
-          return stringVal;
-        },
-        set: function(value) {
-          if(!value) {
-            this.editOptions.editIngredient.pumpTimeMultiplier = null;
-          } else {
-            this.editOptions.editIngredient.pumpTimeMultiplier = parseFloat(value);
-          }
-        }
-      },
       deleteQuestionMessage() {
         if (this.deleteOptions.deleteIngredients.length === 0) {
           return "No ingredients selected!";

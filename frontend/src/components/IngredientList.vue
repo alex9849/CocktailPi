@@ -90,7 +90,7 @@
         @clickAbort="closeIngredientEditor"
         @clickSave="saveEditIngredient"
       >
-        <ingredient-form
+        <add-ingredient-form
           v-model="editIngredient"
           @valid="ingridientValid = true"
           @invalid="ingridientValid = false"
@@ -103,14 +103,14 @@
 
 <script>
 import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
-import IngredientForm from "./IngredientForm";
+import AddIngredientForm from "./AddIngredientForm";
 import draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from "components/CEditDialog";
 
 export default {
     name: "IngredientList",
-    components: {CEditDialog, IngredientForm, draggable},
+    components: {CEditDialog, AddIngredientForm, draggable},
     props: {
       value: {
         type: Array,

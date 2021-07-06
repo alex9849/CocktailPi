@@ -1,100 +1,207 @@
 <template>
-  <div>
-    <c-ingredient-selector
-      v-model="value.ingredient"
-      clearable
-      @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
-      :rules="[val => $v.value.ingredient.required || 'Required']"
+  <div
+    class="q-gutter-y-sm"
+  >
+    <q-input
+      label="Name"
+      outlined
+      :disable="disable"
+      v-model="value.name"
+      filled
+      @input="$v.value.name.$touch()"
+      :rules="[
+                val => $v.value.name.required || 'Required',
+                val => $v.value.name.maxLength || 'Max 30'
+              ]"
     />
     <q-input
-      label="Amount (in ml)"
-      type="number"
+      label="Alcohol content"
       outlined
-      v-model.number="value.amount"
-      @input="() => {$emit('input', value); $v.value.amount.$touch();}"
+      :disable="disable"
+      v-model="value.alcoholContent"
+      filled
+      type="number"
+      @input="$v.value.alcoholContent.$touch()"
       :rules="[
-        val => $v.value.amount.required || 'Required',
-        val => $v.value.amount.minValue || 'Min 1ml'
-      ]"
+                val => $v.value.alcoholContent.required || 'Required',
+                val => $v.value.alcoholContent.minValue || 'Must be positive',
+                val => $v.value.alcoholContent.maxValue || 'Max 100'
+              ]"
     />
-    <slot name="below"/>
+    <q-splitter horizontal :value="10" />
+    <q-tabs
+      class="text-teal"
+      inline-label
+      v-model="value.type"
+      @update:model-value="onTypeChange($event)"
+    >
+      <q-tab
+        :icon="mdiCogs"
+        name="AUTOMATED"
+        label="automated"
+      />
+      <q-tab
+        :icon="mdiHandRight"
+        name="MANUAL"
+        label="manual"
+      />
+    </q-tabs>
+    <q-tab-panels
+      v-model="value.type"
+      animated
+    >
+      <q-tab-panel
+        name="AUTOMATED"
+        style="padding: 0"
+      >
+        <q-input
+          label="Pump time multiplier"
+          outlined
+          :disable="disable"
+          v-model="currentIngredientMultiplierString"
+          filled
+          mask="#.##"
+          @input="$v.value.pumpTimeMultiplier.$touch()"
+          :rules="[
+                val => $v.value.pumpTimeMultiplier.required || 'Required',
+                val => $v.value.pumpTimeMultiplier.minValue || 'Must be positive',
+                val => $v.value.pumpTimeMultiplier.maxValue || 'Max 10'
+              ]"
+        />
+      </q-tab-panel>
+      <q-tab-panel
+        name="MANUAL"
+      >
+        <q-select
+          filled
+          clearable
+          v-model="value.unit"
+          @input="v => v !== 'MILLILITER'? value.addToVolume = false:null"
+          :options="units"
+          emit-value
+          label="Unit"
+          :disable="disable"
+        />
+        <q-checkbox
+          v-if="value.unit === 'MILLILITER'"
+          label="Add to volume"
+          v-model="value.addToVolume"
+          :disable="disable"
+        />
+        <q-checkbox
+          label="Is optional"
+          v-model="value.optional"
+          :disable="disable"
+        />
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
 <script>
-import IngridientService from '../services/ingredient.service'
-import {minValue, required} from "vuelidate/lib/validators";
-import CIngredientSelector from "./CIngredientSelector";
+import {mdiCogs, mdiHandRight, mdiInformation} from "@quasar/extras/mdi-v5";
+import {maxLength, maxValue, minValue, required, requiredIf} from "vuelidate/lib/validators";
 
 export default {
-    name: "IngredientForm",
-    components: {CIngredientSelector},
-    props: {
+  name: "IngredientForm",
+  props: {
+    value: {
+      type: Object,
+      required: true
+    },
+    disable: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      units: [
+        {label: 'gram (g)', value: 'GRAM'},
+        {label: 'milliliter (ml)', value: 'MILLILITER'},
+        {label: 'leveled teaspoon', value: 'LEVELED_TEASPOON'},
+        {label: 'leveled tablespoon', value: 'LEVELED_TABLESPOON'}
+      ],
+    }
+  },
+  methods: {
+    initialize() {
+      this.$v.value.$touch();
+      if(this.$v.value.$invalid) {
+        this.$emit('invalid');
+      } else {
+        this.$emit('valid');
+      }
+    },
+    onTypeChange(newType) {
+      this.$v.value.$touch()
+    }
+  },
+  created() {
+    this.initialize();
+    this.mdiInformation = mdiInformation;
+    this.mdiCogs = mdiCogs;
+    this.mdiHandRight = mdiHandRight;
+  },
+  validations() {
+    let validations = {
       value: {
-        type: Object,
-        required: true
-      }
-    },
-    data() {
-      return {
-        ingredientOptions: []
-      }
-    },
-    methods: {
-      filterIngredients(val, update, abort) {
-        if(val.length < 1) {
-          abort();
-          return;
+        name: {
+          required,
+          maxLength: maxLength(30)
+        },
+        alcoholContent: {
+          required,
+          minValue: minValue(0),
+          maxValue: maxValue(100)
+        },
+        pumpTimeMultiplier: {
+          required: requiredIf(() => this.value.type === "AUTOMATED"),
+          minValue: minValue(0),
+          maxValue: maxValue(10)
         }
-        IngridientService.getIngredientsFilter(val)
-          .then(ingridients => {
-            update(() => {
-              this.ingredientOptions = ingridients;
-            })
-          }, () => abort)
+      }
+    };
+    return validations;
+  },
+  computed: {
+    currentIngredientMultiplierString: {
+      get: function() {
+        const multiplier = this.value.pumpTimeMultiplier;
+        if(multiplier === undefined
+          || multiplier === null) {
+          return null;
+        }
+        let stringVal = "" +  multiplier;
+        if(stringVal.match("^\\d+$")) {
+          stringVal += ".0"
+        }
+        return stringVal;
       },
-      abortFilterIngredients() {
-      },
-      initialize() {
-        this.$v.value.$touch();
-        if(this.$v.value.$invalid) {
-          this.$emit('invalid');
+      set: function(value) {
+        if(!value) {
+          this.value.pumpTimeMultiplier = null;
         } else {
-          this.$emit('valid');
+          this.value.pumpTimeMultiplier = parseFloat(value);
         }
-      }
-    },
-    created() {
-      this.initialize();
-    },
-    validations() {
-      let validations = {
-        value: {
-          ingredient: {
-            required
-          },
-          amount: {
-            required,
-            minValue: minValue(1)
-          }
-        }
-      };
-      return validations;
-    },
-    watch: {
-      '$v.value.$invalid': function _watch$vValue$invalid(value) {
-        if (!value) {
-          this.$emit('valid');
-        } else {
-          this.$emit('invalid');
-        }
-      },
-      value() {
-        this.initialize();
       }
     }
+  },
+  watch: {
+    '$v.value.$invalid': function _watch$vValue$invalid(value) {
+      if (!value) {
+        this.$emit('valid');
+      } else {
+        this.$emit('invalid');
+      }
+    },
+    value() {
+      this.initialize();
+    }
   }
+}
 </script>
 
 <style scoped>
+
 </style>

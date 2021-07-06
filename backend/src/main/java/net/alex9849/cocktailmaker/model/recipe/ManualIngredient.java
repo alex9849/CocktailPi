@@ -12,7 +12,9 @@ public class ManualIngredient extends Ingredient {
     private Unit unit;
 
     @NotNull
-    private boolean addToFillingQuantity;
+    private boolean addToVolume;
+
+    private boolean optional;
 
     @Override
     public Type getType() {
@@ -27,13 +29,19 @@ public class ManualIngredient extends Ingredient {
         this.unit = unit;
     }
 
-    public boolean isAddToFillingQuantity() {
-        return addToFillingQuantity;
+    public boolean isAddToVolume() {
+        return addToVolume;
     }
 
-    public void setAddToFillingQuantity(boolean addToFillingQuantity) {
-        this.addToFillingQuantity = addToFillingQuantity;
+    public void setAddToVolume(boolean addToVolume) {
+        this.addToVolume = addToVolume;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
 
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
 }

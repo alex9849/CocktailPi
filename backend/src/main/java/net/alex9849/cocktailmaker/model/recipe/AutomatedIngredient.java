@@ -5,7 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class PumpableIngredient extends Ingredient {
+public class AutomatedIngredient extends Ingredient {
 
     @NotNull
     @Min(1)
@@ -21,7 +21,7 @@ public class PumpableIngredient extends Ingredient {
 
     @Override
     public Type getType() {
-        return Type.PUMPABLE;
+        return Type.AUTOMATED;
     }
 
     @Override

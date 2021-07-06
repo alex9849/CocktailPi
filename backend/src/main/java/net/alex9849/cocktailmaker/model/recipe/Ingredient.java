@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
 import org.hibernate.annotations.OnDelete;
@@ -80,11 +81,21 @@ public abstract class Ingredient implements Serializable {
     public abstract Unit getUnit();
 
     public enum Type {
-        PUMPABLE, MANUAL
+        AUTOMATED, MANUAL
     }
 
     public enum Unit {
-        MILLILITER("ml"), GRAMM("g")
+        MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon"), LEVELED_TABLESPOON("tablespoon");
+        private String displayUnit;
+
+        Unit(String displayUnit) {
+            this.displayUnit = displayUnit;
+        }
+
+        @JsonValue
+        public String getDisplayUnit() {
+            return displayUnit;
+        }
     }
 
     public static class IngredientFilterNoFilter implements Specification<Ingredient> {
