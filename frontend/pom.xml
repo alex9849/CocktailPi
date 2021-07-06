@@ -46,7 +46,7 @@
               <arguments>run build</arguments>
             </configuration>
           </execution>
-          <execution>
+          <!--execution>
             <id>npm run buildAndroid</id>
             <goals>
               <goal>npm</goal>
@@ -54,7 +54,7 @@
             <configuration>
               <arguments>run buildAndroid</arguments>
             </configuration>
-          </execution>
+          </execution-->
         </executions>
       </plugin>
     </plugins>
