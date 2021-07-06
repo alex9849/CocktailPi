@@ -20,7 +20,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "ingredients", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
-public class Ingredient implements Serializable {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Ingredient implements Serializable {
 
     static final long serialVersionUID = 1L;
 
@@ -35,10 +36,6 @@ public class Ingredient implements Serializable {
     @NotNull
     @Min(0) @Max(100)
     private int alcoholContent;
-
-    @NotNull
-    @Min(1)
-    private double pumpTimeMultiplier;
 
     @OneToMany(mappedBy = "ingredient")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -66,14 +63,6 @@ public class Ingredient implements Serializable {
         return name;
     }
 
-    public double getPumpTimeMultiplier() {
-        return pumpTimeMultiplier;
-    }
-
-    public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
-        this.pumpTimeMultiplier = pumpTimeMultiplier;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -84,6 +73,18 @@ public class Ingredient implements Serializable {
 
     public void setAlcoholContent(int alcoholContent) {
         this.alcoholContent = alcoholContent;
+    }
+
+    public abstract Type getType();
+
+    public abstract Unit getUnit();
+
+    public enum Type {
+        PUMPABLE, MANUAL
+    }
+
+    public enum Unit {
+        MILLILITER("ml"), GRAMM("g")
     }
 
     public static class IngredientFilterNoFilter implements Specification<Ingredient> {
