@@ -257,7 +257,7 @@ export default {
             name: "",
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
-            type: "AUTOMATED",
+            type: "automated",
             unit: null,
             addToVolume: false
           },
@@ -266,7 +266,7 @@ export default {
             name: "",
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
-            type: "AUTOMATED",
+            type: "automated",
             unit: null,
             addToVolume: false
           }
@@ -281,7 +281,8 @@ export default {
       },
       showEditDialog(ingredient) {
         if (ingredient) {
-          this.editOptions.editIngredient = Object.assign({}, ingredient);
+          this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient)
+          this.editOptions.editIngredient = Object.assign(this.editOptions.editIngredient, ingredient);
         }
         this.editOptions.editDialog = true;
       },

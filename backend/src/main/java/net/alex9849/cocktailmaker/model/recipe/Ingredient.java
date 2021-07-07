@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
@@ -81,7 +83,7 @@ public abstract class Ingredient implements Serializable {
     public abstract Unit getUnit();
 
     public enum Unit {
-        MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon"), LEVELED_TABLESPOON("tablespoon");
+        MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon(s)"), LEVELED_TABLESPOON("tablespoon(s)");
         private final String displayUnit;
 
         Unit(String displayUnit) {
@@ -93,7 +95,7 @@ public abstract class Ingredient implements Serializable {
             return displayUnit;
         }
 
-        public static Unit findByDisplayName(String displayUnit) {
+        public static Unit findByDisplayUnit(String displayUnit) {
             for(Unit current : Unit.values()) {
                 if(current.getDisplayUnit().equals(displayUnit)) {
                     return current;
@@ -101,6 +103,7 @@ public abstract class Ingredient implements Serializable {
             }
             return null;
         }
+
     }
 
     public static class IngredientFilterNoFilter implements Specification<Ingredient> {

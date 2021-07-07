@@ -8,7 +8,7 @@
       :disable="disable"
       v-model="value.name"
       filled
-      @input="$v.value.name.$touch()"
+      @input="() => {$v.value.name.$touch(); $emit('input', value)}"
       :rules="[
                 val => $v.value.name.required || 'Required',
                 val => $v.value.name.maxLength || 'Max 30'
@@ -21,7 +21,7 @@
       v-model="value.alcoholContent"
       filled
       type="number"
-      @input="$v.value.alcoholContent.$touch()"
+      @input="() => {$v.value.alcoholContent.$touch(); $emit('input', value)}"
       :rules="[
                 val => $v.value.alcoholContent.required || 'Required',
                 val => $v.value.alcoholContent.minValue || 'Must be positive',
@@ -37,12 +37,12 @@
     >
       <q-tab
         :icon="mdiCogs"
-        name="AUTOMATED"
+        name="automated"
         label="automated"
       />
       <q-tab
         :icon="mdiHandRight"
-        name="MANUAL"
+        name="manual"
         label="manual"
       />
     </q-tabs>
@@ -51,7 +51,7 @@
       animated
     >
       <q-tab-panel
-        name="AUTOMATED"
+        name="automated"
         style="padding: 0"
       >
         <q-input
@@ -61,7 +61,7 @@
           v-model="currentIngredientMultiplierString"
           filled
           mask="#.##"
-          @input="$v.value.pumpTimeMultiplier.$touch()"
+          @input="() => {$v.value.pumpTimeMultiplier.$touch(); $emit('input', value)}"
           :rules="[
                 val => $v.value.pumpTimeMultiplier.required || 'Required',
                 val => $v.value.pumpTimeMultiplier.minValue || 'Must be positive',
@@ -70,13 +70,13 @@
         />
       </q-tab-panel>
       <q-tab-panel
-        name="MANUAL"
+        name="manual"
       >
         <q-select
           filled
           clearable
           v-model="value.unit"
-          @input="v => v !== 'MILLILITER'? value.addToVolume = false:null"
+          @input="v => {v !== 'ml'? value.addToVolume = false:null; $emit('input', value)}"
           :options="units"
           emit-value
           map-options
@@ -84,9 +84,10 @@
           :disable="disable"
         />
         <q-checkbox
-          v-if="value.unit === 'MILLILITER'"
+          v-if="value.unit === 'ml'"
           label="Add to volume"
           v-model="value.addToVolume"
+          @input="$emit('input', value)"
           :disable="disable"
         />
       </q-tab-panel>
@@ -113,10 +114,10 @@ export default {
   data() {
     return {
       units: [
-        {label: 'gram (g)', value: 'GRAM'},
-        {label: 'milliliter (ml)', value: 'MILLILITER'},
-        {label: 'leveled teaspoon(s)', value: 'LEVELED_TEASPOON'},
-        {label: 'leveled tablespoon(s)', value: 'LEVELED_TABLESPOON'}
+        {label: 'gram (g)', value: 'g'},
+        {label: 'milliliter (ml)', value: 'ml'},
+        {label: 'leveled teaspoon(s)', value: 'teaspoon(s)'},
+        {label: 'leveled tablespoon(s)', value: 'tablespoon(s)'}
       ],
     }
   },
@@ -152,7 +153,7 @@ export default {
           maxValue: maxValue(100)
         },
         pumpTimeMultiplier: {
-          required: requiredIf(() => this.value.type === "AUTOMATED"),
+          required: requiredIf(() => this.value.type === "automated"),
           minValue: minValue(0),
           maxValue: maxValue(10)
         }

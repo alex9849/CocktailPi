@@ -14,6 +14,11 @@ public class AutomatedIngredientDto extends IngredientDto {
 
     public AutomatedIngredientDto() {}
 
+    @Override
+    public String getType() {
+        return "automated";
+    }
+
     public AutomatedIngredientDto(AutomatedIngredient ingredient) {
         super(ingredient);
         BeanUtils.copyProperties(ingredient, this);

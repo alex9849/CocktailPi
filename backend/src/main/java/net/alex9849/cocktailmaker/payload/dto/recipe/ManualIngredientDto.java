@@ -21,6 +21,11 @@ public class ManualIngredientDto extends IngredientDto {
         BeanUtils.copyProperties(ingredient, this);
     }
 
+    @Override
+    public String getType() {
+        return "manual";
+    }
+
     public Ingredient.Unit getUnit() {
         return unit;
     }

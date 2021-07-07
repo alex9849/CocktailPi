@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "manual"),
-        @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automatic")
+        @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automated")
 })
 public abstract class IngredientDto {
     private Long id;
@@ -56,6 +56,8 @@ public abstract class IngredientDto {
     public void setAlcoholContent(int alcoholContent) {
         this.alcoholContent = alcoholContent;
     }
+
+    public abstract String getType();
 
     public static IngredientDto toDto(Ingredient ingredient) {
         if(ingredient instanceof ManualIngredient) {
