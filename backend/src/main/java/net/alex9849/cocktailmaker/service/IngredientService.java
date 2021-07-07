@@ -1,7 +1,9 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +43,7 @@ public class IngredientService {
         if(ingredientDto == null) {
             return null;
         }
-        Ingredient ingredient = new Ingredient();
+        Ingredient ingredient = new AutomatedIngredient();
         BeanUtils.copyProperties(ingredientDto, ingredient);
         return ingredient;
     }

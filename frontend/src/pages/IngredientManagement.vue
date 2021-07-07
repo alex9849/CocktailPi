@@ -220,20 +220,18 @@ export default {
             name: "",
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
-            type: "PUMPABLE",
+            type: "AUTOMATED",
             unit: null,
-            optional: false,
-            addToVolume: true
+            addToVolume: false
           },
           newIngredient: {
             id: -1,
             name: "",
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
-            type: "PUMPABLE",
+            type: "AUTOMATED",
             unit: null,
-            optional: false,
-            addToVolume: true
+            addToVolume: false
           }
         }
       }

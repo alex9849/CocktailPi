@@ -14,8 +14,6 @@ public class ManualIngredient extends Ingredient {
     @NotNull
     private boolean addToVolume;
 
-    private boolean optional;
-
     @Override
     public Type getType() {
         return Type.MANUAL;
@@ -35,13 +33,5 @@ public class ManualIngredient extends Ingredient {
 
     public void setAddToVolume(boolean addToVolume) {
         this.addToVolume = addToVolume;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
     }
 }

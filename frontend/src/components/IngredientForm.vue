@@ -79,6 +79,7 @@
           @input="v => v !== 'MILLILITER'? value.addToVolume = false:null"
           :options="units"
           emit-value
+          map-options
           label="Unit"
           :disable="disable"
         />
@@ -86,11 +87,6 @@
           v-if="value.unit === 'MILLILITER'"
           label="Add to volume"
           v-model="value.addToVolume"
-          :disable="disable"
-        />
-        <q-checkbox
-          label="Is optional"
-          v-model="value.optional"
           :disable="disable"
         />
       </q-tab-panel>
@@ -119,8 +115,8 @@ export default {
       units: [
         {label: 'gram (g)', value: 'GRAM'},
         {label: 'milliliter (ml)', value: 'MILLILITER'},
-        {label: 'leveled teaspoon', value: 'LEVELED_TEASPOON'},
-        {label: 'leveled tablespoon', value: 'LEVELED_TABLESPOON'}
+        {label: 'leveled teaspoon(s)', value: 'LEVELED_TEASPOON'},
+        {label: 'leveled tablespoon(s)', value: 'LEVELED_TABLESPOON'}
       ],
     }
   },

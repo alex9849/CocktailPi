@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
@@ -104,7 +105,7 @@ public class CocktailFactory extends Observable {
             //Calculate how long each pump needs to run
             for(RecipeIngredient ingredient : productionStep) {
                 Pump ingPump = this.ingredientIdToPumpMap.get(ingredient.getIngredient().getId());
-                double pumpTime = ingPump.getTimePerClInMs() * ingredient.getIngredient().getPumpTimeMultiplier()
+                double pumpTime = ingPump.getTimePerClInMs() * ((AutomatedIngredient) ingredient.getIngredient()).getPumpTimeMultiplier()
                         * (ingredient.getAmount() / 10d) * this.requestedAmount / recipeAmountOfLiquid;
                 stepPumpTime.add(new AbstractMap.SimpleEntry<>(ingPump, (int) pumpTime));
             }

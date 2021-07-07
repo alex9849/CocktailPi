@@ -4,6 +4,8 @@ import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -159,7 +161,7 @@ public class PumpService implements Observer {
         }
         double multiplier = 1.0;
         if(pump.getCurrentIngredient() != null) {
-            multiplier = pump.getCurrentIngredient().getPumpTimeMultiplier();
+            multiplier = ((AutomatedIngredient) pump.getCurrentIngredient()).getPumpTimeMultiplier();
         }
         int runTime = (int) (pump.getTimePerClInMs() * multiplier / 10d) * pump.getTubeCapacityInMl();
         if (this.isMakingCocktail()) {
