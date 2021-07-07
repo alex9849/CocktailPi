@@ -6,15 +6,15 @@ import org.springframework.beans.BeanUtils;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class AutomaticIngredientDto extends IngredientDto {
+public class AutomatedIngredientDto extends IngredientDto {
 
     @NotNull
     @Min(1)
     private double pumpTimeMultiplier;
 
-    public AutomaticIngredientDto() {}
+    public AutomatedIngredientDto() {}
 
-    public AutomaticIngredientDto(AutomatedIngredient ingredient) {
+    public AutomatedIngredientDto(AutomatedIngredient ingredient) {
         super(ingredient);
         BeanUtils.copyProperties(ingredient, this);
     }

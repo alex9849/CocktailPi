@@ -4,7 +4,9 @@ import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +45,17 @@ public class IngredientService {
         if(ingredientDto == null) {
             return null;
         }
-        Ingredient ingredient = new AutomatedIngredient();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
+        if(ingredientDto instanceof ManualIngredientDto) {
+            ManualIngredient ingredient = new ManualIngredient();
+            BeanUtils.copyProperties(ingredientDto, ingredient);
+            return ingredient;
+        }
+        if(ingredientDto instanceof AutomatedIngredientDto) {
+            AutomatedIngredient ingredient = new AutomatedIngredient();
+            BeanUtils.copyProperties(ingredientDto, ingredient);
+            return ingredient;
+        }
+        throw new IllegalStateException("IngredientType not supported yet!");
     }
 
     public Ingredient updateIngredient(Ingredient ingredient) {

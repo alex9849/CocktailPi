@@ -14,8 +14,8 @@ import javax.validation.constraints.Size;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "MANUAL"),
-        @JsonSubTypes.Type(value = AutomaticIngredientDto.class, name = "AUTOMATIC")
+        @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "manual"),
+        @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automatic")
 })
 public abstract class IngredientDto {
     private Long id;
@@ -62,8 +62,10 @@ public abstract class IngredientDto {
             return new ManualIngredientDto((ManualIngredient) ingredient);
         }
         if(ingredient instanceof AutomatedIngredient) {
-            return new AutomaticIngredientDto((AutomatedIngredient) ingredient);
+            return new AutomatedIngredientDto((AutomatedIngredient) ingredient);
         }
-        throw new IllegalStateException("IngredientType is not implemented yet!");
+        throw new IllegalStateException("IngredientType is not supported yet!");
     }
+
+
 }
