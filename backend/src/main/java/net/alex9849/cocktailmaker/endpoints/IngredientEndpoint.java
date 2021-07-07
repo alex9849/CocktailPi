@@ -35,7 +35,7 @@ public class IngredientEndpoint {
             }
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete)
-                .stream().map(IngredientDto::new).collect(Collectors.toList()));
+                .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -60,16 +60,43 @@
             {{ props.row.name }}
           </q-td>
           <q-td
+            key="type"
+            :props="props"
+          >
+            {{ props.row.type }}
+          </q-td>
+          <q-td
             key="alcoholContent"
             :props="props"
           >
             {{ props.row.alcoholContent }}%
           </q-td>
           <q-td
+            key="unit"
+            :props="props"
+          >
+            {{ props.row.unit }}
+          </q-td>
+          <q-td
             key="pumpTimeMultiplier"
             :props="props"
           >
             {{ props.row.pumpTimeMultiplier }}
+          </q-td>
+          <q-td
+            key="addToVolume"
+            :props="props"
+          >
+            <q-icon
+              v-if="props.row.addToVolume"
+              size="sm"
+              :name="mdiCheckCircle"
+            />
+            <q-icon
+              v-else
+              size="sm"
+              :name="mdiCheckboxBlankCircleOutline"
+            />
           </q-td>
           <q-td
             key="actions"
@@ -183,7 +210,14 @@
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline, mdiCogs, mdiHandRight } from '@quasar/extras/mdi-v5';
+import {
+  mdiDelete,
+  mdiPencilOutline,
+  mdiCogs,
+  mdiHandRight,
+  mdiCheckCircle,
+  mdiCheckboxBlankCircleOutline
+} from '@quasar/extras/mdi-v5';
 import IngredientService from "../services/ingredient.service";
 import CQuestion from "../components/CQuestion";
 import CEditDialog from "components/CEditDialog";
@@ -197,8 +231,11 @@ export default {
       return {
         columns: [
           {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
+          {name: 'type', label: 'Type', field: 'type', align: 'center'},
           {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
+          {name: 'unit', label: 'Unit', field: 'unit', align: 'center'},
           {name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center'},
+          {name: 'addToVolume', label: 'Add to volume', field: 'addToVolume', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
@@ -341,6 +378,8 @@ export default {
     created() {
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
+      this.mdiCheckCircle = mdiCheckCircle;
+      this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
       this.fetchAll();
     },
     computed: {

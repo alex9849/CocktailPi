@@ -35,7 +35,7 @@ public class PumpDto {
         BeanUtils.copyProperties(pump, this);
         this.isCleaning = PumpService.getInstance().isCleaning(pump);
         if(pump.getCurrentIngredient() != null) {
-            this.currentIngredient = new IngredientDto(pump.getCurrentIngredient());
+            this.currentIngredient = IngredientDto.toDto(pump.getCurrentIngredient());
         }
     }
 

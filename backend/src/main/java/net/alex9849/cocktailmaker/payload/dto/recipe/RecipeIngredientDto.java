@@ -17,7 +17,7 @@ public class RecipeIngredientDto {
 
     public RecipeIngredientDto(RecipeIngredient recipeIngredient) {
         if(recipeIngredient.getIngredient() != null) {
-            this.ingredient = new IngredientDto(recipeIngredient.getIngredient());
+            this.ingredient = IngredientDto.toDto(recipeIngredient.getIngredient());
         } else {
             this.ingredient = null;
         }

@@ -14,11 +14,6 @@ public class ManualIngredient extends Ingredient {
     @NotNull
     private boolean addToVolume;
 
-    @Override
-    public Type getType() {
-        return Type.MANUAL;
-    }
-
     public Unit getUnit() {
         return unit;
     }

@@ -20,11 +20,6 @@ public class AutomatedIngredient extends Ingredient {
     }
 
     @Override
-    public Type getType() {
-        return Type.AUTOMATED;
-    }
-
-    @Override
     public Unit getUnit() {
         return Unit.MILLILITER;
     }

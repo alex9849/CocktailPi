@@ -17,7 +17,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "ingredients", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
@@ -76,17 +78,11 @@ public abstract class Ingredient implements Serializable {
         this.alcoholContent = alcoholContent;
     }
 
-    public abstract Type getType();
-
     public abstract Unit getUnit();
-
-    public enum Type {
-        AUTOMATED, MANUAL
-    }
 
     public enum Unit {
         MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon"), LEVELED_TABLESPOON("tablespoon");
-        private String displayUnit;
+        private final String displayUnit;
 
         Unit(String displayUnit) {
             this.displayUnit = displayUnit;
@@ -95,6 +91,15 @@ public abstract class Ingredient implements Serializable {
         @JsonValue
         public String getDisplayUnit() {
             return displayUnit;
+        }
+
+        public static Unit findByDisplayName(String displayUnit) {
+            for(Unit current : Unit.values()) {
+                if(current.getDisplayUnit().equals(displayUnit)) {
+                    return current;
+                }
+            }
+            return null;
         }
     }
 
