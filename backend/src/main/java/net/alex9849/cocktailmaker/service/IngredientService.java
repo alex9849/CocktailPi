@@ -8,12 +8,17 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
+import org.hibernate.Session;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +33,9 @@ public class IngredientService {
 
     @Autowired
     private PumpService pumpService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
@@ -63,9 +71,24 @@ public class IngredientService {
             throw new IllegalArgumentException("Ingredient doesn't exist!");
         }
         Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
-        if(optionalIngredient.isPresent() && !Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
-            throw new IllegalArgumentException("An ingredient with this name already exists!");
+        if(optionalIngredient.isPresent()) {
+            if(!Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
+                throw new IllegalArgumentException("An ingredient with this name already exists!");
+            }
+            if(optionalIngredient.get().getClass() != ingredient.getClass()) {
+                Session session = (Session) entityManager.getDelegate();
+                session.evict(optionalIngredient.get());
+                Query query = entityManager.createNativeQuery("UPDATE ingredients SET dtype = :dtype WHERE id = :id");
+                query.setParameter("dtype", ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
+                query.setParameter("id", ingredient.getId());
+                query.executeUpdate();
+                entityManager.merge(ingredient);
+                entityManager.persist(ingredient);
+                entityManager.clear();
+            }
         }
+
+
         return ingredientRepository.save(ingredient);
     }
 

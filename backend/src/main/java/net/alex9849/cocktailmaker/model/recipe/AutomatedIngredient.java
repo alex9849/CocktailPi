@@ -1,10 +1,13 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity()
+@DiscriminatorValue("AutomatedIngredient")
 public class AutomatedIngredient extends Ingredient {
 
     @NotNull

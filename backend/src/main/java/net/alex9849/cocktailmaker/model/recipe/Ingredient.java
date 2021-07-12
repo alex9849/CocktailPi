@@ -1,7 +1,5 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.Pump;
