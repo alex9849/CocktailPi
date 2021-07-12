@@ -32,7 +32,7 @@ public class IngredientRepository2 {
             }
             return results;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving ingredient", throwables);
+            throw new ServerErrorException("Error loading ingredient", throwables);
         }
     }
 
@@ -46,7 +46,7 @@ public class IngredientRepository2 {
             }
             return Optional.empty();
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving ingredient", throwables);
+            throw new ServerErrorException("Error loading ingredient", throwables);
         }
     }
 
