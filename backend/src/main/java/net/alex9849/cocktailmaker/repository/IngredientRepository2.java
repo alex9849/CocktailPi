@@ -10,6 +10,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class IngredientRepository2 {
@@ -19,10 +20,24 @@ public class IngredientRepository2 {
         this.dataSource = dataSource;
     }
 
+    public Optional<Ingredient> findByNameIgnoringCase(String name) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients WHERE lower(name) = lower(?)");
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error saving category", throwables);
+        }
+    }
+
     public Ingredient create(Ingredient ingredient) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcolhol_content, " +
-                    "unit, pump_time_multiplier, add_to_volume) VALUE (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier, add_to_volume) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
