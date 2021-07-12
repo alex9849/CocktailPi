@@ -44,7 +44,7 @@ public class CategoryRepository2 {
             }
             return result;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving category", throwables);
+            throw new ServerErrorException("Error loading category", throwables);
         }
     }
 
@@ -58,7 +58,7 @@ public class CategoryRepository2 {
             }
             return Optional.empty();
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving category", throwables);
+            throw new ServerErrorException("Error loading category", throwables);
         }
     }
 
@@ -69,7 +69,7 @@ public class CategoryRepository2 {
             pstmt.setLong(2, category.getId());
             return pstmt.executeUpdate() != 0;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving ingredient", throwables);
+            throw new ServerErrorException("Error updating category", throwables);
         }
     }
 
@@ -79,7 +79,7 @@ public class CategoryRepository2 {
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting ingredient", throwables);
+            throw new ServerErrorException("Error deleting category", throwables);
         }
     }
 

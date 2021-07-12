@@ -9,6 +9,8 @@ import org.springframework.web.server.ServerErrorException;
 import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +20,20 @@ public class IngredientRepository2 {
 
     public IngredientRepository2(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public List<Ingredient> findAll() {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients");
+            ResultSet rs = pstmt.executeQuery();
+            List<Ingredient> results = new ArrayList<>();
+            if (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error saving ingredient", throwables);
+        }
     }
 
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
@@ -30,7 +46,7 @@ public class IngredientRepository2 {
             }
             return Optional.empty();
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving category", throwables);
+            throw new ServerErrorException("Error saving ingredient", throwables);
         }
     }
 
@@ -85,7 +101,7 @@ public class IngredientRepository2 {
             pstmt.setLong(7, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving ingredient", throwables);
+            throw new ServerErrorException("Error updating ingredient", throwables);
         }
     }
 

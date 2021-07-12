@@ -30,6 +30,8 @@ public class Pump {
     @ManyToOne()
     private Ingredient currentIngredient;
 
+    private Long currentIngredientId;
+
     public Long getId() {
         return id;
     }
@@ -64,6 +66,14 @@ public class Pump {
 
     public Ingredient getCurrentIngredient() {
         return currentIngredient;
+    }
+
+    public Long getCurrentIngredientId() {
+        return currentIngredientId;
+    }
+
+    public void setCurrentIngredientId(Long currentIngredientId) {
+        this.currentIngredientId = currentIngredientId;
     }
 
     public void setCurrentIngredient(Ingredient currentIngredient) {
