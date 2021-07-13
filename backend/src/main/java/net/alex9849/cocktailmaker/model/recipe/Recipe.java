@@ -33,6 +33,8 @@ public class Recipe {
     @ManyToOne()
     private User owner;
 
+    private Long ownerId;
+
     @Lob() @Basic(fetch = FetchType.LAZY)
     private byte[] image;
 
@@ -126,6 +128,18 @@ public class Recipe {
 
     public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
         this.recipeIngredients = recipeIngredients;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public List<Category> getCategories() {
