@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
 
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +54,15 @@ public class RecipeRepository {
         }
     }
 
-    public List<Recipe> findRecipesByIds(long offset, long limit, RecipeOrderByField orderBy, Sort.Direction sortDirection, Long... ids) {
+    public Optional<Recipe> findById(long id) {
+        List<Recipe> foundList = this.findByIds(0, 1, RecipeOrderByField.NAME, Sort.Direction.ASC, id);
+        if(foundList.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(foundList.get(0));
+    }
+
+    public List<Recipe> findByIds(long offset, long limit, RecipeOrderByField orderBy, Sort.Direction sortDirection, Long... ids) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement(String.format("SELECT * FROM recipes where id IN ? ORDER BY %s %s LIMIT ? OFFSET ?", orderBy.toString().toLowerCase(), sortDirection));
             pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ids));
@@ -117,6 +125,73 @@ public class RecipeRepository {
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error updating recipe", throwables);
         }
+    }
+
+    public boolean delete(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("DELETE from recipes WHERE id = ?");
+            pstmt.setLong(1, id);
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error deleting recipe", throwables);
+        }
+    }
+
+    public Set<Long> getIdsInCategory(long categoryId) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
+                    "JOIN recipe_categories rc on r.id = rc.recipe_id WHERE rc.categories_id = ?");
+            pstmt.setLong(1, categoryId);
+            return getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe", throwables);
+        }
+
+    }
+
+    public Set<Long> getIdsContainingName(String name) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) LIKE '%' | lower(?) | '%'");
+            pstmt.setString(1, name);
+            return getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe", throwables);
+        }
+
+    }
+
+    public Set<Long> getIdsInPublic() {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where in_public = true");
+            return getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe", throwables);
+        }
+
+    }
+
+    public Set<Long> getIdsByOwnerId(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where owner_id = ?");
+            pstmt.setLong(1 , id);
+            return getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe", throwables);
+        }
+
+    }
+
+    /**
+     * @param pstmt needs to produce a resultset with exactly one numeric attribute
+     * @return a parsed set of longs
+     */
+    private Set<Long> getIds(PreparedStatement pstmt) throws SQLException {
+        ResultSet rs = pstmt.executeQuery();
+        Set<Long> results = new HashSet<>();
+        if (rs.next()) {
+            results.add(rs.getLong(1));
+        }
+        return results;
     }
 
     private Recipe populateEntity(Recipe recipe) {

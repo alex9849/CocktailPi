@@ -158,54 +158,6 @@ public class Recipe {
         return ingredientsInBar;
     }
 
-    public static class RecipeFilterNoFilter implements Specification<Recipe> {
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            return criteriaBuilder.and();
-        }
-    }
-
-    public static class RecipeFilterPublic implements Specification<Recipe> {
-        private boolean isPublic;
-
-        public RecipeFilterPublic(boolean isPublic) {
-            super();
-            this.isPublic = isPublic;
-        }
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            return criteriaBuilder.equal(root.get("inPublic"), isPublic);
-        }
-    }
-
-    public static class RecipeFilterOwnerId implements Specification<Recipe> {
-        private long userId;
-
-        public RecipeFilterOwnerId(long userId) {
-            this.userId = userId;
-        }
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            return criteriaBuilder.equal(root.get("owner").<String>get("id"), userId);
-        }
-    }
-
-    public static class RecipeFilterNameContain implements Specification<Recipe> {
-        String searchName;
-
-        public RecipeFilterNameContain(String searchName) {
-            this.searchName = searchName.toLowerCase();
-        }
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + searchName + "%");
-        }
-    }
-
     public static class RecipeFilterCurrentlyMakeable implements Specification<Recipe> {
 
         @Override
@@ -234,20 +186,6 @@ public class Recipe {
             return criteriaBuilder.in(root).value(subquery);
         }
 
-    }
-
-    public static class RecipeFilterCategory implements Specification<Recipe> {
-        private long categoryId;
-
-        public RecipeFilterCategory(long categoryId) {
-            this.categoryId = categoryId;
-        }
-
-        @Override
-        public Predicate toPredicate(Root<Recipe> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            Join<Recipe, Category> category = root.join("categories");
-            return criteriaBuilder.equal(category.get("id"), categoryId);
-        }
     }
 
     public static class RecipeFilterInBar implements Specification<Recipe> {

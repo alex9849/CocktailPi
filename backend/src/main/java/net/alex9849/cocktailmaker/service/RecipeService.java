@@ -1,11 +1,10 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredientId;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
+import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -35,27 +32,13 @@ public class RecipeService {
     IngredientService ingredientService;
 
     @Autowired
-    RecipeIngredientRepository recipeIngredientRepository;
-
-    @Autowired
     CategoryService categoryService;
-
-    @Autowired
-    EntityManager entityManager;
 
     public Recipe createRecipe(Recipe recipe) {
         if(userService.getUser(recipe.getOwner().getId()) == null) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
-        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
-            recipeIngredient.getId().setRecipeId(null);
-            if(!Objects.equals(recipeIngredient.getId().getIngredientId(), recipeIngredient.getIngredient().getId())) {
-                throw new IllegalArgumentException("Malformed RecipeIngredient!");
-            }
-            recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient().getId()));
-        }
-
-        return recipeRepository.save(recipe);
+        return recipeRepository.create(recipe);
     }
 
     public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, boolean isInBar, Integer startNumber, Integer pageSize, Sort sort) {
@@ -99,21 +82,12 @@ public class RecipeService {
         if(recipe.getOwner() != null) {
             recipe.setOwner(userService.getUser(recipe.getOwner().getId()));
         }
-        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
-            if(!Objects.equals(recipeIngredient.getId().getIngredientId(), recipeIngredient.getIngredient().getId())) {
-                throw new IllegalArgumentException("Malformed RecipeIngredient!");
-            }
-            recipeIngredient.setIngredient(entityManager.find(Ingredient.class, recipeIngredient.getIngredient().getId()));
-        }
-        recipeIngredientRepository.deleteAllByRecipeId(recipe.getId());
-        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
-            entityManager.merge(recipeIngredient);
-        }
-        return recipeRepository.save(recipe);
+        recipeRepository.update(recipe);
+        return recipe;
     }
 
     public void delete(long recipeId) {
-        recipeRepository.deleteById(recipeId);
+        recipeRepository.delete(recipeId);
     }
 
     public Recipe fromDto(RecipeDto recipeDto) {
@@ -143,12 +117,9 @@ public class RecipeService {
         RecipeIngredient recipeIngredient = new RecipeIngredient();
         BeanUtils.copyProperties(recipeIngredientDto, recipeIngredient);
         recipeIngredient.setIngredient(ingredientService.fromDto(recipeIngredientDto.getIngredient()));
-        recipeIngredient.setRecipe(recipe);
-        RecipeIngredientId recipeIngredientId = new RecipeIngredientId();
-        recipeIngredientId.setIngredientId(recipeIngredientDto.getIngredient().getId());
-        recipeIngredientId.setRecipeId(recipe.getId());
-        recipeIngredientId.setProductionStep(productionStep);
-        recipeIngredient.setId(recipeIngredientId);
+        recipeIngredient.setIngredientId(recipeIngredientDto.getIngredient().getId());
+        recipeIngredient.setRecipeId(recipe.getId());
+        recipeIngredient.setAmount(productionStep);
         return recipeIngredient;
     }
 }
