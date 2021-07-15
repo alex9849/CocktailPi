@@ -4,7 +4,6 @@ import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
-import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

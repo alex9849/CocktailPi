@@ -7,7 +7,6 @@ import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
-import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.hibernate.Session;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.Arrays;

@@ -2,7 +2,6 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
-import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

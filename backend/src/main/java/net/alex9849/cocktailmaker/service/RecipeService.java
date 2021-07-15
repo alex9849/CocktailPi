@@ -6,8 +6,6 @@ import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredientId;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
-import net.alex9849.cocktailmaker.repository.RecipeIngredientRepository;
-import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

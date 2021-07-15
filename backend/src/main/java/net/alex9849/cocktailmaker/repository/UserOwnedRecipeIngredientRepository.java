@@ -5,10 +5,10 @@ import org.springframework.web.server.ServerErrorException;
 import javax.sql.DataSource;
 import java.sql.*;
 
-public class UserOwnedRecipeIngredientRepository2 {
+public class UserOwnedRecipeIngredientRepository {
     private final DataSource dataSource;
 
-    public UserOwnedRecipeIngredientRepository2(DataSource dataSource) {
+    public UserOwnedRecipeIngredientRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
