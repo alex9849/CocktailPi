@@ -37,6 +37,22 @@ public class IngredientRepository2 {
         }
     }
 
+    public List<Ingredient> findOwnedByUser(long userId) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.* FROM ingredients i JOIN " +
+                    "user_owned_ingredients uo ON uo.ingredient_id = i.id WHERE uo.user_id = ?");
+            pstmt.setLong(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            List<Ingredient> results = new ArrayList<>();
+            if (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading ingredient", throwables);
+        }
+    }
+
     public List<Ingredient> findAll() {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients");
