@@ -22,6 +22,21 @@ public class IngredientRepository2 {
         this.dataSource = dataSource;
     }
 
+    public Optional<Ingredient> findById(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients WHERE id = ?");
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            List<Ingredient> results = new ArrayList<>();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading ingredient", throwables);
+        }
+    }
+
     public List<Ingredient> findAll() {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients");

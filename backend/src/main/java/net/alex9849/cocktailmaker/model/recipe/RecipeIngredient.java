@@ -1,42 +1,15 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-
-@Entity
-@Table(name = "recipe_ingredients")
 public class RecipeIngredient {
 
-    @EmbeddedId
-    private RecipeIngredientId id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("RecipeId")
-    @JoinColumn(name = "recipe_id")
-    private Recipe recipe;
-
-    @ManyToOne()
-    @MapsId("IngredientId")
-    @JoinColumn(name = "ingredient_id")
+    private Long recipeId;
+    private Long ingredientId;
+    private Long productionStep;
     private Ingredient ingredient;
-
-    @Min(1)
     private int amount;
 
-    public RecipeIngredientId getId() {
-        return id;
-    }
-
-    public void setId(RecipeIngredientId id) {
-        this.id = id;
-    }
-
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(Recipe recipe) {
-        this.recipe = recipe;
+    public Long getRecipeId() {
+        return recipeId;
     }
 
     public Ingredient getIngredient() {
@@ -47,18 +20,30 @@ public class RecipeIngredient {
         this.ingredient = ingredient;
     }
 
-    /**
-     *
-     * @return amount in ml
-     */
+    public void setRecipeId(Long recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public Long getIngredientId() {
+        return ingredientId;
+    }
+
+    public void setIngredientId(Long ingredientId) {
+        this.ingredientId = ingredientId;
+    }
+
+    public Long getProductionStep() {
+        return productionStep;
+    }
+
+    public void setProductionStep(Long productionStep) {
+        this.productionStep = productionStep;
+    }
+
     public int getAmount() {
         return amount;
     }
 
-    /**
-     *
-     * @param amount in ml
-     */
     public void setAmount(int amount) {
         this.amount = amount;
     }

@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
@@ -9,10 +11,17 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeRepository2 {
     private final DataSource dataSource;
+
+    @Autowired
+    private RecipeIngredientRepository2 recipeIngredientRepository2;
+
+    @Autowired
+    private IngredientRepository2 ingredientRepository2;
 
     public RecipeRepository2(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -39,7 +48,7 @@ public class RecipeRepository2 {
             if (rs.next()) {
                 results.add(parseRs(rs));
             }
-            return results;
+            return results.stream().map(this::populateEntity).collect(Collectors.toList());
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error loading recipe", throwables);
         }
@@ -56,7 +65,7 @@ public class RecipeRepository2 {
             if (rs.next()) {
                 results.add(parseRs(rs));
             }
-            return results;
+            return results.stream().map(this::populateEntity).collect(Collectors.toList());
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error loading recipe", throwables);
         }
@@ -76,6 +85,10 @@ public class RecipeRepository2 {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
+                for(RecipeIngredient ri : recipe.getRecipeIngredients()) {
+                    ri.setRecipeId(recipe.getId());
+                    recipeIngredientRepository2.create(ri);
+                }
                 return recipe;
             }
             throw new IllegalStateException("Error saving recipe");
@@ -95,10 +108,24 @@ public class RecipeRepository2 {
             pstmt.setDate(5, new Date(System.currentTimeMillis()));
             pstmt.setLong(6, recipe.getOwnerId());
             pstmt.setLong(7, recipe.getId());
+            recipeIngredientRepository2.deleteByRecipe(recipe.getId());
+            for(RecipeIngredient ri : recipe.getRecipeIngredients()) {
+                ri.setRecipeId(recipe.getId());
+                recipeIngredientRepository2.create(ri);
+            }
             return pstmt.executeUpdate() != 0;
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error updating recipe", throwables);
         }
+    }
+
+    private Recipe populateEntity(Recipe recipe) {
+        recipe.setRecipeIngredients(recipeIngredientRepository2.loadByRecipeId(recipe.getId()));
+        for(RecipeIngredient ri : recipe.getRecipeIngredients()) {
+            //Always non null, because of DB constraints
+            ri.setIngredient(ingredientRepository2.findById(ri.getIngredientId()).get());
+        }
+        return recipe;
     }
 
     private Recipe parseRs(ResultSet rs) throws SQLException {

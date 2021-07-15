@@ -75,6 +75,16 @@ public class UserRepository2 {
         }
     }
 
+    public boolean delete(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM users WHERE id = ?");
+            pstmt.setLong(1, id);
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error deleting user", throwables);
+        }
+    }
+
     public User create(User user) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO users (email, username, firstname, " +
