@@ -55,16 +55,32 @@ public class RecipeRepository {
     }
 
     public Optional<Recipe> findById(long id) {
-        List<Recipe> foundList = this.findByIds(0, 1, RecipeOrderByField.NAME, Sort.Direction.ASC, id);
+        List<Recipe> foundList = this.findByIds(0, 1, Sort.by(Sort.Direction.ASC, "name"), id);
         if(foundList.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(foundList.get(0));
     }
 
-    public List<Recipe> findByIds(long offset, long limit, RecipeOrderByField orderBy, Sort.Direction sortDirection, Long... ids) {
+    public List<Recipe> findByIds(long offset, long limit, Sort sort, Long... ids) {
+        StringBuilder sortSql = new StringBuilder("");
+        boolean isSortFirst = false;
+        for(Sort.Order order : sort) {
+            if(isSortFirst) {
+                isSortFirst = true;
+                sortSql.append("ORDER BY ")
+                        .append(order.getProperty())
+                        .append(" ")
+                        .append(order.getDirection().name());
+            } else {
+                sortSql.append(", ")
+                        .append(order.getProperty())
+                        .append(" ")
+                        .append(order.getDirection().name());
+            }
+        }
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement(String.format("SELECT * FROM recipes where id IN ? ORDER BY %s %s LIMIT ? OFFSET ?", orderBy.toString().toLowerCase(), sortDirection));
+            PreparedStatement pstmt = con.prepareStatement(String.format("SELECT * FROM recipes where id IN ? " + sortSql + " LIMIT ? OFFSET ?"));
             pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ids));
             pstmt.setLong(2, limit);
             pstmt.setLong(3, offset);
@@ -146,7 +162,18 @@ public class RecipeRepository {
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error loading recipe", throwables);
         }
+    }
 
+    public Set<Long> getIdsWithIngredients(Long... ingredientIds) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
+                    "JOIN recipe_ingredients ri on r.id = ri.recipe_id " +
+                    "WHERE ri.ingredient_id IN ?");
+            pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ingredientIds));
+            return getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe", throwables);
+        }
     }
 
     public Set<Long> getIdsContainingName(String name) {
@@ -213,9 +240,5 @@ public class RecipeRepository {
         recipe.setInPublic(rs.getBoolean("in_public"));
         recipe.setLastUpdate(rs.getDate("last_update"));
         return recipe;
-    }
-
-    public enum RecipeOrderByField {
-        AUTHOR, LAST_UPDATE, NAME
     }
 }

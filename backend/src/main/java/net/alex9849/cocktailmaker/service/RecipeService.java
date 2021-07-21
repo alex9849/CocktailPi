@@ -9,12 +9,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -41,34 +43,44 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, boolean isInBar, Integer startNumber, Integer pageSize, Sort sort) {
-        Specification<Recipe> spec = new Recipe.RecipeFilterNoFilter();
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, boolean isInBar, int startNumber, int pageSize, Sort sort) {
+        List<Set<Long>> idsToFind = new ArrayList<>();
 
         if(inPublic != null) {
-            spec = spec.and(new Recipe.RecipeFilterPublic(inPublic));
+            idsToFind.add(recipeRepository.getIdsInPublic());
         }
         if(inCategory != null) {
-            spec = spec.and(new Recipe.RecipeFilterCategory(inCategory));
+            idsToFind.add(recipeRepository.getIdsInCategory(inCategory));
         }
         if(ownerId != null) {
-            spec = spec.and(new Recipe.RecipeFilterOwnerId(ownerId));
+            idsToFind.add(recipeRepository.getIdsByOwnerId(ownerId));
         }
         if(containsIngredients != null) {
-            spec = spec.and(new Recipe.RecipeFilterContainsIngredients(containsIngredients));
+            idsToFind.add(recipeRepository.getIdsWithIngredients(containsIngredients));
         }
         if(searchName != null) {
-            spec = spec.and(new Recipe.RecipeFilterNameContain(searchName));
+            idsToFind.add(recipeRepository.getIdsContainingName(searchName));
         }
         if(isFabricable) {
-            spec = spec.and(new Recipe.RecipeFilterCurrentlyMakeable());
+            //TODO
+            //spec = spec.and(new Recipe.RecipeFilterCurrentlyMakeable());
         }
         if(isInBar) {
-            spec = spec.and(new Recipe.RecipeFilterInBar());
+            //TODO
+            //spec = spec.and(new Recipe.RecipeFilterInBar());
         }
-        if(startNumber != null && pageSize != null) {
-            return recipeRepository.findAll(spec, PageRequest.of(startNumber, pageSize, sort));
+        Set<Long> retained = null;
+        for(Set<Long> current : idsToFind) {
+            if(retained == null) {
+                retained = current;
+                continue;
+            }
+            retained.retainAll(current);
         }
-        return new PageImpl<>(recipeRepository.findAll(spec, sort));
+        if(retained.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList());
+        }
+        return new PageImpl<>(recipeRepository.findByIds(startNumber, pageSize, sort, retained.toArray(new Long[1])));
     }
 
     public Recipe getById(long id) {
@@ -78,9 +90,6 @@ public class RecipeService {
     public Recipe updateRecipe(Recipe recipe) {
         if(!recipeRepository.findById(recipe.getId()).isPresent()) {
             throw new IllegalArgumentException("Recipe doesn't exist!");
-        }
-        if(recipe.getOwner() != null) {
-            recipe.setOwner(userService.getUser(recipe.getOwner().getId()));
         }
         recipeRepository.update(recipe);
         return recipe;
