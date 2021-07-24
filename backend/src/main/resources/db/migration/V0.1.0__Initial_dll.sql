@@ -1,5 +1,6 @@
 create sequence hibernate_sequence start 1 increment 1;
 
+
 create table users (
                        id bigserial not null,
                        email varchar(50) unique,

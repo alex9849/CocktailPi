@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.repository;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ServerErrorException;
 
 import javax.persistence.DiscriminatorValue;
@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
-@Service
+@Repository
 public class IngredientRepository {
     private final DataSource dataSource;
 

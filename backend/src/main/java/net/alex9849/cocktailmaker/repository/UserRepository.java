@@ -2,25 +2,31 @@ package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ServerErrorException;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class UserRepository {
-    private final DataSource dataSource;
+@Repository
+public class UserRepository extends JdbcDaoSupport {
+    @Autowired
+    private DataSource dataSource;
 
-    public UserRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    private void initialize() {
+        setDataSource(dataSource);
     }
 
     public Optional<User> findById(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE id = ?");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -34,7 +40,7 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String email) {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE lower(email) = lower(?)");
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
@@ -48,7 +54,7 @@ public class UserRepository {
     }
 
     public Optional<User> findByUsernameIgnoringCase(String username) {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE lower(username) = lower(?)");
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
@@ -62,7 +68,7 @@ public class UserRepository {
     }
 
     public List<User> findAll() {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users");
             pstmt.executeQuery();
             ResultSet rs = pstmt.getResultSet();
@@ -77,7 +83,7 @@ public class UserRepository {
     }
 
     public boolean delete(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM users WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
@@ -87,7 +93,7 @@ public class UserRepository {
     }
 
     public User create(User user) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<User>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO users (email, username, firstname, " +
                     "lastname, password, is_account_non_locked, role) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, user.getEmail());
@@ -105,13 +111,11 @@ public class UserRepository {
                 return user;
             }
             throw new IllegalStateException("Error saving user");
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving user", throwables);
-        }
+        });
     }
 
     public boolean update(User user) {
-        try(Connection con = dataSource.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("UPDATE users SET email = ?, username = ?, " +
                     "firstname = ?, lastname = ?, password = ?, is_account_non_locked = ?, role = ? WHERE id = ?");
             pstmt.setString(1, user.getEmail());

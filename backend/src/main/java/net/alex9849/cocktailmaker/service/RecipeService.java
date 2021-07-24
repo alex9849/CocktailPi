@@ -87,6 +87,14 @@ public class RecipeService {
         return recipeRepository.findById(id).orElse(null);
     }
 
+    public byte[] getImage(long recipeId) {
+        return recipeRepository.getImage(recipeId).orElse(null);
+    }
+
+    public boolean setImage(long recipeId, byte[] image) {
+        return recipeRepository.setImage(recipeId, image);
+    }
+
     public Recipe updateRecipe(Recipe recipe) {
         if(!recipeRepository.findById(recipe.getId()).isPresent()) {
             throw new IllegalArgumentException("Recipe doesn't exist!");

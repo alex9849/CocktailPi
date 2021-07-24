@@ -104,6 +104,7 @@ public class RecipeEndpoint {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
         recipe.setOwner(userService.getUser(principal.getId()));
+        recipe = recipeService.createRecipe(recipe);
         if (file != null) {
             BufferedImage image;
             try {
@@ -114,9 +115,8 @@ public class RecipeEndpoint {
             image = ImageUtils.resizeImage(image, 1000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
-            recipe.setImage(out.toByteArray());
+            recipeService.setImage(recipe.getId(), out.toByteArray());
         }
-        recipe = recipeService.createRecipe(recipe);
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
     }
@@ -139,8 +139,9 @@ public class RecipeEndpoint {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        recipeService.updateRecipe(recipe);
         if (removeImage) {
-            recipe.setImage(null);
+            recipeService.setImage(recipe.getId(), null);
         } else if (file != null) {
             BufferedImage image;
             try {
@@ -151,22 +152,18 @@ public class RecipeEndpoint {
             image = ImageUtils.resizeImage(image, 1000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
-            recipe.setImage(out.toByteArray());
-        } else {
-            recipe.setImage(oldRecipe.getImage());
+            recipeService.setImage(recipe.getId(), out.toByteArray());
         }
-
-        recipeService.updateRecipe(recipe);
         return ResponseEntity.ok().build();
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
-        Recipe recipe = recipeService.getById(id);
-        if (recipe == null) {
+        byte[] image = recipeService.getImage(id);
+        if(image == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(recipe.getImage());
+        return ResponseEntity.ok(image);
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")

@@ -2,9 +2,12 @@ package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import org.postgresql.PGConnection;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ServerErrorException;
 
 import javax.sql.DataSource;
@@ -15,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+@Repository
 public class RecipeRepository {
     private final DataSource dataSource;
 
@@ -110,14 +113,13 @@ public class RecipeRepository {
 
     public Recipe create(Recipe recipe) {
         try (Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, image, in_public, last_update, owner_id) " +
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, owner_id) " +
                     "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
-            pstmt.setBytes(3, recipe.getImage());
-            pstmt.setBoolean(4, recipe.isInPublic());
-            pstmt.setDate(5, new Date(System.currentTimeMillis()));
-            pstmt.setLong(6, recipe.getOwnerId());
+            pstmt.setBoolean(3, recipe.isInPublic());
+            pstmt.setDate(4, new Date(System.currentTimeMillis()));
+            pstmt.setLong(5, recipe.getOwnerId());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -137,14 +139,13 @@ public class RecipeRepository {
     public boolean update(Recipe recipe) {
         try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
-                    "description = ?, image = ?, in_public = ?, last_update = ?, owner_id = ? WHERE id = ?");
+                    "description = ?, in_public = ?, last_update = ?, owner_id = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
-            pstmt.setBytes(3, recipe.getImage());
-            pstmt.setBoolean(4, recipe.isInPublic());
-            pstmt.setDate(5, new Date(System.currentTimeMillis()));
-            pstmt.setLong(6, recipe.getOwnerId());
-            pstmt.setLong(7, recipe.getId());
+            pstmt.setBoolean(3, recipe.isInPublic());
+            pstmt.setDate(4, new Date(System.currentTimeMillis()));
+            pstmt.setLong(5, recipe.getOwnerId());
+            pstmt.setLong(6, recipe.getId());
             recipeIngredientRepository.deleteByRecipe(recipe.getId());
             for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
                 ri.setRecipeId(recipe.getId());
@@ -221,6 +222,40 @@ public class RecipeRepository {
 
     }
 
+    public Optional<byte[]> getImage(long recipeId) {
+        try (Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ?");
+            pstmt.setLong(1, recipeId);
+            ResultSet resultSet = pstmt.executeQuery();
+            if(resultSet.next()) {
+                Long imageOid = resultSet.getObject("image", Long.class);
+                if(imageOid == null) {
+                    return Optional.empty();
+                }
+                con.setAutoCommit(false);
+                LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
+                LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
+                byte buf[] = new byte[imageLob.size()];
+                imageLob.read(buf, 0 , buf.length);
+                return Optional.of(buf);
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe image", throwables);
+        }
+    }
+
+    public boolean setImage(long recipeId, byte[] image) {
+        try (Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET image = ? where id = ?");
+            pstmt.setBytes(1, image);
+            pstmt.setLong(2, recipeId);
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading recipe image", throwables);
+        }
+    }
+
     public Set<Long> getIdsOfFabricableRecipes() {
         try (Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes r " +
@@ -263,7 +298,6 @@ public class RecipeRepository {
         recipe.setOwnerId(rs.getLong("owner_id"));
         recipe.setId(rs.getLong("id"));
         recipe.setDescription(rs.getString("description"));
-        recipe.setImage(rs.getBytes("image"));
         recipe.setName(rs.getString("name"));
         recipe.setInPublic(rs.getBoolean("in_public"));
         recipe.setLastUpdate(rs.getDate("last_update"));

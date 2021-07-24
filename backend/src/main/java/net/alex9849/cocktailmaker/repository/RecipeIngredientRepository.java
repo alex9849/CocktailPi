@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ServerErrorException;
 
 import javax.sql.DataSource;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Repository
 class RecipeIngredientRepository {
     private final DataSource dataSource;
 

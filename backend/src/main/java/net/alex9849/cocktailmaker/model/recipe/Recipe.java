@@ -12,7 +12,6 @@ public class Recipe {
     private boolean inPublic;
     private User owner;
     private Long ownerId;
-    private byte[] image;
     private String description;
     private Date lastUpdate;
     private List<RecipeIngredient> recipeIngredients;
@@ -24,14 +23,6 @@ public class Recipe {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
     }
 
     public String getName() {
