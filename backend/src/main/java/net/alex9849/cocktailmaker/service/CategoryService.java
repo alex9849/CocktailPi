@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
+import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,28 +27,28 @@ public class CategoryService {
     }
 
     public Category createCategory(Category category) {
-        if(categoryRepository.findAllByNameIgnoringCase(category.getName()).isPresent()) {
+        if(categoryRepository.findByNameIgnoringCase(category.getName()).isPresent()) {
             throw new IllegalArgumentException("Category already exists!");
         }
-        category.setId(null);
-        return categoryRepository.save(category);
+        return categoryRepository.create(category);
     }
 
     public Category updateCategory(Category category) {
         if(!categoryRepository.findById(category.getId()).isPresent()) {
             throw new IllegalArgumentException("Category doesn't exist!");
         }
-        Optional<Category> categoryOptional = categoryRepository.findAllByNameIgnoringCase(category.getName());
+        Optional<Category> categoryOptional = categoryRepository.findByNameIgnoringCase(category.getName());
         if(categoryOptional.isPresent()
-                && !categoryOptional.get().getId().equals(category.getId())
+                && !(categoryOptional.get().getId() == category.getId())
                 && categoryOptional.get().getName().equalsIgnoreCase(category.getName())) {
             throw new IllegalArgumentException("Category with this name already exists!");
         }
-        return categoryRepository.save(category);
+        categoryRepository.update(category);
+        return category;
     }
 
     public void deleteCategory(long categoryId) {
-        categoryRepository.deleteById(categoryId);
+        categoryRepository.delete(categoryId);
     }
 
     public Category fromDto(CategoryDto categoryDto) {

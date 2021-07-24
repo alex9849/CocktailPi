@@ -62,6 +62,20 @@ public class CategoryRepository {
         }
     }
 
+    public Optional<Category> findById(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories WHERE id = ?");
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading category", throwables);
+        }
+    }
+
     public boolean update(Category category) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("UPDATE categories SET name = ? WHERE id = ?");
