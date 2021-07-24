@@ -28,7 +28,7 @@ create table ingredients (
 );
 
 create table user_owned_ingredients (
-    user_id bigserial NOT NULL references users(id),
+    user_id bigserial NOT NULL references users(id) on delete cascade,
     ingredient_id bigserial NOT NULL references ingredients(id) on delete cascade,
     primary key (user_id, ingredient_id)
 );
@@ -41,7 +41,7 @@ create table pumps (
                            ),
                        time_per_cl_in_ms int4 not null check (time_per_cl_in_ms >= 1),
                        tube_capacity_in_ml int4 not null check (tube_capacity_in_ml >= 1),
-                       current_ingredient_id int8 references ingredients,
+                       current_ingredient_id int8 references ingredients on delete set null,
                        primary key (id)
 );
 
@@ -73,7 +73,7 @@ create table categories
     primary key (id)
 );
 
-CREATE TABLE public.recipe_categories
+CREATE TABLE recipe_categories
 (
     recipe_id int8 not null references recipes,
     categories_id int8 not null references categories on delete cascade,
