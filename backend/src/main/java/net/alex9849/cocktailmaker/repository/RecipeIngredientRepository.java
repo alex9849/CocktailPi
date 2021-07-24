@@ -1,11 +1,13 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ServerErrorException;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,15 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-class RecipeIngredientRepository {
-    private final DataSource dataSource;
+class RecipeIngredientRepository extends JdbcDaoSupport {
+    @Autowired
+    private DataSource dataSource;
 
-    public RecipeIngredientRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    private void initialize() {
+        setDataSource(dataSource);
     }
 
     public List<RecipeIngredient> loadByRecipeId(long recipeId) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<RecipeIngredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM recipe_ingredients where recipe_id = ?");
             pstmt.setLong(1, recipeId);
             ResultSet rs = pstmt.executeQuery();
@@ -30,23 +34,19 @@ class RecipeIngredientRepository {
                 results.add(parseRs(rs));
             }
             return results;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading recipeIngredient", throwables);
-        }
+        });
     }
 
     public boolean deleteByRecipe(long recipeId) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM recipe_ingredients WHERE recipe_id = ?");
             pstmt.setLong(1, recipeId);
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting recipeIngredients", throwables);
-        }
+        });
     }
 
     public RecipeIngredient create(RecipeIngredient recipeIngredient) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<RecipeIngredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount) " +
                     "VALUES (?, ?, ?, ?)");
             pstmt.setLong(1, recipeIngredient.getIngredientId());
@@ -57,9 +57,7 @@ class RecipeIngredientRepository {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             return recipeIngredient;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving recipeIngredient", throwables);
-        }
+        });
     }
 
     private RecipeIngredient parseRs(ResultSet rs) throws SQLException {

@@ -1,25 +1,33 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ServerErrorException;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CategoryRepository {
-    private final DataSource dataSource;
+public class CategoryRepository extends JdbcDaoSupport {
+    @Autowired
+    private DataSource dataSource;
 
-    public CategoryRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    private void initialize() {
+        setDataSource(dataSource);
     }
 
     public Category create(Category category) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Category>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO categories (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, category.getName());
             pstmt.execute();
@@ -29,13 +37,11 @@ public class CategoryRepository {
                 return category;
             }
             throw new IllegalStateException("Error saving category");
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving category", throwables);
-        }
+        });
     }
 
     public List<Category> findAll() {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Category>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories");
             ResultSet rs = pstmt.executeQuery();
             List<Category> result = new ArrayList<>();
@@ -43,13 +49,11 @@ public class CategoryRepository {
                 result.add(parseRs(rs));
             }
             return result;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading category", throwables);
-        }
+        });
     }
 
     public Optional<Category> findByNameIgnoringCase(String name) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Category>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories WHERE lower(name) = lower(?)");
             pstmt.setString(1, name);
             ResultSet rs = pstmt.executeQuery();
@@ -57,13 +61,11 @@ public class CategoryRepository {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading category", throwables);
-        }
+        });
     }
 
     public List<Category> findByRecipeId(long recipeId) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Category>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT c.* FROM categories c " +
                     "join recipe_categories rc on c.id = rc.categories_id where rc.recipe_id = ?");
             pstmt.setLong(1, recipeId);
@@ -73,13 +75,11 @@ public class CategoryRepository {
                 result.add(parseRs(rs));
             }
             return result;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading category", throwables);
-        }
+        });
     }
 
     public Optional<Category> findById(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Category>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories WHERE id = ?");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -87,30 +87,24 @@ public class CategoryRepository {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading category", throwables);
-        }
+        });
     }
 
     public boolean update(Category category) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE categories SET name = ? WHERE id = ?");
             pstmt.setString(1, category.getName());
             pstmt.setLong(2, category.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error updating category", throwables);
-        }
+        });
     }
 
     public boolean delete(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM categories WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting category", throwables);
-        }
+        });
     }
 
     private Category parseRs(ResultSet rs) throws SQLException {

@@ -1,25 +1,33 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Pump;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ServerErrorException;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class PumpRepository {
-    private final DataSource dataSource;
+public class PumpRepository extends JdbcDaoSupport {
+    @Autowired
+    private DataSource dataSource;
 
-    public PumpRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    private void initialize() {
+        setDataSource(dataSource);
     }
 
     public Pump create(Pump pump) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (gpio_pin, time_per_cl_in_ms, " +
                     "tube_capacity_in_ml, current_ingredient_id) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, pump.getGpioPin());
@@ -33,13 +41,11 @@ public class PumpRepository {
                 return pump;
             }
             throw new IllegalStateException("Error saving pump");
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving pump", throwables);
-        }
+        });
     }
 
     public boolean update(Pump pump) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET gpio_pin = ?, time_per_cl_in_ms = ?, " +
                     "tube_capacity_in_ml = ?, current_ingredient_id = ? WHERE id = ?");
             pstmt.setInt(1, pump.getGpioPin());
@@ -48,13 +54,11 @@ public class PumpRepository {
             pstmt.setLong(4, pump.getCurrentIngredientId());
             pstmt.setLong(5, pump.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error updating pump", throwables);
-        }
+        });
     }
 
     public List<Pump> findAll() {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Pump>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps");
             ResultSet rs = pstmt.executeQuery();
             List<Pump> results = new ArrayList<>();
@@ -62,13 +66,11 @@ public class PumpRepository {
                 results.add(parseRs(rs));
             }
             return results;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving pump", throwables);
-        }
+        });
     }
 
     public Optional<Pump> findByGpioPin(int gpioPin) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where gpio_pin = ?");
             pstmt.setInt(1, gpioPin);
             ResultSet rs = pstmt.executeQuery();
@@ -76,13 +78,11 @@ public class PumpRepository {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading pump", throwables);
-        }
+        });
     }
 
     public Optional<Pump> findById(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where id = ?");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -90,19 +90,15 @@ public class PumpRepository {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading pump", throwables);
-        }
+        });
     }
 
     public boolean delete(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE from pumps WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting pump", throwables);
-        }
+        });
     }
 
     private Pump parseRs(ResultSet rs) throws SQLException {

@@ -14,7 +14,7 @@ class DbUtils {
      * @param pstmt needs to produce a resultset with exactly one numeric attribute
      * @return a parsed set of longs
      */
-    static Set<Long> getIds(PreparedStatement pstmt) throws SQLException {
+    static Set<Long> executeGetIdsPstmt(PreparedStatement pstmt) throws SQLException {
         ResultSet rs = pstmt.executeQuery();
         Set<Long> results = new HashSet<>();
         while (rs.next()) {

@@ -3,27 +3,32 @@ package net.alex9849.cocktailmaker.repository;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ServerErrorException;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
 @Repository
-public class IngredientRepository {
-    private final DataSource dataSource;
+public class IngredientRepository extends JdbcDaoSupport {
+    @Autowired
+    private DataSource dataSource;
 
-    public IngredientRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    private void initialize() {
+        setDataSource(dataSource);
     }
 
     public List<Ingredient> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();
         }
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i " +
                     "WHERE i.id = ANY(?) order by i.name");
 
@@ -34,9 +39,7 @@ public class IngredientRepository {
                 results.add(parseRs(rs));
             }
             return results;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredients", throwables);
-        }
+        });
     }
 
     public Optional<Ingredient> findById(long id) {
@@ -48,7 +51,7 @@ public class IngredientRepository {
     }
 
     public List<Ingredient> findAll() {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
@@ -56,34 +59,28 @@ public class IngredientRepository {
                 results.add(parseRs(rs));
             }
             return results;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
-        }
+        });
     }
 
     public Set<Long> findIdsOwnedByUser(long userId) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i JOIN " +
                     "user_owned_ingredients uo ON uo.ingredient_id = i.id WHERE uo.user_id = ?");
             pstmt.setLong(1, userId);
-            return DbUtils.getIds(pstmt);
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
-        }
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
     }
 
     public Set<Long> findIdsAutocompleteName(String toAutocomplete) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) LIKE ('%' || lower(?) || '%')");
             pstmt.setString(1, toAutocomplete);
-            return DbUtils.getIds(pstmt);
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
-        }
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
     }
 
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
             pstmt.setString(1, name);
             pstmt.execute();
@@ -92,13 +89,11 @@ public class IngredientRepository {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
-        }
+        });
     }
 
     public Ingredient create(Ingredient ingredient) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcolhol_content, " +
                     "unit, pump_time_multiplier, add_to_volume) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
@@ -122,13 +117,11 @@ public class IngredientRepository {
                 return ingredient;
             }
             throw new IllegalStateException("Error saving ingredient");
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error saving ingredient", throwables);
-        }
+        });
     }
 
     public boolean update(Ingredient ingredient) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcolhol_content = ?, " +
                     "unit = ?, pump_time_multiplier = ?, add_to_volume = ? WHERE id = ?");
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
@@ -147,19 +140,15 @@ public class IngredientRepository {
             }
             pstmt.setLong(7, ingredient.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error updating ingredient", throwables);
-        }
+        });
     }
 
     public boolean delete(long id) {
-        try(Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE from ingredients WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting ingredient", throwables);
-        }
+        });
     }
 
     private Ingredient parseRs(ResultSet resultSet) throws SQLException {
