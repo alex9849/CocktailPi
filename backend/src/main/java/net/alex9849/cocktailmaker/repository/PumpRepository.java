@@ -58,7 +58,7 @@ public class PumpRepository {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps");
             ResultSet rs = pstmt.executeQuery();
             List<Pump> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;

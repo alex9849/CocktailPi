@@ -108,7 +108,6 @@ public class IngredientService {
     }
 
     public Ingredient createIngredient(Ingredient ingredient) {
-        ingredient.setId(null);
         Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
         if(optionalIngredient.isPresent()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");

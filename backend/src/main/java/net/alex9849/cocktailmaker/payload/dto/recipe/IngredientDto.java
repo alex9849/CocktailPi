@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
         @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automated")
 })
 public abstract class IngredientDto {
-    private Long id;
+    private long id;
 
     @NotNull
     @Size(min = 1, max = 30)
@@ -33,11 +33,11 @@ public abstract class IngredientDto {
         BeanUtils.copyProperties(ingredient, this);
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

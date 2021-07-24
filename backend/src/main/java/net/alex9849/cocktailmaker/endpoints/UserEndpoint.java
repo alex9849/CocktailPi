@@ -57,7 +57,7 @@ public class UserEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            if(principal.getId().equals(userId)) {
+            if(principal.getId() == userId) {
                 if(updateUser.getAuthority() != beforeUpdate.getAuthority()) {
                     throw new IllegalArgumentException("You can't edit your own role!");
                 }
@@ -83,7 +83,7 @@ public class UserEndpoint {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getId().equals(userId)) {
+        if(principal.getId() == userId) {
             throw new IllegalArgumentException("You can't delete yourself!");
         }
         if(userService.getUser(userId) == null) {

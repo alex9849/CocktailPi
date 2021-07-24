@@ -42,7 +42,6 @@ public class IngredientEndpoint {
     @RequestMapping(value = "", method = RequestMethod.POST)
     ResponseEntity<?> createIngredient(@Valid @RequestBody IngredientDto ingredientDto, UriComponentsBuilder uriBuilder) {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
-        ingredient.setId(null);
         ingredient = ingredientService.createIngredient(ingredient);
         UriComponents uriComponents = uriBuilder.path("/api/ingredient/{id}").buildAndExpand(ingredient.getId());
         return ResponseEntity.ok(uriComponents.toUri());

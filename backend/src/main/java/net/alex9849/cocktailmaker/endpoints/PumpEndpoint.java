@@ -31,7 +31,6 @@ public class PumpEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto pumpDto, UriComponentsBuilder uriBuilder) {
-        pumpDto.setId(null);
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();

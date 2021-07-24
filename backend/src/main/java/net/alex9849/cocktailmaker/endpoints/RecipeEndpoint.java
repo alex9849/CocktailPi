@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,7 +52,7 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "page") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!principal.getId().equals(ownerId) && (inPublic == null || !inPublic)) {
+        if (!Objects.equals(principal.getId(), ownerId) && (inPublic == null || !inPublic)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
@@ -90,7 +91,7 @@ public class RecipeEndpoint {
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if (!recipe.getOwner().getId().equals(principal.getId()) && !recipe.isInPublic()) {
+        if (recipe.getOwner().getId() != principal.getId() && !recipe.isInPublic()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(new RecipeDto(recipe));
@@ -100,7 +101,6 @@ public class RecipeEndpoint {
     @RequestMapping(path = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
-        recipeDto.setId(null);
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
         recipe.setOwner(userService.getUser(principal.getId()));
@@ -135,7 +135,7 @@ public class RecipeEndpoint {
             return ResponseEntity.notFound().build();
         }
         recipe.setOwner(oldRecipe.getOwner());
-        if (!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+        if (recipe.getOwner().getId() != principal.getId() && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -177,7 +177,7 @@ public class RecipeEndpoint {
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if (!recipe.getOwner().getId().equals(principal.getId()) && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+        if (recipe.getOwner().getId() != principal.getId() && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         recipeService.delete(id);

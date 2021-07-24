@@ -2,13 +2,13 @@ package net.alex9849.cocktailmaker.model.recipe;
 
 public class RecipeIngredient {
 
-    private Long recipeId;
-    private Long ingredientId;
-    private Long productionStep;
+    private long recipeId;
+    private long ingredientId;
+    private long productionStep;
     private Ingredient ingredient;
     private int amount;
 
-    public Long getRecipeId() {
+    public long getRecipeId() {
         return recipeId;
     }
 
@@ -20,23 +20,23 @@ public class RecipeIngredient {
         this.ingredient = ingredient;
     }
 
-    public void setRecipeId(Long recipeId) {
+    public void setRecipeId(long recipeId) {
         this.recipeId = recipeId;
     }
 
-    public Long getIngredientId() {
+    public long getIngredientId() {
         return ingredientId;
     }
 
-    public void setIngredientId(Long ingredientId) {
+    public void setIngredientId(long ingredientId) {
         this.ingredientId = ingredientId;
     }
 
-    public Long getProductionStep() {
+    public long getProductionStep() {
         return productionStep;
     }
 
-    public void setProductionStep(Long productionStep) {
+    public void setProductionStep(long productionStep) {
         this.productionStep = productionStep;
     }
 

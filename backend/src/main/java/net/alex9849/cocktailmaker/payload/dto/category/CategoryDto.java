@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 public class CategoryDto {
 
-    private Long id;
+    private long id;
 
     @NotNull
     @Size(min = 1, max = 15)
@@ -20,11 +20,11 @@ public class CategoryDto {
         BeanUtils.copyProperties(category, this);
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

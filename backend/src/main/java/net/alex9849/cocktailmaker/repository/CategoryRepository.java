@@ -62,12 +62,28 @@ public class CategoryRepository {
         }
     }
 
+    public List<Category> findByRecipeId(long recipeId) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT c.* FROM categories c " +
+                    "join recipe_categories rc on c.id = rc.categories_id where rc.recipe_id = ?");
+            pstmt.setLong(1, recipeId);
+            ResultSet rs = pstmt.executeQuery();
+            List<Category> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(parseRs(rs));
+            }
+            return result;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading category", throwables);
+        }
+    }
+
     public Optional<Category> findById(long id) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories WHERE id = ?");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 public class PumpDto {
 
-    private Long id;
+    private long id;
 
     @NotNull
     @Min(1)
@@ -39,11 +39,11 @@ public class PumpDto {
         }
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

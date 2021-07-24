@@ -38,7 +38,6 @@ public class CategoryEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto, UriComponentsBuilder uriBuilder) {
-        categoryDto.setId(null);
         Category category = categoryService.createCategory(categoryService.fromDto(categoryDto));
         UriComponents uriComponents = uriBuilder.path("/api/category/{id}").buildAndExpand(category.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();

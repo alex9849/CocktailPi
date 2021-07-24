@@ -35,7 +35,7 @@ public class RecipeDto {
                 .collect(Collectors.toSet());
     }
 
-    private Long id;
+    private long id;
 
     @NotNull
     @Size(min = 1, max = 30)
@@ -60,11 +60,11 @@ public class RecipeDto {
 
     private boolean ingredientsInBar;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

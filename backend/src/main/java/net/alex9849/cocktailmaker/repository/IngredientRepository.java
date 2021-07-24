@@ -20,13 +20,17 @@ public class IngredientRepository {
     }
 
     public List<Ingredient> findByIds(Long... ids) {
+        if(ids.length == 0) {
+            return new ArrayList<>();
+        }
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement(String.format("SELECT * FROM ingredient i " +
-                    "WHERE i.id IN ? order by i.name"));
-            pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ids));
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i " +
+                    "WHERE i.id = ANY(?) order by i.name");
+
+            pstmt.setArray(1, con.createArrayOf("int8", ids));
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;
@@ -48,7 +52,7 @@ public class IngredientRepository {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;
@@ -70,7 +74,7 @@ public class IngredientRepository {
 
     public Set<Long> findIdsAutocompleteName(String toAutocomplete) {
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) LIKE  (% || lower(?) || %)");
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) LIKE ('%' || lower(?) || '%')");
             pstmt.setString(1, toAutocomplete);
             return DbUtils.getIds(pstmt);
         } catch (SQLException throwables) {
@@ -80,7 +84,7 @@ public class IngredientRepository {
 
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) = lower(?)");
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
             pstmt.setString(1, name);
             pstmt.execute();
             ResultSet rs = pstmt.getResultSet();
@@ -161,11 +165,11 @@ public class IngredientRepository {
     private Ingredient parseRs(ResultSet resultSet) throws SQLException {
         Ingredient ingredient;
         String dType = resultSet.getString("dType");
-        if(Objects.equals(dType, "manual")) {
+        if(Objects.equals(dType, "ManualIngredient")) {
             ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
             ingredient = mIngredient;
-        } else if(Objects.equals(dType, "automated")) {
+        } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();
             aIngredient.setPumpTimeMultiplier(resultSet.getDouble("pump_time_multiplier"));
             ingredient = aIngredient;

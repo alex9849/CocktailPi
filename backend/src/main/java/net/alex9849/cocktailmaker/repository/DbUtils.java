@@ -17,7 +17,7 @@ class DbUtils {
     static Set<Long> getIds(PreparedStatement pstmt) throws SQLException {
         ResultSet rs = pstmt.executeQuery();
         Set<Long> results = new HashSet<>();
-        if (rs.next()) {
+        while (rs.next()) {
             results.add(rs.getLong(1));
         }
         return results;

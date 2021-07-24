@@ -14,12 +14,14 @@ create table users (
 
 create table ingredients (
                              id bigserial not null,
+                             dType varchar(20) check (dType = 'ManualIngredient' OR dType = 'AutomatedIngredient'),
                              alcohol_content int4 not null check (
                                          alcohol_content <= 100
                                      AND alcohol_content >= 0
                                  ),
+                             unit varchar check (dType = 'AutomatedIngredient' OR unit IS NOT NULL),
                              name varchar(30) not null unique,
-                             pump_time_multiplier float8 not null,
+                             pump_time_multiplier float8 check (dType = 'ManualIngredient' OR pump_time_multiplier IS NOT NULL),
                              primary key (id)
 );
 

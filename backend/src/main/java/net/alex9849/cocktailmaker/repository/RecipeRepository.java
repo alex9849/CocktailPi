@@ -23,6 +23,12 @@ public class RecipeRepository {
     private RecipeIngredientRepository recipeIngredientRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private IngredientRepository ingredientRepository;
 
     public RecipeRepository(DataSource dataSource) {
@@ -56,10 +62,10 @@ public class RecipeRepository {
 
     public List<Recipe> findByIds(long offset, long limit, Sort sort, Long... ids) {
         StringBuilder sortSql = new StringBuilder("");
-        boolean isSortFirst = false;
+        boolean isSortFirst = true;
         for (Sort.Order order : sort) {
             if (isSortFirst) {
-                isSortFirst = true;
+                isSortFirst = false;
                 sortSql.append("ORDER BY ")
                         .append(order.getProperty())
                         .append(" ")
@@ -75,9 +81,12 @@ public class RecipeRepository {
             List<Object> params = new ArrayList<>();
             final String query;
             if (ids != null) {
-                query = "SELECT * FROM recipes where id IN ? " + sortSql + " LIMIT ? OFFSET ?";
-                params.add(con.createArrayOf("BIGSERIAL", ids));
+                query = "SELECT * FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
+                params.add(con.createArrayOf("int8", ids));
             } else {
+                if(ids.length == 0) {
+                    return new ArrayList<>();
+                }
                 query = "SELECT * FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
             }
             params.add(limit);
@@ -90,7 +99,7 @@ public class RecipeRepository {
             }
             ResultSet rs = pstmt.executeQuery();
             List<Recipe> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results.stream().map(this::populateEntity).collect(Collectors.toList());
@@ -244,6 +253,8 @@ public class RecipeRepository {
             //Always non null, because of DB constraints
             ri.setIngredient(ingredientRepository.findById(ri.getIngredientId()).get());
         }
+        recipe.setOwner(userRepository.findById(recipe.getOwnerId()).get());
+        recipe.setCategories(categoryRepository.findByRecipeId(recipe.getId()));
         return recipe;
     }
 

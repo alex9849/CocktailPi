@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class UserDto {
-    private Long id;
+    private long id;
 
     @NotBlank
     @Size(min = 3, max = 20)
@@ -48,11 +48,11 @@ public class UserDto {
         }
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

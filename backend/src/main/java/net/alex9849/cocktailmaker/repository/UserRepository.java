@@ -64,9 +64,10 @@ public class UserRepository {
     public List<User> findAll() {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users");
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.executeQuery();
+            ResultSet rs = pstmt.getResultSet();
             List<User> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;

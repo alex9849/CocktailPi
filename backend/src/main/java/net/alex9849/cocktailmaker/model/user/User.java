@@ -27,7 +27,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -80,7 +80,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

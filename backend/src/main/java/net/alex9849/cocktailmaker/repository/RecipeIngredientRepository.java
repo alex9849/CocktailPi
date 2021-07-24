@@ -26,7 +26,7 @@ class RecipeIngredientRepository {
             pstmt.setLong(1, recipeId);
             ResultSet rs = pstmt.executeQuery();
             List<RecipeIngredient> results = new ArrayList<>();
-            if (rs.next()) {
+            while (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;
