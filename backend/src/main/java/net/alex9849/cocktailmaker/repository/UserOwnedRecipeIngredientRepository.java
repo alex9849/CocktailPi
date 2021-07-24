@@ -1,10 +1,12 @@
 package net.alex9849.cocktailmaker.repository;
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
 
 import javax.sql.DataSource;
 import java.sql.*;
 
+@Service
 public class UserOwnedRecipeIngredientRepository {
     private final DataSource dataSource;
 

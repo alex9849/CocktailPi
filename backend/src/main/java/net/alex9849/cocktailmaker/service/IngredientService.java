@@ -1,26 +1,22 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
+import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.hibernate.Session;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -40,11 +36,28 @@ public class IngredientService {
     }
 
     public List<Ingredient> getIngredientByFilter(String nameStartsWith) {
-        Specification<Ingredient> spec = new Ingredient.IngredientFilterNoFilter();
+        List<Set<Long>> idsToFindSetList = new ArrayList<>();
+
         if(nameStartsWith != null) {
-            spec = spec.and(new Ingredient.IngredientFilterNameIncludes(nameStartsWith, true));
+            idsToFindSetList.add(ingredientRepository.findIdsAutocompleteName(nameStartsWith));
         }
-        return ingredientRepository.findAll(Specification.where(spec));
+
+        if(idsToFindSetList.isEmpty()) {
+            return ingredientRepository.findAll();
+        }
+
+        Set<Long> retained = null;
+        for(Set<Long> current : idsToFindSetList) {
+            if(retained == null) {
+                retained = current;
+                continue;
+            }
+            retained.retainAll(current);
+        }
+        if(retained.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
     public Ingredient fromDto(IngredientDto ingredientDto) {
@@ -85,9 +98,8 @@ public class IngredientService {
                 entityManager.clear();
             }
         }
-
-
-        return ingredientRepository.save(ingredient);
+        ingredientRepository.update(ingredient);
+        return ingredient;
     }
 
     public Ingredient createIngredient(Ingredient ingredient) {
@@ -96,15 +108,10 @@ public class IngredientService {
         if(optionalIngredient.isPresent()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
-        return ingredientRepository.save(ingredient);
+        return ingredientRepository.create(ingredient);
     }
 
-    public void deleteIngredient(Ingredient ingredient) {
-        List<Pump> pumpsWithIngredient = pumpService.getPumpsWithIngredient(Arrays.asList(ingredient.getId()));
-        pumpsWithIngredient.forEach(x -> {
-            x.setCurrentIngredient(null);
-            pumpService.updatePump(x);
-        });
-        ingredientRepository.deleteById(ingredient.getId());
+    public boolean deleteIngredient(long id) {
+        return ingredientRepository.delete(id);
     }
 }

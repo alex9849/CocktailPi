@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
+import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

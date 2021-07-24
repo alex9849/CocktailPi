@@ -7,9 +7,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,34 +41,36 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, boolean isInBar, int startNumber, int pageSize, Sort sort) {
-        List<Set<Long>> idsToFind = new ArrayList<>();
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, Long isInBarUserId, int startNumber, int pageSize, Sort sort) {
+        List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(inPublic != null) {
-            idsToFind.add(recipeRepository.getIdsInPublic());
+            idsToFindSetList.add(recipeRepository.getIdsInPublic());
         }
         if(inCategory != null) {
-            idsToFind.add(recipeRepository.getIdsInCategory(inCategory));
+            idsToFindSetList.add(recipeRepository.getIdsInCategory(inCategory));
         }
         if(ownerId != null) {
-            idsToFind.add(recipeRepository.getIdsByOwnerId(ownerId));
+            idsToFindSetList.add(recipeRepository.getIdsByOwnerId(ownerId));
         }
         if(containsIngredients != null) {
-            idsToFind.add(recipeRepository.getIdsWithIngredients(containsIngredients));
+            idsToFindSetList.add(recipeRepository.getIdsWithIngredients(containsIngredients));
         }
         if(searchName != null) {
-            idsToFind.add(recipeRepository.getIdsContainingName(searchName));
+            idsToFindSetList.add(recipeRepository.getIdsContainingName(searchName));
         }
         if(isFabricable) {
-            //TODO
-            //spec = spec.and(new Recipe.RecipeFilterCurrentlyMakeable());
+            idsToFindSetList.add(recipeRepository.getIdsOfFabricableRecipes());
         }
-        if(isInBar) {
-            //TODO
-            //spec = spec.and(new Recipe.RecipeFilterInBar());
+        if(isInBarUserId != null) {
+            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsInBar(isInBarUserId));
+        }
+        Pageable pageable = PageRequest.of((startNumber / pageSize) + 1, pageSize);
+        if(idsToFindSetList.isEmpty()) {
+            return new PageImpl<>(recipeRepository.findAll(startNumber, pageSize, sort), pageable, recipeRepository.count());
         }
         Set<Long> retained = null;
-        for(Set<Long> current : idsToFind) {
+        for(Set<Long> current : idsToFindSetList) {
             if(retained == null) {
                 retained = current;
                 continue;
@@ -80,7 +80,7 @@ public class RecipeService {
         if(retained.isEmpty()) {
             return new PageImpl<>(Collections.emptyList());
         }
-        return new PageImpl<>(recipeRepository.findByIds(startNumber, pageSize, sort, retained.toArray(new Long[1])));
+        return new PageImpl<>(recipeRepository.findByIds(startNumber, pageSize, sort, retained.toArray(new Long[1])), pageable, recipeRepository.count());
     }
 
     public Recipe getById(long id) {

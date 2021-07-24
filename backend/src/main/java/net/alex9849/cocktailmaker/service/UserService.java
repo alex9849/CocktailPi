@@ -1,9 +1,10 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
+import net.alex9849.cocktailmaker.repository.UserOwnedRecipeIngredientRepository;
+import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,12 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
+    UserOwnedRecipeIngredientRepository userOwnedRecipeIngredientRepository;
+
+    @Autowired
+    IngredientService ingredientService;
+
+    @Autowired
     PasswordEncoder encoder;
 
     @Autowired
@@ -46,7 +53,7 @@ public class UserService {
         }
         user.setId(null);
         user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return userRepository.create(user);
     }
 
     /**
@@ -74,8 +81,8 @@ public class UserService {
         if(encodePassword) {
             user.setPassword(encoder.encode(user.getPassword()));
         }
-        user.setOwnedIngredients(userWithId.get().getOwnedIngredients());
-        return userRepository.save(user);
+        userRepository.update(user);
+        return user;
     }
 
     public void addOwnedIngredient(long userId, long id) {
@@ -83,12 +90,11 @@ public class UserService {
         if(!user.isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
-        Ingredient addIngredient = entityManager.find(Ingredient.class, id);
-        if(addIngredient == null) {
+        if(ingredientService.getIngredient(id) == null) {
             throw new IllegalArgumentException("Ingredient doesn't exist!");
         }
-        user.get().getOwnedIngredients().add(addIngredient);
-        userRepository.save(user.get());
+        userOwnedRecipeIngredientRepository.delete(userId, id);
+        userOwnedRecipeIngredientRepository.create(userId, id);
     }
 
     public void removeOwnedIngredient(long userId, long ingredientId) {
@@ -96,17 +102,14 @@ public class UserService {
         if(!user.isPresent()) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
-        if(!user.get().getOwnedIngredients().removeIf(x -> x.getId() == ingredientId)) {
-            throw new IllegalArgumentException("User doesn't own ingredient!");
-        }
-        userRepository.save(user.get());
+        userOwnedRecipeIngredientRepository.delete(userId, ingredientId);
     }
 
     public void deleteUser(long id) {
         if(isDemoMode && id == 1) {
             throw new IllegalArgumentException("The admin-user can't be deleted in demomode!");
         }
-        userRepository.deleteById(id);
+        userRepository.delete(id);
     }
 
     public List<User> getUsers() {

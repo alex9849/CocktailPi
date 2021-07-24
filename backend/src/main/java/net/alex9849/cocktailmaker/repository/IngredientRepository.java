@@ -9,10 +9,7 @@ import org.springframework.web.server.ServerErrorException;
 import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class IngredientRepository {
@@ -22,26 +19,11 @@ public class IngredientRepository {
         this.dataSource = dataSource;
     }
 
-    public Optional<Ingredient> findById(long id) {
+    public List<Ingredient> findByIds(Long... ids) {
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients WHERE id = ?");
-            pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            List<Ingredient> results = new ArrayList<>();
-            if (rs.next()) {
-                return Optional.of(parseRs(rs));
-            }
-            return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
-        }
-    }
-
-    public List<Ingredient> findOwnedByUser(long userId) {
-        try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.* FROM ingredients i JOIN " +
-                    "user_owned_ingredients uo ON uo.ingredient_id = i.id WHERE uo.user_id = ?");
-            pstmt.setLong(1, userId);
+            PreparedStatement pstmt = con.prepareStatement(String.format("SELECT * FROM ingredient i " +
+                    "WHERE i.id IN ? order by i.name"));
+            pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ids));
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
             if (rs.next()) {
@@ -49,19 +31,48 @@ public class IngredientRepository {
             }
             return results;
         } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading ingredient", throwables);
+            throw new ServerErrorException("Error loading ingredients", throwables);
         }
+    }
+
+    public Optional<Ingredient> findById(long id) {
+        List<Ingredient> foundList = findByIds(id);
+        if(foundList.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(foundList.get(0));
     }
 
     public List<Ingredient> findAll() {
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients");
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
             if (rs.next()) {
                 results.add(parseRs(rs));
             }
             return results;
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading ingredient", throwables);
+        }
+    }
+
+    public Set<Long> findIdsOwnedByUser(long userId) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i JOIN " +
+                    "user_owned_ingredients uo ON uo.ingredient_id = i.id WHERE uo.user_id = ?");
+            pstmt.setLong(1, userId);
+            return DbUtils.getIds(pstmt);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading ingredient", throwables);
+        }
+    }
+
+    public Set<Long> findIdsAutocompleteName(String toAutocomplete) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) LIKE  (% || lower(?) || %)");
+            pstmt.setString(1, toAutocomplete);
+            return DbUtils.getIds(pstmt);
         } catch (SQLException throwables) {
             throw new ServerErrorException("Error loading ingredient", throwables);
         }
@@ -69,10 +80,11 @@ public class IngredientRepository {
 
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
         try(Connection con = dataSource.getConnection()) {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients WHERE lower(name) = lower(?)");
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) = lower(?)");
             pstmt.setString(1, name);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            while (rs.next()) {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();

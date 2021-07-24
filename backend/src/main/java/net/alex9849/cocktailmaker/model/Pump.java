@@ -2,41 +2,19 @@ package net.alex9849.cocktailmaker.model;
 
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-@Entity
-@Table(name = "pumps", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "gpioPin")})
 public class Pump {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    @Min(1)
+    private long id;
     private int timePerClInMs;
-
-    @NotNull
-    @Min(1)
     private int tubeCapacityInMl;
-
-    @NotNull
-    @Min(0) @Max(31)
     private int gpioPin;
-
-    @ManyToOne()
+    private Long currentIngredientId;
     private Ingredient currentIngredient;
 
-    private Long currentIngredientId;
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -68,11 +46,11 @@ public class Pump {
         return currentIngredient;
     }
 
-    public Long getCurrentIngredientId() {
+    public long getCurrentIngredientId() {
         return currentIngredientId;
     }
 
-    public void setCurrentIngredientId(Long currentIngredientId) {
+    public void setCurrentIngredientId(long currentIngredientId) {
         this.currentIngredientId = currentIngredientId;
     }
 

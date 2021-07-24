@@ -47,7 +47,7 @@ public class UserRepository {
         }
     }
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsernameIgnoringCase(String username) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE lower(username) = lower(?)");
             pstmt.setString(1, username);
