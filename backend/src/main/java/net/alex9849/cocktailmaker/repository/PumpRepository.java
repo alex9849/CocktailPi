@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PumpRepository {
@@ -66,6 +67,34 @@ public class PumpRepository {
         }
     }
 
+    public Optional<Pump> findByGpioPin(int gpioPin) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where gpio_pin = ?");
+            pstmt.setInt(1, gpioPin);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading pump", throwables);
+        }
+    }
+
+    public Optional<Pump> findById(long id) {
+        try(Connection con = dataSource.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where id = ?");
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException throwables) {
+            throw new ServerErrorException("Error loading pump", throwables);
+        }
+    }
+
     public boolean delete(long id) {
         try(Connection con = dataSource.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement("DELETE from pumps WHERE id = ?");
@@ -85,5 +114,4 @@ public class PumpRepository {
         pump.setCurrentIngredientId(rs.getLong("current_ingredient_id"));
         return pump;
     }
-
 }

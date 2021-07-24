@@ -71,11 +71,11 @@ public class PumpService implements Observer {
         if(pumpRepository.findByGpioPin(pump.getGpioPin()).isPresent()) {
             throw new IllegalArgumentException("GPOI-Pin already in use!");
         }
-        Pump savedPump = pumpRepository.save(pump);
+        pump = pumpRepository.create(pump);
         //Turn off pump
-        gpioController.provideGpioPin(RaspiPin.getPinByAddress(savedPump.getGpioPin())).setHigh();
+        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
-        return savedPump;
+        return pump;
     }
 
     public Pump updatePump(Pump pump) {
@@ -89,17 +89,13 @@ public class PumpService implements Observer {
                 throw new IllegalArgumentException("GPOI-Pin already in use!");
             }
         }
-        Pump savedPump = pumpRepository.save(pump);
+        pumpRepository.update(pump);
         if(optPumpWithGpio.isPresent()) {
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(beforeUpdate.get().getGpioPin())).setLow();
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
-        return savedPump;
-    }
-
-    public List<Pump> getPumpsWithIngredient(List<Long> ingredientIds) {
-        return pumpRepository.findAllByCurrentIngredient_IdIn(ingredientIds);
+        return pump;
     }
 
     public Pump fromDto(PumpDto pumpDto) {
@@ -117,7 +113,7 @@ public class PumpService implements Observer {
         if(pump == null) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        pumpRepository.deleteById(id);
+        pumpRepository.delete(id);
         //Turn off pump
         gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
