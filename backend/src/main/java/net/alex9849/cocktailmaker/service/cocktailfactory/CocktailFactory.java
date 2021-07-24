@@ -49,10 +49,10 @@ public class CocktailFactory extends Observable {
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.gpioController = gpioController;
         this.ingredientIdToPumpMap = pumps.stream().filter(x -> x.getCurrentIngredient() != null).collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x-> x, (x1, x2) -> x1));
-        Map<Integer, List<RecipeIngredient>> productionsStepMap = recipe.getRecipeIngredients().stream().collect(Collectors.groupingBy(x -> x.getId().getProductionStep()));
-        List<Integer> steps = new ArrayList<>(productionsStepMap.keySet());
-        steps.sort(Comparator.comparingInt(x -> x));
-        for(Integer step : steps) {
+        Map<Long, List<RecipeIngredient>> productionsStepMap = recipe.getRecipeIngredients().stream().collect(Collectors.groupingBy(RecipeIngredient::getProductionStep));
+        List<Long> steps = new ArrayList<>(productionsStepMap.keySet());
+        steps.sort(Comparator.comparingLong(x -> x));
+        for(Long step : steps) {
             this.productionSteps.add(productionsStepMap.get(step));
         }
         if(!areEnoughPumpsAvailable()) {

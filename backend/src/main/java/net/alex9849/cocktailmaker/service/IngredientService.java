@@ -60,6 +60,11 @@ public class IngredientService {
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
+    public List<Ingredient> getIngredientsOwnedByUSer(long userId) {
+        return ingredientRepository.findByIds(ingredientRepository
+                .findIdsOwnedByUser(userId).toArray(new Long[1]));
+    }
+
     public Ingredient fromDto(IngredientDto ingredientDto) {
         if(ingredientDto == null) {
             return null;

@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import net.alex9849.cocktailmaker.payload.request.UpdateUserRequest;
+import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class UserEndpoint {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    IngredientService ingredientService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -120,7 +124,9 @@ public class UserEndpoint {
         if(user == null) {
             return ResponseEntity.notFound().build();
         }
-        List<IngredientDto> ownedIngredients = user.getOwnedIngredients().stream().map(IngredientDto::new).collect(Collectors.toList());
+        List<IngredientDto> ownedIngredients = ingredientService.getIngredientsOwnedByUSer(userId)
+                .stream().map(IngredientDto::toDto).collect(Collectors.toList());
+
         return ResponseEntity.ok(ownedIngredients);
     }
 

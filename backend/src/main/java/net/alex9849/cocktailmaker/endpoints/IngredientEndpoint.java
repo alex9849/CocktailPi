@@ -63,11 +63,9 @@ public class IngredientEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     ResponseEntity<?> deleteIngredient(@PathVariable("id") long id) {
-        Ingredient ingredient = ingredientService.getIngredient(id);
-        if(ingredient == null) {
+        if(!ingredientService.deleteIngredient(id)) {
             return ResponseEntity.notFound().build();
         }
-        ingredientService.deleteIngredient(ingredient);
         return ResponseEntity.ok().build();
     }
 

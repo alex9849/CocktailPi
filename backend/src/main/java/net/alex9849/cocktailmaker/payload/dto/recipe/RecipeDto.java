@@ -22,13 +22,12 @@ public class RecipeDto {
         owner.setUsername(recipe.getOwner().getUsername());
         owner.setId(recipe.getOwner().getId());
         this.lastUpdate = recipe.getLastUpdate();
-        this.ingredientsInBar = recipe.isIngredientsInBar();
         this.owner = new UserDto(owner);
-        Map<Integer, List<RecipeIngredient>> byProductionStep = recipe
+        Map<Long, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()
-                .collect(Collectors.groupingBy(x -> x.getId().getProductionStep()));
-        List<Integer> steps = new ArrayList<>(byProductionStep.keySet());
-        steps.sort(Comparator.comparingInt(x -> x));
+                .collect(Collectors.groupingBy(RecipeIngredient::getProductionStep));
+        List<Long> steps = new ArrayList<>(byProductionStep.keySet());
+        steps.sort(Comparator.comparingLong(x -> x));
         this.recipeIngredients = steps.stream().map(x -> byProductionStep.get(x).stream()
                 .map(RecipeIngredientDto::new).collect(Collectors.toList()))
                 .collect(Collectors.toList());

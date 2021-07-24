@@ -78,7 +78,7 @@ public class RecipeEndpoint {
                 break;
         }
         Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, containsIngredients,
-                searchName, isFabricable, isInBar, page, pageSize, sort);
+                searchName, isFabricable, isInBar? principal.getId():null, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
