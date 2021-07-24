@@ -21,6 +21,9 @@ public class PumpRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
     @PostConstruct
     private void initialize() {
         setDataSource(dataSource);
@@ -38,7 +41,7 @@ public class PumpRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 pump.setId(rs.getLong(1));
-                return pump;
+                return populateEntity(pump);
             }
             throw new IllegalStateException("Error saving pump");
         });
@@ -51,7 +54,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setInt(1, pump.getGpioPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
-            pstmt.setLong(4, pump.getCurrentIngredientId());
+            pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.setLong(5, pump.getId());
             return pstmt.executeUpdate() != 0;
         });
@@ -63,7 +66,7 @@ public class PumpRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.executeQuery();
             List<Pump> results = new ArrayList<>();
             while (rs.next()) {
-                results.add(parseRs(rs));
+                results.add(populateEntity(parseRs(rs)));
             }
             return results;
         });
@@ -75,7 +78,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setInt(1, gpioPin);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(parseRs(rs));
+                return Optional.of(populateEntity(parseRs(rs)));
             }
             return Optional.empty();
         });
@@ -87,7 +90,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(parseRs(rs));
+                return Optional.of(populateEntity(parseRs(rs)));
             }
             return Optional.empty();
         });
@@ -99,6 +102,13 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
         });
+    }
+
+    public Pump populateEntity(Pump pump) {
+        if(pump.getCurrentIngredientId() != null) {
+            pump.setCurrentIngredient(ingredientRepository.findById(pump.getCurrentIngredientId()).orElse(null));
+        }
+        return pump;
     }
 
     private Pump parseRs(ResultSet rs) throws SQLException {

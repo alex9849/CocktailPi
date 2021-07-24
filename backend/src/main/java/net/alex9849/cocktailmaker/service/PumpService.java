@@ -105,6 +105,9 @@ public class PumpService implements Observer {
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
         pump.setCurrentIngredient(ingredientService.fromDto(pumpDto.getCurrentIngredient()));
+        if(pump.getCurrentIngredient() != null) {
+            pump.setCurrentIngredientId(pump.getCurrentIngredient().getId());
+        }
         return pump;
     }
 

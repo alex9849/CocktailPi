@@ -91,8 +91,8 @@ public class RecipeService {
         return recipeRepository.getImage(recipeId).orElse(null);
     }
 
-    public boolean setImage(long recipeId, byte[] image) {
-        return recipeRepository.setImage(recipeId, image);
+    public void setImage(long recipeId, byte[] image) {
+        recipeRepository.setImage(recipeId, image);
     }
 
     public Recipe updateRecipe(Recipe recipe) {
@@ -114,6 +114,9 @@ public class RecipeService {
         Recipe recipe = new Recipe();
         BeanUtils.copyProperties(recipeDto, recipe);
         recipe.setOwner(userService.fromDto(recipeDto.getOwner()));
+        if(recipe.getOwner() != null) {
+            recipe.setOwnerId(recipe.getOwner().getId());
+        }
         AtomicInteger index = new AtomicInteger();
         recipe.setRecipeIngredients(recipeDto
                 .getRecipeIngredients().stream()
@@ -136,7 +139,7 @@ public class RecipeService {
         recipeIngredient.setIngredient(ingredientService.fromDto(recipeIngredientDto.getIngredient()));
         recipeIngredient.setIngredientId(recipeIngredientDto.getIngredient().getId());
         recipeIngredient.setRecipeId(recipe.getId());
-        recipeIngredient.setAmount(productionStep);
+        recipeIngredient.setProductionStep(productionStep);
         return recipeIngredient;
     }
 }

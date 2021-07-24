@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
+import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import org.postgresql.PGConnection;
@@ -35,6 +36,9 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RecipeCategoryRepository recipeCategoryRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -128,6 +132,9 @@ public class RecipeRepository extends JdbcDaoSupport {
                     ri.setRecipeId(recipe.getId());
                     recipeIngredientRepository.create(ri);
                 }
+                for(Category category : recipe.getCategories()) {
+                    recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
+                }
                 return recipe;
             }
             throw new IllegalStateException("Error saving recipe");
@@ -148,6 +155,10 @@ public class RecipeRepository extends JdbcDaoSupport {
             for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
                 ri.setRecipeId(recipe.getId());
                 recipeIngredientRepository.create(ri);
+            }
+            recipeCategoryRepository.removeFromAllCategories(recipe.getId());
+            for(Category category : recipe.getCategories()) {
+                recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
             }
             return pstmt.executeUpdate() != 0;
         });
@@ -213,7 +224,6 @@ public class RecipeRepository extends JdbcDaoSupport {
                 if(imageOid == null) {
                     return Optional.empty();
                 }
-                con.setAutoCommit(false);
                 LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
                 LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
                 byte buf[] = new byte[imageLob.size()];
@@ -224,12 +234,32 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
-    public boolean setImage(long recipeId, byte[] image) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET image = ? where id = ?");
-            pstmt.setBytes(1, image);
-            pstmt.setLong(2, recipeId);
-            return pstmt.executeUpdate() != 0;
+    public void setImage(long recipeId, byte[] image) {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ? AND image IS NOT NULL");
+            pstmt.setLong(1, recipeId);
+            ResultSet resultSet = pstmt.executeQuery();
+            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
+            Long imageOid;
+            if(resultSet.next()) {
+                imageOid = resultSet.getObject("image", Long.class);
+            } else {
+                imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
+            }
+            if(image == null) {
+                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE recipes SET image = NULL where id = ?");
+                deleteImagePstmt.setLong(1, recipeId);
+                deleteImagePstmt.executeUpdate();
+                lobApi.delete(imageOid);
+                return null;
+            }
+            LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
+            lobObject.write(image);
+            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE recipes SET image = ? where id = ?");
+            updateLobOidPstmt.setLong(1, imageOid);
+            updateLobOidPstmt.setLong(2, recipeId);
+            updateLobOidPstmt.executeUpdate();
+            return null;
         });
     }
 

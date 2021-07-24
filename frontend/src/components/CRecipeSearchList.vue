@@ -10,12 +10,12 @@
         <div style="margin-bottom: 10px">
             <TopButtonArranger style="padding: 10px">
               <q-btn
-                color="info"
-                label="Refresh"
+                v-if="onlyOwnRecipes && isRecipeCreatorRole"
+                color="negative"
+                label="Delete selected recipes"
                 no-caps
                 :disable="loading"
-                :loading="loading"
-                @click="onRefreshButton"
+                @click="openDeleteDialog"
               />
               <q-btn
                 v-if="isRecipeCreatorRole"
@@ -26,12 +26,12 @@
                 :to="{name: 'recipeadd'}"
               />
               <q-btn
-                v-if="onlyOwnRecipes && isRecipeCreatorRole"
-                color="negative"
-                label="Delete selected recipes"
+                color="info"
+                label="Refresh"
                 no-caps
                 :disable="loading"
-                @click="openDeleteDialog"
+                :loading="loading"
+                @click="onRefreshButton"
               />
             </TopButtonArranger>
           <div
