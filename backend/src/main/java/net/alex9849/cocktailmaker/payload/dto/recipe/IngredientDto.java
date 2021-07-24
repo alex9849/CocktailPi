@@ -57,6 +57,10 @@ public abstract class IngredientDto {
         this.alcoholContent = alcoholContent;
     }
 
+    public Ingredient.Unit getUnit() {
+        return Ingredient.Unit.MILLILITER;
+    }
+
     public abstract String getType();
 
     public static IngredientDto toDto(Ingredient ingredient) {

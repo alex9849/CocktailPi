@@ -46,11 +46,11 @@ public class Pump {
         return currentIngredient;
     }
 
-    public long getCurrentIngredientId() {
+    public Long getCurrentIngredientId() {
         return currentIngredientId;
     }
 
-    public void setCurrentIngredientId(long currentIngredientId) {
+    public void setCurrentIngredientId(Long currentIngredientId) {
         this.currentIngredientId = currentIngredientId;
     }
 

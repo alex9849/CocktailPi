@@ -33,7 +33,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setInt(1, pump.getGpioPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
-            pstmt.setLong(4, pump.getCurrentIngredientId());
+            pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {

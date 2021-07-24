@@ -20,9 +20,10 @@ create table ingredients (
                                          alcohol_content <= 100
                                      AND alcohol_content >= 0
                                  ),
-                             unit varchar check (dType = 'AutomatedIngredient' OR unit IS NOT NULL),
+                             unit varchar not null,
                              name varchar(30) not null unique,
                              pump_time_multiplier float8 check (dType = 'ManualIngredient' OR pump_time_multiplier IS NOT NULL),
+                             add_to_volume boolean check (dType = 'AutomatedIngredient' OR add_to_volume IS NOT NULL),
                              primary key (id)
 );
 
