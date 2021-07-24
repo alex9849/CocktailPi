@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ServerErrorException;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,7 @@ public class UserRepository extends JdbcDaoSupport {
     }
 
     public Optional<User> findById(long id) {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<User>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE id = ?");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -34,13 +36,11 @@ public class UserRepository extends JdbcDaoSupport {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading user", throwables);
-        }
+        });
     }
 
     public Optional<User> findByEmail(String email) {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<User>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE lower(email) = lower(?)");
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
@@ -48,13 +48,11 @@ public class UserRepository extends JdbcDaoSupport {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading user", throwables);
-        }
+        });
     }
 
     public Optional<User> findByUsernameIgnoringCase(String username) {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<User>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users WHERE lower(username) = lower(?)");
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
@@ -62,13 +60,11 @@ public class UserRepository extends JdbcDaoSupport {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading user", throwables);
-        }
+        });
     }
 
     public List<User> findAll() {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<User>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users");
             pstmt.executeQuery();
             ResultSet rs = pstmt.getResultSet();
@@ -77,19 +73,15 @@ public class UserRepository extends JdbcDaoSupport {
                 results.add(parseRs(rs));
             }
             return results;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error loading user", throwables);
-        }
+        });
     }
 
     public boolean delete(long id) {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM users WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error deleting user", throwables);
-        }
+        });
     }
 
     public User create(User user) {
@@ -115,7 +107,7 @@ public class UserRepository extends JdbcDaoSupport {
     }
 
     public boolean update(User user) {
-        try (Connection con = dataSource.getConnection()) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE users SET email = ?, username = ?, " +
                     "firstname = ?, lastname = ?, password = ?, is_account_non_locked = ?, role = ? WHERE id = ?");
             pstmt.setString(1, user.getEmail());
@@ -127,9 +119,7 @@ public class UserRepository extends JdbcDaoSupport {
             pstmt.setString(7, user.getAuthority().toString());
             pstmt.setLong(8, user.getId());
             return pstmt.executeUpdate() != 0;
-        } catch (SQLException throwables) {
-            throw new ServerErrorException("Error updating user", throwables);
-        }
+        });
     }
 
     private User parseRs(ResultSet rs) throws SQLException {
