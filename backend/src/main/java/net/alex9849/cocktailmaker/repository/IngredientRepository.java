@@ -127,13 +127,18 @@ public class IngredientRepository extends JdbcDaoSupport {
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
+            pstmt.setString(4, ingredient.getUnit().toString());
             if(ingredient instanceof AutomatedIngredient) {
                 pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
             if(ingredient instanceof ManualIngredient) {
-                pstmt.setBoolean(6, ((ManualIngredient) ingredient).isAddToVolume());
+                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                    pstmt.setBoolean(6, ((ManualIngredient) ingredient).isAddToVolume());
+                } else {
+                    pstmt.setBoolean(6, false);
+                }
             } else {
                 pstmt.setNull(6, Types.BOOLEAN);
             }
@@ -156,6 +161,7 @@ public class IngredientRepository extends JdbcDaoSupport {
         if(Objects.equals(dType, "ManualIngredient")) {
             ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
+            mIngredient.setAddToVolume(resultSet.getBoolean("add_to_volume"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();
