@@ -2,17 +2,20 @@ package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 
 public class CocktailprogressDto {
     private RecipeDto recipe;
     private int progress;
     private UserDto user;
-    private boolean isCanceled;
+    private Cocktailprogress.State state;
+    private RecipeIngredientDto currentRequiredAction;
 
     public CocktailprogressDto(Cocktailprogress cocktailprogress) {
         this.progress = cocktailprogress.getProgress();
-        this.isCanceled = cocktailprogress.isCanceled();
+        this.state = cocktailprogress.getState();
+        this.currentRequiredAction = new RecipeIngredientDto(cocktailprogress.getCurrentRequiredAction());
         if(cocktailprogress.getRecipe() != null) {
             this.recipe = new RecipeDto(cocktailprogress.getRecipe());
             this.recipe.setRecipeIngredients(null);
@@ -51,11 +54,19 @@ public class CocktailprogressDto {
         this.user = user;
     }
 
-    public boolean isDone() {
-        return this.progress >= 100;
+    public Cocktailprogress.State getState() {
+        return state;
     }
 
-    public boolean isCanceled() {
-        return isCanceled;
+    public void setState(Cocktailprogress.State state) {
+        this.state = state;
+    }
+
+    public RecipeIngredientDto getCurrentRequiredAction() {
+        return currentRequiredAction;
+    }
+
+    public void setCurrentRequiredAction(RecipeIngredientDto currentRequiredAction) {
+        this.currentRequiredAction = currentRequiredAction;
     }
 }

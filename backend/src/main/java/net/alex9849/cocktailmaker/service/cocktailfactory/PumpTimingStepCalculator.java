@@ -6,19 +6,12 @@ import java.util.*;
 
 public class PumpTimingStepCalculator {
     private final int longestIngredientTime;
-    private final int offset;
     private final Pump longestIngredientPump;
     private final Map<Pump, Integer> otherPumpTimings;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
 
-    public PumpTimingStepCalculator(int offset, int longestIngredientTime, Pump longestIngredientPump, Map<Pump, Integer> otherPumpTimings, int minimalPumpTime, int minimalBreakTime) {
-        Objects.requireNonNull(longestIngredientPump);
-        Objects.requireNonNull(otherPumpTimings);
-        this.offset = offset;
-        this.longestIngredientTime = longestIngredientTime;
-        this.longestIngredientPump = longestIngredientPump;
-        this.otherPumpTimings = otherPumpTimings;
+    public PumpTimingStepCalculator(Map<Pump, Integer> pumpRuntimes, int minimalPumpTime, int minimalBreakTime) {
         if(minimalPumpTime <= 0) {
             throw new IllegalArgumentException("minimalPumpTime needs to be at least 1!");
         }
@@ -27,6 +20,20 @@ public class PumpTimingStepCalculator {
             throw new IllegalArgumentException("minimalBreakTime needs to be at least 1!");
         }
         this.minimalBreakTime = minimalBreakTime;
+        if(pumpRuntimes.size() == 0) {
+            throw new IllegalArgumentException("pumpRuntimes must be non empty!");
+        }
+
+        Map.Entry<Pump, Integer> longestRuntime = null;
+        for(Map.Entry<Pump, Integer> currentPumpRuntime : pumpRuntimes.entrySet()) {
+            if(longestRuntime == null || longestRuntime.getValue() < currentPumpRuntime.getValue()) {
+                longestRuntime = currentPumpRuntime;
+            }
+        }
+        pumpRuntimes.remove(longestRuntime.getKey());
+        this.longestIngredientPump = longestRuntime.getKey();
+        this.longestIngredientTime = longestRuntime.getValue();
+        this.otherPumpTimings = pumpRuntimes;
     }
 
     public int getLongestIngredientTime() {
@@ -43,7 +50,7 @@ public class PumpTimingStepCalculator {
 
     public Map<Pump, List<PumpPhase>> getPumpPhases() {
         Map<Pump, List<PumpPhase>> pumpPhases = new HashMap<>();
-        pumpPhases.put(this.longestIngredientPump, Arrays.asList(new PumpPhase(this.offset, this.offset + this.longestIngredientTime, this.longestIngredientPump)));
+        pumpPhases.put(this.longestIngredientPump, Arrays.asList(new PumpPhase(0, this.longestIngredientTime, this.longestIngredientPump)));
 
         for(Map.Entry<Pump, Integer> ingredientPair : this.otherPumpTimings.entrySet()) {
             Pump currentPump = ingredientPair.getKey();
@@ -64,7 +71,7 @@ public class PumpTimingStepCalculator {
                 if(nextPumpStart - lastPumpStop >= this.minimalBreakTime || lastPumpPhase == null) {
                     int currentPumpStart = nextPumpStart;
                     int currentPumpStop = currentPumpStart + pumpIntervalOperatingTime;
-                    lastPumpPhase = new PumpPhase(this.offset + currentPumpStart, this.offset + currentPumpStop, currentPump);
+                    lastPumpPhase = new PumpPhase(currentPumpStart, currentPumpStop, currentPump);
                     pumpPhases.get(currentPump).add(lastPumpPhase);
                     nextPumpStart = currentPumpStop + breakTime;
                     lastPumpStop = currentPumpStop;

@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
-public class PumpService implements Observer {
+public class PumpService {
 
     private static PumpService instance;
 
@@ -129,8 +131,17 @@ public class PumpService implements Observer {
         if(isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
-        this.cocktailFactory = new CocktailFactory(recipe, user, getAllPumps(), gpioController, amount);
-        this.cocktailFactory.addObserver(this);
+        this.cocktailFactory = new CocktailFactory(recipe, user, getAllPumps(), gpioController, amount)
+                .subscribeProgress(progress -> {
+                    if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.COMPLETE) {
+                        this.scheduler.schedule(() -> {
+                            this.cocktailFactory.shutDown();
+                            this.cocktailFactory = null;
+                            this.webSocketService.broadcastCurrentCocktail(null);
+                        }, 5000, TimeUnit.MILLISECONDS);
+                    }
+                    this.webSocketService.broadcastCurrentCocktail(progress);
+                });
         return this.cocktailFactory.makeCocktail();
     }
 
@@ -181,20 +192,5 @@ public class PumpService implements Observer {
 
     public boolean isAnyCleaning() {
         return !cleaningPumpIds.isEmpty();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if(arg instanceof Cocktailprogress) {
-            Cocktailprogress progress = (Cocktailprogress) arg;
-            if(progress.isCanceled() || progress.isDone()) {
-                this.scheduler.schedule(() -> {
-                    this.cocktailFactory.shutDown();
-                    this.cocktailFactory = null;
-                    this.webSocketService.broadcastCurrentCocktail(null);
-                }, 5000, TimeUnit.MILLISECONDS);
-            }
-            this.webSocketService.broadcastCurrentCocktail(progress);
-        }
     }
 }

@@ -14,12 +14,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class CocktailFactory extends Observable {
+public class CocktailFactory {
     private final int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
     private final int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
 
+    private List<Consumer<Cocktailprogress>> subscribers = new ArrayList<>();
     private List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
     private Map<Long, Pump> ingredientIdToPumpMap;
     private Recipe recipe;
@@ -155,12 +157,12 @@ public class CocktailFactory extends Observable {
         for(long i = 0; i <= this.preparationTime; i += 1000) {
             scheduledFutures.add(scheduler.schedule(() -> {
                 this.updateCocktailProgress();
-                this.notifyObservers();
+                this.notifySubscribers();
             }, i, TimeUnit.MILLISECONDS));
         }
         scheduledFutures.add(scheduler.schedule(() -> {
             this.setDone();
-            this.notifyObservers();
+            this.notifySubscribers();
         }, this.preparationTime, TimeUnit.MILLISECONDS));
 
         this.setChanged();
@@ -169,7 +171,7 @@ public class CocktailFactory extends Observable {
         this.cocktailprogress.setRecipe(this.recipe);
         this.cocktailprogress.setCanceled(false);
         this.updateCocktailProgress();
-        this.notifyObservers();
+        this.notifySubscribers();
         return cocktailprogress;
     }
 
@@ -194,7 +196,7 @@ public class CocktailFactory extends Observable {
         this.shutDown();
         this.isCanceled = true;
         this.updateCocktailProgress();
-        this.notifyObservers();
+        this.notifySubscribers();
     }
 
     public void setDone() {
@@ -237,9 +239,15 @@ public class CocktailFactory extends Observable {
         this.setChanged();
     }
 
+    public CocktailFactory subscribeProgress(Consumer<Cocktailprogress> consumer) {
+        this.subscribers.add(consumer);
+        return this;
+    }
 
-    public void notifyObservers() {
-        this.notifyObservers(this.cocktailprogress);
+    public void notifySubscribers() {
+        for(Consumer<Cocktailprogress> consumer : this.subscribers) {
+            consumer.accept(getCocktailprogress());
+        }
     }
 
     public Cocktailprogress getCocktailprogress() {

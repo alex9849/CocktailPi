@@ -1,14 +1,16 @@
 package net.alex9849.cocktailmaker.model.cocktail;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 
 public class Cocktailprogress {
     private Recipe recipe;
     private int progress;
     private User user;
-    private boolean isCanceled;
-    private boolean isDone;
+    private State state;
+    private RecipeIngredient currentRequiredAction;
+
 
     public Recipe getRecipe() {
         return recipe;
@@ -34,19 +36,23 @@ public class Cocktailprogress {
         this.user = user;
     }
 
-    public boolean isCanceled() {
-        return isCanceled;
+    public State getState() {
+        return state;
     }
 
-    public boolean isDone() {
-        return isDone;
+    public void setState(State state) {
+        this.state = state;
     }
 
-    public void setDone(boolean done) {
-        isDone = done;
+    public RecipeIngredient getCurrentRequiredAction() {
+        return currentRequiredAction;
     }
 
-    public void setCanceled(boolean canceled) {
-        isCanceled = canceled;
+    public void setCurrentRequiredAction(RecipeIngredient currentRequiredAction) {
+        this.currentRequiredAction = currentRequiredAction;
+    }
+
+    public enum State {
+        RUNNING, MANUAL_ACTION_REQUIRED, CANCELLED, COMPLETE
     }
 }
