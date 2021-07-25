@@ -33,6 +33,10 @@ public abstract class Ingredient {
 
     public abstract Unit getUnit();
 
+    public boolean isAddToVolume() {
+        return true;
+    }
+
     public enum Unit {
         MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon(s)"), LEVELED_TABLESPOON("tablespoon(s)");
         private final String displayUnit;

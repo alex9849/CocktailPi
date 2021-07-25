@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -131,9 +132,9 @@ public class PumpService {
         if(isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
-        this.cocktailFactory = new CocktailFactory(recipe, user, getAllPumps(), gpioController, amount)
+        this.cocktailFactory = new CocktailFactory(recipe, user, new HashSet<>(getAllPumps()), gpioController)
                 .subscribeProgress(progress -> {
-                    if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.COMPLETE) {
+                    if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
                         this.scheduler.schedule(() -> {
                             this.cocktailFactory.shutDown();
                             this.cocktailFactory = null;

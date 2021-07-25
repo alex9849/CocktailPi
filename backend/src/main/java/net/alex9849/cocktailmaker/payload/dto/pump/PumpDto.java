@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import org.springframework.beans.BeanUtils;
 
@@ -25,7 +25,7 @@ public class PumpDto {
     @Min(0) @Max(31)
     private int gpioPin;
 
-    private IngredientDto currentIngredient;
+    private AutomatedIngredientDto currentIngredient;
 
     private boolean isCleaning;
 
@@ -35,7 +35,7 @@ public class PumpDto {
         BeanUtils.copyProperties(pump, this);
         this.isCleaning = PumpService.getInstance().isCleaning(pump);
         if(pump.getCurrentIngredient() != null) {
-            this.currentIngredient = IngredientDto.toDto(pump.getCurrentIngredient());
+            this.currentIngredient = new AutomatedIngredientDto(pump.getCurrentIngredient());
         }
     }
 
@@ -75,11 +75,11 @@ public class PumpDto {
         this.gpioPin = gpioPin;
     }
 
-    public IngredientDto getCurrentIngredient() {
+    public AutomatedIngredientDto getCurrentIngredient() {
         return currentIngredient;
     }
 
-    public void setCurrentIngredient(IngredientDto currentIngredient) {
+    public void setCurrentIngredient(AutomatedIngredientDto currentIngredient) {
         this.currentIngredient = currentIngredient;
     }
 }

@@ -67,16 +67,24 @@ public class IngredientService {
             return null;
         }
         if(ingredientDto instanceof ManualIngredientDto) {
-            ManualIngredient ingredient = new ManualIngredient();
-            BeanUtils.copyProperties(ingredientDto, ingredient);
-            return ingredient;
+            return fromDto((ManualIngredientDto) ingredientDto);
         }
         if(ingredientDto instanceof AutomatedIngredientDto) {
-            AutomatedIngredient ingredient = new AutomatedIngredient();
-            BeanUtils.copyProperties(ingredientDto, ingredient);
-            return ingredient;
+            return fromDto((AutomatedIngredientDto) ingredientDto);
         }
         throw new IllegalStateException("IngredientType not supported yet!");
+    }
+
+    public AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
+        AutomatedIngredient ingredient = new AutomatedIngredient();
+        BeanUtils.copyProperties(ingredientDto, ingredient);
+        return ingredient;
+    }
+
+    public ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
+        ManualIngredient ingredient = new ManualIngredient();
+        BeanUtils.copyProperties(ingredientDto, ingredient);
+        return ingredient;
     }
 
     public Ingredient updateIngredient(Ingredient ingredient) {

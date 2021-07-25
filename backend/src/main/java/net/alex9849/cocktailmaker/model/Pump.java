@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model;
 
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 
 public class Pump {
     private long id;
@@ -8,7 +8,7 @@ public class Pump {
     private int tubeCapacityInMl;
     private int gpioPin;
     private Long currentIngredientId;
-    private Ingredient currentIngredient;
+    private AutomatedIngredient currentIngredient;
 
     public long getId() {
         return id;
@@ -42,7 +42,7 @@ public class Pump {
         this.gpioPin = gpioPin;
     }
 
-    public Ingredient getCurrentIngredient() {
+    public AutomatedIngredient getCurrentIngredient() {
         return currentIngredient;
     }
 
@@ -54,7 +54,7 @@ public class Pump {
         this.currentIngredientId = currentIngredientId;
     }
 
-    public void setCurrentIngredient(Ingredient currentIngredient) {
+    public void setCurrentIngredient(AutomatedIngredient currentIngredient) {
         this.currentIngredient = currentIngredient;
     }
 }

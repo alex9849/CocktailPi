@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 
 import java.util.List;
@@ -7,9 +8,9 @@ import java.util.List;
 public class ManualProductionStepWorker extends AbstractProductionStepWorker {
     private final List<RecipeIngredient> productionStepInstructions;
     private int currentIndex = 0;
-    private boolean isFinished;
+    private boolean finished = false;
 
-    ManualProductionStepWorker(List<RecipeIngredient> productionStepInstructions) {
+    public ManualProductionStepWorker(List<RecipeIngredient> productionStepInstructions) {
         if(productionStepInstructions.size() == 0) {
             throw new IllegalArgumentException("ProductionStepInstructions must be non-empty!");
         }
@@ -23,7 +24,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
 
     public boolean next() {
         if(this.productionStepInstructions.size() <= this.currentIndex + 1) {
-            this.isFinished = true;
+            this.finished = true;
             return false;
         }
         this.currentIndex++;
@@ -36,7 +37,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
 
     @Override
     public void cancel() {
-        this.isFinished = true;
+        this.finished = true;
         this.notifySubscribers();
     }
 
@@ -45,22 +46,35 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
         return Mode.MANUAL;
     }
 
-    @Override
-    protected ManualStepProgress getProgress() {
+    public int getAmountFilled() {
         int amountFilled = 0;
         for(int i = 0; i < this.currentIndex; i++) {
+            RecipeIngredient recipeIngredient = this.productionStepInstructions.get(this.currentIndex);
+            if(recipeIngredient.getIngredient() instanceof ManualIngredient
+                    && !recipeIngredient.getIngredient().isAddToVolume()) {
+                continue;
+            }
             amountFilled += this.productionStepInstructions.get(this.currentIndex).getAmount();
         }
-        int amountToFill = this.productionStepInstructions.stream().mapToInt(RecipeIngredient::getAmount).sum();
+        return amountFilled;
+    }
 
+    public int getAmountToFill() {
+        return this.productionStepInstructions.stream()
+                .mapToInt(RecipeIngredient::getAmount).sum();
+    }
+
+    @Override
+    public ManualStepProgress getProgress() {
         ManualStepProgress manualStepProgress = new ManualStepProgress();
-        manualStepProgress.setPercentCompleted((int) (amountFilled * 100d )/ amountToFill);
+        manualStepProgress.setPercentCompleted((int) (this.getAmountFilled() * 100d )/ getAmountToFill());
         manualStepProgress.setIngredientToBeAdded(this.productionStepInstructions.get(this.currentIndex));
+        manualStepProgress.setFinished(this.finished);
         return manualStepProgress;
     }
 
     @Override
     public boolean isFinished() {
-        return this.isFinished;
+        return this.finished;
     }
 }

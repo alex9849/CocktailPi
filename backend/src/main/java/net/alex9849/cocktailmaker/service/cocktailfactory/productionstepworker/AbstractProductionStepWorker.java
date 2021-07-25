@@ -24,10 +24,11 @@ public abstract class AbstractProductionStepWorker {
 
     public abstract Mode getMode();
 
-    protected abstract StepProgress getProgress();
+    public abstract StepProgress getProgress();
 
     public abstract boolean isFinished();
 
+    public abstract int getAmountToFill();
 
     enum Mode {
         MANUAL, AUTOMATIC;

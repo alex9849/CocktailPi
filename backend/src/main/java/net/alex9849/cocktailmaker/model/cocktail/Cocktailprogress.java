@@ -53,6 +53,6 @@ public class Cocktailprogress {
     }
 
     public enum State {
-        RUNNING, MANUAL_ACTION_REQUIRED, CANCELLED, COMPLETE
+        RUNNING, MANUAL_ACTION_REQUIRED, CANCELLED, FINISHED, READY_TO_START
     }
 }

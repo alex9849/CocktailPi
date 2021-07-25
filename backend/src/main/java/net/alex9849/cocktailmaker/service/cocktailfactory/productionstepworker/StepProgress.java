@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
 public class StepProgress {
+    private boolean finished;
     private int percentCompleted;
 
     public int getPercentCompleted() {
@@ -9,5 +10,13 @@ public class StepProgress {
 
     public void setPercentCompleted(int percentCompleted) {
         this.percentCompleted = percentCompleted;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
