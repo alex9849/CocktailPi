@@ -24,11 +24,11 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     private IGpioController gpioController;
     private Set<ScheduledFuture> scheduledPumpFutures;
     private ScheduledFuture finishTask;
+    private ScheduledFuture nofierTask;
 
     private long startTime;
     private long endTime;
     private boolean started;
-    private boolean finished;
 
     public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<RecipeIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
         this.pumpsByIngredientId = pumps.stream().collect(Collectors
@@ -75,54 +75,51 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         long delayLastInstruction = this.scheduledPumpFutures.stream()
                 .mapToLong(x -> x.getDelay(TimeUnit.MILLISECONDS)).max().getAsLong();
 
-        this.finishTask = scheduler.scheduleAtFixedRate(this::onFinish, delayLastInstruction, 10, TimeUnit.MILLISECONDS);
+        this.finishTask = scheduler.schedule(this::onFinish, delayLastInstruction, TimeUnit.MILLISECONDS);
+        this.nofierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
         this.endTime = System.currentTimeMillis() + delayLastInstruction;
-    }
-
-    private void onFinish() {
-        boolean arePumpTasksCompleted = this.scheduledPumpFutures.stream()
-                .allMatch(x -> x.isDone() || x.isCancelled());
-        if (!arePumpTasksCompleted) {
-            return;
-        }
-        this.finishTask.cancel(false);
-        this.finished = true;
         this.notifySubscribers();
     }
 
+    private void onFinish() {
+        this.scheduledPumpFutures.forEach(x -> x.cancel(false));
+        this.nofierTask.cancel(false);
+        this.setFinished();
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
     public void cancel() {
-        if (!this.started || this.finished) {
-            throw new IllegalStateException("ProductionStepWorker has not been stated or is already finished!");
+        for (ScheduledFuture future : this.scheduledPumpFutures) {
+            future.cancel(true);
+        }
+        this.finishTask.cancel(false);
+        for (Pump pump : this.pumpPumpPhases.keySet()) {
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
         if (this.scheduler.isShutdown()) {
             return;
         }
-        for (ScheduledFuture future : this.scheduledPumpFutures) {
-            future.cancel(true);
-        }
-        this.finishTask.cancel(true);
-        for (Pump pump : this.pumpPumpPhases.keySet()) {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
-        }
         this.scheduler.shutdown();
-        this.notifySubscribers();
     }
 
     public StepProgress getProgress() {
         StepProgress stepProgress = new StepProgress();
-        stepProgress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) this.endTime)) * 100)));
-        stepProgress.setFinished(this.finished);
+        if(this.started) {
+            stepProgress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) this.endTime)) * 100)));
+        } else {
+            stepProgress.setPercentCompleted(0);
+        }
+        stepProgress.setStarted(this.started);
+        stepProgress.setFinished(this.isFinished());
         return stepProgress;
     }
 
     public int getAmountToFill() {
         return this.productionStepInstructions.stream()
                 .mapToInt(x -> x.getAmount()).sum();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return this.finished;
     }
 
     public long getRequiredPumpingTime() {

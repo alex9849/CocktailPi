@@ -4,12 +4,14 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 
+import java.util.List;
+
 public class Cocktailprogress {
     private Recipe recipe;
     private int progress;
     private User user;
     private State state;
-    private RecipeIngredient currentRequiredAction;
+    private List<RecipeIngredient> currentIngredientsToAddManually;
 
 
     public Recipe getRecipe() {
@@ -44,12 +46,12 @@ public class Cocktailprogress {
         this.state = state;
     }
 
-    public RecipeIngredient getCurrentRequiredAction() {
-        return currentRequiredAction;
+    public List<RecipeIngredient> getCurrentIngredientsToAddManually() {
+        return currentIngredientsToAddManually;
     }
 
-    public void setCurrentRequiredAction(RecipeIngredient currentRequiredAction) {
-        this.currentRequiredAction = currentRequiredAction;
+    public void setCurrentIngredientsToAddManually(List<RecipeIngredient> ingredients) {
+        this.currentIngredientsToAddManually = ingredients;
     }
 
     public enum State {

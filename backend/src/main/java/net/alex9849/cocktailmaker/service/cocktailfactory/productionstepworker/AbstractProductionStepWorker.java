@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 
 public abstract class AbstractProductionStepWorker {
     private final List<Consumer<StepProgress>> subscribers = new ArrayList<>();
+    private boolean finished = false;
+    private Runnable onFinish = null;
 
     public AbstractProductionStepWorker subscribeToProgress(Consumer<StepProgress> progressInPercentConsumer) {
         this.subscribers.add(progressInPercentConsumer);
@@ -26,9 +28,26 @@ public abstract class AbstractProductionStepWorker {
 
     public abstract StepProgress getProgress();
 
-    public abstract boolean isFinished();
-
     public abstract int getAmountToFill();
+
+    protected void setFinished() {
+        if(this.finished) {
+            return;
+        }
+        this.finished = true;
+        this.notifySubscribers();
+        if(this.onFinish != null) {
+            this.onFinish.run();
+        }
+    }
+
+    public boolean isFinished() {
+        return this.finished;
+    }
+
+    public void setOnFinishCallback(Runnable runnable) {
+        this.onFinish = runnable;
+    }
 
     enum Mode {
         MANUAL, AUTOMATIC;

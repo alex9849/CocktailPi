@@ -11,7 +11,6 @@ import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,20 +32,23 @@ public class PumpService {
 
     private CocktailFactory cocktailFactory;
 
-    @Autowired
-    private PumpRepository pumpRepository;
+    private final PumpRepository pumpRepository;
 
-    @Autowired
-    private WebSocketService webSocketService;
+    private final WebSocketService webSocketService;
 
-    @Autowired
-    private IngredientService ingredientService;
+    private final IngredientService ingredientService;
 
-    @Autowired
-    private IGpioController gpioController;
+    private final IGpioController gpioController;
 
-    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
+
+    public PumpService(PumpRepository pumpRepository, WebSocketService webSocketService, IngredientService ingredientService, IGpioController gpioController) {
+        this.pumpRepository = pumpRepository;
+        this.webSocketService = webSocketService;
+        this.ingredientService = ingredientService;
+        this.gpioController = gpioController;
+    }
 
     @PostConstruct
     public void init() {
@@ -125,7 +127,7 @@ public class PumpService {
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
-    public synchronized Cocktailprogress orderCocktail(User user, Recipe recipe, int amount) {
+    public synchronized void orderCocktail(User user, Recipe recipe, int amount) {
         if(this.isMakingCocktail()) {
             throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
@@ -136,14 +138,13 @@ public class PumpService {
                 .subscribeProgress(progress -> {
                     if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
                         this.scheduler.schedule(() -> {
-                            this.cocktailFactory.shutDown();
                             this.cocktailFactory = null;
                             this.webSocketService.broadcastCurrentCocktail(null);
                         }, 5000, TimeUnit.MILLISECONDS);
                     }
                     this.webSocketService.broadcastCurrentCocktail(progress);
                 });
-        return this.cocktailFactory.makeCocktail();
+        this.cocktailFactory.makeCocktail();
     }
 
     public synchronized boolean isMakingCocktail() {
@@ -151,7 +152,7 @@ public class PumpService {
     }
 
     public synchronized boolean cancelCocktailOrder() {
-        if(this.cocktailFactory == null || this.cocktailFactory.isDone()) {
+        if(this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
             return false;
         }
         this.cocktailFactory.cancelCocktail();

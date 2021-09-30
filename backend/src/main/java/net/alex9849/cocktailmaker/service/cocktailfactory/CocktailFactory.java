@@ -4,18 +4,14 @@ import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.AbstractProductionStepWorker;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.AutomaticProductionStepWorker;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.ManualProductionStepWorker;
+import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.StepProgress;
 
 import java.util.*;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -33,7 +29,6 @@ public class CocktailFactory {
 
     private int requestedAmount;
     private Cocktailprogress cocktailprogress;
-    private int currentWorkerIndex = -1;
     private Cocktailprogress.State state;
 
     public CocktailFactory(Recipe recipe, User user, Set<Pump> pumps, IGpioController gpioController) {
@@ -48,14 +43,15 @@ public class CocktailFactory {
                 .collect(Collectors.groupingBy(x -> x.getProductionStep()));
         List<Long> sortedProductionsSteps = recipeIngredientByStep.keySet().stream().sorted().collect(Collectors.toList());
         List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
+
         for(Long prodstep : sortedProductionsSteps) {
             List<RecipeIngredient> manualProductionSteps = new ArrayList<>();
             List<RecipeIngredient> automaticProductionSteps = new ArrayList<>();
             for(RecipeIngredient recipeIngredient : recipeIngredientByStep.get(prodstep)) {
                 if (recipeIngredient.getIngredient() instanceof ManualIngredient) {
                     manualProductionSteps.add(recipeIngredient);
-                }
-                else if (recipeIngredient.getIngredient() instanceof ManualIngredient) {
+
+                } else if (recipeIngredient.getIngredient() instanceof AutomatedIngredient) {
                     if(pumpsByIngredientId.containsKey(recipeIngredient.getIngredient().getId())) {
                         automaticProductionSteps.add(recipeIngredient);
                     } else {
@@ -63,10 +59,8 @@ public class CocktailFactory {
                     }
                 }
                 else {
-                    throw new IllegalStateException("IgredientType not implemented yet!");
-                }
-                if(pumpsByIngredientId.containsKey(recipeIngredient.getIngredientId())) {
-
+                    throw new IllegalStateException("IgredientType not implemented yet: "
+                            + Objects.requireNonNull(recipeIngredient.getIngredient()).getClass().getName());
                 }
             }
             if(!manualProductionSteps.isEmpty()) {
@@ -77,6 +71,23 @@ public class CocktailFactory {
                         manualProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
             }
         }
+        Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
+        if(!workerIterator.hasNext()) {
+            throw new IllegalArgumentException("Cound't create ProductionStepWorkers from recipe!");
+        }
+        AbstractProductionStepWorker currentWorker = workerIterator.next();
+        this.currentProductionStepWorker = currentWorker;
+        while (workerIterator.hasNext()) {
+            AbstractProductionStepWorker nextWorker = workerIterator.next();
+            currentWorker.setOnFinishCallback(() -> {
+                nextWorker.start();
+                this.currentProductionStepWorker = nextWorker;
+            });
+            currentWorker = nextWorker;
+        }
+        currentWorker.setOnFinishCallback(() -> this.onFinish());
+
+        this.productionStepWorkers.forEach(x -> x.subscribeToProgress(stepProgress -> this.notifySubscribers()));
         this.state = Cocktailprogress.State.READY_TO_START;
     }
 
@@ -107,116 +118,59 @@ public class CocktailFactory {
         return this.recipe.getRecipeIngredients().stream().mapToInt(RecipeIngredient::getAmount).sum();
     }
 
-    private AbstractProductionStepWorker startNextWorker() {
-        if(this.productionStepWorkers.size() <= this.currentWorkerIndex + 1) {
-            return null;
-        }
-        this.currentWorkerIndex++;
-        this.productionStepWorkers.get(this.currentWorkerIndex).start();
-        return this.productionStepWorkers.get(this.currentWorkerIndex);
+    private void handleWorkerNotification(AbstractProductionStepWorker worker, StepProgress stepProgress) {
+        this.notifySubscribers();
     }
 
     public void makeCocktail() {
-        if(this.isRunning()) {
-            throw new IllegalArgumentException("Already running!");
+        if(this.state != Cocktailprogress.State.READY_TO_START) {
+            throw new IllegalStateException("Factory not ready to start!");
         }
-        if(this.isDone) {
-            throw new IllegalArgumentException("Did already run!");
-        }
-
-        this.currentProductionStepWorker = startNextWorker();
-        if(this.currentProductionStepWorker == null) {
-            this.onFinish();
-            return;
-        }
-        this.notifySubscribers();
-
-        for(long i = 0; i <= this.preparationTime; i += 1000) {
-            scheduledFutures.add(scheduler.schedule(() -> {
-                this.updateCocktailProgress();
-                this.notifySubscribers();
-            }, i, TimeUnit.MILLISECONDS));
-        }
-        scheduledFutures.add(scheduler.schedule(() -> {
-            this.setDone();
-            this.notifySubscribers();
-        }, this.preparationTime, TimeUnit.MILLISECONDS));
-
+        this.state = Cocktailprogress.State.RUNNING;
         this.cocktailprogress = new Cocktailprogress();
-        this.cocktailprogress.setUser(this.user);
-        this.cocktailprogress.setRecipe(this.recipe);
-        this.cocktailprogress.setCanceled(false);
-        this.updateCocktailProgress();
-        this.notifySubscribers();
-        return cocktailprogress;
+        this.currentProductionStepWorker.start();
     }
 
     private void onFinish() {
-
-    }
-
-    public void shutDown() {
-        if(this.scheduler.isShutdown()) {
+        if(isFinished() || isCanceled()) {
             return;
         }
-        for(ScheduledFuture future : this.scheduledFutures) {
-            future.cancel(true);
+        this.state = Cocktailprogress.State.FINISHED;
+        this.shutDown();
+    }
+
+    public void cancelCocktail() {
+        if(isFinished() || isCanceled()) {
+            throw new IllegalStateException("Cocktail already done!");
         }
-        this.scheduler.shutdown();
-        for(Pump pump : this.pumpTimings.keySet()) {
+        this.shutDown();
+        this.state = Cocktailprogress.State.CANCELLED;
+        this.notifySubscribers();
+    }
+
+    private void shutDown() {
+        for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
+            if(worker instanceof AutomaticProductionStepWorker) {
+                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
+                automaticWorker.cancel();
+            }
+        }
+        for(Pump pump : this.pumps) {
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
         this.gpioController.shutdown();
     }
 
-    public void cancelCocktail() {
-        if(isDone()) {
-            throw new IllegalStateException("Cocktail already done!");
-        }
-        this.shutDown();
-        this.isCanceled = true;
-        this.updateCocktailProgress();
-        this.notifySubscribers();
-    }
-
-    public void setDone() {
-        if(!this.isDone) {
-            this.isDone = true;
-            this.updateCocktailProgress();
-        }
-    }
-
-    public boolean isDone() {
-        return isDone;
+    public boolean isFinished() {
+        return this.state == Cocktailprogress.State.FINISHED;
     }
 
     public boolean isCanceled() {
-        return isCanceled;
+        return this.state == Cocktailprogress.State.CANCELLED;
     }
 
     public boolean isRunning() {
-        if(this.scheduledFutures.stream().anyMatch(x -> !x.isDone())) {
-            return true;
-        }
-        return false;
-    }
-
-    private void updateCocktailProgress() {
-        if(this.cocktailprogress == null) {
-            return;
-        }
-        this.cocktailprogress.setCanceled(this.isCanceled());
-        if(!this.isCanceled()) {
-            int intProgress = 100;
-            if(!this.isDone()) {
-                long runningSince = System.currentTimeMillis() - this.startTime;
-                double progress = ( runningSince / (double) this.preparationTime) * 100;
-                intProgress = (int) Math.min(progress, 100);
-            }
-            this.cocktailprogress.setDone(this.isDone());
-            this.cocktailprogress.setProgress(intProgress);
-        }
-        this.setChanged();
+        return this.state == Cocktailprogress.State.RUNNING;
     }
 
     public CocktailFactory subscribeProgress(Consumer<Cocktailprogress> consumer) {
@@ -224,7 +178,7 @@ public class CocktailFactory {
         return this;
     }
 
-    public void notifySubscribers() {
+    private void notifySubscribers() {
         for(Consumer<Cocktailprogress> consumer : this.subscribers) {
             consumer.accept(getCocktailprogress());
         }
@@ -237,12 +191,11 @@ public class CocktailFactory {
         cocktailprogress.setState(this.state);
         cocktailprogress.setProgress(getProgressInPercent());
 
-
         if(this.currentProductionStepWorker instanceof ManualProductionStepWorker) {
             ManualProductionStepWorker worker = (ManualProductionStepWorker) this.currentProductionStepWorker;
-            cocktailprogress.setCurrentRequiredAction(worker.getProgress().getIngredientToBeAdded());
+            cocktailprogress.setCurrentIngredientsToAddManually(worker.getProgress().getIngredientsToBeAdded());
         }
-
+        return cocktailprogress;
     }
 
     private int getProgressInPercent() {
@@ -252,18 +205,28 @@ public class CocktailFactory {
         if(this.state == Cocktailprogress.State.FINISHED) {
             return 100;
         }
-        int mlToAddManually = this.productionStepWorkers.stream()
-                .filter(x -> x instanceof ManualProductionStepWorker)
-                .mapToInt(x -> x.getAmountToFill())
-                .sum();
-        int mlToAddAutomatically = this.productionStepWorkers.stream()
-                .filter(x -> x instanceof AutomaticProductionStepWorker)
-                .mapToInt(x -> x.getAmountToFill())
-                .sum();
-        int mlToFill = mlToAddAutomatically + mlToAddManually;
 
-        //TODO
-
+        final long TIME_FOR_MANUAL_PROGRESS = 15;
+        long timeNeeded = 0;
+        long timeElapsed = 0;
+        for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
+            if(worker instanceof ManualProductionStepWorker) {
+                timeNeeded += TIME_FOR_MANUAL_PROGRESS;
+                if(worker.isFinished()) {
+                    timeElapsed += TIME_FOR_MANUAL_PROGRESS;
+                }
+            } else if (worker instanceof AutomaticProductionStepWorker) {
+                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
+                timeNeeded += automaticWorker.getRequiredPumpingTime();
+                if(worker.isFinished()) {
+                    timeNeeded += automaticWorker.getRequiredPumpingTime();
+                } else if (automaticWorker.isStarted()) {
+                    timeNeeded += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
+                            * automaticWorker.getRequiredPumpingTime());
+                }
+            }
+        }
+        return Math.round(((float) timeElapsed / timeNeeded) * 100);
     }
 
 
