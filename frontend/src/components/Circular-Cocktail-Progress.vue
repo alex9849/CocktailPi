@@ -71,7 +71,7 @@
                     text-color="white"
                     :icon="mdiStop"
                     :loading="canceling"
-                    :disable="hasCocktailProgress && (cocktailProgress.canceled || cocktailProgress.done)"
+                    :disable="hasCocktailProgress && (cocktailProgress.state === 'CANCELLED' || cocktailProgress.state === 'FINISHED')"
                     @click="onCancelCocktail()"
                     v-if="isAdmin || currentUser.id === cocktailProgress.user.id"
                   />

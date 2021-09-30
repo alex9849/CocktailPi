@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import java.util.List;
 
 public class ManualProductionStepWorker extends AbstractProductionStepWorker {
+    protected boolean started = false;
     private final List<RecipeIngredient> productionStepInstructions;
 
     public ManualProductionStepWorker(List<RecipeIngredient> productionStepInstructions) {
@@ -16,11 +17,19 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
 
     @Override
     public void start() {
+        this.started = true;
         this.notifySubscribers();
     }
 
     public int getSize() {
         return this.productionStepInstructions.size();
+    }
+
+    public void continueProduction() {
+        if(!this.started) {
+            return;
+        }
+        this.setFinished();
     }
 
     @Override

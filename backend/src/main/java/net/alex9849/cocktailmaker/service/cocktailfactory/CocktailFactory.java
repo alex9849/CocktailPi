@@ -150,6 +150,13 @@ public class CocktailFactory {
         this.notifySubscribers();
     }
 
+    public void continueProduction() {
+        if(!(this.currentProductionStepWorker instanceof ManualProductionStepWorker)) {
+            throw new IllegalStateException("No manual interaction required!");
+        }
+        ((ManualProductionStepWorker) this.currentProductionStepWorker).continueProduction();
+    }
+
     private void shutDown() {
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
             if(worker instanceof AutomaticProductionStepWorker) {

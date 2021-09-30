@@ -145,6 +145,13 @@ public class PumpService {
         this.cocktailFactory.makeCocktail();
     }
 
+    public synchronized void continueCocktailProduction() {
+        if (this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
+            throw new IllegalStateException("No cocktail is being prepared currently!");
+        }
+        this.cocktailFactory.continueProduction();
+    }
+
     public synchronized boolean isMakingCocktail() {
         return this.cocktailFactory != null;
     }

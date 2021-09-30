@@ -35,7 +35,7 @@ public class CocktailEndpoint {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         pumpService.orderCocktail(user, recipe, amount);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.accepted().build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
@@ -52,6 +52,12 @@ public class CocktailEndpoint {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "continueproduction", method = RequestMethod.POST)
+    public ResponseEntity<?> continueCocktailProduction() {
+        pumpService.continueCocktailProduction();
+        return ResponseEntity.accepted().build();
     }
 
 }
