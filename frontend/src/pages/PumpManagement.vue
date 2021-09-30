@@ -221,7 +221,6 @@ export default {
           editPump: {
             id: -1,
             timePerClInMs: '',
-            syrupTimePerClInMs: '',
             tubeCapacityInMl: '',
             gpioPin: '',
             currentIngredient: null
@@ -229,7 +228,6 @@ export default {
           newPump: {
             id: -1,
             timePerClInMs: '',
-            syrupTimePerClInMs: '',
             tubeCapacityInMl: '',
             gpioPin: '',
             currentIngredient: null

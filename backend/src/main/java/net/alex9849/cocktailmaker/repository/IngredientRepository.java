@@ -79,6 +79,13 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findIdsNotManual() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE dtype != 'ManualIngredient'");
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
@@ -175,6 +182,4 @@ public class IngredientRepository extends JdbcDaoSupport {
         ingredient.setId(resultSet.getLong("id"));
         return ingredient;
     }
-
-
 }

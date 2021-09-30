@@ -11,6 +11,7 @@ import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,23 +33,20 @@ public class PumpService {
 
     private CocktailFactory cocktailFactory;
 
-    private final PumpRepository pumpRepository;
+    @Autowired
+    private PumpRepository pumpRepository;
 
-    private final WebSocketService webSocketService;
+    @Autowired
+    private WebSocketService webSocketService;
 
-    private final IngredientService ingredientService;
+    @Autowired
+    private IngredientService ingredientService;
 
-    private final IGpioController gpioController;
+    @Autowired
+    private IGpioController gpioController;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
-
-    public PumpService(PumpRepository pumpRepository, WebSocketService webSocketService, IngredientService ingredientService, IGpioController gpioController) {
-        this.pumpRepository = pumpRepository;
-        this.webSocketService = webSocketService;
-        this.ingredientService = ingredientService;
-        this.gpioController = gpioController;
-    }
 
     @PostConstruct
     public void init() {

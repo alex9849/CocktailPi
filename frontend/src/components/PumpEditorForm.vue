@@ -4,6 +4,7 @@
       label="Current ingredient"
       v-model="value.currentIngredient"
       clearable
+      filter-manual-ingredients
     />
     <q-input
       label="Pump time per cl"

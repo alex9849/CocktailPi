@@ -7,15 +7,13 @@ class IngredientService {
       .then(response => response.data);
   }
 
-  getIngredientsFilter(autocomplete) {
-    let path = API_PATH;
-    let filterAdded = false;
-    if(autocomplete) {
-      path += filterAdded?'&':'?';
-      path += "autocomplete=" + autocomplete;
-      filterAdded = true;
-    }
-    return axios.get(path)
+  getIngredientsFilter(autocomplete, filterManualIngredients) {
+    return axios.get(API_PATH, {
+      params: {
+        autocomplete: autocomplete,
+        filterManualIngredients: filterManualIngredients
+      }
+    })
       .then(response => response.data);
   }
 

@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -106,7 +108,10 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public Pump populateEntity(Pump pump) {
         if(pump.getCurrentIngredientId() != null) {
-            pump.setCurrentIngredient(ingredientRepository.findById(pump.getCurrentIngredientId()).orElse(null));
+            Ingredient ingredient = ingredientRepository.findById(pump.getCurrentIngredientId()).orElse(null);
+            if(ingredient instanceof AutomatedIngredient) {
+                pump.setCurrentIngredient((AutomatedIngredient) ingredient);
+            }
         }
         return pump;
     }

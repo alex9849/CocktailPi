@@ -24,7 +24,8 @@ public class IngredientEndpoint {
     IngredientService ingredientService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete) {
+    ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
+                                     @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients) {
         if(autocomplete == null){
             if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(ERole.ROLE_ADMIN)) {
                 ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -34,7 +35,7 @@ public class IngredientEndpoint {
                 throw new IllegalArgumentException("Autocomplete too short");
             }
         }
-        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete)
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients)
                 .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
     }
 

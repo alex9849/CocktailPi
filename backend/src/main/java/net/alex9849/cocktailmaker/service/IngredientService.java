@@ -32,11 +32,14 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngredientByFilter(String nameStartsWith) {
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
             idsToFindSetList.add(ingredientRepository.findIdsAutocompleteName(nameStartsWith));
+        }
+        if(filterManualIngredients) {
+            idsToFindSetList.add(ingredientRepository.findIdsNotManual());
         }
 
         if(idsToFindSetList.isEmpty()) {

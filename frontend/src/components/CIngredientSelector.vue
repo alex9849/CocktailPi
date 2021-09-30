@@ -43,9 +43,9 @@
 </template>
 
 <script>
-  import IngridientService from "../services/ingredient.service";
+import IngridientService from "../services/ingredient.service";
 
-  export default {
+export default {
     name: "CIngredientSelector",
     props: {
       value: {
@@ -95,6 +95,10 @@
         type: String,
         default: undefined
       },
+      filterManualIngredients: {
+        type: Boolean,
+        default: false
+      },
       noInputOptions: {
         type: Array,
         default: () => []
@@ -122,7 +126,7 @@
           update();
           return;
         }
-        IngridientService.getIngredientsFilter(val)
+        IngridientService.getIngredientsFilter(val, this.filterManualIngredients)
           .then(ingridients => {
             update(() => {
               this.fetchedOptions = ingridients;
