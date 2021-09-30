@@ -12,6 +12,7 @@ import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.M
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.StepProgress;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -80,8 +81,8 @@ public class CocktailFactory {
         while (workerIterator.hasNext()) {
             AbstractProductionStepWorker nextWorker = workerIterator.next();
             currentWorker.setOnFinishCallback(() -> {
-                nextWorker.start();
                 this.currentProductionStepWorker = nextWorker;
+                nextWorker.start();
             });
             currentWorker = nextWorker;
         }
@@ -207,7 +208,7 @@ public class CocktailFactory {
             return 100;
         }
 
-        final long TIME_FOR_MANUAL_PROGRESS = 15;
+        final long TIME_FOR_MANUAL_PROGRESS = TimeUnit.SECONDS.toMillis(15);
         long timeNeeded = 0;
         long timeElapsed = 0;
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {

@@ -98,14 +98,14 @@
         <q-btn
           color="positive"
           @click="onMakeCocktail()"
-          :disable="!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress || $v.amountToProduce.$invalid"
+          :disable="hasCocktailProgress || $v.amountToProduce.$invalid"
         >
           Make cocktail
         </q-btn>
         <q-tooltip
-          v-if="!doPumpsHaveAllIngredients(recipe) || hasCocktailProgress"
+          v-if="hasCocktailProgress"
         >
-          {{ hasCocktailProgress? "A cocktail is already being made!" : "Missing ingredients!" }}
+          {{ "A cocktail is already being made!" }}
         </q-tooltip>
       </q-card-actions>
     </q-card>
@@ -113,14 +113,14 @@
 </template>
 
 <script>
-  import PumpService from "../services/pump.service";
-  import CocktailService from "../services/cocktail.service"
-  import {mapGetters} from "vuex";
-  import {mdiPlay} from "@quasar/extras/mdi-v5";
-  import CIngredientSelector from "../components/CIngredientSelector";
-  import {maxValue, minValue, required} from "vuelidate/lib/validators";
+import PumpService from "../services/pump.service";
+import CocktailService from "../services/cocktail.service"
+import {mapGetters} from "vuex";
+import {mdiPlay} from "@quasar/extras/mdi-v5";
+import CIngredientSelector from "../components/CIngredientSelector";
+import {maxValue, minValue, required} from "vuelidate/lib/validators";
 
-  export default {
+export default {
     name: "CMakeCocktailDialog",
     components: {CIngredientSelector},
     props: {

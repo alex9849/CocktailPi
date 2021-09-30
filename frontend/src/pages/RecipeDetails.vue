@@ -27,26 +27,11 @@
             Make cocktail
           </q-btn>
           <q-btn
-            v-else-if="areEnoughPumpsAvailable(recipe)"
+            v-else
             color="warning"
             @click="showMakeCocktailDialog = true"
-            :disable="!isPumpIngredientEditorRole"
           >
-            Change pumplayout & make cocktail
-            <q-tooltip
-              v-if="!isPumpIngredientEditorRole">
-              You are not permitted to change the pumplayout!
-            </q-tooltip>
-          </q-btn>
-          <q-btn
-            v-else
-            color="positive"
-            disable
-          >
-            Make cocktail
-            <q-tooltip>
-              Not enough pumps installed!
-            </q-tooltip>
+            Make cocktail (Half-Automatic)
           </q-btn>
         <q-btn
           color="red"

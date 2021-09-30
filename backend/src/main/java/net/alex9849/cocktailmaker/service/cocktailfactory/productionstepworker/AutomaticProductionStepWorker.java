@@ -95,7 +95,9 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         for (ScheduledFuture future : this.scheduledPumpFutures) {
             future.cancel(true);
         }
-        this.finishTask.cancel(false);
+        if(this.finishTask != null) {
+            this.finishTask.cancel(false);
+        }
         for (Pump pump : this.pumpPumpPhases.keySet()) {
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
