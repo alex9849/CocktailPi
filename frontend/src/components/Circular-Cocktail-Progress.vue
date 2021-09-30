@@ -39,7 +39,7 @@
                   :value="cocktailProgress.progress / 100"
                   stripe
                   rounded
-                  :color="cocktailProgress.canceled? 'red-4' : 'green-4'"
+                  :color="isCocktailCancelled ? 'red-4' : 'green-4'"
                   size="20px"
                   style="margin: 10px 0"
                 >
@@ -106,12 +106,12 @@
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
-  import {mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
-  import CocktailService from "../services/cocktail.service";
-  import CRecipeCard from "./CRecipeCard";
+import {mapGetters} from "vuex";
+import {mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+import CocktailService from "../services/cocktail.service";
+import CRecipeCard from "./CRecipeCard";
 
-  export default {
+export default {
     name: "Circular-Cocktail-Progress",
     components: {CRecipeCard},
     data() {
@@ -146,15 +146,21 @@
           return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
         }
       },
+      isCocktailCancelled() {
+        if(!this.hasCocktailProgress) {
+          return false;
+        }
+        return this.cocktailProgress.state === 'CANCELLED';
+      },
       cocktailProgressBarLabel() {
         if(!this.hasCocktailProgress) {
           return '';
         }
-        if(this.cocktailProgress.done) {
+        if(this.cocktailProgress.state === 'FINISHED') {
           return 'Done!';
         }
-        if(this.cocktailProgress.canceled) {
-          return 'Canceled!';
+        if(this.cocktailProgress.state === 'CANCELLED') {
+          return 'Cancelled!';
         }
         return this.cocktailProgress.progress + '%'
       }

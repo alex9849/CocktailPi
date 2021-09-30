@@ -19,8 +19,7 @@ export default function () {
         id: Number,
         username: String
       },
-      done: Boolean,
-      canceled: Boolean
+      state: String,
     },
     hasCocktailProgress: false,
     currentProgressDialog: false
