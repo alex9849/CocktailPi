@@ -108,7 +108,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     public StepProgress getProgress() {
         StepProgress stepProgress = new StepProgress();
         if(this.started) {
-            stepProgress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) this.endTime)) * 100)));
+            stepProgress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) (this.endTime - this.startTime))) * 100)));
         } else {
             stepProgress.setPercentCompleted(0);
         }

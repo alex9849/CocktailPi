@@ -68,7 +68,7 @@ public class CocktailFactory {
             }
             if(!automaticProductionSteps.isEmpty()) {
                 this.productionStepWorkers.add(new AutomaticProductionStepWorker(pumps, gpioController,
-                        manualProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
+                        automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
             }
         }
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
@@ -137,6 +137,7 @@ public class CocktailFactory {
         }
         this.state = Cocktailprogress.State.FINISHED;
         this.shutDown();
+        this.notifySubscribers();
     }
 
     public void cancelCocktail() {
@@ -219,14 +220,14 @@ public class CocktailFactory {
                 AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
                 timeNeeded += automaticWorker.getRequiredPumpingTime();
                 if(worker.isFinished()) {
-                    timeNeeded += automaticWorker.getRequiredPumpingTime();
+                    timeElapsed += automaticWorker.getRequiredPumpingTime();
                 } else if (automaticWorker.isStarted()) {
-                    timeNeeded += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
+                    timeElapsed += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
                             * automaticWorker.getRequiredPumpingTime());
                 }
             }
         }
-        return Math.round(((float) timeElapsed / timeNeeded) * 100);
+        return Math.round((((float) timeElapsed) / timeNeeded) * 100);
     }
 
 
