@@ -31,6 +31,36 @@
             ml
           </template>
         </q-input>
+        <q-card flat
+                bordered
+                class="bg-warning"
+                v-if="unassignedIngredients.length !== 0"
+        >
+          <q-card-section horizontal>
+            <div class="flex items-center col-auto"
+                 v-if="!$q.platform.is.mobile"
+            >
+              <q-icon :name="mdiAlertOutline"
+                      size="lg"
+                      class="text-orange-14 q-pa-sm"
+              ></q-icon>
+            </div>
+            <q-separator vertical
+                         v-if="!$q.platform.is.mobile"
+            />
+            <div class="col">
+              <div class="q-pa-sm">
+                The following ingredients have to get added manually or are not assigned to pumps. You will be asked to add them during the production progress:
+              </div>
+              <q-separator></q-separator>
+              <ul style="text-align: start">
+                <li v-for="ingredient in unassignedIngredients">
+                  {{ ingredient.name }}
+                </li>
+              </ul>
+            </div>
+          </q-card-section>
+        </q-card>
         <q-table
           v-if="isUserPumpIngredientEditor"
           :columns="columns"
@@ -117,7 +147,7 @@
 import PumpService from "../services/pump.service";
 import CocktailService from "../services/cocktail.service"
 import {mapGetters} from "vuex";
-import {mdiPlay} from "@quasar/extras/mdi-v5";
+import {mdiAlertOutline, mdiPlay} from "@quasar/extras/mdi-v5";
 import CIngredientSelector from "../components/CIngredientSelector";
 import {maxValue, minValue, required} from "vuelidate/lib/validators";
 
@@ -147,6 +177,7 @@ export default {
     },
     created() {
       this.mdiPlay = mdiPlay;
+      this.mdiAlertOutline = mdiAlertOutline;
     },
     methods: {
       markPump(pump) {
@@ -214,9 +245,6 @@ export default {
         sorted.push(...this.getPumpLayout);
         return sorted.sort((a, b) => a.id - b.id);
       },
-      missingAutomaticIngredients() {
-        return this.neededIngredients.filter(x => x.type === 'automated' && !this.getPumpIngredients.some(y => x.id === y.id));
-      },
       neededIngredients() {
           let ingredients = [];
           for(let productionstep of this.recipe.recipeIngredients) {
@@ -227,6 +255,12 @@ export default {
             }
           }
           return ingredients;
+      },
+      unassignedIngredients() {
+        return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
+      },
+      missingAutomaticIngredients() {
+        return this.unassignedIngredients.filter(x => x.type === 'automated');
       },
       showProgressDialog: {
         get() {
