@@ -146,9 +146,6 @@ export default {
     }
   },
   created() {
-    this.loading = true;
-    this.fetchIngredientsAction()
-      .finally(() => this.loading = false);
     this.mdiDelete = mdiDelete;
   },
   computed: {

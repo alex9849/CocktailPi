@@ -100,15 +100,24 @@ a {
 </style>
 
 <script>
-import { openURL } from 'quasar'
+import {openURL} from 'quasar'
 import AppHeader from "../components/AppHeader";
-import {mdiAccount, mdiChevronRight, mdiCogs, mdiEarth,
-  mdiGithub, mdiDocker, mdiLinkedin, mdiWeb, mdiPiggyBank } from "@quasar/extras/mdi-v5";
-import {mapGetters} from 'vuex'
+import {
+  mdiAccount,
+  mdiChevronRight,
+  mdiCogs,
+  mdiDocker,
+  mdiEarth,
+  mdiGithub,
+  mdiLinkedin,
+  mdiPiggyBank,
+  mdiWeb
+} from "@quasar/extras/mdi-v5";
+import {mapActions, mapGetters} from 'vuex'
 import CategoryService from "../services/category.service";
 
 export default {
-    name: 'MainLayout',
+    name: 'LoggedInLayout',
 
     components: {AppHeader},
 
@@ -201,6 +210,7 @@ export default {
       window.addEventListener('resize', this.handleResize);
       this.handleResize();
       this.setCategories();
+      this.fetchIngredientsAction();
       this.mdiChevronRight = mdiChevronRight;
       this.mdiPiggyBank = mdiPiggyBank;
     },
@@ -217,6 +227,9 @@ export default {
       }
     },
     methods: {
+      ...mapActions({
+        fetchIngredientsAction: 'bar/fetchIngredients',
+      }),
       openURLInBrowser(url) {
         openURL(url)
       },

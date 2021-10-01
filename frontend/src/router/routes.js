@@ -22,7 +22,7 @@ function redirectIfAuthenticated(to, from, next) {
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/LoggedInLayout.vue'),
     redirect: {name: 'login'},
     beforeEnter: redirectIfNotAuthenticated,
     children: [{
