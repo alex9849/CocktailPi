@@ -7,7 +7,7 @@
       :rules="[val => $v.value.ingredient.required || 'Required']"
     />
     <q-input
-      label="Amount (in ml)"
+      :label="amountLabel"
       type="number"
       outlined
       v-model.number="value.amount"
@@ -80,6 +80,14 @@ export default {
         }
       };
       return validations;
+    },
+    computed: {
+      amountLabel() {
+        if(!!this.value.ingredient) {
+          return "Amount (in " + this.value.ingredient.unit + ")"
+        }
+        return "Amount"
+      }
     },
     watch: {
       '$v.value.$invalid': function _watch$vValue$invalid(value) {

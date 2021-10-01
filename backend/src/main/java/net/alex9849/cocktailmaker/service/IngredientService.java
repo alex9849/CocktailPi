@@ -79,12 +79,18 @@ public class IngredientService {
     }
 
     public AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
         AutomatedIngredient ingredient = new AutomatedIngredient();
         BeanUtils.copyProperties(ingredientDto, ingredient);
         return ingredient;
     }
 
     public ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
         ManualIngredient ingredient = new ManualIngredient();
         BeanUtils.copyProperties(ingredientDto, ingredient);
         return ingredient;

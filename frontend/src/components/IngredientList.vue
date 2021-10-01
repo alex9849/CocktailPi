@@ -34,7 +34,7 @@
         >
           <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
             <q-item-section>
-              {{ ingredient.amount }}ml {{ ingredient.ingredient.name }}
+              {{ ingredient.amount }} {{ ingredient.ingredient.unit }} {{ ingredient.ingredient.name }}
               <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
                 {{ ingredient.ingredient.alcoholContent }}% alcohol content
               </q-item-label>
