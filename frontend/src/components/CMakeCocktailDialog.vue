@@ -8,7 +8,7 @@
       class="text-center with-desktop"
     >
       <q-card-section class="q-gutter-md">
-        <p class="text-h5">{{ makeCocktailDialogHeadline }}</p>
+        <p class="text-h5">Order Cocktail</p>
         <q-splitter
           horizontal
           :value="10"
@@ -51,8 +51,9 @@
                 @input="updatePumpIngredient(props.row, $event)"
                 clearable
                 dense
+                filter-manual-ingredients
                 :bg-color="markPump(props.row)? 'green-3':undefined"
-                :no-input-options="missingIngredients"
+                :no-input-options="missingAutomaticIngredients"
                 :loading="loadingPumpIds.includes(props.row.id, 0)"
               >
                 <template
@@ -60,7 +61,7 @@
                   slot-scope="{scope}"
                 >
                   <q-item-label
-                    v-if="!!missingIngredients.some(x => x.id === scope.opt.id)"
+                    v-if="!!missingAutomaticIngredients.some(x => x.id === scope.opt.id)"
                     caption
                     class="text-green"
                   >
@@ -213,8 +214,8 @@ export default {
         sorted.push(...this.getPumpLayout);
         return sorted.sort((a, b) => a.id - b.id);
       },
-      missingIngredients() {
-        return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
+      missingAutomaticIngredients() {
+        return this.neededIngredients.filter(x => x.type === 'automated' && !this.getPumpIngredients.some(y => x.id === y.id));
       },
       neededIngredients() {
           let ingredients = [];
@@ -226,12 +227,6 @@ export default {
             }
           }
           return ingredients;
-      },
-      makeCocktailDialogHeadline() {
-        if (!this.doPumpsHaveAllIngredients(this.recipe)) {
-          return "Change pumplayout & make cocktail"
-        }
-        return "Make cocktail"
       },
       showProgressDialog: {
         get() {
