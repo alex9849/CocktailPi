@@ -102,7 +102,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier, add_to_volume) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier, add_to_volume, scale_to_volume) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -113,9 +113,20 @@ public class IngredientRepository extends JdbcDaoSupport {
                 pstmt.setNull(5, Types.DOUBLE);
             }
             if(ingredient instanceof ManualIngredient) {
-                pstmt.setBoolean(6, ((ManualIngredient) ingredient).isAddToVolume());
+                ManualIngredient manualIngredient = (ManualIngredient) ingredient;
+                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                    pstmt.setBoolean(6, manualIngredient.isAddToVolume());
+                } else {
+                    pstmt.setBoolean(6, false);
+                }
+                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                    pstmt.setBoolean(7, false);
+                } else {
+                    pstmt.setBoolean(7, manualIngredient.isScaleToVolume());
+                }
             } else {
                 pstmt.setNull(6, Types.BOOLEAN);
+                pstmt.setNull(7, Types.BOOLEAN);
             }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -130,7 +141,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, add_to_volume = ? WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ?, add_to_volume = ?, scale_to_volume = ? WHERE id = ?");
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -141,15 +152,22 @@ public class IngredientRepository extends JdbcDaoSupport {
                 pstmt.setNull(5, Types.DOUBLE);
             }
             if(ingredient instanceof ManualIngredient) {
+                ManualIngredient manualIngredient = (ManualIngredient) ingredient;
                 if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                    pstmt.setBoolean(6, ((ManualIngredient) ingredient).isAddToVolume());
+                    pstmt.setBoolean(6, manualIngredient.isAddToVolume());
                 } else {
                     pstmt.setBoolean(6, false);
                 }
+                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                    pstmt.setBoolean(7, false);
+                } else {
+                    pstmt.setBoolean(7, manualIngredient.isScaleToVolume());
+                }
             } else {
                 pstmt.setNull(6, Types.BOOLEAN);
+                pstmt.setNull(7, Types.BOOLEAN);
             }
-            pstmt.setLong(7, ingredient.getId());
+            pstmt.setLong(8, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -169,6 +187,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
             mIngredient.setAddToVolume(resultSet.getBoolean("add_to_volume"));
+            mIngredient.setScaleToVolume(resultSet.getBoolean("scale_to_volume"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();

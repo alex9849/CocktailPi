@@ -99,6 +99,21 @@
             />
           </q-td>
           <q-td
+            key="scaleToVolume"
+            :props="props"
+          >
+            <q-icon
+              v-if="props.row.scaleToVolume"
+              size="sm"
+              :name="mdiCheckCircle"
+            />
+            <q-icon
+              v-else
+              size="sm"
+              :name="mdiCheckboxBlankCircleOutline"
+            />
+          </q-td>
+          <q-td
             key="actions"
             class="q-pa-md q-gutter-x-sm"
             :props="props"
@@ -210,14 +225,7 @@
 </template>
 
 <script>
-import {
-  mdiDelete,
-  mdiPencilOutline,
-  mdiCogs,
-  mdiHandRight,
-  mdiCheckCircle,
-  mdiCheckboxBlankCircleOutline
-} from '@quasar/extras/mdi-v5';
+import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
 import IngredientService from "../services/ingredient.service";
 import CQuestion from "../components/CQuestion";
 import CEditDialog from "components/CEditDialog";
@@ -236,6 +244,7 @@ export default {
           {name: 'unit', label: 'Unit', field: 'unit', align: 'center'},
           {name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center'},
           {name: 'addToVolume', label: 'Add to volume', field: 'addToVolume', align: 'center'},
+          {name: 'scaleToVolume', label: 'Scale to volume', field: 'scaleToVolume', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
@@ -259,7 +268,8 @@ export default {
             alcoholContent: 0,
             type: "automated",
             unit: null,
-            addToVolume: false
+            addToVolume: false,
+            scaleToVolume: false
           },
           newIngredient: {
             id: -1,
@@ -268,7 +278,8 @@ export default {
             alcoholContent: 0,
             type: "automated",
             unit: null,
-            addToVolume: false
+            addToVolume: false,
+            scaleToVolume: false
           }
         }
       }

@@ -6,6 +6,7 @@ import javax.persistence.DiscriminatorValue;
 public class ManualIngredient extends Ingredient {
     private Unit unit;
     private boolean addToVolume;
+    private boolean scaleToVolume;
 
     public Unit getUnit() {
         return unit;
@@ -21,5 +22,13 @@ public class ManualIngredient extends Ingredient {
 
     public void setAddToVolume(boolean addToVolume) {
         this.addToVolume = addToVolume;
+    }
+
+    public boolean isScaleToVolume() {
+        return scaleToVolume;
+    }
+
+    public void setScaleToVolume(boolean scaleToVolume) {
+        this.scaleToVolume = scaleToVolume;
     }
 }

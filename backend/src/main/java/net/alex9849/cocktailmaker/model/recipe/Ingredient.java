@@ -38,7 +38,8 @@ public abstract class Ingredient {
     }
 
     public enum Unit {
-        MILLILITER("ml"), GRAM("g"), LEVELED_TEASPOON("teaspoon(s)"), LEVELED_TABLESPOON("tablespoon(s)");
+        MILLILITER("ml"), GRAM("g"), TEASPOON("teaspoon(s)"),
+        TABLESPOON("tablespoon(s)"), PIECE("piece(s)");
         private final String displayUnit;
 
         Unit(String displayUnit) {

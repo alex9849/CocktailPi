@@ -76,7 +76,7 @@
           filled
           clearable
           v-model="value.unit"
-          @input="v => {v !== 'ml'? value.addToVolume = false:null; $emit('input', value)}"
+          @input="onUnitChange"
           :options="units"
           emit-value
           map-options
@@ -87,6 +87,13 @@
           v-if="value.unit === 'ml'"
           label="Add to volume"
           v-model="value.addToVolume"
+          @input="$emit('input', value)"
+          :disable="disable"
+        />
+        <q-checkbox
+          v-if="!!value.unit && value.unit !== 'ml'"
+          label="Scale"
+          v-model="value.scaleToVolume"
           @input="$emit('input', value)"
           :disable="disable"
         />
@@ -116,8 +123,9 @@ export default {
       units: [
         {label: 'gram (g)', value: 'g'},
         {label: 'milliliter (ml)', value: 'ml'},
-        {label: 'leveled teaspoon(s)', value: 'teaspoon(s)'},
-        {label: 'leveled tablespoon(s)', value: 'tablespoon(s)'}
+        {label: 'unit(s)', value: 'unit(s)'},
+        {label: 'teaspoon(s)', value: 'teaspoon(s)'},
+        {label: 'tablespoon(s)', value: 'tablespoon(s)'}
       ],
     }
   },
@@ -132,6 +140,19 @@ export default {
     },
     onTypeChange(newType) {
       this.$v.value.$touch()
+    },
+    onUnitChange(newUnit) {
+      if (newUnit === 'ml') {
+        this.value.addToVolume = false;
+      } else {
+        this.value.addToVolume = null;
+      }
+      if (newUnit !== 'ml') {
+        this.value.scaleToVolume = false;
+      } else {
+        this.value.scaleToVolume = null;
+      }
+      this.$emit('input', this.value)
     }
   },
   created() {
@@ -156,6 +177,9 @@ export default {
           required: requiredIf(() => this.value.type === "automated"),
           minValue: minValue(0),
           maxValue: maxValue(10)
+        },
+        unit: {
+          required: requiredIf(() => this.value.type === "manual")
         }
       }
     };

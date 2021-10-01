@@ -99,6 +99,7 @@ public class IngredientService {
                 && !Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
+
         ingredientRepository.update(ingredient);
         return ingredient;
     }

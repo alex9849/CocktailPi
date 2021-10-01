@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import org.springframework.beans.BeanUtils;
@@ -9,10 +8,14 @@ import javax.validation.constraints.NotNull;
 
 public class ManualIngredientDto extends IngredientDto {
 
+    @NotNull
     private Ingredient.Unit unit;
 
     @NotNull
     private boolean addToVolume;
+
+    @NotNull
+    private boolean scaleToVolume;
 
     public ManualIngredientDto() {}
 
@@ -40,5 +43,13 @@ public class ManualIngredientDto extends IngredientDto {
 
     public void setAddToVolume(boolean addToVolume) {
         this.addToVolume = addToVolume;
+    }
+
+    public boolean isScaleToVolume() {
+        return scaleToVolume;
+    }
+
+    public void setScaleToVolume(boolean scaleToVolume) {
+        this.scaleToVolume = scaleToVolume;
     }
 }
