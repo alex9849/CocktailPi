@@ -56,6 +56,13 @@
               <ul style="text-align: start">
                 <li v-for="ingredient in unassignedIngredients">
                   {{ ingredient.name }}
+                  <q-chip :color="isIngredientInBar(ingredient.id)? 'green-4' : 'red-4'"
+                          dense
+                          square
+                  >
+                    <div v-if="isIngredientInBar(ingredient.id)">in bar</div>
+                    <div v-else>not in bar</div>
+                  </q-chip>
                 </li>
               </ul>
             </div>
@@ -162,6 +169,10 @@ export default {
       recipe: {
         type: Object,
         required: true
+      },
+      ingredientsInBar: {
+        type: Array,
+        required: true
       }
     },
     data() {
@@ -229,6 +240,9 @@ export default {
             message: error.response.data.message
           });
         })
+      },
+      isIngredientInBar(ingredientId) {
+        return this.ingredientsInBar.some(x => x.id === ingredientId);
       }
     },
     computed: {
