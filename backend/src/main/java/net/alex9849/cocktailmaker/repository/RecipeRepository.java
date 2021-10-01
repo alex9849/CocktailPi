@@ -185,8 +185,8 @@ public class RecipeRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
                     "JOIN recipe_ingredients ri on r.id = ri.recipe_id " +
-                    "WHERE ri.ingredient_id IN ?");
-            pstmt.setArray(1, con.createArrayOf("BIGSERIAL", ingredientIds));
+                    "WHERE ri.ingredient_id = ANY(?)");
+            pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -265,7 +265,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsOfFabricableRecipes() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes r " +
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
                     "join recipe_ingredients ri on r.id = ri.recipe_id " +
                     "join ingredients i on i.id = ri.ingredient_id AND i.dtype = 'AutomatedIngredient'" +
                     "left join pumps p on i.id = p.current_ingredient_id " +
