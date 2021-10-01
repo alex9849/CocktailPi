@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import auth from './modules/auth/index';
 import cocktailProgress from './modules/cocktailprogress/index'
 import pumpLayout from './modules/pumplayout/index'
+import bar from './modules/bar/index'
 
 // import example from './module-example'
 
@@ -20,7 +21,8 @@ const store = new Vuex.Store({
   modules: {
     auth: auth,
     cocktailProgress: cocktailProgress,
-    pumpLayout: pumpLayout
+    pumpLayout: pumpLayout,
+    bar: bar
   },
 
   // enable strict mode (adds overhead!)

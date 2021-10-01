@@ -23,7 +23,7 @@
     </TopButtonArranger>
     <q-table
       :columns="columns"
-      :data="ingredients"
+      :data="ownedIngredients"
       :loading="loading"
       hide-bottom
       :pagination="{rowsPerPage: 0, sortBy: 'name'}"
@@ -73,7 +73,7 @@
         <td
           style="color: #b5b5b5"
         >
-          {{ ingredients.length }} ingredient(s) in total
+          {{ ownedIngredients.length }} ingredient(s) in total
         </td>
         <td rowspan="5"/>
       </template>
@@ -121,9 +121,9 @@
 import CIngredientSelector from "components/CIngredientSelector";
 import {required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
-import UserService from "../services/user.service";
 import {mdiDelete} from '@quasar/extras/mdi-v5';
 import TopButtonArranger from "components/TopButtonArranger";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "MyBar",
@@ -135,7 +135,6 @@ export default {
         {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ],
-      ingredients: [],
       loading: false,
       editOptions: {
         editErrorMessage: "",
@@ -148,20 +147,25 @@ export default {
   },
   created() {
     this.loading = true;
-    this.updateOwnedIngredients()
+    this.fetchIngredientsAction()
       .finally(() => this.loading = false);
     this.mdiDelete = mdiDelete;
   },
+  computed: {
+    ...mapGetters({
+      ownedIngredients: 'bar/getOwnedIngredients'
+    })
+  },
   methods: {
+    ...mapActions({
+      fetchIngredientsAction: 'bar/fetchIngredients',
+      addOwnedIngredientAction: 'bar/addIngredient',
+      removeOwnedIngredientAction: 'bar/removeIngredient'
+    }),
     onRefresh() {
       this.loading = true;
-      this.updateOwnedIngredients()
+      this.fetchIngredientsAction()
         .finally(() => this.loading = false);
-
-    },
-    updateOwnedIngredients() {
-      return UserService.getMyOwnedIngredients()
-        .then(ingredients => this.ingredients = ingredients)
 
     },
     closeEditDialog() {
@@ -177,7 +181,6 @@ export default {
           message: "Ingredient added successfully"
         });
         vm.closeEditDialog();
-        vm.onRefresh();
       };
 
       let onError = function (error) {
@@ -189,15 +192,14 @@ export default {
       };
 
       this.editOptions.saving = true
-      UserService.addToMyOwnedIngredients(this.editOptions.addIngredient.id)
+      this.addOwnedIngredientAction(this.editOptions.addIngredient.id)
         .then(onSuccess, onError)
         .finally(() => this.editOptions.saving = false);
 
     },
     onRemoveOwnedIngredient(id) {
-      UserService.removeFromMyOwnedIngredients(id)
+      this.removeOwnedIngredientAction(id)
         .then(() => {
-          this.onRefresh();
           this.$q.notify({
             type: 'positive',
             message: "Ingredient removed successfully"
