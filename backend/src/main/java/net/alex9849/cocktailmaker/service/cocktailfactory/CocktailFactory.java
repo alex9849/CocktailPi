@@ -6,10 +6,7 @@ import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.AbstractProductionStepWorker;
-import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.AutomaticProductionStepWorker;
-import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.ManualProductionStepWorker;
-import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.StepProgress;
+import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -88,8 +85,17 @@ public class CocktailFactory {
         }
         currentWorker.setOnFinishCallback(() -> this.onFinish());
 
-        this.productionStepWorkers.forEach(x -> x.subscribeToProgress(stepProgress -> this.notifySubscribers()));
+        this.productionStepWorkers.forEach(x -> x.subscribeToProgress(this::onSubscriptionChange));
         this.state = Cocktailprogress.State.READY_TO_START;
+    }
+
+    private void onSubscriptionChange(StepProgress stepProgress) {
+        if(stepProgress instanceof ManualStepProgress) {
+            this.state = Cocktailprogress.State.MANUAL_ACTION_REQUIRED;
+        } else {
+            this.state = Cocktailprogress.State.RUNNING;
+        }
+        this.notifySubscribers();
     }
 
     private Set<Ingredient> getNeededIngredientIds() {

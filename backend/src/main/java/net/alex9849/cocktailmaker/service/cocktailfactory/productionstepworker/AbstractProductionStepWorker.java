@@ -35,7 +35,6 @@ public abstract class AbstractProductionStepWorker {
             return;
         }
         this.finished = true;
-        this.notifySubscribers();
         if(this.onFinish != null) {
             this.onFinish.run();
         }
