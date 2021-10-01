@@ -7,13 +7,13 @@
       :value="hasCocktailProgress? cocktailProgress.progress: 0"
       :thickness="0.13"
       color="positive"
-      :center-color="hasCocktailProgress? (cocktailProgress.canceled? 'red' : 'green') : 'info'"
+      :center-color="loadingBarColor"
       track-color="transparent"
       :instant-feedback="!hasCocktailProgress"
       size="lg"
       @click="showDialog = !showDialog"
     >
-      <q-icon :name="hasCocktailProgress? (cocktailProgress.canceled? mdiStop : mdiTimerSandEmpty) : mdiCheckBold" size="20px"/>
+      <q-icon :name="circularProgressIcon" size="20px"/>
     </q-circular-progress>
     <q-dialog
       v-model="showDialog"
@@ -35,11 +35,32 @@
               background-color="#EEEEEE"
             >
               <template v-slot:bottom>
+                <q-card v-if="cocktailProgress.state === 'MANUAL_ACTION_REQUIRED'"
+                        class="bg-warning" style="margin: 10px 0"
+                >
+                  <q-card-section>
+                    <div class="">Please manually add the following ingredients and click "continue":</div>
+                    <div class="row">
+                      <div class="col">
+                        <ul>
+                          <li v-for="recipeIngredient in cocktailProgress.currentIngredientsToAddManually">
+                            {{ recipeIngredient.amount + ' ' + recipeIngredient.ingredient.unit + ' ' + recipeIngredient.ingredient.name }}
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-auto" style="align-self: end">
+                        <q-btn color="green"
+                               @click="onClickContinueProduction"
+                        >Continue</q-btn>
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
                 <q-linear-progress
                   :value="cocktailProgress.progress / 100"
                   stripe
                   rounded
-                  :color="isCocktailCancelled ? 'red-4' : 'green-4'"
+                  :color="loadingBarColor"
                   size="20px"
                   style="margin: 10px 0"
                 >
@@ -107,7 +128,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
+import {mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
 import CocktailService from "../services/cocktail.service";
 import CRecipeCard from "./CRecipeCard";
 
@@ -117,6 +138,7 @@ export default {
     data() {
       return {
         canceling: false,
+        continueProductionClicked: false,
         noCacheString: new Date().getTime()
       }
     },
@@ -125,6 +147,7 @@ export default {
       this.mdiMagnify = mdiMagnify;
       this.mdiStop = mdiStop;
       this.mdiCheckBold = mdiCheckBold;
+      this.mdiAlertOutline = mdiAlertOutline;
     },
     watch: {
       'cocktailProgress.recipe.id': function () {
@@ -152,6 +175,36 @@ export default {
         }
         return this.cocktailProgress.state === 'CANCELLED';
       },
+      circularProgressIcon() {
+        if(!this.hasCocktailProgress) {
+          return mdiCheckBold;
+        }
+        if(this.cocktailProgress.state === 'FINISHED') {
+          return mdiCheckBold;
+        }
+        if(this.cocktailProgress.state === 'CANCELLED') {
+          return mdiStop;
+        }
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+          return mdiAlertOutline;
+        }
+        return mdiTimerSandEmpty;
+      },
+      loadingBarColor () {
+        if(!this.hasCocktailProgress) {
+          return 'info';
+        }
+        if(this.cocktailProgress.state === 'FINISHED') {
+          return 'green';
+        }
+        if(this.cocktailProgress.state === 'CANCELLED') {
+          return 'red';
+        }
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+          return 'warning' ;
+        }
+        return 'green';
+      },
       cocktailProgressBarLabel() {
         if(!this.hasCocktailProgress) {
           return '';
@@ -162,6 +215,9 @@ export default {
         if(this.cocktailProgress.state === 'CANCELLED') {
           return 'Cancelled!';
         }
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+          return 'Manual action required! (' + this.cocktailProgress.progress + '%)' ;
+        }
         return this.cocktailProgress.progress + '%'
       }
     },
@@ -169,10 +225,15 @@ export default {
       onCancelCocktail() {
         this.canceling = true;
         CocktailService.cancelCocktail()
-          .then(() => {
+          .finally(() => {
             this.canceling = false;
-          }, err => {
-            this.canceling = false;
+          })
+      },
+      onClickContinueProduction() {
+        this.continueProductionClicked = true;
+        CocktailService.continueProduction()
+          .finally(() => {
+            this.continueProductionClicked = false;
           })
       }
     }

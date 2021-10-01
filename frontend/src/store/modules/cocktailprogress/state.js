@@ -20,6 +20,7 @@ export default function () {
         username: String
       },
       state: String,
+      currentIngredientsToAddManually: []
     },
     hasCocktailProgress: false,
     currentProgressDialog: false

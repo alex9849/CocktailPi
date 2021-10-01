@@ -15,6 +15,10 @@ class CocktailService {
   cancelCocktail() {
     return axios.delete(API_PATH);
   }
+
+  continueProduction() {
+    return axios.post(API_PATH + 'continueproduction')
+  }
 }
 
 export default new CocktailService();
