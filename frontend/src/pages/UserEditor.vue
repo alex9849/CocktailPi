@@ -44,11 +44,11 @@
 </template>
 
 <script>
-  import UserEditorForm from "../components/UserEditorForm";
-  import userService from "../services/user.service"
-  import {mapGetters} from "vuex";
+import UserEditorForm from "../components/UserEditorForm";
+import userService from "../services/user.service"
+import {mapGetters} from "vuex";
 
-  export default {
+export default {
     name: "UserEditor",
     components: {UserEditorForm},
     data() {
@@ -102,13 +102,8 @@
       }
     },
     created() {
-      this.loading = true;
-      userService.getUser(this.userId)
-        .then(user => {
-          user.password = '';
-          this.user = user;
-          this.loading = false;
-        })
+      this.user = this.$route.meta.user;
+      this.user.password = '';
     }
   }
 </script>
