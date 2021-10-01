@@ -92,7 +92,7 @@
         />
         <q-checkbox
           v-if="!!value.unit && value.unit !== 'ml'"
-          label="Scale"
+          label="Scale to volume"
           v-model="value.scaleToVolume"
           @input="$emit('input', value)"
           :disable="disable"

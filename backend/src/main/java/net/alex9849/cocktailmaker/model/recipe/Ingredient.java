@@ -37,6 +37,10 @@ public abstract class Ingredient {
         return true;
     }
 
+    public boolean isScaleToVolume() {
+        return true;
+    }
+
     public enum Unit {
         MILLILITER("ml"), GRAM("g"), TEASPOON("teaspoon(s)"),
         TABLESPOON("tablespoon(s)"), PIECE("piece(s)");

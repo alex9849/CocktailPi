@@ -262,7 +262,9 @@ public class CocktailFactory {
         double multiplier = wantedAmountOfLiquid / ((double) currentLiquidAmount);
 
         for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
-            recipeIngredient.setAmount((int) (recipeIngredient.getAmount() * multiplier));
+            if(recipeIngredient.getIngredient().isScaleToVolume()) {
+                recipeIngredient.setAmount((int) (recipeIngredient.getAmount() * multiplier));
+            }
         }
         return recipe;
     }
