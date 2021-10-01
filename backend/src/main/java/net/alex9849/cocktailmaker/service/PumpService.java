@@ -132,6 +132,7 @@ public class PumpService {
         if(isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
+        CocktailFactory.transformToAmountOfLiquid(recipe, amount);
         this.cocktailFactory = new CocktailFactory(recipe, user, new HashSet<>(getAllPumps()), gpioController)
                 .subscribeProgress(progress -> {
                     if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {

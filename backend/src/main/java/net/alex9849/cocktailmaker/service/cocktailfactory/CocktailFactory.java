@@ -245,10 +245,20 @@ public class CocktailFactory {
     }
 
 
+    /**
+     * Recalculates the amount of liquid for all ingredients in order to sum up to the total wanted amount of liquid
+     * @param recipe the recipe
+     * @param wantedAmountOfLiquid the wanted amount of liquid
+     * @return the same instance of the recipe object that got passed in, but with recalculated
+     * amount of liquids for all ingredients
+     */
     public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
         int currentLiquidAmount = recipe.getRecipeIngredients().stream()
                 .filter(x -> x.getIngredient().isAddToVolume())
                 .mapToInt(x -> x.getAmount()).sum();
+        if(currentLiquidAmount <= 0) {
+            return recipe;
+        }
         double multiplier = wantedAmountOfLiquid / ((double) currentLiquidAmount);
 
         for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
