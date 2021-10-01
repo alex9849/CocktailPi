@@ -41,14 +41,14 @@
                   <q-card-section>
                     <div class="">Please manually add the following ingredients and click "continue":</div>
                     <div class="row">
-                      <div class="col">
+                      <div class="col-12 col-sm">
                         <ul>
                           <li v-for="recipeIngredient in cocktailProgress.currentIngredientsToAddManually">
                             {{ recipeIngredient.amount + ' ' + recipeIngredient.ingredient.unit + ' ' + recipeIngredient.ingredient.name }}
                           </li>
                         </ul>
                       </div>
-                      <div class="col-auto" style="align-self: end">
+                      <div class="flex col-12 col-sm-auto justify-center" style="align-self: end;" >
                         <q-btn color="green"
                                @click="onClickContinueProduction"
                         >Continue</q-btn>

@@ -6,7 +6,7 @@
       style="padding: 10px"
     >
       <div
-        class="row q-gutter-sm"
+        class="row q-gutter-y-sm"
         style="position: relative"
       >
         <div
@@ -18,9 +18,9 @@
           :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
           placeholder-src="../assets/cocktail-solid.png"
           :ratio="16/9"
-          class="col rounded-borders max-picture-size"
+          class="col-12 col-sm-6 col-md-3 rounded-borders q-px-xs"
         />
-        <div class="col" style="min-width: 200px;">
+        <div class="col-12 col-sm-6 col-md-9 q-px-xs">
           <div class="row">
             <div class="col">
               <h5
@@ -79,9 +79,9 @@
 
 <script>
 
-  import {mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 
-  export default {
+export default {
     name: "CRecipeCard",
     props: {
       recipe: {
@@ -130,15 +130,5 @@
 </script>
 
 <style scoped>
-
-  .max-picture-size {
-    min-width: 200px
-  }
-
-  @media screen and (min-width: 500px) {
-    .max-picture-size {
-      max-width: 250px;
-    }
-  }
 
 </style>
