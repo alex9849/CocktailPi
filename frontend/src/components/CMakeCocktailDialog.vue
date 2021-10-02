@@ -169,10 +169,6 @@ export default {
       recipe: {
         type: Object,
         required: true
-      },
-      ingredientsInBar: {
-        type: Array,
-        required: true
       }
     },
     data() {
@@ -242,7 +238,7 @@ export default {
         })
       },
       isIngredientInBar(ingredientId) {
-        return this.ingredientsInBar.some(x => x.id === ingredientId);
+        return this.ownedIngredients.some(x => x.id === ingredientId);
       }
     },
     computed: {
@@ -252,7 +248,8 @@ export default {
         hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
         getPumpLayout: 'pumpLayout/getLayout',
         getPumpIngredients: 'pumpLayout/getPumpIngredients',
-        isCleaning: 'pumpLayout/isCleaning'
+        isCleaning: 'pumpLayout/isCleaning',
+        ownedIngredients: 'bar/getOwnedIngredients'
       }),
       sortedPumpLayout() {
         let sorted = [];

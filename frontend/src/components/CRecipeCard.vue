@@ -54,12 +54,12 @@
               style="margin-left: 0; margin-right: 5px"
               square
               outline
-              :color="hasPumpLayoutIngredient(ingredient.id)? 'green':'red'"
+              :color="ingredientChipColor(ingredient.id)"
             >
               <q-tooltip
-                v-if="!hasPumpLayoutIngredient(ingredient.id)"
+                v-if="!!ingredientChipTooltip(ingredient.id)"
               >
-                {{ "Ingredient missing" }}
+                {{ ingredientChipTooltip(ingredient.id) }}
               </q-tooltip>
               {{ ingredient.name }}
             </q-chip>
@@ -99,7 +99,8 @@ export default {
     },
     computed: {
       ...mapGetters({
-        getPumpIngredients: 'pumpLayout/getPumpIngredients'
+        getPumpIngredients: 'pumpLayout/getPumpIngredients',
+        ownedIngredients: 'bar/getOwnedIngredients'
       }),
       shortenedDescription() {
         let sDesc = this.recipe.description.substring(0, Math.min(80, this.recipe.description.length));
@@ -112,6 +113,24 @@ export default {
     methods: {
       hasPumpLayoutIngredient(ingredientId) {
         return this.getPumpIngredients.some(x => x.id === ingredientId);
+      },
+      ingredientChipColor(ingredientId) {
+        if(this.getPumpIngredients.some(x => x.id === ingredientId)) {
+          return 'green'
+        }
+        if(this.ownedIngredients.some(x => x.id === ingredientId)) {
+          return 'orange-6'
+        }
+        return 'red'
+      },
+      ingredientChipTooltip(ingredientId) {
+        if(this.getPumpIngredients.some(x => x.id === ingredientId)) {
+          return ''
+        }
+        if(this.ownedIngredients.some(x => x.id === ingredientId)) {
+          return 'add manually'
+        }
+        return 'not owned'
       },
       uniqueIngredientNames(productionSteps) {
         if(!this.showIngredients) {
