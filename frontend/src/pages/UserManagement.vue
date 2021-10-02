@@ -37,97 +37,80 @@
       selection="multiple"
       :selected.sync="selected"
       :pagination="{rowsPerPage: 0, sortBy: 'id'}"
-      :table-style="{margin: '15px'}"
-      style="background-color: #f3f3fa"
     >
-      <template
-        v-slot:body="props"
-      >
-        <q-tr
-          :props="props"
-          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
+      <template v-slot:body-selection="scope">
+        <div class="text-center">
+          <q-checkbox
+            v-if="getUser.id !== scope.row.id"
+            v-model="scope.selected"
+          />
+        </div>
+      </template>
+      <template v-slot:body-cell-nonLocked="props">
+        <q-td :props="props"
+              key="nonLocked"
         >
-          <q-td
-            auto-width
-            style="text-align: center"
-          >
-            <q-checkbox
-              v-if="getUser.id !== props.row.id"
-              v-model="props.selected"
-            />
-          </q-td>
-          <q-td
-            key="username"
-            :props="props"
-          >
-            {{ props.row.username}}
-          </q-td>
-          <q-td
-            key="nonLocked"
-            :props="props"
-          >
-            <q-icon
-              v-if="props.row.accountNonLocked"
-              size="sm"
-              :name="mdiCheckCircle"
-            />
-            <q-icon
-              v-else
-              size="sm"
-              :name="mdiCheckboxBlankCircleOutline"
-            />
-          </q-td>
-          <q-td
-            key="fullname"
-            :props="props"
-          >
-            {{ props.row.firstname }} {{ props.row.lastname }}
-          </q-td>
-          <q-td
-            key="email"
-            :props="props"
-          >
-            {{ props.row.email}}
-          </q-td>
-          <q-td
-            key="role"
-            :props="props"
-          >
-            {{ roles.find(x => x.value === props.row.adminLevel).label }}
-          </q-td>
-          <q-td
-            class="q-pa-md q-gutter-x-sm"
-            key="actions"
-            :props="props"
-          >
-            <q-btn
-              :icon="mdiPencilOutline"
-              text-color="white"
-              :style="{backgroundColor: '#31ccec'}"
-              @click="$router.push({name: 'usereditor', params: {
+          <q-icon
+            v-if="props.row.accountNonLocked"
+            size="sm"
+            :name="mdiCheckCircle"
+          />
+          <q-icon
+            v-else
+            size="sm"
+            :name="mdiCheckboxBlankCircleOutline"
+          />
+        </q-td>
+      </template>
+      <template v-slot:body-cell-fullname="props">
+        <q-td
+          key="fullname"
+          :props="props"
+        >
+          {{ props.row.firstname }} {{ props.row.lastname }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-role="props">
+        <q-td
+          key="role"
+          :props="props"
+        >
+          {{ roles.find(x => x.value === props.row.adminLevel).label }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-actions="props">
+        <q-td
+          class="q-pa-md q-gutter-x-sm"
+          key="actions"
+          :props="props"
+        >
+          <q-btn
+            :icon="mdiPencilOutline"
+            text-color="white"
+            :style="{backgroundColor: '#31ccec'}"
+            @click="$router.push({name: 'usereditor', params: {
                 userId: props.row.id
               }})"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Edit
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              :icon="mdiDelete"
-              v-if="getUser.id !== props.row.id"
-              @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
-              color="red"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Delete
-              </q-tooltip>
-            </q-btn>
-          </q-td>
-        </q-tr>
+            dense
+            rounded
+          >
+            <q-tooltip>
+              Edit
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            :icon="mdiDelete"
+            v-if="getUser.id !== props.row.id"
+            @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
+            color="red"
+            dense
+            rounded
+          >
+            <q-tooltip>
+              Delete
+            </q-tooltip>
+          </q-btn>
+        </q-td>
       </template>
       <template v-slot:header-selection="selected">
         <q-checkbox
@@ -188,13 +171,13 @@
 </template>
 
 <script>
-  import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-  import {mapGetters} from "vuex";
-  import userService from '../services/user.service'
-  import CQuestion from "../components/CQuestion";
-  import TopButtonArranger from "components/TopButtonArranger";
+import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
+import {mapGetters} from "vuex";
+import userService from '../services/user.service'
+import CQuestion from "../components/CQuestion";
+import TopButtonArranger from "components/TopButtonArranger";
 
-  export default {
+export default {
     name: "UserManagement",
     components: {TopButtonArranger, CQuestion},
     data() {
@@ -210,7 +193,7 @@
           {name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center'},
           {name: 'fullname', label: 'Full name', field: '', align: 'left'},
           {name: 'email', label: 'E-Mail', field: 'email', align: 'left'},
-          {name: 'role', label: 'Role', field: '', align: 'center'},
+          {name: 'role', label: 'Role', field: 'role', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         roles: [

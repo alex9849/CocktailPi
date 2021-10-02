@@ -14,6 +14,7 @@
       :selected.sync="selected"
       no-data-label="No cocktails found :("
       :style="'background-color: ' + listBodyColor"
+      :table-style="{margin: '0px'}"
     >
       <template
         v-slot:loading
@@ -78,11 +79,11 @@
 </template>
 
 <script>
-  import CRecipeCard from "./CRecipeCard";
-  import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
-  import {mapGetters} from "vuex";
+import CRecipeCard from "./CRecipeCard";
+import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
+import {mapGetters} from "vuex";
 
-  export default {
+export default {
     name: "CRecipeList",
     components: {CRecipeCard},
     props: {
