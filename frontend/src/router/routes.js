@@ -1,5 +1,5 @@
 import {store} from '../store'
-import {userIdResolver} from "src/router/resolvers";
+import {userResolver} from "src/router/resolvers";
 
 
 function redirectIfNotAuthenticated(to, from, next) {
@@ -78,7 +78,7 @@ const routes = [
       path: 'admin/usermanagement/:userId/edit',
       component: () => import('pages/UserEditor'),
       name: 'usereditor',
-      beforeEnter: userIdResolver('userId')
+      beforeEnter: userResolver('userId')
     }, {
       path: 'admin/pumpmanagement',
       component: () => import('pages/PumpManagement'),

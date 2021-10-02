@@ -31,41 +31,30 @@
       :table-style="{margin: '15px'}"
       style="background-color: #f3f3fa"
     >
-      <template v-slot:body="props">
-        <q-tr
-          :props="props"
-          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props"
+              key="actions"
+              class="q-pa-md q-gutter-x-sm"
         >
-          <q-td
-            key="name"
-            :props="props"
+          <q-btn
+            :icon="mdiDelete"
+            color="red"
+            @click="onRemoveOwnedIngredient(props.row.id)"
+            dense
+            rounded
           >
-            {{ props.row.name }}
-          </q-td>
-          <q-td
-            key="alcoholContent"
-            :props="props"
-          >
-            {{ props.row.alcoholContent }}%
-          </q-td>
-          <q-td
-            key="actions"
-            class="q-pa-md q-gutter-x-sm"
-            :props="props"
-          >
-            <q-btn
-              :icon="mdiDelete"
-              color="red"
-              @click="onRemoveOwnedIngredient(props.row.id)"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Delete
-              </q-tooltip>
-            </q-btn>
-          </q-td>
-        </q-tr>
+            <q-tooltip>
+              Delete
+            </q-tooltip>
+          </q-btn>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-alcoholContent="props">
+        <q-td :props="props"
+              key="alcoholContent"
+        >
+          {{ props.row.alcoholContent }}%
+        </q-td>
       </template>
       <template
         v-slot:bottom-row
@@ -228,11 +217,4 @@ export default {
 </script>
 
 <style scoped>
-.row1 {
-  background-color: #fafafa;
-}
-
-.row2 {
-  background-color: #f3f3fa;
-}
 </style>
