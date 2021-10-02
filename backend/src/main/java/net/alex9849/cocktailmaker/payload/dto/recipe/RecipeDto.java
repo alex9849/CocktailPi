@@ -58,8 +58,6 @@ public class RecipeDto {
 
     private Date lastUpdate;
 
-    private boolean ingredientsInBar;
-
     public long getId() {
         return id;
     }
@@ -118,9 +116,5 @@ public class RecipeDto {
 
     public Date getLastUpdate() {
         return lastUpdate;
-    }
-
-    public boolean isIngredientsInBar() {
-        return ingredientsInBar;
     }
 }

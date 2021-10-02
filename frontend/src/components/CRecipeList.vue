@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot name="top" />
+    <slot name="top"/>
     <q-table
       :data="recipes"
       :columns="columns"
@@ -49,16 +49,16 @@
                 size="md"
                 color="positive">
                 <q-tooltip>
-                  Cocktail can be ordered!
+                  Cocktail can be produced automatically!
                 </q-tooltip>
               </q-icon>
               <q-icon
-                v-else-if="props.row.ingredientsInBar && areEnoughPumpsAvailable(props.row)"
-                :name="mdiAlert"
+                v-else-if="allIngredientsOwned(props.row)"
+                :name="mdiCheckBold"
                 size="md"
                 color="warning">
                 <q-tooltip>
-                  All ingredients are in your bar, but some are not assigned to pumps!
+                  Some ingredients have to get added manually!
                 </q-tooltip>
               </q-icon>
               <q-icon
@@ -67,7 +67,7 @@
                 size="md"
                 color="negative">
                 <q-tooltip>
-                  Missing ingredients or not enough pumps!
+                  Missing ingredients!
                 </q-tooltip>
               </q-icon>
             </template>
@@ -84,76 +84,95 @@ import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
 import {mapGetters} from "vuex";
 
 export default {
-    name: "CRecipeList",
-    components: {CRecipeCard},
-    props: {
-      recipes: {
-        type: Array,
-        required: true
-      },
-      selectable: {
-        type: Boolean,
-        default: false
-      },
-      loading: {
-        type: Boolean,
-        default: false
-      },
-      listBodyColor: {
-        type: String,
-        default: '#f3f3fa'
-      },
-      listItem1Color: {
-        type: String,
-        default: '#f3f3fa'
-      },
-      listItem2Color: {
-        type: String,
-        default: '#fafafa'
+  name: "CRecipeList",
+  components: {CRecipeCard},
+  props: {
+    recipes: {
+      type: Array,
+      required: true
+    },
+    selectable: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    listBodyColor: {
+      type: String,
+      default: '#f3f3fa'
+    },
+    listItem1Color: {
+      type: String,
+      default: '#f3f3fa'
+    },
+    listItem2Color: {
+      type: String,
+      default: '#fafafa'
+    }
+  },
+  data() {
+    return {
+      selected: [],
+      columns: [
+        {
+          name: 'name',
+          label: 'Name',
+          align: 'left',
+          field: row => row.name,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: 'shortDescription',
+          align: 'center',
+          label: 'Short description',
+          field: 'shortDescription',
+          sortable: true
+        },
+        {name: 'owner', label: 'Owner', field: 'owner.username', sortable: true}
+      ]
+    }
+  },
+  created() {
+    this.mdiCheckBold = mdiCheckBold;
+    this.mdiAlert = mdiAlert;
+    this.mdiClose = mdiClose;
+  },
+  computed: {
+    ...mapGetters({
+      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
+      areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable',
+      ownedIngredients: 'bar/getOwnedIngredients'
+    })
+  },
+  watch: {
+    selected(newValue) {
+      this.$emit('selectionChange', newValue);
+    },
+    recipes() {
+      this.selected = [];
+    }
+  },
+  methods: {
+    allIngredientsOwned(recipe) {
+      for(let productionstep of recipe.recipeIngredients) {
+        for(let ingredientstep of productionstep) {
+          if(!this.ownedIngredients.some(x => x.id === ingredientstep.ingredient.id)) {
+            return false;
+          }
+        }
       }
-    },
-    data() {
-      return {
-        selected: [],
-        columns: [
-          {
-            name: 'name',
-            label: 'Name',
-            align: 'left',
-            field: row => row.name,
-            format: val => `${val}`,
-            sortable: true
-          },
-          { name: 'shortDescription', align: 'center', label: 'Short description', field: 'shortDescription', sortable: true },
-          { name: 'owner', label: 'Owner', field: 'owner.username', sortable: true }
-        ]
-      }
-    },
-    created() {
-      this.mdiCheckBold = mdiCheckBold;
-      this.mdiAlert = mdiAlert;
-      this.mdiClose = mdiClose;
-    },
-    computed: {
-      ...mapGetters({
-        doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
-      })
-    },
-    watch: {
-      selected(newValue) {
-        this.$emit('selectionChange', newValue);
-      },
-      recipes() {
-        this.selected = [];
-      }
+      return true;
     }
   }
+}
 </script>
 
 <style scoped>
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
