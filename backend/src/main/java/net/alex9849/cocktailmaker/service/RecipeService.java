@@ -60,10 +60,10 @@ public class RecipeService {
             idsToFindSetList.add(recipeRepository.getIdsContainingName(searchName));
         }
         if(isFabricable) {
-            idsToFindSetList.add(recipeRepository.getIdsOfFabricableRecipes());
+            idsToFindSetList.add(recipeRepository.getIdsOfFullyAutomaticallyFabricableRecipes());
         }
         if(isInBarUserId != null) {
-            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsInBar(isInBarUserId));
+            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(isInBarUserId));
         }
         Pageable pageable = PageRequest.of((startNumber / pageSize) + 1, pageSize);
         if(idsToFindSetList.isEmpty()) {

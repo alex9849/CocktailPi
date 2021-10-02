@@ -183,9 +183,13 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsWithIngredients(Long... ingredientIds) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
-                    "JOIN recipe_ingredients ri on r.id = ri.recipe_id " +
-                    "WHERE ri.ingredient_id = ANY(?)");
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id\n" +
+                    "FROM recipes r\n" +
+                    "         join recipe_ingredients ri on r.id = ri.recipe_id\n" +
+                    "         join ingredients i on i.id = ri.ingredient_id\n" +
+                    "         left join unnest(?) requiredIngredientId on requiredIngredientId = i.id\n" +
+                    "group by r.id\n" +
+                    "having count(*) = count(requiredIngredientId)");
             pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
@@ -263,23 +267,29 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> getIdsOfFabricableRecipes() {
+    public Set<Long> getIdsOfFullyAutomaticallyFabricableRecipes() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id FROM recipes r " +
                     "join recipe_ingredients ri on r.id = ri.recipe_id " +
                     "join ingredients i on i.id = ri.ingredient_id AND i.dtype = 'AutomatedIngredient'" +
                     "left join pumps p on i.id = p.current_ingredient_id " +
-                    "group by r.id having (count(*) - count(p.id)) = 0");
+                    "group by r.id having count(*) = count(p.id)");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
 
-    public Set<Long> getIdsOfRecipesWithAllIngredientsInBar(long userId) {
+    public Set<Long> getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(long userId) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes r " +
-                    "join recipe_ingredients ri on r.id = ri.recipe_id " +
-                    "left join user_owned_ingredients uoi on ri.ingredient_id = uoi.ingredient_id AND uoi.user_id = ? " +
-                    "group by r.id having (count(*) - count(uoi.ingredient_id)) = 0");
+            PreparedStatement pstmt = con.prepareStatement(
+                    "SELECT recipeId from (SELECT r.id AS recipeId, CASE WHEN p.current_ingredient_id IS NOT NULL " +
+                            "OR uoi.ingredient_id IS NOT NULL THEN 1 ELSE 0 END AS owned\n" +
+                    "FROM recipes r\n" +
+                    "         join recipe_ingredients ri on r.id = ri.recipe_id\n" +
+                    "         join ingredients i on i.id = ri.ingredient_id\n" +
+                    "         left join pumps p on i.id = p.current_ingredient_id AND i.dtype = 'AutomatedIngredient'\n" +
+                    "         left join user_owned_ingredients uoi on i.id = uoi.ingredient_id AND uoi.user_id = ?) as sub\n" +
+                    "group by recipeId\n" +
+                    "having count(*) - sum(owned) = 0");
             pstmt.setLong(1, userId);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
