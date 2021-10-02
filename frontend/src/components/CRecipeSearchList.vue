@@ -68,18 +68,21 @@
                     >
                       <q-checkbox
                         v-model="unappliedSearchData.inBar"
+                        class="col-12 col-sm-6"
                       >
                         Fabricable with owned ingredients
                       </q-checkbox>
                       <q-checkbox
                         v-model="unappliedSearchData.fabricable"
+                        class="col-12 col-sm-6"
                       >
-                        Fabricable
+                        Can be fabricated fully automatic
                       </q-checkbox>
                       <c-ingredient-selector
                         v-model="unappliedSearchData.containsIngredients"
+                        class="col-12 col-sm-8"
                         dense
-                        label="Contained ingredients"
+                        label="Contains ingredients"
                         multiple
                         emit-value
                         map-options
@@ -87,6 +90,7 @@
                       />
                       <q-select
                         v-model="unappliedSearchData.orderBy"
+                        class="col-12 col-sm-4"
                         label="Order by"
                         emit-value
                         map-options
@@ -94,7 +98,6 @@
                         outlined
                         dense
                         :options="orderByOptions"
-                        style="min-width: 200px"
                       />
                     </div>
                     <div
