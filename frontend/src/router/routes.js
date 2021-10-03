@@ -1,5 +1,4 @@
 import {store} from '../store'
-import {currentUserResolver, recipeResolver, userResolver} from "src/router/resolvers";
 
 
 function redirectIfNotAuthenticated(to, from, next) {
@@ -37,8 +36,7 @@ const routes = [
     }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
-      name: 'myprofile',
-      beforeEnter: currentUserResolver()
+      name: 'myprofile'
     }, {
       path: 'recipe/add',
       component: () => import('pages/RecipeAdd'),
@@ -58,13 +56,11 @@ const routes = [
     }, {
       path: 'recipe/:id',
       component: () => import('pages/RecipeDetails'),
-      name: 'recipedetails',
-      beforeEnter: recipeResolver("id")
+      name: 'recipedetails'
     }, {
       path: 'recipe/:id/edit',
       component: () => import('pages/RecipeEdit'),
-      name: 'recipeedit',
-      beforeEnter: recipeResolver("id")
+      name: 'recipeedit'
     }, {
       path: 'admin/ingredient',
       component: () => import('pages/IngredientManagement'),
@@ -80,8 +76,7 @@ const routes = [
     }, {
       path: 'admin/usermanagement/:userId/edit',
       component: () => import('pages/UserEditor'),
-      name: 'usereditor',
-      beforeEnter: userResolver('userId')
+      name: 'usereditor'
     }, {
       path: 'admin/pumpmanagement',
       component: () => import('pages/PumpManagement'),

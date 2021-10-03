@@ -57,72 +57,72 @@
 <script>
 import UserEditorForm from "../components/UserEditorForm";
 import userService from "../services/user.service"
+import UserService from "src/services/user.service";
 
 export default {
-    name: "Profile",
-    components: {UserEditorForm},
-    data() {
-      return {
-        user: {},
-        editUser: {},
-        loading: false,
-        sending: false,
-        editMode: false,
-        isValid: false,
-        error: ''
+  name: "Profile",
+  components: {UserEditorForm},
+  data() {
+    return {
+      user: {},
+      editUser: {},
+      loading: false,
+      sending: false,
+      editMode: false,
+      isValid: false,
+      error: ''
+    }
+  },
+  async beforeRouteEnter(to, from, next) {
+    const fetchedUser = await UserService.getMe()
+    next(vm => {
+      fetchedUser.password = '';
+      vm.user = fetchedUser;
+      vm.editUser = Object.assign({}, fetchedUser);
+    });
+  },
+  methods: {
+    getRandomString(length) {
+      var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var result = '';
+      for (var i = 0; i < length; i++) {
+        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
       }
+      return result;
     },
-    created() {
-      this.init();
+    stopEditMode() {
+      this.editMode = false;
+      this.editUser = Object.assign({}, this.user);
     },
-    methods: {
-      init() {
-        let user = this.$route.meta.user;
-        user.password = '';
-        this.user = user;
-        this.editUser = Object.assign({}, user);
-      },
-      getRandomString(length) {
-        var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var result = '';
-        for (var i = 0; i < length; i++) {
-          result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-        }
-        return result;
-      },
-      stopEditMode() {
-        this.editMode = false;
-        this.editUser = Object.assign({}, this.user);
-      },
-      sendUpdateUser() {
-        this.sending = true;
-        let updateUser = Object.assign({}, this.editUser);
-        let updatePassword = !!this.editUser.password || this.editUser.password !== '';
-        if (!updatePassword) {
-          updateUser.password = this.getRandomString(22);
-        }
-        userService.updateMe({
-          updatePassword,
-          userDto: updateUser
-        }).then(() => {
-          this.stopEditMode();
-          this.init();
-          this.error = '';
-          this.$q.notify({
-            type: 'positive',
-            message: 'Profile updated'
-          });
-        }).catch(error => {
-          this.sending = false;
-          this.error = error.response.data.message;
-          this.$q.notify({
-            type: 'negative',
-            message: 'Couldn\'t update profile. ' + error.response.data.message
-          });
-        })
+    sendUpdateUser() {
+      this.sending = true;
+      let updateUser = Object.assign({}, this.editUser);
+      let updatePassword = !!this.editUser.password || this.editUser.password !== '';
+      if (!updatePassword) {
+        updateUser.password = this.getRandomString(22);
       }
+      userService.updateMe({
+        updatePassword,
+        userDto: updateUser
+      }).then(() => {
+        this.stopEditMode();
+        this.init();
+        this.error = '';
+        this.$q.notify({
+          type: 'positive',
+          message: 'Profile updated'
+        });
+      }).catch(error => {
+        this.sending = false;
+        this.error = error.response.data.message;
+        this.$q.notify({
+          type: 'negative',
+          message: 'Couldn\'t update profile. ' + error.response.data.message
+        });
+      })
     }
   }
+}
 </script>
 
 <style scoped>

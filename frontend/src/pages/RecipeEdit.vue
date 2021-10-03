@@ -60,8 +60,15 @@ export default {
       },
       error: '',
       isValid: false,
-      sending: false
+      sending: false,
+      loading: true
     }
+  },
+  async beforeRouteEnter(to, from, next) {
+    const recipe = await RecipeService.getRecipe(to.params.id)
+    next(vm => {
+      vm.editRecipe.recipe = recipe;
+    })
   },
   methods: {
     updateRecipe() {
@@ -85,7 +92,10 @@ export default {
     }
   },
   created() {
-    this.editRecipe.recipe = this.$route.meta.recipe;
+    /*RecipeService.getRecipe(this.$route.params.id)
+      .then(recipe => {
+        this.editRecipe.recipe = recipe;
+      });*/
   }
 }
 </script>

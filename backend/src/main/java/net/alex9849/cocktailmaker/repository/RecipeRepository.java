@@ -118,7 +118,7 @@ public class RecipeRepository extends JdbcDaoSupport {
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, owner_id) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setBoolean(3, recipe.isInPublic());

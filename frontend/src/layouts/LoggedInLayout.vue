@@ -113,7 +113,7 @@ import {
   mdiPiggyBank,
   mdiWeb
 } from "@quasar/extras/mdi-v5";
-import {mapActions, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 import {store} from '../store'
 
 export default {
@@ -238,10 +238,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      fetchIngredientsAction: 'bar/fetchIngredients',
-      fetchCategoriesAction: 'category/fetchCategories'
-    }),
     openURLInBrowser(url) {
       openURL(url)
     },

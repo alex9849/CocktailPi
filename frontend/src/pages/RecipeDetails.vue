@@ -88,7 +88,6 @@
     />
     <c-make-cocktail-dialog
       v-model="showMakeCocktailDialog"
-
       :recipe="recipe"
     />
   </q-page>
@@ -107,19 +106,28 @@ export default {
   components: {TopButtonArranger, CMakeCocktailDialog, CQuestion, IngredientList},
   data() {
     return {
-      recipe: {},
+      recipe: {
+        recipeIngredients: []
+      },
       deleting: false,
       deleteDialog: false,
       showMakeCocktailDialog: false
     }
   },
+  async beforeRouteEnter(to, from, next) {
+    const recipe = await RecipeService.getRecipe(to.params.id)
+    next(vm => {
+      vm.recipe = recipe;
+    });
+  },
+  async beforeRouteUpdate(to, from, next) {
+    this.recipe = await RecipeService.getRecipe(to.params.id)
+    next();
+  },
   created() {
-    this.initialize();
+    //this.recipe = this.$route.meta.recipe;
   },
   methods: {
-    initialize() {
-      this.recipe = this.$route.meta.recipe;
-    },
     deleteRecipe() {
       this.deleting = true;
       RecipeService.deleteRecipe(this.recipe)
@@ -131,11 +139,6 @@ export default {
             message: 'Recipe deleted successfully'
           });
         })
-    }
-  },
-  watch: {
-    '$route.params.id': function () {
-      this.initialize();
     }
   },
   computed: {
