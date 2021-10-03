@@ -27,7 +27,7 @@
         multiple
         outlined
       />
-      <div v-if="allowImageRemoveing" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
+      <div v-if="allowImageRemoving" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
         <q-toggle
           label="Remove image if existing"
           v-model="value.removeImage"
@@ -102,11 +102,11 @@
 </template>
 
 <script>
-  import {maxLength, minLength, required} from "vuelidate/lib/validators";
-  import IngredientList from "./IngredientList";
-  import CategoryService from "../services/category.service";
+import {maxLength, minLength, required} from "vuelidate/lib/validators";
+import IngredientList from "./IngredientList";
+import {mapGetters} from "vuex";
 
-  export default {
+export default {
     name: "RecipeEditorForm",
     components: {IngredientList},
     props: {
@@ -114,7 +114,7 @@
         type: Object,
         required: true
       },
-      allowImageRemoveing: {
+      allowImageRemoving: {
         type: Boolean,
         default: false
       },
@@ -129,22 +129,7 @@
     },
     data() {
       return {
-        image: null,
-        categories: [],
-        categoriesLoading: false
-      }
-    },
-    created() {
-      this.initialize();
-    },
-    methods: {
-      initialize() {
-        this.categoriesLoading = true;
-        CategoryService.getAllCategories()
-          .then(data => {
-            this.categories = data
-            this.categoriesLoading = false;
-          });
+        image: null
       }
     },
     validations() {
@@ -174,7 +159,11 @@
         }
       }
     },
-    computed: {}
+    computed: {
+      ...mapGetters({
+        categories: 'category/getCategories'
+      })
+    }
   }
 </script>
 

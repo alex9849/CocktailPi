@@ -13,7 +13,7 @@
       flat
     >
       <recipe-editor-form
-        allowImageRemoveing
+        allowImageRemoving
         v-model="editRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
