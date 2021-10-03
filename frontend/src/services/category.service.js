@@ -21,8 +21,8 @@ class CategoryService {
     return axios.put(API_PATH + category.id, category);
   }
 
-  deleteCategory(category) {
-    return axios.delete(API_PATH + category.id, category);
+  deleteCategory(categoryId) {
+    return axios.delete(API_PATH + categoryId);
   }
 }
 

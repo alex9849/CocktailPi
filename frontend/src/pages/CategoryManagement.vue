@@ -174,11 +174,12 @@
 
 <script>
 import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-import CategoryService from "../services/category.service";
 import CQuestion from "../components/CQuestion";
 import {maxLength, required} from "vuelidate/lib/validators";
 import CEditDialog from "components/CEditDialog";
 import TopButtonArranger from "components/TopButtonArranger";
+import {mapActions, mapGetters} from "vuex";
+import {createCategory, fetchCategories, updateCategory} from "src/store/modules/category/actions";
 
 export default {
     name: "CategoryManagement",
@@ -189,7 +190,6 @@ export default {
           {name: 'name', label: 'Category', field: 'name', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
-        categories: [],
         selected: [],
         loading: false,
         deleteOptions: {
@@ -217,10 +217,19 @@ export default {
       }
     },
     methods: {
+      ...mapActions({
+        createCategory: 'category/createCategory',
+        updateCategory: 'category/updateCategory',
+        fetchCategories: 'category/fetchCategories',
+        deleteCategories: 'category/deleteCategories'
+      }),
       onRefresh() {
         this.loading = true;
         let vm = this;
-        setTimeout(vm.fetchAll, 500);
+        setTimeout(() => {
+          vm.fetchCategories()
+            .finally(() => vm.loading = false);
+        }, 500);
       },
       showEditDialog(category) {
         if (category) {
@@ -244,7 +253,6 @@ export default {
             message: "Category " + (vm.iseditCategoryNew ? "created" : "updated") + " successfully"
           });
           vm.closeEditDialog();
-          vm.fetchAll();
         };
 
         let onError = function (error) {
@@ -257,46 +265,37 @@ export default {
         };
 
         if (this.iseditCategoryNew) {
-          CategoryService.createCategory(this.editOptions.editCategory)
+          this.createCategory(this.editOptions.editCategory)
             .then(onSuccess, error => onError(error));
         } else {
-          CategoryService.updateCategory(this.editOptions.editCategory)
+          this.updateCategory(this.editOptions.editCategory)
             .then(onSuccess, error => onError(error));
         }
       },
       deleteSelected() {
-        this.deleteOptions.deleteLoading = true;
-        let toDelete = this.deleteOptions.deleteCategory.length;
-        let deleted = 0;
         let vm = this;
         let afterDelete = function () {
-          if (deleted === toDelete) {
-            vm.closeDeleteDialog();
-            vm.deleteOptions.deleteLoading = false;
-            vm.deleteOptions.deleteErrorMessage = "";
-            vm.fetchAll();
-            vm.$q.notify({
-              type: 'positive',
-              message: (toDelete > 1 ? "Categories" : "Category") + " deleted successfully"
-            });
-          }
+          vm.closeDeleteDialog();
+          vm.deleteOptions.deleteLoading = false;
+          vm.deleteOptions.deleteErrorMessage = "";
+          vm.$q.notify({
+            type: 'positive',
+            message: "Categorie(s) deleted successfully"
+          });
         };
-        this.deleteOptions.deleteCategory.forEach(category => {
-          CategoryService.deleteCategory(category)
+        let toDeleteIds = this.deleteOptions.deleteCategory.map(x => x.id);
+        this.deleteOptions.deleteLoading = true;
+        this.deleteCategories(toDeleteIds)
             .then(() => {
-              deleted++;
               afterDelete();
             }, err => {
               vm.deleteOptions.deleteLoading = false;
-              vm.fetchAll();
               vm.deleteOptions.deleteErrorMessage = err.response.data.message;
               vm.$q.notify({
                 type: 'negative',
                 message: err.response.data.message
               });
-            })
-        });
-        afterDelete();
+            });
       },
       openDeleteDialog(forSelected) {
         if (forSelected) {
@@ -308,20 +307,11 @@ export default {
         this.deleteOptions.deleteCategory.splice(0, this.deleteOptions.deleteCategory.length);
         this.deleteOptions.deleteDialog = false;
         this.deleteOptions.deleteErrorMessage = "";
-      },
-      fetchAll() {
-        this.loading = true;
-        CategoryService.getAllCategories()
-          .then(categories => {
-            this.loading = false;
-            this.categories = categories;
-          })
       }
     },
     created() {
       this.mdiDelete = mdiDelete;
       this.mdiPencilOutline = mdiPencilOutline;
-      this.fetchAll();
     },
     validations() {
       let validations = {
@@ -342,6 +332,9 @@ export default {
       }
     },
     computed: {
+      ...mapGetters({
+        categories: 'category/getCategories'
+      }),
       deleteQuestionMessage() {
         if (this.deleteOptions.deleteCategory.length === 0) {
           return "No categories selected!";

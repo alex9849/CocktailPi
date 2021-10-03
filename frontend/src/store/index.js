@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import auth from './modules/auth/index';
 import cocktailProgress from './modules/cocktailprogress/index'
 import pumpLayout from './modules/pumplayout/index'
+import category from './modules/category/index'
 import bar from './modules/bar/index'
 
 // import example from './module-example'
@@ -22,6 +23,7 @@ const store = new Vuex.Store({
     auth: auth,
     cocktailProgress: cocktailProgress,
     pumpLayout: pumpLayout,
+    category: category,
     bar: bar
   },
 
