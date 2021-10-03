@@ -198,7 +198,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsContainingName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) LIKE '%' | lower(?) | '%'");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) LIKE ('%' || lower(?) || '%')");
             pstmt.setString(1, name);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
