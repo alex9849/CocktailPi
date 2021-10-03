@@ -84,13 +84,6 @@
           :disable="disable"
         />
         <q-checkbox
-          v-if="value.unit === 'ml'"
-          label="Add to volume"
-          v-model="value.addToVolume"
-          @input="$emit('input', value)"
-          :disable="disable"
-        />
-        <q-checkbox
           v-if="!!value.unit && value.unit !== 'ml'"
           label="Scale to volume"
           v-model="value.scaleToVolume"
@@ -143,14 +136,7 @@ export default {
     },
     onUnitChange(newUnit) {
       if (newUnit === 'ml') {
-        this.value.addToVolume = false;
-      } else {
-        this.value.addToVolume = null;
-      }
-      if (newUnit !== 'ml') {
-        this.value.scaleToVolume = false;
-      } else {
-        this.value.scaleToVolume = null;
+        this.value.scaleToVolume = true;
       }
       this.$emit('input', this.value)
     }

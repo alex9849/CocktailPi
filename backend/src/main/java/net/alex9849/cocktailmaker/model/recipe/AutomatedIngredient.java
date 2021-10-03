@@ -14,6 +14,10 @@ public class AutomatedIngredient extends Ingredient {
         this.pumpTimeMultiplier = pumpTimeMultiplier;
     }
 
+    public boolean isScaleToVolume() {
+        return true;
+    }
+
     @Override
     public Unit getUnit() {
         return Unit.MILLILITER;

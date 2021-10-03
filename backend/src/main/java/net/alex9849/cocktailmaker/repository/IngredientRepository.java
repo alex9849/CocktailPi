@@ -112,21 +112,10 @@ public class IngredientRepository extends JdbcDaoSupport {
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
-            if(ingredient instanceof ManualIngredient) {
-                ManualIngredient manualIngredient = (ManualIngredient) ingredient;
-                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                    pstmt.setBoolean(6, manualIngredient.isAddToVolume());
-                } else {
-                    pstmt.setBoolean(6, false);
-                }
-                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                    pstmt.setBoolean(7, false);
-                } else {
-                    pstmt.setBoolean(7, manualIngredient.isScaleToVolume());
-                }
+            if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                pstmt.setBoolean(6, true);
             } else {
-                pstmt.setNull(6, Types.BOOLEAN);
-                pstmt.setNull(7, Types.BOOLEAN);
+                pstmt.setBoolean(6, ingredient.isScaleToVolume());
             }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -141,7 +130,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, add_to_volume = ?, scale_to_volume = ? WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ?, scale_to_volume = ? WHERE id = ?");
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -151,23 +140,12 @@ public class IngredientRepository extends JdbcDaoSupport {
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
-            if(ingredient instanceof ManualIngredient) {
-                ManualIngredient manualIngredient = (ManualIngredient) ingredient;
-                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                    pstmt.setBoolean(6, manualIngredient.isAddToVolume());
-                } else {
-                    pstmt.setBoolean(6, false);
-                }
-                if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                    pstmt.setBoolean(7, false);
-                } else {
-                    pstmt.setBoolean(7, manualIngredient.isScaleToVolume());
-                }
+            if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                pstmt.setBoolean(6, true);
             } else {
-                pstmt.setNull(6, Types.BOOLEAN);
-                pstmt.setNull(7, Types.BOOLEAN);
+                pstmt.setBoolean(6, ingredient.isScaleToVolume());
             }
-            pstmt.setLong(8, ingredient.getId());
+            pstmt.setLong(7, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -186,7 +164,6 @@ public class IngredientRepository extends JdbcDaoSupport {
         if(Objects.equals(dType, "ManualIngredient")) {
             ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
-            mIngredient.setAddToVolume(resultSet.getBoolean("add_to_volume"));
             mIngredient.setScaleToVolume(resultSet.getBoolean("scale_to_volume"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {

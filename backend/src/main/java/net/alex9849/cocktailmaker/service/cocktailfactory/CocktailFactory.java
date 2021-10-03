@@ -254,7 +254,7 @@ public class CocktailFactory {
      */
     public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
         int currentLiquidAmount = recipe.getRecipeIngredients().stream()
-                .filter(x -> x.getIngredient().isAddToVolume())
+                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .mapToInt(x -> x.getAmount()).sum();
         if(currentLiquidAmount <= 0) {
             return recipe;

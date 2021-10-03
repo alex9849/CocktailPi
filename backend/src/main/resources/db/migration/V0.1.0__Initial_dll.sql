@@ -23,8 +23,7 @@ create table ingredients (
                              unit varchar not null,
                              name varchar(30) not null unique,
                              pump_time_multiplier float8 check (dType = 'ManualIngredient' OR pump_time_multiplier IS NOT NULL),
-                             add_to_volume boolean check (dType = 'AutomatedIngredient' OR add_to_volume IS NOT NULL),
-                             scale_to_volume boolean check (dType = 'AutomatedIngredient' OR scale_to_volume IS NOT NULL),
+                             scale_to_volume boolean check ((unit = 'MILLILITER' AND scale_to_volume) OR unit != 'MILLILITER'),
                              primary key (id)
 );
 

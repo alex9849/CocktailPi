@@ -12,9 +12,6 @@ public class ManualIngredientDto extends IngredientDto {
     private Ingredient.Unit unit;
 
     @NotNull
-    private boolean addToVolume;
-
-    @NotNull
     private boolean scaleToVolume;
 
     public ManualIngredientDto() {}
@@ -35,14 +32,6 @@ public class ManualIngredientDto extends IngredientDto {
 
     public void setUnit(Ingredient.Unit unit) {
         this.unit = unit;
-    }
-
-    public boolean isAddToVolume() {
-        return addToVolume;
-    }
-
-    public void setAddToVolume(boolean addToVolume) {
-        this.addToVolume = addToVolume;
     }
 
     public boolean isScaleToVolume() {
