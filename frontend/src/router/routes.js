@@ -1,5 +1,5 @@
 import {store} from '../store'
-import {userResolver} from "src/router/resolvers";
+import {recipeResolver, userResolver} from "src/router/resolvers";
 
 
 function redirectIfNotAuthenticated(to, from, next) {
@@ -57,11 +57,13 @@ const routes = [
     }, {
       path: 'recipe/:id',
       component: () => import('pages/RecipeDetails'),
-      name: 'recipedetails'
+      name: 'recipedetails',
+      beforeEnter: recipeResolver("id")
     }, {
       path: 'recipe/:id/edit',
       component: () => import('pages/RecipeEdit'),
-      name: 'recipeedit'
+      name: 'recipeedit',
+      beforeEnter: recipeResolver("id")
     }, {
       path: 'admin/ingredient',
       component: () => import('pages/IngredientManagement'),

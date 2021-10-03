@@ -17,7 +17,6 @@
         v-model="editRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
-        :disabled="loading"
       >
         <template slot="below">
           <div class="q-pa-md q-gutter-sm">
@@ -46,55 +45,49 @@
 </template>
 
 <script>
-  import RecipeEditorForm from "../components/RecipeEditorForm";
-  import RecipeService from "../services/recipe.service"
+import RecipeEditorForm from "../components/RecipeEditorForm";
+import RecipeService from "../services/recipe.service"
 
-  export default {
-    name: "RecipeEdit",
-    components: {RecipeEditorForm},
-    data() {
-      return {
-        editRecipe: {
-          recipe: {},
-          image: null,
-          removeImage: false
-        },
-        error: '',
-        isValid: false,
-        sending: false,
-        loading: false
-      }
-    },
-    methods: {
-      updateRecipe() {
-        this.sending = true;
-        RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image, this.editRecipe.removeImage)
-          .then(response => {
-            this.sending = false;
-            this.$q.notify({
-              type: 'positive',
-              message: 'Recipe updated successfully'
-            });
-            this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
-          }, error => {
-            this.sending = false;
-            this.error = error.response.data.message;
-            this.$q.notify({
-              type: 'negative',
-              message: 'Couldn\'t update recipe. ' + error.response.data.message
-            });
-          })
-      }
-    },
-    created() {
-      this.loading = true;
-      RecipeService.getRecipe(this.$route.params.id)
-        .then(recipe => {
-          this.editRecipe.recipe = recipe;
-          this.loading = false;
-        });
+export default {
+  name: "RecipeEdit",
+  components: {RecipeEditorForm},
+  data() {
+    return {
+      editRecipe: {
+        recipe: {},
+        image: null,
+        removeImage: false
+      },
+      error: '',
+      isValid: false,
+      sending: false
     }
+  },
+  methods: {
+    updateRecipe() {
+      this.sending = true;
+      RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image, this.editRecipe.removeImage)
+        .then(response => {
+          this.sending = false;
+          this.$q.notify({
+            type: 'positive',
+            message: 'Recipe updated successfully'
+          });
+          this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
+        }, error => {
+          this.sending = false;
+          this.error = error.response.data.message;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Couldn\'t update recipe. ' + error.response.data.message
+          });
+        })
+    }
+  },
+  created() {
+    this.editRecipe.recipe = this.$route.meta.recipe;
   }
+}
 </script>
 
 <style scoped>

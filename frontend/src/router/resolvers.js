@@ -1,5 +1,6 @@
 import UserService from '../services/user.service'
 import CategoryService from '../services/category.service'
+import RecipeService from '../services/recipe.service'
 
 export const userResolver = (userIdParam) => {
   return async (to, from, next) => {
@@ -14,3 +15,12 @@ export const categoryResolver = (categoryIdParam) => {
     next();
   }
 }
+
+export const recipeResolver = (recipeIdParam) => {
+  return async (to, from, next) => {
+    to.meta['recipe'] = await RecipeService.getRecipe(to.params[recipeIdParam])
+    next();
+  }
+}
+
+

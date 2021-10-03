@@ -14,30 +14,29 @@
         <q-btn
           color="grey"
           :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-          v-if="loaded && (isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole))"
+          v-if="isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole)"
         >
           Edit
         </q-btn>
         <q-btn
-          v-if="!loaded || doPumpsHaveAllIngredients(recipe)"
+          v-if="doPumpsHaveAllIngredients(recipe)"
           color="positive"
-            @click="showMakeCocktailDialog = true"
-            :loading="!loaded"
-          >
-            Make cocktail
-          </q-btn>
-          <q-btn
-            v-else
-            color="warning"
-            @click="showMakeCocktailDialog = true"
-          >
-            Make cocktail (Half-Automatic)
-          </q-btn>
+          @click="showMakeCocktailDialog = true"
+        >
+          Make cocktail
+        </q-btn>
+        <q-btn
+          v-else
+          color="warning"
+          @click="showMakeCocktailDialog = true"
+        >
+          Make cocktail (Half-Automatic)
+        </q-btn>
         <q-btn
           color="red"
           @click.native="deleteDialog = true"
           :loading="deleting"
-          v-if="loaded && (isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole))"
+          v-if="isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole)"
         >
           Delete
         </q-btn>
@@ -67,7 +66,7 @@
       </div>
       <div class="row">
         <div class="col">
-          <q-card  bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
+          <q-card bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
             <q-card-section>
               <b>Description:</b>
               <div style="min-width: 200px; white-space: pre-line" class="col">
@@ -88,7 +87,6 @@
       @clickAbort="deleteDialog = false"
     />
     <c-make-cocktail-dialog
-      v-if="loaded"
       v-model="showMakeCocktailDialog"
 
       :recipe="recipe"
@@ -112,60 +110,55 @@ export default {
       recipe: {},
       deleting: false,
       deleteDialog: false,
-      loaded: false,
       showMakeCocktailDialog: false
     }
   },
   created() {
-      this.initialize();
+    this.initialize();
+  },
+  methods: {
+    initialize() {
+      this.recipe = this.$route.meta.recipe;
     },
-    methods: {
-      initialize() {
-        RecipeService.getRecipe(this.$route.params.id)
-          .then(recipe => {
-            this.recipe = recipe;
-            this.loaded = true;
+    deleteRecipe() {
+      this.deleting = true;
+      RecipeService.deleteRecipe(this.recipe)
+        .then(() => {
+          this.$router.push({name: 'publicrecipes'});
+          this.deleting = false;
+          this.$q.notify({
+            type: 'positive',
+            message: 'Recipe deleted successfully'
           });
-      },
-      deleteRecipe() {
-        this.deleting = true;
-        RecipeService.deleteRecipe(this.recipe)
-          .then(() => {
-            this.$router.push({name: 'publicrecipes'});
-            this.deleting = false;
-            this.$q.notify({
-              type: 'positive',
-              message: 'Recipe deleted successfully'
-            });
-          })
-      }
-    },
-    watch: {
-      '$route.params.id': function () {
-        this.initialize();
-      }
-    },
-    computed: {
-      ...mapGetters({
-        user: 'auth/getUser',
-        isAdminRole: 'auth/isAdmin',
-        isRecipeCreatorRole: 'auth/isRecipeCreator',
-        isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
-        doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-        areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
-      })
+        })
     }
+  },
+  watch: {
+    '$route.params.id': function () {
+      this.initialize();
+    }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'auth/getUser',
+      isAdminRole: 'auth/isAdmin',
+      isRecipeCreatorRole: 'auth/isRecipeCreator',
+      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
+      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
+      areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
+    })
   }
+}
 </script>
 
 <style scoped>
-  .innerpadding > * {
-    padding: 10px;
-  }
+.innerpadding > * {
+  padding: 10px;
+}
 
-  .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-  }
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
 </style>
