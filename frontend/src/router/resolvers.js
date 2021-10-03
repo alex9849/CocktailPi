@@ -9,6 +9,13 @@ export const userResolver = (userIdParam) => {
   }
 }
 
+export const currentUserResolver = () => {
+  return async (to, from, next) => {
+    to.meta['user'] = await UserService.getMe()
+    next();
+  }
+}
+
 export const categoryResolver = (categoryIdParam) => {
   return async (to, from, next) => {
     to.meta['category'] = await CategoryService.getCategory(to.params[categoryIdParam])

@@ -55,10 +55,10 @@
 </template>
 
 <script>
-  import UserEditorForm from "../components/UserEditorForm";
-  import userService from "../services/user.service"
+import UserEditorForm from "../components/UserEditorForm";
+import userService from "../services/user.service"
 
-  export default {
+export default {
     name: "Profile",
     components: {UserEditorForm},
     data() {
@@ -77,15 +77,10 @@
     },
     methods: {
       init() {
-        this.loading = true;
-        userService.getMe()
-          .then(user => {
-            user.password = '';
-            this.user = user;
-            this.editUser = Object.assign({}, user);
-            this.loading = false;
-            this.sending = false;
-          })
+        let user = this.$route.meta.user;
+        user.password = '';
+        this.user = user;
+        this.editUser = Object.assign({}, user);
       },
       getRandomString(length) {
         var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
