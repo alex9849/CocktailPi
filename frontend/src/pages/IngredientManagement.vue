@@ -180,7 +180,7 @@
         </q-btn>
       </template>
       <template v-slot:default>
-        <ul style="padding: 0">
+        <ul style="padding: 0; list-style: none">
           <li
             :key="index"
             v-for="(ingredient, index) in deleteOptions.deleteIngredients"
