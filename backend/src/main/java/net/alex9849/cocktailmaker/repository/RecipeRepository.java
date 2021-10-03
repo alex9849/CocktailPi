@@ -183,14 +183,15 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsWithIngredients(Long... ingredientIds) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id\n" +
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id\n" +
                     "FROM recipes r\n" +
                     "         join recipe_ingredients ri on r.id = ri.recipe_id\n" +
                     "         join ingredients i on i.id = ri.ingredient_id\n" +
-                    "         left join unnest(?) requiredIngredientId on requiredIngredientId = i.id\n" +
+                    "         join unnest(?) requiredIngredientId on requiredIngredientId = i.id\n" +
                     "group by r.id\n" +
-                    "having count(*) = count(requiredIngredientId)");
+                    "having count(distinct i.id) = cardinality(?)");
             pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
+            pstmt.setArray(2, con.createArrayOf("int8", ingredientIds));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
