@@ -104,6 +104,7 @@ const routes = [
   // but you can also remove it
   {
     path: '*',
+    name: '404Page',
     component: () => import('pages/Error404.vue')
   }
 ];

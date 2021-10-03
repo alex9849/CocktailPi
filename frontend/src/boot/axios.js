@@ -1,13 +1,16 @@
-import Vue from 'vue'
+import {boot} from 'quasar/wrappers'
 import axios from 'axios'
 import authHeader from "src/services/auth-header";
-import {store} from '../store'
+import {store} from '../store';
 
-Vue.prototype.$axios = axios;
-Vue.prototype.$axios.defaults.baseURL = window.location.origin;
-Vue.prototype.$axios.interceptors.request.use(cfg => {
-  cfg.headers.Authorization = authHeader();
-  cfg.baseURL = store.getters['auth/getFormattedServerAddress'];
-  return cfg;
-});
+export default boot(({ Vue }) => {
+  axios.defaults.baseURL = window.location.origin;
+  axios.interceptors.request.use(cfg => {
+    cfg.headers.Authorization = authHeader();
+    cfg.baseURL = store.getters['auth/getFormattedServerAddress'];
+    return cfg;
+  });
+  Vue.prototype.$axios = axios
 
+})
+export { axios }

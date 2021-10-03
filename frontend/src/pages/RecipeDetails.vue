@@ -115,13 +115,13 @@ export default {
     }
   },
   async beforeRouteEnter(to, from, next) {
-    const recipe = await RecipeService.getRecipe(to.params.id)
+    const recipe = await RecipeService.getRecipe(to.params.id);
     next(vm => {
       vm.recipe = recipe;
     });
   },
   async beforeRouteUpdate(to, from, next) {
-    this.recipe = await RecipeService.getRecipe(to.params.id)
+    this.recipe = await RecipeService.getRecipe(to.params.id);
     next();
   },
   created() {
