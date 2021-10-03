@@ -114,6 +114,7 @@ import {
   mdiWeb
 } from "@quasar/extras/mdi-v5";
 import {mapActions, mapGetters} from 'vuex'
+import {store} from '../store'
 
 export default {
   name: 'LoggedInLayout',
@@ -205,13 +206,18 @@ export default {
       ]
     }
   },
+  beforeRouteEnter (to, from, next) {
+    Promise.all([
+      store.dispatch('category/fetchCategories'),
+      store.dispatch('bar/fetchIngredients')
+    ]).then(() => next());
+  },
   created() {
     window.addEventListener('resize', this.handleResize);
     this.handleResize();
-    this.fetchIngredientsAction();
-    this.fetchCategoriesAction();
     this.mdiChevronRight = mdiChevronRight;
     this.mdiPiggyBank = mdiPiggyBank;
+    this.setCategories(this.recipeCategories);
   },
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
@@ -228,22 +234,7 @@ export default {
   },
   watch: {
     recipeCategories(newValue) {
-      this.sidebarItems[1].subSections = [
-        {
-          label: 'All',
-          to: {name: 'publicrecipes'},
-          exact: true,
-          reqLevel: 0,
-        }
-      ];
-      for (let category of newValue) {
-        this.sidebarItems[1].subSections.push({
-          label: category.name,
-          reqLevel: 0,
-          to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
-          exact: true
-        })
-      }
+      this.setCategories(newValue);
     }
   },
   methods: {
@@ -258,6 +249,24 @@ export default {
       this.windowWidth = window.innerWidth;
       if (this.windowWidth > this.desktopModeBreakPoint) {
         this.leftDrawerOpen = true;
+      }
+    },
+    setCategories(categories) {
+      this.sidebarItems[1].subSections = [
+        {
+          label: 'All',
+          to: {name: 'publicrecipes'},
+          exact: true,
+          reqLevel: 0,
+        }
+      ];
+      for (let category of categories) {
+        this.sidebarItems[1].subSections.push({
+          label: category.name,
+          reqLevel: 0,
+          to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
+          exact: true
+        })
       }
     }
   }

@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el v-if="categoryName" label="Public recipes" :to="{name: 'publicrecipes'}"/>
+      <q-breadcrumbs-el v-if="$route.meta.category" label="Public recipes" :to="{name: 'publicrecipes'}"/>
       <q-breadcrumbs-el v-else label="Public recipes"/>
-      <q-breadcrumbs-el v-if="categoryName" :label="categoryName"/>
+      <q-breadcrumbs-el v-if="$route.meta.category" :label="$route.meta.category.name"/>
     </q-breadcrumbs>
     <h5>Public recipes</h5>
     <div class="q-pa-md">
@@ -16,36 +16,28 @@
 </template>
 
 <script>
-  import CRecipeSearchList from "../components/CRecipeSearchList";
-  import CategoryService from "../services/category.service"
+import CRecipeSearchList from "../components/CRecipeSearchList";
+import {mapGetters} from "vuex";
+import {store} from '../store'
 
-  export default {
+
+export default {
     name: "PublicRecipes",
     components: {CRecipeSearchList},
-    data() {
-      return {
-        categoryName: null
-      }
+    beforeRouteEnter(to, from, next) {
+      to.meta['category'] = store.getters['category/getCategories']
+        .find(x => x.id == to.params.cid);
+      next();
     },
-    created() {
-      let categoryId = this.$route.params.cid;
-      this.setCategory(categoryId);
+    beforeRouteUpdate(to, from, next) {
+      to.meta['category'] = store.getters['category/getCategories']
+        .find(x => x.id == to.params.cid);
+      next();
     },
-    watch: {
-      '$route.params.cid': function (value) {
-        this.setCategory(value);
-      }
-    },
-    methods: {
-      setCategory(id) {
-        if(!id) {
-          this.categoryName = null;
-        } else {
-          this.categoryName = "Loading...";
-          CategoryService.getCategory(id)
-            .then(data => this.categoryName = data.name);
-        }
-      }
+    computed: {
+      ...mapGetters({
+        recipeCategories: 'category/getCategories'
+      })
     }
   }
 </script>
