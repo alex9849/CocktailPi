@@ -1,13 +1,18 @@
 <template>
   <div id="q-app">
+    <q-ajax-bar
+      position="top"
+      color="red"
+      size="3px"
+    />
     <router-view/>
   </div>
 </template>
 
 <script>
-  import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
-  const extendTokenBeforeExpirationInMs = 600000;
+const extendTokenBeforeExpirationInMs = 600000;
 
   export default {
     name: 'App',
