@@ -70,8 +70,8 @@ class RecipeService {
     return axios.put(API_PATH + recipe.id + "?removeImage=" + !!removeImage, uploadData, {headers:{'Content-Type' :'multipart/form-data'}});
   }
 
-  deleteRecipe(recipe) {
-    return axios.delete(API_PATH + recipe.id);
+  deleteRecipe(recipeId) {
+    return axios.delete(API_PATH + recipeId);
   }
 }
 

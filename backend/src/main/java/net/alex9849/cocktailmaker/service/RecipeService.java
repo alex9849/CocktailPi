@@ -41,7 +41,10 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients, String searchName, boolean isFabricable, Long isInBarUserId, int startNumber, int pageSize, Sort sort) {
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients,
+                                           String searchName, boolean isFabricable, Long isInBarUserId, int pageNumber,
+                                           int pageSize, Sort sort) {
+        long offset = (long) pageNumber * pageSize;
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(inPublic != null) {
@@ -65,9 +68,9 @@ public class RecipeService {
         if(isInBarUserId != null) {
             idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(isInBarUserId));
         }
-        Pageable pageable = PageRequest.of((startNumber / pageSize) + 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
         if(idsToFindSetList.isEmpty()) {
-            return new PageImpl<>(recipeRepository.findAll(startNumber, pageSize, sort), pageable, recipeRepository.count());
+            return new PageImpl<>(recipeRepository.findAll(offset, pageSize, sort), pageable, recipeRepository.count());
         }
         Set<Long> retained = null;
         for(Set<Long> current : idsToFindSetList) {
@@ -80,7 +83,7 @@ public class RecipeService {
         if(retained.isEmpty()) {
             return new PageImpl<>(Collections.emptyList());
         }
-        return new PageImpl<>(recipeRepository.findByIds(startNumber, pageSize, sort, retained.toArray(new Long[1])), pageable, recipeRepository.count());
+        return new PageImpl<>(recipeRepository.findByIds(offset, pageSize, sort, retained.toArray(new Long[1])), pageable, recipeRepository.count());
     }
 
     public Recipe getById(long id) {

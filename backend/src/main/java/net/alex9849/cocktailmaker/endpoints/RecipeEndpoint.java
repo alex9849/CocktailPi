@@ -49,14 +49,14 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
                                          @RequestParam(value = "searchName", required = false) String searchName,
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
-                                         @RequestParam(value = "page") int page,
+                                         @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!Objects.equals(principal.getId(), ownerId) && (inPublic == null || !inPublic)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
-        page = Math.max(--page, 0);
+        page = Math.max(page, 0);
         Sort sort;
         switch (orderBy) {
             case "authorDesc":

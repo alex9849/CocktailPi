@@ -75,7 +75,7 @@ create table categories
 
 CREATE TABLE recipe_categories
 (
-    recipe_id int8 not null references recipes,
+    recipe_id int8 not null references recipes on delete cascade,
     categories_id int8 not null references categories on delete cascade,
     primary key (recipe_id, categories_id)
 );

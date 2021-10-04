@@ -217,7 +217,6 @@ export default {
     this.handleResize();
     this.mdiChevronRight = mdiChevronRight;
     this.mdiPiggyBank = mdiPiggyBank;
-    this.setCategories(this.recipeCategories);
   },
   destroyed() {
     window.removeEventListener('resize', this.handleResize);
@@ -233,8 +232,11 @@ export default {
     }
   },
   watch: {
-    recipeCategories(newValue) {
-      this.setCategories(newValue);
+    recipeCategories: {
+      immediate: true,
+      handler(newValue) {
+        this.setCategories(newValue);
+      }
     }
   },
   methods: {

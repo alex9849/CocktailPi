@@ -130,7 +130,7 @@ export default {
   methods: {
     deleteRecipe() {
       this.deleting = true;
-      RecipeService.deleteRecipe(this.recipe)
+      RecipeService.deleteRecipe(this.recipe.id)
         .then(() => {
           this.$router.push({name: 'publicrecipes'});
           this.deleting = false;
