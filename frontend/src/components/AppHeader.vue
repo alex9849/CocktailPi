@@ -70,7 +70,7 @@ export default {
         this.$router.push({name: 'login'});
       },
       connectWebsocket() {
-        let socket = new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + "/ws/cocktailprogress");
+        let socket = new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + "/ws");
         this.stompClient = Stomp.over(socket);
         if(!process.env.DEV) {
           this.stompClient.debug = null;
