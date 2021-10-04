@@ -90,12 +90,6 @@ export default {
           });
         })
     }
-  },
-  created() {
-    /*RecipeService.getRecipe(this.$route.params.id)
-      .then(recipe => {
-        this.editRecipe.recipe = recipe;
-      });*/
   }
 }
 </script>

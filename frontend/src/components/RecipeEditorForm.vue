@@ -7,8 +7,7 @@
     >
       <q-input
         outlined
-        :loading="loading"
-        :disable="loading || disabled"
+        :disable="disabled"
         v-model="value.recipe.name"
         @input="() => {$emit('input', value); $v.value.recipe.name.$touch();}"
         label="Recipe-Name"
@@ -18,24 +17,25 @@
         val => $v.value.recipe.name.maxLength || 'Maximal length 20']"
       />
       <q-select
+        :disable="disabled"
         label="Categories"
         v-model="value.recipe.categories"
         :options="categories"
         option-label="name"
-        :loading="loading || categoriesLoading"
-        :disable="loading || categoriesLoading"
         multiple
         outlined
       />
       <div v-if="allowImageRemoving" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
         <q-toggle
           label="Remove image if existing"
+          :disable="disabled"
           v-model="value.removeImage"
           @input="$emit('input', value)"
         />
         <q-file
           v-if="!value.removeImage"
           filled
+          :disable="disabled"
           bottom-slots
           v-model="value.image"
           @input="$emit('input', value)"
@@ -58,6 +58,7 @@
         filled
         bottom-slots
         v-model="value.image"
+        :disable="disabled"
         @input="$emit('input', value)"
         label="Image"
         max-file-size="20971520"
@@ -74,8 +75,7 @@
       </q-file>
       <q-input
         outlined
-        :loading="loading"
-        :disable="loading || disabled"
+        :disable="disabled"
         v-model="value.recipe.description"
         @input="() => {$emit('input', value); $v.value.recipe.description.$touch();}"
         type="textarea"
@@ -88,6 +88,7 @@
       />
       <q-input
         label="Default amount to produce"
+        :disable="disabled"
         type="number"
         outlined
         v-model.number="value.recipe.defaultAmountToFill"
@@ -103,11 +104,11 @@
       </q-input>
       <IngredientList
         v-model="value.recipe.recipeIngredients"
-        :editable="true"
+        :editable="!disabled"
       />
       <q-checkbox
         v-model="value.recipe.inPublic"
-        :disable="loading || disabled"
+        :disable="disabled"
         label="Public recipe"
         @input="$emit('input', value)"
       />
@@ -130,10 +131,6 @@ export default {
         required: true
       },
       allowImageRemoving: {
-        type: Boolean,
-        default: false
-      },
-      loading: {
         type: Boolean,
         default: false
       },
