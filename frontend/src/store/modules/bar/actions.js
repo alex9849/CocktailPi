@@ -15,7 +15,7 @@ export const fetchIngredients = ({ commit }) => {
     })
 }
 
-export const removeIngredient = ({ dispatch, commit }, ingredientId) => {
+export const removeIngredient = ({ dispatch }, ingredientId) => {
   return UserService.removeFromMyOwnedIngredients(ingredientId)
     .then(() => {
       return dispatch('fetchIngredients');

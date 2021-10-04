@@ -1,5 +1,4 @@
 const authToken = JSON.parse(localStorage.getItem('authToken'));
-const user = JSON.parse(localStorage.getItem('user'));
 let serverAddress = localStorage.getItem('serverAddress');
 
 if(serverAddress === null || serverAddress === undefined) {
@@ -24,17 +23,10 @@ const initialLoggedIn = function () {
   return !!initialAuthToken
 }();
 
-const initialUser = function() {
-  if(initialAuthToken){
-    return user;
-  }
-  return null;
-}();
-
 export default function () {
   return {
     status: {
-      user: initialUser,
+      user: null,
       authToken: initialAuthToken,
       loggedIn: initialLoggedIn,
       serverAddress

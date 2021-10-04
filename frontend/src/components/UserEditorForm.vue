@@ -72,14 +72,14 @@
       outlined
       map-options
       :value="value.adminLevel"
-      v-if="!isProfile && !isSelf"
+      v-if="!isSelf"
       :options="roles"
       @input="e => {value.adminLevel = e.value; $emit('input', value); $v.value.adminLevel.$touch();}"
       :disable="loading || disabled"
       label="Role"
     />
     <q-checkbox
-      v-if="!isProfile && !isSelf"
+      v-if="!isSelf"
       :value="!value.accountNonLocked"
       @input="e => {value.accountNonLocked = !e; $emit('input', value)}"
       :disable="loading || disabled"
@@ -90,10 +90,10 @@
 </template>
 
 <script>
-  import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5';
-  import {email, maxLength, minLength, required} from 'vuelidate/lib/validators'
+import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5';
+import {email, maxLength, minLength, required} from 'vuelidate/lib/validators'
 
-  export default {
+export default {
     name: "UserEditorForm",
     props: {
       value: {
@@ -105,10 +105,6 @@
         default: false
       },
       disabled: {
-        type: Boolean,
-        default: false
-      },
-      isProfile: {
         type: Boolean,
         default: false
       },
@@ -177,13 +173,16 @@
       return validations;
     },
     watch: {
-      '$v.value.$invalid': function _watch$vValue$invalid(value) {
-        if (!value) {
-          this.$emit('valid');
-        } else {
-          this.$emit('invalid');
+      '$v.value.$invalid': {
+        immediate: true,
+        handler(value) {
+          if (!value) {
+            this.$emit('valid');
+          } else {
+            this.$emit('invalid');
+          }
         }
-      }
+      },
     },
     created() {
       this.mdiEye = mdiEye;

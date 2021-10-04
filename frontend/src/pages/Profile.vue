@@ -11,7 +11,7 @@
       v-model="editUser"
       :loading="loading"
       :disabled="!editMode || sending"
-      is-profile
+      is-self
       @valid="isValid = true"
       @invalid="isValid = false"
     >
@@ -40,7 +40,7 @@
           <q-btn
             style="width: 100px"
             color="positive"
-            @click="sendUpdateUser"
+            @click="onClickSafe"
             no-caps
             :loading="sending"
             :disable="!isValid"
@@ -56,15 +56,13 @@
 
 <script>
 import UserEditorForm from "../components/UserEditorForm";
-import userService from "../services/user.service"
-import UserService from "src/services/user.service";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "Profile",
   components: {UserEditorForm},
   data() {
     return {
-      user: {},
       editUser: {},
       loading: false,
       sending: false,
@@ -73,15 +71,23 @@ export default {
       error: ''
     }
   },
-  async beforeRouteEnter(to, from, next) {
-    const fetchedUser = await UserService.getMe()
-    next(vm => {
-      fetchedUser.password = '';
-      vm.user = fetchedUser;
-      vm.editUser = Object.assign({}, fetchedUser);
-    });
+  computed: {
+    ...mapGetters({
+      user: 'auth/getUser'
+    })
+  },
+  watch: {
+    user: {
+      immediate: true,
+      handler() {
+        this.resetEditUser()
+      }
+    }
   },
   methods: {
+    ...mapActions({
+      sendUpdateUser: 'auth/updateCurrentUser'
+    }),
     getRandomString(length) {
       var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       var result = '';
@@ -92,33 +98,38 @@ export default {
     },
     stopEditMode() {
       this.editMode = false;
-      this.editUser = Object.assign({}, this.user);
+      this.resetEditUser();
     },
-    sendUpdateUser() {
+    resetEditUser() {
+      this.editUser = Object.assign({
+        password: ''
+      }, this.user);
+    },
+    onClickSafe() {
       this.sending = true;
       let updateUser = Object.assign({}, this.editUser);
       let updatePassword = !!this.editUser.password || this.editUser.password !== '';
       if (!updatePassword) {
         updateUser.password = this.getRandomString(22);
       }
-      userService.updateMe({
+      this.sendUpdateUser({
         updatePassword,
         userDto: updateUser
       }).then(() => {
         this.stopEditMode();
-        this.init();
         this.error = '';
         this.$q.notify({
           type: 'positive',
           message: 'Profile updated'
         });
       }).catch(error => {
-        this.sending = false;
         this.error = error.response.data.message;
         this.$q.notify({
           type: 'negative',
           message: 'Couldn\'t update profile. ' + error.response.data.message
         });
+      }).finally(() => {
+        this.sending = false;
       })
     }
   }

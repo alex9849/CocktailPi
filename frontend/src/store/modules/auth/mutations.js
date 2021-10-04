@@ -3,9 +3,8 @@ export const loginSuccess = (state, jwtResponse) => {
   delete onlyToken.user;
   state.status.loggedIn = true;
   state.status.authToken = onlyToken;
-  state.status.user = jwtResponse.user;
   localStorage.setItem('authToken', JSON.stringify(onlyToken));
-  localStorage.setItem('user', JSON.stringify(jwtResponse.user));
+  setCurrentUser(state, jwtResponse.user)
 };
 export const loginFailure = (state) => {
   state.status.loggedIn = false;
@@ -21,6 +20,9 @@ export const logout = (state) => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('user');
 };
+export const setCurrentUser = (state, user) => {
+  state.status.user = user;
+}
 export const serverAddress = (state, serverAddress) => {
   state.status.serverAddress = serverAddress;
   localStorage.setItem('serverAddress', serverAddress);
