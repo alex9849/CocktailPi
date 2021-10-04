@@ -173,7 +173,7 @@
 <script>
 import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
 import {mapGetters} from "vuex";
-import userService from '../services/user.service'
+import UserService from '../services/user.service'
 import CQuestion from "../components/CQuestion";
 import TopButtonArranger from "components/TopButtonArranger";
 
@@ -267,39 +267,26 @@ export default {
       },
       deleteSelected() {
         this.deleteLoading = true;
-        let toDelete = this.deleteUsers.length;
-        let deleted = 0;
         let vm = this;
-        let afterDelete = function () {
-          if (deleted === toDelete) {
+        const promises = [];
+        this.deleteUsers.forEach(user => {
+          promises.push(UserService.deleteUser(user.id))
+        })
+        Promise.all(promises)
+          .then(() => {
             vm.closeDeleteDialog();
+            vm.selected.splice(0, this.selected.length);
             vm.deleteLoading = false;
             vm.initialize();
             vm.$q.notify({
               type: 'positive',
               message: 'User(s) deleted successfully'
             });
-          }
-        };
-        this.deleteUsers.forEach(user => {
-          userService.deleteUser(user)
-            .then(() => {
-              deleted++;
-              afterDelete();
-            }, err => {
-              vm.deleteLoading = false;
-              vm.initialize();
-              vm.$q.notify({
-                type: 'negative',
-                message: 'Couldn\'t delete user(s). ' + error.response.data.message
-              });
-            })
-        });
-        afterDelete();
+          })
       },
       initialize() {
         this.isLoading = true;
-        userService.getAllUsers()
+        UserService.getAllUsers()
           .then(users => {
             this.data = users;
             this.isLoading = false;
