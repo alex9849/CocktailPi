@@ -274,22 +274,21 @@ export default {
       },
       deleteSelected() {
         let vm = this;
-        let afterDelete = function () {
-          vm.closeDeleteDialog();
-          vm.deleteOptions.deleteLoading = false;
-          vm.deleteOptions.deleteErrorMessage = "";
-          vm.$q.notify({
-            type: 'positive',
-            message: "Categorie(s) deleted successfully"
-          });
-        };
         let toDeleteIds = this.deleteOptions.deleteCategory.map(x => x.id);
         this.deleteOptions.deleteLoading = true;
         this.deleteCategories(toDeleteIds)
             .then(() => {
-              afterDelete();
+              vm.closeDeleteDialog();
+              vm.selected.splice(0, vm.selected.length);
+              vm.deleteOptions.deleteLoading = false;
+              vm.deleteOptions.deleteErrorMessage = "";
+              vm.$q.notify({
+                type: 'positive',
+                message: "Categorie(s) deleted successfully"
+              });
             }, err => {
               vm.deleteOptions.deleteLoading = false;
+              vm.selected.splice(0, vm.selected.length);
               vm.deleteOptions.deleteErrorMessage = err.response.data.message;
               vm.$q.notify({
                 type: 'negative',

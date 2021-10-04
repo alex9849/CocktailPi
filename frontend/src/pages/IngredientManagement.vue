@@ -317,12 +317,15 @@ export default {
       },
       deleteSelected() {
         this.deleteOptions.deleteLoading = true;
-        let toDelete = this.deleteOptions.deleteIngredients.length;
-        let deleted = 0;
         let vm = this;
-        let afterDelete = function () {
-          if (deleted === toDelete) {
+        const promises = [];
+        this.deleteOptions.deleteIngredients.forEach(ingredient => {
+          promises.push(IngredientService.deleteIngredient(ingredient))
+        });
+        Promise.all(promises)
+          .then(() => {
             vm.closeDeleteDialog();
+            vm.selected.splice(0, vm.selected.length);
             vm.deleteOptions.deleteLoading = false;
             vm.deleteOptions.deleteErrorMessage = "";
             vm.fetchAll();
@@ -330,24 +333,16 @@ export default {
               type: 'positive',
               message: (toDelete > 1 ? "Ingredients" : "Ingredient") + " deleted successfully"
             });
-          }
-        };
-        this.deleteOptions.deleteIngredients.forEach(ingredient => {
-          IngredientService.deleteIngredient(ingredient)
-            .then(() => {
-              deleted++;
-              afterDelete();
-            }, err => {
-              vm.deleteOptions.deleteLoading = false;
-              vm.fetchAll();
-              vm.deleteOptions.deleteErrorMessage = err.response.data.message;
-              vm.$q.notify({
-                type: 'negative',
-                message: err.response.data.message
-              });
-            })
-        });
-        afterDelete();
+          }, err => {
+            vm.deleteOptions.deleteLoading = false;
+            vm.selected.splice(0, vm.selected.length);
+            vm.fetchAll();
+            vm.deleteOptions.deleteErrorMessage = err.response.data.message;
+            vm.$q.notify({
+              type: 'negative',
+              message: err.response.data.message
+            });
+          })
       },
       openDeleteDialog(forSelected) {
         if (forSelected) {
