@@ -42,7 +42,7 @@ public class CategoryRepository extends JdbcDaoSupport {
 
     public List<Category> findAll() {
         return getJdbcTemplate().execute((ConnectionCallback<List<Category>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories");
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories ORDER BY name ASC");
             ResultSet rs = pstmt.executeQuery();
             List<Category> result = new ArrayList<>();
             while (rs.next()) {
