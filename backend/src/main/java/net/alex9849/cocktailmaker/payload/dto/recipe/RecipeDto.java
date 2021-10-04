@@ -56,6 +56,9 @@ public class RecipeDto {
     @NotNull
     private Set<CategoryDto> categories;
 
+    @NotNull
+    private long defaultAmountToFill;
+
     private Date lastUpdate;
 
     public long getId() {
@@ -116,5 +119,13 @@ public class RecipeDto {
 
     public Date getLastUpdate() {
         return lastUpdate;
+    }
+
+    public long getDefaultAmountToFill() {
+        return defaultAmountToFill;
+    }
+
+    public void setDefaultAmountToFill(long defaultAmountToFill) {
+        this.defaultAmountToFill = defaultAmountToFill;
     }
 }

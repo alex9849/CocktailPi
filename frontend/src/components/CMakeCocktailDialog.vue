@@ -50,7 +50,8 @@
             />
             <div class="col">
               <div class="q-pa-sm">
-                The following ingredients have to get added manually or are not assigned to pumps. You will be asked to add them during the production progress:
+                The following ingredients have to get added manually or are not assigned to pumps. You will be asked to
+                add them during the production progress:
               </div>
               <q-separator></q-separator>
               <ul style="text-align: start">
@@ -159,147 +160,155 @@ import CIngredientSelector from "../components/CIngredientSelector";
 import {maxValue, minValue, required} from "vuelidate/lib/validators";
 
 export default {
-    name: "CMakeCocktailDialog",
-    components: {CIngredientSelector},
-    props: {
-      value: {
-        type: Boolean,
-        required: false
-      },
-      recipe: {
-        type: Object,
-        required: true
+  name: "CMakeCocktailDialog",
+  components: {CIngredientSelector},
+  props: {
+    value: {
+      type: Boolean,
+      required: false
+    },
+    recipe: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      amountToProduce: 250,
+      columns: [
+        {name: 'id', label: 'Nr', field: 'id', align: 'left'},
+        {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
+        {name: 'actions', label: 'Actions', field: '', align: 'center'}
+      ],
+      loadingPumpIds: []
+    }
+  },
+  created() {
+    this.mdiPlay = mdiPlay;
+    this.mdiAlertOutline = mdiAlertOutline;
+  },
+  watch: {
+    recipe: {
+      immediate: true,
+      handler(newValue) {
+        this.amountToProduce = newValue.defaultAmountToFill
       }
-    },
-    data() {
-      return {
-        amountToProduce: 250,
-        columns: [
-          {name: 'id', label: 'Nr', field: 'id', align: 'left'},
-          {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
-          {name: 'actions', label: 'Actions', field: '', align: 'center'}
-        ],
-        loadingPumpIds: []
+    }
+  },
+  methods: {
+    markPump(pump) {
+      if (!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
+        return false;
       }
-    },
-    created() {
-      this.mdiPlay = mdiPlay;
-      this.mdiAlertOutline = mdiAlertOutline;
-    },
-    methods: {
-      markPump(pump) {
-        if(!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
-          return false;
-        }
-        return this.sortedPumpLayout.find(x => {
-          return !!x.currentIngredient &&
+      return this.sortedPumpLayout.find(x => {
+        return !!x.currentIngredient &&
           pump.currentIngredient.id === x.currentIngredient.id
-        }) === pump;
-      },
-      isIngredientNeeded(ingredientId) {
-        return this.neededIngredients.some(x => x.id === ingredientId);
-      },
-      updatePumpIngredient(pump, newIngredient) {
-        let newPump = Object.assign({}, pump);
-        newPump.currentIngredient = newIngredient;
-        this.loadingPumpIds.push(newPump.id)
-        PumpService.updatePump(newPump)
-          .catch(error => {
-            this.$q.notify({
-              type: 'negative',
-              message: error.response.data.message
-            });
-          })
-          .finally(() => {
-            let array = this.loadingPumpIds;
-            array.splice(array.indexOf(newPump.id), 1);
-          })
-      },
-      onClickCleanPump(pump) {
-        PumpService.cleanPump(pump)
-          .catch(error => {
-            this.$q.notify({
-              type: 'negative',
-              message: error.response.data.message
-            });
-          })
-      },
-      onMakeCocktail() {
-        CocktailService.order(this.recipe.id, this.amountToProduce)
-          .then(() => {
-            this.$refs.mcDialog.hide();
-            this.showProgressDialog = true;
-          })
-          .catch(error => {
+      }) === pump;
+    },
+    isIngredientNeeded(ingredientId) {
+      return this.neededIngredients.some(x => x.id === ingredientId);
+    },
+    updatePumpIngredient(pump, newIngredient) {
+      let newPump = Object.assign({}, pump);
+      newPump.currentIngredient = newIngredient;
+      this.loadingPumpIds.push(newPump.id)
+      PumpService.updatePump(newPump)
+        .catch(error => {
           this.$q.notify({
             type: 'negative',
             message: error.response.data.message
           });
         })
-      },
-      isIngredientInBar(ingredientId) {
-        return this.ownedIngredients.some(x => x.id === ingredientId);
-      }
+        .finally(() => {
+          let array = this.loadingPumpIds;
+          array.splice(array.indexOf(newPump.id), 1);
+        })
     },
-    computed: {
-      ...mapGetters({
-        isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
-        doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-        hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-        getPumpLayout: 'pumpLayout/getLayout',
-        getPumpIngredients: 'pumpLayout/getPumpIngredients',
-        isCleaning: 'pumpLayout/isCleaning',
-        ownedIngredients: 'bar/getOwnedIngredients'
-      }),
-      sortedPumpLayout() {
-        let sorted = [];
-        sorted.push(...this.getPumpLayout);
-        return sorted.sort((a, b) => a.id - b.id);
-      },
-      neededIngredients() {
-          let ingredients = [];
-          for(let productionstep of this.recipe.recipeIngredients) {
-            for(let ingredientstep of productionstep) {
-              if(!ingredients.some(x => x.id === ingredientstep.ingredient.id)) {
-                ingredients.push(ingredientstep.ingredient);
-              }
-            }
-          }
-          return ingredients;
-      },
-      unassignedIngredients() {
-        return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
-      },
-      missingAutomaticIngredients() {
-        return this.unassignedIngredients.filter(x => x.type === 'automated');
-      },
-      showProgressDialog: {
-        get() {
-          return this.$store.getters['cocktailProgress/isShowProgressDialog']
-        },
-        set(val) {
-          return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
-        }
-      }
+    onClickCleanPump(pump) {
+      PumpService.cleanPump(pump)
+        .catch(error => {
+          this.$q.notify({
+            type: 'negative',
+            message: error.response.data.message
+          });
+        })
     },
-    validations() {
-      return {
-        amountToProduce: {
-          required,
-          minValue: minValue(50),
-          maxValue: maxValue(1000)
-        }
-      };
+    onMakeCocktail() {
+      CocktailService.order(this.recipe.id, this.amountToProduce)
+        .then(() => {
+          this.$refs.mcDialog.hide();
+          this.showProgressDialog = true;
+        })
+        .catch(error => {
+          this.$q.notify({
+            type: 'negative',
+            message: error.response.data.message
+          });
+        })
+    },
+    isIngredientInBar(ingredientId) {
+      return this.ownedIngredients.some(x => x.id === ingredientId);
     }
+  },
+  computed: {
+    ...mapGetters({
+      isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
+      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
+      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+      getPumpLayout: 'pumpLayout/getLayout',
+      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      isCleaning: 'pumpLayout/isCleaning',
+      ownedIngredients: 'bar/getOwnedIngredients'
+    }),
+    sortedPumpLayout() {
+      let sorted = [];
+      sorted.push(...this.getPumpLayout);
+      return sorted.sort((a, b) => a.id - b.id);
+    },
+    neededIngredients() {
+      let ingredients = [];
+      for (let productionstep of this.recipe.recipeIngredients) {
+        for (let ingredientstep of productionstep) {
+          if (!ingredients.some(x => x.id === ingredientstep.ingredient.id)) {
+            ingredients.push(ingredientstep.ingredient);
+          }
+        }
+      }
+      return ingredients;
+    },
+    unassignedIngredients() {
+      return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id));
+    },
+    missingAutomaticIngredients() {
+      return this.unassignedIngredients.filter(x => x.type === 'automated');
+    },
+    showProgressDialog: {
+      get() {
+        return this.$store.getters['cocktailProgress/isShowProgressDialog']
+      },
+      set(val) {
+        return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
+      }
+    }
+  },
+  validations() {
+    return {
+      amountToProduce: {
+        required,
+        minValue: minValue(50),
+        maxValue: maxValue(1000)
+      }
+    };
   }
+}
 </script>
 
 <style scoped>
 
-  @media screen and (min-width: 600px) {
-    .with-desktop {
-      width: 500px;
-    }
+@media screen and (min-width: 600px) {
+  .with-desktop {
+    width: 500px;
   }
+}
 
 </style>

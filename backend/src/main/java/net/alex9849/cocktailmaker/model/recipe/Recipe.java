@@ -14,6 +14,7 @@ public class Recipe {
     private Long ownerId;
     private String description;
     private Date lastUpdate;
+    private long defaultAmountToFill;
     private List<RecipeIngredient> recipeIngredients;
     private List<Category> categories;
 
@@ -87,5 +88,13 @@ public class Recipe {
 
     public Date getLastUpdate() {
         return lastUpdate;
+    }
+
+    public long getDefaultAmountToFill() {
+        return defaultAmountToFill;
+    }
+
+    public void setDefaultAmountToFill(long defaultAmountToFill) {
+        this.defaultAmountToFill = defaultAmountToFill;
     }
 }

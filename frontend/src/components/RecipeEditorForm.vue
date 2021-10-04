@@ -86,6 +86,17 @@
           val => $v.value.recipe.description.required || 'Required',
           val => $v.value.recipe.description.maxLength || 'Maximal length 2000']"
       />
+      <q-input
+        label="ml"
+        type="number"
+        outlined
+        v-model.number="value.recipe.defaultAmountToFill"
+        @input="() => {$emit('input', value); $v.value.recipe.defaultAmountToFill.$touch();}"
+        :rules="[
+        val => $v.value.recipe.defaultAmountToFill.required || 'Required',
+        val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml'
+      ]"
+      />
       <IngredientList
         v-model="value.recipe.recipeIngredients"
         :editable="true"
@@ -102,7 +113,7 @@
 </template>
 
 <script>
-import {maxLength, minLength, required} from "vuelidate/lib/validators";
+import {maxLength, minLength, minValue, required} from "vuelidate/lib/validators";
 import IngredientList from "./IngredientList";
 import {mapGetters} from "vuex";
 
@@ -144,6 +155,10 @@ export default {
             description: {
               required,
               maxLength: maxLength(2000)
+            },
+            defaultAmountToFill: {
+              required,
+              minValue: minValue(50)
             }
           }
         }

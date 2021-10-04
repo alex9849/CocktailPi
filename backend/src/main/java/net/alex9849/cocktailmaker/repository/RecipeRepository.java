@@ -117,13 +117,14 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, owner_id) " +
-                    "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, " +
+                    "owner_id, default_amount_to_fill) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setBoolean(3, recipe.isInPublic());
             pstmt.setDate(4, new Date(System.currentTimeMillis()));
             pstmt.setLong(5, recipe.getOwnerId());
+            pstmt.setLong(6, recipe.getDefaultAmountToFill());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -144,13 +145,15 @@ public class RecipeRepository extends JdbcDaoSupport {
     public boolean update(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
-                    "description = ?, in_public = ?, last_update = ?, owner_id = ? WHERE id = ?");
+                    "description = ?, in_public = ?, last_update = ?, owner_id = ?, " +
+                    "default_amount_to_fill = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setBoolean(3, recipe.isInPublic());
             pstmt.setDate(4, new Date(System.currentTimeMillis()));
             pstmt.setLong(5, recipe.getOwnerId());
-            pstmt.setLong(6, recipe.getId());
+            pstmt.setLong(6, recipe.getDefaultAmountToFill());
+            pstmt.setLong(7, recipe.getId());
             recipeIngredientRepository.deleteByRecipe(recipe.getId());
             for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
                 ri.setRecipeId(recipe.getId());
@@ -315,6 +318,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setName(rs.getString("name"));
         recipe.setInPublic(rs.getBoolean("in_public"));
         recipe.setLastUpdate(rs.getDate("last_update"));
+        recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
         return recipe;
     }
 }
