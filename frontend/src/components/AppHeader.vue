@@ -2,7 +2,7 @@
   <q-header reveal bordered>
     <q-dialog v-model="showWebsocketReconnectDialog" seamless position="top">
       <q-banner inline-actions rounded class="bg-orange text-white">
-        You have lost connection to the internet. This app is offline. Reconnecting in {{ secondsTillWebsocketReconnect }}
+        Connection lost! Reconnecting in: {{ secondsTillWebsocketReconnect }}
         <template v-slot:avatar>
           <q-icon :name="mdiAlert"
                   color="primary"
