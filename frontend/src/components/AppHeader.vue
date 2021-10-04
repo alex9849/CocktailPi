@@ -1,5 +1,21 @@
 <template>
   <q-header reveal bordered>
+    <q-dialog v-model="showWebsocketReconnectDialog" seamless position="top">
+      <q-banner inline-actions rounded class="bg-orange text-white">
+        You have lost connection to the internet. This app is offline. Reconnecting in {{ secondsTillWebsocketReconnect }}
+        <template v-slot:avatar>
+          <q-icon :name="mdiAlert"
+                  color="primary"
+          />
+        </template>
+        <template v-slot:action>
+          <q-btn flat
+                 label="Reconnect now"
+                 @click="connectWebsocket(true)"
+          />
+        </template>
+      </q-banner>
+    </q-dialog>
     <q-toolbar>
       <slot name="left" />
 
@@ -42,7 +58,7 @@
 
 <script>
 import {mapActions, mapGetters, mapMutations} from "vuex";
-import {mdiAccountBox, mdiPower} from "@quasar/extras/mdi-v5";
+import {mdiAccountBox, mdiAlert, mdiPower} from "@quasar/extras/mdi-v5";
 import CircularCocktailProgress from "./Circular-Cocktail-Progress";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
@@ -53,7 +69,10 @@ export default {
     components: {CircularCocktailProgress},
     data() {
       return {
-        websocketAutoreconnect: true,
+        reconnectTasks: [],
+        showWebsocketReconnectDialog: false,
+        reconnectThrottleInSeconds: 5,
+        secondsTillWebsocketReconnect: 0,
         stompClient: null
       }
     },
@@ -69,15 +88,19 @@ export default {
         this.storeLogout();
         this.$router.push({name: 'login'});
       },
-      connectWebsocket() {
+      connectWebsocket(websocketAutoreconnect) {
         let socket = new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + "/ws");
         this.stompClient = Stomp.over(socket);
         if(!process.env.DEV) {
           this.stompClient.debug = null;
         }
-        this.websocketAutoreconnect = true;
+        for(const id of this.reconnectTasks) {
+          clearTimeout(id);
+        }
         let vm = this;
         let connectCallback = function () {
+          vm.reconnectThrottleInSeconds = 5;
+          vm.showWebsocketReconnectDialog = false;
           vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
             if(cocktailProgressMessage.body === "DELETE") {
               vm.setCocktailProgress(null);
@@ -92,8 +115,18 @@ export default {
           });
         };
         let disconnectCallback = function () {
-          if (vm.websocketAutoreconnect) {
-            vm.connectWebsocket();
+          if (websocketAutoreconnect) {
+            vm.showWebsocketReconnectDialog = true;
+            let reconnectThrottle = vm.reconnectThrottleInSeconds;
+            vm.reconnectThrottleInSeconds = Math.min(20, vm.reconnectThrottleInSeconds * 2);
+            for(let i = reconnectThrottle; i > 0; i--) {
+              vm.reconnectTasks.push(setTimeout(() => {
+                vm.secondsTillWebsocketReconnect = i;
+              }, (reconnectThrottle - i) * 1000));
+            }
+            vm.reconnectTasks.push(setTimeout(() => {
+              vm.connectWebsocket(true);
+            }, reconnectThrottle * 1000));
           }
         };
         let headers = {
@@ -107,7 +140,6 @@ export default {
         }
       },
       destroyWebsocket() {
-        this.websocketAutoreconnect = false;
         this.disconnectWebsocket();
       }
     },
@@ -124,20 +156,21 @@ export default {
       }
     },
     watch: {
-      isLoggedIn(val) {
-        if(val) {
-          this.connectWebsocket();
-        } else {
-          this.destroyWebsocket();
+      isLoggedIn: {
+        immediate: true,
+        handler(val) {
+          if(val) {
+            this.connectWebsocket(true);
+          } else {
+            this.destroyWebsocket();
+          }
         }
       }
     },
     created() {
       this.mdiAccountBox = mdiAccountBox;
       this.mdiPower = mdiPower;
-      if(this.isLoggedIn) {
-        this.connectWebsocket();
-      }
+      this.mdiAlert = mdiAlert;
     },
     destroyed() {
       this.destroyWebsocket();
