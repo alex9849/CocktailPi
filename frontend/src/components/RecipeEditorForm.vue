@@ -87,7 +87,7 @@
           val => $v.value.recipe.description.maxLength || 'Maximal length 2000']"
       />
       <q-input
-        label="ml"
+        label="Default amount to produce"
         type="number"
         outlined
         v-model.number="value.recipe.defaultAmountToFill"
@@ -96,7 +96,11 @@
         val => $v.value.recipe.defaultAmountToFill.required || 'Required',
         val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml'
       ]"
-      />
+      >
+        <template slot="append">
+          ml
+        </template>
+      </q-input>
       <IngredientList
         v-model="value.recipe.recipeIngredients"
         :editable="true"
