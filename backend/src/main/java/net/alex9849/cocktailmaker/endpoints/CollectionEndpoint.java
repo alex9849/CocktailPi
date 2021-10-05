@@ -31,6 +31,28 @@ public class CollectionEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getCollection(@PathVariable(value = "id") long id) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection collection = collectionService.getCollectionById(id);
+        if(collection == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if(collection.getOwner().getId() != principal.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(collection);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getCollections(@RequestParam(value = "ownerid", required = true) long ownerId) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(ownerId != principal.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId));
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCollection(@PathVariable(value = "id") long id,
                                               @Valid @RequestBody CollectionDto collectionDto) {
