@@ -2,9 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
-import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
-import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
@@ -18,11 +16,8 @@ public class RecipeDto {
 
     public RecipeDto(Recipe recipe) {
         BeanUtils.copyProperties(recipe, this);
-        User owner = new User();
-        owner.setUsername(recipe.getOwner().getUsername());
-        owner.setId(recipe.getOwner().getId());
+        this.owner = new RecipeOwnerDto(recipe.getOwner());
         this.lastUpdate = recipe.getLastUpdate();
-        this.owner = new UserDto(owner);
         Map<Long, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()
                 .collect(Collectors.groupingBy(RecipeIngredient::getProductionStep));
@@ -44,7 +39,7 @@ public class RecipeDto {
     private boolean inPublic;
 
     @NotNull
-    private UserDto owner;
+    private RecipeOwnerDto owner;
 
     @NotNull
     @Size(min = 0, max = 3000)
@@ -85,11 +80,11 @@ public class RecipeDto {
         this.inPublic = inPublic;
     }
 
-    public UserDto getOwner() {
+    public RecipeOwnerDto getOwner() {
         return owner;
     }
 
-    public void setOwner(UserDto owner) {
+    public void setOwner(RecipeOwnerDto owner) {
         this.owner = owner;
     }
 

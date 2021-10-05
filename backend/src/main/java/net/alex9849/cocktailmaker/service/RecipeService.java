@@ -116,7 +116,7 @@ public class RecipeService {
         }
         Recipe recipe = new Recipe();
         BeanUtils.copyProperties(recipeDto, recipe);
-        recipe.setOwner(userService.fromDto(recipeDto.getOwner()));
+        recipe.setOwner(userService.getUser(recipeDto.getOwner().getId()));
         if(recipe.getOwner() != null) {
             recipe.setOwnerId(recipe.getOwner().getId());
         }
