@@ -15,7 +15,8 @@
     <q-item
       v-for="(productionStep, index) in ingredients"
       :key="index"
-      class="dragItem alternateGrey"
+      class="dragItem"
+      :class="{'alternateGrey': alternateRowColors}"
     >
       <q-item-section avatar>
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
@@ -133,13 +134,9 @@ export default {
         type: Boolean,
         default: false
       },
-      row1Color: {
-        type: String,
-        default: "#FFFFFF"
-      },
-      row2Color: {
-        type: String,
-        default: "#FFFFFF"
+      alternateRowColors: {
+        type: Boolean,
+        default: false
       }
     },
     data() {

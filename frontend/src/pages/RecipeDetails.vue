@@ -56,8 +56,7 @@
           <div>
             <ingredient-list
               big
-              :row1-color="'#f3f3fa'"
-              :row2-color="'#fafafa'"
+              alternateRowColors
               class="bg-grey-3 shadow-2"
               v-model="recipe.recipeIngredients"
             />
