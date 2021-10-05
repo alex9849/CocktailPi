@@ -143,6 +143,11 @@ export default {
               to: {name: 'mybar'},
               exact: false
             }, {
+              reqLevel: 0,
+              label: 'My collections',
+              to: {name: 'mycollections'},
+              exact: false
+            }, {
               label: 'My recipes',
               reqLevel: 1,
               to: {name: 'myrecipes'},

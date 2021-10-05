@@ -27,7 +27,6 @@
       <template v-slot:body="props">
         <router-link
           :to="{name: 'recipedetails', params: {id: props.row.id}}"
-          class=""
         >
           <c-recipe-card
             style="margin: 10px"

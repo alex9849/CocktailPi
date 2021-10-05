@@ -34,6 +34,14 @@ const routes = [
       component: () => import('pages/MyBar'),
       name: "mybar"
     }, {
+      path: 'collection/own',
+      component: () => import('pages/MyCollections'),
+      name: "mycollections"
+    }, {
+      path: 'collection/:id',
+      component: () => import('pages/Collection'),
+      name: "collection"
+    }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
       name: 'myprofile'

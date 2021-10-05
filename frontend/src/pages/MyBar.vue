@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el label="Ingredient Management"/>
+      <q-breadcrumbs-el label="My bar"/>
     </q-breadcrumbs>
     <h5>Ingredients you own</h5>
     <TopButtonArranger style="padding: 10px">
