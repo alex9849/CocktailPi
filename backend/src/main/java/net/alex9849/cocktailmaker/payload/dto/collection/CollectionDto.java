@@ -4,9 +4,19 @@ import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class CollectionDto {
     private long id;
+
+    @NotNull
+    @Min(3)
+    @Max(20)
     private String name;
+    @NotNull
+    @Max(2000)
     private String description;
     private boolean completed;
     private OwnerDto owner;
