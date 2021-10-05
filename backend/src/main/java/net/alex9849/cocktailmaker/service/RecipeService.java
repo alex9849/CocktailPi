@@ -98,12 +98,11 @@ public class RecipeService {
         recipeRepository.setImage(recipeId, image);
     }
 
-    public Recipe updateRecipe(Recipe recipe) {
+    public boolean updateRecipe(Recipe recipe) {
         if(!recipeRepository.findById(recipe.getId()).isPresent()) {
             throw new IllegalArgumentException("Recipe doesn't exist!");
         }
-        recipeRepository.update(recipe);
-        return recipe;
+        return recipeRepository.update(recipe);
     }
 
     public void delete(long recipeId) {

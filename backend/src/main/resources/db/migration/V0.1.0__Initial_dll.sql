@@ -85,3 +85,13 @@ CREATE TABLE recipe_categories
     categories_id int8 not null references categories on delete cascade,
     primary key (recipe_id, categories_id)
 );
+
+create table collections
+(
+    id   bigserial   NOT NULL,
+    name varchar(20) NOT NULL,
+    description varchar(200) NOT NULL,
+    completed bool NOT NULL,
+    owner_id bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
+    primary key (id)
+);

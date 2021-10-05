@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import org.springframework.beans.BeanUtils;
 
@@ -16,7 +17,7 @@ public class RecipeDto {
 
     public RecipeDto(Recipe recipe) {
         BeanUtils.copyProperties(recipe, this);
-        this.owner = new RecipeOwnerDto(recipe.getOwner());
+        this.owner = new OwnerDto(recipe.getOwner());
         this.lastUpdate = recipe.getLastUpdate();
         Map<Long, List<RecipeIngredient>> byProductionStep = recipe
                 .getRecipeIngredients().stream()
@@ -39,7 +40,7 @@ public class RecipeDto {
     private boolean inPublic;
 
     @NotNull
-    private RecipeOwnerDto owner;
+    private OwnerDto owner;
 
     @NotNull
     @Size(min = 0, max = 3000)
@@ -80,11 +81,11 @@ public class RecipeDto {
         this.inPublic = inPublic;
     }
 
-    public RecipeOwnerDto getOwner() {
+    public OwnerDto getOwner() {
         return owner;
     }
 
-    public void setOwner(RecipeOwnerDto owner) {
+    public void setOwner(OwnerDto owner) {
         this.owner = owner;
     }
 

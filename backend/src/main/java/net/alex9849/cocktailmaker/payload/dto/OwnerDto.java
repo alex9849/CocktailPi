@@ -1,14 +1,14 @@
-package net.alex9849.cocktailmaker.payload.dto.recipe;
+package net.alex9849.cocktailmaker.payload.dto;
 
 import net.alex9849.cocktailmaker.model.user.User;
 
-public class RecipeOwnerDto {
+public class OwnerDto {
     private long id;
     private String name;
 
-    public RecipeOwnerDto() {}
+    public OwnerDto() {}
 
-    public RecipeOwnerDto(User user) {
+    public OwnerDto(User user) {
         this.id = user.getId();
         this.name = user.getUsername();
     }
