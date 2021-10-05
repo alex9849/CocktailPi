@@ -61,4 +61,34 @@ public class CollectionEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(value = "{id}/add", method = RequestMethod.POST)
+    public ResponseEntity<?> addRecipeToCollection(@PathVariable(value = "id") long collectionId,
+                                                   @RequestBody(required = true) long recipeId) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection existingCollection = collectionService.getCollectionById(collectionId);
+        if(existingCollection == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (existingCollection.getOwner().getId() != principal.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        collectionService.addRecipe(recipeId, collectionId);
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "{id}/remove", method = RequestMethod.POST)
+    public ResponseEntity<?> removeRecipeFromCollection(@PathVariable(value = "id") long collectionId,
+                                                   @RequestBody(required = true) long recipeId) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection existingCollection = collectionService.getCollectionById(collectionId);
+        if(existingCollection == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (existingCollection.getOwner().getId() != principal.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        collectionService.removeRecipe(recipeId, collectionId);
+        return ResponseEntity.ok().build();
+    }
+
 }

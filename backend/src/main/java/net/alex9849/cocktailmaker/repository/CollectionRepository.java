@@ -60,6 +60,26 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
+    public boolean addRecipe(long collectionId, long recipeId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (recipe_id, collection_id) " +
+                    "VALUES (?, ?)");
+            pstmt.setLong(1, recipeId);
+            pstmt.setLong(2, collectionId);
+            return pstmt.executeUpdate() != 0;
+        });
+    }
+
+    public boolean removeRecipe(long collectionId, long recipeId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM collections WHERE " +
+                    "recipe_id = ? AND collection_id = ?");
+            pstmt.setLong(1, recipeId);
+            pstmt.setLong(2, collectionId);
+            return pstmt.executeUpdate() != 0;
+        });
+    }
+
     public boolean delete(long id) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM collections WHERE id = ?");

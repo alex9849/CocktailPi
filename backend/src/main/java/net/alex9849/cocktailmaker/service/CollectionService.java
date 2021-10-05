@@ -19,6 +19,9 @@ public class CollectionService {
     private CollectionRepository collectionRepository;
 
     @Autowired
+    private RecipeService recipeService;
+
+    @Autowired
     private UserService userService;
 
     public Collection createCollection(Collection collection) {
@@ -34,6 +37,17 @@ public class CollectionService {
 
     public boolean deleteCollection(long id) {
         return collectionRepository.delete(id);
+    }
+
+    public boolean addRecipe(long recipeId, long collectionId) {
+        if(recipeService.getById(recipeId) == null) {
+            throw new IllegalArgumentException("Recipe not found!");
+        }
+        return collectionRepository.addRecipe(recipeId, collectionId);
+    }
+
+    public boolean removeRecipe(long recipeId, long collectionId) {
+        return collectionRepository.removeRecipe(recipeId, collectionId);
     }
 
     public Collection getCollectionById(long id) {

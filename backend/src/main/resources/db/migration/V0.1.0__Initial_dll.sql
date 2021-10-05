@@ -95,3 +95,10 @@ create table collections
     owner_id bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
     primary key (id)
 );
+
+CREATE TABLE collection_recipes
+(
+    recipe_id     int8 not null references recipes on delete cascade,
+    collection_id int8 not null references collections on delete cascade,
+    primary key (recipe_id, collection_id)
+);
