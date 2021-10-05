@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
+import net.alex9849.cocktailmaker.repository.CollectionRepository;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class RecipeService {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    CollectionRepository collectionRepository;
 
     public Recipe createRecipe(Recipe recipe) {
         if(userService.getUser(recipe.getOwner().getId()) == null) {
@@ -88,6 +92,10 @@ public class RecipeService {
 
     public Recipe getById(long id) {
         return recipeRepository.findById(id).orElse(null);
+    }
+
+    public List<Recipe> getByIds(Long... id) {
+        return recipeRepository.findByIds(0, Long.MAX_VALUE, Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public byte[] getImage(long recipeId) {

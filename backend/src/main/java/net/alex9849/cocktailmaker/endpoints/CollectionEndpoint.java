@@ -113,4 +113,17 @@ public class CollectionEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(value = "{id}/recipes", method = RequestMethod.POST)
+    public ResponseEntity<?> getCollectionRecipes(@PathVariable(value = "id") long collectionId) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection existingCollection = collectionService.getCollectionById(collectionId);
+        if(existingCollection == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (existingCollection.getOwner().getId() != principal.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(collectionService.getCollectionRecipes(collectionId));
+    }
+
 }

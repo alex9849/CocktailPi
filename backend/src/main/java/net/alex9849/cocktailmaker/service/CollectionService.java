@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Collection;
+import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailmaker.repository.CollectionRepository;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +65,14 @@ public class CollectionService {
             return new ArrayList<>();
         }
         return collectionRepository.findByIds(ids.toArray(new Long[1]));
+    }
+
+    public List<Recipe> getCollectionRecipes(long collectionId) {
+        Set<Long> ids = collectionRepository.findRecipeIdsForCollection(collectionId);
+        if(ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return recipeService.getByIds(ids.toArray(new Long[1]));
     }
 
     public Collection fromDto(CollectionDto collectionDto) {

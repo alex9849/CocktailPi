@@ -97,6 +97,17 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findRecipeIdsForCollection(long collectionId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM collections c " +
+                    "JOIN collection_recipes cr ON cr.collection_id = c.id " +
+                    "JOIN recipes r ON cr.recipe_id = r.id AND (r.in_public OR r.owner_id = c.owner_id) " +
+                    "WHERE c.id = ?");
+            pstmt.setLong(1, collectionId);
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public List<Collection> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();
