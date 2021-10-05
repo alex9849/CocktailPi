@@ -42,7 +42,6 @@
       <template v-slot:body="props">
         <q-tr
           :props="props"
-          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
         >
           <q-td
             auto-width
@@ -384,17 +383,4 @@ export default {
 </script>
 
 <style scoped>
-.row1 {
-  background-color: #fafafa;
-}
-
-@media screen and (min-width: 600px) {
-  .with-desktop {
-    width: 500px;
-  }
-}
-
-.row2 {
-  background-color: #f3f3fa;
-}
 </style>

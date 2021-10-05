@@ -15,8 +15,7 @@
     <q-item
       v-for="(productionStep, index) in ingredients"
       :key="index"
-      class="dragItem"
-      :style="'background-color: ' + ((index % 2 === 0)? row1Color:row2Color)"
+      class="dragItem alternateGrey"
     >
       <q-item-section avatar>
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
