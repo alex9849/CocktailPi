@@ -46,11 +46,11 @@
           clearable
         >
           <template v-slot:prepend>
-          <q-icon
-            name="cloud_upload"
-            @click.stop
-          />
-        </template>
+            <q-icon
+              name="cloud_upload"
+              @click.stop
+            />
+          </template>
         </q-file>
       </div>
       <q-file
@@ -95,8 +95,7 @@
         @input="() => {$emit('input', value); $v.value.recipe.defaultAmountToFill.$touch();}"
         :rules="[
         val => $v.value.recipe.defaultAmountToFill.required || 'Required',
-        val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml'
-      ]"
+        val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml']"
       >
         <template slot="append">
           ml
@@ -123,64 +122,64 @@ import IngredientList from "./IngredientList";
 import {mapGetters} from "vuex";
 
 export default {
-    name: "RecipeEditorForm",
-    components: {IngredientList},
-    props: {
+  name: "RecipeEditorForm",
+  components: {IngredientList},
+  props: {
+    value: {
+      type: Object,
+      required: true
+    },
+    allowImageRemoving: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      image: null
+    }
+  },
+  validations() {
+    let validations = {
       value: {
-        type: Object,
-        required: true
-      },
-      allowImageRemoving: {
-        type: Boolean,
-        default: false
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      }
-    },
-    data() {
-      return {
-        image: null
-      }
-    },
-    validations() {
-      let validations = {
-        value: {
-          recipe: {
-            name: {
-              required,
-              minLength: minLength(3),
-              maxLength: maxLength(20)
-            },
-            description: {
-              required,
-              maxLength: maxLength(2000)
-            },
-            defaultAmountToFill: {
-              required,
-              minValue: minValue(50)
-            }
+        recipe: {
+          name: {
+            required,
+            minLength: minLength(3),
+            maxLength: maxLength(20)
+          },
+          description: {
+            required,
+            maxLength: maxLength(2000)
+          },
+          defaultAmountToFill: {
+            required,
+            minValue: minValue(50)
           }
         }
-      };
-      return validations;
-    },
-    watch: {
-      '$v.value.recipe.$invalid': function _watch$vValueRecipe$invalid(value) {
-        if (!value) {
-          this.$emit('valid');
-        } else {
-          this.$emit('invalid');
-        }
       }
-    },
-    computed: {
-      ...mapGetters({
-        categories: 'category/getCategories'
-      })
+    };
+    return validations;
+  },
+  watch: {
+    '$v.value.recipe.$invalid': function _watch$vValueRecipe$invalid(value) {
+      if (!value) {
+        this.$emit('valid');
+      } else {
+        this.$emit('invalid');
+      }
     }
+  },
+  computed: {
+    ...mapGetters({
+      categories: 'category/getCategories'
+    })
   }
+}
 </script>
 
 <style scoped>
