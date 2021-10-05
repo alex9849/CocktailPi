@@ -10,13 +10,13 @@
       label="Pump time per cl"
       v-model="value.timePerClInMs"
       type="number"
-      suffix="ms"
       outlined
       @input="$v.value.timePerClInMs.$touch()"
       :rules="[val => $v.value.timePerClInMs.required || 'Required',
               val => $v.value.timePerClInMs.minValue || 'Min 1']"
     >
       <template slot="append">
+        ms/cl
         <q-icon
           :name="mdiInformation"
           @click="showHelpPumpTime = !showHelpPumpTime"
@@ -36,13 +36,13 @@
       label="Tube capacity"
       v-model="value.tubeCapacityInMl"
       type="number"
-      suffix="ml"
       outlined
       @input="$v.value.tubeCapacityInMl.$touch()"
       :rules="[val => $v.value.tubeCapacityInMl.required || 'Required',
               val => $v.value.tubeCapacityInMl.minValue || 'Min 1']"
     >
       <template slot="append">
+        ml
         <q-icon
           :name="mdiInformation"
           @click="showHelpTubeCapacity = !showHelpTubeCapacity"
