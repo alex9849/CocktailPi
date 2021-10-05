@@ -3,6 +3,7 @@
     <q-breadcrumbs>
       <q-breadcrumbs-el label="My collections"/>
     </q-breadcrumbs>
+    <h5>My collections</h5>
     <div class="q-pa-md row items-start">
       <div class="col-12 col-md-6 col-lg-4"
            v-for="collection of collections"

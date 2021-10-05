@@ -12,6 +12,7 @@
       hide-header
       selection="multiple"
       :selected.sync="selected"
+      :flat="flat"
       no-data-label="No cocktails found :("
       :style="'background-color: ' + listBodyColor"
       :table-style="{margin: '0px'}"
@@ -89,6 +90,10 @@ export default {
     recipes: {
       type: Array,
       required: true
+    },
+    flat: {
+      type: Boolean,
+      default: false
     },
     selectable: {
       type: Boolean,
@@ -169,9 +174,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
 a {
   text-decoration: none;
   color: inherit;
+}
+.q-table__bottom--nodata {
+  border: 0;
 }
 </style>
