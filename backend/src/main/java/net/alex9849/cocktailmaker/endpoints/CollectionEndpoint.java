@@ -50,11 +50,11 @@ public class CollectionEndpoint {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCollection(@PathVariable(value = "id") long id) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Collection collection = collectionService.getCollectionById(id);
+        Collection existingCollection = collectionService.getCollectionById(id);
         if(existingCollection == null) {
             return ResponseEntity.notFound().build();
         }
-        if (collection.getOwner().getId() != principal.getId()) {
+        if (existingCollection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         collectionService.deleteCollection(id);
