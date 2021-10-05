@@ -13,6 +13,8 @@ public class RecipeIngredientDto {
     @Min(1)
     private int amount;
 
+    private boolean scale;
+
     public RecipeIngredientDto() {}
 
     public RecipeIngredientDto(RecipeIngredient recipeIngredient) {
@@ -21,7 +23,7 @@ public class RecipeIngredientDto {
         } else {
             this.ingredient = null;
         }
-
+        this.scale = recipeIngredient.isScale();
         this.amount = recipeIngredient.getAmount();
     }
 
@@ -39,5 +41,13 @@ public class RecipeIngredientDto {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public boolean isScale() {
+        return scale;
+    }
+
+    public void setScale(boolean scale) {
+        this.scale = scale;
     }
 }

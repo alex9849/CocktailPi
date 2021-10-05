@@ -83,13 +83,6 @@
           label="Unit"
           :disable="disable"
         />
-        <q-checkbox
-          v-if="!!value.unit && value.unit !== 'ml'"
-          label="Scale to volume"
-          v-model="value.scaleToVolume"
-          @input="$emit('input', value)"
-          :disable="disable"
-        />
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -134,12 +127,6 @@ export default {
     onTypeChange(newType) {
       this.$v.value.$touch()
     },
-    onUnitChange(newUnit) {
-      if (newUnit === 'ml') {
-        this.value.scaleToVolume = true;
-      }
-      this.$emit('input', this.value)
-    }
   },
   created() {
     this.initialize();

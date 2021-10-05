@@ -57,8 +57,6 @@ public abstract class IngredientDto {
         this.alcoholContent = alcoholContent;
     }
 
-    public abstract boolean isScaleToVolume();
-
     public Ingredient.Unit getUnit() {
         return Ingredient.Unit.MILLILITER;
     }

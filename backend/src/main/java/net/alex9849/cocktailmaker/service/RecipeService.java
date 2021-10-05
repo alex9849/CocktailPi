@@ -141,6 +141,7 @@ public class RecipeService {
         BeanUtils.copyProperties(recipeIngredientDto, recipeIngredient);
         recipeIngredient.setIngredient(ingredientService.fromDto(recipeIngredientDto.getIngredient()));
         recipeIngredient.setIngredientId(recipeIngredientDto.getIngredient().getId());
+        recipeIngredient.setScale(recipeIngredientDto.isScale());
         recipeIngredient.setRecipeId(recipe.getId());
         recipeIngredient.setProductionStep(productionStep);
         return recipeIngredient;

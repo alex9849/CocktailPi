@@ -253,16 +253,27 @@ public class CocktailFactory {
      * amount of liquids for all ingredients
      */
     public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
-        int currentLiquidAmount = recipe.getRecipeIngredients().stream()
+        int liquidAmountScaled = recipe.getRecipeIngredients().stream()
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
+                .filter(x -> x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
-        if(currentLiquidAmount <= 0) {
+        int liquidAmountUnscaled = recipe.getRecipeIngredients().stream()
+                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
+                .filter(x -> !x.isScale())
+                .mapToInt(x -> x.getAmount()).sum();
+        int liquidAmountToBeScaledTo = wantedAmountOfLiquid - liquidAmountUnscaled;
+        if(liquidAmountScaled <= 0) {
             return recipe;
         }
-        double multiplier = wantedAmountOfLiquid / ((double) currentLiquidAmount);
+        double multiplier;
+        if(liquidAmountToBeScaledTo < 0) {
+            multiplier = 0;
+        } else {
+            multiplier = wantedAmountOfLiquid / ((double) liquidAmountScaled);
+        }
 
         for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
-            if(recipeIngredient.getIngredient().isScaleToVolume()) {
+            if(recipeIngredient.isScale()) {
                 recipeIngredient.setAmount((int) (recipeIngredient.getAmount() * multiplier));
             }
         }

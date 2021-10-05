@@ -38,7 +38,12 @@
         >
           <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
             <q-item-section>
-              {{ ingredient.amount }} {{ ingredient.ingredient.unit }} {{ ingredient.ingredient.name }}
+              <div style="display: ruby">
+                {{ ingredient.amount }} {{ ingredient.ingredient.unit }} {{ ingredient.ingredient.name }}
+                <q-item-label v-if="!ingredient.scale" caption>
+                  (Unscaled)
+                </q-item-label>
+              </div>
               <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
                 {{ ingredient.ingredient.alcoholContent }}% alcohol content
               </q-item-label>
@@ -90,14 +95,14 @@
       <c-edit-dialog
         v-model="showIngredientEditorDialog"
         :title="addIngredient?'Add Ingredient':'Edit Ingredient'"
-        :valid="ingridientValid"
+        :valid="ingredientValid"
         @clickAbort="closeIngredientEditor"
         @clickSave="saveEditIngredient"
       >
         <add-ingredient-form
           v-model="editIngredient"
-          @valid="ingridientValid = true"
-          @invalid="ingridientValid = false"
+          @valid="ingredientValid = true"
+          @invalid="ingredientValid = false"
         />
       </c-edit-dialog>
 
@@ -143,15 +148,17 @@ export default {
         ingredients: [],
         showIngredientEditorDialog: false,
         addIngredient: false,
-        ingridientValid: false,
+        ingredientValid: false,
         valid: false,
         newIngredient: {
           amount: '',
-          ingredient: null
+          ingredient: null,
+          scale: true
         },
         editIngredient: {
           amount: '',
-          ingredient: null
+          ingredient: null,
+          scale: true
         },
         editIngredientGroupIndex: -1,
         editIngredientIndex: -1,

@@ -251,8 +251,7 @@ export default {
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
             type: "automated",
-            unit: null,
-            scaleToVolume: false
+            unit: null
           },
           newIngredient: {
             id: -1,
@@ -260,8 +259,7 @@ export default {
             pumpTimeMultiplier: 1.0,
             alcoholContent: 0,
             type: "automated",
-            unit: null,
-            scaleToVolume: true
+            unit: null
           }
         }
       }

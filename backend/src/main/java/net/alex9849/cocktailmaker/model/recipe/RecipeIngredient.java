@@ -7,6 +7,7 @@ public class RecipeIngredient {
     private long productionStep;
     private Ingredient ingredient;
     private int amount;
+    private boolean scale;
 
     public long getRecipeId() {
         return recipeId;
@@ -46,5 +47,13 @@ public class RecipeIngredient {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public boolean isScale() {
+        return scale;
+    }
+
+    public void setScale(boolean scale) {
+        this.scale = scale;
     }
 }

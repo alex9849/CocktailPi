@@ -17,6 +17,11 @@
         val => $v.value.amount.minValue || 'Min 1ml'
       ]"
     />
+    <q-checkbox
+      label="Scale with volume"
+      v-model="value.scale"
+      @input="$emit('input', value)"
+    />
     <slot name="below"/>
   </div>
 </template>

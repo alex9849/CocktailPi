@@ -102,7 +102,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier, scale_to_volume) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -111,11 +111,6 @@ public class IngredientRepository extends JdbcDaoSupport {
                 pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
-            }
-            if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                pstmt.setBoolean(6, true);
-            } else {
-                pstmt.setBoolean(6, ingredient.isScaleToVolume());
             }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -130,7 +125,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, scale_to_volume = ? WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ? WHERE id = ?");
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -139,11 +134,6 @@ public class IngredientRepository extends JdbcDaoSupport {
                 pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
-            }
-            if(ingredient.getUnit() == Ingredient.Unit.MILLILITER) {
-                pstmt.setBoolean(6, true);
-            } else {
-                pstmt.setBoolean(6, ingredient.isScaleToVolume());
             }
             pstmt.setLong(7, ingredient.getId());
             return pstmt.executeUpdate() != 0;
@@ -164,7 +154,6 @@ public class IngredientRepository extends JdbcDaoSupport {
         if(Objects.equals(dType, "ManualIngredient")) {
             ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
-            mIngredient.setScaleToVolume(resultSet.getBoolean("scale_to_volume"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();

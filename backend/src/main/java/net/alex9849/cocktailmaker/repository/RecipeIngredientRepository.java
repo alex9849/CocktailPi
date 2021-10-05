@@ -47,12 +47,13 @@ class RecipeIngredientRepository extends JdbcDaoSupport {
 
     public RecipeIngredient create(RecipeIngredient recipeIngredient) {
         return getJdbcTemplate().execute((ConnectionCallback<RecipeIngredient>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipe_ingredients (ingredient_id, recipe_id, production_step, amount) " +
-                    "VALUES (?, ?, ?, ?)");
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipe_ingredients " +
+                    "(ingredient_id, recipe_id, production_step, amount, scale) VALUES (?, ?, ?, ?, ?)");
             pstmt.setLong(1, recipeIngredient.getIngredientId());
             pstmt.setLong(2, recipeIngredient.getRecipeId());
             pstmt.setLong(3, recipeIngredient.getProductionStep());
             pstmt.setLong(4, recipeIngredient.getAmount());
+            pstmt.setBoolean(5, recipeIngredient.isScale());
 
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -66,6 +67,7 @@ class RecipeIngredientRepository extends JdbcDaoSupport {
         recipeIngredient.setRecipeId(rs.getLong("recipe_id"));
         recipeIngredient.setIngredientId(rs.getLong("ingredient_id"));
         recipeIngredient.setProductionStep(rs.getLong("production_step"));
+        recipeIngredient.setScale(rs.getBoolean("scale"));
         return recipeIngredient;
     }
 

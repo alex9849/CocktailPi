@@ -24,10 +24,6 @@ public class AutomatedIngredientDto extends IngredientDto {
         BeanUtils.copyProperties(ingredient, this);
     }
 
-    public boolean isScaleToVolume() {
-        return true;
-    }
-
     public double getPumpTimeMultiplier() {
         return pumpTimeMultiplier;
     }
