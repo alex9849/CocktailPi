@@ -60,12 +60,12 @@ jobs:
     - docker
     before_deploy:
     - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-    - docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG -f ./docker/Dockerfile
+    - docker build -t alex9849/pi-cocktailmaker:$TRAVIS_BRANCH -f ./docker/Dockerfile
       ./
-    - docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG alex9849/pi-cocktailmaker:latest
-    - docker build -t alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi -f ./docker/DockerfilePi
+    - docker tag alex9849/pi-cocktailmaker:$TRAVIS_BRANCH alex9849/pi-cocktailmaker:latest
+    - docker build -t alex9849/pi-cocktailmaker:$TRAVIS_BRANCH-pi -f ./docker/DockerfilePi
       ./
-    - docker tag alex9849/pi-cocktailmaker:$TRAVIS_TAG-pi alex9849/pi-cocktailmaker:latest-pi
+    - docker tag alex9849/pi-cocktailmaker:$TRAVIS_BRANCH-pi alex9849/pi-cocktailmaker:latest-pi
     workspaces:
       use: target
     deploy:
