@@ -84,21 +84,6 @@
             {{ props.row.pumpTimeMultiplier }}
           </q-td>
           <q-td
-            key="scaleToVolume"
-            :props="props"
-          >
-            <q-icon
-              v-if="props.row.scaleToVolume"
-              size="sm"
-              :name="mdiCheckCircle"
-            />
-            <q-icon
-              v-else
-              size="sm"
-              :name="mdiCheckboxBlankCircleOutline"
-            />
-          </q-td>
-          <q-td
             key="actions"
             class="q-pa-md q-gutter-x-sm"
             :props="props"
@@ -228,7 +213,6 @@ export default {
           {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
           {name: 'unit', label: 'Unit', field: 'unit', align: 'center'},
           {name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center'},
-          {name: 'scaleToVolume', label: 'Scale to volume', field: 'scaleToVolume', align: 'center'},
           {name: 'actions', label: 'Actions', field: '', align: 'center'}
         ],
         ingredients: [],
