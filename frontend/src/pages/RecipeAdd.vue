@@ -42,18 +42,18 @@
 </template>
 
 <script>
-  import RecipeEditorForm from "../components/RecipeEditorForm";
-  import RecipeService from "../services/recipe.service"
-  import Recipe from "../models/Recipe";
-  import {mapGetters} from "vuex";
+import RecipeEditorForm from "../components/RecipeEditorForm";
+import RecipeService from "../services/recipe.service"
+import Recipe from "../models/Recipe";
+import {mapGetters} from "vuex";
 
-  export default {
+export default {
     name: "RecipeAdd",
     components: {RecipeEditorForm},
     data() {
       return {
         addRecipe: {
-          recipe: new Recipe(0, '', true, {}, '',  [], []),
+          recipe: new Recipe(0, '', true, {}, '',  [], [], 250),
           image: null
         },
         error: '',
