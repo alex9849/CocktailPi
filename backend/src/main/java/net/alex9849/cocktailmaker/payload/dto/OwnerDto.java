@@ -4,13 +4,13 @@ import net.alex9849.cocktailmaker.model.user.User;
 
 public class OwnerDto {
     private long id;
-    private String name;
+    private String username;
 
     public OwnerDto() {}
 
     public OwnerDto(User user) {
         this.id = user.getId();
-        this.name = user.getUsername();
+        this.username = user.getUsername();
     }
 
     public long getId() {
@@ -21,11 +21,11 @@ public class OwnerDto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
