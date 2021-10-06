@@ -43,8 +43,8 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">
-              {{ shortenedDescription }}
+            <div class="col dotted-overflow">
+              {{ recipe.description }}
             </div>
           </div>
           <div class="row" style="margin-top: 10px">
@@ -101,14 +101,7 @@ export default {
       ...mapGetters({
         getPumpIngredients: 'pumpLayout/getPumpIngredients',
         ownedIngredients: 'bar/getOwnedIngredients'
-      }),
-      shortenedDescription() {
-        let sDesc = this.recipe.description.substring(0, Math.min(80, this.recipe.description.length));
-        if(sDesc.length < this.recipe.description.length) {
-          sDesc += " ...";
-        }
-        return sDesc;
-      }
+      })
     },
     methods: {
       hasPumpLayoutIngredient(ingredientId) {
@@ -149,5 +142,10 @@ export default {
 </script>
 
 <style scoped>
-
+.dotted-overflow {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>
