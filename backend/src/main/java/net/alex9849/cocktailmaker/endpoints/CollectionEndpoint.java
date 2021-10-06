@@ -5,15 +5,21 @@ import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.CollectionService;
+import net.alex9849.cocktailmaker.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/collection")
@@ -56,8 +62,10 @@ public class CollectionEndpoint {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateCollection(@PathVariable(value = "id") long id,
-                                              @Valid @RequestBody CollectionDto collectionDto) {
+    public ResponseEntity<?> updateCollection(@Valid @RequestPart("collection") CollectionDto collectionDto,
+                                              @RequestPart(value = "image", required = false) MultipartFile file,
+                                              @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
+                                              @PathVariable("id") long id, HttpServletRequest request) throws IOException {
         collectionDto.setId(id);
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection existingCollection = collectionService.getCollectionById(id);
@@ -67,7 +75,19 @@ public class CollectionEndpoint {
         if (existingCollection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        collectionService.updateCollection(collectionService.fromDto(collectionDto));
+        Collection updateCollection = collectionService.fromDto(collectionDto);
+        updateCollection.setOwner(existingCollection.getOwner());
+        updateCollection.setOwnerId(existingCollection.getOwnerId());
+        BufferedImage image = null;
+        if(file != null) {
+            try {
+                image = ImageIO.read(file.getInputStream());
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Invalid image format!");
+            }
+            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+        }
+        collectionService.updateCollection(updateCollection, image, removeImage);
         return ResponseEntity.ok().build();
     }
 

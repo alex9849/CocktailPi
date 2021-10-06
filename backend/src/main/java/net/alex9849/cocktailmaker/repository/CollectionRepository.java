@@ -1,6 +1,9 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Collection;
+import org.postgresql.PGConnection;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -14,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -118,6 +122,55 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
+    public void setImage(long collectionId, byte[] image) {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM collections where id = ? AND image IS NOT NULL");
+            pstmt.setLong(1, collectionId);
+            ResultSet resultSet = pstmt.executeQuery();
+            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
+            Long imageOid;
+            if(resultSet.next()) {
+                imageOid = resultSet.getObject("image", Long.class);
+            } else {
+                imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
+            }
+            if(image == null) {
+                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE collections SET image = NULL where id = ?");
+                deleteImagePstmt.setLong(1, collectionId);
+                deleteImagePstmt.executeUpdate();
+                lobApi.delete(imageOid);
+                return null;
+            }
+            LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
+            lobObject.write(image);
+            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE collections SET image = ? where id = ?");
+            updateLobOidPstmt.setLong(1, imageOid);
+            updateLobOidPstmt.setLong(2, collectionId);
+            updateLobOidPstmt.executeUpdate();
+            return null;
+        });
+    }
+
+    public Optional<byte[]> getImage(long collectionId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<byte[]>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM collections where id = ?");
+            pstmt.setLong(1, collectionId);
+            ResultSet resultSet = pstmt.executeQuery();
+            if(resultSet.next()) {
+                Long imageOid = resultSet.getObject("image", Long.class);
+                if(imageOid == null) {
+                    return Optional.empty();
+                }
+                LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
+                LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
+                byte buf[] = new byte[imageLob.size()];
+                imageLob.read(buf, 0 , buf.length);
+                return Optional.of(buf);
+            }
+            return Optional.empty();
+        });
+    }
+
     private Collection populateEntity(Collection collection) {
         collection.setOwner(userRepository.findById(collection.getOwnerId()).orElse(null));
         collection.setSize(recipeRepository.findRecipeIdsForCollection(collection.getId()).size());
@@ -131,6 +184,7 @@ public class CollectionRepository extends JdbcDaoSupport {
         collection.setDescription(rs.getString("description"));
         collection.setCompleted(rs.getBoolean("completed"));
         collection.setOwnerId(rs.getLong("owner_id"));
+        collection.setHasImage(rs.getObject("image") != null);
         return populateEntity(collection);
     }
 }

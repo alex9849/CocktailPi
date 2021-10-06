@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.user.User;
 public class Collection {
     private long id;
     private String name;
+    private boolean hasImage;
     private String description;
     private boolean completed;
     private long ownerId;
@@ -17,6 +18,14 @@ public class Collection {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public boolean hasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public long getOwnerId() {

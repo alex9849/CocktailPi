@@ -88,11 +88,12 @@ CREATE TABLE recipe_categories
 
 create table collections
 (
-    id   bigserial   NOT NULL,
-    name varchar(20) NOT NULL,
+    id          bigserial    NOT NULL,
+    name        varchar(20)  NOT NULL,
     description varchar(200) NOT NULL,
-    completed bool NOT NULL,
-    owner_id bigserial NOT NULL REFERENCES users ON DELETE CASCADE,
+    completed   bool         NOT NULL,
+    image       oid,
+    owner_id    bigserial    NOT NULL REFERENCES users ON DELETE CASCADE,
     primary key (id)
 );
 

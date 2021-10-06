@@ -18,6 +18,7 @@ public class CollectionDto {
     @Size(max = 20)
     private String description;
     private boolean completed;
+    private boolean hasImage;
     private OwnerDto owner;
     private int size;
 
@@ -26,6 +27,14 @@ public class CollectionDto {
     public CollectionDto(Collection collection) {
         BeanUtils.copyProperties(collection, this);
         this.owner = new OwnerDto(collection.getOwner());
+    }
+
+    public boolean hasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public long getId() {

@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +33,21 @@ public class CollectionService {
         return collectionRepository.create(collection);
     }
 
-    public boolean updateCollection(Collection collection) {
+    public Collection updateCollection(Collection collection, BufferedImage image, boolean removeImage) throws IOException {
         if(collectionRepository.findByIds(collection.getId()).isEmpty()) {
             throw new IllegalArgumentException("Collection doesn't exist!");
         }
-        return collectionRepository.update(collection);
+        collectionRepository.update(collection);
+        if(removeImage) {
+            collectionRepository.setImage(collection.getId(), null);
+        }
+        if(image != null) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", out);
+            collectionRepository.setImage(collection.getId(), out.toByteArray());
+        }
+
+        return collectionRepository.findByIds(collection.getId()).get(0);
     }
 
     public boolean deleteCollection(long id) {
