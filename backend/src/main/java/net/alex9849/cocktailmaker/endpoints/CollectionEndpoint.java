@@ -130,9 +130,9 @@ public class CollectionEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "{id}/remove", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/{recipeId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeRecipeFromCollection(@PathVariable(value = "id") long collectionId,
-                                                   @RequestBody(required = true) long recipeId) {
+                                                        @PathVariable(value = "recipeId") long recipeId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection existingCollection = collectionService.getCollectionById(collectionId);
         if(existingCollection == null) {

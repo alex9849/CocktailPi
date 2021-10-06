@@ -6,6 +6,12 @@
     <h5>My collections</h5>
     <top-button-arranger>
       <q-btn
+        color="positive"
+        label="Create collection"
+        no-caps
+        @click="onClickCreateCollectionMenu"
+      />
+      <q-btn
         color="info"
         label="Refresh"
         :disable="isLoading"
@@ -26,19 +32,6 @@
           style="max-height: 300px"
         />
       </router-link>
-      <div class="col-12 col-md-6 col-lg-4 d-flex items-stretch">
-        <q-card
-          style="cursor: pointer"
-          @click="onClickCreateCollectionMenu()"
-          class="full-height bg-grey-3"
-          flat
-          bordered
-        >
-          <q-card-actions align="center" class="full-height">
-            <q-icon class="full-height" size="100px" :name="mdiPlusCircleOutline"></q-icon>
-          </q-card-actions>
-        </q-card>
-      </div>
     </div>
     <c-edit-dialog
       v-model="createCollection.menuOpen"

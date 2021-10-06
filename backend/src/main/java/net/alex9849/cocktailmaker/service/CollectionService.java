@@ -55,14 +55,18 @@ public class CollectionService {
     }
 
     public boolean addRecipe(long recipeId, long collectionId) {
+        if(collectionRepository.findByIds(collectionId).isEmpty()) {
+            throw new IllegalArgumentException("Collection not found!");
+        }
         if(recipeService.getById(recipeId) == null) {
             throw new IllegalArgumentException("Recipe not found!");
         }
-        return collectionRepository.addRecipe(recipeId, collectionId);
+        collectionRepository.removeRecipe(collectionId, recipeId);
+        return collectionRepository.addRecipe(collectionId, recipeId);
     }
 
     public boolean removeRecipe(long recipeId, long collectionId) {
-        return collectionRepository.removeRecipe(recipeId, collectionId);
+        return collectionRepository.removeRecipe(collectionId, recipeId);
     }
 
     public List<Recipe> getRecipesForCollection(long collectionId) {

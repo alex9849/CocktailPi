@@ -1,15 +1,15 @@
 <template>
-  <q-card flat bordered>
+  <q-card flat bordered class="bg-grey-1">
     <q-card-section horizontal>
-      <q-card-section class="col-4">
+      <q-card-section class="col-4 q-pa-sm">
         <q-img :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + value.id + '/image?timestamp=' + value.lastUpdate.getMilliseconds()"
                placeholder-src="../assets/cocktail-solid.png"
                :ratio="1"
                class="rounded-borders"
         />
       </q-card-section>
-      <q-card-section class="q-pt-xs">
-        <div class="text-h5 q-mt-sm q-mb-xs" style="margin-bottom: 0">{{ value.name }}</div>
+      <q-card-section class="col-8 q-pa-sm">
+        <div class="text-h5" style="margin-bottom: 0">{{ value.name }}</div>
         <div class="text-caption text-grey">
           {{ value.size }} Cocktail(s) / {{ value.completed? 'complete' : 'incomplete'}}
         </div>
