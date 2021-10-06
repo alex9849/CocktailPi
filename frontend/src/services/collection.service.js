@@ -35,7 +35,8 @@ class CollectionService {
     let params = {
       ownerId: id
     };
-    return axios.get(API_PATH, {params});
+    return axios.get(API_PATH, {params})
+      .then(response => response.data);;
   };
 
   addRecipeToCollection(collectionId, recipeId) {
@@ -49,7 +50,8 @@ class CollectionService {
 
   getCollectionRecipes(collectionId) {
     return axios.get(API_PATH + collectionId + "/recipes")
-      .then(response => response.data.map(x => RecipeService.afterRecipeLoad(x)));
+      .then(response => response.data.map(x => RecipeService.afterRecipeLoad(x)))
+      .then(response => response.data);;
   }
 }
 

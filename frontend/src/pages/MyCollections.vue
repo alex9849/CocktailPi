@@ -34,43 +34,23 @@
 
 <script>
 import CCollectionCard from "components/CCollectionCard";
+import CollectionService from "../services/collection.service";
+import {store} from '../store';
 import {mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
 
 export default {
   name: "MyCollections",
   components: {CCollectionCard},
+  async beforeRouteEnter(to, from, next) {
+    let userId = store.getters['auth/getUser'].id;
+    let collections = await CollectionService.getCollectionsByUser(userId);
+    next(vm => {
+      vm.collections = collections;
+    })
+  },
   data() {
     return {
-      collections: [{
-        id: 1,
-        name: 'Test',
-        description: 'Test',
-        size: 4,
-        complete: true
-      }, {
-        id: 1,
-        name: 'Test',
-        description: 'Test',
-        size: 4,
-        complete: true
-      }, {
-        id: 1,
-        name: 'Test',
-        description: 'Test',
-        size: 4
-      }, {
-        id: 1,
-        name: 'Test',
-        description: 'Test',
-        size: 4,
-        complete: true
-      }, {
-        id: 1,
-        name: 'Test',
-        description: 'Test',
-        size: 4,
-        complete: true
-      }]
+      collections: []
     }
   },
   created() {
