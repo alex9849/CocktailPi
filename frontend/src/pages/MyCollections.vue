@@ -14,17 +14,14 @@
         no-caps
       />
     </top-button-arranger>
-    <div class="q-pa-md row q-gutter-y-sm">
-      <q-inner-loading color="info"
-                       :showing="isLoading"
-      />
+    <div class="q-pa-md row q-col-gutter-sm">
       <router-link v-for="collection of collections"
                    class="col-12 col-md-6 col-lg-4 d-flex items-stretch"
                    :to="{name: 'collection', params: {id: collection.id}}"
       >
         <c-collection-card
           :value="collection"
-          class="q-ma-xs full-height"
+          class="full-height"
         />
       </router-link>
       <div class="col-12 col-md-6 col-lg-4 d-flex items-stretch">
@@ -32,7 +29,7 @@
           style="cursor: pointer"
           :value="collection"
           @click="onClickCreateCollectionMenu()"
-          class="q-ma-xs full-height bg-grey-3"
+          class="full-height bg-grey-3"
           flat
           bordered
         >

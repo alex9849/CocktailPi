@@ -10,7 +10,7 @@
       <q-card-section class="q-pt-xs">
         <div class="text-h5 q-mt-sm q-mb-xs" style="margin-bottom: 0">{{ value.name }}</div>
         <div class="text-caption text-grey">
-          {{ value.size }} Cocktail(s) / {{ value.complete? 'complete' : 'incomplete'}}
+          {{ value.size }} Cocktail(s) / {{ value.completed? 'complete' : 'incomplete'}}
         </div>
         <div class="text-caption text-grey">
           {{ value.description }}

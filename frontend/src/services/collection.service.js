@@ -13,6 +13,11 @@ class CollectionService {
     });
   };
 
+  getCollection(id) {
+    return axios.get(API_PATH + id)
+      .then(response => response.data);
+  }
+
   updateCollection(collection, image, removeImage) {
     let uploadData = new FormData();
     const stringCollection = JSON.stringify(collection);

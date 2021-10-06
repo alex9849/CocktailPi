@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.endpoints;
 import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class CollectionEndpoint {
         if(collection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(collection);
+        return ResponseEntity.ok(new CollectionDto(collection));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -50,7 +51,8 @@ public class CollectionEndpoint {
         if(ownerId != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId));
+        return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId)
+                .stream().map(CollectionDto::new));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
@@ -123,7 +125,8 @@ public class CollectionEndpoint {
         if (existingCollection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(collectionService.getRecipesForCollection(collectionId));
+        return ResponseEntity.ok(collectionService.getRecipesForCollection(collectionId).stream()
+                .map(RecipeDto::new));
     }
 
 }

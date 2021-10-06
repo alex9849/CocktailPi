@@ -112,7 +112,7 @@ public class CollectionRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.executeQuery();
             List<Collection> results = new ArrayList<>();
             while (rs.next()) {
-                results.add(populateEntity(parseRs(rs)));
+                results.add(parseRs(rs));
             }
             return results;
         });
@@ -130,6 +130,7 @@ public class CollectionRepository extends JdbcDaoSupport {
         collection.setName(rs.getString("name"));
         collection.setDescription(rs.getString("description"));
         collection.setCompleted(rs.getBoolean("completed"));
-        return collection;
+        collection.setOwnerId(rs.getLong("owner_id"));
+        return populateEntity(collection);
     }
 }

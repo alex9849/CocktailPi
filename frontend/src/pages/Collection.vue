@@ -77,7 +77,7 @@
               </div>
               <q-checkbox label="complete"
                           :disable="!editData.editMode"
-                          v-model="editData.collection.complete"
+                          v-model="editData.collection.completed"
               />
               <div class="q-gutter-x-sm">
                 <q-btn
@@ -89,7 +89,7 @@
                 />
                 <q-btn
                   v-if="editData.editMode"
-                  @click="editData.editMode = false"
+                  @click="onAbortEdit()"
                   color="negative"
                   label="Abort"
                   no-caps
@@ -113,10 +113,18 @@
 <script>
 import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
+import CollectionService from "src/services/collection.service";
 
 export default {
   name: "Collection",
   components: {CRecipeList},
+  async beforeRouteEnter(to, from, next) {
+    let collection = await CollectionService.getCollection(to.params.id);
+    next(vm => {
+      vm.collection = collection;
+      vm.editData.collection = Object.assign({}, collection);
+    })
+  },
   data() {
     return {
       editData: {
@@ -126,7 +134,7 @@ export default {
           name: '',
           description: '',
           image: true,
-          complete: false
+          completed: false
         }
       },
       collection: {
@@ -139,13 +147,16 @@ export default {
   },
   watch: {
     collection: {
-      immediate: true,
       handler(newValue) {
           this.resetEditData();
       }
     }
   },
   methods: {
+    onAbortEdit() {
+      this.resetEditData();
+      this.editData.editMode = false;
+    },
     resetEditData() {
       this.editData.collection = Object.assign({}, this.collection)
     }
