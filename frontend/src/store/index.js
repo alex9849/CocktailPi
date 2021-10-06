@@ -5,6 +5,7 @@ import cocktailProgress from './modules/cocktailprogress/index'
 import pumpLayout from './modules/pumplayout/index'
 import category from './modules/category/index'
 import bar from './modules/bar/index'
+import collection from './modules/collection/index'
 
 // import example from './module-example'
 
@@ -24,7 +25,8 @@ const store = new Vuex.Store({
     cocktailProgress: cocktailProgress,
     pumpLayout: pumpLayout,
     category: category,
-    bar: bar
+    bar: bar,
+    collection: collection
   },
 
   // enable strict mode (adds overhead!)

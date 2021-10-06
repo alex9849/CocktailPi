@@ -42,19 +42,14 @@ class RecipeService {
     };
     return axios.get(API_PATH, config)
       .then(response => {
-        for(let recipe of response.data.content) {
-          recipe.lastUpdate = new Date(recipe.lastUpdate)
-        }
+        response.data.content = response.data.content.map(x => this.afterRecipeLoad(x))
         return response.data;
       });
   }
 
   getRecipe(id) {
     return axios.get(API_PATH + id)
-      .then(response => {
-        response.data.lastUpdate = new Date(response.data.lastUpdate)
-        return response.data;
-      });
+      .then(response => this.afterRecipeLoad(response.data));
   }
 
   updateRecipe(recipe, image, removeImage) {
@@ -72,6 +67,11 @@ class RecipeService {
 
   deleteRecipe(recipeId) {
     return axios.delete(API_PATH + recipeId);
+  }
+
+  afterRecipeLoad(recipe) {
+    recipe.lastUpdate = new Date(recipe.lastUpdate);
+    return recipe;
   }
 }
 

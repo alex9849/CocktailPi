@@ -45,7 +45,7 @@ public class CollectionEndpoint {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getCollections(@RequestParam(value = "ownerid", required = true) long ownerId) {
+    public ResponseEntity<?> getCollections(@RequestParam(value = "ownerId", required = true) long ownerId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(ownerId != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -113,7 +113,7 @@ public class CollectionEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "{id}/recipes", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/recipes", method = RequestMethod.GET)
     public ResponseEntity<?> getCollectionRecipes(@PathVariable(value = "id") long collectionId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection existingCollection = collectionService.getCollectionById(collectionId);
