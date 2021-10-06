@@ -97,4 +97,8 @@ public class CollectionService {
         }
         return collection;
     }
+
+    public byte[] getImage(long collectionId) {
+        return collectionRepository.getImage(collectionId).orElse(null);
+    }
 }

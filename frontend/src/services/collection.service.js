@@ -15,7 +15,7 @@ class CollectionService {
 
   getCollection(id) {
     return axios.get(API_PATH + id)
-      .then(response => response.data);
+      .then(response => this.afterCollectionLoad(response.data));
   }
 
   updateCollection(collection, image, removeImage) {
@@ -41,7 +41,7 @@ class CollectionService {
       ownerId: id
     };
     return axios.get(API_PATH, {params})
-      .then(response => response.data);;
+      .then(response => response.data.map(x => this.afterCollectionLoad(x)));;
   };
 
   addRecipeToCollection(collectionId, recipeId) {
@@ -57,6 +57,11 @@ class CollectionService {
     return axios.get(API_PATH + collectionId + "/recipes")
       .then(response => response.data.map(x => RecipeService.afterRecipeLoad(x)))
       .then(response => response.data);;
+  }
+
+  afterCollectionLoad(collection) {
+    collection.lastUpdate = new Date(collection.lastUpdate);
+    return collection;
   }
 }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 public class CollectionDto {
     private long id;
@@ -15,12 +16,13 @@ public class CollectionDto {
     private String name;
 
     @NotNull
-    @Size(max = 20)
+    @Size(max = 2000)
     private String description;
     private boolean completed;
     private boolean hasImage;
     private OwnerDto owner;
     private int size;
+    private Date lastUpdate;
 
     public CollectionDto() {}
 
@@ -29,12 +31,20 @@ public class CollectionDto {
         this.owner = new OwnerDto(collection.getOwner());
     }
 
-    public boolean hasImage() {
+    public boolean isHasImage() {
         return hasImage;
     }
 
     public void setHasImage(boolean hasImage) {
         this.hasImage = hasImage;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     public long getId() {

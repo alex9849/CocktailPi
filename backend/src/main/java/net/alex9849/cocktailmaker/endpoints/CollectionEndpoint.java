@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.service.CollectionService;
 import net.alex9849.cocktailmaker.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +60,15 @@ public class CollectionEndpoint {
         }
         return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId)
                 .stream().map(CollectionDto::new));
+    }
+
+    @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
+        byte[] image = collectionService.getImage(id);
+        if(image == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(image);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)

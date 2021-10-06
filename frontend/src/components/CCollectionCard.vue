@@ -1,18 +1,19 @@
 <template>
   <q-card flat bordered>
     <q-card-section horizontal>
-      <q-card-section class="col-auto">
-        <q-avatar size="8rem">
-          <img src="https://cdn.quasar.dev/img/parallax2.jpg"
-          />
-        </q-avatar>
+      <q-card-section class="col-4">
+        <q-img :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + value.id + '/image?timestamp=' + value.lastUpdate.getMilliseconds()"
+               placeholder-src="../assets/cocktail-solid.png"
+               :ratio="1"
+               class="rounded-borders"
+        />
       </q-card-section>
       <q-card-section class="q-pt-xs">
         <div class="text-h5 q-mt-sm q-mb-xs" style="margin-bottom: 0">{{ value.name }}</div>
         <div class="text-caption text-grey">
           {{ value.size }} Cocktail(s) / {{ value.completed? 'complete' : 'incomplete'}}
         </div>
-        <div class="text-caption text-grey">
+        <div class="text-caption text-grey dotted-overflow" style="">
           {{ value.description }}
         </div>
       </q-card-section>
@@ -33,5 +34,10 @@ export default {
 </script>
 
 <style scoped>
-
+.dotted-overflow {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>

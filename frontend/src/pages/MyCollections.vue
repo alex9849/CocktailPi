@@ -16,18 +16,19 @@
     </top-button-arranger>
     <div class="q-pa-md row q-col-gutter-sm">
       <router-link v-for="collection of collections"
+                   :key="collection.id"
                    class="col-12 col-md-6 col-lg-4 d-flex items-stretch"
                    :to="{name: 'collection', params: {id: collection.id}}"
       >
         <c-collection-card
           :value="collection"
           class="full-height"
+          style="max-height: 300px"
         />
       </router-link>
       <div class="col-12 col-md-6 col-lg-4 d-flex items-stretch">
         <q-card
           style="cursor: pointer"
-          :value="collection"
           @click="onClickCreateCollectionMenu()"
           class="full-height bg-grey-3"
           flat

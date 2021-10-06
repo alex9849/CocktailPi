@@ -2,6 +2,8 @@ package net.alex9849.cocktailmaker.model;
 
 import net.alex9849.cocktailmaker.model.user.User;
 
+import java.util.Date;
+
 public class Collection {
     private long id;
     private String name;
@@ -11,6 +13,15 @@ public class Collection {
     private long ownerId;
     private User owner;
     private int size;
+    private Date lastUpdate;
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
     public long getId() {
         return id;
@@ -20,7 +31,7 @@ public class Collection {
         this.id = id;
     }
 
-    public boolean hasImage() {
+    public boolean isHasImage() {
         return hasImage;
     }
 

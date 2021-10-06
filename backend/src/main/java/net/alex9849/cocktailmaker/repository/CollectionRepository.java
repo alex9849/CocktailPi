@@ -57,7 +57,7 @@ public class CollectionRepository extends JdbcDaoSupport {
     public boolean update(Collection collection) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE collections SET name = ?, description = ?, " +
-                    "completed = ?, owner_id = ? WHERE id = ?");
+                    "completed = ?, owner_id = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             pstmt.setString(1, collection.getName());
             pstmt.setString(2, collection.getDescription());
             pstmt.setBoolean(3, collection.isCompleted());
@@ -69,7 +69,7 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public boolean addRecipe(long collectionId, long recipeId) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (recipe_id, collection_id) " +
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collection_recipes (recipe_id, collection_id) " +
                     "VALUES (?, ?)");
             pstmt.setLong(1, recipeId);
             pstmt.setLong(2, collectionId);
@@ -79,7 +79,7 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public boolean removeRecipe(long collectionId, long recipeId) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("DELETE FROM collections WHERE " +
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM collection_recipes WHERE " +
                     "recipe_id = ? AND collection_id = ?");
             pstmt.setLong(1, recipeId);
             pstmt.setLong(2, collectionId);
@@ -135,7 +135,7 @@ public class CollectionRepository extends JdbcDaoSupport {
                 imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
             }
             if(image == null) {
-                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE collections SET image = NULL where id = ?");
+                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE collections SET image = NULL, last_update = CURRENT_TIMESTAMP where id = ?");
                 deleteImagePstmt.setLong(1, collectionId);
                 deleteImagePstmt.executeUpdate();
                 lobApi.delete(imageOid);
@@ -143,7 +143,7 @@ public class CollectionRepository extends JdbcDaoSupport {
             }
             LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
             lobObject.write(image);
-            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE collections SET image = ? where id = ?");
+            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE collections SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
             updateLobOidPstmt.setLong(1, imageOid);
             updateLobOidPstmt.setLong(2, collectionId);
             updateLobOidPstmt.executeUpdate();
@@ -185,6 +185,7 @@ public class CollectionRepository extends JdbcDaoSupport {
         collection.setCompleted(rs.getBoolean("completed"));
         collection.setOwnerId(rs.getLong("owner_id"));
         collection.setHasImage(rs.getObject("image") != null);
+        collection.setLastUpdate(rs.getTimestamp("last_update"));
         return populateEntity(collection);
     }
 }

@@ -23,15 +23,15 @@
                     class="q-gutter-md"
             >
               <div>
-                <q-img v-if="collection.image"
+                <q-img v-if="collection.hasImage"
                        class="col rounded-borders"
                        style="max-height: 200px"
-                       src="https://cdn.quasar.dev/img/parallax2.jpg"
+                       :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + collection.id + '/image?timestamp=' + collection.lastUpdate.getMilliseconds()"
                 />
               </div>
               <q-input label="Name"
                        outlined
-                       :disable="!editData.editMode"
+                       :disable="!editData.editMode || editData.saving"
                        v-model="editData.collection.name"
                        hide-bottom-space
                        :rules="[
@@ -46,7 +46,7 @@
                        autogrow
                        hide-bottom-space
                        type="textarea"
-                       :disable="!editData.editMode"
+                       :disable="!editData.editMode || editData.saving"
                        v-model="editData.collection.description"
                        :rules="[
                         val => $v.editData.collection.description.required || 'Required',
@@ -56,15 +56,26 @@
               </q-input>
               <div class="row"
                    v-if="editData.editMode"
-                   :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': editData.collection.image}"
+                   :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': collection.hasImage && !editData.newImage && !editData.removeImage}"
               >
                 <div class="col">
                   <q-toggle label="remove existing image"
                             color="red"
+                            :disable="editData.saving"
+                            v-if="collection.hasImage && !editData.newImage"
                             v-model="editData.removeImage"
+                            @change="onChangeRemoveImage($event)"
                   />
                   <q-file label="Image"
                           outlined
+                          bottom-slots
+                          :disable="editData.saving"
+                          v-if="!editData.removeImage"
+                          v-model="editData.newImage"
+                          @change="onImageSelect($event)"
+                          max-file-size="20971520"
+                          accept="image/*"
+                          clearable
                   >
                     <template v-slot:prepend>
                       <q-icon
@@ -76,7 +87,7 @@
                 </div>
               </div>
               <q-checkbox label="complete"
-                          :disable="!editData.editMode"
+                          :disable="!editData.editMode || editData.saving"
                           v-model="editData.collection.completed"
               />
               <div class="q-gutter-x-sm">
@@ -89,6 +100,7 @@
                 />
                 <q-btn
                   v-if="editData.editMode"
+                  :disable="editData.saving"
                   @click="onAbortEdit()"
                   color="negative"
                   label="Abort"
@@ -98,7 +110,9 @@
                   v-if="editData.editMode"
                   type="submit"
                   color="positive"
+                  :loading="editData.saving"
                   label="Save"
+                  @click="onClickSafe()"
                   no-caps
                 />
               </div>
@@ -119,7 +133,7 @@ export default {
   name: "Collection",
   components: {CRecipeList},
   async beforeRouteEnter(to, from, next) {
-    let collection = await CollectionService.getCollection(to.params.id);
+    const collection = await CollectionService.getCollection(to.params.id);
     next(vm => {
       vm.collection = collection;
       vm.editData.collection = Object.assign({}, collection);
@@ -128,19 +142,21 @@ export default {
   data() {
     return {
       editData: {
+        saving: false,
         editMode: false,
         removeImage: false,
+        newImage: null,
         collection: {
           name: '',
           description: '',
-          image: true,
+          hasImage: false,
           completed: false
         }
       },
       collection: {
         name: 'Test',
         description: '',
-        image: true,
+        hasImage: false,
         complete: false
       }
     }
@@ -148,17 +164,46 @@ export default {
   watch: {
     collection: {
       handler(newValue) {
-          this.resetEditData();
+        this.resetEditData();
       }
     }
   },
   methods: {
+    onImageSelect(image) {
+      if (!!image) {
+        this.editData.removeImage = false;
+      }
+    },
+    onChangeRemoveImage(isRemove) {
+      if (isRemove) {
+        this.editData.newImage = null;
+      }
+    },
     onAbortEdit() {
       this.resetEditData();
       this.editData.editMode = false;
     },
+    refreshCollection() {
+      return CollectionService.getCollection(this.$route.params.id)
+        .then(collection => {
+          this.collection = collection
+          return this.collection;
+        });
+    },
+    onClickSafe() {
+      this.editData.saving = true;
+      CollectionService.updateCollection(this.editData.collection, this.editData.newImage, this.editData.removeImage)
+        .then(() => {
+          this.refreshCollection();
+          this.editData.editMode = false;
+        }).finally(() => {
+        this.editData.saving = false;
+      })
+    },
     resetEditData() {
       this.editData.collection = Object.assign({}, this.collection)
+      this.editData.newImage = null;
+      this.editData.removeImage = false;
     }
   },
   validations() {
