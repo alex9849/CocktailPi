@@ -5,14 +5,28 @@
       <q-breadcrumbs-el :label="collection.name"/>
     </q-breadcrumbs>
     <h5 style="margin-bottom: 15px">{{ collection.name }}</h5>
-    <div class="row q-col-gutter-sm">
-      <div class="col-12 col-md-8 col-lg-9">
-        <c-recipe-list
-          list-body-color="transparent"
-          flat
-          :recipes="[]"
-          class="rounded-borders q-card q-card--bordered q-card--flat no-shadow"
-        />
+    <div class="row q-col-gutter-md">
+      <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
+        <router-link v-for="recipe of recipes"
+                     v-if="recipes.length !== 0"
+                     :key="recipe.id"
+                     class="row"
+                     :to="{name: 'recipedetails', params: {id: recipe.id}}"
+        >
+          <c-recipe-card
+            :recipe="recipe"
+            show-ingredients
+            class="col-12 bg-grey-2 q-card--bordered q-card--flat no-shadow"
+          />
+        </router-link>
+        <q-card v-if="recipes.length === 0"
+                flat
+                bordered
+        >
+          <q-card-section class="text-center">
+            No recipes found!
+          </q-card-section>
+        </q-card>
       </div>
       <div class="col-12 col-md-4 col-lg-3">
         <q-card class="rounded-borders"
@@ -128,15 +142,18 @@
 import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
+import CRecipeCard from "components/CRecipeCard";
 
 export default {
   name: "Collection",
-  components: {CRecipeList},
+  components: {CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
+    const recipes = await CollectionService.getCollectionRecipes(to.params.id);
     next(vm => {
       vm.collection = collection;
       vm.editData.collection = Object.assign({}, collection);
+      vm.recipes = recipes;
     })
   },
   data() {
@@ -158,7 +175,8 @@ export default {
         description: '',
         hasImage: false,
         complete: false
-      }
+      },
+      recipes: []
     }
   },
   watch: {

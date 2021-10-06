@@ -94,8 +94,8 @@ public class RecipeService {
         return recipeRepository.findById(id).orElse(null);
     }
 
-    public List<Recipe> getByIds(Long... id) {
-        return recipeRepository.findByIds(0, Long.MAX_VALUE, Sort.by(Sort.Direction.ASC, "name"));
+    public List<Recipe> getByIds(Long... ids) {
+        return recipeRepository.findByIds(0, Long.MAX_VALUE, Sort.by(Sort.Direction.ASC, "name"), ids);
     }
 
     public List<Recipe> getRecipesForCollection(long collectionId) {
