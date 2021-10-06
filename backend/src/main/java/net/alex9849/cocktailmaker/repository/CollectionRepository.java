@@ -24,6 +24,9 @@ public class CollectionRepository extends JdbcDaoSupport {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RecipeRepository recipeRepository;
+
     @PostConstruct
     private void initialize() {
         setDataSource(dataSource);
@@ -90,20 +93,9 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsOwnedByUser(long userId) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM collections " +
+            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections " +
                     "WHERE owner_id = ?");
             pstmt.setLong(1, userId);
-            return DbUtils.executeGetIdsPstmt(pstmt);
-        });
-    }
-
-    public Set<Long> findRecipeIdsForCollection(long collectionId) {
-        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM collections c " +
-                    "JOIN collection_recipes cr ON cr.collection_id = c.id " +
-                    "JOIN recipes r ON cr.recipe_id = r.id AND (r.in_public OR r.owner_id = c.owner_id) " +
-                    "WHERE c.id = ?");
-            pstmt.setLong(1, collectionId);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -128,7 +120,7 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     private Collection populateEntity(Collection collection) {
         collection.setOwner(userRepository.findById(collection.getOwnerId()).orElse(null));
-        collection.setSize(this.findRecipeIdsForCollection(collection.getId()).size());
+        collection.setSize(recipeRepository.findRecipeIdsForCollection(collection.getId()).size());
         return collection;
     }
 

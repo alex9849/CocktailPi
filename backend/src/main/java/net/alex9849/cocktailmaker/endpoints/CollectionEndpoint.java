@@ -123,7 +123,7 @@ public class CollectionEndpoint {
         if (existingCollection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(collectionService.getCollectionRecipes(collectionId));
+        return ResponseEntity.ok(collectionService.getRecipesForCollection(collectionId));
     }
 
 }

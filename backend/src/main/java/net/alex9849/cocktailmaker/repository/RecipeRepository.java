@@ -167,6 +167,17 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findRecipeIdsForCollection(long collectionId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT r.id as id FROM collections c " +
+                    "JOIN collection_recipes cr ON cr.collection_id = c.id " +
+                    "JOIN recipes r ON cr.recipe_id = r.id AND (r.in_public OR r.owner_id = c.owner_id) " +
+                    "WHERE c.id = ?");
+            pstmt.setLong(1, collectionId);
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public boolean delete(long id) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE from recipes WHERE id = ?");

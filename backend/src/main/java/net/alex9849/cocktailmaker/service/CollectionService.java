@@ -51,6 +51,10 @@ public class CollectionService {
         return collectionRepository.removeRecipe(recipeId, collectionId);
     }
 
+    public List<Recipe> getRecipesForCollection(long collectionId) {
+        return recipeService.getRecipesForCollection(collectionId);
+    }
+
     public Collection getCollectionById(long id) {
         List<Collection> collections = collectionRepository.findByIds(id);
         if(collections.isEmpty()) {
@@ -67,22 +71,14 @@ public class CollectionService {
         return collectionRepository.findByIds(ids.toArray(new Long[1]));
     }
 
-    public List<Recipe> getCollectionRecipes(long collectionId) {
-        Set<Long> ids = collectionRepository.findRecipeIdsForCollection(collectionId);
-        if(ids.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return recipeService.getByIds(ids.toArray(new Long[1]));
-    }
-
     public Collection fromDto(CollectionDto collectionDto) {
         if(collectionDto == null) {
             return null;
         }
         Collection collection = new Collection();
         BeanUtils.copyProperties(collectionDto, collection);
-        collection.setOwner(userService.getUser(collectionDto.getOwner().getId()));
-        if(collection.getOwner() != null) {
+        if(collectionDto.getOwner() != null) {
+            collection.setOwner(userService.getUser(collectionDto.getOwner().getId()));
             collection.setOwnerId(collection.getOwner().getId());
         }
         return collection;
