@@ -42,19 +42,15 @@
         <div class="row"
              v-if="editData.editMode"
         >
-          <q-card bordered flat class="col-12 bg-grey-2"
-                  style="cursor: pointer"
-                  @click="editData.showAddRecipeDialog = true"
-
+          <c-recipe-selector
+            label="Add recipe"
+            class="col-12 bg-grey-2"
+            @input="!!$event ? onAddRecipe($event.id) : ''"
           >
-            <q-card-section class="text-center">
-              <q-icon
-                :name="mdiPlusCircleOutline"
-                size="xl"
-              />
-              <div>Add recipe</div>
-            </q-card-section>
-          </q-card>
+            <template v-slot:prepend>
+              <q-icon :name="mdiPlusCircleOutline" />
+            </template>
+          </c-recipe-selector>
         </div>
         <router-link v-for="recipe of recipes"
                      v-if="recipes.length !== 0"
@@ -196,7 +192,7 @@
       title="Add recipe"
       v-model="editData.showAddRecipeDialog"
     >
-
+      <c-recipe-selector/>
     </c-edit-dialog>
   </q-page>
 </template>
@@ -211,10 +207,13 @@ import {mdiDelete, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
 import TopButtonArranger from "components/TopButtonArranger";
 import CQuestion from "components/CQuestion";
 import CEditDialog from "components/CEditDialog";
+import CRecipeSelector from "components/CRecipeSelector";
 
 export default {
   name: "Collection",
-  components: {CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
+  components: {
+    CRecipeSelector,
+    CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
     const recipes = await CollectionService.getCollectionRecipes(to.params.id);
@@ -274,18 +273,33 @@ export default {
         })
     },
     onClickDeleteRecipe(recipeId) {
-      let promises = [];
       this.deletingRecipIds.push(recipeId);
-      promises.push(CollectionService.removeRecipeFromCollection(this.collection.id, recipeId)
+      CollectionService.removeRecipeFromCollection(this.collection.id, recipeId)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: "Recipe removed successfully"
+          });
+        })
         .finally(() => {
-          promises.push(
-            CollectionService.getCollectionRecipes(this.collection.id)
+          CollectionService.getCollectionRecipes(this.collection.id)
             .then(recipes => this.recipes = recipes)
-          )
-        }));
-      Promise.all(promises)
+            .finally(() => {
+              this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
+            })
+        });
+    },
+    onAddRecipe(recipeId) {
+      CollectionService.addRecipeToCollection(this.collection.id, recipeId)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: "Recipe added successfully"
+          });
+        })
         .finally(() => {
-          this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
+          CollectionService.getCollectionRecipes(this.collection.id)
+            .then(recipes => this.recipes = recipes)
         });
     },
     onImageSelect(image) {

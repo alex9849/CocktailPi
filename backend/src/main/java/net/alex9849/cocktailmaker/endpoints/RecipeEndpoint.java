@@ -44,6 +44,7 @@ public class RecipeEndpoint {
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
                                          @RequestParam(value = "inPublic", required = false) Boolean inPublic,
+                                         @RequestParam(value = "permittedForUser", required = false) Long permittedForUserId,
                                          @RequestParam(value = "fabricable", defaultValue = "false") boolean isFabricable,
                                          @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
                                          @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
@@ -52,7 +53,8 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!Objects.equals(principal.getId(), ownerId) && (inPublic == null || !inPublic)) {
+        if (!Objects.equals(principal.getId(), ownerId) && (inPublic == null || !inPublic)
+                && !Objects.equals(principal.getId(), permittedForUserId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
@@ -78,8 +80,9 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
-        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, inCategory, containsIngredients,
-                searchName, isFabricable, isInBar? principal.getId():null, page, pageSize, sort);
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, permittedForUserId,
+                inCategory, containsIngredients, searchName, isFabricable,
+                isInBar? principal.getId():null, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }

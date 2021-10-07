@@ -233,6 +233,14 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> getIdsPermittedForUserId(Long userId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes WHERE owner_id = ? OR in_public");
+            pstmt.setLong(1, userId);
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public Optional<byte[]> getImage(long recipeId) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<byte[]>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ?");

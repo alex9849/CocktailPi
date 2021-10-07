@@ -341,6 +341,7 @@ export default {
       this.loading = true;
       return RecipeService.getRecipes(this.pagination.page,
         this.onlyOwnRecipes ? this.user.id : null,
+        null,
         this.onlyOwnRecipes ? null : true,
         this.searchOptions.automaticallyFabricable,
         this.searchOptions.fabricableWithOwnedIngredients,

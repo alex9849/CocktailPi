@@ -45,7 +45,8 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long inCategory, Long[] containsIngredients,
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long permittedForUserId,
+                                           Long inCategory, Long[] containsIngredients,
                                            String searchName, boolean isFabricable, Long isInBarUserId, int pageNumber,
                                            int pageSize, Sort sort) {
         long offset = (long) pageNumber * pageSize;
@@ -59,6 +60,9 @@ public class RecipeService {
         }
         if(ownerId != null) {
             idsToFindSetList.add(recipeRepository.getIdsByOwnerId(ownerId));
+        }
+        if(permittedForUserId != null) {
+            idsToFindSetList.add(recipeRepository.getIdsPermittedForUserId(permittedForUserId));
         }
         if(containsIngredients != null) {
             idsToFindSetList.add(recipeRepository.getIdsWithIngredients(containsIngredients));
