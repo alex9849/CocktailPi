@@ -7,6 +7,30 @@
     <h5>{{ collection.name }}</h5>
     <top-button-arranger style="margin-bottom: 15px">
       <q-btn
+        v-if="!editData.editMode"
+        @click="editData.editMode = true"
+        color="grey"
+        label="Edit"
+        no-caps
+      />
+      <q-btn
+        v-if="editData.editMode"
+        :disable="editData.saving"
+        @click="onAbortEdit()"
+        color="negative"
+        label="Abort"
+        no-caps
+      />
+      <q-btn
+        v-if="editData.editMode"
+        type="submit"
+        color="positive"
+        :loading="editData.saving"
+        label="Save"
+        @click="onClickSafe()"
+        no-caps
+      />
+      <q-btn
         color="negative"
         label="Delete collection"
         no-caps
@@ -15,6 +39,23 @@
     </top-button-arranger>
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
+        <div class="row"
+             v-if="editData.editMode"
+        >
+          <q-card bordered flat class="col-12 bg-grey-2"
+                  style="cursor: pointer"
+                  @click="editData.showAddRecipeDialog = true"
+
+          >
+            <q-card-section class="text-center">
+              <q-icon
+                :name="mdiPlusCircleOutline"
+                size="xl"
+              />
+              <div>Add recipe</div>
+            </q-card-section>
+          </q-card>
+        </div>
         <router-link v-for="recipe of recipes"
                      v-if="recipes.length !== 0"
                      :key="recipe.id"
@@ -33,6 +74,7 @@
                   round
                   flat
                   dense
+                  v-if="editData.editMode"
                   :loading="deletingRecipIds.some(x => x === recipe.id)"
                   @click.prevent="onClickDeleteRecipe(recipe.id)"
                   class="text-red"
@@ -87,19 +129,6 @@
               >
 
               </q-input>
-              <q-input label="description"
-                       outlined
-                       autogrow
-                       hide-bottom-space
-                       type="textarea"
-                       :disable="!editData.editMode || editData.saving"
-                       v-model="editData.collection.description"
-                       :rules="[
-                        val => $v.editData.collection.description.required || 'Required',
-                        val => $v.editData.collection.description.maxLength || 'Maximal length 2000']"
-              >
-
-              </q-input>
               <div class="row"
                    v-if="editData.editMode"
                    :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': collection.hasImage && !editData.newImage && !editData.removeImage}"
@@ -136,32 +165,19 @@
                           :disable="!editData.editMode || editData.saving"
                           v-model="editData.collection.completed"
               />
-              <div class="q-gutter-x-sm">
-                <q-btn
-                  v-if="!editData.editMode"
-                  @click="editData.editMode = true"
-                  color="grey"
-                  label="Edit"
-                  no-caps
-                />
-                <q-btn
-                  v-if="editData.editMode"
-                  :disable="editData.saving"
-                  @click="onAbortEdit()"
-                  color="negative"
-                  label="Abort"
-                  no-caps
-                />
-                <q-btn
-                  v-if="editData.editMode"
-                  type="submit"
-                  color="positive"
-                  :loading="editData.saving"
-                  label="Save"
-                  @click="onClickSafe()"
-                  no-caps
-                />
-              </div>
+              <q-input label="description"
+                       outlined
+                       autogrow
+                       hide-bottom-space
+                       type="textarea"
+                       :disable="!editData.editMode || editData.saving"
+                       v-model="editData.collection.description"
+                       :rules="[
+                        val => $v.editData.collection.description.required || 'Required',
+                        val => $v.editData.collection.description.maxLength || 'Maximal length 2000']"
+              >
+
+              </q-input>
             </q-form>
           </q-card-section>
         </q-card>
@@ -175,9 +191,13 @@
       @clickOk="onDeleteCollection"
       :question="'Delete collection \'' + collection.name + '\''"
       v-model="showDeleteCollectionDialog"
+    />
+    <c-edit-dialog
+      title="Add recipe"
+      v-model="editData.showAddRecipeDialog"
     >
 
-    </c-question>
+    </c-edit-dialog>
   </q-page>
 </template>
 
@@ -187,13 +207,14 @@ import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
 import CRecipeCard from "components/CRecipeCard";
 import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
-import {mdiDelete} from "@quasar/extras/mdi-v5";
+import {mdiDelete, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
 import TopButtonArranger from "components/TopButtonArranger";
 import CQuestion from "components/CQuestion";
+import CEditDialog from "components/CEditDialog";
 
 export default {
   name: "Collection",
-  components: {CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
+  components: {CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
     const recipes = await CollectionService.getCollectionRecipes(to.params.id);
@@ -206,6 +227,7 @@ export default {
   data() {
     return {
       editData: {
+        showAddRecipeDialog: false,
         saving: false,
         editMode: false,
         removeImage: false,
@@ -231,6 +253,7 @@ export default {
   },
   created() {
     this.mdiDelete = mdiDelete;
+    this.mdiPlusCircleOutline = mdiPlusCircleOutline;
   },
   watch: {
     collection: {

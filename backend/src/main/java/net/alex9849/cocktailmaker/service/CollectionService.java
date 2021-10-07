@@ -55,11 +55,17 @@ public class CollectionService {
     }
 
     public boolean addRecipe(long recipeId, long collectionId) {
-        if(collectionRepository.findByIds(collectionId).isEmpty()) {
+        List<Collection> foundCollections = collectionRepository.findByIds(collectionId);
+        if(foundCollections.isEmpty()) {
             throw new IllegalArgumentException("Collection not found!");
         }
-        if(recipeService.getById(recipeId) == null) {
+        Collection collection = foundCollections.get(0);
+        Recipe foundRecipe = recipeService.getById(recipeId);
+        if(foundRecipe == null) {
             throw new IllegalArgumentException("Recipe not found!");
+        }
+        if(foundRecipe.getOwner().getId() != foundRecipe.getOwner().getId() && !foundRecipe.isInPublic()) {
+            throw new IllegalArgumentException("Recipe addition not permitted!");
         }
         collectionRepository.removeRecipe(collectionId, recipeId);
         return collectionRepository.addRecipe(collectionId, recipeId);

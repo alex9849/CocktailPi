@@ -31,7 +31,9 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     private boolean started;
 
     public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<RecipeIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
-        this.pumpsByIngredientId = pumps.stream().collect(Collectors
+        this.pumpsByIngredientId = pumps.stream()
+                .filter(x -> x.getCurrentIngredient() != null)
+                .collect(Collectors
                 .toMap(x -> x.getCurrentIngredient().getId(), x -> x, (x1, x2) -> x1));
         this.productionStepInstructions = productionStepInstructions;
 
