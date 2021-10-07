@@ -4,7 +4,15 @@
       <q-breadcrumbs-el :to="{name: 'mycollections'}" label="My collections"/>
       <q-breadcrumbs-el :label="collection.name"/>
     </q-breadcrumbs>
-    <h5 style="margin-bottom: 15px">{{ collection.name }}</h5>
+    <h5>{{ collection.name }}</h5>
+    <top-button-arranger style="margin-bottom: 15px">
+      <q-btn
+        color="negative"
+        label="Delete collection"
+        no-caps
+        @click="showDeleteCollectionDialog = true"
+      />
+    </top-button-arranger>
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
         <router-link v-for="recipe of recipes"
@@ -159,6 +167,17 @@
         </q-card>
       </div>
     </div>
+    <c-question
+      ok-button-text="Delete"
+      :loading="deletingCollection"
+      ok-color="red"
+      @clickAbort="showDeleteCollectionDialog = false"
+      @clickOk="onDeleteCollection"
+      :question="'Delete collection \'' + collection.name + '\''"
+      v-model="showDeleteCollectionDialog"
+    >
+
+    </c-question>
   </q-page>
 </template>
 
@@ -169,10 +188,12 @@ import CollectionService from "src/services/collection.service";
 import CRecipeCard from "components/CRecipeCard";
 import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
 import {mdiDelete} from "@quasar/extras/mdi-v5";
+import TopButtonArranger from "components/TopButtonArranger";
+import CQuestion from "components/CQuestion";
 
 export default {
   name: "Collection",
-  components: {CRecipeFabricableIcon, CRecipeCard, CRecipeList},
+  components: {CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
     const recipes = await CollectionService.getCollectionRecipes(to.params.id);
@@ -203,7 +224,9 @@ export default {
         complete: false
       },
       recipes: [],
-      deletingRecipIds: []
+      deletingRecipIds: [],
+      showDeleteCollectionDialog: false,
+      deletingCollection: false
     }
   },
   created() {
@@ -217,6 +240,16 @@ export default {
     }
   },
   methods: {
+    onDeleteCollection() {
+      this.deletingCollection = true;
+      CollectionService.deleteCollection(this.collection.id)
+        .then(() => {
+          this.$router.push({name: 'mycollections'})
+        })
+        .finally(() => {
+          this.deletingCollection = false;
+        })
+    },
     onClickDeleteRecipe(recipeId) {
       let promises = [];
       this.deletingRecipIds.push(recipeId);
