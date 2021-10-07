@@ -72,7 +72,7 @@
                   </div>
                 </q-linear-progress>
               </template>
-              <template v-slot:headlineRight>
+              <template v-slot:topRight>
                 <div>
                   <q-btn
                     dense

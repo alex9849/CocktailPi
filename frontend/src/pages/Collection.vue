@@ -17,7 +17,31 @@
             :recipe="recipe"
             show-ingredients
             class="col-12 bg-grey-2 q-card--bordered q-card--flat no-shadow"
-          />
+          >
+            <template v-slot:headline>
+              <div class="flex content-center">
+                <b>{{ recipe.name }}</b>
+                <q-btn
+                  round
+                  flat
+                  dense
+                  :loading="deletingRecipIds.some(x => x === recipe.id)"
+                  @click.prevent="onClickDeleteRecipe(recipe.id)"
+                  class="text-red"
+                  :icon="mdiDelete"
+                >
+                </q-btn>
+              </div>
+            </template>
+            <template v-slot:topRight>
+              <div class="row items-center">
+                <c-recipe-fabricable-icon
+                  :recipe="recipe"
+                />
+              </div>
+            </template>
+
+          </c-recipe-card>
         </router-link>
         <q-card v-if="recipes.length === 0"
                 flat
@@ -143,10 +167,12 @@ import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
 import CRecipeCard from "components/CRecipeCard";
+import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
+import {mdiDelete} from "@quasar/extras/mdi-v5";
 
 export default {
   name: "Collection",
-  components: {CRecipeCard, CRecipeList},
+  components: {CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
     const recipes = await CollectionService.getCollectionRecipes(to.params.id);
@@ -176,8 +202,12 @@ export default {
         hasImage: false,
         complete: false
       },
-      recipes: []
+      recipes: [],
+      deletingRecipIds: []
     }
+  },
+  created() {
+    this.mdiDelete = mdiDelete;
   },
   watch: {
     collection: {
@@ -187,6 +217,21 @@ export default {
     }
   },
   methods: {
+    onClickDeleteRecipe(recipeId) {
+      let promises = [];
+      this.deletingRecipIds.push(recipeId);
+      promises.push(CollectionService.removeRecipeFromCollection(this.collection.id, recipeId)
+        .finally(() => {
+          promises.push(
+            CollectionService.getCollectionRecipes(this.collection.id)
+            .then(recipes => this.recipes = recipes)
+          )
+        }));
+      Promise.all(promises)
+        .finally(() => {
+          this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
+        });
+    },
     onImageSelect(image) {
       if (!!image) {
         this.editData.removeImage = false;

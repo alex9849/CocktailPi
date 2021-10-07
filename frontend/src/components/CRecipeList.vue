@@ -43,33 +43,9 @@
               />
             </template>
             <template slot="topRight">
-              <q-icon
-                v-if="doPumpsHaveAllIngredients(props.row)"
-                :name="mdiCheckBold"
-                size="md"
-                color="positive">
-                <q-tooltip>
-                  Cocktail can be produced automatically!
-                </q-tooltip>
-              </q-icon>
-              <q-icon
-                v-else-if="allIngredientsOwned(props.row)"
-                :name="mdiCheckBold"
-                size="md"
-                color="warning">
-                <q-tooltip>
-                  Some ingredients have to get added manually!
-                </q-tooltip>
-              </q-icon>
-              <q-icon
-                v-else
-                :name="mdiClose"
-                size="md"
-                color="negative">
-                <q-tooltip>
-                  Missing ingredients!
-                </q-tooltip>
-              </q-icon>
+              <c-recipe-fabricable-icon
+                :recipe="props.row"
+              />
             </template>
           </c-recipe-card>
         </router-link>
@@ -80,12 +56,11 @@
 
 <script>
 import CRecipeCard from "./CRecipeCard";
-import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
-import {mapGetters} from "vuex";
+import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
 
 export default {
   name: "CRecipeList",
-  components: {CRecipeCard},
+  components: {CRecipeFabricableIcon, CRecipeCard},
   props: {
     recipes: {
       type: Array,
@@ -139,36 +114,12 @@ export default {
       ]
     }
   },
-  created() {
-    this.mdiCheckBold = mdiCheckBold;
-    this.mdiAlert = mdiAlert;
-    this.mdiClose = mdiClose;
-  },
-  computed: {
-    ...mapGetters({
-      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-      areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable',
-      ownedIngredients: 'bar/getOwnedIngredients'
-    })
-  },
   watch: {
     selected(newValue) {
       this.$emit('selectionChange', newValue);
     },
     recipes() {
       this.selected = [];
-    }
-  },
-  methods: {
-    allIngredientsOwned(recipe) {
-      for(let productionstep of recipe.recipeIngredients) {
-        for(let ingredientstep of productionstep) {
-          if(!this.ownedIngredients.some(x => x.id === ingredientstep.ingredient.id)) {
-            return false;
-          }
-        }
-      }
-      return true;
     }
   }
 }

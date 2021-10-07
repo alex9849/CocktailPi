@@ -26,13 +26,12 @@
               <h5
                 style="margin: 0; padding-bottom: 10px;"
               >
-                <b>{{ recipe.name}}</b>
+                <slot name="headline">
+                  <b>{{ recipe.name }}</b>
+                </slot>
               </h5>
             </div>
             <div class="col/"/>
-            <div class="col" style="display: contents; max-width: max-content">
-              <slot name="headlineRight"/>
-            </div>
             <div class="row">
               <div class="col"/>
               <div
@@ -82,63 +81,63 @@
 import {mapGetters} from "vuex";
 
 export default {
-    name: "CRecipeCard",
-    props: {
-      recipe: {
-        type: Object,
-        required: true
-      },
-      showIngredients: {
-        type: Boolean,
-        default: false
-      },
-      backgroundColor: {
-        type: String,
-        default: '#fafafa'
-      }
+  name: "CRecipeCard",
+  props: {
+    recipe: {
+      type: Object,
+      required: true
     },
-    computed: {
-      ...mapGetters({
-        getPumpIngredients: 'pumpLayout/getPumpIngredients',
-        ownedIngredients: 'bar/getOwnedIngredients'
-      })
+    showIngredients: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-      hasPumpLayoutIngredient(ingredientId) {
-        return this.getPumpIngredients.some(x => x.id === ingredientId);
-      },
-      ingredientChipColor(ingredientId) {
-        if(this.getPumpIngredients.some(x => x.id === ingredientId)) {
-          return 'green'
-        }
-        if(this.ownedIngredients.some(x => x.id === ingredientId)) {
-          return 'orange-6'
-        }
-        return 'red'
-      },
-      ingredientChipTooltip(ingredientId) {
-        if(this.getPumpIngredients.some(x => x.id === ingredientId)) {
-          return ''
-        }
-        if(this.ownedIngredients.some(x => x.id === ingredientId)) {
-          return 'add manually'
-        }
-        return 'not owned'
-      },
-      uniqueIngredientNames(productionSteps) {
-        if(!this.showIngredients) {
-          return [];
-        }
-        let unique = new Map();
-        for (let productionStep of productionSteps) {
-          for (let ingredient of productionStep) {
-            unique.set(ingredient.ingredient.id, ingredient.ingredient);
-          }
-        }
-        return Array.from(unique.values());
+    backgroundColor: {
+      type: String,
+      default: '#fafafa'
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      ownedIngredients: 'bar/getOwnedIngredients'
+    })
+  },
+  methods: {
+    hasPumpLayoutIngredient(ingredientId) {
+      return this.getPumpIngredients.some(x => x.id === ingredientId);
+    },
+    ingredientChipColor(ingredientId) {
+      if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
+        return 'green'
       }
+      if (this.ownedIngredients.some(x => x.id === ingredientId)) {
+        return 'orange-6'
+      }
+      return 'red'
+    },
+    ingredientChipTooltip(ingredientId) {
+      if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
+        return ''
+      }
+      if (this.ownedIngredients.some(x => x.id === ingredientId)) {
+        return 'add manually'
+      }
+      return 'not owned'
+    },
+    uniqueIngredientNames(productionSteps) {
+      if (!this.showIngredients) {
+        return [];
+      }
+      let unique = new Map();
+      for (let productionStep of productionSteps) {
+        for (let ingredient of productionStep) {
+          unique.set(ingredient.ingredient.id, ingredient.ingredient);
+        }
+      }
+      return Array.from(unique.values());
     }
   }
+}
 </script>
 
 <style scoped>
