@@ -185,7 +185,7 @@
       ok-color="red"
       @clickAbort="showDeleteCollectionDialog = false"
       @clickOk="onDeleteCollection"
-      :question="'Delete collection \'' + collection.name + '\''"
+      :question="'Delete collection \'' + collection.name + '\'?'"
       v-model="showDeleteCollectionDialog"
     />
     <c-edit-dialog
