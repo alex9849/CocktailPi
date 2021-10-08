@@ -147,6 +147,7 @@
                           max-file-size="20971520"
                           accept="image/*"
                           clearable
+                          hide-bottom-space
                   >
                     <template v-slot:prepend>
                       <q-icon
