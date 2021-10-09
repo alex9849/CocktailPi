@@ -38,65 +38,61 @@
       />
     </top-button-arranger>
     <div class="row q-col-gutter-md">
-      <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
-        <div class="row"
-             v-if="editData.editMode"
+      <div class="col-12 col-md-8 col-lg-9">
+        <recipe-list
+          :recipes="recipes"
         >
-          <c-recipe-selector
-            label="Add recipe"
-            class="col-12 bg-grey-2"
-            @input="!!$event ? onAddRecipe($event.id) : ''"
-          >
-            <template v-slot:prepend>
-              <q-icon :name="mdiPlusCircleOutline" />
-            </template>
-          </c-recipe-selector>
-        </div>
-        <router-link v-for="recipe of recipes"
-                     v-if="recipes.length !== 0"
-                     :key="recipe.id"
-                     class="row"
-                     :to="{name: 'recipedetails', params: {id: recipe.id}}"
-        >
-          <c-recipe-card
-            :recipe="recipe"
-            show-ingredients
-            class="col-12 bg-grey-2 q-card--bordered q-card--flat no-shadow"
-          >
-            <template v-slot:headline>
-              <div class="flex content-center">
-                <b>{{ recipe.name }}</b>
-                <q-btn
-                  round
-                  flat
-                  dense
-                  v-if="editData.editMode"
-                  :loading="deletingRecipIds.some(x => x === recipe.id)"
-                  @click.prevent="onClickDeleteRecipe(recipe.id)"
-                  class="text-red"
-                  :icon="mdiDelete"
-                >
-                </q-btn>
-              </div>
-            </template>
-            <template v-slot:topRight>
-              <div class="row items-center">
-                <c-recipe-fabricable-icon
-                  :recipe="recipe"
-                />
-              </div>
-            </template>
-
-          </c-recipe-card>
-        </router-link>
-        <q-card v-if="recipes.length === 0"
+          <template slot="first">
+            <div class="col-12"
+                 v-if="editData.editMode"
+            >
+              <c-recipe-selector
+                label="Add recipe"
+                class="bg-grey-2"
+                @input="!!$event ? onAddRecipe($event.id) : ''"
+              >
+                <template v-slot:prepend>
+                  <q-icon :name="mdiPlusCircleOutline" />
+                </template>
+              </c-recipe-selector>
+            </div>
+            <div v-if="recipes.length === 0"
+                 class="col-12"
+            >
+              <q-card
+                      flat
+                      bordered
+              >
+                <q-card-section class="text-center">
+                  No recipes found!
+                </q-card-section>
+              </q-card>
+            </div>
+          </template>
+          <template slot="recipeHeadline" slot-scope="{recipe}">
+            <div class="flex content-center">
+              <b>{{ recipe.name }}</b>
+              <q-btn
+                round
                 flat
-                bordered
-        >
-          <q-card-section class="text-center">
-            No recipes found!
-          </q-card-section>
-        </q-card>
+                dense
+                v-if="editData.editMode"
+                :loading="deletingRecipIds.some(x => x === recipe.id)"
+                @click.prevent="onClickDeleteRecipe(recipe.id)"
+                class="text-red"
+                :icon="mdiDelete"
+              >
+              </q-btn>
+            </div>
+          </template>
+          <template slot="recipeTopRight" slot-scope="{recipe}">
+            <div class="row items-center">
+              <c-recipe-fabricable-icon
+                :recipe="recipe"
+              />
+            </div>
+          </template>
+        </recipe-list>
       </div>
       <div class="col-12 col-md-4 col-lg-3">
         <q-card class="rounded-borders"
@@ -202,6 +198,7 @@
 import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
+import RecipeService from "src/services/recipe.service";
 import CRecipeCard from "components/CRecipeCard";
 import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
 import {mdiDelete, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
@@ -209,15 +206,19 @@ import TopButtonArranger from "components/TopButtonArranger";
 import CQuestion from "components/CQuestion";
 import CEditDialog from "components/CEditDialog";
 import CRecipeSelector from "components/CRecipeSelector";
+import RecipeList from "components/RecipeList";
 
 export default {
   name: "Collection",
   components: {
+    RecipeList,
     CRecipeSelector,
     CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
-    const recipes = await CollectionService.getCollectionRecipes(to.params.id);
+    const recipes = await RecipeService.getRecipes(0, null, null, to.params.id,
+      null, null, null, null, null, null, null)
+      .then(page => page.content);
     next(vm => {
       vm.collection = collection;
       vm.editData.collection = Object.assign({}, collection);

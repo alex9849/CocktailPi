@@ -342,6 +342,7 @@ export default {
       return RecipeService.getRecipes(this.pagination.page,
         this.onlyOwnRecipes ? this.user.id : null,
         null,
+        null,
         this.onlyOwnRecipes ? null : true,
         this.searchOptions.automaticallyFabricable,
         this.searchOptions.fabricableWithOwnedIngredients,
