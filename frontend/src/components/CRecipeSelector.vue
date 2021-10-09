@@ -96,7 +96,7 @@ export default {
         update();
         return;
       }
-      RecipeService.getRecipes(0, null, this.user.id, null,
+      RecipeService.getRecipes(0, null, this.user.id, null, null,
         null, null, null, val, null, null)
         .then(page => {
           update(() => {

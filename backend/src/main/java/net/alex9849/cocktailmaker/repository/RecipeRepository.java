@@ -167,7 +167,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findRecipeIdsForCollection(long collectionId) {
+    public Set<Long> findIdsInCollection(long collectionId) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id as id FROM collections c " +
                     "JOIN collection_recipes cr ON cr.collection_id = c.id " +

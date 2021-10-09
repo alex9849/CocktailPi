@@ -1,9 +1,11 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
+import net.alex9849.cocktailmaker.service.CollectionService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.ImageUtils;
@@ -41,10 +43,14 @@ public class RecipeEndpoint {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CollectionService collectionService;
+
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
                                          @RequestParam(value = "inPublic", required = false) Boolean inPublic,
                                          @RequestParam(value = "permittedForUser", required = false) Long permittedForUserId,
+                                         @RequestParam(value = "inCollection", required = false) Long inCollectionId,
                                          @RequestParam(value = "fabricable", defaultValue = "false") boolean isFabricable,
                                          @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
                                          @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
@@ -53,8 +59,21 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!Objects.equals(principal.getId(), ownerId) && (inPublic == null || !inPublic)
-                && !Objects.equals(principal.getId(), permittedForUserId)) {
+        if(inCollectionId != null) {
+            Collection collection = collectionService.getCollectionById(inCollectionId);
+            if(collection == null) {
+                inCollectionId = null;
+            } else {
+                if (!Objects.equals(principal.getId(), collection.getOwner().getId())) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+            }
+        }
+        if (!Objects.equals(principal.getId(), ownerId)
+                && (inPublic == null || !inPublic)
+                && !Objects.equals(principal.getId(), permittedForUserId)
+                && inCollectionId == null
+        ) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         final int pageSize = 10;
@@ -81,7 +100,7 @@ public class RecipeEndpoint {
                 break;
         }
         Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, permittedForUserId,
-                inCategory, containsIngredients, searchName, isFabricable,
+                inCollectionId, inCategory, containsIngredients, searchName, isFabricable,
                 isInBar? principal.getId():null, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));

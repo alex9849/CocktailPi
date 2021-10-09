@@ -45,7 +45,7 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long permittedForUserId,
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long permittedForUserId, Long inCollection,
                                            Long inCategory, Long[] containsIngredients,
                                            String searchName, boolean isFabricable, Long isInBarUserId, int pageNumber,
                                            int pageSize, Sort sort) {
@@ -63,6 +63,9 @@ public class RecipeService {
         }
         if(permittedForUserId != null) {
             idsToFindSetList.add(recipeRepository.getIdsPermittedForUserId(permittedForUserId));
+        }
+        if(inCollection != null) {
+            idsToFindSetList.add(recipeRepository.findIdsInCollection(inCollection));
         }
         if(containsIngredients != null) {
             idsToFindSetList.add(recipeRepository.getIdsWithIngredients(containsIngredients));
@@ -100,14 +103,6 @@ public class RecipeService {
 
     public List<Recipe> getByIds(Long... ids) {
         return recipeRepository.findByIds(0, Long.MAX_VALUE, Sort.by(Sort.Direction.ASC, "name"), ids);
-    }
-
-    public List<Recipe> getRecipesForCollection(long collectionId) {
-        Set<Long> ids = recipeRepository.findRecipeIdsForCollection(collectionId);
-        if(ids.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return this.getByIds(ids.toArray(new Long[1]));
     }
 
     public byte[] getImage(long recipeId) {

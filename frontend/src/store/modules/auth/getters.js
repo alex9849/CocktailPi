@@ -1,4 +1,4 @@
-import { Platform } from 'quasar'
+import {Platform} from 'quasar'
 
 export const isLoggedIn = state => state.status.loggedIn;
 export const getUser = state => state.status.user;
@@ -20,18 +20,24 @@ export const getAdminLevel = state => {
   return state.status.user.adminLevel;
 };
 
-export const isRecipeCreator = state => {
+export const isUser = state => {
   if(!getUser(state))
     return false;
   return state.status.user.adminLevel >= 1;
 };
-export const isPumpIngredientEditor = state => {
+
+export const isRecipeCreator = state => {
   if(!getUser(state))
     return false;
   return state.status.user.adminLevel >= 2;
 };
-export const isAdmin = state => {
+export const isPumpIngredientEditor = state => {
   if(!getUser(state))
     return false;
   return state.status.user.adminLevel >= 3;
+};
+export const isAdmin = state => {
+  if(!getUser(state))
+    return false;
+  return state.status.user.adminLevel >= 4;
 };

@@ -138,18 +138,18 @@ export default {
               to: {name: 'dashboard'},
               exact: false
             }, {
-              reqLevel: 0,
+              reqLevel: 1,
               label: 'My bar',
               to: {name: 'mybar'},
               exact: false
             }, {
-              reqLevel: 0,
+              reqLevel: 1,
               label: 'My collections',
               to: {name: 'mycollections'},
               exact: false
             }, {
               label: 'My recipes',
-              reqLevel: 1,
+              reqLevel: 2,
               to: {name: 'myrecipes'},
               exact: false
             }
@@ -157,38 +157,38 @@ export default {
         }, {
           label: 'PUBLIC COCKTAILS',
           icon: mdiEarth,
-          reqLevel: 0,
+          reqLevel: 1,
           subSections: [
             {
               label: 'All',
               to: {name: 'publicrecipes'},
               exact: true,
-              reqLevel: 0,
+              reqLevel: 1,
             }
           ]
         }, {
           label: 'ADMINISTRATION',
           icon: mdiCogs,
-          reqLevel: 3,
+          reqLevel: 4,
           subSections: [
             {
               label: 'Users',
-              reqLevel: 3,
+              reqLevel: 4,
               to: {name: 'usermanagement'},
               exact: false
             }, {
               label: 'Ingredients',
-              reqLevel: 3,
+              reqLevel: 4,
               to: {name: 'ingredientmanagement'},
               exact: false
             }, {
               label: 'Categories',
-              reqLevel: 3,
+              reqLevel: 4,
               to: {name: 'categorymanagement'},
               exact: false
             }, {
               label: 'Pumps',
-              reqLevel: 3,
+              reqLevel: 4,
               to: {name: 'pumpmanagement'},
               exact: false
             }
@@ -261,13 +261,13 @@ export default {
           label: 'All',
           to: {name: 'publicrecipes'},
           exact: true,
-          reqLevel: 0,
+          reqLevel: 1,
         }
       ];
       for (let category of categories) {
         this.sidebarItems[1].subSections.push({
           label: category.name,
-          reqLevel: 0,
+          reqLevel: 1,
           to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
           exact: true
         })

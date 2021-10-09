@@ -18,7 +18,7 @@ class RecipeService {
       .then(response => response.data);
   }
 
-  getRecipes(page, ownerId, permittedForUser, inPublic, fabricable, inBar, containsIngredients,
+  getRecipes(page, ownerId, permittedForUser, inCollection, inPublic, fabricable, inBar, containsIngredients,
              searchName, inCategoryId, orderBy) {
     let querystring = require('querystring');
     let inCategory = inCategoryId;
@@ -27,6 +27,7 @@ class RecipeService {
         ownerId,
         inPublic,
         permittedForUser,
+        inCollection,
         fabricable,
         inBar,
         containsIngredients,

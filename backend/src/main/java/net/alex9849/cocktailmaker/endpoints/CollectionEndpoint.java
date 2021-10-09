@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.endpoints;
 import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.CollectionService;
 import net.alex9849.cocktailmaker.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,20 +142,6 @@ public class CollectionEndpoint {
         }
         collectionService.removeRecipe(recipeId, collectionId);
         return ResponseEntity.ok().build();
-    }
-
-    @RequestMapping(value = "{id}/recipes", method = RequestMethod.GET)
-    public ResponseEntity<?> getCollectionRecipes(@PathVariable(value = "id") long collectionId) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Collection existingCollection = collectionService.getCollectionById(collectionId);
-        if(existingCollection == null) {
-            return ResponseEntity.notFound().build();
-        }
-        if (existingCollection.getOwner().getId() != principal.getId()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        return ResponseEntity.ok(collectionService.getRecipesForCollection(collectionId).stream()
-                .map(RecipeDto::new));
     }
 
 }

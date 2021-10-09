@@ -75,10 +75,6 @@ public class CollectionService {
         return collectionRepository.removeRecipe(collectionId, recipeId);
     }
 
-    public List<Recipe> getRecipesForCollection(long collectionId) {
-        return recipeService.getRecipesForCollection(collectionId);
-    }
-
     public Collection getCollectionById(long id) {
         List<Collection> collections = collectionRepository.findByIds(id);
         if(collections.isEmpty()) {
