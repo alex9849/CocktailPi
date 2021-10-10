@@ -158,7 +158,7 @@ export default {
             this.loading = false;
             reject(error);
           });
-        }, this.disableLoadingSpinner? 0 : 500);
+        }, withLoadingAnimation? 500 : 0);
       }));
     },
     updateRoute() {
@@ -167,7 +167,7 @@ export default {
       };
       query = Object.assign(query, this.filter);
       query = JsUtils.cleanObject(query);
-      this.$router.replace({name: this.$route.name, query});
+      this.$router.replace({name: this.$route.name, query}).catch(()=>{});
     },
     onPageClick(page) {
       if (this.pagination.page !== page) {
