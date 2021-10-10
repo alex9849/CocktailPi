@@ -7,16 +7,16 @@
     <h5>{{ collection.name }}</h5>
     <top-button-arranger style="margin-bottom: 15px">
       <q-btn
-        v-if="!editRecipes"
-        @click="editRecipes = true"
+        v-if="!editRecipeMode.active"
+        @click="editRecipeMode.active = true"
         color="grey"
         label="Modify recipes"
         no-caps
       />
       <q-btn
-        v-if="editRecipes"
-        @click="editRecipes = false"
-        color="negative"
+        v-if="editRecipeMode.active"
+        @click="editRecipeMode.active = false"
+        color="warning"
         label="Stop modifying recipes"
         no-caps
       />
@@ -35,9 +35,10 @@
         >
           <template slot="firstItem">
             <div class="col-12"
-                 v-if="editRecipes"
+                 v-if="editRecipeMode.active"
             >
               <c-recipe-selector
+                :loading="editRecipeMode.addingRecipe"
                 label="Add recipe"
                 class="bg-grey-2"
                 @input="!!$event ? onAddRecipe($event.id) : ''"
@@ -55,8 +56,8 @@
                 round
                 flat
                 dense
-                v-if="editRecipes"
-                :loading="deletingRecipIds.some(x => x === recipe.id)"
+                v-if="editRecipeMode.active"
+                :loading="editRecipeMode.deletingRecipIds.some(x => x === recipe.id)"
                 @click.prevent="onClickDeleteRecipe(recipe.id)"
                 class="text-red"
                 :icon="mdiDelete"
@@ -227,6 +228,11 @@ export default {
   data() {
     return {
       editRecipes: false,
+      editRecipeMode: {
+        active: false,
+        deletingRecipIds: [],
+        addingRecipe: false
+      },
       editData: {
         showAddRecipeDialog: false,
         saving: false,
@@ -246,7 +252,6 @@ export default {
         hasImage: false,
         complete: false
       },
-      deletingRecipIds: [],
       showDeleteCollectionDialog: false,
       deletingCollection: false
     }
@@ -274,7 +279,7 @@ export default {
         })
     },
     onClickDeleteRecipe(recipeId) {
-      this.deletingRecipIds.push(recipeId);
+      this.editRecipeMode.deletingRecipIds.push(recipeId);
       CollectionService.removeRecipeFromCollection(this.collection.id, recipeId)
         .then(() => {
           this.$q.notify({
@@ -283,12 +288,13 @@ export default {
           });
         })
         .finally(() => {
-          this.$refs.recipeSearchList.updateRecipes().finally(() =>{
-            this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
+          this.$refs.recipeSearchList.updateRecipes(false).finally(() =>{
+            this.editRecipeMode.deletingRecipIds = this.editRecipeMode.deletingRecipIds.filter(x => x !== recipeId)
           });
         });
     },
     onAddRecipe(recipeId) {
+      this.editRecipeMode.addingRecipe = true;
       CollectionService.addRecipeToCollection(this.collection.id, recipeId)
         .then(() => {
           this.$q.notify({
@@ -297,7 +303,8 @@ export default {
           });
         })
         .finally(() => {
-          this.$refs.recipeSearchList.updateRecipes()
+          this.editRecipeMode.addingRecipe = false;
+          this.$refs.recipeSearchList.updateRecipes(false)
         });
     },
     onImageSelect(image) {

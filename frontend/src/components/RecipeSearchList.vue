@@ -129,9 +129,11 @@ export default {
         page: !!queryParams.page? Number(queryParams.page) : 0
       }
     },
-    updateRecipes() {
-      this.loading = true;
-      this.recipes = [];
+    updateRecipes(withLoadingAnimation = true) {
+      this.loading = withLoadingAnimation;
+      if(withLoadingAnimation) {
+        this.recipes = [];
+      }
       this.updateRoute();
       return new Promise(((resolve, reject) => {
         setTimeout(() => {
@@ -156,7 +158,7 @@ export default {
             this.loading = false;
             reject(error);
           });
-        }, 500);
+        }, this.disableLoadingSpinner? 0 : 500);
       }));
     },
     updateRoute() {
