@@ -21,7 +21,7 @@
       />
     </top-button-arranger>
     <div class="q-pa-md">
-      <recipe-search-list
+      <c-recipe-search-list
         :only-own-recipes="true"
         ref="recipeSearchList"
       />
@@ -31,13 +31,12 @@
 
 <script>
 import CRecipeSearchList from "../components/CRecipeSearchList";
-import RecipeSearchList from "components/RecipeSearchList";
 import TopButtonArranger from "components/TopButtonArranger";
 import {mapGetters} from "vuex";
 
 export default {
     name: "OwnRecipes",
-    components: {TopButtonArranger, RecipeSearchList, CRecipeSearchList},
+    components: {TopButtonArranger, CRecipeSearchList},
     data() {
       return{
         refreshing: false

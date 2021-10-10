@@ -1,136 +1,78 @@
 <template>
   <div>
-    <slot name="top"/>
-    <q-table
-      :data="recipes"
-      :columns="columns"
-      row-key="name"
-      :loading="loading"
-      :visible-columns="['name']"
-      :pagination="{rowsPerPage: 0}"
-      hide-pagination
-      hide-header
-      selection="multiple"
-      :selected.sync="selected"
-      :flat="flat"
-      no-data-label="No cocktails found :("
-      :style="'background-color: ' + listBodyColor"
-      :table-style="{margin: '0px'}"
-    >
-      <template
-        v-slot:loading
+    <div class="row q-col-gutter-md">
+      <slot name="firstItem"/>
+      <div v-if="recipes.length === 0 && !!noDataMessage"
+           class="col-12"
       >
-        <q-inner-loading
-          showing
-          color="info"
-        />
-      </template>
-      <template v-slot:body="props">
+        <q-card
+          flat
+          bordered
+          class="bg-grey-1"
+        >
+          <q-card-section class="text-center">
+            {{ noDataMessage }}
+          </q-card-section>
+        </q-card>
+      </div>
+      <div
+        v-for="recipe of recipes"
+        :key="recipe.id"
+        class="col-12"
+      >
         <router-link
-          :to="{name: 'recipedetails', params: {id: props.row.id}}"
+          class="no-link-format"
+          :to="{name: 'recipedetails', params: {id: recipe.id}}"
         >
           <c-recipe-card
-            style="margin: 10px"
-            :recipe="props.row"
+            :recipe="recipe"
             show-ingredients
-            :background-color="(props.rowIndex % 2 === 0)? listItem1Color : listItem2Color"
+            class="bg-grey-2 q-card--bordered q-card--flat no-shadow"
           >
-            <template slot="beforePicture">
-              <q-checkbox
-                v-if="selectable"
-                v-model="props.selected"
-                keep-color
+            <template v-slot:headline>
+              <slot
+                v-if="!!$scopedSlots.recipeHeadline"
+                :recipe="recipe"
+                name="recipeHeadline"
               />
             </template>
             <template slot="topRight">
-              <c-recipe-fabricable-icon
-                :recipe="props.row"
+              <slot
+                v-if="!!$scopedSlots.recipeTopRight"
+                :recipe="recipe"
+                name="recipeTopRight"
               />
             </template>
           </c-recipe-card>
         </router-link>
-      </template>
-    </q-table>
+      </div>
+      <slot name="lastItem"/>
+    </div>
   </div>
 </template>
 
 <script>
-import CRecipeCard from "./CRecipeCard";
-import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
+import CRecipeCard from "components/CRecipeCard";
 
 export default {
   name: "CRecipeList",
-  components: {CRecipeFabricableIcon, CRecipeCard},
+  components: {CRecipeCard},
   props: {
     recipes: {
       type: Array,
       required: true
     },
-    flat: {
-      type: Boolean,
-      default: false
-    },
-    selectable: {
-      type: Boolean,
-      default: false
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    listBodyColor: {
+    noDataMessage: {
       type: String,
-      default: '#f3f3fa'
-    },
-    listItem1Color: {
-      type: String,
-      default: '#f3f3fa'
-    },
-    listItem2Color: {
-      type: String,
-      default: '#fafafa'
-    }
-  },
-  data() {
-    return {
-      selected: [],
-      columns: [
-        {
-          name: 'name',
-          label: 'Name',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: 'shortDescription',
-          align: 'center',
-          label: 'Short description',
-          field: 'shortDescription',
-          sortable: true
-        },
-        {name: 'owner', label: 'Owner', field: 'owner.username', sortable: true}
-      ]
-    }
-  },
-  watch: {
-    selected(newValue) {
-      this.$emit('selectionChange', newValue);
-    },
-    recipes() {
-      this.selected = [];
+      required: false
     }
   }
 }
 </script>
 
-<style >
-a {
+<style scoped>
+.no-link-format {
   text-decoration: none;
   color: inherit;
-}
-.q-table__bottom--nodata {
-  border: 0;
 }
 </style>

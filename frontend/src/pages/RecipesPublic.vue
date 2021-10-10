@@ -23,7 +23,7 @@
       />
     </top-button-arranger>
     <div class="q-pa-md">
-      <recipe-search-list
+      <c-recipe-search-list
         :category-id="$route.params.cid"
         ref="recipeSearchList"
       />
@@ -35,13 +35,12 @@
 import CRecipeSearchList from "../components/CRecipeSearchList";
 import {mapGetters} from "vuex";
 import {store} from '../store'
-import RecipeSearchList from "components/RecipeSearchList";
 import TopButtonArranger from "components/TopButtonArranger";
 
 
 export default {
   name: "PublicRecipes",
-  components: {TopButtonArranger, RecipeSearchList, CRecipeSearchList},
+  components: {TopButtonArranger, CRecipeSearchList},
   data() {
     return {
       refreshing: false

@@ -95,7 +95,7 @@ import {mdiMagnify} from '@quasar/extras/mdi-v5';
 import CIngredientSelector from "components/CIngredientSelector";
 
 export default {
-  name: "RecipeSearchFilterCard",
+  name: "CRecipeSearchFilterCard",
   components: {CIngredientSelector},
   props: {
     value: {

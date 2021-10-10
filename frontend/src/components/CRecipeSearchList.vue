@@ -1,382 +1,206 @@
 <template>
-  <div>
+  <div class="q-gutter-md">
+    <c-recipe-search-filter-card
+      v-model="filter"
+      ref="filter"
+      class="bg-grey-1"
+      @clickSearch="updateRecipes"
+    />
     <c-recipe-list
       :recipes="recipes"
-      :loading="loading"
-      @selectionChange="deleteRecipes = $event"
-      :selectable="onlyOwnRecipes"
+      :no-data-message="noDataMessage"
     >
-      <template slot="top">
-        <div style="margin-bottom: 10px">
-          <TopButtonArranger style="padding: 10px">
-            <q-btn
-              v-if="onlyOwnRecipes && isRecipeCreatorRole"
-              color="negative"
-              label="Delete selected recipes"
-              no-caps
-              :disable="loading"
-              @click="openDeleteDialog"
-            />
-            <q-btn
-              v-if="isRecipeCreatorRole"
-              color="positive"
-              label="Create recipe"
-              no-caps
-              :disable="loading"
-              :to="{name: 'recipeadd'}"
-            />
-            <q-btn
-              color="info"
-              label="Refresh"
-              no-caps
-              :disable="loading"
-              :loading="loading"
-              @click="onRefreshButton"
-            />
-          </TopButtonArranger>
-          <div
-            class="searchBarSlot rounded-borders shadow-2 innerpadding"
-            style="background-color: #fafafa; padding: 10px; margin-block: 10px"
-          >
-            <div
-              class="row"
+      <template slot="firstItem"
+      >
+        <div class="col-12 q-col-gutter-y-md"
+             v-if="!!$slots.firstItem || loading"
+        >
+          <slot name="firstItem"></slot>
+          <div v-if="loading">
+            <q-card flat
+                    bordered
             >
-              <div
-                class="col"
-                style="display: flex; align-items: center">
-                <b>Search-options</b>
-              </div>
-              <div class="col"/>
-            </div>
-            <div
-              class="row"
-            >
-              <q-card
-                flat bordered
-                style="width: 100%"
-              >
-                <q-card-section style="padding: 0px">
-                  <q-expansion-item
-                    style="width: 100%"
-                    label="Expert-Search"
-                    v-model="isFilterExpanded"
-                    :header-class="isFilterExpanded? 'bg-grey-2' : ''"
-                  >
-                    <div
-                      class="row justify-evenly q-col-gutter-sm"
-                      style="padding: 10px"
-                    >
-                      <q-checkbox
-                        v-model="searchOptions.fabricableWithOwnedIngredients"
-                        class="col-12 col-sm-6"
-                      >
-                        Fabricable with owned ingredients
-                      </q-checkbox>
-                      <q-checkbox
-                        v-model="searchOptions.automaticallyFabricable"
-                        class="col-12 col-sm-6"
-                      >
-                        Can be fabricated fully automatic
-                      </q-checkbox>
-                      <c-ingredient-selector
-                        v-model="searchOptions.containsIngredients"
-                        class="col-12 col-sm-8"
-                        dense
-                        label="Contains ingredients"
-                        multiple
-                        emit-value
-                        map-options
-                        use-chips
-                      />
-                      <q-select
-                        v-model="searchOptions.orderBy"
-                        class="col-12 col-sm-4"
-                        label="Order by"
-                        emit-value
-                        map-options
-                        round
-                        outlined
-                        dense
-                        :options="orderByOptions"
-                      />
-                    </div>
-                    <div
-                      class="row justify-center"
-                      style="padding-bottom: 10px"
-                    >
-                      <q-btn
-                        color="red"
-                        label="Reset filters"
-                        @click="resetFilters()"
-                      />
-                    </div>
-                  </q-expansion-item>
-                </q-card-section>
-              </q-card>
-            </div>
-            <div
-              class="row"
-            >
-              <div class="col" style="display: block">
-                <q-input
-                  v-model="searchOptions.query"
-                  outlined
-                  label="Search"
-                  dense
-                  bg-color="white"
-                  @keypress.enter="() => {pagination.page = 0; updateRoute(); fetchRecipes();}"
-                >
-                  <template slot="after">
-                    <q-btn
-                      text-color="black"
-                      color="white"
-                      :icon="mdiMagnify"
-                      @click="() => {pagination.page = 0; updateRoute(); fetchRecipes();}"
-                    />
-                  </template>
-                </q-input>
-              </div>
-            </div>
+              <q-card-section class="q-pa-md">
+                <q-icon :name="mdiAlert" size="sm"/>
+                Loading...
+              </q-card-section>
+              <q-inner-loading showing>
+                <q-spinner size="40px" color="info" />
+              </q-inner-loading>
+            </q-card>
           </div>
         </div>
       </template>
+      <template slot="recipeTopRight"
+                slot-scope="{recipe}"
+      >
+        <slot name="recipeTopRight"
+              v-if="!!$scopedSlots.recipeTopRight"
+              :recipe="recipe"
+        />
+      </template>
+      <template slot="recipeHeadline"
+                slot-scope="{recipe}"
+      >
+        <slot name="recipeHeadline"
+              v-if="!!$scopedSlots.recipeHeadline"
+              :recipe="recipe"
+        />
+      </template>
+      <template slot="lastItem"
+                v-if="!!$slots.lastItem"
+      >
+        <slot name="lastItem"></slot>
+      </template>
     </c-recipe-list>
-    <div class="row justify-center q-mt-md">
-      <q-pagination
-        :value="pagination.page + 1"
-        @input="onPageClick($event - 1)"
-        color="grey-8"
-        :max="pagination.totalPages"
-        :max-pages="9"
-        :boundary-numbers="true"
-        size="md"
-        outline
-        direction-links
-      />
-    </div>
-    <c-question
-      :question="deleteQuestionMessage"
-      ok-color="red"
-      ok-button-text="Delete"
-      :loading="deleteLoading"
-      v-model="deleteDialog"
-      @clickOk="deleteSelected"
-      @clickAbort="closeDeleteDialog"
-    >
-      <template v-slot:buttons>
-        <q-btn
-          v-if="deleteRecipes.length === 0"
-          color="grey"
-          style="width: 150px"
-          @click="closeDeleteDialog"
-        >
-          Ok
-        </q-btn>
-      </template>
-      <template v-slot:default>
-        <ul style="padding: 0; list-style: none">
-          <li
-            :key="index"
-            v-for="(recipe, index) in deleteRecipes"
-          >
-            {{ recipe.name }}
-          </li>
-        </ul>
-      </template>
-    </c-question>
+    <q-pagination
+      class="flex justify-center"
+      :value="pagination.page + 1"
+      @input="onPageClick($event - 1)"
+      color="grey-8"
+      :max="pagination.totalPages"
+      :max-pages="9"
+      :boundary-numbers="true"
+      size="md"
+      outline
+      direction-links
+    />
   </div>
 </template>
+
 <script>
-import {mdiMagnify} from '@quasar/extras/mdi-v5';
-import RecipeService from "../services/recipe.service"
+import RecipeService from '../services/recipe.service'
+import CRecipeSearchFilterCard from "components/CRecipeSearchFilterCard";
 import {mapGetters} from "vuex";
-import CRecipeList from "../components/CRecipeList";
-import CQuestion from "./CQuestion";
-import CIngredientSelector from "components/CIngredientSelector";
+import {mdiAlert} from "@quasar/extras/mdi-v5";
 import JsUtils from "src/services/JsUtils";
-import TopButtonArranger from "components/TopButtonArranger";
+import CRecipeList from "components/CRecipeList";
 
 export default {
   name: "CRecipeSearchList",
-  components: {TopButtonArranger, CIngredientSelector, CRecipeList, CQuestion},
+  components: {CRecipeList, CRecipeSearchFilterCard},
   props: {
+    collectionId: {
+      type: Number,
+      required: false
+    },
     onlyOwnRecipes: {
       type: Boolean,
-      default: false
+      required: false
     },
     categoryId: {
-      type: Number
-    }
+      type: Number,
+      required: false
+    },
   },
   data() {
     return {
-      orderByOptions: [{
-        label: 'Name asc',
-        value: 'nameAsc'
-      }, {
-        label: 'Name desc',
-        value: 'nameDesc'
-      }, {
-        label: 'Last update',
-        value: 'lastUpdateAsc'
-      }, {
-        label: 'Least update',
-        value: 'lastUpdateDesc'
-      }, {
-        label: 'Author asc',
-        value: 'authorAsc'
-      }, {
-        label: 'Author desc',
-        value: 'authorDesc'
-      }],
+      recipes: [],
       loading: false,
-      deleteLoading: false,
-      deleteDialog: false,
-      deleteRecipes: [],
-      isFilterExpanded: false,
-      searchOptions: this.defaultSearchOptions(),
+      filter: this.routeOptions().filter,
       pagination: {
-        page: 0,
+        page: this.routeOptions().page,
         totalPages: 1
-      },
-      recipes: []
+      }
     }
   },
   created() {
-    this.mdiMagnify = mdiMagnify;
-    if (this.$route.query.page) {
-      this.pagination.page = Number(this.$route.query.page);
-      this.pagination.totalPages = Number(this.$route.query.page);
-    }
-    if (this.$route.query.search) {
-      this.searchOptions.query = this.$route.query.query;
-      this.unappliedSearchData.query = this.$route.query.query;
-    }
-    const filterFromRoute = this.filterFromRoute();
-    this.searchOptions = filterFromRoute.searchOptions;
-    this.pagination.page = filterFromRoute.page
-    this.fetchRecipes();
-  },
-  watch: {
-    categoryId() {
-      this.fetchRecipes();
-    }
+    this.updateRecipes();
+    this.mdiAlert = mdiAlert;
   },
   methods: {
-    defaultSearchOptions() {
-      return {
-        query: '',
-        automaticallyFabricable: false,
-        fabricableWithOwnedIngredients: false,
-        containsIngredients: [],
-        orderBy: null
-      }
-    },
-    filterFromRoute() {
+    routeOptions() {
       const queryParams = this.$route.query;
+      let containsIngredients = !!queryParams.containsIngredients? queryParams.containsIngredients : [];
+      if(!Array.isArray(containsIngredients)) {
+        containsIngredients = [containsIngredients]
+      }
+
       return {
-        searchOptions: {
+        filter: {
           query: !!queryParams.query ? queryParams.query : '',
           automaticallyFabricable: !!queryParams.automaticallyFabricable ?
             (queryParams.automaticallyFabricable === 'true') : false,
           fabricableWithOwnedIngredients: !!queryParams.fabricableWithOwnedIngredients ?
             (queryParams.fabricableWithOwnedIngredients === 'true') : false,
-          containsIngredients: !!queryParams.containsIngredients? queryParams.containsIngredients : [],
+          containsIngredients: containsIngredients,
           orderBy: queryParams.orderBy
         },
         page: !!queryParams.page? Number(queryParams.page) : 0
       }
     },
-    closeDeleteDialog() {
-      this.deleteDialog = false;
-    },
-    openDeleteDialog() {
-      this.deleteDialog = true;
-    },
-    resetFilters() {
-      this.searchOptions = this.defaultSearchOptions();
-    },
-    deleteSelected() {
-      this.deleteLoading = true;
-      let vm = this;
-      const deletePromises = [];
-      this.deleteRecipes.forEach(recipe => {
-        deletePromises.push(RecipeService.deleteRecipe(recipe.id))
-      })
-      Promise.all(deletePromises)
-        .then(() => {
-          vm.closeDeleteDialog();
-          vm.deleteLoading = false;
-          vm.fetchRecipes();
-        }, err => {
-          vm.deleteLoading = false;
-          vm.fetchRecipes();
-        })
-    },
-    onRefreshButton() {
-      this.loading = true;
-      this.recipes = [];
-      let vm = this;
-      setTimeout(() => {
-        vm.fetchRecipes()
-      }, 500);
+    updateRecipes(withLoadingAnimation = true) {
+      this.loading = withLoadingAnimation;
+      if(withLoadingAnimation) {
+        this.recipes = [];
+      }
+      this.updateRoute();
+      return new Promise(((resolve, reject) => {
+        setTimeout(() => {
+          RecipeService.getRecipes(this.pagination.page,
+            this.onlyOwnRecipes ? this.user.id : null,
+            null,
+            this.collectionId,
+            this.onlyOwnRecipes ? null : true,
+            this.filter.automaticallyFabricable,
+            this.filter.fabricableWithOwnedIngredients,
+            this.filter.containsIngredients,
+            this.filter.query,
+            this.categoryId,
+            this.filter.orderBy
+          ).then(page => {
+            this.recipes = page.content;
+            this.pagination.totalPages = page.totalPages;
+            this.pagination.page = page.number;
+            this.loading = false;
+            resolve(page.content);
+          }, error => {
+            this.loading = false;
+            reject(error);
+          });
+        }, withLoadingAnimation? 500 : 0);
+      }));
     },
     updateRoute() {
       let query = {
         page: this.pagination.page
       };
-      query = Object.assign(query, this.searchOptions);
+      query = Object.assign(query, this.filter);
       query = JsUtils.cleanObject(query);
-      this.$router.replace({name: this.$route.name, query});
+      this.$router.replace({name: this.$route.name, query}).catch(()=>{});
     },
     onPageClick(page) {
       if (this.pagination.page !== page) {
         this.pagination.page = page;
-        this.updateRoute();
-        this.fetchRecipes();
+        this.updateRecipes()
       }
+    }
+  },
+  watch: {
+    collectionId() {
+      this.updateRecipes()
     },
-    fetchRecipes() {
-      this.recipes = [];
-      this.loading = true;
-      return RecipeService.getRecipes(this.pagination.page,
-        this.onlyOwnRecipes ? this.user.id : null,
-        null,
-        null,
-        this.onlyOwnRecipes ? null : true,
-        this.searchOptions.automaticallyFabricable,
-        this.searchOptions.fabricableWithOwnedIngredients,
-        this.searchOptions.containsIngredients,
-        this.searchOptions.query,
-        this.categoryId,
-        this.searchOptions.orderBy
-      ).then(page => {
-        this.recipes = page.content;
-        this.pagination.totalPages = page.totalPages;
-        this.pagination.page = page.number;
-        this.loading = false;
-      }, error => {
-        this.loading = false;
-      });
+    onlyOwnRecipes() {
+      this.updateRecipes()
+    },
+    categoryId() {
+      this.updateRecipes()
     }
   },
   computed: {
     ...mapGetters({
-      isRecipeCreatorRole: 'auth/isRecipeCreator',
       user: 'auth/getUser'
     }),
-    deleteQuestionMessage() {
-      if (this.deleteRecipes.length === 0) {
-        return "No recipes selected!";
+    noDataMessage() {
+      if(this.loading) {
+        return "";
       }
-      if (this.deleteRecipes.length === 1) {
-        return "The following recipe will be deleted:";
-      }
-      return "The following recipes will be deleted:";
+      return "No recipes found!"
     }
   }
 }
 </script>
 
 <style scoped>
+
 </style>

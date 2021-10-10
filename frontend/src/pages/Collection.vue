@@ -29,7 +29,7 @@
     </top-button-arranger>
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-8 col-lg-9">
-        <recipe-search-list
+        <c-recipe-search-list
           ref="recipeSearchList"
           :collection-id="collection.id"
         >
@@ -65,7 +65,7 @@
               </q-btn>
             </div>
           </template>
-        </recipe-search-list>
+        </c-recipe-search-list>
       </div>
       <div class="col-12 col-md-4 col-lg-3">
         <q-card class="rounded-borders"
@@ -191,7 +191,6 @@
 </template>
 
 <script>
-import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
 import CRecipeCard from "components/CRecipeCard";
@@ -201,16 +200,14 @@ import TopButtonArranger from "components/TopButtonArranger";
 import CQuestion from "components/CQuestion";
 import CEditDialog from "components/CEditDialog";
 import CRecipeSelector from "components/CRecipeSelector";
-import RecipeList from "components/RecipeList";
-import RecipeSearchList from "components/RecipeSearchList";
+import CRecipeSearchList from "components/CRecipeSearchList";
 
 export default {
   name: "Collection",
   components: {
-    RecipeSearchList,
-    RecipeList,
+    CRecipeSearchList,
     CRecipeSelector,
-    CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
+    CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
     next(vm => {
