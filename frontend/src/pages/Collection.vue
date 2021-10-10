@@ -7,27 +7,17 @@
     <h5>{{ collection.name }}</h5>
     <top-button-arranger style="margin-bottom: 15px">
       <q-btn
-        v-if="!editData.editMode"
-        @click="editData.editMode = true"
+        v-if="!editRecipes"
+        @click="editRecipes = true"
         color="grey"
-        label="Edit"
+        label="Modify recipes"
         no-caps
       />
       <q-btn
-        v-if="editData.editMode"
-        :disable="editData.saving"
-        @click="onAbortEdit()"
+        v-if="editRecipes"
+        @click="editRecipes = false"
         color="negative"
-        label="Abort"
-        no-caps
-      />
-      <q-btn
-        v-if="editData.editMode"
-        type="submit"
-        color="positive"
-        :loading="editData.saving"
-        label="Save"
-        @click="onClickSafe()"
+        label="Stop modifying recipes"
         no-caps
       />
       <q-btn
@@ -40,12 +30,12 @@
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-8 col-lg-9">
         <recipe-search-list
-          :recipes="recipes"
-          :collection-id="$route.params.id"
+          ref="recipeSearchList"
+          :collection-id="collection.id"
         >
           <template slot="firstItem">
             <div class="col-12"
-                 v-if="editData.editMode"
+                 v-if="editRecipes"
             >
               <c-recipe-selector
                 label="Add recipe"
@@ -65,7 +55,7 @@
                 round
                 flat
                 dense
-                v-if="editData.editMode"
+                v-if="editRecipes"
                 :loading="deletingRecipIds.some(x => x === recipe.id)"
                 @click.prevent="onClickDeleteRecipe(recipe.id)"
                 class="text-red"
@@ -158,8 +148,31 @@
                         val => $v.editData.collection.description.required || 'Required',
                         val => $v.editData.collection.description.maxLength || 'Maximal length 2000']"
               >
-
               </q-input>
+              <q-btn
+                v-if="!editData.editMode"
+                @click="editData.editMode = true"
+                color="grey"
+                label="Edit"
+                no-caps
+              />
+              <q-btn
+                v-if="editData.editMode"
+                :disable="editData.saving"
+                @click="onAbortEdit()"
+                color="negative"
+                label="Abort"
+                no-caps
+              />
+              <q-btn
+                v-if="editData.editMode"
+                type="submit"
+                color="positive"
+                :loading="editData.saving"
+                label="Save"
+                @click="onClickSafe()"
+                no-caps
+              />
             </q-form>
           </q-card-section>
         </q-card>
@@ -187,7 +200,6 @@
 import CRecipeList from "components/CRecipeList";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import CollectionService from "src/services/collection.service";
-import RecipeService from "src/services/recipe.service";
 import CRecipeCard from "components/CRecipeCard";
 import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
 import {mdiDelete, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
@@ -207,17 +219,14 @@ export default {
     CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
   async beforeRouteEnter(to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id);
-    const recipes = await RecipeService.getRecipes(0, null, null, to.params.id,
-      null, null, null, null, null, null, null)
-      .then(page => page.content);
     next(vm => {
       vm.collection = collection;
       vm.editData.collection = Object.assign({}, collection);
-      vm.recipes = recipes;
     })
   },
   data() {
     return {
+      editRecipes: false,
       editData: {
         showAddRecipeDialog: false,
         saving: false,
@@ -237,7 +246,6 @@ export default {
         hasImage: false,
         complete: false
       },
-      recipes: [],
       deletingRecipIds: [],
       showDeleteCollectionDialog: false,
       deletingCollection: false
@@ -275,11 +283,9 @@ export default {
           });
         })
         .finally(() => {
-          CollectionService.getCollectionRecipes(this.collection.id)
-            .then(recipes => this.recipes = recipes)
-            .finally(() => {
-              this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
-            })
+          this.$refs.recipeSearchList.updateRecipes().finally(() =>{
+            this.deletingRecipIds = this.deletingRecipIds.filter(x => x !== recipeId)
+          });
         });
     },
     onAddRecipe(recipeId) {
@@ -291,8 +297,7 @@ export default {
           });
         })
         .finally(() => {
-          CollectionService.getCollectionRecipes(this.collection.id)
-            .then(recipes => this.recipes = recipes)
+          this.$refs.recipeSearchList.updateRecipes()
         });
     },
     onImageSelect(image) {

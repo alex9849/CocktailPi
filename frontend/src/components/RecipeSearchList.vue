@@ -12,22 +12,23 @@
     >
       <template slot="firstItem"
       >
-        <div class="col-12"
+        <div class="col-12 q-col-gutter-y-md"
              v-if="!!$slots.firstItem || loading"
         >
           <slot name="firstItem"></slot>
-          <q-card v-if="loading"
-                  flat
-                  bordered
-          >
-            <q-card-section class="q-pa-md">
-              <q-icon :name="mdiAlert" size="sm"/>
-              Loading...
-            </q-card-section>
-            <q-inner-loading showing>
-              <q-spinner size="40px" color="info" />
-            </q-inner-loading>
-          </q-card>
+          <div v-if="loading">
+            <q-card flat
+                    bordered
+            >
+              <q-card-section class="q-pa-md">
+                <q-icon :name="mdiAlert" size="sm"/>
+                Loading...
+              </q-card-section>
+              <q-inner-loading showing>
+                <q-spinner size="40px" color="info" />
+              </q-inner-loading>
+            </q-card>
+          </div>
         </div>
       </template>
       <template slot="recipeTopRight"
@@ -79,10 +80,6 @@ export default {
   name: "RecipeSearchList",
   components: {RecipeSearchFilterCard, RecipeList},
   props: {
-    loading: {
-      type: Boolean,
-      default: false
-    },
     collectionId: {
       type: Number,
       required: false
@@ -136,28 +133,31 @@ export default {
       this.loading = true;
       this.recipes = [];
       this.updateRoute();
-      setTimeout(() => {
-        return RecipeService.getRecipes(this.pagination.page,
-          this.onlyOwnRecipes ? this.user.id : null,
-          null,
-          this.collectionId,
-          this.onlyOwnRecipes ? null : true,
-          this.filter.automaticallyFabricable,
-          this.filter.fabricableWithOwnedIngredients,
-          this.filter.containsIngredients,
-          this.filter.query,
-          this.categoryId,
-          this.filter.orderBy
-        ).then(page => {
-          this.recipes = page.content;
-          this.pagination.totalPages = page.totalPages;
-          this.pagination.page = page.number;
-          this.loading = false;
-        }, error => {
-          this.loading = false;
-        });
-      }, 500);
-
+      return new Promise(((resolve, reject) => {
+        setTimeout(() => {
+          RecipeService.getRecipes(this.pagination.page,
+            this.onlyOwnRecipes ? this.user.id : null,
+            null,
+            this.collectionId,
+            this.onlyOwnRecipes ? null : true,
+            this.filter.automaticallyFabricable,
+            this.filter.fabricableWithOwnedIngredients,
+            this.filter.containsIngredients,
+            this.filter.query,
+            this.categoryId,
+            this.filter.orderBy
+          ).then(page => {
+            this.recipes = page.content;
+            this.pagination.totalPages = page.totalPages;
+            this.pagination.page = page.number;
+            this.loading = false;
+            resolve(page.content);
+          }, error => {
+            this.loading = false;
+            reject(error);
+          });
+        }, 500);
+      }));
     },
     updateRoute() {
       let query = {
@@ -172,6 +172,17 @@ export default {
         this.pagination.page = page;
         this.updateRecipes()
       }
+    }
+  },
+  watch: {
+    collectionId() {
+      this.updateRecipes()
+    },
+    onlyOwnRecipes() {
+      this.updateRecipes()
+    },
+    categoryId() {
+      this.updateRecipes()
     }
   },
   computed: {
