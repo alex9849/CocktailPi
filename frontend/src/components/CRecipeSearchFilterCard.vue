@@ -118,12 +118,6 @@ export default {
       }, {
         label: 'Least update',
         value: 'lastUpdateDesc'
-      }, {
-        label: 'Author asc',
-        value: 'authorAsc'
-      }, {
-        label: 'Author desc',
-        value: 'authorDesc'
       }],
     }
   },

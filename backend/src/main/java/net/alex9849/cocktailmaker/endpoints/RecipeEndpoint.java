@@ -80,17 +80,11 @@ public class RecipeEndpoint {
         page = Math.max(page, 0);
         Sort sort;
         switch (orderBy) {
-            case "authorDesc":
-                sort = Sort.by(Sort.Direction.DESC, "author");
-                break;
-            case "authorAsc":
-                sort = Sort.by(Sort.Direction.ASC, "author");
-                break;
             case "lastUpdateDesc":
-                sort = Sort.by(Sort.Direction.DESC, "lastUpdate");
+                sort = Sort.by(Sort.Direction.DESC, "last_update");
                 break;
             case "lastUpdateAsc":
-                sort = Sort.by(Sort.Direction.ASC, "lastUpdate");
+                sort = Sort.by(Sort.Direction.ASC, "last_update");
                 break;
             case "nameDesc":
                 sort = Sort.by(Sort.Direction.DESC, "name");
