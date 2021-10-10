@@ -65,13 +65,6 @@
               </q-btn>
             </div>
           </template>
-          <template slot="recipeTopRight" slot-scope="{recipe}">
-            <div class="row items-center">
-              <c-recipe-fabricable-icon
-                :recipe="recipe"
-              />
-            </div>
-          </template>
         </recipe-search-list>
       </div>
       <div class="col-12 col-md-4 col-lg-3">

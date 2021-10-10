@@ -37,7 +37,11 @@
               <div
                 class="col"
                 style="display: contents; max-width: max-content;">
-                <slot name="topRight"/>
+                <slot name="topRight">
+                  <c-recipe-fabricable-icon
+                    :recipe="recipe"
+                  />
+                </slot>
               </div>
             </div>
           </div>
@@ -79,9 +83,11 @@
 <script>
 
 import {mapGetters} from "vuex";
+import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
 
 export default {
   name: "CRecipeCard",
+  components: {CRecipeFabricableIcon},
   props: {
     recipe: {
       type: Object,
