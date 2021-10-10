@@ -1,5 +1,5 @@
 <template>
-  <q-card class="bg-grey-1">
+  <q-card>
     <q-card-section>
       <div class="q-gutter-md">
         <div>

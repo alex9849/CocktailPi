@@ -2,10 +2,12 @@
   <div class="q-gutter-md">
     <recipe-search-filter-card
       v-model="filter"
+      class="bg-grey-1"
       @clickSearch="updateRecipes"
     />
     <recipe-list
       :recipes="[]"
+      no-data-message="No recipes found!"
     >
       <template slot="firstItem"
                 v-if="!!$slots.firstItem"

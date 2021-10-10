@@ -56,18 +56,6 @@
                 </template>
               </c-recipe-selector>
             </div>
-            <div v-if="recipes.length === 0"
-                 class="col-12"
-            >
-              <q-card
-                      flat
-                      bordered
-              >
-                <q-card-section class="text-center">
-                  No recipes found!
-                </q-card-section>
-              </q-card>
-            </div>
           </template>
           <template slot="recipeHeadline" slot-scope="{recipe}">
             <div class="flex content-center">

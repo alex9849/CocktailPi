@@ -2,6 +2,19 @@
   <div>
     <div class="row q-col-gutter-md">
       <slot name="firstItem"/>
+      <div v-if="recipes.length === 0 && !!noDataMessage"
+           class="col-12"
+      >
+        <q-card
+          flat
+          bordered
+          class="bg-grey-1"
+        >
+          <q-card-section class="text-center">
+            {{ noDataMessage }}
+          </q-card-section>
+        </q-card>
+      </div>
       <div
         v-for="recipe of recipes"
         :key="recipe.id"
@@ -47,6 +60,10 @@ export default {
     recipes: {
       type: Array,
       required: true
+    },
+    noDataMessage: {
+      type: String,
+      required: false
     }
   }
 }
