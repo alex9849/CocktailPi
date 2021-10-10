@@ -39,10 +39,10 @@
     </top-button-arranger>
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-8 col-lg-9">
-        <recipe-list
+        <recipe-search-list
           :recipes="recipes"
         >
-          <template slot="first">
+          <template slot="firstItem">
             <div class="col-12"
                  v-if="editData.editMode"
             >
@@ -92,7 +92,7 @@
               />
             </div>
           </template>
-        </recipe-list>
+        </recipe-search-list>
       </div>
       <div class="col-12 col-md-4 col-lg-3">
         <q-card class="rounded-borders"
@@ -207,10 +207,12 @@ import CQuestion from "components/CQuestion";
 import CEditDialog from "components/CEditDialog";
 import CRecipeSelector from "components/CRecipeSelector";
 import RecipeList from "components/RecipeList";
+import RecipeSearchList from "components/RecipeSearchList";
 
 export default {
   name: "Collection",
   components: {
+    RecipeSearchList,
     RecipeList,
     CRecipeSelector,
     CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard, CRecipeList},
