@@ -8,12 +8,27 @@
     />
     <recipe-list
       :recipes="recipes"
-      no-data-message="No recipes found!"
+      :no-data-message="noDataMessage"
     >
       <template slot="firstItem"
-                v-if="!!$slots.firstItem"
       >
-        <slot name="firstItem"></slot>
+        <div class="col-12"
+             v-if="!!$slots.firstItem || loading"
+        >
+          <slot name="firstItem"></slot>
+          <q-card v-if="loading"
+                  flat
+                  bordered
+          >
+            <q-card-section class="q-pa-md">
+              <q-icon :name="mdiAlert" size="sm"/>
+              Loading...
+            </q-card-section>
+            <q-inner-loading showing>
+              <q-spinner size="40px" color="info" />
+            </q-inner-loading>
+          </q-card>
+        </div>
       </template>
       <template slot="recipeTopRight"
                 slot-scope="{recipe}"
@@ -57,12 +72,17 @@ import RecipeList from "components/RecipeList";
 import RecipeService from '../services/recipe.service'
 import RecipeSearchFilterCard from "components/RecipeSearchFilterCard";
 import {mapGetters} from "vuex";
+import {mdiAlert} from "@quasar/extras/mdi-v5";
 import JsUtils from "src/services/JsUtils";
 
 export default {
   name: "RecipeSearchList",
   components: {RecipeSearchFilterCard, RecipeList},
   props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
     collectionId: {
       type: Number,
       required: false
@@ -89,10 +109,16 @@ export default {
   },
   created() {
     this.updateRecipes();
+    this.mdiAlert = mdiAlert;
   },
   methods: {
     routeOptions() {
       const queryParams = this.$route.query;
+      let containsIngredients = !!queryParams.containsIngredients? queryParams.containsIngredients : [];
+      if(!Array.isArray(containsIngredients)) {
+        containsIngredients = [containsIngredients]
+      }
+
       return {
         filter: {
           query: !!queryParams.query ? queryParams.query : '',
@@ -100,7 +126,7 @@ export default {
             (queryParams.automaticallyFabricable === 'true') : false,
           fabricableWithOwnedIngredients: !!queryParams.fabricableWithOwnedIngredients ?
             (queryParams.fabricableWithOwnedIngredients === 'true') : false,
-          containsIngredients: !!queryParams.containsIngredients? queryParams.containsIngredients : [],
+          containsIngredients: containsIngredients,
           orderBy: queryParams.orderBy
         },
         page: !!queryParams.page? Number(queryParams.page) : 0
@@ -110,25 +136,28 @@ export default {
       this.loading = true;
       this.recipes = [];
       this.updateRoute();
-      return RecipeService.getRecipes(this.pagination.page,
-        this.onlyOwnRecipes ? this.user.id : null,
-        null,
-        this.collectionId,
-        this.onlyOwnRecipes ? null : true,
-        this.filter.automaticallyFabricable,
-        this.filter.fabricableWithOwnedIngredients,
-        this.filter.containsIngredients,
-        this.filter.query,
-        this.categoryId,
-        this.filter.orderBy
-      ).then(page => {
-        this.recipes = page.content;
-        this.pagination.totalPages = page.totalPages;
-        this.pagination.page = page.number;
-        this.loading = false;
-      }, error => {
-        this.loading = false;
-      });
+      setTimeout(() => {
+        return RecipeService.getRecipes(this.pagination.page,
+          this.onlyOwnRecipes ? this.user.id : null,
+          null,
+          this.collectionId,
+          this.onlyOwnRecipes ? null : true,
+          this.filter.automaticallyFabricable,
+          this.filter.fabricableWithOwnedIngredients,
+          this.filter.containsIngredients,
+          this.filter.query,
+          this.categoryId,
+          this.filter.orderBy
+        ).then(page => {
+          this.recipes = page.content;
+          this.pagination.totalPages = page.totalPages;
+          this.pagination.page = page.number;
+          this.loading = false;
+        }, error => {
+          this.loading = false;
+        });
+      }, 500);
+
     },
     updateRoute() {
       let query = {
@@ -139,14 +168,22 @@ export default {
       this.$router.replace({name: this.$route.name, query});
     },
     onPageClick(page) {
-      this.pagination.page = page;
-      this.updateRecipes();
+      if (this.pagination.page !== page) {
+        this.pagination.page = page;
+        this.updateRecipes()
+      }
     }
   },
   computed: {
     ...mapGetters({
       user: 'auth/getUser'
-    })
+    }),
+    noDataMessage() {
+      if(this.loading) {
+        return "";
+      }
+      return "No recipes found!"
+    }
   }
 }
 </script>

@@ -41,6 +41,7 @@
       <div class="col-12 col-md-8 col-lg-9">
         <recipe-search-list
           :recipes="recipes"
+          :collection-id="$route.params.id"
         >
           <template slot="firstItem">
             <div class="col-12"
