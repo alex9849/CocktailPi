@@ -94,7 +94,7 @@ public class RecipeService {
         if(retained.isEmpty()) {
             return new PageImpl<>(Collections.emptyList());
         }
-        return new PageImpl<>(recipeRepository.findByIds(offset, pageSize, sort, retained.toArray(new Long[1])), pageable, recipeRepository.count());
+        return new PageImpl<>(recipeRepository.findByIds(offset, pageSize, sort, retained.toArray(new Long[1])), pageable, retained.size());
     }
 
     public Recipe getById(long id) {

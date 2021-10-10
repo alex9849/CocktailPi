@@ -52,7 +52,7 @@
                     :options="orderByOptions"
                   />
                   <div
-                    class="col-12 flex content-center"
+                    class="col-12 flex justify-center"
                   >
                     <q-btn
                       color="red"
