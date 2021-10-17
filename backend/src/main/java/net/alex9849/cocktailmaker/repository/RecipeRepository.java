@@ -336,7 +336,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setDescription(rs.getString("description"));
         recipe.setName(rs.getString("name"));
         recipe.setInPublic(rs.getBoolean("in_public"));
-        recipe.setLastUpdate(rs.getDate("last_update"));
+        recipe.setLastUpdate(rs.getTimestamp("last_update"));
         recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
         return recipe;
     }

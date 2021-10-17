@@ -135,7 +135,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
-            pstmt.setLong(7, ingredient.getId());
+            pstmt.setLong(6, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         });
     }

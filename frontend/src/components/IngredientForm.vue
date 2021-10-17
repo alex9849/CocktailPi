@@ -109,7 +109,7 @@ export default {
       units: [
         {label: 'gram (g)', value: 'g'},
         {label: 'milliliter (ml)', value: 'ml'},
-        {label: 'unit(s)', value: 'unit(s)'},
+        {label: 'piece(s)', value: 'piece(s)'},
         {label: 'teaspoon(s)', value: 'teaspoon(s)'},
         {label: 'tablespoon(s)', value: 'tablespoon(s)'}
       ],
