@@ -129,7 +129,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
-                for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
+                for (RecipeIngredient ri : recipe.getProductionSteps()) {
                     ri.setRecipeId(recipe.getId());
                     recipeIngredientRepository.create(ri);
                 }
@@ -155,7 +155,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(6, recipe.getDefaultAmountToFill());
             pstmt.setLong(7, recipe.getId());
             recipeIngredientRepository.deleteByRecipe(recipe.getId());
-            for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
+            for (RecipeIngredient ri : recipe.getProductionSteps()) {
                 ri.setRecipeId(recipe.getId());
                 recipeIngredientRepository.create(ri);
             }
@@ -319,8 +319,8 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     private Recipe populateEntity(Recipe recipe) {
-        recipe.setRecipeIngredients(recipeIngredientRepository.loadByRecipeId(recipe.getId()));
-        for (RecipeIngredient ri : recipe.getRecipeIngredients()) {
+        recipe.setProductionSteps(recipeIngredientRepository.loadByRecipeId(recipe.getId()));
+        for (RecipeIngredient ri : recipe.getProductionSteps()) {
             //Always non null, because of DB constraints
             ri.setIngredient(ingredientRepository.findById(ri.getIngredientId()).get());
         }

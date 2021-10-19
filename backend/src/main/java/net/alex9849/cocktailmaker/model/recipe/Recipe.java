@@ -15,7 +15,7 @@ public class Recipe {
     private String description;
     private Date lastUpdate;
     private long defaultAmountToFill;
-    private List<RecipeIngredient> recipeIngredients;
+    private List<ProductionStep> productionSteps;
     private List<Category> categories;
 
     public long getId() {
@@ -58,12 +58,12 @@ public class Recipe {
         this.owner = owner;
     }
 
-    public List<RecipeIngredient> getRecipeIngredients() {
-        return recipeIngredients;
+    public List<ProductionStep> getProductionSteps() {
+        return productionSteps;
     }
 
-    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
-        this.recipeIngredients = recipeIngredients;
+    public void setProductionSteps(List<ProductionStep> productionSteps) {
+        this.productionSteps = productionSteps;
     }
 
     public void setLastUpdate(Date lastUpdate) {

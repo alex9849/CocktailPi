@@ -135,7 +135,7 @@ public class RecipeService {
             recipe.setOwnerId(recipe.getOwner().getId());
         }
         AtomicInteger index = new AtomicInteger();
-        recipe.setRecipeIngredients(recipeDto
+        recipe.setProductionSteps(recipeDto
                 .getRecipeIngredients().stream()
                         .flatMap(x -> {
                             index.incrementAndGet();

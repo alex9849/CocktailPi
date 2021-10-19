@@ -48,7 +48,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
     }
 
     private Recipe createRecipe(Recipe recipe) {
-        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
+        for(RecipeIngredient recipeIngredient : recipe.getProductionSteps()) {
             Ingredient ingredient = getOrCreateIngredient(recipeIngredient.getIngredient());
             recipeIngredient.setIngredient(ingredient);
             recipeIngredient.setIngredientId(ingredient.getId());

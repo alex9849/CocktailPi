@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
-public class RecipeIngredient {
+public class ProductionStep {
 
     private long recipeId;
     private long ingredientId;

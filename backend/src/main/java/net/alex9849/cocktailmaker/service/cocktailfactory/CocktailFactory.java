@@ -4,7 +4,10 @@ import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
-import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
 
@@ -37,7 +40,7 @@ public class CocktailFactory {
         Map<Long, Pump> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x -> x, (a, b) -> a));
-        Map<Long, List<RecipeIngredient>> recipeIngredientByStep = recipe.getRecipeIngredients().stream()
+        Map<Long, List<RecipeIngredient>> recipeIngredientByStep = recipe.getProductionSteps().stream()
                 .collect(Collectors.groupingBy(x -> x.getProductionStep()));
         List<Long> sortedProductionsSteps = recipeIngredientByStep.keySet().stream().sorted().collect(Collectors.toList());
         List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
@@ -99,7 +102,7 @@ public class CocktailFactory {
     }
 
     private Set<Ingredient> getNeededIngredientIds() {
-        return new HashSet<Ingredient>(this.recipe.getRecipeIngredients().stream()
+        return new HashSet<Ingredient>(this.recipe.getProductionSteps().stream()
                 .collect(Collectors.toMap(x -> x.getIngredient().getId(), x -> x.getIngredient(), (a, b) -> a))
                 .values());
     }
@@ -122,7 +125,7 @@ public class CocktailFactory {
     }
 
     public int getRecipeAmountOfLiquid() {
-        return this.recipe.getRecipeIngredients().stream().mapToInt(RecipeIngredient::getAmount).sum();
+        return this.recipe.getProductionSteps().stream().mapToInt(RecipeIngredient::getAmount).sum();
     }
 
     private void handleWorkerNotification(AbstractProductionStepWorker worker, StepProgress stepProgress) {
@@ -253,11 +256,11 @@ public class CocktailFactory {
      * amount of liquids for all ingredients
      */
     public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
-        int liquidAmountScaled = recipe.getRecipeIngredients().stream()
+        int liquidAmountScaled = recipe.getProductionSteps().stream()
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
-        int liquidAmountUnscaled = recipe.getRecipeIngredients().stream()
+        int liquidAmountUnscaled = recipe.getProductionSteps().stream()
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> !x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
@@ -272,7 +275,7 @@ public class CocktailFactory {
             multiplier = wantedAmountOfLiquid / ((double) liquidAmountScaled);
         }
 
-        for(RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
+        for(RecipeIngredient recipeIngredient : recipe.getProductionSteps()) {
             if(recipeIngredient.isScale()) {
                 recipeIngredient.setAmount((int) (recipeIngredient.getAmount() * multiplier));
             }

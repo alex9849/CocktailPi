@@ -20,7 +20,7 @@ public class RecipeDto {
         this.owner = new OwnerDto(recipe.getOwner());
         this.lastUpdate = recipe.getLastUpdate();
         Map<Long, List<RecipeIngredient>> byProductionStep = recipe
-                .getRecipeIngredients().stream()
+                .getProductionSteps().stream()
                 .collect(Collectors.groupingBy(RecipeIngredient::getProductionStep));
         List<Long> steps = new ArrayList<>(byProductionStep.keySet());
         steps.sort(Comparator.comparingLong(x -> x));
