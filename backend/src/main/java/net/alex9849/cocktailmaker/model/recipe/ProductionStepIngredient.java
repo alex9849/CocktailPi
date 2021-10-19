@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
-public class AddIngredient {
+public class ProductionStepIngredient {
 
     private Ingredient ingredient;
     private int amount;

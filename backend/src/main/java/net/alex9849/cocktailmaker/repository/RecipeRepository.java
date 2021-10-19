@@ -1,7 +1,8 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Category;
-import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
@@ -32,7 +33,7 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     @Autowired
-    private RecipeIngredientRepository recipeIngredientRepository;
+    private ProductionStepRepository productionStepRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -129,9 +130,9 @@ public class RecipeRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
-                for (AddIngredient ri : recipe.getProductionSteps()) {
+                for (ProductionStep step : recipe.getProductionSteps()) {
                     ri.setRecipeId(recipe.getId());
-                    recipeIngredientRepository.create(ri);
+                    productionStepRepository.create(ri);
                 }
                 for(Category category : recipe.getCategories()) {
                     recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
@@ -154,10 +155,10 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(5, recipe.getOwnerId());
             pstmt.setLong(6, recipe.getDefaultAmountToFill());
             pstmt.setLong(7, recipe.getId());
-            recipeIngredientRepository.deleteByRecipe(recipe.getId());
-            for (AddIngredient ri : recipe.getProductionSteps()) {
+            productionStepRepository.deleteByRecipe(recipe.getId());
+            for (ProductionStepIngredient ri : recipe.getProductionSteps()) {
                 ri.setRecipeId(recipe.getId());
-                recipeIngredientRepository.create(ri);
+                productionStepRepository.create(ri);
             }
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());
             for(Category category : recipe.getCategories()) {
@@ -319,8 +320,8 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     private Recipe populateEntity(Recipe recipe) {
-        recipe.setProductionSteps(recipeIngredientRepository.loadByRecipeId(recipe.getId()));
-        for (AddIngredient ri : recipe.getProductionSteps()) {
+        recipe.setProductionSteps(productionStepRepository.loadByRecipeId(recipe.getId()));
+        for (ProductionStepIngredient ri : recipe.getProductionSteps()) {
             //Always non null, because of DB constraints
             ri.setIngredient(ingredientRepository.findById(ri.getIngredientId()).get());
         }

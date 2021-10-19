@@ -1,17 +1,17 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 
 import java.util.List;
 
 public class ManualStepProgress extends StepProgress {
-    private List<AddIngredient> ingredientsToBeAdded;
+    private List<ProductionStepIngredient> ingredientsToBeAdded;
 
-    public List<AddIngredient> getIngredientsToBeAdded() {
+    public List<ProductionStepIngredient> getIngredientsToBeAdded() {
         return ingredientsToBeAdded;
     }
 
-    public void setIngredientsToBeAdded(List<AddIngredient> ingredientsToBeAdded) {
+    public void setIngredientsToBeAdded(List<ProductionStepIngredient> ingredientsToBeAdded) {
         this.ingredientsToBeAdded = ingredientsToBeAdded;
     }
 }

@@ -1,8 +1,8 @@
 package db.migration;
 
 import net.alex9849.cocktailmaker.model.Category;
-import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
@@ -48,7 +48,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
     }
 
     private Recipe createRecipe(Recipe recipe) {
-        for(AddIngredient recipeIngredient : recipe.getProductionSteps()) {
+        for(ProductionStepIngredient recipeIngredient : recipe.getProductionSteps()) {
             Ingredient ingredient = getOrCreateIngredient(recipeIngredient.getIngredient());
             recipeIngredient.setIngredient(ingredient);
             recipeIngredient.setIngredientId(ingredient.getId());

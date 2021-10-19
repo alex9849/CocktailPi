@@ -3,8 +3,8 @@ package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpTimingStepCalculator;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class AutomaticProductionStepWorker extends AbstractProductionStepWorker {
     private final Map<Long, Pump> pumpsByIngredientId;
-    private final List<AddIngredient> productionStepInstructions;
+    private final List<ProductionStepIngredient> productionStepInstructions;
     private final Map<Pump, List<PumpPhase>> pumpPumpPhases;
     private final long requiredWorkingTime;
     private final ScheduledExecutorService scheduler;
@@ -30,7 +30,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     private long endTime;
     private boolean started;
 
-    public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<AddIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
+    public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
         this.pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors
@@ -38,7 +38,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.productionStepInstructions = productionStepInstructions;
 
         Map<Pump, Integer> pumpRuntimes = new HashMap<>();
-        for (AddIngredient instruction : this.productionStepInstructions) {
+        for (ProductionStepIngredient instruction : this.productionStepInstructions) {
             if (!(instruction.getIngredient() instanceof AutomatedIngredient)) {
                 throw new IllegalArgumentException("Can't automatically fulfill productionstep. One or more given ingredients can only be added manually!");
             }

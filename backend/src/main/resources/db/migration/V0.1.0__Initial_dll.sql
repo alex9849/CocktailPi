@@ -60,16 +60,24 @@ create table recipes
     primary key (id)
 );
 
-create table recipe_ingredients
+create table production_steps
 (
-    ingredient_id   int8 not null references ingredients on delete cascade,
-    recipe_id       int8 not null references recipes on delete cascade,
-    production_step int4 not null,
-    amount          int4 not null check (amount >= 1),
-    scale           bool not null,
-    primary key (
-                 ingredient_id, recipe_id, production_step
-        )
+    recipe_id int8 not null references recipes on delete cascade,
+    dType     varchar(20) check (dType = 'AddIngredients' OR dType = 'WrittenInstruction'),
+    message   varchar(500) check (dType != 'WrittenInstruction' OR (message IS NOT NULL AND length(message) > 0)),
+    "order"   int4 not null,
+    primary key (recipe_id, "order")
+);
+
+create table production_step_ingredients
+(
+    recipe_id     int8 not null,
+    "order"       int4 not null,
+    ingredient_id int8 not null references ingredients on delete cascade,
+    amount        int4 not null check (amount >= 1),
+    scale         bool not null,
+    primary key (ingredient_id, recipe_id, "order"),
+    foreign key (recipe_id, "order") references production_steps on delete cascade
 );
 
 create table categories
@@ -90,7 +98,7 @@ create table collections
 (
     id          bigserial                   NOT NULL,
     name        varchar(20)                 NOT NULL,
-    description varchar(2000)                NOT NULL,
+    description varchar(2000)               NOT NULL,
     completed   bool                        NOT NULL,
     image       oid,
     owner_id    bigserial                   NOT NULL REFERENCES users ON DELETE CASCADE,
