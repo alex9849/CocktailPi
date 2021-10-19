@@ -12,7 +12,7 @@ public class Cocktailprogress {
     private User user;
     private State state;
     private List<ProductionStepIngredient> currentIngredientsToAddManually;
-
+    private String writtenInstruction;
 
     public Recipe getRecipe() {
         return recipe;
@@ -20,6 +20,14 @@ public class Cocktailprogress {
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
+    }
+
+    public String getWrittenInstruction() {
+        return writtenInstruction;
+    }
+
+    public void setWrittenInstruction(String writtenInstruction) {
+        this.writtenInstruction = writtenInstruction;
     }
 
     public int getProgress() {
@@ -52,6 +60,10 @@ public class Cocktailprogress {
 
     public void setCurrentIngredientsToAddManually(List<ProductionStepIngredient> ingredients) {
         this.currentIngredientsToAddManually = ingredients;
+    }
+
+    public void setCurrentWrittenInstruction(String message) {
+        this.writtenInstruction = message;
     }
 
     public enum State {

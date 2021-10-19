@@ -116,21 +116,11 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         } else {
             stepProgress.setPercentCompleted(0);
         }
-        stepProgress.setStarted(this.started);
         stepProgress.setFinished(this.isFinished());
         return stepProgress;
     }
 
-    public int getAmountToFill() {
-        return this.productionStepInstructions.stream()
-                .mapToInt(x -> x.getAmount()).sum();
-    }
-
     public long getRequiredPumpingTime() {
         return this.requiredWorkingTime;
-    }
-
-    public Mode getMode() {
-        return Mode.AUTOMATIC;
     }
 }

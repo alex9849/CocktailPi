@@ -66,9 +66,8 @@ public class CocktailFactory {
             return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
         }
         if(pStep instanceof WrittenInstructionProductionStep) {
-            //Todo
-            throw new IllegalStateException("Implement WrittenInstructionProductionStep!");
-
+            WrittenInstructionProductionStep wIPStep = (WrittenInstructionProductionStep) pStep;
+            return Arrays.asList(new WrittenInstructionProductionStepWorker(wIPStep.getMessage()));
         }
         throw new IllegalStateException("ProductionStepType unknown!");
     }
@@ -178,10 +177,10 @@ public class CocktailFactory {
     }
 
     public void continueProduction() {
-        if(!(this.currentProductionStepWorker instanceof ManualProductionStepWorker)) {
+        if(!(this.currentProductionStepWorker instanceof ManualFinishable)) {
             throw new IllegalStateException("No manual interaction required!");
         }
-        ((ManualProductionStepWorker) this.currentProductionStepWorker).continueProduction();
+        ((ManualFinishable) this.currentProductionStepWorker).continueProduction();
     }
 
     private void shutDown() {
@@ -230,6 +229,10 @@ public class CocktailFactory {
         if(this.currentProductionStepWorker instanceof ManualProductionStepWorker) {
             ManualProductionStepWorker worker = (ManualProductionStepWorker) this.currentProductionStepWorker;
             cocktailprogress.setCurrentIngredientsToAddManually(worker.getProgress().getIngredientsToBeAdded());
+        }
+        if(this.currentProductionStepWorker instanceof WrittenInstructionProductionStepWorker) {
+            WrittenInstructionProductionStepWorker worker = (WrittenInstructionProductionStepWorker) this.currentProductionStepWorker;
+            cocktailprogress.setWrittenInstruction(worker.getProgress().getMessage());
         }
         return cocktailprogress;
     }

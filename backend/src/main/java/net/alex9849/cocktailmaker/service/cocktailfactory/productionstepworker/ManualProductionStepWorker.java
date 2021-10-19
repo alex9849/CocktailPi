@@ -4,7 +4,8 @@ import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 
 import java.util.List;
 
-public class ManualProductionStepWorker extends AbstractProductionStepWorker {
+public class ManualProductionStepWorker extends AbstractProductionStepWorker
+        implements ManualFinishable {
     protected boolean started = false;
     private final List<ProductionStepIngredient> productionStepInstructions;
 
@@ -34,16 +35,6 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
 
     @Override
     public void cancel() {}
-
-    @Override
-    public Mode getMode() {
-        return Mode.MANUAL;
-    }
-
-    public int getAmountToFill() {
-        return this.productionStepInstructions.stream()
-                .mapToInt(ProductionStepIngredient::getAmount).sum();
-    }
 
     @Override
     public ManualStepProgress getProgress() {

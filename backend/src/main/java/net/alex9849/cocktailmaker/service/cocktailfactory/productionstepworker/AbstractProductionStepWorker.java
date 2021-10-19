@@ -24,11 +24,7 @@ public abstract class AbstractProductionStepWorker {
 
     public abstract void cancel();
 
-    public abstract Mode getMode();
-
     public abstract StepProgress getProgress();
-
-    public abstract int getAmountToFill();
 
     protected void setFinished() {
         if(this.finished) {
