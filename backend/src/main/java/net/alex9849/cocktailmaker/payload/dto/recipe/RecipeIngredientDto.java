@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -17,7 +17,7 @@ public class RecipeIngredientDto {
 
     public RecipeIngredientDto() {}
 
-    public RecipeIngredientDto(RecipeIngredient recipeIngredient) {
+    public RecipeIngredientDto(AddIngredient recipeIngredient) {
         if(recipeIngredient.getIngredient() != null) {
             this.ingredient = IngredientDto.toDto(recipeIngredient.getIngredient());
         } else {

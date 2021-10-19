@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
@@ -129,7 +129,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
-                for (RecipeIngredient ri : recipe.getProductionSteps()) {
+                for (AddIngredient ri : recipe.getProductionSteps()) {
                     ri.setRecipeId(recipe.getId());
                     recipeIngredientRepository.create(ri);
                 }
@@ -155,7 +155,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(6, recipe.getDefaultAmountToFill());
             pstmt.setLong(7, recipe.getId());
             recipeIngredientRepository.deleteByRecipe(recipe.getId());
-            for (RecipeIngredient ri : recipe.getProductionSteps()) {
+            for (AddIngredient ri : recipe.getProductionSteps()) {
                 ri.setRecipeId(recipe.getId());
                 recipeIngredientRepository.create(ri);
             }
@@ -320,7 +320,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     private Recipe populateEntity(Recipe recipe) {
         recipe.setProductionSteps(recipeIngredientRepository.loadByRecipeId(recipe.getId()));
-        for (RecipeIngredient ri : recipe.getProductionSteps()) {
+        for (AddIngredient ri : recipe.getProductionSteps()) {
             //Always non null, because of DB constraints
             ri.setIngredient(ingredientRepository.findById(ri.getIngredientId()).get());
         }

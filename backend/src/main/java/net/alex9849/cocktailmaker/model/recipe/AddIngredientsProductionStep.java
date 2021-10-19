@@ -5,13 +5,13 @@ import java.util.List;
 
 @DiscriminatorValue("AddIngredients")
 public class AddIngredientsProductionStep implements ProductionStep {
-    private List<Ingredient> ingredients;
+    private List<AddIngredient> recipeIngredients;
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
+    public List<AddIngredient> getRecipeIngredients() {
+        return recipeIngredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    public void setRecipeIngredients(List<AddIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
     }
 }

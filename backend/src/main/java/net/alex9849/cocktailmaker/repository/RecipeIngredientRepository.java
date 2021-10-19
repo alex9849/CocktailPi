@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -24,12 +24,12 @@ class RecipeIngredientRepository extends JdbcDaoSupport {
         setDataSource(dataSource);
     }
 
-    public List<RecipeIngredient> loadByRecipeId(long recipeId) {
-        return getJdbcTemplate().execute((ConnectionCallback<List<RecipeIngredient>>) con -> {
+    public List<AddIngredient> loadByRecipeId(long recipeId) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<AddIngredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM recipe_ingredients where recipe_id = ?");
             pstmt.setLong(1, recipeId);
             ResultSet rs = pstmt.executeQuery();
-            List<RecipeIngredient> results = new ArrayList<>();
+            List<AddIngredient> results = new ArrayList<>();
             while (rs.next()) {
                 results.add(parseRs(rs));
             }
@@ -45,8 +45,8 @@ class RecipeIngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public RecipeIngredient create(RecipeIngredient recipeIngredient) {
-        return getJdbcTemplate().execute((ConnectionCallback<RecipeIngredient>) con -> {
+    public AddIngredient create(AddIngredient recipeIngredient) {
+        return getJdbcTemplate().execute((ConnectionCallback<AddIngredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipe_ingredients " +
                     "(ingredient_id, recipe_id, production_step, amount, scale) VALUES (?, ?, ?, ?, ?)");
             pstmt.setLong(1, recipeIngredient.getIngredientId());
@@ -61,8 +61,8 @@ class RecipeIngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    private RecipeIngredient parseRs(ResultSet rs) throws SQLException {
-        RecipeIngredient recipeIngredient = new RecipeIngredient();
+    private AddIngredient parseRs(ResultSet rs) throws SQLException {
+        AddIngredient recipeIngredient = new AddIngredient();
         recipeIngredient.setAmount(rs.getInt("amount"));
         recipeIngredient.setRecipeId(rs.getLong("recipe_id"));
         recipeIngredient.setIngredientId(rs.getLong("ingredient_id"));

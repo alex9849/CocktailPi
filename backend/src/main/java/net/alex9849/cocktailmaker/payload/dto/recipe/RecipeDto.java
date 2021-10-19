@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import org.springframework.beans.BeanUtils;
@@ -19,9 +19,9 @@ public class RecipeDto {
         BeanUtils.copyProperties(recipe, this);
         this.owner = new OwnerDto(recipe.getOwner());
         this.lastUpdate = recipe.getLastUpdate();
-        Map<Long, List<RecipeIngredient>> byProductionStep = recipe
+        Map<Long, List<AddIngredient>> byProductionStep = recipe
                 .getProductionSteps().stream()
-                .collect(Collectors.groupingBy(RecipeIngredient::getProductionStep));
+                .collect(Collectors.groupingBy(AddIngredient::getProductionStep));
         List<Long> steps = new ArrayList<>(byProductionStep.keySet());
         steps.sort(Comparator.comparingLong(x -> x));
         this.recipeIngredients = steps.stream().map(x -> byProductionStep.get(x).stream()

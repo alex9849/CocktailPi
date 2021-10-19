@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.model.cocktail;
 
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class Cocktailprogress {
     private int progress;
     private User user;
     private State state;
-    private List<RecipeIngredient> currentIngredientsToAddManually;
+    private List<AddIngredient> currentIngredientsToAddManually;
 
 
     public Recipe getRecipe() {
@@ -46,11 +46,11 @@ public class Cocktailprogress {
         this.state = state;
     }
 
-    public List<RecipeIngredient> getCurrentIngredientsToAddManually() {
+    public List<AddIngredient> getCurrentIngredientsToAddManually() {
         return currentIngredientsToAddManually;
     }
 
-    public void setCurrentIngredientsToAddManually(List<RecipeIngredient> ingredients) {
+    public void setCurrentIngredientsToAddManually(List<AddIngredient> ingredients) {
         this.currentIngredientsToAddManually = ingredients;
     }
 

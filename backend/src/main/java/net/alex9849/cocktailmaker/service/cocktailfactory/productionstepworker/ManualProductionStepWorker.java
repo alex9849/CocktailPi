@@ -1,14 +1,14 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.model.recipe.RecipeIngredient;
+import net.alex9849.cocktailmaker.model.recipe.AddIngredient;
 
 import java.util.List;
 
 public class ManualProductionStepWorker extends AbstractProductionStepWorker {
     protected boolean started = false;
-    private final List<RecipeIngredient> productionStepInstructions;
+    private final List<AddIngredient> productionStepInstructions;
 
-    public ManualProductionStepWorker(List<RecipeIngredient> productionStepInstructions) {
+    public ManualProductionStepWorker(List<AddIngredient> productionStepInstructions) {
         if(productionStepInstructions.size() == 0) {
             throw new IllegalArgumentException("ProductionStepInstructions must be non-empty!");
         }
@@ -42,7 +42,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker {
 
     public int getAmountToFill() {
         return this.productionStepInstructions.stream()
-                .mapToInt(RecipeIngredient::getAmount).sum();
+                .mapToInt(AddIngredient::getAmount).sum();
     }
 
     @Override
