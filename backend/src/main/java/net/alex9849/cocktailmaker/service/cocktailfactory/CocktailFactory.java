@@ -4,10 +4,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
 
@@ -40,37 +37,9 @@ public class CocktailFactory {
         Map<Long, Pump> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x -> x, (a, b) -> a));
-        Map<Long, List<RecipeIngredient>> recipeIngredientByStep = recipe.getProductionSteps().stream()
-                .collect(Collectors.groupingBy(x -> x.getProductionStep()));
-        List<Long> sortedProductionsSteps = recipeIngredientByStep.keySet().stream().sorted().collect(Collectors.toList());
-        List<List<RecipeIngredient>> productionSteps = new ArrayList<>();
 
-        for(Long prodstep : sortedProductionsSteps) {
-            List<RecipeIngredient> manualProductionSteps = new ArrayList<>();
-            List<RecipeIngredient> automaticProductionSteps = new ArrayList<>();
-            for(RecipeIngredient recipeIngredient : recipeIngredientByStep.get(prodstep)) {
-                if (recipeIngredient.getIngredient() instanceof ManualIngredient) {
-                    manualProductionSteps.add(recipeIngredient);
-
-                } else if (recipeIngredient.getIngredient() instanceof AutomatedIngredient) {
-                    if(pumpsByIngredientId.containsKey(recipeIngredient.getIngredient().getId())) {
-                        automaticProductionSteps.add(recipeIngredient);
-                    } else {
-                        manualProductionSteps.add(recipeIngredient);
-                    }
-                }
-                else {
-                    throw new IllegalStateException("IgredientType not implemented yet: "
-                            + Objects.requireNonNull(recipeIngredient.getIngredient()).getClass().getName());
-                }
-            }
-            if(!manualProductionSteps.isEmpty()) {
-                this.productionStepWorkers.add(new ManualProductionStepWorker(manualProductionSteps));
-            }
-            if(!automaticProductionSteps.isEmpty()) {
-                this.productionStepWorkers.add(new AutomaticProductionStepWorker(pumps, gpioController,
-                        automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
-            }
+        for(ProductionStep pStep : recipe.getProductionSteps()) {
+            this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
         }
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
         if(!workerIterator.hasNext()) {
@@ -92,6 +61,48 @@ public class CocktailFactory {
         this.state = Cocktailprogress.State.READY_TO_START;
     }
 
+    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, Pump> pumpsByIngredientId) {
+        if(pStep instanceof AddIngredientsProductionStep) {
+            return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
+        }
+        if(pStep instanceof WrittenInstructionProductionStep) {
+            //Todo
+            throw new IllegalStateException("Implement WrittenInstructionProductionStep!");
+
+        }
+        throw new IllegalStateException("ProductionStepType unknown!");
+    }
+
+    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, Pump> pumpsByIngredientId) {
+        List<AbstractProductionStepWorker> workers = new ArrayList<>();
+        List<ProductionStepIngredient> manualProductionSteps = new ArrayList<>();
+        List<ProductionStepIngredient> automaticProductionSteps = new ArrayList<>();
+        for(ProductionStepIngredient psi : pStep.getStepIngredients()) {
+            if (psi.getIngredient() instanceof ManualIngredient) {
+                manualProductionSteps.add(psi);
+
+            } else if (psi.getIngredient() instanceof AutomatedIngredient) {
+                if(pumpsByIngredientId.containsKey(psi.getIngredient().getId())) {
+                    automaticProductionSteps.add(psi);
+                } else {
+                    manualProductionSteps.add(psi);
+                }
+            }
+            else {
+                throw new IllegalStateException("IgredientType not implemented yet: "
+                        + Objects.requireNonNull(psi.getIngredient()).getClass().getName());
+            }
+        }
+        if(!manualProductionSteps.isEmpty()) {
+            workers.add(new ManualProductionStepWorker(manualProductionSteps));
+        }
+        if(!automaticProductionSteps.isEmpty()) {
+            workers.add(new AutomaticProductionStepWorker(pumps, gpioController,
+                    automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
+        }
+        return workers;
+    }
+
     private void onSubscriptionChange(StepProgress stepProgress) {
         if(stepProgress instanceof ManualStepProgress) {
             this.state = Cocktailprogress.State.MANUAL_ACTION_REQUIRED;
@@ -103,6 +114,9 @@ public class CocktailFactory {
 
     private Set<Ingredient> getNeededIngredientIds() {
         return new HashSet<Ingredient>(this.recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
                 .collect(Collectors.toMap(x -> x.getIngredient().getId(), x -> x.getIngredient(), (a, b) -> a))
                 .values());
     }
@@ -125,7 +139,11 @@ public class CocktailFactory {
     }
 
     public int getRecipeAmountOfLiquid() {
-        return this.recipe.getProductionSteps().stream().mapToInt(RecipeIngredient::getAmount).sum();
+        return this.recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
+                .mapToInt(ProductionStepIngredient::getAmount).sum();
     }
 
     private void handleWorkerNotification(AbstractProductionStepWorker worker, StepProgress stepProgress) {
@@ -257,10 +275,16 @@ public class CocktailFactory {
      */
     public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
         int liquidAmountScaled = recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
         int liquidAmountUnscaled = recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> !x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
@@ -275,9 +299,14 @@ public class CocktailFactory {
             multiplier = wantedAmountOfLiquid / ((double) liquidAmountScaled);
         }
 
-        for(RecipeIngredient recipeIngredient : recipe.getProductionSteps()) {
-            if(recipeIngredient.isScale()) {
-                recipeIngredient.setAmount((int) (recipeIngredient.getAmount() * multiplier));
+        for(ProductionStep pStep : recipe.getProductionSteps()) {
+            if(pStep instanceof AddIngredientsProductionStep) {
+                AddIngredientsProductionStep addIPStep = (AddIngredientsProductionStep) pStep;
+                for(ProductionStepIngredient psi : addIPStep.getStepIngredients()) {
+                    if(psi.isScale()) {
+                        psi.setAmount((int) (psi.getAmount() * multiplier));
+                    }
+                }
             }
         }
         return recipe;

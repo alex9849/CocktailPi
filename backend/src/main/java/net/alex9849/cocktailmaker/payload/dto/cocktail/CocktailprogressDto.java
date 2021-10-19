@@ -26,7 +26,7 @@ public class CocktailprogressDto {
         }
         if(cocktailprogress.getRecipe() != null) {
             this.recipe = new RecipeDto(cocktailprogress.getRecipe());
-            this.recipe.setRecipeIngredients(null);
+            this.recipe.setProductionSteps(null);
         }
         if(cocktailprogress.getUser() != null) {
             UserDto userDto = new UserDto();
