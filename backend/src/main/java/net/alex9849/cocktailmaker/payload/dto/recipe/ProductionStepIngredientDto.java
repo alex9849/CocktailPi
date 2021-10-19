@@ -3,8 +3,14 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 public class ProductionStepIngredientDto {
+    @NotNull
     private IngredientDto ingredient;
+
+    @Min(1)
     private int amount;
     private boolean scale;
 
