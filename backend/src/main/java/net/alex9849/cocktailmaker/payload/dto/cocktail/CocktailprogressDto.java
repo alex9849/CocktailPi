@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class CocktailprogressDto {
     private int progress;
     private UserDto user;
     private Cocktailprogress.State state;
-    private List<RecipeIngredientDto> currentIngredientsToAddManually;
+    private List<ProductionStepIngredientDto> currentIngredientsToAddManually;
 
     public CocktailprogressDto(Cocktailprogress cocktailprogress) {
         this.progress = cocktailprogress.getProgress();
@@ -21,7 +21,7 @@ public class CocktailprogressDto {
         if(cocktailprogress.getCurrentIngredientsToAddManually() != null) {
             this.currentIngredientsToAddManually = cocktailprogress.getCurrentIngredientsToAddManually()
                     .stream()
-                    .map(RecipeIngredientDto::new)
+                    .map(ProductionStepIngredientDto::new)
                     .collect(Collectors.toList());
         }
         if(cocktailprogress.getRecipe() != null) {
@@ -70,11 +70,11 @@ public class CocktailprogressDto {
         this.state = state;
     }
 
-    public List<RecipeIngredientDto> getCurrentIngredientsToAddManually() {
+    public List<ProductionStepIngredientDto> getCurrentIngredientsToAddManually() {
         return currentIngredientsToAddManually;
     }
 
-    public void setCurrentIngredientsToAddManually(List<RecipeIngredientDto> currentIngredientsToAddManually) {
+    public void setCurrentIngredientsToAddManually(List<ProductionStepIngredientDto> currentIngredientsToAddManually) {
         this.currentIngredientsToAddManually = currentIngredientsToAddManually;
     }
 }
