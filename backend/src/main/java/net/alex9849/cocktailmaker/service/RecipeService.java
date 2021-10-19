@@ -1,9 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeIngredientDto;
+import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.payload.dto.recipe.*;
 import net.alex9849.cocktailmaker.repository.CollectionRepository;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -134,30 +131,56 @@ public class RecipeService {
         if(recipe.getOwner() != null) {
             recipe.setOwnerId(recipe.getOwner().getId());
         }
-        AtomicInteger index = new AtomicInteger();
-        recipe.setProductionSteps(recipeDto
-                .getRecipeIngredients().stream()
-                        .flatMap(x -> {
-                            index.incrementAndGet();
-                            return x.stream().map(y -> fromDto(y, recipe, index.get()));
-                        }).collect(Collectors.toList()));
+        if(recipeDto.getProductionSteps() != null) {
+            recipe.setProductionSteps(recipeDto.getProductionSteps().stream()
+                    .map(this::fromDto).collect(Collectors.toList()));
+        }
         recipe.setCategories(recipeDto.getCategories()
                 .stream().map(x -> categoryService.fromDto(x))
                 .collect(Collectors.toList()));
         return recipe;
     }
 
-    public ProductionStepIngredient fromDto(RecipeIngredientDto recipeIngredientDto, Recipe recipe, int productionStep) {
-        if(recipeIngredientDto == null) {
+    public ProductionStep fromDto(ProductionStepDto productionStepDto) {
+        if(productionStepDto == null) {
             return null;
         }
-        ProductionStepIngredient recipeIngredient = new ProductionStepIngredient();
-        BeanUtils.copyProperties(recipeIngredientDto, recipeIngredient);
-        recipeIngredient.setIngredient(ingredientService.fromDto(recipeIngredientDto.getIngredient()));
-        recipeIngredient.setIngredientId(recipeIngredientDto.getIngredient().getId());
-        recipeIngredient.setScale(recipeIngredientDto.isScale());
-        recipeIngredient.setRecipeId(recipe.getId());
-        recipeIngredient.setProductionStep(productionStep);
-        return recipeIngredient;
+        if(productionStepDto instanceof WrittenInstructionProductionStepDto) {
+            return fromDto((WrittenInstructionProductionStepDto) productionStepDto);
+        }
+        if(productionStepDto instanceof AddIngredientsProductionStepDto) {
+            return fromDto((AddIngredientsProductionStepDto) productionStepDto);
+        }
+        throw new IllegalStateException("ProductionSteDtoType not supported: " + productionStepDto.getType());
+    }
+
+    public WrittenInstructionProductionStep fromDto(WrittenInstructionProductionStepDto dto) {
+        if(dto == null) {
+            return null;
+        }
+        WrittenInstructionProductionStep pStep = new WrittenInstructionProductionStep();
+        BeanUtils.copyProperties(dto, pStep);
+        return pStep;
+    }
+
+    public AddIngredientsProductionStep fromDto(AddIngredientsProductionStepDto dto) {
+        if(dto == null) {
+            return null;
+        }
+        AddIngredientsProductionStep pStep = new AddIngredientsProductionStep();
+        BeanUtils.copyProperties(dto, pStep);
+        pStep.setStepIngredients(dto.getStepIngredients().stream()
+                .map(this::fromDto).collect(Collectors.toList()));
+        return pStep;
+    }
+
+    public ProductionStepIngredient fromDto(ProductionStepIngredientDto dto) {
+        if(dto == null) {
+            return null;
+        }
+        ProductionStepIngredient psi = new ProductionStepIngredient();
+        BeanUtils.copyProperties(dto, psi);
+        psi.setIngredient(ingredientService.fromDto(dto.getIngredient()));
+        return psi;
     }
 }

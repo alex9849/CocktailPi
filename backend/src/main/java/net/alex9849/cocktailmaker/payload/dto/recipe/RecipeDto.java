@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
@@ -8,7 +7,9 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RecipeDto {
@@ -19,14 +20,8 @@ public class RecipeDto {
         BeanUtils.copyProperties(recipe, this);
         this.owner = new OwnerDto(recipe.getOwner());
         this.lastUpdate = recipe.getLastUpdate();
-        Map<Long, List<ProductionStepIngredient>> byProductionStep = recipe
-                .getProductionSteps().stream()
-                .collect(Collectors.groupingBy(ProductionStepIngredient::getProductionStep));
-        List<Long> steps = new ArrayList<>(byProductionStep.keySet());
-        steps.sort(Comparator.comparingLong(x -> x));
-        this.recipeIngredients = steps.stream().map(x -> byProductionStep.get(x).stream()
-                .map(RecipeIngredientDto::new).collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        this.productionSteps = recipe.getProductionSteps().stream()
+                .map(ProductionStepDto::toDto).collect(Collectors.toList());
         this.categories = recipe.getCategories().stream().map(CategoryDto::new)
                 .collect(Collectors.toSet());
     }
@@ -47,7 +42,7 @@ public class RecipeDto {
     private String description;
 
     @NotNull
-    private List<List<RecipeIngredientDto>> recipeIngredients;
+    private List<ProductionStepDto> productionSteps;
 
     @NotNull
     private Set<CategoryDto> categories;
@@ -97,12 +92,12 @@ public class RecipeDto {
         this.description = description;
     }
 
-    public List<List<RecipeIngredientDto>> getRecipeIngredients() {
-        return recipeIngredients;
+    public List<ProductionStepDto> getProductionSteps() {
+        return productionSteps;
     }
 
-    public void setRecipeIngredients(List<List<RecipeIngredientDto>> recipeIngredients) {
-        this.recipeIngredients = recipeIngredients;
+    public void setProductionSteps(List<ProductionStepDto> productionSteps) {
+        this.productionSteps = productionSteps;
     }
 
     public Set<CategoryDto> getCategories() {
