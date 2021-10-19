@@ -1,8 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Category;
-import net.alex9849.cocktailmaker.model.recipe.ProductionStep;
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
@@ -130,10 +128,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
-                for (ProductionStep step : recipe.getProductionSteps()) {
-                    ri.setRecipeId(recipe.getId());
-                    productionStepRepository.create(ri);
-                }
+                productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
                 for(Category category : recipe.getCategories()) {
                     recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
                 }
@@ -156,10 +151,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(6, recipe.getDefaultAmountToFill());
             pstmt.setLong(7, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
-            for (ProductionStepIngredient ri : recipe.getProductionSteps()) {
-                ri.setRecipeId(recipe.getId());
-                productionStepRepository.create(ri);
-            }
+            productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());
             for(Category category : recipe.getCategories()) {
                 recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
@@ -321,10 +313,6 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     private Recipe populateEntity(Recipe recipe) {
         recipe.setProductionSteps(productionStepRepository.loadByRecipeId(recipe.getId()));
-        for (ProductionStepIngredient ri : recipe.getProductionSteps()) {
-            //Always non null, because of DB constraints
-            ri.setIngredient(ingredientRepository.findById(ri.getIngredientId()).get());
-        }
         recipe.setOwner(userRepository.findById(recipe.getOwnerId()).get());
         recipe.setCategories(categoryRepository.findByRecipeId(recipe.getId()));
         return recipe;
