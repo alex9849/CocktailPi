@@ -22,6 +22,9 @@ class ProductionStepRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private ProductionStepIngredientRepository productionStepIngredientRepository;
+
     @PostConstruct
     private void initialize() {
         setDataSource(dataSource);
@@ -34,8 +37,9 @@ class ProductionStepRepository extends JdbcDaoSupport {
             pstmt.setLong(1, recipeId);
             ResultSet rs = pstmt.executeQuery();
             List<ProductionStep> results = new ArrayList<>();
+            int index = 0;
             while (rs.next()) {
-                results.add(parseRs(rs));
+                results.add(populateEntity(parseRs(rs), recipeId, ++index));
             }
             return results;
         });
@@ -72,8 +76,26 @@ class ProductionStepRepository extends JdbcDaoSupport {
                 }
             }
             pstmt.execute();
+
+            for(int i = 0; i < productionSteps.size(); i++) {
+                ProductionStep currentStep = productionSteps.get(i);
+                if(!(currentStep instanceof AddIngredientsProductionStep)) {
+                    continue;
+                }
+                AddIngredientsProductionStep addIPs = (AddIngredientsProductionStep) currentStep;
+                productionStepIngredientRepository.create(addIPs.getStepIngredients(), recipeId, i);
+            }
             return productionSteps;
         });
+    }
+
+    private ProductionStep populateEntity(ProductionStep productionStep, long recipeId, int orderIndex) {
+        if(productionStep instanceof AddIngredientsProductionStep) {
+            AddIngredientsProductionStep addPs = (AddIngredientsProductionStep) productionStep;
+            addPs.setStepIngredients(productionStepIngredientRepository
+                    .loadProductionStepIngredients(recipeId, orderIndex));
+        }
+        return productionStep;
     }
 
     private ProductionStep parseRs(ResultSet rs) throws SQLException {
@@ -94,7 +116,7 @@ class ProductionStepRepository extends JdbcDaoSupport {
                         .value().equals(dType)
         ) {
             AddIngredientsProductionStep pStep = new AddIngredientsProductionStep();
-            pStep.setStepIngredients();
+            return pStep;
         }
         throw new IllegalStateException("DAO can't handle dType: " + dType);
     }
