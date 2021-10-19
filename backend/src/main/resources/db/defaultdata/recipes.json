@@ -1,0 +1,2119 @@
+[
+  {
+    "id": 1,
+    "name": "Across the Pacific",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A cocktail creation of Meaghan Dorman, bar director of Dear Irving and The Raines Law Room, New York. The Across the Pacific is another bitter tiki creation. The Averna Amaro brings dried fruit and raisin notes to the tropical, split-rum base cocktail.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 1,
+            "name": "Blended Aged Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 3,
+            "name": "Averna Amaro",
+            "alcoholContent": 29,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 5,
+            "name": "Orgeat Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 22,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 22,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 9,
+    "name": "Adios Motherfucker",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "You say goodbye, we say hello, and also, Adios Motherfucker!",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 30,
+            "name": "Sweet & Sour Mix",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 29,
+            "name": "Tequila",
+            "alcoholContent": 50,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 31,
+            "name": "Sprite",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 32,
+            "name": "Blue Cura\u00e7ao",
+            "alcoholContent": 30,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 13,
+            "name": "Gin",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 4,
+        "name": "Party Drink"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 2,
+    "name": "Adonis",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Nineteenth Century aperitif using sherry.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 7,
+            "name": "Sherry (fino)",
+            "alcoholContent": 15,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 6,
+            "name": "Sweet Vermouth",
+            "alcoholContent": 15,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 8,
+            "name": "Orange Bitter",
+            "alcoholContent": 28,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 2,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 6,
+        "name": "Aperitif"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 3,
+    "name": "Afterglow",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A famous alcohol-free cocktail.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 10,
+            "name": "Pineapple Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 236,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 9,
+            "name": "Orange Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 236,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 11,
+            "name": "Grenadine Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      },
+      {
+        "id": 1,
+        "name": "Ordinary Drink"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 4,
+    "name": "Agua de valencia",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "One of the traditional cocktails of Valencia",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 9,
+            "name": "Orange Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 500,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 100,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 12,
+            "name": "Champagne",
+            "alcoholContent": 12,
+            "unit": "ml"
+          },
+          "amount": 300,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 13,
+            "name": "Gin",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 100,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 15,
+            "name": "Sugar",
+            "alcoholContent": 0,
+            "unit": "tablespoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 5,
+    "name": "Airmail",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Though not fully official on account of the plane breaking down, the first attempt at modern airmail was documented in 1911. It traveled from Petaluma to Santa Rosa, California and contained exactly three pieces of correspondence. The first instance of the Air Mail cocktail was documented in Esquire magazine\u2019s 1949 edition of Handbook for Hosts. It\u2019s not certain why the drink is named for the modern delivery method, but it can be said the Air Mail is quite like the Caribbean version of a French 75, with a splash of lime whisked into a turbulent mix of rum, honey and Champagne.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 17,
+            "name": "Honey Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 12,
+            "name": "Champagne",
+            "alcoholContent": 12,
+            "unit": "ml"
+          },
+          "amount": 40,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 6,
+    "name": "Amaretto Sour",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Combining amaretto with bourbon, fresh lemon juice, rich simple syrup, and egg white creates a perfectly balanced Amaretto Sour.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 20,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 22,
+            "name": "Amaretto Liqueur",
+            "alcoholContent": 24,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 40,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 20,
+            "name": "Simple Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 5,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 19,
+            "name": "Angostura Bitter",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 1,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 18,
+            "name": "Egg White",
+            "alcoholContent": 0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 7,
+    "name": "Americano",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "The Americano is an IBA official cocktail composed of Campari, sweet vermouth, and for the sparkling version, club soda. The cocktail was first served in creator Gaspare Campari's bar, Caff\u00e8 Campari, in the 1860s.\n\nServe on Ice!",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 24,
+            "name": "Campari",
+            "alcoholContent": 25,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 25,
+            "name": "Red Vermouth",
+            "alcoholContent": 16,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 8,
+    "name": "American Trilogy",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Brown sugar mingles with a half-rye, half-Applejack backbone to shift the classic into a slightly darker place.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 27,
+            "name": "Brown Sugar",
+            "alcoholContent": 0,
+            "unit": "tablespoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 8,
+            "name": "Orange Bitter",
+            "alcoholContent": 28,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 2,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 26,
+            "name": "Whisky",
+            "alcoholContent": 43,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 28,
+            "name": "Applejack",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 10,
+    "name": "Angevine Soup",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "The Angevine Soup is a French cocktail, typical of Anjou.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 34,
+            "name": "Cointreau",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 20,
+            "name": "Simple Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 33,
+            "name": "Cr\u00e9mant de Loire",
+            "alcoholContent": 13,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 75,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 11,
+    "name": "Aperol Spritz",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A great cocktail for a summer weekend.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 35,
+            "name": "Prosecco",
+            "alcoholContent": 11,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 36,
+            "name": "Aperol",
+            "alcoholContent": 15,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 20,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 23,
+            "name": "Soda Water",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 20,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 12,
+    "name": "Apertass",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Perfect drink for an appetizer.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 36,
+            "name": "Aperol",
+            "alcoholContent": 15,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 23,
+            "name": "Soda Water",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 70,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 6,
+        "name": "Aperitif"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 13,
+    "name": "AppleCider Margarita",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "These apple cider margaritas are a seasonal twist on a classic cocktail recipe. Sweetened with maple syrup and garnished with a cinnamon sugar rim, these are perfect for Thanksgiving or another holiday gathering.\n\n- Combine sugar, cinnamon, and salt on a small, flat plate.\n- Pour a small amount of maple syrup on another small plate.\n- Dip the rim of the glass in a bit of maple syrup, then coat into the cinnamon sugar mixture.\n- Fill a cocktail shaker halfway with ice.\n- Add all ingredients to cocktail shaker and shake vigorously for about 30 seconds.\n- Strain into glass and enjoy!",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 40,
+            "name": "Cinnamon",
+            "alcoholContent": 0,
+            "unit": "teaspoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 41,
+            "name": "Salt",
+            "alcoholContent": 0,
+            "unit": "teaspoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 15,
+            "name": "Sugar",
+            "alcoholContent": 0,
+            "unit": "tablespoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 37,
+            "name": "Apple Cider",
+            "alcoholContent": 5,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 125,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 38,
+            "name": "Tequila (Silver)",
+            "alcoholContent": 38,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 31,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 5,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 39,
+            "name": "Maple Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 7,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 14,
+    "name": "Apple Jack",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A year round favorite served warm or cold.\n\n- 3/4 fill a highball glass with cubed ice.\n- Pour Old No. 7 over ice.\n- Top with apple juice.\n- Add apple slice to garnish.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 42,
+            "name": "Jack Daniel's",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 50,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 43,
+            "name": "Apple Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 100,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 15,
+    "name": "Appletini",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A sweet and sour electric green drink with a sweet, delicious apple flavor.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 44,
+            "name": "Apple Schnapps",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 7,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 16,
+    "name": "April Rain Cocktail",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Bright, refreshing, and just slightly dry, the April rain is a wonderful cocktail that's sure to put you in a spring mood.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 45,
+            "name": "Dry Vermouth",
+            "alcoholContent": 18,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 17,
+    "name": "Aqueduct",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "The Aqueduct cocktail is made from vodka, Cointreau, apricot brandy and lime juice, and served in a cocktail glass.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 46,
+            "name": "Apricot Liqueur",
+            "alcoholContent": 42,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 34,
+            "name": "Cointreau",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 18,
+    "name": "Aviation",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A classic cocktail made with gin, maraschino liqueur, creme de violette (optional), and lemon juice. This drink is meant to be served straight, and in a cocktail glass.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 13,
+            "name": "Gin",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 47,
+            "name": "Maraschino Liqueur",
+            "alcoholContent": 32,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 19,
+    "name": "B-52",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Believed to have originated in 1970 by a bartender and fan of the iconic band, the B-52 is classic guilty pleasure armed with three liqueurs. Make this layered shooter in seconds and impress all your friends.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 48,
+            "name": "Kahl\u00faa",
+            "alcoholContent": 28,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 49,
+            "name": "Baileys Irish Cream",
+            "alcoholContent": 17,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 50,
+            "name": "Grand Marnier",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 6,
+        "name": "Aperitif"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 20,
+    "name": "Baby Guinness",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A simple and sweet shot that resembles a baby pint of Guinness.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 48,
+            "name": "Kahl\u00faa",
+            "alcoholContent": 28,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 51,
+            "name": "Irish Cream",
+            "alcoholContent": 15,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 2,
+        "name": "Shot"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 21,
+    "name": "Bacardi Cocktail",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "The Bacardi\u0301 Cocktail became one of the most popular drinks of the period immediately following the repeal of Prohibition. It is a variation of the Daiquiri that involves rum, lime and grenadine. It is rare on menus today but was a stalwart of the 1930s bar repertoire.\n\nRecommendation: Use Bacardi rum!",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 20,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 11,
+            "name": "Grenadine Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 5,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 22,
+    "name": "Bahama Mama",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A blend of fruit juice and rum create this delicious, tropical cocktail.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 9,
+            "name": "Orange Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 10,
+            "name": "Pineapple Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 11,
+            "name": "Grenadine Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      },
+      {
+        "id": 7,
+        "name": "Longdrink"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 23,
+    "name": "Bangkok Sunrise",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A drink that looks like a Bangkok sunrise. Shown in Danger 5, this is a wonderful cocktail that's sure to put you in a spring mood.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 9,
+            "name": "Orange Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 120,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 29,
+            "name": "Tequila",
+            "alcoholContent": 50,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 52,
+            "name": "Lemongrass Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 11,
+            "name": "Grenadine Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 24,
+    "name": "Barracuda",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A well known cocktail of unknown origins, thought to date from the 1970s.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 53,
+            "name": "Galliano",
+            "alcoholContent": 30,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 2,
+            "name": "Rum",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 10,
+            "name": "Pineapple Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 1,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 35,
+            "name": "Prosecco",
+            "alcoholContent": 11,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 25,
+    "name": "Barraquito",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A multi-layered coffee drink.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 54,
+            "name": "Coffee",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 55,
+            "name": "Licor 43",
+            "alcoholContent": 31,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 57,
+            "name": "Condensed Milk",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 56,
+            "name": "Frothed Milk",
+            "alcoholContent": 0,
+            "unit": "tablespoon(s)"
+          },
+          "amount": 3,
+          "scale": false
+        }
+      ]
+    ],
+    "categories": [],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 26,
+    "name": "Basil Smash",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Enjoy a summer breezed basil flavoured cocktail.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 13,
+            "name": "Gin",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 50,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 20,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 20,
+            "name": "Simple Syrup",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        }
+      ],
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 58,
+            "name": "Basil Leaves",
+            "alcoholContent": 0,
+            "unit": "piece(s)"
+          },
+          "amount": 3,
+          "scale": false
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 27,
+    "name": "Bay Breeze",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A tropical, refreshing cocktail based on the classic Cape Cod.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 59,
+            "name": "Cranberry Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 120,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 14,
+            "name": "Vodka",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 10,
+            "name": "Pineapple Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 28,
+    "name": "Beam me up, Scotchie",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "A simple Fall cocktail worthy of Scotty himself\n\nDirections:\n- Muddle ingredients\n- Strain out fig seeds\n- Serve in a cocktail glass over ice\n- Garnish with figs",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 62,
+            "name": "Vanilla liqueur",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 60,
+            "name": "Glenfiddich Scotch",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 29,
+    "name": "Beergarita",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Beergarita combines beer with a freshly made margarita",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 29,
+            "name": "Tequila",
+            "alcoholContent": 50,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 63,
+            "name": "Tattersall Grapefruit Crema",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 30,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 64,
+            "name": "Light Beer",
+            "alcoholContent": 2,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 6,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 4,
+            "name": "Lime Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 30,
+    "name": "Bee's Knees",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "The recipe allegedly appears in a 1930 edition of San Francisco bartender and author Bill Boothby\u2019s cocktail compendium World Drinks and How to Mix Them. However, other evidence suggests Frank Meier, a bartender at the Ritz Paris, was the cocktail\u2019s original creator. It appears in Meier\u2019s 1936 edition of The Artistry of Mixing Drinks.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "manual",
+            "id": 65,
+            "name": "Honey",
+            "alcoholContent": 0,
+            "unit": "tablespoon(s)"
+          },
+          "amount": 1,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 10,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 13,
+            "name": "Gin",
+            "alcoholContent": 45,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 40,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [
+      {
+        "id": 3,
+        "name": "Cocktail"
+      }
+    ],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 31,
+    "name": "Bellini",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Bellini is a sparkling Italian cocktail.",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 66,
+            "name": "Peach Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 60,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 67,
+            "name": "Raspberry Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 7,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 68,
+            "name": "Chilled Sparkling Wine",
+            "alcoholContent": 14,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 120,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  },
+  {
+    "id": 32,
+    "name": "Between the Sheets",
+    "inPublic": true,
+    "owner": {
+      "id": 1,
+      "username": "Admin"
+    },
+    "description": "Also known as the Maiden\u2019s Prayer, Between the Sheets is a flirty cocktail for sexy people!",
+    "recipeIngredients": [
+      [
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 71,
+            "name": "Rum (White)",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 70,
+            "name": "Triple Sec",
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 21,
+            "name": "Lemon Juice",
+            "alcoholContent": 0,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 15,
+          "scale": true
+        },
+        {
+          "ingredient": {
+            "type": "automated",
+            "id": 69,
+            "name": "Brandy",
+            "alcoholContent": 86,
+            "pumpTimeMultiplier": 1.0,
+            "unit": "ml"
+          },
+          "amount": 45,
+          "scale": true
+        }
+      ]
+    ],
+    "categories": [],
+    "defaultAmountToFill": 250,
+    "lastUpdate": 1634421600000
+  }
+]
