@@ -52,7 +52,7 @@
           </div>
           <div class="row" style="margin-top: 10px">
             <q-chip
-              v-for="(ingredient) in uniqueIngredientNames(recipe.recipeIngredients)"
+              v-for="(ingredient) in uniqueIngredientNames(recipe.productionSteps)"
               dense
               style="margin-left: 0; margin-right: 5px"
               square
@@ -136,7 +136,10 @@ export default {
       }
       let unique = new Map();
       for (let productionStep of productionSteps) {
-        for (let ingredient of productionStep) {
+        if (productionStep.type !== 'addIngredients') {
+          continue
+        }
+        for (let ingredient of productionStep.stepIngredients) {
           unique.set(ingredient.ingredient.id, ingredient.ingredient);
         }
       }

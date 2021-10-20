@@ -7,25 +7,12 @@ export const doPumpsHaveAllIngredientsForRecipe = (state) => {
       }
     }
     let success = true;
-    for(let productionstep of recipe.recipeIngredients) {
-      for(let ingredientstep of productionstep) {
+    for(let productionstep of recipe.productionSteps) {
+      for(let ingredientstep of productionstep.stepIngredients) {
         success &= pumpIngredientIds.has(ingredientstep.ingredient.id)
       }
     }
     return success;
-  }
-};
-
-export const areEnoughPumpsAvailable = (state) => {
-  return (recipe) => {
-    let recipeIngredientIds = new Set();
-
-    for(let productionstep of recipe.recipeIngredients) {
-      for(let ingredientstep of productionstep) {
-        recipeIngredientIds.add(ingredientstep.ingredient.id);
-      }
-    }
-    return recipeIngredientIds.size <= state.pumpLayout.length;
   }
 };
 
