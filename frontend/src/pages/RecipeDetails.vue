@@ -58,7 +58,7 @@
               big
               alternateRowColors
               class="bg-grey-3 shadow-2"
-              v-model="recipe.recipeIngredients"
+              v-model="recipe.productionSteps"
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       recipe: {
-        recipeIngredients: []
+        productionSteps: []
       },
       deleting: false,
       deleteDialog: false,

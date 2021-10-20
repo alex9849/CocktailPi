@@ -90,12 +90,12 @@ export default {
   },
   methods: {
     allIngredientsOwned(recipe) {
-      for (let productionstep of recipe.productionSteps) {
+      for (let productionStep of recipe.productionSteps) {
         if (productionStep.type !== 'addIngredients') {
           continue
         }
-        for (let ingredientstep of productionstep.stepIngredients) {
-          if (!this.ownedIngredients.some(x => x.id === ingredientstep.ingredient.id)) {
+        for (let ingredientStep of productionStep.stepIngredients) {
+          if (!this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id)) {
             return false;
           }
         }

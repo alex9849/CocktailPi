@@ -7,12 +7,12 @@ export const doPumpsHaveAllIngredientsForRecipe = (state) => {
       }
     }
     let success = true;
-    for(let productionstep of recipe.productionSteps) {
-      if (productionStep.type !== 'addIngredients') {
+    for(let productionSteps of recipe.productionSteps) {
+      if (productionSteps.type !== 'addIngredients') {
         continue
       }
-      for(let ingredientstep of productionstep.stepIngredients) {
-        success &= pumpIngredientIds.has(ingredientstep.ingredient.id)
+      for(let ingredientStep of productionSteps.stepIngredients) {
+        success &= pumpIngredientIds.has(ingredientStep.ingredient.id)
       }
     }
     return success;
