@@ -267,10 +267,13 @@ export default {
     },
     neededIngredients() {
       let ingredients = [];
-      for (let productionstep of this.recipe.recipeIngredients) {
-        for (let ingredientstep of productionstep) {
-          if (!ingredients.some(x => x.id === ingredientstep.ingredient.id)) {
-            ingredients.push(ingredientstep.ingredient);
+      for (let productionStep of this.recipe.productionSteps) {
+        if (productionStep.type !== 'addIngredients') {
+          continue
+        }
+        for (let ingredientStep of productionStep.stepIngredients) {
+          if (!ingredients.some(x => x.id === ingredientStep.ingredient.id)) {
+            ingredients.push(ingredientStep.ingredient);
           }
         }
       }
