@@ -10,13 +10,13 @@
         :icon="mdiCupWater"
         name="ingredient"
         label="Ingredient"
-        v-if="selectedTab === 'ingredient' || !value"
+        v-if="selectedTab === 'ingredient' || newProductionStep"
       />
       <q-tab
         :icon="mdiPencilOutline"
         name="writtenInstruction"
         label="Instruction"
-        v-if="selectedTab === 'writtenInstruction' || !value"
+        v-if="selectedTab === 'writtenInstruction' || newProductionStep"
       />
     </q-tabs>
     <q-tab-panels
@@ -24,7 +24,7 @@
     >
       <q-tab-panel
         name="ingredient"
-        v-if="selectedTab === 'ingredient' || !value"
+        v-if="selectedTab === 'ingredient' || newProductionStep"
       >
         <ingredient-production-step-form
           v-if="selectedTab === 'ingredient'"
@@ -36,7 +36,7 @@
       </q-tab-panel>
       <q-tab-panel
         name="writtenInstruction"
-        v-if="selectedTab === 'writtenInstruction' || !value"
+        v-if="selectedTab === 'writtenInstruction' || newProductionStep"
       >
         <written-instruction-production-step-form
           v-if="selectedTab === 'writtenInstruction'"
@@ -62,6 +62,10 @@ export default {
   props: {
     value: {
       type: Object
+    },
+    newProductionStep: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -96,7 +100,7 @@ export default {
   },
   methods: {
     determineProductionStepType(prodStep) {
-      if(Object.keys(prodStep).some(x => x === 'message')) {
+      if(prodStep.type === 'writtenInstruction') {
         return 'writtenInstruction'
       }
       return 'ingredient'
@@ -110,7 +114,8 @@ export default {
         })
       } else {
         this.editStep = Object.assign({},{
-          message: ''
+          message: '',
+          type: 'writtenInstruction'
         })
       }
     }

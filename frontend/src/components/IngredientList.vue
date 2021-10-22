@@ -123,14 +123,15 @@
         v-model="editor.visible"
         :title="editor.isCreatingNew? 'Add Production-Step':'Edit Production-Step'"
         :valid="editor.valid"
-        @clickAbort="closeIngredientEditor"
-        @clickSave="saveEditIngredient"
+        @clickAbort="closeProductionStepEditor"
+        @clickSave="saveEditProductionStep"
       >
         <q-splitter horizontal :value="10" />
         <production-step-list-editor
           @valid="editor.valid = true"
           @invalid="editor.valid = false"
           v-model="editor.editingObject"
+          :new-production-step="editor.isCreatingNew"
         />
       </c-edit-dialog>
 
@@ -225,18 +226,37 @@ export default {
         }
         this.emitChange();
       },
-      closeIngredientEditor() {
+      closeProductionStepEditor() {
         this.editor.visible = false;
         this.editor.productionStepIndex = -1;
         this.editor.ingredientIndex = -1;
+        Vue.set(this.editor, 'editingObject', null);
       },
-      saveEditIngredient() {
-        if (this.editIngredientIndex < 0) {
-          this.ingredients.push([this.editIngredient]);
+      saveEditProductionStep() {
+        if(this.editor.productionStepIndex >= 0) {
+          //Edit
+          if(this.editor.ingredientIndex >= 0) {
+            //Ingredient
+            this.productionSteps[this.editor.productionStepIndex]
+              .stepIngredients[this.editor.ingredientIndex] = this.editor.editingObject
+          } else {
+            //Instruction
+            this.productionSteps[this.editor.productionStepIndex] = this.editor.editingObject
+          }
         } else {
-          this.ingredients[this.editIngredientGroupIndex][this.editIngredientIndex] = this.editIngredient;
+          //Add new ProductionStep
+          if(this.editor.editingObject.type === 'writtenInstruction') {
+            //Instruction
+            this.productionSteps.push(this.editor.editingObject)
+          } else {
+            //Ingredient
+            this.productionSteps.push({
+              type: 'addIngredients',
+              stepIngredients: [this.editor.editingObject]
+            })
+          }
         }
-        this.closeIngredientEditor();
+        this.closeProductionStepEditor();
         this.emitChange();
       }
     },
