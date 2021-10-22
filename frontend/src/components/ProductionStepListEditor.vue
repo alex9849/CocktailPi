@@ -93,7 +93,7 @@ export default {
         this.editStep = {
           ingredient: '',
           amount: '',
-          scale: false
+          scale: true
         }
       }
     }
@@ -110,7 +110,7 @@ export default {
         this.editStep = Object.assign({}, {
           ingredient: '',
           amount: '',
-          scale: false
+          scale: true
         })
       } else {
         this.editStep = Object.assign({},{
