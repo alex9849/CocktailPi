@@ -1,9 +1,14 @@
 package db.migration;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.CategoryService;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.service.RecipeService;
@@ -12,6 +17,11 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,7 +40,24 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         if(!userService.getUsers().isEmpty()) {
             return;
         }
+        InputStream recipeStream = this.getClass().getResourceAsStream("/db/defaultdata/recipes.json");
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        TypeReference<List<RecipeDto>> typeReference = new TypeReference<List<RecipeDto>>(){};
+        List<RecipeDto> recipeDtos = mapper.readValue(recipeStream, typeReference);
         User defaultUser = createDefaultUser();
+        OwnerDto defaultOwnerDto = new OwnerDto(defaultUser);
+        for(RecipeDto recipeDto : recipeDtos) {
+            recipeDto.setOwner(defaultOwnerDto);
+            long recipeId = createRecipe(recipeService.fromDto(recipeDto)).getId();
+            InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/" + recipeDto.getName() + ".jpg");
+            if(recipeImageStream != null) {
+                BufferedImage image = ImageIO.read(recipeImageStream);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(image, "jpg", out);
+                recipeService.setImage(recipeId, out.toByteArray());
+            }
+        }
     }
 
     private User createDefaultUser() {
