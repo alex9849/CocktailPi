@@ -1,7 +1,6 @@
 <template>
   <draggable
-    :value="ingredients"
-    @input="updateOneElementProductionStepList"
+    :value="productionSteps"
     :disabled="!editable"
     :delay="400"
     :delayOnTouchOnly="true"
@@ -13,7 +12,7 @@
     :animation="200"
   >
     <q-item
-      v-for="(productionStep, index) in ingredients"
+      v-for="(productionStep, index) in productionSteps"
       :key="index"
       class="dragItem"
       :class="{'alternateGrey': alternateRowColors}"
@@ -21,11 +20,18 @@
       <q-item-section avatar>
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
       </q-item-section>
-
-      <q-item-section>
+      <q-item-section v-if="productionStep.type === 'writtenInstruction'">
+        <q-list bordered>
+          <q-item>
+            <q-item-section>
+              {{ productionStep.message }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-item-section>
+      <q-item-section v-if="productionStep.type === 'addIngredients'">
         <draggable
-          :value="productionStep"
-          @input="updateProductionStepList(productionStep, $event)"
+          :value="productionStep.stepIngredients"
           :disabled="!editable"
           :delay="400"
           :delayOnTouchOnly="true"
@@ -36,7 +42,7 @@
           class="q-list q-list--bordered q-list--separator"
           :animation="200"
         >
-          <q-item v-for="(ingredient, index) in productionStep" :key="index" class="dragItem">
+          <q-item v-for="(ingredient, index) in productionStep.stepIngredients" :key="index" class="dragItem">
             <q-item-section>
               <div style="display: ruby">
                 {{ ingredient.amount }} {{ ingredient.ingredient.unit }} {{ ingredient.ingredient.name }}
@@ -74,10 +80,10 @@
       <q-item-section>
         <q-item-label header style="padding: 0" class="text-black">
           <b v-if="big">
-            Ingredients
+            Production-Steps
           </b>
           <div v-else>
-            Ingredients
+            Production-Steps
           </div>
         </q-item-label>
       </q-item-section>
@@ -85,7 +91,7 @@
       <q-item-section side v-if="editable">
         <q-btn
           :icon="mdiPlusCircleOutline"
-          @click="showIngredientEditor(null)"
+          @click="showIngredientEditor(null, null)"
           dense
           flat
           rounded
@@ -94,16 +100,12 @@
 
       <c-edit-dialog
         v-model="showIngredientEditorDialog"
-        :title="addIngredient?'Add Ingredient':'Edit Ingredient'"
+        :title="addIngredient? 'Add Production-Step':'Edit Production-Step'"
         :valid="ingredientValid"
         @clickAbort="closeIngredientEditor"
         @clickSave="saveEditIngredient"
       >
-        <add-ingredient-form
-          v-model="editIngredient"
-          @valid="ingredientValid = true"
-          @invalid="ingredientValid = false"
-        />
+        <production-step-list-editor/>
       </c-edit-dialog>
 
     </q-item>
@@ -112,14 +114,14 @@
 
 <script>
 import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
-import AddIngredientForm from "./AddIngredientForm";
 import draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from "components/CEditDialog";
+import ProductionStepListEditor from "components/ProductionStepListEditor";
 
 export default {
     name: "IngredientList",
-    components: {CEditDialog, AddIngredientForm, draggable},
+    components: {ProductionStepListEditor, CEditDialog, draggable},
     props: {
       value: {
         type: Array,
@@ -141,20 +143,26 @@ export default {
     },
     data() {
       return {
-        ingredients: [],
+        productionSteps: [],
         showIngredientEditorDialog: false,
         addIngredient: false,
         ingredientValid: false,
         valid: false,
-        newIngredient: {
-          amount: '',
-          ingredient: null,
-          scale: true
+        newProductionStep: {
+          type: 'addIngredients',
+          stepIngredients: [{
+            amount: '',
+            ingredient: null,
+            scale: true
+          }]
         },
-        editIngredient: {
-          amount: '',
-          ingredient: null,
-          scale: true
+        editProductionStep: {
+          type: 'addIngredients',
+          stepIngredients: [{
+            amount: '',
+            ingredient: null,
+            scale: true
+          }]
         },
         editIngredientGroupIndex: -1,
         editIngredientIndex: -1,
@@ -165,7 +173,7 @@ export default {
       value: {
         deep: true,
         handler() {
-          this.ingredients = cloneDeep(this.value);
+          this.productionSteps = cloneDeep(this.value);
         }
       }
     },
@@ -173,62 +181,10 @@ export default {
       log(el) {
         console.log(el);
       },
-      updateProductionStepList(group, updated) {
-        if (updated.length === 0) {
-          this.ingredients = this.ingredients.filter(x => x != group);
-        } else {
-          //Merge complete productionsteps into others
-          for (let updatedListItem of updated) {
-            if (Array.isArray(updatedListItem)) {
-              let updatedListItemIndex = updated.indexOf(updatedListItem);
-              updated.splice(updatedListItemIndex, 1, ...updatedListItem);
-              //This is needed, because the updateOneElementProductionStepList()-Method
-              // would otherwise reset your ingredients, because it works with old data
-              this.disableNextUpdateProductionStepList = true;
-              this.ingredients = this.ingredients.filter(x => x != updatedListItem);
-            }
-          }
-          //Search and merge duplicates
-          let iterationIndex = 0;
-          let ingredientIdsToIndex = new Map();
-          for (let updatedListItem of updated) {
-            if(ingredientIdsToIndex.has(updatedListItem.ingredient.id)) {
-              let index = ingredientIdsToIndex.get(updatedListItem.ingredient.id);
-              updated[index].amount += updatedListItem.amount;
-              updated.splice(iterationIndex, 1);
-            } else {
-              ingredientIdsToIndex.set(updatedListItem.ingredient.id, iterationIndex)
-            }
-            iterationIndex++;
-          }
-          let groupIndex = this.ingredients.indexOf(group);
-          let newIngredients = Object.assign([], this.ingredients);
-          newIngredients[groupIndex] = updated;
-          this.ingredients = newIngredients;
-        }
-        this.emitChange();
-      },
-      updateOneElementProductionStepList(updated) {
-        if(this.disableNextUpdateProductionStepList) {
-          this.disableNextUpdateProductionStepList = false
-          return;
-        }
-        for (let updatedListItem of updated) {
-          if (!Array.isArray(updatedListItem)) {
-            let updatedListItemIndex = updated.indexOf(updatedListItem);
-            updated.splice(updatedListItemIndex, 1, [updatedListItem]);
-          }
-        }
-        this.ingredients = updated;
-        this.emitChange();
-      },
       emitChange() {
-        this.$emit('input', this.ingredients);
+        this.$emit('input', this.productionSteps);
       },
-      showIngredientEditor() {
-        this.showIngredientEditor(null)
-      },
-      showIngredientEditor(group, ingredient) {
+      showIngredientEditor(productionStep, ingredient) {
         this.addIngredient = true;
         if (ingredient) {
           this.editIngredient = Object.assign({}, ingredient);

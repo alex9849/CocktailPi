@@ -32,7 +32,7 @@ import {minValue, required} from "vuelidate/lib/validators";
 import CIngredientSelector from "./CIngredientSelector";
 
 export default {
-    name: "IngredientForm",
+    name: "IngredientProductionStepForm",
     components: {CIngredientSelector},
     props: {
       value: {

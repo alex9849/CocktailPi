@@ -33,7 +33,7 @@
       class="text-teal"
       inline-label
       v-model="value.type"
-      @update:model-value="onTypeChange($event)"
+      @input="onTypeChange($event)"
     >
       <q-tab
         :icon="mdiCogs"
@@ -76,7 +76,6 @@
           filled
           clearable
           v-model="value.unit"
-          @input="onUnitChange"
           :options="units"
           emit-value
           map-options
