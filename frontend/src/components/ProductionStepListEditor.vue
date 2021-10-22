@@ -10,11 +10,13 @@
         :icon="mdiCupWater"
         name="ingredient"
         label="Ingredient"
+        v-if="selectedTab === 'ingredient' || !value"
       />
       <q-tab
         :icon="mdiPencilOutline"
         name="writtenInstruction"
         label="Instruction"
+        v-if="selectedTab === 'writtenInstruction' || !value"
       />
     </q-tabs>
     <q-tab-panels
@@ -22,7 +24,7 @@
     >
       <q-tab-panel
         name="ingredient"
-        :disable="!!value"
+        v-if="selectedTab === 'ingredient' || !value"
       >
         <ingredient-production-step-form
           v-if="selectedTab === 'ingredient'"
@@ -34,7 +36,7 @@
       </q-tab-panel>
       <q-tab-panel
         name="writtenInstruction"
-        :disable="!!value"
+        v-if="selectedTab === 'writtenInstruction' || !value"
       >
         <written-instruction-production-step-form
           v-if="selectedTab === 'writtenInstruction'"

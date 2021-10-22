@@ -102,7 +102,7 @@
         </template>
       </q-input>
       <IngredientList
-        v-model="value.recipe.recipeIngredients"
+        v-model="value.recipe.productionSteps"
         :editable="!disabled"
       />
       <q-checkbox

@@ -42,22 +42,22 @@
           class="q-list q-list--bordered q-list--separator"
           :animation="200"
         >
-          <q-item v-for="(ingredient, index) in productionStep.stepIngredients" :key="index" class="dragItem">
+          <q-item v-for="(stepIngredient, index) in productionStep.stepIngredients" :key="index" class="dragItem">
             <q-item-section>
               <div style="display: ruby">
-                {{ ingredient.amount }} {{ ingredient.ingredient.unit }} {{ ingredient.ingredient.name }}
-                <q-item-label v-if="!ingredient.scale" caption>
+                {{ stepIngredient.amount }} {{ stepIngredient.ingredient.unit }} {{ stepIngredient.ingredient.name }}
+                <q-item-label v-if="!stepIngredient.scale" caption>
                   (Unscaled)
                 </q-item-label>
               </div>
-              <q-item-label v-if="ingredient.ingredient.alcoholContent !== 0" caption>
-                {{ ingredient.ingredient.alcoholContent }}% alcohol content
+              <q-item-label v-if="stepIngredient.ingredient.alcoholContent !== 0" caption>
+                {{ stepIngredient.ingredient.alcoholContent }}% alcohol content
               </q-item-label>
             </q-item-section>
             <q-item-section side v-if="editable">
               <q-btn
                 :icon="mdiPencilOutline"
-                @click.native="showIngredientEditor(productionStep, ingredient)"
+                @click.native="showEditStepIngredientEditor(productionStep, stepIngredient)"
                 dense
                 flat
                 rounded
@@ -66,7 +66,7 @@
             <q-item-section side v-if="editable">
               <q-btn
                 :icon="mdiDelete"
-                @click.native="removeIngredient(productionStep, ingredient)"
+                @click.native="removeStepIngredient(productionStep, stepIngredient)"
                 dense
                 flat
                 rounded
@@ -91,7 +91,7 @@
       <q-item-section side v-if="editable">
         <q-btn
           :icon="mdiPlusCircleOutline"
-          @click="showIngredientEditor(null, null)"
+          @click="showAddProductionStepEditor()"
           dense
           flat
           rounded
@@ -105,9 +105,11 @@
         @clickAbort="closeIngredientEditor"
         @clickSave="saveEditIngredient"
       >
+        <q-splitter horizontal :value="10" />
         <production-step-list-editor
           @valid="editor.valid = true"
           @invalid="editor.valid = false"
+          v-model="editor.editingObject"
         />
       </c-edit-dialog>
 
@@ -121,6 +123,7 @@ import draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from "components/CEditDialog";
 import ProductionStepListEditor from "components/ProductionStepListEditor";
+import Vue from "vue";
 
 export default {
     name: "IngredientList",
@@ -152,12 +155,14 @@ export default {
           visible: false,
           valid: false,
           productionStepIndex: -1,
-          ingredientIndex: -1
+          ingredientIndex: -1,
+          editingObject: null
         },
       }
     },
     watch: {
       value: {
+        immediate: true,
         deep: true,
         handler() {
           this.productionSteps = cloneDeep(this.value);
@@ -171,19 +176,21 @@ export default {
       emitChange() {
         this.$emit('input', this.productionSteps);
       },
-      showIngredientEditor(productionStep, ingredient) {
-        this.editor.isCreatingNew = !productionStep;
+      showAddProductionStepEditor() {
+        this.editor.isCreatingNew = true;
         this.editor.visible = true;
       },
-      removeIngredient(group, ingredient) {
-        let groupIndex = this.ingredients.indexOf(group);
-        let newGroup = group.filter(x => x !== ingredient);
-        if (newGroup.length === 0) {
-          this.ingredients = this.ingredients.filter(x => x !== group)
-        } else {
-          let newIngredients = Object.assign([], this.ingredients);
-          newIngredients[groupIndex] = newGroup;
-          this.ingredients = newIngredients;
+      showEditStepIngredientEditor(productionStep, stepIngredient) {
+        this.editor.productionStepIndex = this.productionSteps.indexOf(productionStep);
+        this.editor.ingredientIndex = productionStep.stepIngredients.indexOf(stepIngredient);
+        Vue.set(this.editor, 'editingObject', stepIngredient);
+        this.editor.isCreatingNew = false;
+        this.editor.visible = true;
+      },
+      removeStepIngredient(productionStep, stepIngredient) {
+        productionStep.stepIngredients = productionStep.stepIngredients.filter(x => x !== stepIngredient);
+        if(productionStep.stepIngredients.length === 0) {
+          this.productionSteps = this.productionSteps.filter(x => x !== productionStep);
         }
         this.emitChange();
       },
