@@ -99,13 +99,16 @@
       </q-item-section>
 
       <c-edit-dialog
-        v-model="showIngredientEditorDialog"
-        :title="addIngredient? 'Add Production-Step':'Edit Production-Step'"
-        :valid="ingredientValid"
+        v-model="editor.visible"
+        :title="editor.isCreatingNew? 'Add Production-Step':'Edit Production-Step'"
+        :valid="editor.valid"
         @clickAbort="closeIngredientEditor"
         @clickSave="saveEditIngredient"
       >
-        <production-step-list-editor/>
+        <production-step-list-editor
+          @valid="editor.valid = true"
+          @invalid="editor.valid = false"
+        />
       </c-edit-dialog>
 
     </q-item>
@@ -144,29 +147,13 @@ export default {
     data() {
       return {
         productionSteps: [],
-        showIngredientEditorDialog: false,
-        addIngredient: false,
-        ingredientValid: false,
-        valid: false,
-        newProductionStep: {
-          type: 'addIngredients',
-          stepIngredients: [{
-            amount: '',
-            ingredient: null,
-            scale: true
-          }]
+        editor: {
+          isCreatingNew: true,
+          visible: false,
+          valid: false,
+          productionStepIndex: -1,
+          ingredientIndex: -1
         },
-        editProductionStep: {
-          type: 'addIngredients',
-          stepIngredients: [{
-            amount: '',
-            ingredient: null,
-            scale: true
-          }]
-        },
-        editIngredientGroupIndex: -1,
-        editIngredientIndex: -1,
-        disableNextUpdateProductionStepList: false,
       }
     },
     watch: {
@@ -185,14 +172,8 @@ export default {
         this.$emit('input', this.productionSteps);
       },
       showIngredientEditor(productionStep, ingredient) {
-        this.addIngredient = true;
-        if (ingredient) {
-          this.editIngredient = Object.assign({}, ingredient);
-          this.addIngredient = false;
-          this.editIngredientGroupIndex = this.ingredients.indexOf(group);
-          this.editIngredientIndex = this.ingredients[this.editIngredientGroupIndex].indexOf(ingredient);
-        }
-        this.showIngredientEditorDialog = true;
+        this.editor.isCreatingNew = !productionStep;
+        this.editor.visible = true;
       },
       removeIngredient(group, ingredient) {
         let groupIndex = this.ingredients.indexOf(group);
@@ -207,10 +188,9 @@ export default {
         this.emitChange();
       },
       closeIngredientEditor() {
-        this.editIngredient = JSON.parse(JSON.stringify(this.newIngredient));
-        this.showIngredientEditorDialog = false;
-        this.editIngredientIndex = -1;
-        this.editIngredientGroupIndex = -1;
+        this.editor.visible = false;
+        this.editor.productionStepIndex = -1;
+        this.editor.ingredientIndex = -1;
       },
       saveEditIngredient() {
         if (this.editIngredientIndex < 0) {

@@ -28,6 +28,26 @@ export default {
       required: false
     }
   },
+  watch: {
+    value: {
+      immediate: true,
+      handler() {
+        this.$v.value.$touch();
+        if(this.$v.value.$invalid) {
+          this.$emit('invalid');
+        } else {
+          this.$emit('valid');
+        }
+      }
+    },
+    '$v.value.$invalid': function _watch$vValue$invalid(value) {
+      if (!value) {
+        this.$emit('valid');
+      } else {
+        this.$emit('invalid');
+      }
+    }
+  },
   validations() {
     let validations = {
       value: {

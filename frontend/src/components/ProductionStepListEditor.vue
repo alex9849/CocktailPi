@@ -28,8 +28,8 @@
           v-if="selectedTab === 'ingredient'"
           :value="editStep"
           @input="$emit('input', $event)"
-          @valid="iFormValid = true"
-          @invalid="iFormValid = false"
+          @valid="$emit('valid')"
+          @invalid="$emit('invalid')"
         />
       </q-tab-panel>
       <q-tab-panel
@@ -40,8 +40,8 @@
           v-if="selectedTab === 'writtenInstruction'"
           :value="editStep"
           @input="$emit('input', $event)"
-          @valid="wiformValid = true"
-          @invalid="wiformValid = false"
+          @valid="$emit('valid')"
+          @invalid="$emit('invalid')"
         />
       </q-tab-panel>
     </q-tab-panels>

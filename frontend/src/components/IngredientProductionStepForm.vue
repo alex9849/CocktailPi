@@ -59,18 +59,7 @@ export default {
           }, () => abort)
       },
       abortFilterIngredients() {
-      },
-      initialize() {
-        this.$v.value.$touch();
-        if(this.$v.value.$invalid) {
-          this.$emit('invalid');
-        } else {
-          this.$emit('valid');
-        }
       }
-    },
-    created() {
-      this.initialize();
     },
     validations() {
       let validations = {
@@ -102,8 +91,16 @@ export default {
           this.$emit('invalid');
         }
       },
-      value() {
-        this.initialize();
+      value: {
+        immediate: true,
+        handler() {
+          this.$v.value.$touch();
+          if(this.$v.value.$invalid) {
+            this.$emit('invalid');
+          } else {
+            this.$emit('valid');
+          }
+        }
       }
     }
   }
