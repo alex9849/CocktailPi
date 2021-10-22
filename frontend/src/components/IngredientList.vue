@@ -1,12 +1,13 @@
 <template>
   <draggable
     :value="productionSteps"
+    @input="onProductionStepListDrag($event)"
     :disabled="!editable"
     :delay="400"
     :delayOnTouchOnly="true"
     :touchStartThreshold="10"
     draggable=".dragItem"
-    group="ingredients"
+    group="productionSteps"
     tag="div"
     class="rounded-borders q-list q-list--bordered q-list--separator"
     :animation="200"
@@ -53,6 +54,7 @@
       <q-item-section v-if="productionStep.type === 'addIngredients'">
         <draggable
           :value="productionStep.stepIngredients"
+          @input="onStepIngredientsListDrag(productionStep, $event)"
           :disabled="!editable"
           :delay="400"
           :delayOnTouchOnly="true"
@@ -74,6 +76,16 @@
               <q-item-label v-if="stepIngredient.ingredient.alcoholContent !== 0" caption>
                 {{ stepIngredient.ingredient.alcoholContent }}% alcohol content
               </q-item-label>
+            </q-item-section>
+            <q-item-section side v-if="editable">
+              <q-btn
+                v-if="productionStep.stepIngredients.length > 1"
+                :icon="mdiCallSplit"
+                @click.native="splitUpStepIngredient(productionStep, stepIngredient)"
+                dense
+                flat
+                rounded
+              />
             </q-item-section>
             <q-item-section side v-if="editable">
               <q-btn
@@ -140,7 +152,7 @@
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
+import {mdiCallSplit, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
 import draggable from 'vuedraggable';
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from "components/CEditDialog";
@@ -258,12 +270,37 @@ export default {
         }
         this.closeProductionStepEditor();
         this.emitChange();
-      }
+      },
+      splitUpStepIngredient(productionStep, stepIngredient) {
+        let prodStepIndex = this.productionSteps.indexOf(productionStep);
+        productionStep.stepIngredients = productionStep.stepIngredients
+          .filter(x => x !== stepIngredient)
+        this.productionSteps.splice(prodStepIndex + 1, 0, {
+          type: 'addIngredients',
+          stepIngredients: [stepIngredient]
+        })
+        this.emitChange()
+      },
+      onProductionStepListDrag(value) {
+        this.productionSteps = value;
+        this.emitChange()
+      },
+      onStepIngredientsListDrag(productionStep, value) {
+        productionStep.stepIngredients = value;
+        this.productionSteps = this.productionSteps.filter(x => {
+          if(x.type !== 'addIngredients') {
+            return true;
+          }
+          return x.stepIngredients.length !== 0;
+        })
+        this.emitChange();
+      },
     },
     created() {
       this.mdiPlusCircleOutline = mdiPlusCircleOutline;
       this.mdiPencilOutline = mdiPencilOutline;
       this.mdiDelete = mdiDelete;
+      this.mdiCallSplit = mdiCallSplit;
     }
   }
 </script>
