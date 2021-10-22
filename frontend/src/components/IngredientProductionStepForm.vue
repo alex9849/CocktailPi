@@ -52,9 +52,9 @@ export default {
           return;
         }
         IngridientService.getIngredientsFilter(val)
-          .then(ingridients => {
+          .then(ingredients => {
             update(() => {
-              this.ingredientOptions = ingridients;
+              this.ingredientOptions = ingredients;
             })
           }, () => abort)
       },
