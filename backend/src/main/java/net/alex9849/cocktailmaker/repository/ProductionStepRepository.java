@@ -14,7 +14,9 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Repository
@@ -39,7 +41,7 @@ class ProductionStepRepository extends JdbcDaoSupport {
             List<ProductionStep> results = new ArrayList<>();
             int index = 0;
             while (rs.next()) {
-                results.add(populateEntity(parseRs(rs), recipeId, ++index));
+                results.add(populateEntity(parseRs(rs), recipeId, index++));
             }
             return results;
         });
@@ -59,9 +61,10 @@ class ProductionStepRepository extends JdbcDaoSupport {
         }
         return getJdbcTemplate().execute((ConnectionCallback<List<ProductionStep>>) con -> {
             String sqlQuery = "INSERT INTO production_steps (recipe_id, dType, message, \"order\") VALUES";
-            for(ProductionStep ps : productionSteps) {
-                sqlQuery += " (?, ?, ?, ?)";
-            }
+            List<String> valuesSqlString = new LinkedList<>();
+            productionSteps.forEach(x -> valuesSqlString.add(" (?, ?, ?, ?)"));
+            sqlQuery += String.join(",", valuesSqlString);
+
             PreparedStatement pstmt = con.prepareStatement(sqlQuery);
             for(int i = 0; i < productionSteps.size(); i++) {
                 final int paramSize = 4;
@@ -73,6 +76,8 @@ class ProductionStepRepository extends JdbcDaoSupport {
                 if(currentStep instanceof WrittenInstructionProductionStep) {
                     WrittenInstructionProductionStep wStep = (WrittenInstructionProductionStep) currentStep;
                     pstmt.setString(paramSize * i + 3, wStep.getMessage());
+                } else {
+                    pstmt.setNull(paramSize * i + 3, Types.VARCHAR);
                 }
             }
             pstmt.execute();

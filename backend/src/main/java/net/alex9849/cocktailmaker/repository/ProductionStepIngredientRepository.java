@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Repository
@@ -50,9 +51,9 @@ public class ProductionStepIngredientRepository extends JdbcDaoSupport {
         }
         return getJdbcTemplate().execute((ConnectionCallback<List<ProductionStepIngredient>>) con -> {
             String sqlQuery = "INSERT INTO production_step_ingredients (recipe_id, \"order\", ingredient_id, amount, scale) VALUES";
-            for(ProductionStepIngredient psi : stepIngredients) {
-                sqlQuery += " (?, ?, ?, ?, ?)";
-            }
+            List<String> valuesSqlString = new LinkedList<>();
+            stepIngredients.forEach(x -> valuesSqlString.add(" (?, ?, ?, ?, ?)"));
+            sqlQuery += String.join(",", valuesSqlString);
 
             PreparedStatement pstmt = con.prepareStatement(sqlQuery);
             final int paramSize = 5;
