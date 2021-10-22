@@ -21,10 +21,31 @@
         <q-avatar color="grey">{{ index + 1}}.</q-avatar>
       </q-item-section>
       <q-item-section v-if="productionStep.type === 'writtenInstruction'">
-        <q-list bordered>
+        <q-list>
           <q-item>
             <q-item-section>
+              <q-item-label caption>
+                Manual instruction:
+              </q-item-label>
               {{ productionStep.message }}
+            </q-item-section>
+            <q-item-section side v-if="editable">
+              <q-btn
+                :icon="mdiPencilOutline"
+                @click.native="showManualInstructionEditor(productionStep)"
+                dense
+                flat
+                rounded
+              />
+            </q-item-section>
+            <q-item-section side v-if="editable">
+              <q-btn
+                :icon="mdiDelete"
+                @click.native="removeManualInstruction(productionStep)"
+                dense
+                flat
+                rounded
+              />
             </q-item-section>
           </q-item>
         </q-list>
@@ -57,7 +78,7 @@
             <q-item-section side v-if="editable">
               <q-btn
                 :icon="mdiPencilOutline"
-                @click.native="showEditStepIngredientEditor(productionStep, stepIngredient)"
+                @click.native="showStepIngredientEditor(productionStep, stepIngredient)"
                 dense
                 flat
                 rounded
@@ -180,7 +201,17 @@ export default {
         this.editor.isCreatingNew = true;
         this.editor.visible = true;
       },
-      showEditStepIngredientEditor(productionStep, stepIngredient) {
+      showManualInstructionEditor(productionStep) {
+        this.editor.productionStepIndex = this.productionSteps.indexOf(productionStep);
+        Vue.set(this.editor, 'editingObject', productionStep);
+        this.editor.isCreatingNew = false;
+        this.editor.visible = true;
+      },
+      removeManualInstruction(productionStep) {
+        this.productionSteps = this.productionSteps.filter(x => x !== productionStep);
+        this.emitChange();
+      },
+      showStepIngredientEditor(productionStep, stepIngredient) {
         this.editor.productionStepIndex = this.productionSteps.indexOf(productionStep);
         this.editor.ingredientIndex = productionStep.stepIngredients.indexOf(stepIngredient);
         Vue.set(this.editor, 'editingObject', stepIngredient);
