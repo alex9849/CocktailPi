@@ -1,9 +1,9 @@
 package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 public class CocktailprogressDto {
     private RecipeDto recipe;
     private int progress;
-    private UserDto user;
+    private OwnerDto user;
     private Cocktailprogress.State state;
     private List<ProductionStepIngredientDto> currentIngredientsToAddManually;
+    private String writtenInstruction;
+
 
     public CocktailprogressDto(Cocktailprogress cocktailprogress) {
         this.progress = cocktailprogress.getProgress();
@@ -24,15 +26,18 @@ public class CocktailprogressDto {
                     .map(ProductionStepIngredientDto::new)
                     .collect(Collectors.toList());
         }
+        if(cocktailprogress.getWrittenInstruction() != null) {
+            this.writtenInstruction = cocktailprogress.getWrittenInstruction();
+        }
         if(cocktailprogress.getRecipe() != null) {
             this.recipe = new RecipeDto(cocktailprogress.getRecipe());
             this.recipe.setProductionSteps(null);
         }
         if(cocktailprogress.getUser() != null) {
-            UserDto userDto = new UserDto();
-            userDto.setId(cocktailprogress.getUser().getId());
-            userDto.setUsername(cocktailprogress.getUser().getUsername());
-            this.user = userDto;
+            OwnerDto ownerDto = new OwnerDto();
+            ownerDto.setId(cocktailprogress.getUser().getId());
+            ownerDto.setUsername(cocktailprogress.getUser().getUsername());
+            this.user = ownerDto;
         }
     }
 
@@ -54,12 +59,20 @@ public class CocktailprogressDto {
         this.progress = progress;
     }
 
-    public UserDto getUser() {
+    public OwnerDto getUser() {
         return user;
     }
 
-    public void setUser(UserDto user) {
+    public void setUser(OwnerDto user) {
         this.user = user;
+    }
+
+    public String getWrittenInstruction() {
+        return writtenInstruction;
+    }
+
+    public void setWrittenInstruction(String writtenInstruction) {
+        this.writtenInstruction = writtenInstruction;
     }
 
     public Cocktailprogress.State getState() {

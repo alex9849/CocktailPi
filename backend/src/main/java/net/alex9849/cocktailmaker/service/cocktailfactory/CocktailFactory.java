@@ -104,6 +104,8 @@ public class CocktailFactory {
 
     private void onSubscriptionChange(StepProgress stepProgress) {
         if(stepProgress instanceof ManualStepProgress) {
+            this.state = Cocktailprogress.State.MANUAL_INGREDIENT_ADD;
+        } else if(stepProgress instanceof WrittenInstructionStepProgress) {
             this.state = Cocktailprogress.State.MANUAL_ACTION_REQUIRED;
         } else {
             this.state = Cocktailprogress.State.RUNNING;
@@ -263,6 +265,13 @@ public class CocktailFactory {
                     timeElapsed += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
                             * automaticWorker.getRequiredPumpingTime());
                 }
+            } else if (worker instanceof WrittenInstructionProductionStepWorker) {
+                timeNeeded += TIME_FOR_MANUAL_PROGRESS;
+                if(worker.isFinished()) {
+                    timeElapsed += TIME_FOR_MANUAL_PROGRESS;
+                }
+            } else {
+                throw new IllegalStateException("Unknown worker type!");
             }
         }
         return Math.round((((float) timeElapsed) / timeNeeded) * 100);

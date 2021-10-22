@@ -35,7 +35,7 @@
               background-color="#EEEEEE"
             >
               <template v-slot:bottom>
-                <q-card v-if="cocktailProgress.state === 'MANUAL_ACTION_REQUIRED'"
+                <q-card v-if="cocktailProgress.state === 'MANUAL_INGREDIENT_ADD'"
                         class="bg-warning" style="margin: 10px 0"
                 >
                   <q-card-section>
@@ -48,6 +48,21 @@
                           </li>
                         </ul>
                       </div>
+                      <div class="flex col-12 col-sm-auto justify-center" style="align-self: end;" >
+                        <q-btn color="green"
+                               @click="onClickContinueProduction"
+                        >Continue</q-btn>
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
+                <q-card v-if="cocktailProgress.state === 'MANUAL_ACTION_REQUIRED'"
+                        class="bg-warning" style="margin: 10px 0"
+                >
+                  <q-card-section>
+                    <div class="">{{ cocktailProgress.writtenInstruction }}</div>
+                    <div class="row">
+                      <div class="col col-sm"></div>
                       <div class="flex col-12 col-sm-auto justify-center" style="align-self: end;" >
                         <q-btn color="green"
                                @click="onClickContinueProduction"
