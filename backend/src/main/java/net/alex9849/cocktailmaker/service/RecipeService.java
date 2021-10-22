@@ -125,23 +125,31 @@ public class RecipeService {
         if(recipeDto == null) {
             return null;
         }
-        Recipe recipe = new Recipe();
-        BeanUtils.copyProperties(recipeDto, recipe);
+        Recipe recipe = fromDtoWithoutOwner(recipeDto);
         recipe.setOwner(userService.getUser(recipeDto.getOwner().getId()));
         if(recipe.getOwner() != null) {
             recipe.setOwnerId(recipe.getOwner().getId());
         }
+        return recipe;
+    }
+
+    public static Recipe fromDtoWithoutOwner(RecipeDto recipeDto) {
+        if(recipeDto == null) {
+            return null;
+        }
+        Recipe recipe = new Recipe();
+        BeanUtils.copyProperties(recipeDto, recipe);
         if(recipeDto.getProductionSteps() != null) {
             recipe.setProductionSteps(recipeDto.getProductionSteps().stream()
-                    .map(this::fromDto).collect(Collectors.toList()));
+                    .map(RecipeService::fromDto).collect(Collectors.toList()));
         }
         recipe.setCategories(recipeDto.getCategories()
-                .stream().map(x -> categoryService.fromDto(x))
+                .stream().map(CategoryService::fromDto)
                 .collect(Collectors.toList()));
         return recipe;
     }
 
-    public ProductionStep fromDto(ProductionStepDto productionStepDto) {
+    public static ProductionStep fromDto(ProductionStepDto productionStepDto) {
         if(productionStepDto == null) {
             return null;
         }
@@ -154,7 +162,7 @@ public class RecipeService {
         throw new IllegalStateException("ProductionSteDtoType not supported: " + productionStepDto.getType());
     }
 
-    public WrittenInstructionProductionStep fromDto(WrittenInstructionProductionStepDto dto) {
+    public static WrittenInstructionProductionStep fromDto(WrittenInstructionProductionStepDto dto) {
         if(dto == null) {
             return null;
         }
@@ -163,24 +171,24 @@ public class RecipeService {
         return pStep;
     }
 
-    public AddIngredientsProductionStep fromDto(AddIngredientsProductionStepDto dto) {
+    public static AddIngredientsProductionStep fromDto(AddIngredientsProductionStepDto dto) {
         if(dto == null) {
             return null;
         }
         AddIngredientsProductionStep pStep = new AddIngredientsProductionStep();
         BeanUtils.copyProperties(dto, pStep);
         pStep.setStepIngredients(dto.getStepIngredients().stream()
-                .map(this::fromDto).collect(Collectors.toList()));
+                .map(RecipeService::fromDto).collect(Collectors.toList()));
         return pStep;
     }
 
-    public ProductionStepIngredient fromDto(ProductionStepIngredientDto dto) {
+    public static ProductionStepIngredient fromDto(ProductionStepIngredientDto dto) {
         if(dto == null) {
             return null;
         }
         ProductionStepIngredient psi = new ProductionStepIngredient();
         BeanUtils.copyProperties(dto, psi);
-        psi.setIngredient(ingredientService.fromDto(dto.getIngredient()));
+        psi.setIngredient(IngredientService.fromDto(dto.getIngredient()));
         return psi;
     }
 }

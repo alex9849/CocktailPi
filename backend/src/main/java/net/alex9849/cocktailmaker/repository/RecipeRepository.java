@@ -259,6 +259,8 @@ public class RecipeRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ? AND image IS NOT NULL");
             pstmt.setLong(1, recipeId);
             ResultSet resultSet = pstmt.executeQuery();
+            boolean autoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
             LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
             Long imageOid;
             if(resultSet.next()) {
@@ -279,6 +281,8 @@ public class RecipeRepository extends JdbcDaoSupport {
             updateLobOidPstmt.setLong(1, imageOid);
             updateLobOidPstmt.setLong(2, recipeId);
             updateLobOidPstmt.executeUpdate();
+            con.commit();
+            con.setAutoCommit(autoCommit);
             return null;
         });
     }

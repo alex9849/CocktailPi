@@ -101,13 +101,13 @@ public class PumpService {
         return pump;
     }
 
-    public Pump fromDto(PumpDto pumpDto) {
+    public static Pump fromDto(PumpDto pumpDto) {
         if(pumpDto == null) {
             return null;
         }
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
-        pump.setCurrentIngredient(ingredientService.fromDto(pumpDto.getCurrentIngredient()));
+        pump.setCurrentIngredient(IngredientService.fromDto(pumpDto.getCurrentIngredient()));
         if(pump.getCurrentIngredient() != null) {
             pump.setCurrentIngredientId(pump.getCurrentIngredient().getId());
         }

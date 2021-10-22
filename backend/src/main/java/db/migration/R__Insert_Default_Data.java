@@ -9,37 +9,49 @@ import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailmaker.service.CategoryService;
-import net.alex9849.cocktailmaker.service.IngredientService;
+import net.alex9849.cocktailmaker.repository.CategoryRepository;
+import net.alex9849.cocktailmaker.repository.IngredientRepository;
+import net.alex9849.cocktailmaker.repository.RecipeRepository;
+import net.alex9849.cocktailmaker.repository.UserRepository;
 import net.alex9849.cocktailmaker.service.RecipeService;
-import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class R__Insert_Default_Data extends BaseJavaMigration {
 
-    private final UserService userService = SpringUtility.getBean(UserService.class);
-    private final RecipeService recipeService = SpringUtility.getBean(RecipeService.class);
-    private final CategoryService categoryService = SpringUtility.getBean(CategoryService.class);
-    private final IngredientService ingredientService = SpringUtility.getBean(IngredientService.class);
+    private final UserRepository userRepository = SpringUtility.getBean(UserRepository.class);
+    private final RecipeRepository recipeRepository = SpringUtility.getBean(RecipeRepository.class);
+    private final CategoryRepository categoryRepository = SpringUtility.getBean(CategoryRepository.class);
+    private final IngredientRepository ingredientRepository = SpringUtility.getBean(IngredientRepository.class);
 
     private Map<String, Category> categoriesByName = null;
     private Map<String, Ingredient> ingredientsByName = null;
 
     @Override
     public void migrate(Context context) throws Exception {
-        if(!userService.getUsers().isEmpty()) {
+        Connection connection = context.getConnection();
+        final JdbcTemplate jdbcTemplate = new JdbcTemplate(new SingleConnectionDataSource(connection, true));
+        userRepository.setJdbcTemplate(jdbcTemplate);
+        recipeRepository.setJdbcTemplate(jdbcTemplate);
+        categoryRepository.setJdbcTemplate(jdbcTemplate);
+        ingredientRepository.setJdbcTemplate(jdbcTemplate);
+
+        if(!userRepository.findAll().isEmpty()) {
             return;
         }
+
         InputStream recipeStream = this.getClass().getResourceAsStream("/db/defaultdata/recipes.json");
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -49,13 +61,16 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         OwnerDto defaultOwnerDto = new OwnerDto(defaultUser);
         for(RecipeDto recipeDto : recipeDtos) {
             recipeDto.setOwner(defaultOwnerDto);
-            long recipeId = createRecipe(recipeService.fromDto(recipeDto)).getId();
+            Recipe recipe = RecipeService.fromDtoWithoutOwner(recipeDto);
+            recipe.setOwner(defaultUser);
+            recipe.setOwnerId(defaultUser.getId());
+            long recipeId = createRecipe(recipe).getId();
             InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/" + recipeDto.getName() + ".jpg");
             if(recipeImageStream != null) {
                 BufferedImage image = ImageIO.read(recipeImageStream);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ImageIO.write(image, "jpg", out);
-                recipeService.setImage(recipeId, out.toByteArray());
+                recipeRepository.setImage(recipeId, out.toByteArray());
             }
         }
     }
@@ -69,7 +84,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         defaultUser.setPassword("123456");
         defaultUser.setAccountNonLocked(true);
         defaultUser.setAuthority(ERole.ROLE_ADMIN);
-        return userService.createUser(defaultUser);
+        return userRepository.create(defaultUser);
     }
 
     private Recipe createRecipe(Recipe recipe) {
@@ -84,16 +99,16 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         for(int i = 0; i < recipe.getCategories().size(); i++) {
             recipe.getCategories().set(i, getOrCreateCategory(recipe.getCategories().get(i)));
         }
-        return recipeService.createRecipe(recipe);
+        return recipeRepository.create(recipe);
     }
 
     private Ingredient getOrCreateIngredient(Ingredient searchIngredient) {
         if(ingredientsByName == null) {
-            ingredientsByName = ingredientService.getIngredientByFilter(null, false)
+            ingredientsByName = ingredientRepository.findAll()
                     .stream().collect(Collectors.toMap(Ingredient::getName, x -> x));
         }
         if(!ingredientsByName.containsKey(searchIngredient.getName())) {
-            Ingredient createdIngredient = ingredientService.createIngredient(searchIngredient);
+            Ingredient createdIngredient = ingredientRepository.create(searchIngredient);
             ingredientsByName.put(createdIngredient.getName(), createdIngredient);
         }
         return ingredientsByName.get(searchIngredient.getName());
@@ -101,11 +116,11 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
 
     private Category getOrCreateCategory(Category searchCategory) {
         if(categoriesByName == null) {
-            categoriesByName = categoryService.getAllCategories().stream()
+            categoriesByName = categoryRepository.findAll().stream()
                     .collect(Collectors.toMap(Category::getName, x -> x));
         }
         if(!categoriesByName.containsKey(searchCategory.getName())) {
-            Category createdCategory = categoryService.createCategory(searchCategory);
+            Category createdCategory = categoryRepository.create(searchCategory);
             categoriesByName.put(createdCategory.getName(), createdCategory);
         }
         return categoriesByName.get(searchCategory.getName());

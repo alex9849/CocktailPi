@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.*;
 
 @Service
@@ -21,12 +20,6 @@ public class IngredientService {
 
     @Autowired
     private IngredientRepository ingredientRepository;
-
-    @Autowired
-    private PumpService pumpService;
-
-    @Autowired
-    private EntityManager entityManager;
 
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
@@ -65,7 +58,7 @@ public class IngredientService {
                 .findIdsOwnedByUser(userId).toArray(new Long[1]));
     }
 
-    public Ingredient fromDto(IngredientDto ingredientDto) {
+    public static Ingredient fromDto(IngredientDto ingredientDto) {
         if(ingredientDto == null) {
             return null;
         }
@@ -78,7 +71,7 @@ public class IngredientService {
         throw new IllegalStateException("IngredientType not supported yet!");
     }
 
-    public AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
+    public static AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
         if(ingredientDto == null) {
             return null;
         }
@@ -87,7 +80,7 @@ public class IngredientService {
         return ingredient;
     }
 
-    public ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
+    public static ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
         if(ingredientDto == null) {
             return null;
         }
