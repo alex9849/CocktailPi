@@ -13,7 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -117,13 +120,12 @@ public class RecipeRepository extends JdbcDaoSupport {
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, " +
-                    "owner_id, default_amount_to_fill) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "owner_id, default_amount_to_fill) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setBoolean(3, recipe.isInPublic());
-            pstmt.setDate(4, new Date(System.currentTimeMillis()));
-            pstmt.setLong(5, recipe.getOwnerId());
-            pstmt.setLong(6, recipe.getDefaultAmountToFill());
+            pstmt.setLong(4, recipe.getOwnerId());
+            pstmt.setLong(5, recipe.getDefaultAmountToFill());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -141,15 +143,14 @@ public class RecipeRepository extends JdbcDaoSupport {
     public boolean update(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
-                    "description = ?, in_public = ?, last_update = ?, owner_id = ?, " +
+                    "description = ?, in_public = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
                     "default_amount_to_fill = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setBoolean(3, recipe.isInPublic());
-            pstmt.setDate(4, new Date(System.currentTimeMillis()));
-            pstmt.setLong(5, recipe.getOwnerId());
-            pstmt.setLong(6, recipe.getDefaultAmountToFill());
-            pstmt.setLong(7, recipe.getId());
+            pstmt.setLong(4, recipe.getOwnerId());
+            pstmt.setLong(5, recipe.getDefaultAmountToFill());
+            pstmt.setLong(6, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());

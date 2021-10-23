@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-input
-      v-model.trim="value.message"
+      v-model="value.message"
       @input="() => {$emit('input', value); $v.value.message.$touch();}"
       tcype="textarea"
       label="Instruction"
