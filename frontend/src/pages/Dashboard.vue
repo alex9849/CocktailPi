@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page class="page-content">
     <p>Dashboard</p>
   </q-page>
 </template>

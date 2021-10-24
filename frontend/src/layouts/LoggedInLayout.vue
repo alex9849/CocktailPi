@@ -86,7 +86,7 @@
 
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="justify-center">
       <router-view/>
     </q-page-container>
   </q-layout>

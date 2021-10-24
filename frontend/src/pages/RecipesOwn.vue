@@ -1,8 +1,5 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="My recipes"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>My Recipes</h5>
     <top-button-arranger>
       <q-btn
@@ -20,7 +17,7 @@
         @click="onRefreshButton"
       />
     </top-button-arranger>
-    <div class="q-pa-md">
+    <div class="q-py-md">
       <c-recipe-search-list
         :only-own-recipes="true"
         ref="recipeSearchList"

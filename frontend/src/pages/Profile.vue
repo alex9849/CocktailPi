@@ -1,8 +1,5 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="My Profile"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>My profile</h5>
     <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
       {{ error }}

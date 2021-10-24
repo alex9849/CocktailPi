@@ -1,8 +1,5 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="My collections"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>My collections</h5>
     <top-button-arranger>
       <q-btn
@@ -20,7 +17,7 @@
         no-caps
       />
     </top-button-arranger>
-    <div class="q-pa-md row q-col-gutter-sm">
+    <div class="q-py-md row q-col-gutter-sm">
       <router-link v-for="collection of collections"
                    :key="collection.id"
                    class="col-12 col-md-6 col-lg-4 d-flex items-stretch"

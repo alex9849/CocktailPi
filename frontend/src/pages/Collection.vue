@@ -1,11 +1,7 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el :to="{name: 'mycollections'}" label="My collections"/>
-      <q-breadcrumbs-el :label="collection.name"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>{{ collection.name }}</h5>
-    <top-button-arranger style="margin-bottom: 15px">
+    <top-button-arranger>
       <q-btn
         v-if="!editRecipeMode.active"
         @click="editRecipeMode.active = true"
@@ -27,7 +23,7 @@
         @click="showDeleteCollectionDialog = true"
       />
     </top-button-arranger>
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-md q-py-md">
       <div class="col-12 col-md-8 col-lg-9">
         <c-recipe-search-list
           ref="recipeSearchList"

@@ -1,10 +1,7 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="CategoryManagement"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>CategoryManagement</h5>
-    <TopButtonArranger style="padding: 10px">
+    <TopButtonArranger>
       <q-btn
         color="negative"
         label="Delete selected categories"
@@ -28,87 +25,89 @@
         no-caps
       />
     </TopButtonArranger>
-    <q-table
-      :columns="columns"
-      :data="categories"
-      :loading="loading"
-      :selected.sync="selected"
-      selection="multiple"
-      hide-bottom
-      :pagination="{rowsPerPage: 0, sortBy: 'name'}"
-      no-data-label="No categories found"
-      :table-style="{margin: '15px'}"
-      style="background-color: #f3f3fa"
-    >
-      <template v-slot:body="props">
-        <q-tr
-          :props="props"
-          :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
-        >
-          <q-td
-            auto-width
-            style="text-align: center"
-          >
-            <q-checkbox
-              v-model="props.selected"
-            />
-          </q-td>
-          <q-td
-            key="name"
-            :props="props"
-          >
-            {{ props.row.name }}
-          </q-td>
-          <q-td
-            key="actions"
-            class="q-pa-md q-gutter-x-sm"
-            :props="props"
-          >
-            <q-btn
-              :icon="mdiPencilOutline"
-              text-color="white"
-              :style="{backgroundColor: '#31ccec'}"
-              @click="showEditDialog(props.row)"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Edit
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              :icon="mdiDelete"
-              color="red"
-              @click="() => {deleteOptions.deleteCategory.push(props.row); openDeleteDialog(false);}"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Delete
-              </q-tooltip>
-            </q-btn>
-          </q-td>
-        </q-tr>
-      </template>
-      <template
-        v-slot:bottom-row
+    <div class="q-py-md">
+      <q-table
+        :columns="columns"
+        :data="categories"
+        :loading="loading"
+        :selected.sync="selected"
+        selection="multiple"
+        hide-bottom
+        :pagination="{rowsPerPage: 0, sortBy: 'name'}"
+        no-data-label="No categories found"
+        :table-style="{margin: '15px'}"
+        style="background-color: #f3f3fa"
       >
-        <td
-          style="color: #b5b5b5"
+        <template v-slot:body="props">
+          <q-tr
+            :props="props"
+            :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
+          >
+            <q-td
+              auto-width
+              style="text-align: center"
+            >
+              <q-checkbox
+                v-model="props.selected"
+              />
+            </q-td>
+            <q-td
+              key="name"
+              :props="props"
+            >
+              {{ props.row.name }}
+            </q-td>
+            <q-td
+              key="actions"
+              class="q-pa-md q-gutter-x-sm"
+              :props="props"
+            >
+              <q-btn
+                :icon="mdiPencilOutline"
+                text-color="white"
+                :style="{backgroundColor: '#31ccec'}"
+                @click="showEditDialog(props.row)"
+                dense
+                rounded
+              >
+                <q-tooltip>
+                  Edit
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                :icon="mdiDelete"
+                color="red"
+                @click="() => {deleteOptions.deleteCategory.push(props.row); openDeleteDialog(false);}"
+                dense
+                rounded
+              >
+                <q-tooltip>
+                  Delete
+                </q-tooltip>
+              </q-btn>
+            </q-td>
+          </q-tr>
+        </template>
+        <template
+          v-slot:bottom-row
         >
-          {{ categories.length + ' ' + ((categories.length === 1)? 'category' : 'categories')}} in total
-        </td>
-        <td rowspan="5"/>
-      </template>
-      <template
-        v-slot:loading
-      >
-        <q-inner-loading
-          showing
-          color="info"
-        />
-      </template>
-    </q-table>
+          <td
+            style="color: #b5b5b5"
+          >
+            {{ categories.length + ' ' + ((categories.length === 1)? 'category' : 'categories')}} in total
+          </td>
+          <td rowspan="5"/>
+        </template>
+        <template
+          v-slot:loading
+        >
+          <q-inner-loading
+            showing
+            color="info"
+          />
+        </template>
+      </q-table>
+    </div>
     <c-question
       :question="deleteQuestionMessage"
       ok-color="red"
@@ -168,7 +167,6 @@
               ]"
       />
     </c-edit-dialog>
-
   </q-page>
 </template>
 

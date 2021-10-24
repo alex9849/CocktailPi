@@ -1,45 +1,43 @@
 <template>
   <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="User Management" :to="{name: 'usermanagement'}"/>
-      <q-breadcrumbs-el label="Edit user"/>
-    </q-breadcrumbs>
     <h5>Edit user</h5>
-    <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
-      {{ error }}
-    </q-banner>
-    <q-card
-      flat
-    >
-      <user-editor-form
-        v-model="user"
-        :loading="loading"
-        :is-self="userId === getUser.id"
-        @valid="isValid = true"
-        @invalid="isValid = false"
+    <div class="page-content">
+      <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
+        {{ error }}
+      </q-banner>
+      <q-card
+        flat
       >
-        <template slot="below">
-          <div class="q-pa-md q-gutter-sm">
-            <q-btn
-              style="width: 100px"
-              color="negative"
-              label="Abort"
-              no-caps
-              :to="{name: 'usermanagement'}"
-            />
-            <q-btn
-              type="submit"
-              style="width: 100px"
-              color="positive"
-              label="Save"
-              no-caps
-              :disable="loading || !isValid"
-              @click="sendUpdateUser()"
-            />
-          </div>
-        </template>
-      </user-editor-form>
-    </q-card>
+        <user-editor-form
+          v-model="user"
+          :loading="loading"
+          :is-self="userId === getUser.id"
+          @valid="isValid = true"
+          @invalid="isValid = false"
+        >
+          <template slot="below">
+            <div class="q-pa-md q-gutter-sm">
+              <q-btn
+                style="width: 100px"
+                color="negative"
+                label="Abort"
+                no-caps
+                :to="{name: 'usermanagement'}"
+              />
+              <q-btn
+                type="submit"
+                style="width: 100px"
+                color="positive"
+                label="Save"
+                no-caps
+                :disable="loading || !isValid"
+                @click="sendUpdateUser()"
+              />
+            </div>
+          </template>
+        </user-editor-form>
+      </q-card>
+    </div>
   </q-page>
 </template>
 

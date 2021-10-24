@@ -1,10 +1,7 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="My bar"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>Ingredients you own</h5>
-    <TopButtonArranger style="padding: 10px">
+    <TopButtonArranger>
       <q-btn
         color="positive"
         label="Add ingredient"
@@ -21,58 +18,71 @@
         no-caps
       />
     </TopButtonArranger>
-    <q-table
-      :columns="columns"
-      :data="ownedIngredients"
-      :loading="loading"
-      hide-bottom
-      :pagination="{rowsPerPage: 0, sortBy: 'name'}"
-      no-data-label="No ingredients found"
-    >
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props"
-              key="actions"
-              class="q-pa-md q-gutter-x-sm"
-        >
-          <q-btn
-            :icon="mdiDelete"
-            color="red"
-            @click="onRemoveOwnedIngredient(props.row.id)"
-            dense
-            rounded
+    <div class="q-py-md">
+      <q-table
+        :columns="columns"
+        :data="ownedIngredients"
+        :loading="loading"
+        hide-bottom
+        :pagination="{rowsPerPage: 0, sortBy: 'name'}"
+        no-data-label="No ingredients found"
+      >
+        <template v-slot:body-cell-actions="props">
+          <q-td :props="props"
+                key="actions"
+                class="q-pa-md q-gutter-x-sm"
           >
-            <q-tooltip>
-              Delete
-            </q-tooltip>
-          </q-btn>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-alcoholContent="props">
-        <q-td :props="props"
-              key="alcoholContent"
+            <q-btn
+              :icon="mdiDelete"
+              color="red"
+              @click="onRemoveOwnedIngredient(props.row.id)"
+              dense
+              rounded
+            >
+              <q-tooltip>
+                Delete
+              </q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-alcoholContent="props">
+          <q-td :props="props"
+                key="alcoholContent"
+          >
+            {{ props.row.alcoholContent }}%
+          </q-td>
+        </template>
+        <template
+          v-slot:bottom-row
         >
-          {{ props.row.alcoholContent }}%
-        </q-td>
-      </template>
-      <template
-        v-slot:bottom-row
-      >
-        <td
-          style="color: #b5b5b5"
+          <td
+            style="color: #b5b5b5"
+          >
+            {{ ownedIngredients.length }} ingredient(s) in total
+          </td>
+          <td rowspan="5"/>
+        </template>
+        <template
+          v-slot:loading
         >
-          {{ ownedIngredients.length }} ingredient(s) in total
-        </td>
-        <td rowspan="5"/>
-      </template>
-      <template
-        v-slot:loading
+          <q-inner-loading
+            showing
+            color="info"
+          />
+        </template>
+      </q-table>
+      <h5
+
+        style="padding-top: 15px; padding-bottom: 15px"
       >
-        <q-inner-loading
-          showing
-          color="info"
-        />
-      </template>
-    </q-table>
+        Ingredients you should buy
+      </h5>
+      <q-card flat class="bg-grey-4">
+        <q-card-section class="text-center">
+          Feature not implemented yet!
+        </q-card-section>
+      </q-card>
+    </div>
     <c-edit-dialog
       v-model="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
@@ -90,17 +100,6 @@
         :rules="[val => $v.editOptions.addIngredient.required || 'Required']"
       />
     </c-edit-dialog>
-
-    <h5
-      style="padding-top: 15px; padding-bottom: 15px"
-    >
-      Ingredients you should buy
-    </h5>
-    <q-card flat class="bg-grey-4">
-      <q-card-section class="text-center">
-        Feature not implemented yet!
-      </q-card-section>
-    </q-card>
   </q-page>
 </template>
 

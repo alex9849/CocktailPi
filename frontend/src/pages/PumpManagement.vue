@@ -1,10 +1,7 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="Pumps"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>Pumps</h5>
-    <TopButtonArranger style="padding: 10px">
+    <TopButtonArranger>
       <q-btn
         color="negative"
         label="Delete selected pumps"
@@ -28,120 +25,122 @@
         no-caps
       />
     </TopButtonArranger>
-    <q-table
-      :columns="columns"
-      :data="pumps"
-      :loading="isLoading"
-      :selected.sync="selected"
-      selection="multiple"
-      hide-bottom
-      :pagination="{rowsPerPage: 0, sortBy: 'id'}"
-      :table-style="{margin: '15px'}"
-      style="background-color: #f3f3fa"
-    >
-      <template v-slot:body="props">
-        <q-tr
-          :props="props"
-        >
-          <q-td
-            auto-width
-            style="text-align: center"
-          >
-            <q-checkbox
-              v-model="props.selected"
-            />
-          </q-td>
-          <q-td
-            key="id"
-            :props="props"
-          >
-            {{ props.row.id }}
-          </q-td>
-          <q-td
-            key="timePerClInMs"
-            :props="props"
-          >
-            {{ props.row.timePerClInMs }} ms
-          </q-td>
-          <q-td
-            key="tubeCapacityInMl"
-            :props="props"
-          >
-            {{ props.row.tubeCapacityInMl }} ml
-          </q-td>
-          <q-td
-            key="gpioPin"
-            :props="props"
-          >
-            {{ props.row.gpioPin }}
-          </q-td>
-          <q-td
-            key="currentIngredient"
-            :props="props"
-          >
-            {{ props.row.currentIngredient ? props.row.currentIngredient.name : "Empty" }}
-          </q-td>
-          <q-td
-            key="actions"
-            class="q-pa-md q-gutter-x-sm"
-            :props="props"
-          >
-            <q-btn
-              :icon="mdiPlay"
-              color="green"
-              @click="onClickCleanPump(props.row)"
-              dense
-              rounded
-              :loading="isCleaning(props.row.id)"
-            >
-              <q-tooltip>
-                Pump up
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              :icon="mdiPencilOutline"
-              color="info"
-              @click="showEditDialog(props.row)"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Edit
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              :icon="mdiDelete"
-              color="red"
-              @click="() => {deletePumps.push(props.row); openDeleteDialog(false);}"
-              dense
-              rounded
-            >
-              <q-tooltip>
-                Delete
-              </q-tooltip>
-            </q-btn>
-          </q-td>
-        </q-tr>
-      </template>
-      <template
-        v-slot:bottom-row
+    <div class="q-py-md">
+      <q-table
+        :columns="columns"
+        :data="pumps"
+        :loading="isLoading"
+        :selected.sync="selected"
+        selection="multiple"
+        hide-bottom
+        :pagination="{rowsPerPage: 0, sortBy: 'id'}"
+        :table-style="{margin: '15px'}"
+        style="background-color: #f3f3fa"
       >
-        <td
-          style="color: #b5b5b5"
+        <template v-slot:body="props">
+          <q-tr
+            :props="props"
+          >
+            <q-td
+              auto-width
+              style="text-align: center"
+            >
+              <q-checkbox
+                v-model="props.selected"
+              />
+            </q-td>
+            <q-td
+              key="id"
+              :props="props"
+            >
+              {{ props.row.id }}
+            </q-td>
+            <q-td
+              key="timePerClInMs"
+              :props="props"
+            >
+              {{ props.row.timePerClInMs }} ms
+            </q-td>
+            <q-td
+              key="tubeCapacityInMl"
+              :props="props"
+            >
+              {{ props.row.tubeCapacityInMl }} ml
+            </q-td>
+            <q-td
+              key="gpioPin"
+              :props="props"
+            >
+              {{ props.row.gpioPin }}
+            </q-td>
+            <q-td
+              key="currentIngredient"
+              :props="props"
+            >
+              {{ props.row.currentIngredient ? props.row.currentIngredient.name : "Empty" }}
+            </q-td>
+            <q-td
+              key="actions"
+              class="q-pa-md q-gutter-x-sm"
+              :props="props"
+            >
+              <q-btn
+                :icon="mdiPlay"
+                color="green"
+                @click="onClickCleanPump(props.row)"
+                dense
+                rounded
+                :loading="isCleaning(props.row.id)"
+              >
+                <q-tooltip>
+                  Pump up
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                :icon="mdiPencilOutline"
+                color="info"
+                @click="showEditDialog(props.row)"
+                dense
+                rounded
+              >
+                <q-tooltip>
+                  Edit
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                :icon="mdiDelete"
+                color="red"
+                @click="() => {deletePumps.push(props.row); openDeleteDialog(false);}"
+                dense
+                rounded
+              >
+                <q-tooltip>
+                  Delete
+                </q-tooltip>
+              </q-btn>
+            </q-td>
+          </q-tr>
+        </template>
+        <template
+          v-slot:bottom-row
         >
-          {{ pumps.length }} pump(s) in total
-        </td>
-        <td rowspan="5"/>
-      </template>
-      <template
-        v-slot:loading
-      >
-        <q-inner-loading
-          showing
-          color="info"
-        />
-      </template>
-    </q-table>
+          <td
+            style="color: #b5b5b5"
+          >
+            {{ pumps.length }} pump(s) in total
+          </td>
+          <td rowspan="5"/>
+        </template>
+        <template
+          v-slot:loading
+        >
+          <q-inner-loading
+            showing
+            color="info"
+          />
+        </template>
+      </q-table>
+    </div>
     <c-edit-dialog
       v-model="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"

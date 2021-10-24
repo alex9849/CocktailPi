@@ -1,32 +1,29 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el v-if="$route.meta.category" label="Public recipes" :to="{name: 'publicrecipes'}"/>
-      <q-breadcrumbs-el v-else label="Public recipes"/>
-      <q-breadcrumbs-el v-if="$route.meta.category" :label="$route.meta.category.name"/>
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>Public recipes</h5>
-    <top-button-arranger>
-      <q-btn
-        v-if="isRecipeCreatorRole"
-        color="positive"
-        label="Create recipe"
-        no-caps
-        :to="{name: 'recipeadd'}"
-      />
-      <q-btn
-        color="info"
-        label="Refresh"
-        no-caps
-        :disable="refreshing"
-        @click="onRefreshButton"
-      />
-    </top-button-arranger>
-    <div class="q-pa-md">
-      <c-recipe-search-list
-        :category-id="$route.params.cid"
-        ref="recipeSearchList"
-      />
+    <div>
+      <top-button-arranger>
+        <q-btn
+          v-if="isRecipeCreatorRole"
+          color="positive"
+          label="Create recipe"
+          no-caps
+          :to="{name: 'recipeadd'}"
+        />
+        <q-btn
+          color="info"
+          label="Refresh"
+          no-caps
+          :disable="refreshing"
+          @click="onRefreshButton"
+        />
+      </top-button-arranger>
+      <div class="q-py-md">
+        <c-recipe-search-list
+          :category-id="$route.params.cid"
+          ref="recipeSearchList"
+        />
+      </div>
     </div>
   </q-page>
 </template>

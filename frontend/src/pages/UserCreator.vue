@@ -1,9 +1,5 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="User Management" :to="{name: 'usermanagement'}" />
-      <q-breadcrumbs-el label="Create user" />
-    </q-breadcrumbs>
+  <q-page class="page-content" padding>
     <h5>Create user</h5>
     <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
       {{ error }}
@@ -44,11 +40,11 @@
 </template>
 
 <script>
-  import UserEditorForm from "../components/UserEditorForm";
-  import User from "../models/User"
-  import userService from "../services/user.service"
+import UserEditorForm from "../components/UserEditorForm";
+import User from "../models/User"
+import userService from "../services/user.service"
 
-  export default {
+export default {
     name: "UserCreator",
     components: {UserEditorForm},
     data() {

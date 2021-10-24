@@ -1,10 +1,6 @@
 <template>
-  <q-page padding>
-    <q-breadcrumbs>
-      <q-breadcrumbs-el label="Public recipes" :to="{name: 'publicrecipes'}"/>
-      <q-breadcrumbs-el label="Recipe details"/>
-    </q-breadcrumbs>
-    <div class="row innerpadding" style="display: inline">
+  <q-page class="page-content" padding>
+    <div class="row">
       <div class="col vcenter">
         <h5>{{ recipe.name }}</h5>
       </div>
