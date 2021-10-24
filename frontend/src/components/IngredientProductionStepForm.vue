@@ -2,7 +2,6 @@
   <div>
     <c-ingredient-selector
       v-model="value.ingredient"
-      clearable
       @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
       :rules="[val => $v.value.ingredient.required || 'Required']"
     />
