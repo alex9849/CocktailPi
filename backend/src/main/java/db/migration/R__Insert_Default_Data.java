@@ -81,7 +81,8 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         defaultUser.setFirstname("Admin");
         defaultUser.setLastname("Example");
         defaultUser.setEmail("admin@localhost.local");
-        defaultUser.setPassword("123456");
+
+        defaultUser.setPassword("$2a$10$foQL7xSRCK53J/G.MIauWOnllOS9.vyIT5RtUQT25t5ref07MtCfe");
         defaultUser.setAccountNonLocked(true);
         defaultUser.setAuthority(ERole.ROLE_ADMIN);
         return userRepository.create(defaultUser);
