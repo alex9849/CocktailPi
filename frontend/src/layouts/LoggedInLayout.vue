@@ -31,26 +31,26 @@
           default-opened
         >
           <q-item
-            v-for="(subsecion, subindex) in section.subSections"
-            v-if="subsecion.reqLevel <= getAdminLevel"
+            v-for="(subsection, subindex) in section.subSections"
+            v-if="subsection.reqLevel <= getAdminLevel"
             style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
             active-class="bg-orange-2 text-dark"
             :inset-level="0.4"
             :key="subindex"
             clickable
-            :exact="subsecion.exact"
+            :exact="subsection.exact"
             @click="() => {
                 if(!desktopMode) {
                   leftDrawerOpen = false;
                 }
               }"
-            :to="subsecion.to"
+            :to="subsection.to"
           >
             <q-item-section avatar style="min-width: 0">
               <q-icon :name="mdiChevronRight"/>
             </q-item-section>
             <q-item-section>
-              {{ subsecion.label }}
+              {{ subsection.label }}
             </q-item-section>
           </q-item>
         </q-expansion-item>
@@ -138,18 +138,18 @@ export default {
               to: {name: 'dashboard'},
               exact: false
             }, {
-              reqLevel: 1,
+              reqLevel: 0,
               label: 'My bar',
               to: {name: 'mybar'},
               exact: false
             }, {
-              reqLevel: 1,
+              reqLevel: 0,
               label: 'My collections',
               to: {name: 'mycollections'},
               exact: false
             }, {
               label: 'My recipes',
-              reqLevel: 2,
+              reqLevel: 1,
               to: {name: 'myrecipes'},
               exact: false
             }
@@ -157,38 +157,38 @@ export default {
         }, {
           label: 'PUBLIC COCKTAILS',
           icon: mdiEarth,
-          reqLevel: 1,
+          reqLevel: 0,
           subSections: [
             {
               label: 'All',
               to: {name: 'publicrecipes'},
               exact: true,
-              reqLevel: 1,
+              reqLevel: 0,
             }
           ]
         }, {
           label: 'ADMINISTRATION',
           icon: mdiCogs,
-          reqLevel: 4,
+          reqLevel: 3,
           subSections: [
             {
               label: 'Users',
-              reqLevel: 4,
+              reqLevel: 3,
               to: {name: 'usermanagement'},
               exact: false
             }, {
               label: 'Ingredients',
-              reqLevel: 4,
+              reqLevel: 3,
               to: {name: 'ingredientmanagement'},
               exact: false
             }, {
               label: 'Categories',
-              reqLevel: 4,
+              reqLevel: 3,
               to: {name: 'categorymanagement'},
               exact: false
             }, {
               label: 'Pumps',
-              reqLevel: 4,
+              reqLevel: 3,
               to: {name: 'pumpmanagement'},
               exact: false
             }
@@ -256,18 +256,19 @@ export default {
       }
     },
     setCategories(categories) {
+      //Vue.set(this.editor, 'editingObject', productionStep);
       this.sidebarItems[1].subSections = [
         {
           label: 'All',
           to: {name: 'publicrecipes'},
           exact: true,
-          reqLevel: 1,
+          reqLevel: 0,
         }
       ];
       for (let category of categories) {
         this.sidebarItems[1].subSections.push({
           label: category.name,
-          reqLevel: 1,
+          reqLevel: 0,
           to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
           exact: true
         })

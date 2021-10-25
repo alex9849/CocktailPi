@@ -29,15 +29,15 @@ export const isUser = state => {
 export const isRecipeCreator = state => {
   if(!getUser(state))
     return false;
-  return state.status.user.adminLevel >= 2;
+  return state.status.user.adminLevel >= 1;
 };
 export const isPumpIngredientEditor = state => {
   if(!getUser(state))
     return false;
-  return state.status.user.adminLevel >= 3;
+  return state.status.user.adminLevel >= 2;
 };
 export const isAdmin = state => {
   if(!getUser(state))
     return false;
-  return state.status.user.adminLevel >= 4;
+  return state.status.user.adminLevel >= 3;
 };

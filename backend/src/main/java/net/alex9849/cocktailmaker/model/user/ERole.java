@@ -3,10 +3,10 @@ package net.alex9849.cocktailmaker.model.user;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum ERole implements GrantedAuthority {
-    COLLECTION_USER("USER", 0), ROLE_USER("USER", 1),
-    ROLE_RECIPE_CREATOR("RECIPE_CREATOR", 2),
-    ROLE_PUMP_INGREDIENT_EDITOR("PUMP_INGREDIENT_EDITOR", 3),
-    ROLE_ADMIN("ADMIN", 4);
+    ROLE_USER("USER", 0),
+    ROLE_RECIPE_CREATOR("RECIPE_CREATOR", 1),
+    ROLE_PUMP_INGREDIENT_EDITOR("PUMP_INGREDIENT_EDITOR", 2),
+    ROLE_ADMIN("ADMIN", 3);
 
     private String roleName;
 

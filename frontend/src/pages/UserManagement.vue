@@ -200,18 +200,15 @@ export default {
       roles: [
         {
           value: 0,
-          label: 'Collection-User'
-        }, {
-          value: 1,
           label: 'User'
         }, {
-          value: 2,
+          value: 1,
           label: 'Recipe-Creator'
         }, {
-          value: 3,
+          value: 2,
           label: 'Pump-Ingredient-Editor'
         }, {
-          value: 4,
+          value: 3,
           label: 'Admin'
         }
       ]
