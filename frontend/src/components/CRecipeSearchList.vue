@@ -126,7 +126,7 @@ export default {
           containsIngredients: containsIngredients,
           orderBy: queryParams.orderBy
         },
-        page: !!queryParams.page? Number(queryParams.page) : 0
+        page: !!queryParams.page? (Number(queryParams.page) - 1) : 0
       }
     },
     updateRecipes(withLoadingAnimation = true) {
@@ -163,11 +163,14 @@ export default {
     },
     updateRoute() {
       let query = {
-        page: this.pagination.page
+        page: this.pagination.page + 1
       };
+      if(query.page === 1) {
+        delete query.page;
+      }
       query = Object.assign(query, this.filter);
       query = JsUtils.cleanObject(query);
-      this.$router.replace({name: this.$route.name, query}).catch(()=>{});
+      this.$router.replace({name: this.$route.name, query: query}).catch(()=>{});
     },
     onPageClick(page) {
       if (this.pagination.page !== page) {
