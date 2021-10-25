@@ -293,6 +293,18 @@ export default {
           }
           return x.stepIngredients.length !== 0;
         })
+        const ingredientIdToStepIndex = new Map();
+        for(let index = 0; index < productionStep.stepIngredients.length; index++) {
+          const si = productionStep.stepIngredients[index];
+          if(ingredientIdToStepIndex.has(si.ingredient.id)) {
+            const otherSIIndex = ingredientIdToStepIndex.get(si.ingredient.id);
+            productionStep.stepIngredients[otherSIIndex].amount += si.amount;
+            productionStep.stepIngredients.splice(index, 1);
+            index--;
+          } else {
+            ingredientIdToStepIndex.set(si.ingredient.id, index);
+          }
+        }
         this.emitChange();
       },
     },
