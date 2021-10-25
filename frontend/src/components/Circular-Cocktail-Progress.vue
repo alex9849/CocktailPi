@@ -200,7 +200,7 @@ export default {
         if(this.cocktailProgress.state === 'CANCELLED') {
           return mdiStop;
         }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
           return mdiAlertOutline;
         }
         return mdiTimerSandEmpty;
@@ -215,7 +215,7 @@ export default {
         if(this.cocktailProgress.state === 'CANCELLED') {
           return 'red';
         }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
           return 'warning' ;
         }
         return 'green';
@@ -230,7 +230,7 @@ export default {
         if(this.cocktailProgress.state === 'CANCELLED') {
           return 'Cancelled!';
         }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED') {
+        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
           return 'Manual action required! (' + this.cocktailProgress.progress + '%)' ;
         }
         return this.cocktailProgress.progress + '%'
