@@ -23,6 +23,6 @@ public class ProdModeGpioPin implements IGpioPin {
     @Override
     public void setLow() {
         this.gpioPin.low();
-        System.out.println("Pin " + gpioPin.getPin().getAddress() + " stopped!");
+        System.out.println("Pin " + gpioPin.getPin().getAddress() + " started!");
     }
 }
