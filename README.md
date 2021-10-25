@@ -91,18 +91,18 @@ volumes:
   cocktail-db-data:
 ````
 Don't forget to change the JWT_SECRET! If you want to enable https for the 
-webinterface you may be able for do that by tunneling the app-traffic 
+webinterface you may be able to do that by tunneling the app-traffic 
 though a reverse-proxy.
 
 Start the application by executing the following command as root user in the same
 directory as your docker-compose.yml
 ``docker-compose up -d``
 Now the latest version of the application gets downloaded and started. This may take a while.
-After startup you should be able to reach your application on the port 80!
-The default user is named `admin` and uses the password ``123456``.
+After startup, you should be able to reach your application on the port 80!
+The default users name is `admin` and the default password is ``123456``.
 
-Next you need to add your pumps. Go to 'Administration' -> 'Pumps' 
-and click 'Add pump'. Fill in the form shown for. Notice
+At next, you need to add your pumps. Go to 'Administration' -> 'Pumps' 
+and click 'Add pump'. Fill in the form shown. Notice
 that the field 'WiringPi-Pin' is not the GPIO-Pin. 
 Since there are different RaspberryPi-Boards you need 
 to find out the right WiringPi-Pin number for your 
