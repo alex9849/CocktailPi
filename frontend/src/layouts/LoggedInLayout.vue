@@ -200,7 +200,7 @@ export default {
         link: 'https://github.com/alex9849/pi-cocktail-maker/'
       }, {
         icon: mdiDocker,
-        link: 'https://hub.docker.com/r/alex9849/pi-cocktailmaker'
+        link: 'https://hub.docker.com/r/alex9849/pi-cocktailmaker/'
       }, {
         icon: mdiLinkedin,
         link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'
