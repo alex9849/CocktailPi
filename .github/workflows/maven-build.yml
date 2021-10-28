@@ -36,3 +36,8 @@ jobs:
       run: | 
         mvn clean
         mvn install -P prod
+    - name: Archive server
+      uses: actions/upload-artifact@v2
+      with:
+        name: Application
+        path: backend/target/*.jar
