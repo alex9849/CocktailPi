@@ -22,20 +22,24 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-      
+
     - name: Get the version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       shell: bash
-      
-    - name: Set version
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Build project
       run: |
         mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
         mvn versions:commit
-        
-    - name: Build with Maven
-      run: | 
         mvn clean
         mvn install -P prod
+
     - name: Archive server
       uses: actions/upload-artifact@v2
       with:
