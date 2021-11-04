@@ -9,12 +9,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -39,14 +37,6 @@ jobs:
         mvn versions:commit
         mvn clean
         mvn install -P prod
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
-    permissions:
-      contents: read
-      packages: write
-    steps:
     - name: Archive server
       uses: actions/upload-artifact@v2
       with:
