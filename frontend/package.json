@@ -15,7 +15,7 @@
   "dependencies": {
     "@mdi/js": "^4.9.95",
     "@quasar/extras": "^1.11.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",
     "net.liggesmeyer.cocktailmaker": "file:src-cordova",
