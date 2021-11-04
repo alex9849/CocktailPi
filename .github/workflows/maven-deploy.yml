@@ -60,8 +60,6 @@ jobs:
       with:
         name: Server
         path: backend/target/
-    - name: Display structure of downloaded files
-      run: ls -R backend/target
     - name: Upload release binary
       uses: actions/upload-release-asset@v1.0.2
       env:
@@ -70,4 +68,3 @@ jobs:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: backend/target/server.jar
         asset_name: Server.jar
-        asset_content_type: application/octet-stream
