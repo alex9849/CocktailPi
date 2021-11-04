@@ -61,7 +61,7 @@ jobs:
         name: Server
         path: backend/target/
     - name: Display structure of downloaded files
-      run: ls -R
+      run: ls -R backend/target
     - name: Upload release binary
       uses: actions/upload-release-asset@v1.0.2
       env:
