@@ -68,3 +68,4 @@ jobs:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: backend/target/server.jar
         asset_name: Server.jar
+        asset_content_type: application/java-archive
