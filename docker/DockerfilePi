@@ -5,7 +5,7 @@ ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
 ENV DEMOMODE=false
 
-COPY backend/target/backend-*.jar /app.jar
+COPY backend/target/server.jar /app.jar
 COPY docker/lib/pi4j-1.2.deb /
 RUN wget https://project-downloads.drogon.net/wiringpi-latest.deb
 RUN dpkg -i wiringpi-latest.deb
