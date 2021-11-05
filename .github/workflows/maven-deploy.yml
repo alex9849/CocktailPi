@@ -36,7 +36,6 @@ jobs:
         mvn versions:commit
         mvn clean
         mvn install -P prod
-        mv backend/target/server.jar backend/target/server.jar
     - name: Archive server
       uses: actions/upload-artifact@v2
       with:
