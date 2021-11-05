@@ -78,11 +78,10 @@ jobs:
       with:
         username: alex9849
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Get release
-      id: get_release
-      uses: bruceadams/get-release@v1.2.3
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      shell: bash
     - name: Download artifact
       uses: actions/download-artifact@v2
       with:
