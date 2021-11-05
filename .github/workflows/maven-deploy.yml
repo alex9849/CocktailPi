@@ -60,12 +60,8 @@ jobs:
       with:
         name: Server
         path: backend/target/
-    - name: Upload release binary
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+    - name: Github release
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ steps.get_release.outputs.upload_url }}
-        asset_path: backend/target/server.jar
-        asset_name: Server.jar
-        asset_content_type: application/java-archive
+        fail_on_unmatched_files: true
+        files: backend/target/server.jar
