@@ -64,6 +64,7 @@
 <script>
 import {mapGetters} from "vuex";
 import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
+import {getPumpIngredients} from "src/store/modules/pumplayout/getters";
 
 export default {
   name: "CRecipeFabricableIcon",
@@ -85,7 +86,8 @@ export default {
   computed: {
     ...mapGetters({
       doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-      ownedIngredients: 'bar/getOwnedIngredients'
+      ownedIngredients: 'bar/getOwnedIngredients',
+      pumpIngredients: 'pumpLayout/getPumpIngredients'
     })
   },
   methods: {
@@ -95,7 +97,10 @@ export default {
           continue
         }
         for (let ingredientStep of productionStep.stepIngredients) {
-          if (!this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id)) {
+          if (
+            !this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id)
+            && !this.pumpIngredients.some(x => x.id === ingredientStep.ingredient.id)
+          ) {
             return false;
           }
         }
