@@ -82,6 +82,7 @@
       @clickAbort="deleteDialog = false"
     />
     <c-make-cocktail-dialog
+      v-if="loaded"
       v-model="showMakeCocktailDialog"
       :recipe="recipe"
     />
@@ -104,6 +105,7 @@ export default {
       recipe: {
         productionSteps: []
       },
+      loaded: false,
       deleting: false,
       deleteDialog: false,
       showMakeCocktailDialog: false
@@ -113,6 +115,7 @@ export default {
     const recipe = await RecipeService.getRecipe(to.params.id);
     next(vm => {
       vm.recipe = recipe;
+      vm.loaded = true;
     });
   },
   async beforeRouteUpdate(to, from, next) {

@@ -70,6 +70,37 @@
             </div>
           </q-card-section>
         </q-card>
+        <q-card flat
+                bordered
+                class="bg-red-5"
+                v-if="feasibilityReport.insufficientIngredients.length !== 0"
+        >
+          <q-card-section horizontal>
+            <div class="flex items-center col-auto"
+                 v-if="!$q.platform.is.mobile"
+            >
+              <q-icon :name="mdiAlertOutline"
+                      size="lg"
+                      class="text-orange-14 q-pa-sm"
+              ></q-icon>
+            </div>
+            <q-separator vertical
+                         v-if="!$q.platform.is.mobile"
+            />
+            <div class="col">
+              <div class="q-pa-sm">
+                Can't make cocktail! Some pumps don't have enough liquid left:
+              </div>
+              <q-separator></q-separator>
+              <ul style="text-align: start">
+                <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients">
+                  {{ insufficientIngredient.ingredient.name }}:
+                  {{ insufficientIngredient.amountRemaining }} ml
+                </li>
+              </ul>
+            </div>
+          </q-card-section>
+        </q-card>
         <q-table
           v-if="isUserPumpIngredientEditor"
           :columns="columns"
@@ -160,7 +191,7 @@
         <q-btn
           color="positive"
           @click="onMakeCocktail()"
-          :disable="hasCocktailProgress || $v.amountToProduce.$invalid"
+          :disable="hasCocktailProgress || $v.amountToProduce.$invalid || !feasibilityOk"
         >
           Make cocktail
         </q-btn>
@@ -205,7 +236,11 @@ export default {
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ],
       loadingPumpIdsCurrentIngredient: [],
-      loadingPumpIdsFillingLevel: []
+      loadingPumpIdsFillingLevel: [],
+      feasibilityReport: {
+        insufficientIngredients: []
+      },
+      checkingFeasibility: true
     }
   },
   created() {
@@ -218,6 +253,14 @@ export default {
       handler(newValue) {
         this.amountToProduce = newValue.defaultAmountToFill
       }
+    },
+    amountToProduce: {
+      immediate: true,
+      handler() {
+        if(!!this.recipe) {
+          this.checkFeasibility();
+        }
+      }
     }
   },
   methods: {
@@ -229,6 +272,15 @@ export default {
         return !!x.currentIngredient &&
           pump.currentIngredient.id === x.currentIngredient.id
       }) === pump;
+    },
+    checkFeasibility() {
+      this.checkingFeasibility = true;
+      CocktailService.checkFeasibility(this.recipe.id, this.amountToProduce)
+        .then(report => {
+          this.feasibilityReport = report;
+        }).finally(() => {
+          this.checkingFeasibility = false;
+      })
     },
     isIngredientNeeded(ingredientId) {
       return this.neededIngredients.some(x => x.id === ingredientId);
@@ -247,6 +299,7 @@ export default {
         .finally(() => {
           let array = this.loadingPumpIdsCurrentIngredient;
           array.splice(array.indexOf(newPump.id), 1);
+          this.checkFeasibility();
         })
     },
     updatePumpFillingLevel(pump, newFillingLevel) {
@@ -266,6 +319,7 @@ export default {
         .finally(() => {
           let array = this.loadingPumpIdsFillingLevel;
           array.splice(array.indexOf(newPump.id), 1);
+          this.checkFeasibility();
         })
     },
     onClickCleanPump(pump) {
@@ -282,6 +336,7 @@ export default {
         .then(() => {
           this.$refs.mcDialog.hide();
           this.showProgressDialog = true;
+          this.checkFeasibility()
         })
         .catch(error => {
           this.$q.notify({
@@ -304,6 +359,9 @@ export default {
       isCleaning: 'pumpLayout/isCleaning',
       ownedIngredients: 'bar/getOwnedIngredients'
     }),
+    feasibilityOk() {
+      return this.feasibilityReport.insufficientIngredients.length === 0 && !this.checkingFeasibility;
+    },
     sortedPumpLayout() {
       let sorted = [];
       sorted.push(...this.getPumpLayout);

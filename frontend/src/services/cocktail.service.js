@@ -12,6 +12,14 @@ class CocktailService {
     });
   }
 
+  checkFeasibility(recipeId, amount) {
+    return axios.get(API_PATH + recipeId + "/feasibility", {
+      params: {
+        amount: amount
+      }
+    }).then(response => response.data);
+  }
+
   cancelCocktail() {
     return axios.delete(API_PATH);
   }
