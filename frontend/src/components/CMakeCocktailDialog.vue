@@ -201,7 +201,7 @@ export default {
       columns: [
         {name: 'id', label: 'Nr', field: 'id', align: 'left'},
         {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
-        {name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center'},
+        {name: 'fillingLevelInMl', label: 'Remaining filling level', field: 'fillingLevelInMl', align: 'center'},
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ],
       loadingPumpIdsCurrentIngredient: [],
