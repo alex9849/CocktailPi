@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
 import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
@@ -84,8 +85,9 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     }
 
     private void onFinish() {
-        this.scheduledPumpFutures.forEach(x -> x.cancel(false));
+        this.scheduledPumpFutures.forEach(x -> x.cancel(true));
         this.nofierTask.cancel(false);
+        this.stopAllPumps();
         this.setFinished();
     }
 
@@ -100,9 +102,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         if(this.finishTask != null) {
             this.finishTask.cancel(false);
         }
-        for (Pump pump : this.pumpPumpPhases.keySet()) {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
-        }
+        this.stopAllPumps();
         if (this.scheduler.isShutdown()) {
             return;
         }
@@ -118,6 +118,15 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         }
         stepProgress.setFinished(this.isFinished());
         return stepProgress;
+    }
+
+    private void stopAllPumps() {
+        for(Pump pump : this.pumpPumpPhases.keySet()) {
+            IGpioPin gpioPin = gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin()));
+            if(!gpioPin.isHigh()) {
+                gpioPin.setHigh();
+            }
+        }
     }
 
     public long getRequiredPumpingTime() {

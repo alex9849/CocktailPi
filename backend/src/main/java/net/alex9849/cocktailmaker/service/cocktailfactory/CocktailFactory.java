@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
-import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
@@ -191,9 +190,6 @@ public class CocktailFactory {
                 AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
                 automaticWorker.cancel();
             }
-        }
-        for(Pump pump : this.pumps) {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
         this.gpioController.shutdown();
     }

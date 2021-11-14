@@ -10,18 +10,18 @@ public class ProdModeGpioPin implements IGpioPin {
     }
 
     @Override
-    public boolean isHigh() {
+    public synchronized boolean isHigh() {
         return this.gpioPin.isHigh();
     }
 
     @Override
-    public void setHigh() {
+    public synchronized void setHigh() {
         this.gpioPin.high();
         System.out.println("Pin " + gpioPin.getPin().getAddress() + " stopped!");
     }
 
     @Override
-    public void setLow() {
+    public synchronized void setLow() {
         this.gpioPin.low();
         System.out.println("Pin " + gpioPin.getPin().getAddress() + " started!");
     }

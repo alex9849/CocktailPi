@@ -11,18 +11,18 @@ public class DemoModeGpioPin implements IGpioPin {
     }
 
     @Override
-    public boolean isHigh() {
+    public synchronized boolean isHigh() {
         return this.isHigh;
     }
 
     @Override
-    public void setHigh() {
+    public synchronized void setHigh() {
         this.isHigh = true;
         System.out.println("Pin " + pin.getAddress() + " stopped!");
     }
 
     @Override
-    public void setLow() {
+    public synchronized void setLow() {
         this.isHigh = false;
         System.out.println("Pin " + pin.getAddress() + " started!");
     }

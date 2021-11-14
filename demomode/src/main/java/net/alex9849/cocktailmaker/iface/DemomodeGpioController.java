@@ -8,7 +8,7 @@ public class DemomodeGpioController implements IGpioController {
     private HashMap<Pin, DemoModeGpioPin> pinMap = new HashMap<>();
 
     @Override
-    public IGpioPin provideGpioPin(Pin pin) {
+    public synchronized IGpioPin provideGpioPin(Pin pin) {
         return pinMap.computeIfAbsent(pin, p -> new DemoModeGpioPin(pin));
     }
 

@@ -12,12 +12,12 @@ public class ProdModeGpioController implements IGpioController {
     private HashMap<Pin, ProdModeGpioPin> pinMap = new HashMap<>();
 
     @Override
-    public IGpioPin provideGpioPin(Pin pin) {
+    public synchronized IGpioPin provideGpioPin(Pin pin) {
         return pinMap.computeIfAbsent(pin, (p) -> new ProdModeGpioPin(controller.provisionDigitalOutputPin(p)));
     }
 
     @Override
-    public void shutdown() {
+    public synchronized void shutdown() {
         controller.shutdown();
     }
 }
