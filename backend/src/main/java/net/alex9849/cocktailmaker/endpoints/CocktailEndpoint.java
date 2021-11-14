@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class CocktailEndpoint {
     private PumpService pumpService;
 
     @RequestMapping(value = "{recipeId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", defaultValue = "250") int amount) {
+    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", required = false) Integer amount) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(recipeId);
         if(recipe == null) {
@@ -34,8 +35,31 @@ public class CocktailEndpoint {
         if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        if(amount == null) {
+            amount = (int) recipe.getDefaultAmountToFill();
+        } else if (amount < 50) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         pumpService.orderCocktail(user, recipe, amount);
         return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.GET)
+    public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", required = false) Integer amount) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Recipe recipe = recipeService.getById(recipeId);
+        if(recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if(amount == null) {
+            amount = (int) recipe.getDefaultAmountToFill();
+        } else if (amount < 50) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(new FeasibilityReportDto(pumpService.checkFeasibility(recipe, amount)));
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)

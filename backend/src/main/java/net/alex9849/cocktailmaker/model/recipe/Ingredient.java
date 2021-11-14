@@ -2,6 +2,8 @@ package net.alex9849.cocktailmaker.model.recipe;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Objects;
+
 public abstract class Ingredient {
     private long id;
     private String name;
@@ -32,6 +34,19 @@ public abstract class Ingredient {
     }
 
     public abstract Unit getUnit();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return id == that.id && alcoholContent == that.alcoholContent && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, alcoholContent);
+    }
 
     public enum Unit {
         MILLILITER("ml"), GRAM("g"), TEASPOON("teaspoon(s)"),

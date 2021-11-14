@@ -273,6 +273,14 @@ public class CocktailFactory {
         return Math.round((((float) timeElapsed) / timeNeeded) * 100);
     }
 
+    public static Map<Ingredient, Integer> getNeededAmountNeededPerIngredient(Recipe recipe) {
+        return recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
+                .collect(Collectors.toMap(x -> x.getIngredient(), x -> x.getAmount(), (a, b) -> a + b));
+    }
+
 
     /**
      * Recalculates the amount of liquid for all ingredients in order to sum up to the total wanted amount of liquid

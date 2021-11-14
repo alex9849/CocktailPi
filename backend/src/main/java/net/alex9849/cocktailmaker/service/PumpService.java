@@ -2,9 +2,11 @@ package net.alex9849.cocktailmaker.service;
 
 import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -16,14 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -144,6 +144,41 @@ public class PumpService {
                     this.webSocketService.broadcastCurrentCocktail(progress);
                 });
         this.cocktailFactory.makeCocktail();
+    }
+
+    public FeasibilityReport checkFeasibility(Recipe recipe, Integer amount) {
+        CocktailFactory.transformToAmountOfLiquid(recipe, amount);
+        Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
+        Map<Long, List<Pump>> pumpsByIngredientId = getAllPumps().stream().filter(x -> x.getCurrentIngredient() != null)
+                .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));
+        List<FeasibilityReport.InsufficientIngredient> insufficientIngredients = new ArrayList<>();
+
+        for(Ingredient ingredient : neededAmountPerIngredientId.keySet()) {
+            int remainingNeededAmount = neededAmountPerIngredientId.get(ingredient);
+            if(!pumpsByIngredientId.containsKey(ingredient.getId())) {
+                //We only check for automated ingredients
+                continue;
+            }
+            for(Pump pump : pumpsByIngredientId.get(ingredient.getId())) {
+                if(remainingNeededAmount > pump.getFillingLevelInMl()) {
+                    remainingNeededAmount -= pump.getFillingLevelInMl();
+                } else {
+                    remainingNeededAmount = 0;
+                    continue;
+                }
+            }
+            if(remainingNeededAmount > 0) {
+                FeasibilityReport.InsufficientIngredient insufficientIngredient = new FeasibilityReport.InsufficientIngredient();
+                insufficientIngredient.setIngredient(ingredient);
+                insufficientIngredient.setAmountRemaining(remainingNeededAmount);
+                insufficientIngredient.setAmountNeeded(neededAmountPerIngredientId.get(ingredient));
+                insufficientIngredients.add(insufficientIngredient);
+            }
+        }
+
+        FeasibilityReport report = new FeasibilityReport();
+        report.setInsufficientIngredients(insufficientIngredients);
+        return report;
     }
 
     public synchronized void continueCocktailProduction() {
