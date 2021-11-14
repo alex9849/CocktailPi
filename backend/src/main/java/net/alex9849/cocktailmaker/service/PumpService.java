@@ -40,9 +40,6 @@ public class PumpService {
     private WebSocketService webSocketService;
 
     @Autowired
-    private IngredientService ingredientService;
-
-    @Autowired
     private IGpioController gpioController;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -133,6 +130,10 @@ public class PumpService {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
         CocktailFactory.transformToAmountOfLiquid(recipe, amount);
+        FeasibilityReport report = this.checkFeasibility(recipe);
+        if(!report.getInsufficientIngredients().isEmpty()) {
+            throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
+        }
         this.cocktailFactory = new CocktailFactory(recipe, user, new HashSet<>(getAllPumps()), gpioController)
                 .subscribeProgress(progress -> {
                     if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
@@ -143,11 +144,17 @@ public class PumpService {
                     }
                     this.webSocketService.broadcastCurrentCocktail(progress);
                 });
+        for(Pump pump : this.cocktailFactory.getUsedPumps()) {
+            this.pumpRepository.update(pump);
+        }
+        webSocketService.broadcastPumpLayout(getAllPumps());
         this.cocktailFactory.makeCocktail();
     }
 
-    public FeasibilityReport checkFeasibility(Recipe recipe, Integer amount) {
-        CocktailFactory.transformToAmountOfLiquid(recipe, amount);
+    public FeasibilityReport checkFeasibility(Recipe recipe, int amount) {
+        return checkFeasibility(CocktailFactory.transformToAmountOfLiquid(recipe, amount));
+    }
+    public FeasibilityReport checkFeasibility(Recipe recipe) {
         Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
         Map<Long, List<Pump>> pumpsByIngredientId = getAllPumps().stream().filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));

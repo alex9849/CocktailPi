@@ -17,40 +17,47 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class AutomaticProductionStepWorker extends AbstractProductionStepWorker {
-    private final Map<Long, Pump> pumpsByIngredientId;
+    private final Map<Long, List<Pump>> pumpsByIngredientId;
     private final List<ProductionStepIngredient> productionStepInstructions;
     private final Map<Pump, List<PumpPhase>> pumpPumpPhases;
+    private final Set<Pump> usedPumps;
     private final long requiredWorkingTime;
     private final ScheduledExecutorService scheduler;
     private IGpioController gpioController;
     private Set<ScheduledFuture> scheduledPumpFutures;
     private ScheduledFuture finishTask;
-    private ScheduledFuture nofierTask;
+    private ScheduledFuture notifierTask;
 
     private long startTime;
     private long endTime;
     private boolean started;
 
+    /**
+     *
+     * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
+     */
     public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
         this.pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors
-                .toMap(x -> x.getCurrentIngredient().getId(), x -> x, (x1, x2) -> x1));
+                .groupingBy(x -> x.getCurrentIngredient().getId()));
         this.productionStepInstructions = productionStepInstructions;
 
-        Map<Pump, Integer> pumpRuntimes = new HashMap<>();
+        Map<ProductionStepIngredient, List<Pump>> matchingPumpByProductionStepIngredient = new HashMap<>();
         for (ProductionStepIngredient instruction : this.productionStepInstructions) {
             if (!(instruction.getIngredient() instanceof AutomatedIngredient)) {
                 throw new IllegalArgumentException("Can't automatically fulfill productionstep. One or more given ingredients can only be added manually!");
             }
             AutomatedIngredient currAutoIngredient = (AutomatedIngredient) instruction.getIngredient();
-            Pump pumpWithIngredient = this.pumpsByIngredientId.get(currAutoIngredient.getId());
-            if (pumpWithIngredient == null) {
+            List<Pump> pumpsWithIngredient = this.pumpsByIngredientId.get(currAutoIngredient.getId());
+            if (pumpsWithIngredient == null) {
                 throw new IllegalArgumentException("Can't automatically fulfill productionstep. One or more required ingredients are not assigned to pumps!");
             }
-            pumpRuntimes.put(pumpWithIngredient, (int) (currAutoIngredient.getPumpTimeMultiplier() * instruction.getAmount() * pumpWithIngredient.getTimePerClInMs() / 10d));
+            matchingPumpByProductionStepIngredient.put(instruction, pumpsWithIngredient);
         }
-        PumpTimingStepCalculator pumpTimingStepCalculator = new PumpTimingStepCalculator(pumpRuntimes, minimalPumpTime, minimalBreakTime);
+        PumpTimingStepCalculator pumpTimingStepCalculator = new PumpTimingStepCalculator(matchingPumpByProductionStepIngredient,
+                minimalPumpTime, minimalBreakTime);
+        this.usedPumps = pumpTimingStepCalculator.getUsedPumps();
         this.pumpPumpPhases = pumpTimingStepCalculator.getPumpPhases();
         this.requiredWorkingTime = pumpTimingStepCalculator.getLongestIngredientTime();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -79,14 +86,18 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
                 .mapToLong(x -> x.getDelay(TimeUnit.MILLISECONDS)).max().getAsLong();
 
         this.finishTask = scheduler.schedule(this::onFinish, delayLastInstruction, TimeUnit.MILLISECONDS);
-        this.nofierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
+        this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
         this.endTime = System.currentTimeMillis() + delayLastInstruction;
         this.notifySubscribers();
     }
 
+    public Set<Pump> getUsedPumps() {
+        return usedPumps;
+    }
+
     private void onFinish() {
         this.scheduledPumpFutures.forEach(x -> x.cancel(true));
-        this.nofierTask.cancel(false);
+        this.notifierTask.cancel(false);
         this.stopAllPumps();
         this.setFinished();
     }

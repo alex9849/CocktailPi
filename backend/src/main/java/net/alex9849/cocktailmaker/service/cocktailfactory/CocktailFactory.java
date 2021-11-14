@@ -28,14 +28,17 @@ public class CocktailFactory {
     private Cocktailprogress cocktailprogress;
     private Cocktailprogress.State state;
 
+    /**
+     * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
+     */
     public CocktailFactory(Recipe recipe, User user, Set<Pump> pumps, IGpioController gpioController) {
         this.pumps = pumps;
         this.gpioController = gpioController;
         this.recipe = recipe;
         this.user = user;
-        Map<Long, Pump> pumpsByIngredientId = pumps.stream()
+        Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
-                .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x -> x, (a, b) -> a));
+                .collect(Collectors.groupingBy(x -> x.getCurrentIngredient().getId()));
 
         for(ProductionStep pStep : recipe.getProductionSteps()) {
             this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
@@ -60,7 +63,7 @@ public class CocktailFactory {
         this.state = Cocktailprogress.State.READY_TO_START;
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, Pump> pumpsByIngredientId) {
+    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
         if(pStep instanceof AddIngredientsProductionStep) {
             return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
         }
@@ -71,7 +74,7 @@ public class CocktailFactory {
         throw new IllegalStateException("ProductionStepType unknown!");
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, Pump> pumpsByIngredientId) {
+    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
         List<AbstractProductionStepWorker> workers = new ArrayList<>();
         List<ProductionStepIngredient> manualProductionSteps = new ArrayList<>();
         List<ProductionStepIngredient> automaticProductionSteps = new ArrayList<>();
@@ -99,6 +102,13 @@ public class CocktailFactory {
                     automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
         }
         return workers;
+    }
+
+    public Set<Pump> getUsedPumps() {
+        return this.productionStepWorkers.stream()
+                .filter(x -> x instanceof AutomaticProductionStepWorker)
+                .flatMap(x -> ((AutomaticProductionStepWorker) x).getUsedPumps().stream())
+                .collect(Collectors.toSet());
     }
 
     private void onSubscriptionChange(StepProgress stepProgress) {
