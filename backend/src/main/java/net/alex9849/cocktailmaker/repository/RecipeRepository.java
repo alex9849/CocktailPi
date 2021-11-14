@@ -95,7 +95,7 @@ public class RecipeRepository extends JdbcDaoSupport {
                 query = "SELECT * FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
                 params.add(con.createArrayOf("int8", ids));
             } else {
-                if(ids.length == 0) {
+                if (ids.length == 0) {
                     return new ArrayList<>();
                 }
                 query = "SELECT * FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
@@ -105,7 +105,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
             PreparedStatement pstmt = con.prepareStatement(query);
             int paramIndex = 0;
-            for(Object param : params) {
+            for (Object param : params) {
                 pstmt.setObject(++paramIndex, param);
             }
             ResultSet rs = pstmt.executeQuery();
@@ -131,7 +131,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             if (rs.next()) {
                 recipe.setId(rs.getLong(1));
                 productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
-                for(Category category : recipe.getCategories()) {
+                for (Category category : recipe.getCategories()) {
                     recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
                 }
                 return recipe;
@@ -154,7 +154,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());
-            for(Category category : recipe.getCategories()) {
+            for (Category category : recipe.getCategories()) {
                 recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
             }
             return pstmt.executeUpdate() != 0;
@@ -241,15 +241,15 @@ public class RecipeRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ?");
             pstmt.setLong(1, recipeId);
             ResultSet resultSet = pstmt.executeQuery();
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 Long imageOid = resultSet.getObject("image", Long.class);
-                if(imageOid == null) {
+                if (imageOid == null) {
                     return Optional.empty();
                 }
                 LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
                 LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
                 byte buf[] = new byte[imageLob.size()];
-                imageLob.read(buf, 0 , buf.length);
+                imageLob.read(buf, 0, buf.length);
                 return Optional.of(buf);
             }
             return Optional.empty();
@@ -265,12 +265,12 @@ public class RecipeRepository extends JdbcDaoSupport {
             con.setAutoCommit(false);
             LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
             Long imageOid;
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 imageOid = resultSet.getObject("image", Long.class);
             } else {
                 imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
             }
-            if(image == null) {
+            if (image == null) {
                 PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE recipes SET image = NULL where id = ?");
                 deleteImagePstmt.setLong(1, recipeId);
                 deleteImagePstmt.executeUpdate();
@@ -292,13 +292,13 @@ public class RecipeRepository extends JdbcDaoSupport {
     public Set<Long> getIdsOfFullyAutomaticallyFabricableRecipes() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id AS id\n" +
-                    "FROM recipes r\n" +
-                    "         join production_steps ps on ps.recipe_id = r.id\n" +
-                    "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
-                    "         join ingredients i on i.id = psi.ingredient_id AND i.dtype = 'AutomatedIngredient'\n" +
-                    "         left join pumps p on i.id = p.current_ingredient_id\n" +
-                    "group by r.id\n" +
-                    "having count(*) = count(p.id)");
+                    "                    FROM recipes r\n" +
+                    "                             join production_steps ps on ps.recipe_id = r.id\n" +
+                    "                             join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
+                    "                             join ingredients i on i.id = psi.ingredient_id\n" +
+                    "                             left join pumps p on i.id = p.current_ingredient_id AND i.dtype = 'AutomatedIngredient'\n" +
+                    "                    group by r.id\n" +
+                    "                    having count(*) = count(p.id)");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
