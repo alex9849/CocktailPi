@@ -5,7 +5,8 @@
     @input="$emit('input', $event)"
   >
     <q-card
-      class="text-center with-desktop"
+      class="text-center"
+      style=""
     >
       <q-card-section class="q-gutter-md">
         <p class="text-h5">Order Cocktail</p>
@@ -83,6 +84,7 @@
             <q-td
               key="currentIngredient"
               :props="props"
+              style="min-width: 250px; max-width: 250px"
             >
               <c-ingredient-selector
                 :value="props.row.currentIngredient"
@@ -92,7 +94,7 @@
                 filter-manual-ingredients
                 :bg-color="markPump(props.row)? 'green-3':undefined"
                 :no-input-options="missingAutomaticIngredients"
-                :loading="loadingPumpIds.includes(props.row.id, 0)"
+                :loading="loadingPumpIdsCurrentIngredient.includes(props.row.id, 0)"
               >
                 <template
                   slot="afterIngredientName"
@@ -107,6 +109,27 @@
                   </q-item-label>
                 </template>
               </c-ingredient-selector>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-fillingLevelInMl="props">
+            <q-td
+              key="fillingLevelInMl"
+              :props="props"
+              style="min-width: 175px; max-width: 175px"
+            >
+              <q-input
+                :value="props.row.fillingLevelInMl"
+                @input="updatePumpFillingLevel(props.row, $event)"
+                debounce="500"
+                :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
+                type="number"
+                dense
+                outlined
+              >
+                <template slot="append">
+                  ml
+                </template>
+              </q-input>
             </q-td>
           </template>
           <template v-slot:body-cell-actions="props">
@@ -178,9 +201,11 @@ export default {
       columns: [
         {name: 'id', label: 'Nr', field: 'id', align: 'left'},
         {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
+        {name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center'},
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ],
-      loadingPumpIds: []
+      loadingPumpIdsCurrentIngredient: [],
+      loadingPumpIdsFillingLevel: []
     }
   },
   created() {
@@ -211,7 +236,7 @@ export default {
     updatePumpIngredient(pump, newIngredient) {
       let newPump = Object.assign({}, pump);
       newPump.currentIngredient = newIngredient;
-      this.loadingPumpIds.push(newPump.id)
+      this.loadingPumpIdsCurrentIngredient.push(newPump.id)
       PumpService.updatePump(newPump)
         .catch(error => {
           this.$q.notify({
@@ -220,7 +245,26 @@ export default {
           });
         })
         .finally(() => {
-          let array = this.loadingPumpIds;
+          let array = this.loadingPumpIdsCurrentIngredient;
+          array.splice(array.indexOf(newPump.id), 1);
+        })
+    },
+    updatePumpFillingLevel(pump, newFillingLevel) {
+      if (!newFillingLevel || newFillingLevel < 0) {
+        return
+      }
+      let newPump = Object.assign({}, pump);
+      newPump.fillingLevelInMl = newFillingLevel
+      this.loadingPumpIdsFillingLevel.push(newPump.id)
+      PumpService.updatePump(newPump)
+        .catch(error => {
+          this.$q.notify({
+            type: 'negative',
+            message: error.response.data.message
+          });
+        })
+        .finally(() => {
+          let array = this.loadingPumpIdsFillingLevel;
           array.splice(array.indexOf(newPump.id), 1);
         })
     },
@@ -307,11 +351,5 @@ export default {
 </script>
 
 <style scoped>
-
-@media screen and (min-width: 600px) {
-  .with-desktop {
-    width: 500px;
-  }
-}
 
 </style>
