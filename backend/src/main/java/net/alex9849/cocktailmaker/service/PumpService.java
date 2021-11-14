@@ -93,8 +93,8 @@ public class PumpService {
             }
         }
         pumpRepository.update(pump);
-        if(optPumpWithGpio.isPresent()) {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(beforeUpdate.get().getGpioPin())).setLow();
+        if(beforeUpdate.get().getGpioPin() != pump.getGpioPin()) {
+            gpioController.provideGpioPin(RaspiPin.getPinByAddress(beforeUpdate.get().getGpioPin())).setHigh();
             gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
