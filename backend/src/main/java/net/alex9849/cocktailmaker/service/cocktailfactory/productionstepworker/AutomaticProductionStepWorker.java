@@ -100,7 +100,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
             future.cancel(true);
         }
         if(this.finishTask != null) {
-            this.finishTask.cancel(false);
+            this.finishTask.cancel(true);
         }
         this.stopAllPumps();
         if (this.scheduler.isShutdown()) {
