@@ -46,7 +46,7 @@ public class PumpEndpoint {
             Pump oldPump = pumpService.getPump(id);
             if(oldPump != null) {
                 oldPump.setCurrentIngredient(updatePump.getCurrentIngredient());
-                oldPump.setFillingLevel(updatePump.getFillingLevel());
+                oldPump.setFillingLevelInMl(updatePump.getFillingLevelInMl());
                 updatePump = oldPump;
             }
         }

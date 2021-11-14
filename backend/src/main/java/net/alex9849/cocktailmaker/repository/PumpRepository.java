@@ -34,12 +34,12 @@ public class PumpRepository extends JdbcDaoSupport {
     public Pump create(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (gpio_pin, time_per_cl_in_ms, " +
-                    "tube_capacity_in_ml, current_ingredient_id, filling_level) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, pump.getGpioPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
-            pstmt.setInt(5, pump.getFillingLevel());
+            pstmt.setInt(5, pump.getFillingLevelInMl());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -53,12 +53,12 @@ public class PumpRepository extends JdbcDaoSupport {
     public boolean update(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET gpio_pin = ?, time_per_cl_in_ms = ?, " +
-                    "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level = ? WHERE id = ?");
+                    "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ? WHERE id = ?");
             pstmt.setInt(1, pump.getGpioPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
-            pstmt.setInt(5, pump.getFillingLevel());
+            pstmt.setInt(5, pump.getFillingLevelInMl());
             pstmt.setLong(6, pump.getId());
             return pstmt.executeUpdate() != 0;
         });
@@ -125,7 +125,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
         pump.setTubeCapacityInMl(rs.getInt("tube_capacity_in_ml"));
         pump.setCurrentIngredientId(rs.getLong("current_ingredient_id"));
-        pump.setTubeCapacityInMl(rs.getInt("filling_level"));
+        pump.setFillingLevelInMl(rs.getInt("filling_level_in_ml"));
         return pump;
     }
 }

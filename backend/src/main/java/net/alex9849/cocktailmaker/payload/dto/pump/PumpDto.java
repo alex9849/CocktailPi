@@ -27,7 +27,7 @@ public class PumpDto {
 
     @NotNull
     @Min(0)
-    private int fillingLevel;
+    private int fillingLevelInMl;
 
     private AutomatedIngredientDto currentIngredient;
 
@@ -87,11 +87,11 @@ public class PumpDto {
         this.currentIngredient = currentIngredient;
     }
 
-    public int getFillingLevel() {
-        return fillingLevel;
+    public int getFillingLevelInMl() {
+        return fillingLevelInMl;
     }
 
-    public void setFillingLevel(int fillingLevel) {
-        this.fillingLevel = fillingLevel;
+    public void setFillingLevelInMl(int fillingLevelInMl) {
+        this.fillingLevelInMl = fillingLevelInMl;
     }
 }

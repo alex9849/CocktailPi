@@ -80,6 +80,12 @@
               {{ props.row.currentIngredient ? props.row.currentIngredient.name : "Empty" }}
             </q-td>
             <q-td
+              key="fillingLevelInMl"
+              :props="props"
+            >
+              {{ props.row.fillingLevelInMl }} ml
+            </q-td>
+            <q-td
               key="actions"
               class="q-pa-md q-gutter-x-sm"
               :props="props"
@@ -221,6 +227,7 @@ export default {
           timePerClInMs: '',
           tubeCapacityInMl: '',
           gpioPin: '',
+          fillingLevelInMl: 0,
           currentIngredient: null
         },
         newPump: {
@@ -228,6 +235,7 @@ export default {
           timePerClInMs: '',
           tubeCapacityInMl: '',
           gpioPin: '',
+          fillingLevelInMl: 0,
           currentIngredient: null
         }
       },
@@ -244,6 +252,7 @@ export default {
         },
         {name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center'},
         {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
+        {name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center'},
         {name: 'actions', label: 'Actions', field: '', align: 'center'}
       ]
     }

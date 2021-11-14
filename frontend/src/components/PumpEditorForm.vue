@@ -7,6 +7,31 @@
       filter-manual-ingredients
     />
     <q-input
+      label="Current filling level"
+      v-model="value.fillingLevelInMl"
+      type="number"
+      outlined
+      @input="$v.value.fillingLevelInMl.$touch()"
+      :rules="[val => $v.value.fillingLevelInMl.required || 'Required',
+              val => $v.value.fillingLevelInMl.minValue || 'Min 0']"
+    >
+      <template slot="append">
+        ml
+        <q-icon
+          :name="mdiInformation"
+          @click="showHelpTubeFillingLevel = !showHelpTubeFillingLevel"
+        >
+          <q-dialog v-model="showHelpTubeFillingLevel">
+            <q-card>
+              <q-card-section>
+                The amount of remaining liquid in the attached container.
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-icon>
+      </template>
+    </q-input>
+    <q-input
       label="Pump time per cl"
       v-model="value.timePerClInMs"
       type="number"
@@ -104,6 +129,7 @@ export default {
     },
     data: () => {
       return {
+        showHelpTubeFillingLevel: false,
         showHelpPumpTime: false,
         showHelpWiringPi: false,
         showHelpTubeCapacity: false
@@ -138,6 +164,10 @@ export default {
             required,
             minValue: minValue(1),
             maxValue: maxValue(30)
+          },
+          fillingLevelInMl: {
+            required,
+            minValue: minValue(0)
           }
         }
       };
