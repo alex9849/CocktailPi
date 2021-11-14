@@ -1,6 +1,6 @@
 <template>
-  <q-page class="page-content">
-    <p>Dashboard</p>
+  <q-page class="row justify-center items-center page-content">
+    What a wonderful day for a cocktail
   </q-page>
 </template>
 
