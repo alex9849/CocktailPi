@@ -25,6 +25,10 @@ public class PumpDto {
     @Min(0) @Max(31)
     private int gpioPin;
 
+    @NotNull
+    @Min(0)
+    private int fillingLevel;
+
     private AutomatedIngredientDto currentIngredient;
 
     private boolean isCleaning;
@@ -81,5 +85,13 @@ public class PumpDto {
 
     public void setCurrentIngredient(AutomatedIngredientDto currentIngredient) {
         this.currentIngredient = currentIngredient;
+    }
+
+    public int getFillingLevel() {
+        return fillingLevel;
+    }
+
+    public void setFillingLevel(int fillingLevel) {
+        this.fillingLevel = fillingLevel;
     }
 }

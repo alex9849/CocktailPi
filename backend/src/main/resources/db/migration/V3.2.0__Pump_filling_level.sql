@@ -1,0 +1,1 @@
+alter table pumps add column filling_level int4 default 0 not null;
