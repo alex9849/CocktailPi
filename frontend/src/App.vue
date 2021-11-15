@@ -25,7 +25,6 @@ export default {
     this.tokenupdater = setInterval(() => {
       if (this.getAuthToken) {
         const tokenExpiration = this.getAuthToken.tokenExpiration
-        const token = this.getAuthToken.accessToken
         const currentDate = new Date()
         const refreshTime = new Date()
         refreshTime.setTime(tokenExpiration.getTime() - extendTokenBeforeExpirationInMs)
