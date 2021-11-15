@@ -29,7 +29,7 @@
       class="q-py-md"
     >
       <q-table
-        :data="data"
+        :rows="data"
         :columns="colums"
         hide-bottom
         ref="userTable"
@@ -114,7 +114,7 @@
         </template>
         <template v-slot:header-selection="selected">
           <q-checkbox
-            :value="isAllSelectedCeckboxState"
+            v-model:model-value="isAllSelectedCeckboxState"
             @input="v => v? selectAll() : $refs.userTable.clearSelection()"
           />
         </template>
@@ -143,7 +143,7 @@
       ok-color="red"
       ok-button-text="Delete"
       :loading="deleteLoading"
-      v-model="deleteDialog"
+      v-model:show="deleteDialog"
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >

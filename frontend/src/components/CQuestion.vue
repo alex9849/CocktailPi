@@ -1,7 +1,7 @@
 <template>
   <q-dialog
-    :value="value"
-    @input="event => {$emit('input', event);}"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     @hide="$emit('clickAbort')"
   >
     <q-card>
@@ -9,7 +9,7 @@
         <h5>{{ question }}</h5>
         <q-splitter
           horizontal
-          :value="10"
+          :model-value="10"
         />
         <slot name="error-area" />
         <slot />
@@ -41,7 +41,7 @@
 export default {
   name: 'CQuestion',
   props: {
-    value: {
+    show: {
       type: Boolean,
       required: true
     },
@@ -62,7 +62,7 @@ export default {
       default: 'green'
     }
   },
-  emits: ['input', 'clickAbort', 'clickOk']
+  emits: ['update:show', 'clickAbort', 'clickOk']
 }
 </script>
 

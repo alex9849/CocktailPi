@@ -9,58 +9,58 @@
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      v-model="value.username"
-      @input="() => {$emit('input', value); $v.value.username.$touch();}"
+      :model-value="modelValue.username"
+      :rules="[
+        val => !v.modelValue.username.required.$invalid || 'Required',
+        val => !v.modelValue.username.minLength.$invalid || 'Minimal length 3',
+        val => !v.modelValue.username.maxLength.$invalid || 'Maximal length 20']"
       label="Username"
-      :rules="[
-        val => $v.value.username.required || 'Required',
-        val => $v.value.username.minLength || 'Minimal length 3',
-        val => $v.value.username.maxLength || 'Maximal length 20']"
+      @update:model-value="e => setValue('username', e)"
     />
     <q-input
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      v-model="value.firstname"
+      :model-value="modelValue.firstname"
       label="Firstname"
-      @input="() => {$emit('input', value); $v.value.firstname.$touch();}"
       :rules="[
-        val => $v.value.firstname.required || 'Required',
-        val => $v.value.firstname.maxLength || 'Maximal length 20']"
+        val => !v.modelValue.firstname.required.$invalid || 'Required',
+        val => !v.modelValue.firstname.maxLength.$invalid || 'Maximal length 20']"
+      @update:model-value="e => setValue('firstname', e)"
     />
     <q-input
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      v-model="value.lastname"
-      @input="() => {$emit('input', value); $v.value.lastname.$touch();}"
+      :model-value="modelValue.lastname"
+      :rules="[
+        val => !v.modelValue.lastname.required.$invalid || 'Required',
+        val => !v.modelValue.lastname.maxLength.$invalid || 'Maximal length 20']"
       label="Lastname"
-      :rules="[
-        val => $v.value.lastname.required || 'Required',
-        val => $v.value.lastname.maxLength || 'Maximal length 20']"
+      @update:model-value="e => setValue('lastname', e)"
     />
     <q-input
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      v-model="value.email"
-      @input="() => {$emit('input', value); $v.value.email.$touch();}"
+      :model-value="modelValue.email"
       :rules="[
-        val => $v.value.email.required || 'Required',
-        val => $v.value.email.email || 'Email required',
-        val => $v.value.email.maxLength || 'Maximal length 5']"
+        val => !v.modelValue.email.required.$invalid || 'Required',
+        val => !v.modelValue.email.email.$invalid || 'Email required',
+        val => !v.modelValue.email.maxLength.$invalid || 'Maximal length 5']"
+      @update:model-value="e => setValue('email', e)"
       label="E-Mail"
     />
     <q-input
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      v-model="value.password"
-      @input="() => {$emit('input', value); $v.value.password.$touch();}"
+      :model-value="v.modelValue.password.$model"
       :rules="[
-        val => !passwordRequired || $v.value.password.required || 'Required',
-        val => $v.value.password.minLength || 'Minimal length 6',
-        val => $v.value.password.minLength || 'Maximal length 40']"
+        val => !passwordRequired || !v.modelValue.password.required.$invalid || 'Required',
+        val => !v.modelValue.password.minLength.$invalid || 'Minimal length 6',
+        val => !v.modelValue.password.minLength.$invalid || 'Maximal length 40']"
+      @update:model-value="e => setValue('password', e)"
       label="Password"
       :type="showPassword? 'text':'password'"
     >
@@ -71,17 +71,17 @@
     <q-select
       outlined
       map-options
-      :value="value.adminLevel"
+      :model-value="modelValue.adminLevel"
       v-if="!isSelf"
       :options="roles"
-      @input="e => {value.adminLevel = e.value; $emit('input', value); $v.value.adminLevel.$touch();}"
+      @update:model-value="e => setValue('adminLevel', e.value)"
       :disable="loading || disabled"
       label="Role"
     />
     <q-checkbox
       v-if="!isSelf"
-      :value="!value.accountNonLocked"
-      @input="e => {value.accountNonLocked = !e; $emit('input', value)}"
+      :model-value="!modelValue.accountNonLocked"
+      @update:model-value="e => setValue('accountNonLocked', !e)"
       :disable="loading || disabled"
       label="Locked"
     />
@@ -97,7 +97,7 @@ import useVuelidate from '@vuelidate/core'
 export default {
   name: 'UserEditorForm',
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
     },
@@ -118,7 +118,20 @@ export default {
       default: false
     }
   },
-  emits: ['submit', 'input', 'valid', 'invalid'],
+  emits: ['submit', 'update:modelValue', 'valid', 'invalid'],
+  setup () {
+    return {
+      v: useVuelidate(),
+      mdiEye: mdiEye,
+      mdiEyeOff: mdiEyeOff
+    }
+  },
+  methods: {
+    setValue(attribute, value) {
+      this.v.modelValue[attribute].$model = value;
+      this.$emit('update:modelValue', this.modelValue)
+    }
+  },
   data () {
     return {
       showPassword: false,
@@ -141,7 +154,7 @@ export default {
   },
   validations () {
     const validations = {
-      value: {
+      modelValue: {
         username: {
           required,
           minLength: minLength(3),
@@ -166,16 +179,17 @@ export default {
         },
         adminLevel: {
           required
-        }
+        },
+        accountNonLocked: {}
       }
     }
     if (this.passwordRequired) {
-      validations.value.password.required = required
+      validations.modelValue.password.required = required
     }
     return validations
   },
   watch: {
-    '$v.value.$invalid': {
+    'v.modelValue.$invalid': {
       immediate: true,
       handler (value) {
         if (!value) {
@@ -185,11 +199,6 @@ export default {
         }
       }
     }
-  },
-  created () {
-    this.mdiEye = mdiEye
-    this.mdiEyeOff = mdiEyeOff
-    return { v$: useVuelidate() }
   }
 }
 </script>
