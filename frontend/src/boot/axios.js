@@ -10,6 +10,6 @@ export default boot(({ Vue }) => {
     cfg.baseURL = store.getters['auth/getFormattedServerAddress']
     return cfg
   })
-  Vue.prototype.$axios = axios
+  Vue.prototype.globalProperties.$axios = axios
 })
 export { axios }
