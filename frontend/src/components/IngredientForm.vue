@@ -6,34 +6,34 @@
       label="Name"
       outlined
       :disable="disable"
-      v-model="value.name"
-      filled
-      @input="() => {$v.value.name.$touch(); $emit('input', value)}"
+      :model-value="modelValue.name"
       :rules="[
-                val => $v.value.name.required || 'Required',
-                val => $v.value.name.maxLength || 'Max 30'
+                val => !v.modelValue.name.required.$invalid || 'Required',
+                val => !v.modelValue.name.maxLength.$invalid || 'Max 30'
               ]"
+      filled
+      @update:model-value="e => setValue('name', e)"
     />
     <q-input
       label="Alcohol content"
       outlined
       :disable="disable"
-      v-model="value.alcoholContent"
       filled
       type="number"
-      @input="() => {$v.value.alcoholContent.$touch(); $emit('input', value)}"
+      :model-value="modelValue.alcoholContent"
       :rules="[
-                val => $v.value.alcoholContent.required || 'Required',
-                val => $v.value.alcoholContent.minValue || 'Must be positive',
-                val => $v.value.alcoholContent.maxValue || 'Max 100'
+                val => !v.modelValue.alcoholContent.required.$invalid || 'Required',
+                val => !v.modelValue.alcoholContent.minValue.$invalid || 'Must be positive',
+                val => !v.modelValue.alcoholContent.maxValue.$invalid || 'Max 100'
               ]"
+      @update:model-value="e => setValue('alcoholContent', e)"
     />
-    <q-splitter horizontal :value="10" />
+    <q-splitter :model-value="10" horizontal/>
     <q-tabs
       class="text-teal"
       inline-label
-      v-model="value.type"
-      @input="onTypeChange($event)"
+      :model-value="modelValue.type"
+      @update:model-value="e => setValue('type', e)"
     >
       <q-tab
         :icon="mdiCogs"
@@ -47,7 +47,7 @@
       />
     </q-tabs>
     <q-tab-panels
-      v-model="value.type"
+      v-model:model-value="modelValue.type"
       animated
     >
       <q-tab-panel
@@ -58,15 +58,15 @@
           label="Pump time multiplier"
           outlined
           :disable="disable"
-          v-model="currentIngredientMultiplierString"
+          :model-value="currentIngredientMultiplierString"
+          :rules="[
+                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || 'Required',
+                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || 'Must be positive',
+                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || 'Max 10'
+              ]"
           filled
           mask="#.##"
-          @input="() => {$v.value.pumpTimeMultiplier.$touch(); $emit('input', value)}"
-          :rules="[
-                val => $v.value.pumpTimeMultiplier.required || 'Required',
-                val => $v.value.pumpTimeMultiplier.minValue || 'Must be positive',
-                val => $v.value.pumpTimeMultiplier.maxValue || 'Max 10'
-              ]"
+          @update:model-value="e => setValue('pumpTimeMultiplier', e)"
         />
       </q-tab-panel>
       <q-tab-panel
@@ -75,7 +75,8 @@
         <q-select
           filled
           clearable
-          v-model="value.unit"
+          :model-value="modelValue.unit"
+          @update:model-value="e => setValue('unit', e)"
           :options="units"
           emit-value
           map-options
@@ -88,14 +89,14 @@
 </template>
 
 <script>
-import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
-import { maxLength, maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
+import {mdiCogs, mdiHandRight, mdiInformation} from '@quasar/extras/mdi-v5'
+import {maxLength, maxValue, minValue, required, requiredIf} from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'IngredientForm',
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
     },
@@ -104,41 +105,35 @@ export default {
       default: false
     }
   },
-  emits: ['input', 'invalid', 'valid'],
-  data () {
+  emits: ['update:modelValue', 'invalid', 'valid'],
+  data() {
     return {
       units: [
-        { label: 'gram (g)', value: 'g' },
-        { label: 'milliliter (ml)', value: 'ml' },
-        { label: 'piece(s)', value: 'piece(s)' },
-        { label: 'teaspoon(s)', value: 'teaspoon(s)' },
-        { label: 'tablespoon(s)', value: 'tablespoon(s)' }
+        {label: 'gram (g)', value: 'g'},
+        {label: 'milliliter (ml)', value: 'ml'},
+        {label: 'piece(s)', value: 'piece(s)'},
+        {label: 'teaspoon(s)', value: 'teaspoon(s)'},
+        {label: 'tablespoon(s)', value: 'tablespoon(s)'}
       ]
     }
   },
   methods: {
-    initialize () {
-      this.$v.value.$touch()
-      if (this.$v.value.$invalid) {
-        this.$emit('invalid')
-      } else {
-        this.$emit('valid')
-      }
-    },
-    onTypeChange (newType) {
-      this.$v.value.$touch()
+    setValue(attribute, value) {
+      this.v.modelValue[attribute].$model = value;
+      this.$emit('update:modelValue', this.modelValue)
     }
   },
-  setup () {
-    this.initialize()
-    this.mdiInformation = mdiInformation
-    this.mdiCogs = mdiCogs
-    this.mdiHandRight = mdiHandRight
-    return { v$: useVuelidate() }
+  setup() {
+    return {
+      v: useVuelidate(),
+      mdiInformation: mdiInformation,
+      mdiCogs: mdiCogs,
+      mdiHandRight: mdiHandRight
+    }
   },
-  validations () {
-    const validations = {
-      value: {
+  validations() {
+    return {
+      modelValue: {
         name: {
           required,
           maxLength: maxLength(30)
@@ -148,22 +143,22 @@ export default {
           minValue: minValue(0),
           maxValue: maxValue(100)
         },
+        type: {},
         pumpTimeMultiplier: {
-          required: requiredIf(() => this.value.type === 'automated'),
+          required: requiredIf(() => this.modelValue.type === 'automated'),
           minValue: minValue(0),
           maxValue: maxValue(10)
         },
         unit: {
-          required: requiredIf(() => this.value.type === 'manual')
+          required: requiredIf(() => this.modelValue.type === 'manual')
         }
       }
     }
-    return validations
   },
   computed: {
     currentIngredientMultiplierString: {
       get: function () {
-        const multiplier = this.value.pumpTimeMultiplier
+        const multiplier = this.modelValue.pumpTimeMultiplier
         if (multiplier === undefined ||
           multiplier === null) {
           return null
@@ -176,23 +171,23 @@ export default {
       },
       set: function (value) {
         if (!value) {
-          this.value.pumpTimeMultiplier = null
+          this.modelValue.pumpTimeMultiplier = null
         } else {
-          this.value.pumpTimeMultiplier = parseFloat(value)
+          this.modelValue.pumpTimeMultiplier = parseFloat(value)
         }
       }
     }
   },
   watch: {
-    '$v.value.$invalid': function _watch$vValue$invalid (value) {
-      if (!value) {
-        this.$emit('valid')
-      } else {
-        this.$emit('invalid')
+    'v.modelValue.$invalid': {
+      immediate: true,
+      handler(value) {
+        if (!value) {
+          this.$emit('valid')
+        } else {
+          this.$emit('invalid')
+        }
       }
-    },
-    value () {
-      this.initialize()
     }
   }
 }

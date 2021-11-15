@@ -9,7 +9,7 @@
         flat
       >
         <user-editor-form
-          v-model="user"
+          v-model:model-value="user"
           :loading="loading"
           :is-self="userId === getUser.id"
           @valid="isValid = true"

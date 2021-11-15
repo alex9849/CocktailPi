@@ -28,7 +28,7 @@
     <div class="q-py-md">
       <q-table
         :columns="columns"
-        :data="ingredients"
+        :rows="ingredients"
         :loading="loading"
         v-model:selected="selected"
         selection="multiple"
@@ -41,14 +41,14 @@
         <template v-slot:body="props">
           <q-tr
             :props="props"
-            :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
+            :key="props.row.id"
           >
             <q-td
               auto-width
               style="text-align: center"
             >
               <q-checkbox
-                v-model="props.selected"
+                v-model:model-value="props.selected"
               />
             </q-td>
             <q-td
@@ -137,7 +137,7 @@
       ok-color="red"
       ok-button-text="Delete"
       :loading="deleteOptions.deleteLoading"
-      v-model="deleteOptions.deleteDialog"
+      v-model:show="deleteOptions.deleteDialog"
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >
@@ -175,7 +175,7 @@
       </template>
     </c-question>
     <c-edit-dialog
-      v-model="editOptions.editDialog"
+      v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
       :title="editDialogHeadline"
       :saving="editOptions.editIngredientSaving"
@@ -184,7 +184,7 @@
       @clickSave="onClickSaveIngredient"
     >
       <ingredient-form
-        v-model="editOptions.editIngredient"
+        v-model:model-value="editOptions.editIngredient"
         :disable="editOptions.editIngredientSaving"
         @valid="editOptions.valid = true"
         @invalid="editOptions.valid = false"
@@ -312,7 +312,7 @@ export default {
           vm.fetchAll()
           vm.$q.notify({
             type: 'positive',
-            message: (toDelete > 1 ? 'Ingredients' : 'Ingredient') + ' deleted successfully'
+            message: (promises.length > 1 ? 'Ingredients' : 'Ingredient') + ' deleted successfully'
           })
         }, err => {
           vm.deleteOptions.deleteLoading = false
@@ -345,11 +345,15 @@ export default {
         })
     }
   },
+  setup () {
+    return {
+      mdiDelete: mdiDelete,
+      mdiPencilOutline: mdiPencilOutline,
+      mdiCheckCircle: mdiCheckCircle,
+      mdiCheckboxBlankCircleOutline: mdiCheckboxBlankCircleOutline
+    }
+  },
   created () {
-    this.mdiDelete = mdiDelete
-    this.mdiPencilOutline = mdiPencilOutline
-    this.mdiCheckCircle = mdiCheckCircle
-    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.fetchAll()
   },
   computed: {
@@ -376,11 +380,4 @@ export default {
 </script>
 
 <style scoped>
-  .row1 {
-    background-color: #fafafa;
-  }
-
-  .row2 {
-    background-color: #f3f3fa;
-  }
 </style>

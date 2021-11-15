@@ -42,7 +42,7 @@
           <div class="text-center">
             <q-checkbox
               v-if="getUser.id !== scope.row.id"
-              v-model="scope.selected"
+              v-model:model-value="scope.selected"
             />
           </div>
         </template>
@@ -300,12 +300,4 @@ export default {
 </script>
 
 <style scoped>
-.row1 {
-  background-color: #fafafa;
-}
-
-.row2 {
-  background-color: #f3f3fa;
-}
-
 </style>
