@@ -21,7 +21,7 @@
     <div class="q-py-md">
       <q-table
         :columns="columns"
-        :data="ownedIngredients"
+        :rows="ownedIngredients"
         :loading="loading"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
@@ -84,7 +84,7 @@
       </q-card>
     </div>
     <c-edit-dialog
-      v-model="editOptions.editDialog"
+      v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
       title="Add Ingredient"
       :saving="editOptions.saving"
@@ -95,9 +95,8 @@
       <c-ingredient-selector
         label="Ingredient"
         :disable="editOptions.saving"
-        v-model="editOptions.addIngredient"
-        @input="$v.editOptions.addIngredient.$touch()"
-        :rules="[val => $v.editOptions.addIngredient.required || 'Required']"
+        v-model:selected="v.editOptions.addIngredient.$model"
+        :rules="[() => !v.editOptions.addIngredient.$error || 'Required']"
       />
     </c-edit-dialog>
   </q-page>
@@ -105,11 +104,11 @@
 
 <script>
 import CIngredientSelector from 'components/CIngredientSelector'
-import { required } from '@vuelidate/validators'
+import {required} from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
-import { mdiDelete } from '@quasar/extras/mdi-v5'
+import {mdiDelete} from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import { mapActions, mapGetters } from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import useVuelidate from '@vuelidate/core'
 
 export default {
@@ -133,8 +132,10 @@ export default {
     }
   },
   setup () {
-    this.mdiDelete = mdiDelete
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiDelete: mdiDelete
+    }
   },
   computed: {
     ...mapGetters({
@@ -149,8 +150,10 @@ export default {
     }),
     onRefresh () {
       this.loading = true
-      this.fetchIngredientsAction()
-        .finally(() => this.loading = false)
+      setTimeout(() => {
+        this.fetchIngredientsAction()
+          .finally(() => this.loading = false)
+      }, 500)
     },
     closeEditDialog () {
       this.editOptions.editDialog = false
@@ -196,19 +199,18 @@ export default {
     }
   },
   watch: {
-    '$v.editOptions.addIngredient.$invalid': function _watch$vEditOptionsEditIngredient$invalid (value) {
+    'v.editOptions.$invalid': function _watch$vEditOptionsEditIngredient$invalid (value) {
       this.editOptions.valid = !value
     }
   },
   validations () {
-    const validations = {
+    return {
       editOptions: {
         addIngredient: {
           required
         }
       }
     }
-    return validations
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <q-dialog
-    :value="value"
-    @input="$emit('input', $event)"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     :persistent="saving"
     @hide="$emit('clickAbort')"
   >
@@ -32,7 +32,7 @@
               label="Abort"
               style="width: 150px"
               :disable="saving"
-              @click="() => {$emit('input', false); $emit('clickAbort')}"
+              @click="() => {$emit('update:show', false); $emit('clickAbort')}"
             />
             <q-btn
               color="green"
@@ -50,10 +50,11 @@
 </template>
 
 <script>
+
 export default {
   name: 'CEditDialog',
   props: {
-    value: {
+    show: {
       type: Boolean,
       required: true
     },
@@ -74,7 +75,7 @@ export default {
       default: ''
     }
   },
-  emits: ['input', 'clickAbort', 'clickSave']
+  emits: ['update:show', 'clickAbort', 'clickSave']
 }
 </script>
 

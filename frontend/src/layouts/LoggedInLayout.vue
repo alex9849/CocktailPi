@@ -18,12 +18,11 @@
       v-model="leftDrawerOpen"
       :behavior="desktopMode? 'desktop':'mobile'"
       persistent
-      content-class="bg-sidebar shadow-5"
+      class="bg-sidebar shadow-5"
     >
       <q-list>
         <q-expansion-item
           v-for="(section, index) in sidebarItems"
-          v-if="section.reqLevel <= getAdminLevel"
           :label="section.label"
           :icon="section.icon"
           :key="index"
@@ -32,7 +31,6 @@
         >
           <q-item
             v-for="(subsection, subindex) in section.subSections"
-            v-if="subsection.reqLevel <= getAdminLevel"
             style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
             active-class="bg-orange-2 text-dark"
             :inset-level="0.4"
@@ -114,7 +112,7 @@ import {
   mdiWeb
 } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
-import store from '../store'
+import { store } from '../store'
 
 export default {
   name: 'LoggedInLayout',

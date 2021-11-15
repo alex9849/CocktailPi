@@ -4,9 +4,9 @@
     behavior="menu"
     :loading="loading"
     :dense="dense"
-    :value="value"
+    :model-value="selected"
+    @update:model-value="$emit('update:selected', $event)"
     :bg-color="bgColor"
-    @input="$emit('input', $event)"
     use-input
     :clearable="clearable"
     :disable="disable"
@@ -27,7 +27,7 @@
     <template v-slot:option="scope">
       <q-item
         v-bind="scope.itemProps"
-        v-on="scope.itemEvents"
+        v-on="scope.itemProps"
       >
         <q-item-section>
           {{ scope.opt.name }}
@@ -43,13 +43,13 @@
 </template>
 
 <script>
-import IngridientService from '../services/ingredient.service'
+import IngredientService from '../services/ingredient.service'
 
 export default {
   name: 'CIngredientSelector',
   props: {
-    value: {
-      type: Object | Array
+    selected: {
+      type: [Object, Array]
     },
     label: {
       type: String,
@@ -104,7 +104,7 @@ export default {
       default: () => []
     }
   },
-  emits: ['input'],
+  emits: ['update:selected'],
   data () {
     return {
       fetchedOptions: [],
@@ -127,10 +127,10 @@ export default {
         update()
         return
       }
-      IngridientService.getIngredientsFilter(val, this.filterManualIngredients)
-        .then(ingridients => {
+      IngredientService.getIngredientsFilter(val, this.filterManualIngredients)
+        .then(ingredients => {
           update(() => {
-            this.fetchedOptions = ingridients
+            this.fetchedOptions = ingredients
           })
         }, () => abort)
     },
