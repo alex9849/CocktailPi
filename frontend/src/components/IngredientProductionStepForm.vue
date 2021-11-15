@@ -27,8 +27,9 @@
 
 <script>
 import IngridientService from '../services/ingredient.service'
-import { minValue, required } from 'vuelidate/lib/validators'
+import { minValue, required } from '@vuelidate/validators'
 import CIngredientSelector from './CIngredientSelector'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'IngredientProductionStepForm',
@@ -44,6 +45,9 @@ export default {
     return {
       ingredientOptions: []
     }
+  },
+  setup () {
+    return { v$: useVuelidate() }
   },
   methods: {
     filterIngredients (val, update, abort) {

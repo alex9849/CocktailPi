@@ -187,16 +187,15 @@
 </template>
 
 <script>
-import { maxLength, minLength, required } from 'vuelidate/lib/validators'
+import { maxLength, minLength, required } from '@vuelidate/validators'
 import CollectionService from 'src/services/collection.service'
-import CRecipeCard from 'components/CRecipeCard'
-import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
 import { mdiDelete, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CQuestion from 'components/CQuestion'
 import CEditDialog from 'components/CEditDialog'
 import CRecipeSelector from 'components/CRecipeSelector'
 import CRecipeSearchList from 'components/CRecipeSearchList'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'Collection',
@@ -205,9 +204,7 @@ export default {
     CRecipeSelector,
     CEditDialog,
     CQuestion,
-    TopButtonArranger,
-    CRecipeFabricableIcon,
-    CRecipeCard
+    TopButtonArranger
   },
   async beforeRouteEnter (to, from, next) {
     const collection = await CollectionService.getCollection(to.params.id)
@@ -247,9 +244,10 @@ export default {
       deletingCollection: false
     }
   },
-  created () {
+  setup () {
     this.mdiDelete = mdiDelete
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
+    return { v$: useVuelidate() }
   },
   watch: {
     collection: {

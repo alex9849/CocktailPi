@@ -114,7 +114,7 @@ import {
   mdiWeb
 } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
-import { store } from '../store'
+import store from '../store'
 
 export default {
   name: 'LoggedInLayout',

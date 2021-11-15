@@ -117,9 +117,10 @@
 </template>
 
 <script>
-import { maxLength, minLength, minValue, required } from 'vuelidate/lib/validators'
+import { maxLength, minLength, minValue, required } from '@vuelidate/validators'
 import IngredientList from './IngredientList'
 import { mapGetters } from 'vuex'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'RecipeEditorForm',
@@ -143,6 +144,9 @@ export default {
     return {
       image: null
     }
+  },
+  setup () {
+    return { v$: useVuelidate() }
   },
   validations () {
     const validations = {

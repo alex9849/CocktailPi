@@ -59,8 +59,9 @@ import { store } from '../store'
 import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CEditDialog from 'components/CEditDialog'
 import { mapGetters } from 'vuex'
-import { maxLength, minLength, required } from 'vuelidate/lib/validators'
+import { maxLength, minLength, required } from '@vuelidate/validators'
 import TopButtonArranger from 'components/TopButtonArranger'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'MyCollections',
@@ -84,8 +85,9 @@ export default {
       }
     }
   },
-  created () {
+  setup () {
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
+    return { v$: useVuelidate() }
   },
   computed: {
     ...mapGetters({

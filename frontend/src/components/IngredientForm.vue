@@ -89,7 +89,8 @@
 
 <script>
 import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
-import { maxLength, maxValue, minValue, required, requiredIf } from 'vuelidate/lib/validators'
+import { maxLength, maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'IngredientForm',
@@ -128,11 +129,12 @@ export default {
       this.$v.value.$touch()
     }
   },
-  created () {
+  setup () {
     this.initialize()
     this.mdiInformation = mdiInformation
     this.mdiCogs = mdiCogs
     this.mdiHandRight = mdiHandRight
+    return { v$: useVuelidate() }
   },
   validations () {
     const validations = {

@@ -105,11 +105,12 @@
 
 <script>
 import CIngredientSelector from 'components/CIngredientSelector'
-import { required } from 'vuelidate/lib/validators'
+import { required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import { mapActions, mapGetters } from 'vuex'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'MyBar',
@@ -131,8 +132,9 @@ export default {
       }
     }
   },
-  created () {
+  setup () {
     this.mdiDelete = mdiDelete
+    return { v$: useVuelidate() }
   },
   computed: {
     ...mapGetters({

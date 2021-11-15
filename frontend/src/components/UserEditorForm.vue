@@ -91,7 +91,8 @@
 
 <script>
 import { mdiEye, mdiEyeOff } from '@quasar/extras/mdi-v5'
-import { email, maxLength, minLength, required } from 'vuelidate/lib/validators'
+import { email, maxLength, minLength, required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'UserEditorForm',
@@ -188,6 +189,7 @@ export default {
   created () {
     this.mdiEye = mdiEye
     this.mdiEyeOff = mdiEyeOff
+    return { v$: useVuelidate() }
   }
 }
 </script>

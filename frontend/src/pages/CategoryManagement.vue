@@ -173,11 +173,12 @@
 <script>
 import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import CQuestion from '../components/CQuestion'
-import { maxLength, required } from 'vuelidate/lib/validators'
+import { maxLength, required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import { mapActions, mapGetters } from 'vuex'
 import { createCategory, fetchCategories, updateCategory } from 'src/store/modules/category/actions'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'CategoryManagement',
@@ -306,9 +307,10 @@ export default {
       this.deleteOptions.deleteErrorMessage = ''
     }
   },
-  created () {
+  setup () {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
+    return { v$: useVuelidate() }
   },
   validations () {
     const validations = {

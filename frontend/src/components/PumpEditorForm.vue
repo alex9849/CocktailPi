@@ -115,8 +115,9 @@
 <script>
 
 import CIngredientSelector from './CIngredientSelector'
-import { maxValue, minValue, required } from 'vuelidate/lib/validators'
+import { maxValue, minValue, required } from '@vuelidate/validators'
 import { mdiInformation } from '@quasar/extras/mdi-v5'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'PumpEditorForm',
@@ -146,9 +147,10 @@ export default {
       }
     }
   },
-  created () {
+  setup () {
     this.initialize()
     this.mdiInformation = mdiInformation
+    return { v$: useVuelidate() }
   },
   validations () {
     const validations = {

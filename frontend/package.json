@@ -15,6 +15,8 @@
   "dependencies": {
     "@mdi/js": "^4.9.95",
     "@quasar/extras": "^1.12.0",
+    "@vuelidate/core": "^2.0.0-alpha.32",
+    "@vuelidate/validators": "^2.0.0-alpha.25",
     "axios": "^0.21.2",
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",

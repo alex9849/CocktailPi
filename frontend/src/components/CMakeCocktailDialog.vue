@@ -210,7 +210,8 @@ import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
 import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from '../components/CIngredientSelector'
-import { maxValue, minValue, required } from 'vuelidate/lib/validators'
+import { maxValue, minValue, required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'CMakeCocktailDialog',
@@ -243,9 +244,10 @@ export default {
       checkingFeasibility: true
     }
   },
-  created () {
+  setup () {
     this.mdiPlay = mdiPlay
     this.mdiAlertOutline = mdiAlertOutline
+    return { v$: useVuelidate() }
   },
   watch: {
     recipe: {

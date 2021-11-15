@@ -97,7 +97,8 @@
 <script>
 import LoginRequest from '../models/LoginRequest'
 import { mdiAlert, mdiEmail, mdiOnepassword, mdiServer } from '@quasar/extras/mdi-v5'
-import { helpers, required } from 'vuelidate/lib/validators'
+import { helpers, required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'Login',
@@ -110,11 +111,12 @@ export default {
       transitionTrigger: false
     }
   },
-  created () {
+  setup () {
     this.mdiEmail = mdiEmail
     this.mdiOnepassword = mdiOnepassword
     this.mdiAlert = mdiAlert
     this.mdiServer = mdiServer
+    return { v$: useVuelidate() }
   },
   validations () {
     const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi)

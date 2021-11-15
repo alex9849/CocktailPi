@@ -18,7 +18,8 @@
 
 <script>
 
-import { maxLength, required } from 'vuelidate/lib/validators'
+import { maxLength, required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'WrittenInstructionProductionStepForm',
@@ -29,6 +30,9 @@ export default {
     }
   },
   emits: ['input', 'valid', 'invalid'],
+  setup () {
+    return { v$: useVuelidate() }
+  },
   watch: {
     value: {
       immediate: true,
