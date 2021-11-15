@@ -22,7 +22,7 @@
     >
       <q-list>
         <q-expansion-item
-          v-for="(section, index) in sidebarItems"
+          v-for="(section, index) in permittedSidebarItems"
           :label="section.label"
           :icon="section.icon"
           :key="index"
@@ -233,6 +233,17 @@ export default {
     }),
     desktopMode () {
       return this.windowWidth > this.desktopModeBreakPoint
+    },
+    permittedSidebarItems() {
+      let sidebarItems = []
+      for (let item of this.sidebarItems) {
+        if (item.reqLevel <= this.getAdminLevel) {
+          sidebarItems.push(item)
+        }
+        item.subSections = item.subSections
+          .filter(x => x.reqLevel <= this.getAdminLevel)
+      }
+      return sidebarItems
     }
   },
   watch: {
