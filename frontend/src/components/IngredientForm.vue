@@ -103,6 +103,7 @@ export default {
       default: false
     }
   },
+  emits: ['input', 'invalid', 'valid'],
   data () {
     return {
       units: [

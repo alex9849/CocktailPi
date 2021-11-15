@@ -117,6 +117,7 @@ export default {
       default: false
     }
   },
+  emits: ['submit', 'input', 'valid', 'invalid'],
   data () {
     return {
       showPassword: false,

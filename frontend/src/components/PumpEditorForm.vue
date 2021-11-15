@@ -127,6 +127,7 @@ export default {
       required: true
     }
   },
+  emits: ['invalid', 'valid'],
   data: () => {
     return {
       showHelpTubeFillingLevel: false,

@@ -28,6 +28,7 @@ export default {
       required: false
     }
   },
+  emits: ['input', 'valid', 'invalid'],
   watch: {
     value: {
       immediate: true,

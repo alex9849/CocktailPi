@@ -73,7 +73,8 @@ export default {
       type: String,
       default: ''
     }
-  }
+  },
+  emits: ['input', 'clickAbort', 'clickSave']
 }
 </script>
 

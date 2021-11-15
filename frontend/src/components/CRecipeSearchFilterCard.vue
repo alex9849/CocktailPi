@@ -121,6 +121,7 @@ export default {
       }]
     }
   },
+  emits: ['clickSearch', 'input'],
   created () {
     this.mdiMagnify = mdiMagnify
   },

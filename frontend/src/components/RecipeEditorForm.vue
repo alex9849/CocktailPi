@@ -138,6 +138,7 @@ export default {
       default: false
     }
   },
+  emits: ['submit', 'input', 'valid', 'invalid'],
   data () {
     return {
       image: null

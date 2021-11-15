@@ -68,6 +68,7 @@ export default {
       default: false
     }
   },
+  emits: ['input', 'valid', 'invalid'],
   data () {
     return {
       selectedTab: 'ingredient',

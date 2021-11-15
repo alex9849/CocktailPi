@@ -61,7 +61,8 @@ export default {
       type: String,
       default: 'green'
     }
-  }
+  },
+  emits: ['input', 'clickAbort', 'clickOk']
 }
 </script>
 
