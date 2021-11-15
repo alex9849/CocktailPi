@@ -5,7 +5,7 @@
       {{ error }}
     </q-banner>
     <user-editor-form
-      v-model="editUser"
+      v-model:model-value="editUser"
       :loading="loading"
       :disabled="!editMode || sending"
       is-self
