@@ -1,12 +1,10 @@
 <template>
-  <div id="q-app">
-    <q-ajax-bar
-      position="top"
-      color="red"
-      size="3px"
-    />
-    <router-view/>
-  </div>
+  <q-ajax-bar
+    color="red"
+    position="top"
+    size="3px"
+  />
+  <router-view/>
 </template>
 
 <script>
