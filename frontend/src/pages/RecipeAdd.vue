@@ -42,7 +42,7 @@
 import RecipeEditorForm from '../components/RecipeEditorForm'
 import RecipeService from '../services/recipe.service'
 import Recipe from '../models/Recipe'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'RecipeAdd',

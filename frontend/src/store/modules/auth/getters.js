@@ -1,4 +1,4 @@
-import {Platform} from 'quasar'
+import { Platform } from 'quasar'
 
 export const isLoggedIn = state => state.status.loggedIn
 export const getUser = state => state.status.user

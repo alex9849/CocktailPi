@@ -54,7 +54,7 @@
 
 import IngredientProductionStepForm from './IngredientProductionStepForm'
 import WrittenInstructionProductionStepForm from 'components/WrittenInstructionProductionStepForm'
-import {mdiCupWater, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import { mdiCupWater, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'ProductionStepListEditor',

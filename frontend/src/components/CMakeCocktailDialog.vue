@@ -207,10 +207,10 @@
 <script>
 import PumpService from '../services/pump.service'
 import CocktailService from '../services/cocktail.service'
-import {mapGetters} from 'vuex'
-import {mdiAlertOutline, mdiPlay} from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
+import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from '../components/CIngredientSelector'
-import {maxValue, minValue, required} from 'vuelidate/lib/validators'
+import { maxValue, minValue, required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'CMakeCocktailDialog',

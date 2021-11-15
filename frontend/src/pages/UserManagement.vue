@@ -172,8 +172,8 @@
 </template>
 
 <script>
-import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
-import {mapGetters} from 'vuex'
+import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
 import UserService from '../services/user.service'
 import CQuestion from '../components/CQuestion'
 import TopButtonArranger from 'components/TopButtonArranger'

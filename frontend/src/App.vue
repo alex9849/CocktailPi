@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 const extendTokenBeforeExpirationInMs = 600000
 

@@ -1,4 +1,4 @@
-import {store} from '../store'
+import { store } from '../store'
 
 function redirectIfNotAuthenticated (to, from, next) {
   if (!store.getters['auth/isLoggedIn']) {

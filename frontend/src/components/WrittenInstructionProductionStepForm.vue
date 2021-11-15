@@ -18,7 +18,7 @@
 
 <script>
 
-import {maxLength, required} from 'vuelidate/lib/validators'
+import { maxLength, required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'WrittenInstructionProductionStepForm',

@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import IngredientService from '../services/ingredient.service'
 import CQuestion from '../components/CQuestion'
 import CEditDialog from 'components/CEditDialog'

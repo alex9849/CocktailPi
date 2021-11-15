@@ -171,13 +171,13 @@
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import CQuestion from '../components/CQuestion'
-import {maxLength, required} from 'vuelidate/lib/validators'
+import { maxLength, required } from 'vuelidate/lib/validators'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
-import {mapActions, mapGetters} from 'vuex'
-import {createCategory, fetchCategories, updateCategory} from 'src/store/modules/category/actions'
+import { mapActions, mapGetters } from 'vuex'
+import { createCategory, fetchCategories, updateCategory } from 'src/store/modules/category/actions'
 
 export default {
   name: 'CategoryManagement',

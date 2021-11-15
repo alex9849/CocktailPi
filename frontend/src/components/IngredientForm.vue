@@ -88,8 +88,8 @@
 </template>
 
 <script>
-import {mdiCogs, mdiHandRight, mdiInformation} from '@quasar/extras/mdi-v5'
-import {maxLength, maxValue, minValue, required, requiredIf} from 'vuelidate/lib/validators'
+import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
+import { maxLength, maxValue, minValue, required, requiredIf } from 'vuelidate/lib/validators'
 
 export default {
   name: 'IngredientForm',

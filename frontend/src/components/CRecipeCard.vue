@@ -82,7 +82,7 @@
 
 <script>
 
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
 
 export default {

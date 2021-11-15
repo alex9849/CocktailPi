@@ -44,7 +44,7 @@
 <script>
 import UserEditorForm from '../components/UserEditorForm'
 import UserService from '../services/user.service'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UserEditor',

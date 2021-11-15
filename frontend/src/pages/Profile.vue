@@ -53,7 +53,7 @@
 
 <script>
 import UserEditorForm from '../components/UserEditorForm'
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Profile',

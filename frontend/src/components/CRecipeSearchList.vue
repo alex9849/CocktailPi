@@ -71,8 +71,8 @@
 <script>
 import RecipeService from '../services/recipe.service'
 import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
-import {mapGetters} from 'vuex'
-import {mdiAlert} from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
+import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
 import CRecipeList from 'components/CRecipeList'
 

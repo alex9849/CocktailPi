@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import {mdiCallSplit, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
+import { mdiCallSplit, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from 'components/CEditDialog'

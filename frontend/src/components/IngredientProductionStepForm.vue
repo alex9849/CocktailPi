@@ -27,7 +27,7 @@
 
 <script>
 import IngridientService from '../services/ingredient.service'
-import {minValue, required} from 'vuelidate/lib/validators'
+import { minValue, required } from 'vuelidate/lib/validators'
 import CIngredientSelector from './CIngredientSelector'
 
 export default {

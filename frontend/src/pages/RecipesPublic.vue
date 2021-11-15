@@ -30,8 +30,8 @@
 
 <script>
 import CRecipeSearchList from '../components/CRecipeSearchList'
-import {mapGetters} from 'vuex'
-import {store} from '../store'
+import { mapGetters } from 'vuex'
+import { store } from '../store'
 import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {

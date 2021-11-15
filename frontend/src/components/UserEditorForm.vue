@@ -90,8 +90,8 @@
 </template>
 
 <script>
-import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5'
-import {email, maxLength, minLength, required} from 'vuelidate/lib/validators'
+import { mdiEye, mdiEyeOff } from '@quasar/extras/mdi-v5'
+import { email, maxLength, minLength, required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'UserEditorForm',

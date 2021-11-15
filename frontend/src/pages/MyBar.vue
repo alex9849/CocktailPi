@@ -105,11 +105,11 @@
 
 <script>
 import CIngredientSelector from 'components/CIngredientSelector'
-import {required} from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 import CEditDialog from 'components/CEditDialog'
-import {mdiDelete} from '@quasar/extras/mdi-v5'
+import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'MyBar',

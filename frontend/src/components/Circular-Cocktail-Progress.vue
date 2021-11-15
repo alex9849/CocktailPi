@@ -142,8 +142,8 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-import {mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
+import { mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty } from '@quasar/extras/mdi-v5'
 import CocktailService from '../services/cocktail.service'
 import CRecipeCard from './CRecipeCard'
 

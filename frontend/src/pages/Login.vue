@@ -96,8 +96,8 @@
 
 <script>
 import LoginRequest from '../models/LoginRequest'
-import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5'
-import {helpers, required} from 'vuelidate/lib/validators'
+import { mdiAlert, mdiEmail, mdiOnepassword, mdiServer } from '@quasar/extras/mdi-v5'
+import { helpers, required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'Login',

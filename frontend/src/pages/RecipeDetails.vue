@@ -93,7 +93,7 @@
 import RecipeService from '../services/recipe.service'
 import IngredientList from '../components/IngredientList'
 import CQuestion from '../components/CQuestion'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 

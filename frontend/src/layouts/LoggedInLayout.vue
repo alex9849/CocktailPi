@@ -100,7 +100,7 @@ a {
 </style>
 
 <script>
-import {openURL} from 'quasar'
+import { openURL } from 'quasar'
 import AppHeader from '../components/AppHeader'
 import {
   mdiAccount,
@@ -113,8 +113,8 @@ import {
   mdiPiggyBank,
   mdiWeb
 } from '@quasar/extras/mdi-v5'
-import {mapGetters} from 'vuex'
-import {store} from '../store'
+import { mapGetters } from 'vuex'
+import { store } from '../store'
 
 export default {
   name: 'LoggedInLayout',

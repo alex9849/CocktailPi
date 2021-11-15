@@ -117,9 +117,9 @@
 </template>
 
 <script>
-import {maxLength, minLength, minValue, required} from 'vuelidate/lib/validators'
+import { maxLength, minLength, minValue, required } from 'vuelidate/lib/validators'
 import IngredientList from './IngredientList'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'RecipeEditorForm',

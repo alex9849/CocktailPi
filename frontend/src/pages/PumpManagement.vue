@@ -200,8 +200,8 @@
 
 <script>
 
-import {mdiDelete, mdiPencilOutline, mdiPlay} from '@quasar/extras/mdi-v5'
-import {mapGetters} from 'vuex'
+import { mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
 import PumpService from '../services/pump.service'
 import CQuestion from '../components/CQuestion'
