@@ -28,7 +28,7 @@
     <div class="q-py-md">
       <q-table
         :columns="columns"
-        :data="categories"
+        :rows="categories"
         :loading="loading"
         v-model:selected="selected"
         selection="multiple"
@@ -41,7 +41,6 @@
         <template v-slot:body="props">
           <q-tr
             :props="props"
-            :class="(props.rowIndex % 2 === 1)? 'row1':'row2'"
           >
             <q-td
               auto-width
@@ -113,7 +112,7 @@
       ok-color="red"
       ok-button-text="Delete"
       :loading="deleteOptions.deleteLoading"
-      v-model="deleteOptions.deleteDialog"
+      v-model:show="deleteOptions.deleteDialog"
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >
@@ -146,7 +145,7 @@
       </template>
     </c-question>
     <c-edit-dialog
-      v-model="editOptions.editDialog"
+      v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
       :title="editDialogHeadline"
       :saving="editOptions.editCategorySaving"
@@ -158,12 +157,11 @@
         label="Name"
         outlined
         :disable="editOptions.editCategorySaving"
-        v-model="editOptions.editCategory.name"
+        v-model:model-value="v.editOptions.editCategory.name.$model"
         filled
-        @input="$v.editOptions.editCategory.name.$touch()"
         :rules="[
-                val => $v.editOptions.editCategory.name.required || 'Required',
-                val => $v.editOptions.editCategory.name.maxLength || 'Max 15'
+                val => !v.editOptions.editCategory.name.required.$invalid || 'Required',
+                val => !v.editOptions.editCategory.name.maxLength.$invalid || 'Max 15'
               ]"
       />
     </c-edit-dialog>
@@ -308,9 +306,11 @@ export default {
     }
   },
   setup () {
-    this.mdiDelete = mdiDelete
-    this.mdiPencilOutline = mdiPencilOutline
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiDelete: mdiDelete,
+      mdiPencilOutline: mdiPencilOutline
+    }
   },
   validations () {
     const validations = {
@@ -326,8 +326,10 @@ export default {
     return validations
   },
   watch: {
-    '$v.editOptions.editCategory.$invalid': function _watch$vEditOptionseditCategory$invalid (value) {
-      this.editOptions.valid = !value
+    'v.editOptions.editCategory.$invalid': {
+      handler (value) {
+        this.editOptions.valid = !value
+      }
     }
   },
   computed: {
@@ -357,11 +359,4 @@ export default {
 </script>
 
 <style scoped>
-  .row1 {
-    background-color: #fafafa;
-  }
-
-  .row2 {
-    background-color: #f3f3fa;
-  }
 </style>
