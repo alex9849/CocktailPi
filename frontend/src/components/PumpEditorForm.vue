@@ -2,18 +2,19 @@
   <div>
     <c-ingredient-selector
       label="Current ingredient"
-      v-model="value.currentIngredient"
+      :selected="modelValue.currentIngredient"
+      @update:selected="setValue('currentIngredient', $event)"
       clearable
       filter-manual-ingredients
     />
     <q-input
       label="Current filling level"
-      v-model="value.fillingLevelInMl"
       type="number"
       outlined
-      @input="$v.value.fillingLevelInMl.$touch()"
-      :rules="[val => $v.value.fillingLevelInMl.required || 'Required',
-              val => $v.value.fillingLevelInMl.minValue || 'Min 0']"
+      :model-value="v.modelValue.fillingLevelInMl.$model"
+      :rules="[val => !v.modelValue.fillingLevelInMl.required.$invalid || 'Required',
+              val => !v.modelValue.fillingLevelInMl.minValue.$invalid || 'Min 0']"
+      @update:model-value="setValue('fillingLevelInMl', $event)"
     >
       <template v-slot:append>
         ml
@@ -33,12 +34,12 @@
     </q-input>
     <q-input
       label="Pump time per cl"
-      v-model="value.timePerClInMs"
       type="number"
       outlined
-      @input="$v.value.timePerClInMs.$touch()"
-      :rules="[val => $v.value.timePerClInMs.required || 'Required',
-              val => $v.value.timePerClInMs.minValue || 'Min 1']"
+      :model-value="v.modelValue.timePerClInMs.$model"
+      :rules="[val => !v.modelValue.timePerClInMs.required.$invalid || 'Required',
+              val => !v.modelValue.timePerClInMs.minValue.$invalid || 'Min 1']"
+      @update:model-value="setValue('timePerClInMs', $event)"
     >
       <template v-slot:append>
         ms/cl
@@ -59,12 +60,12 @@
     </q-input>
     <q-input
       label="Tube capacity"
-      v-model="value.tubeCapacityInMl"
       type="number"
       outlined
-      @input="$v.value.tubeCapacityInMl.$touch()"
-      :rules="[val => $v.value.tubeCapacityInMl.required || 'Required',
-              val => $v.value.tubeCapacityInMl.minValue || 'Min 1']"
+      :model-value="v.modelValue.tubeCapacityInMl.$model"
+      :rules="[val => !v.modelValue.tubeCapacityInMl.required.$invalid || 'Required',
+              val => !v.modelValue.tubeCapacityInMl.minValue.$invalid || 'Min 1']"
+      @update:model-value="setValue('tubeCapacityInMl', $event)"
     >
       <template v-slot:append>
         ml
@@ -84,13 +85,13 @@
     </q-input>
     <q-input
       label="WiringPi-Pin"
-      v-model="value.gpioPin"
       type="number"
       outlined
-      @input="$v.value.gpioPin.$touch()"
-      :rules="[val => $v.value.gpioPin.required || 'Required',
-              val => $v.value.gpioPin.minValue || 'Min 1',
-              val => $v.value.gpioPin.maxValue || 'Max 30']"
+      :model-value="v.modelValue.gpioPin.$model"
+      :rules="[val => !v.modelValue.gpioPin.required.$invalid || 'Required',
+              val => !v.modelValue.gpioPin.minValue.$invalid || 'Min 1',
+              val => !v.modelValue.gpioPin.maxValue.$invalid || 'Max 30']"
+      @update:model-value="setValue('gpioPin', $event)"
     >
       <template v-slot:append>
         <q-icon
@@ -115,20 +116,20 @@
 <script>
 
 import CIngredientSelector from './CIngredientSelector'
-import { maxValue, minValue, required } from '@vuelidate/validators'
-import { mdiInformation } from '@quasar/extras/mdi-v5'
+import {maxValue, minValue, required} from '@vuelidate/validators'
+import {mdiInformation} from '@quasar/extras/mdi-v5'
 import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'PumpEditorForm',
   components: { CIngredientSelector },
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
     }
   },
-  emits: ['invalid', 'valid'],
+  emits: ['update:modelValue', 'invalid', 'valid'],
   data: () => {
     return {
       showHelpTubeFillingLevel: false,
@@ -138,23 +139,21 @@ export default {
     }
   },
   methods: {
-    initialize () {
-      this.$v.value.$touch()
-      if (this.$v.value.$invalid) {
-        this.$emit('invalid')
-      } else {
-        this.$emit('valid')
-      }
+    setValue(attribute, value) {
+      this.v.modelValue[attribute].$model = value;
+      this.$emit('update:modelValue', this.modelValue)
     }
   },
   setup () {
-    this.initialize()
-    this.mdiInformation = mdiInformation
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiInformation: mdiInformation
+    }
   },
   validations () {
-    const validations = {
-      value: {
+    return {
+      modelValue: {
+        currentIngredient: {},
         timePerClInMs: {
           required,
           minValue: minValue(1)
@@ -174,18 +173,16 @@ export default {
         }
       }
     }
-    return validations
   },
   watch: {
-    '$v.value.$invalid': function _watch$vValue$invalid (value) {
-      if (!value) {
-        this.$emit('valid')
-      } else {
-        this.$emit('invalid')
+    'v.modelValue.$invalid': {
+      handler (value) {
+        if (!value) {
+          this.$emit('valid')
+        } else {
+          this.$emit('invalid')
+        }
       }
-    },
-    value () {
-      this.initialize()
     }
   }
 }

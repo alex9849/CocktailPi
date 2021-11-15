@@ -28,7 +28,7 @@
     <div class="q-py-md">
       <q-table
         :columns="columns"
-        :data="pumps"
+        :rows="pumps"
         :loading="isLoading"
         v-model:selected="selected"
         selection="multiple"
@@ -148,7 +148,7 @@
       </q-table>
     </div>
     <c-edit-dialog
-      v-model="editOptions.editDialog"
+      v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
       :title="editDialogHeadline"
       :saving="editOptions.editPumpSaving"
@@ -158,7 +158,7 @@
     >
       <pump-editor-form
         class="innerpadding"
-        v-model="editOptions.editPump"
+        v-model:model-value="editOptions.editPump"
         :persistent="editOptions.editPumpSaving"
         @hide="closeEditDialog"
         @valid="editOptions.valid = true"
@@ -170,7 +170,7 @@
       ok-color="red"
       ok-button-text="Delete"
       :loading="deleteLoading"
-      v-model="deleteDialog"
+      v-model:show="deleteDialog"
       @clickOk="deleteSelected"
       @clickAbort="closeDeleteDialog"
     >
