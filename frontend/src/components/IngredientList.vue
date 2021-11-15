@@ -157,7 +157,6 @@ import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from 'components/CEditDialog'
 import ProductionStepListEditor from 'components/ProductionStepListEditor'
-import Vue from 'vue'
 
 export default {
   name: 'IngredientList',
@@ -217,7 +216,7 @@ export default {
     },
     showManualInstructionEditor (productionStep) {
       this.editor.productionStepIndex = this.productionSteps.indexOf(productionStep)
-      Vue.set(this.editor, 'editingObject', productionStep)
+      this.editor.editingObject = productionStep
       this.editor.isCreatingNew = false
       this.editor.visible = true
     },
@@ -228,7 +227,7 @@ export default {
     showStepIngredientEditor (productionStep, stepIngredient) {
       this.editor.productionStepIndex = this.productionSteps.indexOf(productionStep)
       this.editor.ingredientIndex = productionStep.stepIngredients.indexOf(stepIngredient)
-      Vue.set(this.editor, 'editingObject', stepIngredient)
+      this.editor.editingObject = stepIngredient
       this.editor.isCreatingNew = false
       this.editor.visible = true
     },
@@ -243,7 +242,7 @@ export default {
       this.editor.visible = false
       this.editor.productionStepIndex = -1
       this.editor.ingredientIndex = -1
-      Vue.set(this.editor, 'editingObject', null)
+      this.editor.editingObject = null
     },
     saveEditProductionStep () {
       if (this.editor.productionStepIndex >= 0) {

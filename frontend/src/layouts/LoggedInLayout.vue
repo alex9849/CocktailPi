@@ -256,7 +256,6 @@ export default {
       }
     },
     setCategories (categories) {
-      // Vue.set(this.editor, 'editingObject', productionStep);
       this.sidebarItems[1].subSections = [
         {
           label: 'All',
