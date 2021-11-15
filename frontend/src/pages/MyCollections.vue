@@ -24,29 +24,28 @@
                    :to="{name: 'collection', params: {id: collection.id}}"
       >
         <c-collection-card
-          :value="collection"
+          :model-value="collection"
           class="full-height"
           style="max-height: 300px"
         />
       </router-link>
     </div>
     <c-edit-dialog
-      v-model="createCollection.menuOpen"
+      v-model:show="createCollection.menuOpen"
       :saving="createCollection.saving"
       title="Create collection"
-      :valid="!$v.createCollection.$invalid"
+      :valid="!v.createCollection.$invalid"
       :error-message="createCollection.errorMessage"
       @clickAbort="onCloseCreateCollectionMenu"
       @clickSave="onClickSafeNewCollection"
     >
       <q-input
         label="Name"
-        v-model="createCollection.name"
+        v-model:model-value="v.createCollection.name.$model"
         outlined
-        @input="$v.createCollection.name.$touch()"
-        :rules="[val => $v.createCollection.name.required || 'Required',
-              val => $v.createCollection.name.minLength || 'Min 3 letters',
-              val => $v.createCollection.name.maxLength || 'Max 20 letters']"
+        :rules="[val => !v.createCollection.name.required.$invalid || 'Required',
+              val => !v.createCollection.name.minLength.$invalid || 'Min 3 letters',
+              val => !v.createCollection.name.maxLength.$invalid || 'Max 20 letters']"
       />
     </c-edit-dialog>
   </q-page>
@@ -56,10 +55,10 @@
 import CCollectionCard from 'components/CCollectionCard'
 import CollectionService from '../services/collection.service'
 import store from '../store'
-import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import {mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
 import CEditDialog from 'components/CEditDialog'
-import { mapGetters } from 'vuex'
-import { maxLength, minLength, required } from '@vuelidate/validators'
+import {mapGetters} from 'vuex'
+import {maxLength, minLength, required} from '@vuelidate/validators'
 import TopButtonArranger from 'components/TopButtonArranger'
 import useVuelidate from '@vuelidate/core'
 
@@ -86,8 +85,10 @@ export default {
     }
   },
   setup () {
-    this.mdiPlusCircleOutline = mdiPlusCircleOutline
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiPlusCircleOutline: mdiPlusCircleOutline
+    }
   },
   computed: {
     ...mapGetters({
@@ -128,7 +129,7 @@ export default {
     }
   },
   validations () {
-    const validations = {
+    return {
       createCollection: {
         name: {
           required,
@@ -137,7 +138,6 @@ export default {
         }
       }
     }
-    return validations
   }
 }
 </script>

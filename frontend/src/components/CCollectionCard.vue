@@ -2,19 +2,28 @@
   <q-card flat bordered class="bg-grey-1">
     <q-card-section horizontal>
       <q-card-section class="col-4 q-pa-sm">
-        <q-img :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + value.id + '/image?timestamp=' + value.lastUpdate.getMilliseconds()"
-               placeholder-src="../assets/cocktail-solid.png"
+        <q-img v-if="modelValue.hasImage"
+               :src="this.$store.getters['auth/getFormattedServerAddress']
+                  + '/api/collection/' + this.modelValue.id + '/image?timestamp='
+                  + this.modelValue.lastUpdate.getMilliseconds()"
+               placeholder-src="~assets/cocktail-solid.png"
                :ratio="1"
                class="rounded-borders"
         />
+        <q-img v-else
+               :ratio="1"
+               class="rounded-borders"
+               placeholder-src="~assets/cocktail-solid.png"
+               src="~assets/cocktail-solid.png"
+        />
       </q-card-section>
       <q-card-section class="col-8 q-pa-sm">
-        <div class="text-h5" style="margin-bottom: 0">{{ value.name }}</div>
+        <div class="text-h5" style="margin-bottom: 0">{{ modelValue.name }}</div>
         <div class="text-caption text-grey">
-          {{ value.size }} Cocktail(s) / {{ value.completed? 'complete' : 'incomplete'}}
+          {{ modelValue.size }} Cocktail(s) / {{ modelValue.completed? 'complete' : 'incomplete'}}
         </div>
         <div class="text-caption text-grey dotted-overflow" style="">
-          {{ value.description }}
+          {{ modelValue.description }}
         </div>
       </q-card-section>
     </q-card-section>
@@ -22,10 +31,11 @@
 </template>
 
 <script>
+
 export default {
   name: 'CCollectionCard',
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
     }
