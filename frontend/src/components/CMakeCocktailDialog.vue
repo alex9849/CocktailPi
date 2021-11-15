@@ -3,6 +3,7 @@
     :value="value"
     ref="mcDialog"
     @input="$emit('input', $event)"
+    style="max-width: max-content"
   >
     <q-card
       class="text-center"
@@ -115,7 +116,6 @@
             <q-td
               key="currentIngredient"
               :props="props"
-              style="min-width: 250px; max-width: 250px"
             >
               <c-ingredient-selector
                 :value="props.row.currentIngredient"
@@ -146,7 +146,6 @@
             <q-td
               key="fillingLevelInMl"
               :props="props"
-              style="min-width: 175px; max-width: 175px"
             >
               <q-input
                 :value="props.row.fillingLevelInMl"
