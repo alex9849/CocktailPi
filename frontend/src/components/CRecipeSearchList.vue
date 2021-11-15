@@ -10,7 +10,7 @@
       :recipes="recipes"
       :no-data-message="noDataMessage"
     >
-      <template slot="firstItem"
+      <template v-slot:firstItem
       >
         <div class="col-12 q-col-gutter-y-md"
              v-if="!!$slots.firstItem || loading"
@@ -31,23 +31,23 @@
           </div>
         </div>
       </template>
-      <template slot="recipeTopRight"
-                slot-scope="{recipe}"
+      <template v-slot:recipeTopRight="{recipe}"
+
       >
         <slot name="recipeTopRight"
-              v-if="!!$scopedSlots.recipeTopRight"
+              v-if="!!$slots.recipeTopRight"
               :recipe="recipe"
         />
       </template>
-      <template slot="recipeHeadline"
-                slot-scope="{recipe}"
+      <template v-slot:recipeHeadline="{recipe}"
+
       >
         <slot name="recipeHeadline"
-              v-if="!!$scopedSlots.recipeHeadline"
+              v-if="!!$slots.recipeHeadline"
               :recipe="recipe"
         />
       </template>
-      <template slot="lastItem"
+      <template v-slot:lastItem
                 v-if="!!$slots.lastItem"
       >
         <slot name="lastItem"></slot>
@@ -70,15 +70,15 @@
 
 <script>
 import RecipeService from '../services/recipe.service'
-import CRecipeSearchFilterCard from "components/CRecipeSearchFilterCard";
-import {mapGetters} from "vuex";
-import {mdiAlert} from "@quasar/extras/mdi-v5";
-import JsUtils from "src/services/JsUtils";
-import CRecipeList from "components/CRecipeList";
+import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
+import {mapGetters} from 'vuex'
+import {mdiAlert} from '@quasar/extras/mdi-v5'
+import JsUtils from 'src/services/JsUtils'
+import CRecipeList from 'components/CRecipeList'
 
 export default {
-  name: "CRecipeSearchList",
-  components: {CRecipeList, CRecipeSearchFilterCard},
+  name: 'CRecipeSearchList',
+  components: { CRecipeList, CRecipeSearchFilterCard },
   props: {
     collectionId: {
       type: Number,
@@ -91,9 +91,9 @@ export default {
     categoryId: {
       type: Number,
       required: false
-    },
+    }
   },
-  data() {
+  data () {
     return {
       recipes: [],
       loading: false,
@@ -104,38 +104,40 @@ export default {
       }
     }
   },
-  created() {
-    this.updateRecipes();
-    this.mdiAlert = mdiAlert;
+  created () {
+    this.updateRecipes()
+    this.mdiAlert = mdiAlert
   },
   methods: {
-    routeOptions() {
-      const queryParams = this.$route.query;
-      let containsIngredients = !!queryParams.containsIngredients? queryParams.containsIngredients : [];
-      if(!Array.isArray(containsIngredients)) {
+    routeOptions () {
+      const queryParams = this.$route.query
+      let containsIngredients = queryParams.containsIngredients ? queryParams.containsIngredients : []
+      if (!Array.isArray(containsIngredients)) {
         containsIngredients = [containsIngredients]
       }
 
       return {
         filter: {
-          query: !!queryParams.query ? queryParams.query : '',
-          automaticallyFabricable: !!queryParams.automaticallyFabricable ?
-            (queryParams.automaticallyFabricable === 'true') : false,
-          fabricableWithOwnedIngredients: !!queryParams.fabricableWithOwnedIngredients ?
-            (queryParams.fabricableWithOwnedIngredients === 'true') : false,
+          query: queryParams.query ? queryParams.query : '',
+          automaticallyFabricable: queryParams.automaticallyFabricable
+            ? (queryParams.automaticallyFabricable === 'true')
+            : false,
+          fabricableWithOwnedIngredients: queryParams.fabricableWithOwnedIngredients
+            ? (queryParams.fabricableWithOwnedIngredients === 'true')
+            : false,
           containsIngredients: containsIngredients,
           orderBy: queryParams.orderBy
         },
-        page: !!queryParams.page? (Number(queryParams.page) - 1) : 0
+        page: queryParams.page ? (Number(queryParams.page) - 1) : 0
       }
     },
-    updateRecipes(withLoadingAnimation = true) {
-      this.loading = withLoadingAnimation;
-      if(withLoadingAnimation) {
-        this.recipes = [];
+    updateRecipes (withLoadingAnimation = true) {
+      this.loading = withLoadingAnimation
+      if (withLoadingAnimation) {
+        this.recipes = []
       }
-      this.updateRoute();
-      return new Promise(((resolve, reject) => {
+      this.updateRoute()
+      return new Promise((resolve, reject) => {
         setTimeout(() => {
           RecipeService.getRecipes(this.pagination.page,
             this.onlyOwnRecipes ? this.user.id : null,
@@ -149,44 +151,44 @@ export default {
             this.categoryId,
             this.filter.orderBy
           ).then(page => {
-            this.recipes = page.content;
-            this.pagination.totalPages = page.totalPages;
-            this.pagination.page = page.number;
-            this.loading = false;
-            resolve(page.content);
+            this.recipes = page.content
+            this.pagination.totalPages = page.totalPages
+            this.pagination.page = page.number
+            this.loading = false
+            resolve(page.content)
           }, error => {
-            this.loading = false;
-            reject(error);
-          });
-        }, withLoadingAnimation? 500 : 0);
-      }));
+            this.loading = false
+            reject(error)
+          })
+        }, withLoadingAnimation ? 500 : 0)
+      })
     },
-    updateRoute() {
+    updateRoute () {
       let query = {
         page: this.pagination.page + 1
-      };
-      if(query.page === 1) {
-        delete query.page;
       }
-      query = Object.assign(query, this.filter);
-      query = JsUtils.cleanObject(query);
-      this.$router.replace({name: this.$route.name, query: query}).catch(()=>{});
+      if (query.page === 1) {
+        delete query.page
+      }
+      query = Object.assign(query, this.filter)
+      query = JsUtils.cleanObject(query)
+      this.$router.replace({ name: this.$route.name, query: query }).catch(() => {})
     },
-    onPageClick(page) {
+    onPageClick (page) {
       if (this.pagination.page !== page) {
-        this.pagination.page = page;
+        this.pagination.page = page
         this.updateRecipes()
       }
     }
   },
   watch: {
-    collectionId() {
+    collectionId () {
       this.updateRecipes()
     },
-    onlyOwnRecipes() {
+    onlyOwnRecipes () {
       this.updateRecipes()
     },
-    categoryId() {
+    categoryId () {
       this.updateRecipes()
     }
   },
@@ -194,11 +196,11 @@ export default {
     ...mapGetters({
       user: 'auth/getUser'
     }),
-    noDataMessage() {
-      if(this.loading) {
-        return "";
+    noDataMessage () {
+      if (this.loading) {
+        return ''
       }
-      return "No recipes found!"
+      return 'No recipes found!'
     }
   }
 }

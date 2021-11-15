@@ -74,7 +74,7 @@
             bg-color="white"
             @keypress.enter="onSearch"
           >
-            <template slot="after">
+            <template v-slot:after>
               <q-btn
                 text-color="black"
                 color="white"
@@ -91,19 +91,19 @@
 </template>
 
 <script>
-import {mdiMagnify} from '@quasar/extras/mdi-v5';
-import CIngredientSelector from "components/CIngredientSelector";
+import {mdiMagnify} from '@quasar/extras/mdi-v5'
+import CIngredientSelector from 'components/CIngredientSelector'
 
 export default {
-  name: "CRecipeSearchFilterCard",
-  components: {CIngredientSelector},
+  name: 'CRecipeSearchFilterCard',
+  components: { CIngredientSelector },
   props: {
     value: {
       type: Object,
       required: true
     }
   },
-  data() {
+  data () {
     return {
       isFilterExpanded: false,
       orderByOptions: [{
@@ -118,14 +118,14 @@ export default {
       }, {
         label: 'Least update',
         value: 'lastUpdateDesc'
-      }],
+      }]
     }
   },
-  created() {
-    this.mdiMagnify = mdiMagnify;
+  created () {
+    this.mdiMagnify = mdiMagnify
   },
   methods: {
-    defaultFilter() {
+    defaultFilter () {
       return {
         query: '',
         automaticallyFabricable: false,
@@ -134,10 +134,10 @@ export default {
         orderBy: null
       }
     },
-    onSearch() {
+    onSearch () {
       this.$emit('clickSearch')
     },
-    resetFilter() {
+    resetFilter () {
       this.$emit('input', this.defaultFilter())
     }
   }

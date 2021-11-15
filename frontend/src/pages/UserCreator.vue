@@ -14,7 +14,7 @@
         @valid="isValid = true"
         @invalid="isValid = false"
       >
-        <template slot="below">
+        <template v-slot:below>
           <div class="q-pa-md q-gutter-sm">
             <q-btn
               style="width: 100px"
@@ -40,44 +40,44 @@
 </template>
 
 <script>
-import UserEditorForm from "../components/UserEditorForm";
-import User from "../models/User"
-import userService from "../services/user.service"
+import UserEditorForm from '../components/UserEditorForm'
+import User from '../models/User'
+import userService from '../services/user.service'
 
 export default {
-    name: "UserCreator",
-    components: {UserEditorForm},
-    data() {
-      return {
-        newUser: new User('', '', '',
-          '', true, '', '', 0),
-        isValid: false,
-        loading: false,
-        error: ''
-      }
-    },
-    methods: {
-      createUser() {
-        this.loading = true;
-        userService.createUser(this.newUser)
-          .then(() => {
-            this.loading = false;
-            this.$q.notify({
-              type: 'positive',
-              message: 'User created successfully'
-            });
-            this.$router.push({name: 'usermanagement'})
-          }).catch(error => {
-          this.loading = false;
-          this.error = error.response.data.message;
+  name: 'UserCreator',
+  components: { UserEditorForm },
+  data () {
+    return {
+      newUser: new User('', '', '',
+        '', true, '', '', 0),
+      isValid: false,
+      loading: false,
+      error: ''
+    }
+  },
+  methods: {
+    createUser () {
+      this.loading = true
+      userService.createUser(this.newUser)
+        .then(() => {
+          this.loading = false
+          this.$q.notify({
+            type: 'positive',
+            message: 'User created successfully'
+          })
+          this.$router.push({ name: 'usermanagement' })
+        }).catch(error => {
+          this.loading = false
+          this.error = error.response.data.message
           this.$q.notify({
             type: 'negative',
             message: 'Couldn\'t create user. ' + error.response.data.message
-          });
+          })
         })
-      }
     }
   }
+}
 </script>
 
 <style scoped>

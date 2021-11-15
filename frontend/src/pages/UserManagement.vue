@@ -35,7 +35,7 @@
         ref="userTable"
         :loading="isLoading"
         selection="multiple"
-        :selected.sync="selected"
+        v-model:selected="selected"
         :pagination="{rowsPerPage: 0, sortBy: 'id'}"
       >
         <template v-slot:body-selection="scope">
@@ -172,16 +172,16 @@
 </template>
 
 <script>
-import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-import {mapGetters} from "vuex";
+import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import {mapGetters} from 'vuex'
 import UserService from '../services/user.service'
-import CQuestion from "../components/CQuestion";
-import TopButtonArranger from "components/TopButtonArranger";
+import CQuestion from '../components/CQuestion'
+import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
-  name: "UserManagement",
-  components: {TopButtonArranger, CQuestion},
-  data() {
+  name: 'UserManagement',
+  components: { TopButtonArranger, CQuestion },
+  data () {
     return {
       deleteDialog: false,
       deleteUsers: [],
@@ -190,12 +190,12 @@ export default {
       isLoading: false,
       data: [],
       colums: [
-        {name: 'username', label: 'Username', field: 'username', align: 'left'},
-        {name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center'},
-        {name: 'fullname', label: 'Full name', field: '', align: 'left'},
-        {name: 'email', label: 'E-Mail', field: 'email', align: 'left'},
-        {name: 'role', label: 'Role', field: 'role', align: 'center'},
-        {name: 'actions', label: 'Actions', field: '', align: 'center'}
+        { name: 'username', label: 'Username', field: 'username', align: 'left' },
+        { name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center' },
+        { name: 'fullname', label: 'Full name', field: '', align: 'left' },
+        { name: 'email', label: 'E-Mail', field: 'email', align: 'left' },
+        { name: 'role', label: 'Role', field: 'role', align: 'center' },
+        { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       roles: [
         {
@@ -214,85 +214,85 @@ export default {
       ]
     }
   },
-  created() {
-    this.mdiCheckCircle = mdiCheckCircle;
-    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
-    this.mdiDelete = mdiDelete;
-    this.mdiPencilOutline = mdiPencilOutline;
-    this.initialize();
+  created () {
+    this.mdiCheckCircle = mdiCheckCircle
+    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
+    this.mdiDelete = mdiDelete
+    this.mdiPencilOutline = mdiPencilOutline
+    this.initialize()
   },
   computed: {
     ...mapGetters({
       getUser: 'auth/getUser'
     }),
-    deleteQuestionMessage() {
+    deleteQuestionMessage () {
       if (this.deleteUsers.length === 0) {
-        return "No users selected!";
+        return 'No users selected!'
       }
       if (this.deleteUsers.length === 1) {
-        return "The following user will be deleted:";
+        return 'The following user will be deleted:'
       }
-      return "The following users will be deleted:";
+      return 'The following users will be deleted:'
     },
-    isAllSelectedCeckboxState() {
+    isAllSelectedCeckboxState () {
       if (this.selected.length === 0) {
-        return false;
+        return false
       }
       if (this.selected.length === this.data.length - 1) {
-        return true;
+        return true
       }
-      return undefined;
+      return undefined
     }
   },
   methods: {
-    selectAll() {
-      let toSelect = this.data.filter(x => x.id !== this.getUser.id);
-      this.selected.push(...toSelect);
+    selectAll () {
+      const toSelect = this.data.filter(x => x.id !== this.getUser.id)
+      this.selected.push(...toSelect)
     },
-    onRefreshButton() {
-      this.isLoading = true;
-      let vm = this;
+    onRefreshButton () {
+      this.isLoading = true
+      const vm = this
       setTimeout(() => {
         vm.initialize()
-      }, 500);
+      }, 500)
     },
-    openDeleteDialog(forSelectedUsers) {
+    openDeleteDialog (forSelectedUsers) {
       if (forSelectedUsers) {
-        this.deleteUsers.push(...this.selected);
+        this.deleteUsers.push(...this.selected)
       }
-      this.deleteDialog = true;
+      this.deleteDialog = true
     },
-    closeDeleteDialog() {
-      this.deleteUsers.splice(0, this.deleteUsers.length);
-      this.deleteDialog = false;
+    closeDeleteDialog () {
+      this.deleteUsers.splice(0, this.deleteUsers.length)
+      this.deleteDialog = false
     },
-    deleteSelected() {
-      this.deleteLoading = true;
-      let vm = this;
-      const promises = [];
+    deleteSelected () {
+      this.deleteLoading = true
+      const vm = this
+      const promises = []
       this.deleteUsers.forEach(user => {
         promises.push(UserService.deleteUser(user.id))
       })
       Promise.all(promises)
         .then(() => {
-          vm.closeDeleteDialog();
-          vm.selected.splice(0, this.selected.length);
-          vm.deleteLoading = false;
-          vm.initialize();
+          vm.closeDeleteDialog()
+          vm.selected.splice(0, this.selected.length)
+          vm.deleteLoading = false
+          vm.initialize()
           vm.$q.notify({
             type: 'positive',
             message: 'User(s) deleted successfully'
-          });
+          })
         })
     },
-    initialize() {
-      this.isLoading = true;
+    initialize () {
+      this.isLoading = true
       UserService.getAllUsers()
         .then(users => {
-          this.data = users;
-          this.isLoading = false;
+          this.data = users
+          this.isLoading = false
         }, err => {
-          this.loading = false;
+          this.loading = false
         })
     }
   }

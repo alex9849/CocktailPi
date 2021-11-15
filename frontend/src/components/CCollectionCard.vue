@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "CCollectionCard",
+  name: 'CCollectionCard',
   props: {
     value: {
       type: Object,

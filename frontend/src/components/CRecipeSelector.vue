@@ -29,11 +29,11 @@
 </template>
 
 <script>
-import RecipeService from "../services/recipe.service"
-import {mapGetters} from "vuex";
+import RecipeService from '../services/recipe.service'
+import {mapGetters} from 'vuex'
 
 export default {
-  name: "CRecipeSelector",
+  name: 'CRecipeSelector',
   props: {
     value: {
       type: Object | Array
@@ -79,7 +79,7 @@ export default {
       default: () => []
     }
   },
-  data() {
+  data () {
     return {
       fetchedOptions: []
     }
@@ -90,21 +90,21 @@ export default {
     })
   },
   methods: {
-    filterRecipes(val, update, abort) {
-      this.stringInput = val;
-      if(val.length < 2) {
-        update();
-        return;
+    filterRecipes (val, update, abort) {
+      this.stringInput = val
+      if (val.length < 2) {
+        update()
+        return
       }
       RecipeService.getRecipes(0, null, this.user.id, null, null,
         null, null, null, val, null, null)
         .then(page => {
           update(() => {
-            this.fetchedOptions = page.content;
+            this.fetchedOptions = page.content
           })
         }, () => abort)
     },
-    abortFilterRecipes() {
+    abortFilterRecipes () {
 
     }
   }

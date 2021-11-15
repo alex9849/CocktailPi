@@ -142,117 +142,117 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from "@quasar/extras/mdi-v5";
-import CocktailService from "../services/cocktail.service";
-import CRecipeCard from "./CRecipeCard";
+import {mapGetters} from 'vuex'
+import {mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from '@quasar/extras/mdi-v5'
+import CocktailService from '../services/cocktail.service'
+import CRecipeCard from './CRecipeCard'
 
 export default {
-    name: "Circular-Cocktail-Progress",
-    components: {CRecipeCard},
-    data() {
-      return {
-        canceling: false,
-        continueProductionClicked: false,
-        noCacheString: new Date().getTime()
+  name: 'Circular-Cocktail-Progress',
+  components: { CRecipeCard },
+  data () {
+    return {
+      canceling: false,
+      continueProductionClicked: false,
+      noCacheString: new Date().getTime()
+    }
+  },
+  created () {
+    this.mdiTimerSandEmpty = mdiTimerSandEmpty
+    this.mdiMagnify = mdiMagnify
+    this.mdiStop = mdiStop
+    this.mdiCheckBold = mdiCheckBold
+    this.mdiAlertOutline = mdiAlertOutline
+  },
+  watch: {
+    'cocktailProgress.recipe.id': function () {
+      this.noCacheString = new Date().getTime()
+    }
+  },
+  computed: {
+    ...mapGetters({
+      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+      cocktailProgress: 'cocktailProgress/getCocktailProgress',
+      currentUser: 'auth/getUser',
+      isAdmin: 'auth/isAdmin'
+    }),
+    showDialog: {
+      get () {
+        return this.$store.getters['cocktailProgress/isShowProgressDialog']
+      },
+      set (val) {
+        return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
       }
     },
-    created() {
-      this.mdiTimerSandEmpty = mdiTimerSandEmpty;
-      this.mdiMagnify = mdiMagnify;
-      this.mdiStop = mdiStop;
-      this.mdiCheckBold = mdiCheckBold;
-      this.mdiAlertOutline = mdiAlertOutline;
-    },
-    watch: {
-      'cocktailProgress.recipe.id': function () {
-        this.noCacheString = new Date().getTime()
+    isCocktailCancelled () {
+      if (!this.hasCocktailProgress) {
+        return false
       }
+      return this.cocktailProgress.state === 'CANCELLED'
     },
-    computed: {
-      ...mapGetters({
-        hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-        cocktailProgress: 'cocktailProgress/getCocktailProgress',
-        currentUser: 'auth/getUser',
-        isAdmin: 'auth/isAdmin'
-      }),
-      showDialog: {
-        get() {
-          return this.$store.getters['cocktailProgress/isShowProgressDialog']
-        },
-        set(val) {
-          return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
-        }
-      },
-      isCocktailCancelled() {
-        if(!this.hasCocktailProgress) {
-          return false;
-        }
-        return this.cocktailProgress.state === 'CANCELLED';
-      },
-      circularProgressIcon() {
-        if(!this.hasCocktailProgress) {
-          return mdiCheckBold;
-        }
-        if(this.cocktailProgress.state === 'FINISHED') {
-          return mdiCheckBold;
-        }
-        if(this.cocktailProgress.state === 'CANCELLED') {
-          return mdiStop;
-        }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
-          return mdiAlertOutline;
-        }
-        return mdiTimerSandEmpty;
-      },
-      loadingBarColor () {
-        if(!this.hasCocktailProgress) {
-          return 'info';
-        }
-        if(this.cocktailProgress.state === 'FINISHED') {
-          return 'green';
-        }
-        if(this.cocktailProgress.state === 'CANCELLED') {
-          return 'red';
-        }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
-          return 'warning' ;
-        }
-        return 'green';
-      },
-      cocktailProgressBarLabel() {
-        if(!this.hasCocktailProgress) {
-          return '';
-        }
-        if(this.cocktailProgress.state === 'FINISHED') {
-          return 'Done!';
-        }
-        if(this.cocktailProgress.state === 'CANCELLED') {
-          return 'Cancelled!';
-        }
-        if(this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
-          return 'Manual action required! (' + this.cocktailProgress.progress + '%)' ;
-        }
-        return this.cocktailProgress.progress + '%'
+    circularProgressIcon () {
+      if (!this.hasCocktailProgress) {
+        return mdiCheckBold
       }
+      if (this.cocktailProgress.state === 'FINISHED') {
+        return mdiCheckBold
+      }
+      if (this.cocktailProgress.state === 'CANCELLED') {
+        return mdiStop
+      }
+      if (this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
+        return mdiAlertOutline
+      }
+      return mdiTimerSandEmpty
     },
-    methods: {
-      onCancelCocktail() {
-        this.canceling = true;
-        CocktailService.cancelCocktail()
-          .finally(() => {
-            this.canceling = false;
-          })
-      },
-      onClickContinueProduction() {
-        this.continueProductionClicked = true;
-        CocktailService.continueProduction()
-          .finally(() => {
-            this.continueProductionClicked = false;
-          })
+    loadingBarColor () {
+      if (!this.hasCocktailProgress) {
+        return 'info'
       }
+      if (this.cocktailProgress.state === 'FINISHED') {
+        return 'green'
+      }
+      if (this.cocktailProgress.state === 'CANCELLED') {
+        return 'red'
+      }
+      if (this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
+        return 'warning'
+      }
+      return 'green'
+    },
+    cocktailProgressBarLabel () {
+      if (!this.hasCocktailProgress) {
+        return ''
+      }
+      if (this.cocktailProgress.state === 'FINISHED') {
+        return 'Done!'
+      }
+      if (this.cocktailProgress.state === 'CANCELLED') {
+        return 'Cancelled!'
+      }
+      if (this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
+        return 'Manual action required! (' + this.cocktailProgress.progress + '%)'
+      }
+      return this.cocktailProgress.progress + '%'
+    }
+  },
+  methods: {
+    onCancelCocktail () {
+      this.canceling = true
+      CocktailService.cancelCocktail()
+        .finally(() => {
+          this.canceling = false
+        })
+    },
+    onClickContinueProduction () {
+      this.continueProductionClicked = true
+      CocktailService.continueProduction()
+        .finally(() => {
+          this.continueProductionClicked = false
+        })
     }
   }
+}
 </script>
 
 <style scoped>

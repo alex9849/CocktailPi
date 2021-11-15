@@ -18,10 +18,10 @@
 
 <script>
 
-import {maxLength, required} from "vuelidate/lib/validators";
+import {maxLength, required} from 'vuelidate/lib/validators'
 
 export default {
-  name: "WrittenInstructionProductionStepForm",
+  name: 'WrittenInstructionProductionStepForm',
   props: {
     value: {
       type: Object,
@@ -31,33 +31,33 @@ export default {
   watch: {
     value: {
       immediate: true,
-      handler() {
-        this.$v.value.$touch();
-        if(this.$v.value.$invalid) {
-          this.$emit('invalid');
+      handler () {
+        this.$v.value.$touch()
+        if (this.$v.value.$invalid) {
+          this.$emit('invalid')
         } else {
-          this.$emit('valid');
+          this.$emit('valid')
         }
       }
     },
-    '$v.value.$invalid': function _watch$vValue$invalid(value) {
+    '$v.value.$invalid': function _watch$vValue$invalid (value) {
       if (!value) {
-        this.$emit('valid');
+        this.$emit('valid')
       } else {
-        this.$emit('invalid');
+        this.$emit('invalid')
       }
     }
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       value: {
         message: {
           required,
           maxLength: maxLength(500)
-        },
+        }
       }
-    };
-    return validations;
+    }
+    return validations
   }
 }
 </script>

@@ -27,31 +27,31 @@
 </template>
 
 <script>
-import CRecipeSearchList from "../components/CRecipeSearchList";
-import TopButtonArranger from "components/TopButtonArranger";
-import {mapGetters} from "vuex";
+import CRecipeSearchList from '../components/CRecipeSearchList'
+import TopButtonArranger from 'components/TopButtonArranger'
+import {mapGetters} from 'vuex'
 
 export default {
-    name: "OwnRecipes",
-    components: {TopButtonArranger, CRecipeSearchList},
-    data() {
-      return{
-        refreshing: false
-      }
-    },
-    computed: {
-      ...mapGetters({
-        isRecipeCreatorRole: 'auth/isRecipeCreator'
-      })
-    },
-    methods: {
-      onRefreshButton() {
-        this.refreshing = true
-        this.$refs.recipeSearchList.updateRecipes()
-          .finally(() => this.refreshing = false)
-      }
+  name: 'OwnRecipes',
+  components: { TopButtonArranger, CRecipeSearchList },
+  data () {
+    return {
+      refreshing: false
+    }
+  },
+  computed: {
+    ...mapGetters({
+      isRecipeCreatorRole: 'auth/isRecipeCreator'
+    })
+  },
+  methods: {
+    onRefreshButton () {
+      this.refreshing = true
+      this.$refs.recipeSearchList.updateRecipes()
+        .finally(() => this.refreshing = false)
     }
   }
+}
 </script>
 
 <style scoped>

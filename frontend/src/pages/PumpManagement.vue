@@ -30,7 +30,7 @@
         :columns="columns"
         :data="pumps"
         :loading="isLoading"
-        :selected.sync="selected"
+        v-model:selected="selected"
         selection="multiple"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'id'}"
@@ -200,25 +200,25 @@
 
 <script>
 
-import {mdiDelete, mdiPencilOutline, mdiPlay} from "@quasar/extras/mdi-v5";
-import {mapGetters} from "vuex";
-import PumpEditorForm from "../components/PumpEditorForm";
-import PumpService from "../services/pump.service"
-import CQuestion from "../components/CQuestion";
-import CEditDialog from "components/CEditDialog";
-import TopButtonArranger from "components/TopButtonArranger";
+import {mdiDelete, mdiPencilOutline, mdiPlay} from '@quasar/extras/mdi-v5'
+import {mapGetters} from 'vuex'
+import PumpEditorForm from '../components/PumpEditorForm'
+import PumpService from '../services/pump.service'
+import CQuestion from '../components/CQuestion'
+import CEditDialog from 'components/CEditDialog'
+import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
-  name: "PumpManagement",
-  components: {TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion},
-  data() {
+  name: 'PumpManagement',
+  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion },
+  data () {
     return {
       deleteDialog: false,
       deletePumps: [],
       deleteLoading: false,
       isLoading: false,
       editOptions: {
-        editErrorMessage: "",
+        editErrorMessage: '',
         editPumpSaving: false,
         editDialog: false,
         valid: false,
@@ -242,125 +242,125 @@ export default {
       pumps: [],
       selected: [],
       columns: [
-        {name: 'id', label: 'Nr', field: 'id', align: 'left'},
-        {name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center'},
+        { name: 'id', label: 'Nr', field: 'id', align: 'left' },
+        { name: 'timePerClInMs', label: 'Time per Cl', field: 'timePerClInMs', align: 'center' },
         {
           name: 'tubeCapacityInMl',
           label: 'Tube capacity',
           field: 'tubeCapacityInMl',
           align: 'center'
         },
-        {name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center'},
-        {name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center'},
-        {name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center'},
-        {name: 'actions', label: 'Actions', field: '', align: 'center'}
+        { name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center' },
+        { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
+        { name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center' },
+        { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
   },
-  created() {
-    this.mdiDelete = mdiDelete;
-    this.mdiPencilOutline = mdiPencilOutline;
-    this.mdiPlay = mdiPlay;
-    this.initialize();
+  created () {
+    this.mdiDelete = mdiDelete
+    this.mdiPencilOutline = mdiPencilOutline
+    this.mdiPlay = mdiPlay
+    this.initialize()
   },
   methods: {
-    onRefreshButton() {
-      this.isLoading = true;
-      let vm = this;
+    onRefreshButton () {
+      this.isLoading = true
+      const vm = this
       setTimeout(() => {
         vm.initialize()
-      }, 500);
+      }, 500)
     },
-    initialize() {
-      this.isLoading = true;
+    initialize () {
+      this.isLoading = true
       PumpService.getAllPumps()
         .then(pumps => {
-          this.pumps = pumps;
-          this.isLoading = false;
+          this.pumps = pumps
+          this.isLoading = false
         })
     },
-    onClickCleanPump(pump) {
+    onClickCleanPump (pump) {
       PumpService.cleanPump(pump)
         .catch(error => {
           this.$q.notify({
             type: 'negative',
             message: error.response.data.message
-          });
+          })
         })
     },
-    openDeleteDialog(forSelectedPumps) {
+    openDeleteDialog (forSelectedPumps) {
       if (forSelectedPumps) {
-        this.deletePumps.push(...this.selected);
+        this.deletePumps.push(...this.selected)
       }
-      this.deleteDialog = true;
+      this.deleteDialog = true
     },
-    closeDeleteDialog() {
-      this.deletePumps.splice(0, this.deletePumps.length);
-      this.deleteDialog = false;
+    closeDeleteDialog () {
+      this.deletePumps.splice(0, this.deletePumps.length)
+      this.deleteDialog = false
     },
-    deleteSelected() {
-      this.deleteLoading = true;
-      let vm = this;
-      const promises = [];
+    deleteSelected () {
+      this.deleteLoading = true
+      const vm = this
+      const promises = []
       this.deletePumps.forEach(pump => {
         promises.push(PumpService.deletePump(pump))
-      });
+      })
       Promise.all(promises)
         .then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: ((vm.deletePumps.length > 1) ? "Pumps" : "Pump") + " deleted successfully"
-          });
-          vm.closeDeleteDialog();
-          vm.selected.splice(0, vm.selected.length);
-          vm.deleteLoading = false;
-          vm.initialize();
+            message: ((vm.deletePumps.length > 1) ? 'Pumps' : 'Pump') + ' deleted successfully'
+          })
+          vm.closeDeleteDialog()
+          vm.selected.splice(0, vm.selected.length)
+          vm.deleteLoading = false
+          vm.initialize()
         }, err => {
-          vm.deleteLoading = false;
-          vm.selected.splice(0, vm.selected.length);
-          vm.initialize();
+          vm.deleteLoading = false
+          vm.selected.splice(0, vm.selected.length)
+          vm.initialize()
         })
     },
-    closeEditDialog() {
-      this.editOptions.editPump = Object.assign({}, this.editOptions.newPump);
-      this.editOptions.editDialog = false;
-      this.editOptions.editErrorMessage = "";
+    closeEditDialog () {
+      this.editOptions.editPump = Object.assign({}, this.editOptions.newPump)
+      this.editOptions.editDialog = false
+      this.editOptions.editErrorMessage = ''
     },
-    showEditDialog(pump) {
+    showEditDialog (pump) {
       if (pump) {
-        this.editOptions.editPump = Object.assign({}, pump);
+        this.editOptions.editPump = Object.assign({}, pump)
       }
-      this.editOptions.editDialog = true;
+      this.editOptions.editDialog = true
     },
-    onClickSavePump() {
-      this.editOptions.editPumpSaving = true;
-      let vm = this;
-      let onSuccess = function () {
-        vm.editOptions.editPumpSaving = false;
-        vm.editOptions.editErrorMessage = "";
+    onClickSavePump () {
+      this.editOptions.editPumpSaving = true
+      const vm = this
+      const onSuccess = function () {
+        vm.editOptions.editPumpSaving = false
+        vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
-          message: "Pump " + (vm.isEditIngredientNew ? "created" : "updated") + " successfully"
-        });
-        vm.closeEditDialog();
-        vm.initialize();
-      };
+          message: 'Pump ' + (vm.isEditIngredientNew ? 'created' : 'updated') + ' successfully'
+        })
+        vm.closeEditDialog()
+        vm.initialize()
+      }
 
-      let onError = function (error) {
-        vm.editOptions.editPumpSaving = false;
-        vm.editOptions.editErrorMessage = error.response.data.message;
+      const onError = function (error) {
+        vm.editOptions.editPumpSaving = false
+        vm.editOptions.editErrorMessage = error.response.data.message
         vm.$q.notify({
           type: 'negative',
           message: error.response.data.message
-        });
-      };
+        })
+      }
 
       if (this.isEditPumpNew) {
         PumpService.createPump(this.editOptions.editPump)
-          .then(onSuccess, error => onError(error));
+          .then(onSuccess, error => onError(error))
       } else {
         PumpService.updatePump(this.editOptions.editPump)
-          .then(onSuccess, error => onError(error));
+          .then(onSuccess, error => onError(error))
       }
     }
   },
@@ -368,23 +368,23 @@ export default {
     ...mapGetters({
       isCleaning: 'pumpLayout/isCleaning'
     }),
-    isEditPumpNew() {
-      return this.editOptions.editPump.id === -1;
+    isEditPumpNew () {
+      return this.editOptions.editPump.id === -1
     },
-    deleteQuestionMessage() {
+    deleteQuestionMessage () {
       if (this.deletePumps.length === 0) {
-        return "No pumps selected!";
+        return 'No pumps selected!'
       }
       if (this.deletePumps.length === 1) {
-        return "The following pump will be deleted:";
+        return 'The following pump will be deleted:'
       }
-      return "The following pumps will be deleted:";
+      return 'The following pumps will be deleted:'
     },
-    editDialogHeadline() {
+    editDialogHeadline () {
       if (this.isEditPumpNew) {
-        return "Create pump"
+        return 'Create pump'
       }
-      return "Edit pump"
+      return 'Edit pump'
     }
   }
 }

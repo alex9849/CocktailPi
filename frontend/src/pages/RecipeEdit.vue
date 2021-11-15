@@ -13,7 +13,7 @@
         @valid="isValid = true"
         @invalid="isValid = false"
       >
-        <template slot="below">
+        <template v-slot:below>
           <div class="q-pa-md q-gutter-sm">
             <q-btn
               style="width: 100px"
@@ -40,13 +40,13 @@
 </template>
 
 <script>
-import RecipeEditorForm from "../components/RecipeEditorForm";
-import RecipeService from "../services/recipe.service"
+import RecipeEditorForm from '../components/RecipeEditorForm'
+import RecipeService from '../services/recipe.service'
 
 export default {
-  name: "RecipeEdit",
-  components: {RecipeEditorForm},
-  data() {
+  name: 'RecipeEdit',
+  components: { RecipeEditorForm },
+  data () {
     return {
       editRecipe: {
         recipe: {},
@@ -59,30 +59,30 @@ export default {
       loading: true
     }
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     const recipe = await RecipeService.getRecipe(to.params.id)
     next(vm => {
-      vm.editRecipe.recipe = recipe;
+      vm.editRecipe.recipe = recipe
     })
   },
   methods: {
-    updateRecipe() {
-      this.sending = true;
+    updateRecipe () {
+      this.sending = true
       RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image, this.editRecipe.removeImage)
         .then(response => {
-          this.sending = false;
+          this.sending = false
           this.$q.notify({
             type: 'positive',
             message: 'Recipe updated successfully'
-          });
-          this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
+          })
+          this.$router.push({ name: 'recipedetails', params: { id: this.$route.params.id } })
         }, error => {
-          this.sending = false;
-          this.error = error.response.data.message;
+          this.sending = false
+          this.error = error.response.data.message
           this.$q.notify({
             type: 'negative',
             message: 'Couldn\'t update recipe. ' + error.response.data.message
-          });
+          })
         })
     }
   }

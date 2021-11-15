@@ -1,3 +1,3 @@
 export const setOwnedIngredients = (state, ingredients) => {
-  state.ingredientsOwned = ingredients;
-};
+  state.ingredientsOwned = ingredients
+}

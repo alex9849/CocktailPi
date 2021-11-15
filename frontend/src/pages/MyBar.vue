@@ -104,26 +104,26 @@
 </template>
 
 <script>
-import CIngredientSelector from "components/CIngredientSelector";
-import {required} from "vuelidate/lib/validators";
-import CEditDialog from "components/CEditDialog";
-import {mdiDelete} from '@quasar/extras/mdi-v5';
-import TopButtonArranger from "components/TopButtonArranger";
-import {mapActions, mapGetters} from "vuex";
+import CIngredientSelector from 'components/CIngredientSelector'
+import {required} from 'vuelidate/lib/validators'
+import CEditDialog from 'components/CEditDialog'
+import {mdiDelete} from '@quasar/extras/mdi-v5'
+import TopButtonArranger from 'components/TopButtonArranger'
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
-  name: "MyBar",
-  components: {TopButtonArranger, CEditDialog, CIngredientSelector},
-  data() {
+  name: 'MyBar',
+  components: { TopButtonArranger, CEditDialog, CIngredientSelector },
+  data () {
     return {
       columns: [
-        {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
-        {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
-        {name: 'actions', label: 'Actions', field: '', align: 'center'}
+        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
+        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
+        { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       loading: false,
       editOptions: {
-        editErrorMessage: "",
+        editErrorMessage: '',
         saving: false,
         editDialog: false,
         valid: false,
@@ -131,8 +131,8 @@ export default {
       }
     }
   },
-  created() {
-    this.mdiDelete = mdiDelete;
+  created () {
+    this.mdiDelete = mdiDelete
   },
   computed: {
     ...mapGetters({
@@ -145,71 +145,69 @@ export default {
       addOwnedIngredientAction: 'bar/addIngredient',
       removeOwnedIngredientAction: 'bar/removeIngredient'
     }),
-    onRefresh() {
-      this.loading = true;
+    onRefresh () {
+      this.loading = true
       this.fetchIngredientsAction()
-        .finally(() => this.loading = false);
-
+        .finally(() => this.loading = false)
     },
-    closeEditDialog() {
-      this.editOptions.editDialog = false;
-      this.editOptions.addIngredient = null;
+    closeEditDialog () {
+      this.editOptions.editDialog = false
+      this.editOptions.addIngredient = null
     },
-    onAddOwnedIngredient() {
-      let vm = this;
-      let onSuccess = function () {
-        vm.editOptions.editErrorMessage = "";
+    onAddOwnedIngredient () {
+      const vm = this
+      const onSuccess = function () {
+        vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
-          message: "Ingredient added successfully"
-        });
-        vm.closeEditDialog();
-      };
+          message: 'Ingredient added successfully'
+        })
+        vm.closeEditDialog()
+      }
 
-      let onError = function (error) {
-        vm.editOptions.editErrorMessage = error.response.data.message;
+      const onError = function (error) {
+        vm.editOptions.editErrorMessage = error.response.data.message
         vm.$q.notify({
           type: 'negative',
           message: error.response.data.message
-        });
-      };
+        })
+      }
 
       this.editOptions.saving = true
       this.addOwnedIngredientAction(this.editOptions.addIngredient.id)
         .then(onSuccess, onError)
-        .finally(() => this.editOptions.saving = false);
-
+        .finally(() => this.editOptions.saving = false)
     },
-    onRemoveOwnedIngredient(id) {
+    onRemoveOwnedIngredient (id) {
       this.removeOwnedIngredientAction(id)
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: "Ingredient removed successfully"
-          });
-          }, err => {
+            message: 'Ingredient removed successfully'
+          })
+        }, err => {
           this.$q.notify({
             type: 'negative',
             message: err.response.data.message
-          });
-        });
+          })
+        })
     }
   },
   watch: {
-    '$v.editOptions.addIngredient.$invalid': function _watch$vEditOptionsEditIngredient$invalid(value) {
-      this.editOptions.valid = !value;
+    '$v.editOptions.addIngredient.$invalid': function _watch$vEditOptionsEditIngredient$invalid (value) {
+      this.editOptions.valid = !value
     }
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       editOptions: {
         addIngredient: {
           required
         }
       }
-    };
-    return validations;
-  },
+    }
+    return validations
+  }
 }
 </script>
 

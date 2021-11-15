@@ -29,32 +29,31 @@
 </template>
 
 <script>
-import CRecipeSearchList from "../components/CRecipeSearchList";
-import {mapGetters} from "vuex";
+import CRecipeSearchList from '../components/CRecipeSearchList'
+import {mapGetters} from 'vuex'
 import {store} from '../store'
-import TopButtonArranger from "components/TopButtonArranger";
-
+import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
-  name: "PublicRecipes",
-  components: {TopButtonArranger, CRecipeSearchList},
-  data() {
+  name: 'PublicRecipes',
+  components: { TopButtonArranger, CRecipeSearchList },
+  data () {
     return {
       refreshing: false
     }
   },
-  beforeRouteEnter(to, from, next) {
-    to.meta['category'] = store.getters['category/getCategories']
-      .find(x => x.id == to.params.cid);
-    next();
+  beforeRouteEnter (to, from, next) {
+    to.meta.category = store.getters['category/getCategories']
+      .find(x => x.id == to.params.cid)
+    next()
   },
-  beforeRouteUpdate(to, from, next) {
-    to.meta['category'] = store.getters['category/getCategories']
-      .find(x => x.id == to.params.cid);
-    next();
+  beforeRouteUpdate (to, from, next) {
+    to.meta.category = store.getters['category/getCategories']
+      .find(x => x.id == to.params.cid)
+    next()
   },
   methods: {
-    onRefreshButton() {
+    onRefreshButton () {
       this.refreshing = true
       this.$refs.recipeSearchList.updateRecipes()
         .finally(() => this.refreshing = false)

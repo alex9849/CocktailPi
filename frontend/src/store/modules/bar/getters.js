@@ -1,1 +1,1 @@
-export const getOwnedIngredients = state => state.ingredientsOwned;
+export const getOwnedIngredients = state => state.ingredientsOwned

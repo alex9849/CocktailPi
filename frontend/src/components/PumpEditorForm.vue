@@ -15,7 +15,7 @@
       :rules="[val => $v.value.fillingLevelInMl.required || 'Required',
               val => $v.value.fillingLevelInMl.minValue || 'Min 0']"
     >
-      <template slot="append">
+      <template v-slot:append>
         ml
         <q-icon
           :name="mdiInformation"
@@ -40,7 +40,7 @@
       :rules="[val => $v.value.timePerClInMs.required || 'Required',
               val => $v.value.timePerClInMs.minValue || 'Min 1']"
     >
-      <template slot="append">
+      <template v-slot:append>
         ms/cl
         <q-icon
           :name="mdiInformation"
@@ -66,7 +66,7 @@
       :rules="[val => $v.value.tubeCapacityInMl.required || 'Required',
               val => $v.value.tubeCapacityInMl.minValue || 'Min 1']"
     >
-      <template slot="append">
+      <template v-slot:append>
         ml
         <q-icon
           :name="mdiInformation"
@@ -92,7 +92,7 @@
               val => $v.value.gpioPin.minValue || 'Min 1',
               val => $v.value.gpioPin.maxValue || 'Max 30']"
     >
-      <template slot="append">
+      <template v-slot:append>
         <q-icon
           :name="mdiInformation"
           @click="showHelpWiringPi = !showHelpWiringPi"
@@ -114,78 +114,78 @@
 
 <script>
 
-import CIngredientSelector from "./CIngredientSelector";
-import {maxValue, minValue, required,} from "vuelidate/lib/validators";
-import {mdiInformation} from "@quasar/extras/mdi-v5";
+import CIngredientSelector from './CIngredientSelector'
+import {maxValue, minValue, required} from 'vuelidate/lib/validators'
+import {mdiInformation} from '@quasar/extras/mdi-v5'
 
 export default {
-    name: "PumpEditorForm",
-    components: {CIngredientSelector},
-    props: {
-      value: {
-        type: Object,
-        required: true
-      }
-    },
-    data: () => {
-      return {
-        showHelpTubeFillingLevel: false,
-        showHelpPumpTime: false,
-        showHelpWiringPi: false,
-        showHelpTubeCapacity: false
-      }
-    },
-    methods: {
-      initialize() {
-        this.$v.value.$touch();
-        if(this.$v.value.$invalid) {
-          this.$emit('invalid');
-        } else {
-          this.$emit('valid');
-        }
-      }
-    },
-    created() {
-      this.initialize();
-      this.mdiInformation = mdiInformation;
-    },
-    validations() {
-      let validations = {
-        value: {
-          timePerClInMs: {
-            required,
-            minValue: minValue(1)
-          },
-          tubeCapacityInMl: {
-            required,
-            minValue: minValue(1)
-          },
-          gpioPin: {
-            required,
-            minValue: minValue(1),
-            maxValue: maxValue(30)
-          },
-          fillingLevelInMl: {
-            required,
-            minValue: minValue(0)
-          }
-        }
-      };
-      return validations;
-    },
-    watch: {
-      '$v.value.$invalid': function _watch$vValue$invalid(value) {
-        if (!value) {
-          this.$emit('valid');
-        } else {
-          this.$emit('invalid');
-        }
-      },
-      value() {
-        this.initialize();
+  name: 'PumpEditorForm',
+  components: { CIngredientSelector },
+  props: {
+    value: {
+      type: Object,
+      required: true
+    }
+  },
+  data: () => {
+    return {
+      showHelpTubeFillingLevel: false,
+      showHelpPumpTime: false,
+      showHelpWiringPi: false,
+      showHelpTubeCapacity: false
+    }
+  },
+  methods: {
+    initialize () {
+      this.$v.value.$touch()
+      if (this.$v.value.$invalid) {
+        this.$emit('invalid')
+      } else {
+        this.$emit('valid')
       }
     }
+  },
+  created () {
+    this.initialize()
+    this.mdiInformation = mdiInformation
+  },
+  validations () {
+    const validations = {
+      value: {
+        timePerClInMs: {
+          required,
+          minValue: minValue(1)
+        },
+        tubeCapacityInMl: {
+          required,
+          minValue: minValue(1)
+        },
+        gpioPin: {
+          required,
+          minValue: minValue(1),
+          maxValue: maxValue(30)
+        },
+        fillingLevelInMl: {
+          required,
+          minValue: minValue(0)
+        }
+      }
+    }
+    return validations
+  },
+  watch: {
+    '$v.value.$invalid': function _watch$vValue$invalid (value) {
+      if (!value) {
+        this.$emit('valid')
+      } else {
+        this.$emit('invalid')
+      }
+    },
+    value () {
+      this.initialize()
+    }
   }
+}
 </script>
 
 <style scoped>

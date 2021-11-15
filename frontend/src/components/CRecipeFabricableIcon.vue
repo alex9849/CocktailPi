@@ -62,12 +62,12 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {mdiAlert, mdiCheckBold, mdiClose} from "@quasar/extras/mdi-v5";
-import {getPumpIngredients} from "src/store/modules/pumplayout/getters";
+import {mapGetters} from 'vuex'
+import {mdiAlert, mdiCheckBold, mdiClose} from '@quasar/extras/mdi-v5'
+import {getPumpIngredients} from 'src/store/modules/pumplayout/getters'
 
 export default {
-  name: "CRecipeFabricableIcon",
+  name: 'CRecipeFabricableIcon',
   props: {
     recipe: {
       type: Object,
@@ -78,10 +78,10 @@ export default {
       default: false
     }
   },
-  created() {
-    this.mdiCheckBold = mdiCheckBold;
-    this.mdiAlert = mdiAlert;
-    this.mdiClose = mdiClose;
+  created () {
+    this.mdiCheckBold = mdiCheckBold
+    this.mdiAlert = mdiAlert
+    this.mdiClose = mdiClose
   },
   computed: {
     ...mapGetters({
@@ -91,21 +91,21 @@ export default {
     })
   },
   methods: {
-    allIngredientsOwned(recipe) {
-      for (let productionStep of recipe.productionSteps) {
+    allIngredientsOwned (recipe) {
+      for (const productionStep of recipe.productionSteps) {
         if (productionStep.type !== 'addIngredients') {
           continue
         }
-        for (let ingredientStep of productionStep.stepIngredients) {
+        for (const ingredientStep of productionStep.stepIngredients) {
           if (
-            !this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id)
-            && !this.pumpIngredients.some(x => x.id === ingredientStep.ingredient.id)
+            !this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id) &&
+            !this.pumpIngredients.some(x => x.id === ingredientStep.ingredient.id)
           ) {
-            return false;
+            return false
           }
         }
       }
-      return true;
+      return true
     }
   }
 }

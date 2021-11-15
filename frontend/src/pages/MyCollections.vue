@@ -53,26 +53,26 @@
 </template>
 
 <script>
-import CCollectionCard from "components/CCollectionCard";
-import CollectionService from "../services/collection.service";
-import {store} from '../store';
-import {mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
-import CEditDialog from "components/CEditDialog";
-import {mapGetters} from "vuex";
-import {maxLength, minLength, required} from "vuelidate/lib/validators";
-import TopButtonArranger from "components/TopButtonArranger";
+import CCollectionCard from 'components/CCollectionCard'
+import CollectionService from '../services/collection.service'
+import {store} from '../store'
+import {mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
+import CEditDialog from 'components/CEditDialog'
+import {mapGetters} from 'vuex'
+import {maxLength, minLength, required} from 'vuelidate/lib/validators'
+import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
-  name: "MyCollections",
-  components: {TopButtonArranger, CEditDialog, CCollectionCard},
-  async beforeRouteEnter(to, from, next) {
-    let userId = store.getters['auth/getUser'].id;
-    let collections = await CollectionService.getCollectionsByUser(userId);
+  name: 'MyCollections',
+  components: { TopButtonArranger, CEditDialog, CCollectionCard },
+  async beforeRouteEnter (to, from, next) {
+    const userId = store.getters['auth/getUser'].id
+    const collections = await CollectionService.getCollectionsByUser(userId)
     next(vm => {
-      vm.collections = collections;
+      vm.collections = collections
     })
   },
-  data() {
+  data () {
     return {
       isLoading: false,
       collections: [],
@@ -84,8 +84,8 @@ export default {
       }
     }
   },
-  created() {
-    this.mdiPlusCircleOutline = mdiPlusCircleOutline;
+  created () {
+    this.mdiPlusCircleOutline = mdiPlusCircleOutline
   },
   computed: {
     ...mapGetters({
@@ -93,40 +93,40 @@ export default {
     })
   },
   methods: {
-    onClickCreateCollectionMenu() {
-      this.createCollection.menuOpen = true;
+    onClickCreateCollectionMenu () {
+      this.createCollection.menuOpen = true
     },
-    onCloseCreateCollectionMenu() {
-      this.createCollection.menuOpen = false;
+    onCloseCreateCollectionMenu () {
+      this.createCollection.menuOpen = false
       this.createCollection.name = ''
     },
-    refreshCollections() {
-      this.isLoading = true;
-      let vm = this;
+    refreshCollections () {
+      this.isLoading = true
+      const vm = this
       setTimeout(() => {
         CollectionService.getCollectionsByUser(this.currentUser.id)
           .then(collections => {
             vm.collections = collections
           })
-          .finally(() => vm.isLoading = false);
+          .finally(() => vm.isLoading = false)
       }, 500)
     },
-    onClickSafeNewCollection() {
+    onClickSafeNewCollection () {
       CollectionService.createCollection(this.createCollection.name)
         .then(() => {
-          this.createCollection.errorMessage = '';
-          this.refreshCollections();
-          this.onCloseCreateCollectionMenu();
+          this.createCollection.errorMessage = ''
+          this.refreshCollections()
+          this.onCloseCreateCollectionMenu()
         }, err => {
-          this.createCollection.errorMessage = err.response.data.message;
+          this.createCollection.errorMessage = err.response.data.message
         })
         .finally(() => {
-          this.createCollection.saving = false;
+          this.createCollection.saving = false
         })
     }
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       createCollection: {
         name: {
           required,
@@ -134,8 +134,8 @@ export default {
           maxLength: maxLength(20)
         }
       }
-    };
-    return validations;
+    }
+    return validations
   }
 }
 </script>

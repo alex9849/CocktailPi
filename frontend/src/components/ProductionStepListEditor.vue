@@ -52,13 +52,13 @@
 
 <script>
 
-import IngredientProductionStepForm from "./IngredientProductionStepForm";
-import WrittenInstructionProductionStepForm from "components/WrittenInstructionProductionStepForm";
-import {mdiCupWater, mdiPencilOutline} from "@quasar/extras/mdi-v5"
+import IngredientProductionStepForm from './IngredientProductionStepForm'
+import WrittenInstructionProductionStepForm from 'components/WrittenInstructionProductionStepForm'
+import {mdiCupWater, mdiPencilOutline} from '@quasar/extras/mdi-v5'
 
 export default {
-  name: "ProductionStepListEditor",
-  components: {WrittenInstructionProductionStepForm, IngredientProductionStepForm},
+  name: 'ProductionStepListEditor',
+  components: { WrittenInstructionProductionStepForm, IngredientProductionStepForm },
   props: {
     value: {
       type: Object
@@ -68,7 +68,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       selectedTab: 'ingredient',
       iFormValid: false,
@@ -76,17 +76,17 @@ export default {
       editStep: {}
     }
   },
-  created() {
-    this.mdiPencilOutline = mdiPencilOutline;
-    this.mdiCupWater = mdiCupWater;
+  created () {
+    this.mdiPencilOutline = mdiPencilOutline
+    this.mdiCupWater = mdiCupWater
   },
   watch: {
     value: {
       immediate: true,
-      handler(newValue) {
-        if(!!newValue) {
+      handler (newValue) {
+        if (newValue) {
           this.selectedTab = this.determineProductionStepType(newValue)
-          this.editStep = Object.assign({}, newValue);
+          this.editStep = Object.assign({}, newValue)
           return
         }
         this.selectedTab = 'ingredient'
@@ -99,21 +99,21 @@ export default {
     }
   },
   methods: {
-    determineProductionStepType(prodStep) {
-      if(prodStep.type === 'writtenInstruction') {
+    determineProductionStepType (prodStep) {
+      if (prodStep.type === 'writtenInstruction') {
         return 'writtenInstruction'
       }
       return 'ingredient'
     },
-    onProductionStepTypeChange(newType) {
-      if(newType === 'ingredient') {
+    onProductionStepTypeChange (newType) {
+      if (newType === 'ingredient') {
         this.editStep = Object.assign({}, {
           ingredient: '',
           amount: '',
           scale: true
         })
       } else {
-        this.editStep = Object.assign({},{
+        this.editStep = Object.assign({}, {
           message: '',
           type: 'writtenInstruction'
         })

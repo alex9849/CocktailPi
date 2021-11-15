@@ -29,7 +29,7 @@
           ref="recipeSearchList"
           :collection-id="collection.id"
         >
-          <template slot="firstItem">
+          <template v-slot:firstItem>
             <div class="col-12"
                  v-if="editRecipeMode.active"
             >
@@ -45,7 +45,7 @@
               </c-recipe-selector>
             </div>
           </template>
-          <template slot="recipeHeadline" slot-scope="{recipe}">
+          <template v-slot:recipeHeadline="{recipe}" >
             <div class="flex content-center">
               <b>{{ recipe.name }}</b>
               <q-btn
@@ -187,31 +187,36 @@
 </template>
 
 <script>
-import {maxLength, minLength, required} from "vuelidate/lib/validators";
-import CollectionService from "src/services/collection.service";
-import CRecipeCard from "components/CRecipeCard";
-import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
-import {mdiDelete, mdiPlusCircleOutline} from "@quasar/extras/mdi-v5";
-import TopButtonArranger from "components/TopButtonArranger";
-import CQuestion from "components/CQuestion";
-import CEditDialog from "components/CEditDialog";
-import CRecipeSelector from "components/CRecipeSelector";
-import CRecipeSearchList from "components/CRecipeSearchList";
+import {maxLength, minLength, required} from 'vuelidate/lib/validators'
+import CollectionService from 'src/services/collection.service'
+import CRecipeCard from 'components/CRecipeCard'
+import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
+import {mdiDelete, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
+import TopButtonArranger from 'components/TopButtonArranger'
+import CQuestion from 'components/CQuestion'
+import CEditDialog from 'components/CEditDialog'
+import CRecipeSelector from 'components/CRecipeSelector'
+import CRecipeSearchList from 'components/CRecipeSearchList'
 
 export default {
-  name: "Collection",
+  name: 'Collection',
   components: {
     CRecipeSearchList,
     CRecipeSelector,
-    CEditDialog, CQuestion, TopButtonArranger, CRecipeFabricableIcon, CRecipeCard},
-  async beforeRouteEnter(to, from, next) {
-    const collection = await CollectionService.getCollection(to.params.id);
+    CEditDialog,
+    CQuestion,
+    TopButtonArranger,
+    CRecipeFabricableIcon,
+    CRecipeCard
+  },
+  async beforeRouteEnter (to, from, next) {
+    const collection = await CollectionService.getCollection(to.params.id)
     next(vm => {
-      vm.collection = collection;
-      vm.editData.collection = Object.assign({}, collection);
+      vm.collection = collection
+      vm.editData.collection = Object.assign({}, collection)
     })
   },
-  data() {
+  data () {
     return {
       editRecipes: false,
       editRecipeMode: {
@@ -242,96 +247,96 @@ export default {
       deletingCollection: false
     }
   },
-  created() {
-    this.mdiDelete = mdiDelete;
-    this.mdiPlusCircleOutline = mdiPlusCircleOutline;
+  created () {
+    this.mdiDelete = mdiDelete
+    this.mdiPlusCircleOutline = mdiPlusCircleOutline
   },
   watch: {
     collection: {
-      handler(newValue) {
-        this.resetEditData();
+      handler (newValue) {
+        this.resetEditData()
       }
     }
   },
   methods: {
-    onDeleteCollection() {
-      this.deletingCollection = true;
+    onDeleteCollection () {
+      this.deletingCollection = true
       CollectionService.deleteCollection(this.collection.id)
         .then(() => {
-          this.$router.push({name: 'mycollections'})
+          this.$router.push({ name: 'mycollections' })
         })
         .finally(() => {
-          this.deletingCollection = false;
+          this.deletingCollection = false
         })
     },
-    onClickDeleteRecipe(recipeId) {
-      this.editRecipeMode.deletingRecipIds.push(recipeId);
+    onClickDeleteRecipe (recipeId) {
+      this.editRecipeMode.deletingRecipIds.push(recipeId)
       CollectionService.removeRecipeFromCollection(this.collection.id, recipeId)
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: "Recipe removed successfully"
-          });
+            message: 'Recipe removed successfully'
+          })
         })
         .finally(() => {
-          this.$refs.recipeSearchList.updateRecipes(false).finally(() =>{
+          this.$refs.recipeSearchList.updateRecipes(false).finally(() => {
             this.editRecipeMode.deletingRecipIds = this.editRecipeMode.deletingRecipIds.filter(x => x !== recipeId)
-          });
-        });
+          })
+        })
     },
-    onAddRecipe(recipeId) {
-      this.editRecipeMode.addingRecipe = true;
+    onAddRecipe (recipeId) {
+      this.editRecipeMode.addingRecipe = true
       CollectionService.addRecipeToCollection(this.collection.id, recipeId)
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: "Recipe added successfully"
-          });
+            message: 'Recipe added successfully'
+          })
         })
         .finally(() => {
-          this.editRecipeMode.addingRecipe = false;
+          this.editRecipeMode.addingRecipe = false
           this.$refs.recipeSearchList.updateRecipes(false)
-        });
+        })
     },
-    onImageSelect(image) {
-      if (!!image) {
-        this.editData.removeImage = false;
+    onImageSelect (image) {
+      if (image) {
+        this.editData.removeImage = false
       }
     },
-    onChangeRemoveImage(isRemove) {
+    onChangeRemoveImage (isRemove) {
       if (isRemove) {
-        this.editData.newImage = null;
+        this.editData.newImage = null
       }
     },
-    onAbortEdit() {
-      this.resetEditData();
-      this.editData.editMode = false;
+    onAbortEdit () {
+      this.resetEditData()
+      this.editData.editMode = false
     },
-    refreshCollection() {
+    refreshCollection () {
       return CollectionService.getCollection(this.$route.params.id)
         .then(collection => {
           this.collection = collection
-          return this.collection;
-        });
+          return this.collection
+        })
     },
-    onClickSafe() {
-      this.editData.saving = true;
+    onClickSafe () {
+      this.editData.saving = true
       CollectionService.updateCollection(this.editData.collection, this.editData.newImage, this.editData.removeImage)
         .then(() => {
-          this.refreshCollection();
-          this.editData.editMode = false;
+          this.refreshCollection()
+          this.editData.editMode = false
         }).finally(() => {
-        this.editData.saving = false;
-      })
+          this.editData.saving = false
+        })
     },
-    resetEditData() {
+    resetEditData () {
       this.editData.collection = Object.assign({}, this.collection)
-      this.editData.newImage = null;
-      this.editData.removeImage = false;
+      this.editData.newImage = null
+      this.editData.removeImage = false
     }
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       editData: {
         collection: {
           name: {
@@ -345,8 +350,8 @@ export default {
           }
         }
       }
-    };
-    return validations;
+    }
+    return validations
   }
 }
 </script>

@@ -38,31 +38,31 @@
 </template>
 
 <script>
-  export default {
-    name: "CQuestion",
-    props: {
-      value: {
-        type: Boolean,
-        required: true
-      },
-      question: {
-        type: String,
-        required: true
-      },
-      loading: {
-        type: Boolean,
-        default: false
-      },
-      okButtonText: {
-        type: String,
-        default: 'OK'
-      },
-      okColor: {
-        type: String,
-        default: 'green'
-      }
+export default {
+  name: 'CQuestion',
+  props: {
+    value: {
+      type: Boolean,
+      required: true
+    },
+    question: {
+      type: String,
+      required: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    okButtonText: {
+      type: String,
+      default: 'OK'
+    },
+    okColor: {
+      type: String,
+      default: 'green'
     }
   }
+}
 </script>
 
 <style scoped>

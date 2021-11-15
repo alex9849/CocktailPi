@@ -30,7 +30,7 @@
         :columns="columns"
         :data="ingredients"
         :loading="loading"
-        :selected.sync="selected"
+        v-model:selected="selected"
         selection="multiple"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
@@ -194,185 +194,185 @@
 </template>
 
 <script>
-import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-import IngredientService from "../services/ingredient.service";
-import CQuestion from "../components/CQuestion";
-import CEditDialog from "components/CEditDialog";
-import TopButtonArranger from "components/TopButtonArranger";
-import IngredientForm from "components/IngredientForm";
+import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import IngredientService from '../services/ingredient.service'
+import CQuestion from '../components/CQuestion'
+import CEditDialog from 'components/CEditDialog'
+import TopButtonArranger from 'components/TopButtonArranger'
+import IngredientForm from 'components/IngredientForm'
 
 export default {
-    name: "IngredientManagement",
-    components: {IngredientForm, CEditDialog, CQuestion, TopButtonArranger},
-    data() {
-      return {
-        columns: [
-          {name: 'name', label: 'Ingredient', field: 'name', align: 'center'},
-          {name: 'type', label: 'Type', field: 'type', align: 'center'},
-          {name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center'},
-          {name: 'unit', label: 'Unit', field: 'unit', align: 'center'},
-          {name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center'},
-          {name: 'actions', label: 'Actions', field: '', align: 'center'}
-        ],
-        ingredients: [],
-        selected: [],
-        loading: false,
-        deleteOptions: {
-          deleteIngredients: [],
-          deleteErrorMessage: "",
-          deleteLoading: false,
-          deleteDialog: false
+  name: 'IngredientManagement',
+  components: { IngredientForm, CEditDialog, CQuestion, TopButtonArranger },
+  data () {
+    return {
+      columns: [
+        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
+        { name: 'type', label: 'Type', field: 'type', align: 'center' },
+        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
+        { name: 'unit', label: 'Unit', field: 'unit', align: 'center' },
+        { name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center' },
+        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+      ],
+      ingredients: [],
+      selected: [],
+      loading: false,
+      deleteOptions: {
+        deleteIngredients: [],
+        deleteErrorMessage: '',
+        deleteLoading: false,
+        deleteDialog: false
+      },
+      editOptions: {
+        editErrorMessage: '',
+        editIngredientSaving: false,
+        editDialog: false,
+        valid: false,
+        editIngredient: {
+          id: -1,
+          name: '',
+          pumpTimeMultiplier: 1.0,
+          alcoholContent: 0,
+          type: 'automated',
+          unit: null
         },
-        editOptions: {
-          editErrorMessage: "",
-          editIngredientSaving: false,
-          editDialog: false,
-          valid: false,
-          editIngredient: {
-            id: -1,
-            name: "",
-            pumpTimeMultiplier: 1.0,
-            alcoholContent: 0,
-            type: "automated",
-            unit: null
-          },
-          newIngredient: {
-            id: -1,
-            name: "",
-            pumpTimeMultiplier: 1.0,
-            alcoholContent: 0,
-            type: "automated",
-            unit: null
-          }
+        newIngredient: {
+          id: -1,
+          name: '',
+          pumpTimeMultiplier: 1.0,
+          alcoholContent: 0,
+          type: 'automated',
+          unit: null
         }
-      }
-    },
-    methods: {
-      onRefresh() {
-        this.loading = true;
-        let vm = this;
-        setTimeout(vm.fetchAll, 500);
-      },
-      showEditDialog(ingredient) {
-        if (ingredient) {
-          this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient)
-          this.editOptions.editIngredient = Object.assign(this.editOptions.editIngredient, ingredient);
-        }
-        this.editOptions.editDialog = true;
-      },
-      closeEditDialog() {
-        this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient);
-        this.editOptions.editDialog = false;
-        this.editOptions.editErrorMessage = "";
-      },
-      onClickSaveIngredient() {
-        this.editOptions.editIngredientSaving = true;
-        let vm = this;
-        let onSuccess = function () {
-          vm.editOptions.editIngredientSaving = false;
-          vm.editOptions.editErrorMessage = "";
-          vm.$q.notify({
-            type: 'positive',
-            message: "Ingredient " + (vm.isEditIngredientNew ? "created" : "updated") + " successfully"
-          });
-          vm.closeEditDialog();
-          vm.fetchAll();
-        };
-
-        let onError = function (error) {
-          vm.editOptions.editIngredientSaving = false;
-          vm.editOptions.editErrorMessage = error.response.data.message;
-          vm.$q.notify({
-            type: 'negative',
-            message: error.response.data.message
-          });
-        };
-
-        if (this.isEditIngredientNew) {
-          IngredientService.createIngredient(this.editOptions.editIngredient)
-            .then(onSuccess, error => onError(error));
-        } else {
-          IngredientService.updateIngredient(this.editOptions.editIngredient)
-            .then(onSuccess, error => onError(error));
-        }
-      },
-      deleteSelected() {
-        this.deleteOptions.deleteLoading = true;
-        let vm = this;
-        const promises = [];
-        this.deleteOptions.deleteIngredients.forEach(ingredient => {
-          promises.push(IngredientService.deleteIngredient(ingredient))
-        });
-        Promise.all(promises)
-          .then(() => {
-            vm.closeDeleteDialog();
-            vm.selected.splice(0, vm.selected.length);
-            vm.deleteOptions.deleteLoading = false;
-            vm.deleteOptions.deleteErrorMessage = "";
-            vm.fetchAll();
-            vm.$q.notify({
-              type: 'positive',
-              message: (toDelete > 1 ? "Ingredients" : "Ingredient") + " deleted successfully"
-            });
-          }, err => {
-            vm.deleteOptions.deleteLoading = false;
-            vm.selected.splice(0, vm.selected.length);
-            vm.fetchAll();
-            vm.deleteOptions.deleteErrorMessage = err.response.data.message;
-            vm.$q.notify({
-              type: 'negative',
-              message: err.response.data.message
-            });
-          })
-      },
-      openDeleteDialog(forSelected) {
-        if (forSelected) {
-          this.deleteOptions.deleteIngredients.push(...this.selected);
-        }
-        this.deleteOptions.deleteDialog = true;
-      },
-      closeDeleteDialog() {
-        this.deleteOptions.deleteIngredients.splice(0, this.deleteOptions.deleteIngredients.length);
-        this.deleteOptions.deleteDialog = false;
-        this.deleteOptions.deleteErrorMessage = "";
-      },
-      fetchAll() {
-        this.loading = true;
-        IngredientService.getIngredients()
-          .then(ingredients => {
-            this.loading = false;
-            this.ingredients = ingredients;
-          })
-      }
-    },
-    created() {
-      this.mdiDelete = mdiDelete;
-      this.mdiPencilOutline = mdiPencilOutline;
-      this.mdiCheckCircle = mdiCheckCircle;
-      this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline;
-      this.fetchAll();
-    },
-    computed: {
-      deleteQuestionMessage() {
-        if (this.deleteOptions.deleteIngredients.length === 0) {
-          return "No ingredients selected!";
-        }
-        if (this.deleteOptions.deleteIngredients.length === 1) {
-          return "The following ingredient will be deleted:";
-        }
-        return "The following ingredients will be deleted:";
-      },
-      isEditIngredientNew() {
-        return this.editOptions.editIngredient.id === -1;
-      },
-      editDialogHeadline() {
-        if (this.isEditIngredientNew) {
-          return "Create ingredient"
-        }
-        return "Edit ingredient"
       }
     }
+  },
+  methods: {
+    onRefresh () {
+      this.loading = true
+      const vm = this
+      setTimeout(vm.fetchAll, 500)
+    },
+    showEditDialog (ingredient) {
+      if (ingredient) {
+        this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient)
+        this.editOptions.editIngredient = Object.assign(this.editOptions.editIngredient, ingredient)
+      }
+      this.editOptions.editDialog = true
+    },
+    closeEditDialog () {
+      this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient)
+      this.editOptions.editDialog = false
+      this.editOptions.editErrorMessage = ''
+    },
+    onClickSaveIngredient () {
+      this.editOptions.editIngredientSaving = true
+      const vm = this
+      const onSuccess = function () {
+        vm.editOptions.editIngredientSaving = false
+        vm.editOptions.editErrorMessage = ''
+        vm.$q.notify({
+          type: 'positive',
+          message: 'Ingredient ' + (vm.isEditIngredientNew ? 'created' : 'updated') + ' successfully'
+        })
+        vm.closeEditDialog()
+        vm.fetchAll()
+      }
+
+      const onError = function (error) {
+        vm.editOptions.editIngredientSaving = false
+        vm.editOptions.editErrorMessage = error.response.data.message
+        vm.$q.notify({
+          type: 'negative',
+          message: error.response.data.message
+        })
+      }
+
+      if (this.isEditIngredientNew) {
+        IngredientService.createIngredient(this.editOptions.editIngredient)
+          .then(onSuccess, error => onError(error))
+      } else {
+        IngredientService.updateIngredient(this.editOptions.editIngredient)
+          .then(onSuccess, error => onError(error))
+      }
+    },
+    deleteSelected () {
+      this.deleteOptions.deleteLoading = true
+      const vm = this
+      const promises = []
+      this.deleteOptions.deleteIngredients.forEach(ingredient => {
+        promises.push(IngredientService.deleteIngredient(ingredient))
+      })
+      Promise.all(promises)
+        .then(() => {
+          vm.closeDeleteDialog()
+          vm.selected.splice(0, vm.selected.length)
+          vm.deleteOptions.deleteLoading = false
+          vm.deleteOptions.deleteErrorMessage = ''
+          vm.fetchAll()
+          vm.$q.notify({
+            type: 'positive',
+            message: (toDelete > 1 ? 'Ingredients' : 'Ingredient') + ' deleted successfully'
+          })
+        }, err => {
+          vm.deleteOptions.deleteLoading = false
+          vm.selected.splice(0, vm.selected.length)
+          vm.fetchAll()
+          vm.deleteOptions.deleteErrorMessage = err.response.data.message
+          vm.$q.notify({
+            type: 'negative',
+            message: err.response.data.message
+          })
+        })
+    },
+    openDeleteDialog (forSelected) {
+      if (forSelected) {
+        this.deleteOptions.deleteIngredients.push(...this.selected)
+      }
+      this.deleteOptions.deleteDialog = true
+    },
+    closeDeleteDialog () {
+      this.deleteOptions.deleteIngredients.splice(0, this.deleteOptions.deleteIngredients.length)
+      this.deleteOptions.deleteDialog = false
+      this.deleteOptions.deleteErrorMessage = ''
+    },
+    fetchAll () {
+      this.loading = true
+      IngredientService.getIngredients()
+        .then(ingredients => {
+          this.loading = false
+          this.ingredients = ingredients
+        })
+    }
+  },
+  created () {
+    this.mdiDelete = mdiDelete
+    this.mdiPencilOutline = mdiPencilOutline
+    this.mdiCheckCircle = mdiCheckCircle
+    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
+    this.fetchAll()
+  },
+  computed: {
+    deleteQuestionMessage () {
+      if (this.deleteOptions.deleteIngredients.length === 0) {
+        return 'No ingredients selected!'
+      }
+      if (this.deleteOptions.deleteIngredients.length === 1) {
+        return 'The following ingredient will be deleted:'
+      }
+      return 'The following ingredients will be deleted:'
+    },
+    isEditIngredientNew () {
+      return this.editOptions.editIngredient.id === -1
+    },
+    editDialogHeadline () {
+      if (this.isEditIngredientNew) {
+        return 'Create ingredient'
+      }
+      return 'Edit ingredient'
+    }
   }
+}
 </script>
 
 <style scoped>

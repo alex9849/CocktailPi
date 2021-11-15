@@ -15,7 +15,7 @@
           @valid="isValid = true"
           @invalid="isValid = false"
         >
-          <template slot="below">
+          <template v-slot:below>
             <div class="q-pa-md q-gutter-sm">
               <q-btn
                 style="width: 100px"
@@ -42,14 +42,14 @@
 </template>
 
 <script>
-import UserEditorForm from "../components/UserEditorForm";
-import UserService from "../services/user.service"
-import {mapGetters} from "vuex";
+import UserEditorForm from '../components/UserEditorForm'
+import UserService from '../services/user.service'
+import {mapGetters} from 'vuex'
 
 export default {
-  name: "UserEditor",
-  components: {UserEditorForm},
-  data() {
+  name: 'UserEditor',
+  components: { UserEditorForm },
+  data () {
     return {
       user: {},
       userId: this.$route.params.userId,
@@ -58,55 +58,55 @@ export default {
       error: ''
     }
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     const user = await UserService.getUser(to.params.userId)
     next(vm => {
-      vm.user = user;
+      vm.user = user
       vm.user.password = ''
     })
   },
   computed: {
     ...mapGetters({
       getUser: 'auth/getUser'
-    }),
+    })
   },
   methods: {
-    sendUpdateUser() {
-      this.loading = true;
-      let updateUser = Object.assign({}, this.user);
-      let updatePassword = !!this.user.password || this.user.password !== '';
+    sendUpdateUser () {
+      this.loading = true
+      const updateUser = Object.assign({}, this.user)
+      const updatePassword = !!this.user.password || this.user.password !== ''
       if (!updatePassword) {
-        updateUser.password = this.getRandomString(22);
+        updateUser.password = this.getRandomString(22)
       }
       UserService.updateUser({
         updatePassword,
         userDto: updateUser
       }).then(() => {
-        this.loading = false;
+        this.loading = false
         this.$q.notify({
           type: 'positive',
           message: 'User updated successfully'
-        });
-        this.$router.push({name: 'usermanagement'})
+        })
+        this.$router.push({ name: 'usermanagement' })
       }).catch(error => {
-        this.loading = false;
-        this.error = error.response.data.message;
+        this.loading = false
+        this.error = error.response.data.message
         this.$q.notify({
           type: 'negative',
           message: 'Couldn\'t update user. ' + error.response.data.message
-        });
+        })
       })
     },
-    getRandomString(length) {
-      var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    getRandomString (length) {
+      const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length))
       }
-      return result;
+      return result
     }
   },
-  created() {
+  created () {
   }
 }
 </script>

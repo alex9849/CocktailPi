@@ -43,98 +43,98 @@
 </template>
 
 <script>
-import IngridientService from "../services/ingredient.service";
+import IngridientService from '../services/ingredient.service'
 
 export default {
-    name: "CIngredientSelector",
-    props: {
-      value: {
-        type: Object | Array
-      },
-      label: {
-        type: String,
-        default: 'Ingredient'
-      },
-      dense: {
-        type: Boolean,
-        default: false
-      },
-      loading: {
-        type: Boolean,
-        default: false
-      },
-      disable: {
-        type: Boolean,
-        default: false
-      },
-      clearable: {
-        type: Boolean,
-        default: false
-      },
-      multiple: {
-        type: Boolean,
-        default: false
-      },
-      emitValue: {
-        type: Boolean,
-        default: false
-      },
-      mapOptions: {
-        type: Boolean,
-        default: false
-      },
-      useChips: {
-        type: Boolean,
-        default: false
-      },
-      rules: {
-        type: Array,
-        default: () => []
-      },
-      bgColor: {
-        type: String,
-        default: undefined
-      },
-      filterManualIngredients: {
-        type: Boolean,
-        default: false
-      },
-      noInputOptions: {
-        type: Array,
-        default: () => []
-      }
+  name: 'CIngredientSelector',
+  props: {
+    value: {
+      type: Object | Array
     },
-    data() {
-      return {
-        fetchedOptions: [],
-        stringInput: '',
-        selectedIngredient: this.value
-      }
+    label: {
+      type: String,
+      default: 'Ingredient'
     },
-    computed: {
-      ingredientOptions() {
-        if(this.stringInput.length < 2) {
-          return this.noInputOptions;
-        }
-        return this.fetchedOptions;
-      }
+    dense: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-      filterIngredients(val, update, abort) {
-        this.stringInput = val;
-        if(val.length < 2) {
-          update();
-          return;
-        }
-        IngridientService.getIngredientsFilter(val, this.filterManualIngredients)
-          .then(ingridients => {
-            update(() => {
-              this.fetchedOptions = ingridients;
-            })
-          }, () => abort)
-      },
-      abortFilterIngredients() {
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    disable: {
+      type: Boolean,
+      default: false
+    },
+    clearable: {
+      type: Boolean,
+      default: false
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    emitValue: {
+      type: Boolean,
+      default: false
+    },
+    mapOptions: {
+      type: Boolean,
+      default: false
+    },
+    useChips: {
+      type: Boolean,
+      default: false
+    },
+    rules: {
+      type: Array,
+      default: () => []
+    },
+    bgColor: {
+      type: String,
+      default: undefined
+    },
+    filterManualIngredients: {
+      type: Boolean,
+      default: false
+    },
+    noInputOptions: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      fetchedOptions: [],
+      stringInput: '',
+      selectedIngredient: this.value
+    }
+  },
+  computed: {
+    ingredientOptions () {
+      if (this.stringInput.length < 2) {
+        return this.noInputOptions
       }
+      return this.fetchedOptions
+    }
+  },
+  methods: {
+    filterIngredients (val, update, abort) {
+      this.stringInput = val
+      if (val.length < 2) {
+        update()
+        return
+      }
+      IngridientService.getIngredientsFilter(val, this.filterManualIngredients)
+        .then(ingridients => {
+          update(() => {
+            this.fetchedOptions = ingridients
+          })
+        }, () => abort)
+    },
+    abortFilterIngredients () {
     }
   }
+}
 </script>

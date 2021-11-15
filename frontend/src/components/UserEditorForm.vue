@@ -90,105 +90,105 @@
 </template>
 
 <script>
-import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5';
+import {mdiEye, mdiEyeOff} from '@quasar/extras/mdi-v5'
 import {email, maxLength, minLength, required} from 'vuelidate/lib/validators'
 
 export default {
-    name: "UserEditorForm",
-    props: {
-      value: {
-        type: Object,
-        required: true,
-      },
-      loading: {
-        type: Boolean,
-        default: false
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      isSelf: {
-        type: Boolean,
-        default: false
-      },
-      passwordRequired: {
-        type: Boolean,
-        default: false
-      }
+  name: 'UserEditorForm',
+  props: {
+    value: {
+      type: Object,
+      required: true
     },
-    data() {
-      return {
-        showPassword: false,
-        roles: [
-          {
-            value: 0,
-            label: 'User'
-          }, {
-            value: 1,
-            label: 'Recipe-Creator'
-          }, {
-            value: 2,
-            label: 'Pump-Ingredient-Editor'
-          }, {
-            value: 3,
-            label: 'Admin'
-          }
-        ]
-      }
+    loading: {
+      type: Boolean,
+      default: false
     },
-    validations() {
-      let validations = {
-        value: {
-          username: {
-            required,
-            minLength: minLength(3),
-            maxLength: maxLength(20)
-          },
-          firstname: {
-            required,
-            maxLength: maxLength(20)
-          },
-          lastname: {
-            required,
-            maxLength: maxLength(20)
-          },
-          email: {
-            required,
-            email,
-            maxLength: maxLength(50)
-          },
-          password: {
-            minLength: minLength(6),
-            maxLength: maxLength(40)
-          },
-          adminLevel: {
-            required
-          }
-        }
-      };
-      if(this.passwordRequired) {
-        validations.value.password.required = required;
-      }
-      return validations;
+    disabled: {
+      type: Boolean,
+      default: false
     },
-    watch: {
-      '$v.value.$invalid': {
-        immediate: true,
-        handler(value) {
-          if (!value) {
-            this.$emit('valid');
-          } else {
-            this.$emit('invalid');
-          }
-        }
-      },
+    isSelf: {
+      type: Boolean,
+      default: false
     },
-    created() {
-      this.mdiEye = mdiEye;
-      this.mdiEyeOff = mdiEyeOff;
+    passwordRequired: {
+      type: Boolean,
+      default: false
     }
+  },
+  data () {
+    return {
+      showPassword: false,
+      roles: [
+        {
+          value: 0,
+          label: 'User'
+        }, {
+          value: 1,
+          label: 'Recipe-Creator'
+        }, {
+          value: 2,
+          label: 'Pump-Ingredient-Editor'
+        }, {
+          value: 3,
+          label: 'Admin'
+        }
+      ]
+    }
+  },
+  validations () {
+    const validations = {
+      value: {
+        username: {
+          required,
+          minLength: minLength(3),
+          maxLength: maxLength(20)
+        },
+        firstname: {
+          required,
+          maxLength: maxLength(20)
+        },
+        lastname: {
+          required,
+          maxLength: maxLength(20)
+        },
+        email: {
+          required,
+          email,
+          maxLength: maxLength(50)
+        },
+        password: {
+          minLength: minLength(6),
+          maxLength: maxLength(40)
+        },
+        adminLevel: {
+          required
+        }
+      }
+    }
+    if (this.passwordRequired) {
+      validations.value.password.required = required
+    }
+    return validations
+  },
+  watch: {
+    '$v.value.$invalid': {
+      immediate: true,
+      handler (value) {
+        if (!value) {
+          this.$emit('valid')
+        } else {
+          this.$emit('invalid')
+        }
+      }
+    }
+  },
+  created () {
+    this.mdiEye = mdiEye
+    this.mdiEyeOff = mdiEyeOff
   }
+}
 </script>
 
 <style scoped>

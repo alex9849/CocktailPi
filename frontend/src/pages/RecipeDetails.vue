@@ -91,16 +91,16 @@
 
 <script>
 import RecipeService from '../services/recipe.service'
-import IngredientList from "../components/IngredientList";
-import CQuestion from "../components/CQuestion";
-import {mapGetters} from "vuex";
-import CMakeCocktailDialog from "../components/CMakeCocktailDialog";
-import TopButtonArranger from "components/TopButtonArranger";
+import IngredientList from '../components/IngredientList'
+import CQuestion from '../components/CQuestion'
+import {mapGetters} from 'vuex'
+import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
+import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
-  name: "RecipeDetails",
-  components: {TopButtonArranger, CMakeCocktailDialog, CQuestion, IngredientList},
-  data() {
+  name: 'RecipeDetails',
+  components: { TopButtonArranger, CMakeCocktailDialog, CQuestion, IngredientList },
+  data () {
     return {
       recipe: {
         productionSteps: []
@@ -111,31 +111,31 @@ export default {
       showMakeCocktailDialog: false
     }
   },
-  async beforeRouteEnter(to, from, next) {
-    const recipe = await RecipeService.getRecipe(to.params.id);
+  async beforeRouteEnter (to, from, next) {
+    const recipe = await RecipeService.getRecipe(to.params.id)
     next(vm => {
-      vm.recipe = recipe;
-      vm.loaded = true;
-    });
+      vm.recipe = recipe
+      vm.loaded = true
+    })
   },
-  async beforeRouteUpdate(to, from, next) {
-    this.recipe = await RecipeService.getRecipe(to.params.id);
-    next();
+  async beforeRouteUpdate (to, from, next) {
+    this.recipe = await RecipeService.getRecipe(to.params.id)
+    next()
   },
-  created() {
-    //this.recipe = this.$route.meta.recipe;
+  created () {
+    // this.recipe = this.$route.meta.recipe;
   },
   methods: {
-    deleteRecipe() {
-      this.deleting = true;
+    deleteRecipe () {
+      this.deleting = true
       RecipeService.deleteRecipe(this.recipe.id)
         .then(() => {
-          this.$router.push({name: 'publicrecipes'});
-          this.deleting = false;
+          this.$router.push({ name: 'publicrecipes' })
+          this.deleting = false
           this.$q.notify({
             type: 'positive',
             message: 'Recipe deleted successfully'
-          });
+          })
         })
     }
   },

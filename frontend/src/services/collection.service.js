@@ -1,67 +1,65 @@
-import axios from 'axios';
+import axios from 'axios'
 import RecipeService from './recipe.service'
 
-const API_PATH = 'api/collection/';
+const API_PATH = 'api/collection/'
 
 class CollectionService {
-
-  createCollection(name) {
+  createCollection (name) {
     return axios.post(API_PATH, {
       name: name,
-      description: "My cool collection",
+      description: 'My cool collection',
       completed: false
-    });
+    })
   };
 
-  getCollection(id) {
+  getCollection (id) {
     return axios.get(API_PATH + id)
-      .then(response => this.afterCollectionLoad(response.data));
+      .then(response => this.afterCollectionLoad(response.data))
   }
 
-  updateCollection(collection, image, removeImage) {
-    let uploadData = new FormData();
-    const stringCollection = JSON.stringify(collection);
+  updateCollection (collection, image, removeImage) {
+    const uploadData = new FormData()
+    const stringCollection = JSON.stringify(collection)
     const blobRecipe = new Blob([stringCollection], {
       type: 'application/json'
-    });
-    uploadData.append("collection", blobRecipe);
-    if(image) {
-      uploadData.append("image", image);
+    })
+    uploadData.append('collection', blobRecipe)
+    if (image) {
+      uploadData.append('image', image)
     }
-    return axios.put(API_PATH + collection.id + "?removeImage=" + !!removeImage, uploadData, {headers:{'Content-Type' :'multipart/form-data'}});
-
+    return axios.put(API_PATH + collection.id + '?removeImage=' + !!removeImage, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
   };
 
-  deleteCollection(collectionId) {
+  deleteCollection (collectionId) {
     return axios.delete(API_PATH + collectionId)
   };
 
-  getCollectionsByUser(id) {
-    let params = {
+  getCollectionsByUser (id) {
+    const params = {
       ownerId: id
-    };
-    return axios.get(API_PATH, {params})
-      .then(response => response.data.map(x => this.afterCollectionLoad(x)));;
+    }
+    return axios.get(API_PATH, { params })
+      .then(response => response.data.map(x => this.afterCollectionLoad(x)))
   };
 
-  addRecipeToCollection(collectionId, recipeId) {
-    return axios.post(API_PATH + collectionId + "/add", recipeId,
-      {headers: { 'Content-Type': 'application/json' }})
+  addRecipeToCollection (collectionId, recipeId) {
+    return axios.post(API_PATH + collectionId + '/add', recipeId,
+      { headers: { 'Content-Type': 'application/json' } })
   };
 
-  removeRecipeFromCollection(collectionId, recipeId) {
-    return axios.delete(API_PATH + collectionId + "/" + recipeId)
+  removeRecipeFromCollection (collectionId, recipeId) {
+    return axios.delete(API_PATH + collectionId + '/' + recipeId)
   };
 
-  getCollectionRecipes(collectionId) {
-    return axios.get(API_PATH + collectionId + "/recipes")
+  getCollectionRecipes (collectionId) {
+    return axios.get(API_PATH + collectionId + '/recipes')
       .then(response => response.data.map(x => RecipeService.afterRecipeLoad(x)))
   }
 
-  afterCollectionLoad(collection) {
-    collection.lastUpdate = new Date(collection.lastUpdate);
-    return collection;
+  afterCollectionLoad (collection) {
+    collection.lastUpdate = new Date(collection.lastUpdate)
+    return collection
   }
 }
 
-export default new CollectionService();
+export default new CollectionService()

@@ -31,14 +31,14 @@
           >
             <template v-slot:headline>
               <slot
-                v-if="!!$scopedSlots.recipeHeadline"
+                v-if="!!$slots.recipeHeadline"
                 :recipe="recipe"
                 name="recipeHeadline"
               />
             </template>
-            <template slot="topRight">
+            <template v-slot:topRight>
               <slot
-                v-if="!!$scopedSlots.recipeTopRight"
+                v-if="!!$slots.recipeTopRight"
                 :recipe="recipe"
                 name="recipeTopRight"
               />
@@ -52,11 +52,11 @@
 </template>
 
 <script>
-import CRecipeCard from "components/CRecipeCard";
+import CRecipeCard from 'components/CRecipeCard'
 
 export default {
-  name: "CRecipeList",
-  components: {CRecipeCard},
+  name: 'CRecipeList',
+  components: { CRecipeCard },
   props: {
     recipes: {
       type: Array,

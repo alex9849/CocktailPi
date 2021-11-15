@@ -51,7 +51,7 @@
 
 <script>
 export default {
-  name: "CEditDialog",
+  name: 'CEditDialog',
   props: {
     value: {
       type: Boolean,

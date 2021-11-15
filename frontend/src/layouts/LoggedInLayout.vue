@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh LpR fFf">
     <AppHeader>
-      <template slot="left">
+      <template v-slot:left>
         <q-btn
           v-if="!desktopMode"
           flat
@@ -101,7 +101,7 @@ a {
 
 <script>
 import {openURL} from 'quasar'
-import AppHeader from "../components/AppHeader";
+import AppHeader from '../components/AppHeader'
 import {
   mdiAccount,
   mdiChevronRight,
@@ -112,16 +112,16 @@ import {
   mdiLinkedin,
   mdiPiggyBank,
   mdiWeb
-} from "@quasar/extras/mdi-v5";
+} from '@quasar/extras/mdi-v5'
 import {mapGetters} from 'vuex'
 import {store} from '../store'
 
 export default {
   name: 'LoggedInLayout',
 
-  components: {AppHeader},
+  components: { AppHeader },
 
-  data() {
+  data () {
     return {
       desktopModeBreakPoint: 1023,
       leftDrawerOpen: false,
@@ -135,22 +135,22 @@ export default {
             {
               reqLevel: 0,
               label: 'Dashboard',
-              to: {name: 'dashboard'},
+              to: { name: 'dashboard' },
               exact: false
             }, {
               reqLevel: 0,
               label: 'My bar',
-              to: {name: 'mybar'},
+              to: { name: 'mybar' },
               exact: false
             }, {
               reqLevel: 0,
               label: 'My collections',
-              to: {name: 'mycollections'},
+              to: { name: 'mycollections' },
               exact: false
             }, {
               label: 'My recipes',
               reqLevel: 1,
-              to: {name: 'myrecipes'},
+              to: { name: 'myrecipes' },
               exact: false
             }
           ]
@@ -161,9 +161,9 @@ export default {
           subSections: [
             {
               label: 'All',
-              to: {name: 'publicrecipes'},
+              to: { name: 'publicrecipes' },
               exact: true,
-              reqLevel: 0,
+              reqLevel: 0
             }
           ]
         }, {
@@ -174,22 +174,22 @@ export default {
             {
               label: 'Users',
               reqLevel: 3,
-              to: {name: 'usermanagement'},
+              to: { name: 'usermanagement' },
               exact: false
             }, {
               label: 'Ingredients',
               reqLevel: 3,
-              to: {name: 'ingredientmanagement'},
+              to: { name: 'ingredientmanagement' },
               exact: false
             }, {
               label: 'Categories',
               reqLevel: 3,
-              to: {name: 'categorymanagement'},
+              to: { name: 'categorymanagement' },
               exact: false
             }, {
               label: 'Pumps',
               reqLevel: 3,
-              to: {name: 'pumpmanagement'},
+              to: { name: 'pumpmanagement' },
               exact: false
             }
           ]
@@ -216,16 +216,16 @@ export default {
       store.dispatch('category/fetchCategories'),
       store.dispatch('bar/fetchIngredients'),
       store.dispatch('auth/fetchCurrentUser')
-    ]).then(() => next());
+    ]).then(() => next())
   },
-  created() {
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
-    this.mdiChevronRight = mdiChevronRight;
-    this.mdiPiggyBank = mdiPiggyBank;
+  created () {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
+    this.mdiChevronRight = mdiChevronRight
+    this.mdiPiggyBank = mdiPiggyBank
   },
-  destroyed() {
-    window.removeEventListener('resize', this.handleResize);
+  unmounted () {
+    window.removeEventListener('resize', this.handleResize)
   },
   computed: {
     ...mapGetters({
@@ -233,43 +233,43 @@ export default {
       getAdminLevel: 'auth/getAdminLevel',
       recipeCategories: 'category/getCategories'
     }),
-    desktopMode() {
-      return this.windowWidth > this.desktopModeBreakPoint;
+    desktopMode () {
+      return this.windowWidth > this.desktopModeBreakPoint
     }
   },
   watch: {
     recipeCategories: {
       immediate: true,
-      handler(newValue) {
-        this.setCategories(newValue);
+      handler (newValue) {
+        this.setCategories(newValue)
       }
     }
   },
   methods: {
-    openURLInBrowser(url) {
+    openURLInBrowser (url) {
       openURL(url)
     },
-    handleResize() {
-      this.windowWidth = window.innerWidth;
+    handleResize () {
+      this.windowWidth = window.innerWidth
       if (this.windowWidth > this.desktopModeBreakPoint) {
-        this.leftDrawerOpen = true;
+        this.leftDrawerOpen = true
       }
     },
-    setCategories(categories) {
-      //Vue.set(this.editor, 'editingObject', productionStep);
+    setCategories (categories) {
+      // Vue.set(this.editor, 'editingObject', productionStep);
       this.sidebarItems[1].subSections = [
         {
           label: 'All',
-          to: {name: 'publicrecipes'},
+          to: { name: 'publicrecipes' },
           exact: true,
-          reqLevel: 0,
+          reqLevel: 0
         }
-      ];
-      for (let category of categories) {
+      ]
+      for (const category of categories) {
         this.sidebarItems[1].subSections.push({
           label: category.name,
           reqLevel: 0,
-          to: {name: 'publiccategoryrecipes', params: {cid: category.id}},
+          to: { name: 'publiccategoryrecipes', params: { cid: category.id } },
           exact: true
         })
       }

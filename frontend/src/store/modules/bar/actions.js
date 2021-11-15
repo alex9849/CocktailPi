@@ -1,9 +1,9 @@
-import UserService from "src/services/user.service";
+import UserService from 'src/services/user.service'
 
 export const addIngredient = ({ dispatch, commit }, ingredientId) => {
   return UserService.addToMyOwnedIngredients(ingredientId)
     .then(() => {
-      return dispatch('fetchIngredients');
+      return dispatch('fetchIngredients')
     })
 }
 
@@ -11,13 +11,13 @@ export const fetchIngredients = ({ commit }) => {
   return UserService.getMyOwnedIngredients()
     .then(data => {
       commit('setOwnedIngredients', data)
-      return data;
+      return data
     })
 }
 
 export const removeIngredient = ({ dispatch }, ingredientId) => {
   return UserService.removeFromMyOwnedIngredients(ingredientId)
     .then(() => {
-      return dispatch('fetchIngredients');
+      return dispatch('fetchIngredients')
     })
 }

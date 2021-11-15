@@ -1,46 +1,48 @@
 import {store} from '../store'
 
-
-function redirectIfNotAuthenticated(to, from, next) {
+function redirectIfNotAuthenticated (to, from, next) {
   if (!store.getters['auth/isLoggedIn']) {
-    next({name: "login", query: {
-      redirectTo: to.fullPath
-      }});
-    return;
+    next({
+      name: 'login',
+      query: {
+        redirectTo: to.fullPath
+      }
+    })
+    return
   }
-  next();
+  next()
 }
 
-function redirectIfAuthenticated(to, from, next) {
+function redirectIfAuthenticated (to, from, next) {
   if (store.getters['auth/isLoggedIn']) {
-    next({name: "dashboard"});
-    return;
+    next({ name: 'dashboard' })
+    return
   }
-  next();
+  next()
 }
 
 const routes = [
   {
     path: '/',
     component: () => import('layouts/LoggedInLayout.vue'),
-    redirect: {name: 'login'},
+    redirect: { name: 'login' },
     beforeEnter: redirectIfNotAuthenticated,
     children: [{
       path: 'dashboard',
       component: () => import('pages/Dashboard'),
-      name: "dashboard"
+      name: 'dashboard'
     }, {
       path: 'mybar',
       component: () => import('pages/MyBar'),
-      name: "mybar"
+      name: 'mybar'
     }, {
       path: 'collection/own',
       component: () => import('pages/MyCollections'),
-      name: "mycollections"
+      name: 'mycollections'
     }, {
       path: 'collection/:id',
       component: () => import('pages/Collection'),
-      name: "collection"
+      name: 'collection'
     }, {
       path: 'user/profile',
       component: () => import('pages/Profile'),
@@ -115,6 +117,6 @@ const routes = [
     name: '404Page',
     component: () => import('pages/Error404.vue')
   }
-];
+]
 
 export default routes

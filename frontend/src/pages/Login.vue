@@ -95,34 +95,34 @@
 </template>
 
 <script>
-import LoginRequest from '../models/LoginRequest';
-import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5';
-import {helpers, required} from "vuelidate/lib/validators";
+import LoginRequest from '../models/LoginRequest'
+import {mdiAlert, mdiEmail, mdiOnepassword, mdiServer} from '@quasar/extras/mdi-v5'
+import {helpers, required} from 'vuelidate/lib/validators'
 
 export default {
-  name: "Login",
-  data() {
+  name: 'Login',
+  data () {
     return {
       loginRequest: new LoginRequest('', '', !!this.$q.platform.is.cordova),
       loading: false,
-      error: "",
+      error: '',
       disableLogin: true,
-      transitionTrigger: false,
+      transitionTrigger: false
     }
   },
-  created() {
-    this.mdiEmail = mdiEmail;
-    this.mdiOnepassword = mdiOnepassword;
-    this.mdiAlert = mdiAlert;
-    this.mdiServer = mdiServer;
+  created () {
+    this.mdiEmail = mdiEmail
+    this.mdiOnepassword = mdiOnepassword
+    this.mdiAlert = mdiAlert
+    this.mdiServer = mdiServer
   },
-  validations() {
-    const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi);
-    let serverAddress = {
+  validations () {
+    const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi)
+    const serverAddress = {
       required,
       isURL
     }
-    let validations = {
+    const validations = {
       loginRequest: {
         username: {
           required
@@ -131,53 +131,53 @@ export default {
           required
         }
       }
-    };
-    if (!!this.$q.platform.is.cordova) {
-      validations.serverAddress = serverAddress;
     }
-    return validations;
+    if (this.$q.platform.is.cordova) {
+      validations.serverAddress = serverAddress
+    }
+    return validations
   },
   methods: {
-    onSubmit() {
-      this.loading = true;
+    onSubmit () {
+      this.loading = true
       this.$store.dispatch('auth/login', this.loginRequest)
         .then(() => {
-          this.loading = false;
+          this.loading = false
           if (this.$route.query.redirectTo) {
-            this.$router.push(this.$route.query.redirectTo);
+            this.$router.push(this.$route.query.redirectTo)
           } else {
-            this.$router.push({name: 'dashboard'});
+            this.$router.push({ name: 'dashboard' })
           }
         }).catch(err => {
-        this.loading = false;
-        if (!!err.response && err.response.status === 401) {
-          this.showError('Username or password wrong!');
-        } else {
-          this.showError('Couldn\'t contact server!');
-        }
-      });
+          this.loading = false
+          if (!!err.response && err.response.status === 401) {
+            this.showError('Username or password wrong!')
+          } else {
+            this.showError('Couldn\'t contact server!')
+          }
+        })
     },
-    showError(error) {
-      this.error = error;
-      this.transitionTrigger = !this.transitionTrigger;
+    showError (error) {
+      this.error = error
+      this.transitionTrigger = !this.transitionTrigger
     }
   },
   watch: {
-    '$v.$invalid': function _watch$v$invalid(value) {
-      this.disableLogin = value;
+    '$v.$invalid': function _watch$v$invalid (value) {
+      this.disableLogin = value
     }
   },
   computed: {
     serverAddress: {
-      get() {
-        return this.$store.getters['auth/getServerAddress'];
+      get () {
+        return this.$store.getters['auth/getServerAddress']
       },
-      set(value) {
-        this.$store.dispatch('auth/serverAddress', value);
+      set (value) {
+        this.$store.dispatch('auth/serverAddress', value)
       }
     }
   }
-  }
+}
 </script>
 
 <style scoped>

@@ -97,7 +97,7 @@
         val => $v.value.recipe.defaultAmountToFill.required || 'Required',
         val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml']"
       >
-        <template slot="append">
+        <template v-slot:append>
           ml
         </template>
       </q-input>
@@ -117,13 +117,13 @@
 </template>
 
 <script>
-import {maxLength, minLength, minValue, required} from "vuelidate/lib/validators";
-import IngredientList from "./IngredientList";
-import {mapGetters} from "vuex";
+import {maxLength, minLength, minValue, required} from 'vuelidate/lib/validators'
+import IngredientList from './IngredientList'
+import {mapGetters} from 'vuex'
 
 export default {
-  name: "RecipeEditorForm",
-  components: {IngredientList},
+  name: 'RecipeEditorForm',
+  components: { IngredientList },
   props: {
     value: {
       type: Object,
@@ -138,13 +138,13 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       image: null
     }
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       value: {
         recipe: {
           name: {
@@ -162,15 +162,15 @@ export default {
           }
         }
       }
-    };
-    return validations;
+    }
+    return validations
   },
   watch: {
-    '$v.value.recipe.$invalid': function _watch$vValueRecipe$invalid(value) {
+    '$v.value.recipe.$invalid': function _watch$vValueRecipe$invalid (value) {
       if (!value) {
-        this.$emit('valid');
+        this.$emit('valid')
       } else {
-        this.$emit('invalid');
+        this.$emit('invalid')
       }
     }
   },

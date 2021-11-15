@@ -1,27 +1,25 @@
-const authToken = JSON.parse(localStorage.getItem('authToken'));
-let serverAddress = localStorage.getItem('serverAddress');
+const authToken = JSON.parse(localStorage.getItem('authToken'))
+let serverAddress = localStorage.getItem('serverAddress')
 
-if(serverAddress === null || serverAddress === undefined) {
-  serverAddress = "";
+if (serverAddress === null || serverAddress === undefined) {
+  serverAddress = ''
 }
 
-const currentDate = new Date();
+const currentDate = new Date()
 
-const initialAuthToken = function ()  {
-
-  let status = { status: { loggedIn: false }, user: null };
-  if(!authToken || !authToken.tokenExpiration)
-    return null;
-  authToken.tokenExpiration = new Date(authToken.tokenExpiration);
-  if(authToken.tokenExpiration < currentDate) {
-    return null;
+const initialAuthToken = (function () {
+  const status = { status: { loggedIn: false }, user: null }
+  if (!authToken || !authToken.tokenExpiration) { return null }
+  authToken.tokenExpiration = new Date(authToken.tokenExpiration)
+  if (authToken.tokenExpiration < currentDate) {
+    return null
   }
-  return authToken;
-}();
+  return authToken
+}())
 
-const initialLoggedIn = function () {
+const initialLoggedIn = (function () {
   return !!initialAuthToken
-}();
+}())
 
 export default function () {
   return {

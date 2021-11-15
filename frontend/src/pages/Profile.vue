@@ -52,13 +52,13 @@
 </template>
 
 <script>
-import UserEditorForm from "../components/UserEditorForm";
-import {mapActions, mapGetters} from "vuex";
+import UserEditorForm from '../components/UserEditorForm'
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
-  name: "Profile",
-  components: {UserEditorForm},
-  data() {
+  name: 'Profile',
+  components: { UserEditorForm },
+  data () {
     return {
       editUser: {},
       loading: false,
@@ -76,7 +76,7 @@ export default {
   watch: {
     user: {
       immediate: true,
-      handler() {
+      handler () {
         this.resetEditUser()
       }
     }
@@ -85,48 +85,48 @@ export default {
     ...mapActions({
       sendUpdateUser: 'auth/updateCurrentUser'
     }),
-    getRandomString(length) {
-      var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    getRandomString (length) {
+      const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        result += randomChars.charAt(Math.floor(Math.random() * randomChars.length))
       }
-      return result;
+      return result
     },
-    stopEditMode() {
-      this.editMode = false;
-      this.resetEditUser();
+    stopEditMode () {
+      this.editMode = false
+      this.resetEditUser()
     },
-    resetEditUser() {
+    resetEditUser () {
       this.editUser = Object.assign({
         password: ''
-      }, this.user);
+      }, this.user)
     },
-    onClickSafe() {
-      this.sending = true;
-      let updateUser = Object.assign({}, this.editUser);
-      let updatePassword = !!this.editUser.password || this.editUser.password !== '';
+    onClickSafe () {
+      this.sending = true
+      const updateUser = Object.assign({}, this.editUser)
+      const updatePassword = !!this.editUser.password || this.editUser.password !== ''
       if (!updatePassword) {
-        updateUser.password = this.getRandomString(22);
+        updateUser.password = this.getRandomString(22)
       }
       this.sendUpdateUser({
         updatePassword,
         userDto: updateUser
       }).then(() => {
-        this.stopEditMode();
-        this.error = '';
+        this.stopEditMode()
+        this.error = ''
         this.$q.notify({
           type: 'positive',
           message: 'Profile updated'
-        });
+        })
       }).catch(error => {
-        this.error = error.response.data.message;
+        this.error = error.response.data.message
         this.$q.notify({
           type: 'negative',
           message: 'Couldn\'t update profile. ' + error.response.data.message
-        });
+        })
       }).finally(() => {
-        this.sending = false;
+        this.sending = false
       })
     }
   }

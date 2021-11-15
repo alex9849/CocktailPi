@@ -82,12 +82,12 @@
 
 <script>
 
-import {mapGetters} from "vuex";
-import CRecipeFabricableIcon from "components/CRecipeFabricableIcon";
+import {mapGetters} from 'vuex'
+import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
 
 export default {
-  name: "CRecipeCard",
-  components: {CRecipeFabricableIcon},
+  name: 'CRecipeCard',
+  components: { CRecipeFabricableIcon },
   props: {
     recipe: {
       type: Object,
@@ -109,10 +109,10 @@ export default {
     })
   },
   methods: {
-    hasPumpLayoutIngredient(ingredientId) {
-      return this.getPumpIngredients.some(x => x.id === ingredientId);
+    hasPumpLayoutIngredient (ingredientId) {
+      return this.getPumpIngredients.some(x => x.id === ingredientId)
     },
-    ingredientChipColor(ingredientId) {
+    ingredientChipColor (ingredientId) {
       if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
         return 'green'
       }
@@ -121,7 +121,7 @@ export default {
       }
       return 'red'
     },
-    ingredientChipTooltip(ingredientId) {
+    ingredientChipTooltip (ingredientId) {
       if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
         return ''
       }
@@ -130,20 +130,20 @@ export default {
       }
       return 'not owned'
     },
-    uniqueIngredientNames(productionSteps) {
+    uniqueIngredientNames (productionSteps) {
       if (!this.showIngredients) {
-        return [];
+        return []
       }
-      let unique = new Map();
-      for (let productionStep of productionSteps) {
+      const unique = new Map()
+      for (const productionStep of productionSteps) {
         if (productionStep.type !== 'addIngredients') {
           continue
         }
-        for (let ingredient of productionStep.stepIngredients) {
-          unique.set(ingredient.ingredient.id, ingredient.ingredient);
+        for (const ingredient of productionStep.stepIngredients) {
+          unique.set(ingredient.ingredient.id, ingredient.ingredient)
         }
       }
-      return Array.from(unique.values());
+      return Array.from(unique.values())
     }
   }
 }

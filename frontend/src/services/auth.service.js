@@ -1,26 +1,27 @@
-import axios from 'axios';
+import axios from 'axios'
 
-const API_PATH = 'api/auth/';
+const API_PATH = 'api/auth/'
 
 class AuthService {
-  login(loginRequest) {
+  login (loginRequest) {
     return axios
       .post(API_PATH + 'login', loginRequest)
       .then(response => {
-        //JwtResponse
-        response.data.tokenExpiration = new Date(response.data.tokenExpiration);
-        return response.data;
-      });
+        // JwtResponse
+        response.data.tokenExpiration = new Date(response.data.tokenExpiration)
+        return response.data
+      })
   }
-  refreshToken(token) {
+
+  refreshToken (token) {
     return axios
       .get(API_PATH + 'refreshToken')
       .then(response => {
-        //JwtResponse
-        response.data.tokenExpiration = new Date(response.data.tokenExpiration);
-        return response.data;
-      });
+        // JwtResponse
+        response.data.tokenExpiration = new Date(response.data.tokenExpiration)
+        return response.data
+      })
   }
 }
 
-export default new AuthService();
+export default new AuthService()

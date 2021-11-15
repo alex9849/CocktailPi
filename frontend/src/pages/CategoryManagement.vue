@@ -30,7 +30,7 @@
         :columns="columns"
         :data="categories"
         :loading="loading"
-        :selected.sync="selected"
+        v-model:selected="selected"
         selection="multiple"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
@@ -171,187 +171,187 @@
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5';
-import CQuestion from "../components/CQuestion";
-import {maxLength, required} from "vuelidate/lib/validators";
-import CEditDialog from "components/CEditDialog";
-import TopButtonArranger from "components/TopButtonArranger";
-import {mapActions, mapGetters} from "vuex";
-import {createCategory, fetchCategories, updateCategory} from "src/store/modules/category/actions";
+import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import CQuestion from '../components/CQuestion'
+import {maxLength, required} from 'vuelidate/lib/validators'
+import CEditDialog from 'components/CEditDialog'
+import TopButtonArranger from 'components/TopButtonArranger'
+import {mapActions, mapGetters} from 'vuex'
+import {createCategory, fetchCategories, updateCategory} from 'src/store/modules/category/actions'
 
 export default {
-    name: "CategoryManagement",
-    components: {TopButtonArranger, CEditDialog, CQuestion},
-    data() {
-      return {
-        columns: [
-          {name: 'name', label: 'Category', field: 'name', align: 'center'},
-          {name: 'actions', label: 'Actions', field: '', align: 'center'}
-        ],
-        selected: [],
-        loading: false,
-        deleteOptions: {
-          deleteCategory: [],
-          deleteErrorMessage: "",
-          deleteLoading: false,
-          deleteDialog: false
+  name: 'CategoryManagement',
+  components: { TopButtonArranger, CEditDialog, CQuestion },
+  data () {
+    return {
+      columns: [
+        { name: 'name', label: 'Category', field: 'name', align: 'center' },
+        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+      ],
+      selected: [],
+      loading: false,
+      deleteOptions: {
+        deleteCategory: [],
+        deleteErrorMessage: '',
+        deleteLoading: false,
+        deleteDialog: false
+      },
+      editOptions: {
+        editErrorMessage: '',
+        editCategorySaving: false,
+        editDialog: false,
+        valid: false,
+        editCategory: {
+          id: -1,
+          name: '',
+          alcoholContent: 0
         },
-        editOptions: {
-          editErrorMessage: "",
-          editCategorySaving: false,
-          editDialog: false,
-          valid: false,
-          editCategory: {
-            id: -1,
-            name: "",
-            alcoholContent: 0
-          },
-          newCategory: {
-            id: -1,
-            name: "",
-            alcoholContent: 0
-          }
+        newCategory: {
+          id: -1,
+          name: '',
+          alcoholContent: 0
         }
-      }
-    },
-    methods: {
-      ...mapActions({
-        createCategory: 'category/createCategory',
-        updateCategory: 'category/updateCategory',
-        fetchCategories: 'category/fetchCategories',
-        deleteCategories: 'category/deleteCategories'
-      }),
-      onRefresh() {
-        this.loading = true;
-        let vm = this;
-        setTimeout(() => {
-          vm.fetchCategories()
-            .finally(() => vm.loading = false);
-        }, 500);
-      },
-      showEditDialog(category) {
-        if (category) {
-          this.editOptions.editCategory = Object.assign({}, category);
-        }
-        this.editOptions.editDialog = true;
-      },
-      closeEditDialog() {
-        this.editOptions.editCategory = Object.assign({}, this.editOptions.newCategory);
-        this.editOptions.editDialog = false;
-        this.editOptions.editErrorMessage = "";
-      },
-      onClickSaveCategory() {
-        this.editOptions.editCategorySaving = true;
-        let vm = this;
-        let onSuccess = function () {
-          vm.editOptions.editCategorySaving = false;
-          vm.editOptions.editErrorMessage = "";
-          vm.$q.notify({
-            type: 'positive',
-            message: "Category " + (vm.iseditCategoryNew ? "created" : "updated") + " successfully"
-          });
-          vm.closeEditDialog();
-        };
-
-        let onError = function (error) {
-          vm.editOptions.editCategorySaving = false;
-          vm.editOptions.editErrorMessage = error.response.data.message;
-          vm.$q.notify({
-            type: 'negative',
-            message: error.response.data.message
-          });
-        };
-
-        if (this.iseditCategoryNew) {
-          this.createCategory(this.editOptions.editCategory)
-            .then(onSuccess, error => onError(error));
-        } else {
-          this.updateCategory(this.editOptions.editCategory)
-            .then(onSuccess, error => onError(error));
-        }
-      },
-      deleteSelected() {
-        let vm = this;
-        let toDeleteIds = this.deleteOptions.deleteCategory.map(x => x.id);
-        this.deleteOptions.deleteLoading = true;
-        this.deleteCategories(toDeleteIds)
-            .then(() => {
-              vm.closeDeleteDialog();
-              vm.selected.splice(0, vm.selected.length);
-              vm.deleteOptions.deleteLoading = false;
-              vm.deleteOptions.deleteErrorMessage = "";
-              vm.$q.notify({
-                type: 'positive',
-                message: "Categorie(s) deleted successfully"
-              });
-            }, err => {
-              vm.deleteOptions.deleteLoading = false;
-              vm.selected.splice(0, vm.selected.length);
-              vm.deleteOptions.deleteErrorMessage = err.response.data.message;
-              vm.$q.notify({
-                type: 'negative',
-                message: err.response.data.message
-              });
-            });
-      },
-      openDeleteDialog(forSelected) {
-        if (forSelected) {
-          this.deleteOptions.deleteCategory.push(...this.selected);
-        }
-        this.deleteOptions.deleteDialog = true;
-      },
-      closeDeleteDialog() {
-        this.deleteOptions.deleteCategory.splice(0, this.deleteOptions.deleteCategory.length);
-        this.deleteOptions.deleteDialog = false;
-        this.deleteOptions.deleteErrorMessage = "";
-      }
-    },
-    created() {
-      this.mdiDelete = mdiDelete;
-      this.mdiPencilOutline = mdiPencilOutline;
-    },
-    validations() {
-      let validations = {
-        editOptions: {
-          editCategory: {
-            name: {
-              required,
-              maxLength: maxLength(15)
-            }
-          }
-        }
-      };
-      return validations;
-    },
-    watch: {
-      '$v.editOptions.editCategory.$invalid': function _watch$vEditOptionseditCategory$invalid(value) {
-        this.editOptions.valid = !value;
-      }
-    },
-    computed: {
-      ...mapGetters({
-        categories: 'category/getCategories'
-      }),
-      deleteQuestionMessage() {
-        if (this.deleteOptions.deleteCategory.length === 0) {
-          return "No categories selected!";
-        }
-        if (this.deleteOptions.deleteCategory.length === 1) {
-          return "The following category will be deleted:";
-        }
-        return "The following categories will be deleted:";
-      },
-      iseditCategoryNew() {
-        return this.editOptions.editCategory.id === -1;
-      },
-      editDialogHeadline() {
-        if (this.iseditCategoryNew) {
-          return "Create category"
-        }
-        return "Edit category"
       }
     }
+  },
+  methods: {
+    ...mapActions({
+      createCategory: 'category/createCategory',
+      updateCategory: 'category/updateCategory',
+      fetchCategories: 'category/fetchCategories',
+      deleteCategories: 'category/deleteCategories'
+    }),
+    onRefresh () {
+      this.loading = true
+      const vm = this
+      setTimeout(() => {
+        vm.fetchCategories()
+          .finally(() => vm.loading = false)
+      }, 500)
+    },
+    showEditDialog (category) {
+      if (category) {
+        this.editOptions.editCategory = Object.assign({}, category)
+      }
+      this.editOptions.editDialog = true
+    },
+    closeEditDialog () {
+      this.editOptions.editCategory = Object.assign({}, this.editOptions.newCategory)
+      this.editOptions.editDialog = false
+      this.editOptions.editErrorMessage = ''
+    },
+    onClickSaveCategory () {
+      this.editOptions.editCategorySaving = true
+      const vm = this
+      const onSuccess = function () {
+        vm.editOptions.editCategorySaving = false
+        vm.editOptions.editErrorMessage = ''
+        vm.$q.notify({
+          type: 'positive',
+          message: 'Category ' + (vm.iseditCategoryNew ? 'created' : 'updated') + ' successfully'
+        })
+        vm.closeEditDialog()
+      }
+
+      const onError = function (error) {
+        vm.editOptions.editCategorySaving = false
+        vm.editOptions.editErrorMessage = error.response.data.message
+        vm.$q.notify({
+          type: 'negative',
+          message: error.response.data.message
+        })
+      }
+
+      if (this.iseditCategoryNew) {
+        this.createCategory(this.editOptions.editCategory)
+          .then(onSuccess, error => onError(error))
+      } else {
+        this.updateCategory(this.editOptions.editCategory)
+          .then(onSuccess, error => onError(error))
+      }
+    },
+    deleteSelected () {
+      const vm = this
+      const toDeleteIds = this.deleteOptions.deleteCategory.map(x => x.id)
+      this.deleteOptions.deleteLoading = true
+      this.deleteCategories(toDeleteIds)
+        .then(() => {
+          vm.closeDeleteDialog()
+          vm.selected.splice(0, vm.selected.length)
+          vm.deleteOptions.deleteLoading = false
+          vm.deleteOptions.deleteErrorMessage = ''
+          vm.$q.notify({
+            type: 'positive',
+            message: 'Categorie(s) deleted successfully'
+          })
+        }, err => {
+          vm.deleteOptions.deleteLoading = false
+          vm.selected.splice(0, vm.selected.length)
+          vm.deleteOptions.deleteErrorMessage = err.response.data.message
+          vm.$q.notify({
+            type: 'negative',
+            message: err.response.data.message
+          })
+        })
+    },
+    openDeleteDialog (forSelected) {
+      if (forSelected) {
+        this.deleteOptions.deleteCategory.push(...this.selected)
+      }
+      this.deleteOptions.deleteDialog = true
+    },
+    closeDeleteDialog () {
+      this.deleteOptions.deleteCategory.splice(0, this.deleteOptions.deleteCategory.length)
+      this.deleteOptions.deleteDialog = false
+      this.deleteOptions.deleteErrorMessage = ''
+    }
+  },
+  created () {
+    this.mdiDelete = mdiDelete
+    this.mdiPencilOutline = mdiPencilOutline
+  },
+  validations () {
+    const validations = {
+      editOptions: {
+        editCategory: {
+          name: {
+            required,
+            maxLength: maxLength(15)
+          }
+        }
+      }
+    }
+    return validations
+  },
+  watch: {
+    '$v.editOptions.editCategory.$invalid': function _watch$vEditOptionseditCategory$invalid (value) {
+      this.editOptions.valid = !value
+    }
+  },
+  computed: {
+    ...mapGetters({
+      categories: 'category/getCategories'
+    }),
+    deleteQuestionMessage () {
+      if (this.deleteOptions.deleteCategory.length === 0) {
+        return 'No categories selected!'
+      }
+      if (this.deleteOptions.deleteCategory.length === 1) {
+        return 'The following category will be deleted:'
+      }
+      return 'The following categories will be deleted:'
+    },
+    iseditCategoryNew () {
+      return this.editOptions.editCategory.id === -1
+    },
+    editDialogHeadline () {
+      if (this.iseditCategoryNew) {
+        return 'Create category'
+      }
+      return 'Edit category'
+    }
   }
+}
 </script>
 
 <style scoped>

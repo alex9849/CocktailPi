@@ -1,29 +1,29 @@
-import axios from 'axios';
+import axios from 'axios'
 
-const API_PATH = 'api/category/';
+const API_PATH = 'api/category/'
 
 class CategoryService {
-  getAllCategories() {
+  getAllCategories () {
     return axios.get(API_PATH)
-      .then(response => response.data);
+      .then(response => response.data)
   }
 
-  getCategory(id) {
+  getCategory (id) {
     return axios.get(API_PATH + id)
-      .then(response => response.data);
+      .then(response => response.data)
   }
 
-  createCategory(category) {
-    return axios.post(API_PATH, category);
+  createCategory (category) {
+    return axios.post(API_PATH, category)
   }
 
-  updateCategory(category) {
-    return axios.put(API_PATH + category.id, category);
+  updateCategory (category) {
+    return axios.put(API_PATH + category.id, category)
   }
 
-  deleteCategory(categoryId) {
-    return axios.delete(API_PATH + categoryId);
+  deleteCategory (categoryId) {
+    return axios.delete(API_PATH + categoryId)
   }
 }
 
-export default new CategoryService();
+export default new CategoryService()

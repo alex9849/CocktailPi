@@ -88,11 +88,11 @@
 </template>
 
 <script>
-import {mdiCogs, mdiHandRight, mdiInformation} from "@quasar/extras/mdi-v5";
-import {maxLength, maxValue, minValue, required, requiredIf} from "vuelidate/lib/validators";
+import {mdiCogs, mdiHandRight, mdiInformation} from '@quasar/extras/mdi-v5'
+import {maxLength, maxValue, minValue, required, requiredIf} from 'vuelidate/lib/validators'
 
 export default {
-  name: "IngredientForm",
+  name: 'IngredientForm',
   props: {
     value: {
       type: Object,
@@ -103,38 +103,38 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       units: [
-        {label: 'gram (g)', value: 'g'},
-        {label: 'milliliter (ml)', value: 'ml'},
-        {label: 'piece(s)', value: 'piece(s)'},
-        {label: 'teaspoon(s)', value: 'teaspoon(s)'},
-        {label: 'tablespoon(s)', value: 'tablespoon(s)'}
-      ],
+        { label: 'gram (g)', value: 'g' },
+        { label: 'milliliter (ml)', value: 'ml' },
+        { label: 'piece(s)', value: 'piece(s)' },
+        { label: 'teaspoon(s)', value: 'teaspoon(s)' },
+        { label: 'tablespoon(s)', value: 'tablespoon(s)' }
+      ]
     }
   },
   methods: {
-    initialize() {
-      this.$v.value.$touch();
-      if(this.$v.value.$invalid) {
-        this.$emit('invalid');
+    initialize () {
+      this.$v.value.$touch()
+      if (this.$v.value.$invalid) {
+        this.$emit('invalid')
       } else {
-        this.$emit('valid');
+        this.$emit('valid')
       }
     },
-    onTypeChange(newType) {
+    onTypeChange (newType) {
       this.$v.value.$touch()
-    },
+    }
   },
-  created() {
-    this.initialize();
-    this.mdiInformation = mdiInformation;
-    this.mdiCogs = mdiCogs;
-    this.mdiHandRight = mdiHandRight;
+  created () {
+    this.initialize()
+    this.mdiInformation = mdiInformation
+    this.mdiCogs = mdiCogs
+    this.mdiHandRight = mdiHandRight
   },
-  validations() {
-    let validations = {
+  validations () {
+    const validations = {
       value: {
         name: {
           required,
@@ -146,50 +146,50 @@ export default {
           maxValue: maxValue(100)
         },
         pumpTimeMultiplier: {
-          required: requiredIf(() => this.value.type === "automated"),
+          required: requiredIf(() => this.value.type === 'automated'),
           minValue: minValue(0),
           maxValue: maxValue(10)
         },
         unit: {
-          required: requiredIf(() => this.value.type === "manual")
+          required: requiredIf(() => this.value.type === 'manual')
         }
       }
-    };
-    return validations;
+    }
+    return validations
   },
   computed: {
     currentIngredientMultiplierString: {
-      get: function() {
-        const multiplier = this.value.pumpTimeMultiplier;
-        if(multiplier === undefined
-          || multiplier === null) {
-          return null;
+      get: function () {
+        const multiplier = this.value.pumpTimeMultiplier
+        if (multiplier === undefined ||
+          multiplier === null) {
+          return null
         }
-        let stringVal = "" +  multiplier;
-        if(stringVal.match("^\\d+$")) {
-          stringVal += ".0"
+        let stringVal = '' + multiplier
+        if (stringVal.match('^\\d+$')) {
+          stringVal += '.0'
         }
-        return stringVal;
+        return stringVal
       },
-      set: function(value) {
-        if(!value) {
-          this.value.pumpTimeMultiplier = null;
+      set: function (value) {
+        if (!value) {
+          this.value.pumpTimeMultiplier = null
         } else {
-          this.value.pumpTimeMultiplier = parseFloat(value);
+          this.value.pumpTimeMultiplier = parseFloat(value)
         }
       }
     }
   },
   watch: {
-    '$v.value.$invalid': function _watch$vValue$invalid(value) {
+    '$v.value.$invalid': function _watch$vValue$invalid (value) {
       if (!value) {
-        this.$emit('valid');
+        this.$emit('valid')
       } else {
-        this.$emit('invalid');
+        this.$emit('invalid')
       }
     },
-    value() {
-      this.initialize();
+    value () {
+      this.initialize()
     }
   }
 }
