@@ -5,7 +5,7 @@
         @submit="onSubmit">
         <q-card-section style="text-align: center">
           <div class="text-h4">
-            <img src="../assets/logo-full.svg" width="80px"/>
+            <img src="../assets/logo-full.svg" style="width: 80px"/>
             <p>Login</p>
           </div>
         </q-card-section>
@@ -28,13 +28,13 @@
             placeholder="https://myserver.net/"
             :disable="loading"
             v-model="serverAddress"
-            @input="$v.serverAddress.$touch()"
+            :rules="[
+            val => v.serverAddress.required || 'Required',
+            val => v.serverAddress.isURL || 'Not a valid URL'
+            ]"
             filled
             lazy-rules
-            :rules="[
-            val => $v.serverAddress.required || 'Required',
-            val => $v.serverAddress.isURL || 'Not a valid URL'
-            ]"
+            @input="v.serverAddress.$touch()"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiServer"/>
@@ -46,10 +46,10 @@
             label="Username"
             v-model="loginRequest.username"
             lazy-rules
-            @input="$v.loginRequest.username.$touch()"
             :rules="[
-              val => $v.loginRequest.username.required || 'Required'
+              val => v.loginRequest.username.required || 'Required'
             ]"
+            @input="v.loginRequest.username.$touch()"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiEmail"/>
@@ -62,10 +62,10 @@
             type="password"
             v-model="loginRequest.password"
             lazy-rules
-            @input="$v.loginRequest.password.$touch()"
             :rules="[
-              val => $v.loginRequest.password.required || 'Required'
+              val => v.loginRequest.password.required || 'Required'
             ]"
+            @input="v.loginRequest.password.$touch()"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiOnepassword"/>
@@ -112,11 +112,13 @@ export default {
     }
   },
   setup () {
-    this.mdiEmail = mdiEmail
-    this.mdiOnepassword = mdiOnepassword
-    this.mdiAlert = mdiAlert
-    this.mdiServer = mdiServer
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiEmail,
+      mdiOnepassword,
+      mdiAlert,
+      mdiServer
+    }
   },
   validations () {
     const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi)
@@ -165,7 +167,7 @@ export default {
     }
   },
   watch: {
-    '$v.$invalid': function _watch$v$invalid (value) {
+    'v.$invalid': function _watchv$invalid (value) {
       this.disableLogin = value
     }
   },

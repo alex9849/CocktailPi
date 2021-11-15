@@ -31,7 +31,7 @@
 <script>
 import CRecipeSearchList from '../components/CRecipeSearchList'
 import { mapGetters } from 'vuex'
-import { store } from '../store'
+import store from '../store'
 import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
@@ -43,12 +43,12 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    to.meta.category = store.getters['category/getCategories']
+    to.meta.category = store().getters['category/getCategories']
       .find(x => x.id == to.params.cid)
     next()
   },
   beforeRouteUpdate (to, from, next) {
-    to.meta.category = store.getters['category/getCategories']
+    to.meta.category = store().getters['category/getCategories']
       .find(x => x.id == to.params.cid)
     next()
   },

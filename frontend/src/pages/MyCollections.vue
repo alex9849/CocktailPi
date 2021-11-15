@@ -55,7 +55,7 @@
 <script>
 import CCollectionCard from 'components/CCollectionCard'
 import CollectionService from '../services/collection.service'
-import { store } from '../store'
+import store from '../store'
 import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CEditDialog from 'components/CEditDialog'
 import { mapGetters } from 'vuex'
@@ -67,7 +67,7 @@ export default {
   name: 'MyCollections',
   components: { TopButtonArranger, CEditDialog, CCollectionCard },
   async beforeRouteEnter (to, from, next) {
-    const userId = store.getters['auth/getUser'].id
+    const userId = store().getters['auth/getUser'].id
     const collections = await CollectionService.getCollectionsByUser(userId)
     next(vm => {
       vm.collections = collections

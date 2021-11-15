@@ -1,8 +1,8 @@
-import { store } from '../store'
+import store from '../store'
 import Error404 from 'pages/Error404.vue'
 
 function redirectIfNotAuthenticated (to, from, next) {
-  if (!store.getters['auth/isLoggedIn']) {
+  if (!store().getters['auth/isLoggedIn']) {
     next({
       name: 'login',
       query: {
@@ -15,7 +15,7 @@ function redirectIfNotAuthenticated (to, from, next) {
 }
 
 function redirectIfAuthenticated (to, from, next) {
-  if (store.getters['auth/isLoggedIn']) {
+  if (store().getters['auth/isLoggedIn']) {
     next({ name: 'dashboard' })
     return
   }
