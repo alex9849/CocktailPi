@@ -44,12 +44,11 @@
             :disable="loading"
             filled
             label="Username"
-            v-model="loginRequest.username"
+            v-model="v.loginRequest.username.$model"
             lazy-rules
             :rules="[
-              val => v.loginRequest.username.required || 'Required'
+              val => !v.loginRequest.username.$error || 'Required'
             ]"
-            @input="v.loginRequest.username.$touch()"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiEmail"/>
@@ -60,12 +59,11 @@
             filled
             label="Password"
             type="password"
-            v-model="loginRequest.password"
+            v-model="v.loginRequest.password.$model"
             lazy-rules
             :rules="[
-              val => v.loginRequest.password.required || 'Required'
+              val => !v.loginRequest.password.$error || 'Required'
             ]"
-            @input="v.loginRequest.password.$touch()"
           >
             <template v-slot:prepend>
               <q-icon :name="mdiOnepassword"/>
