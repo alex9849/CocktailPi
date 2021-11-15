@@ -1,4 +1,5 @@
 import { store } from '../store'
+import Error404 from 'pages/Error404.vue'
 
 function redirectIfNotAuthenticated (to, from, next) {
   if (!store.getters['auth/isLoggedIn']) {
@@ -113,9 +114,9 @@ const routes = [
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '*',
+    path: '/:catchAll(.*)*',
     name: '404Page',
-    component: () => import('pages/Error404.vue')
+    component: Error404
   }
 ]
 
