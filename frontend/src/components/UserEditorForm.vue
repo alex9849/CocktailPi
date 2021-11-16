@@ -55,7 +55,7 @@
       outlined
       :loading="loading"
       :disable="loading || disabled"
-      :model-value="v.modelValue.password"
+      :model-value="modelValue.password"
       :rules="[
         val => !passwordRequired || !v.modelValue.password.required.$invalid || 'Required',
         val => !v.modelValue.password.minLength.$invalid || 'Minimal length 6',
