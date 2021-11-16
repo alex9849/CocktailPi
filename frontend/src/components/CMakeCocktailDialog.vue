@@ -1,8 +1,8 @@
 <template>
   <q-dialog
-    :value="value"
+    :model-value="show"
     ref="mcDialog"
-    @input="$emit('input', $event)"
+    @update:model-value="$emit('update:show', $event)"
     style="max-width: max-content"
   >
     <q-card
@@ -13,20 +13,19 @@
         <p class="text-h5">Order Cocktail</p>
         <q-splitter
           horizontal
-          :value="10"
+          :model-value="10"
         />
         <q-input
-          v-model.number="amountToProduce"
-          @input="$v.amountToProduce.$touch()"
+          v-model.number="v.amountToProduce.$model"
           label="Amount to produce"
           outlined
           input-class="text-center text-weight-medium"
           rounded
           type="number"
           :rules="[
-            val => $v.amountToProduce.required || 'Required',
-            val => $v.amountToProduce.minValue || 'Min 50ml',
-            val => $v.amountToProduce.maxValue || 'Max 1000ml'
+            val => !v.amountToProduce.required.$invalid || 'Required',
+            val => !v.amountToProduce.minValue.$invalid || 'Min 50ml',
+            val => !v.amountToProduce.maxValue.$invalid || 'Max 1000ml'
           ]"
         >
           <template v-slot:append>
@@ -105,7 +104,7 @@
         <q-table
           v-if="isUserPumpIngredientEditor"
           :columns="columns"
-          :data="sortedPumpLayout"
+          :rows="sortedPumpLayout"
           :pagination="{rowsPerPage: 0}"
           hide-bottom
           flat
@@ -118,8 +117,8 @@
               :props="props"
             >
               <c-ingredient-selector
-                :value="props.row.currentIngredient"
-                @input="updatePumpIngredient(props.row, $event)"
+                :selected="props.row.currentIngredient"
+                @update:selected="updatePumpIngredient(props.row, $event)"
                 clearable
                 dense
                 filter-manual-ingredients
@@ -148,8 +147,8 @@
               :props="props"
             >
               <q-input
-                :value="props.row.fillingLevelInMl"
-                @input="updatePumpFillingLevel(props.row, $event)"
+                :model-value="props.row.fillingLevelInMl"
+                @update:model-value="updatePumpFillingLevel(props.row, $event)"
                 debounce="500"
                 :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
                 type="number"
@@ -190,7 +189,7 @@
         <q-btn
           color="positive"
           @click="onMakeCocktail()"
-          :disable="hasCocktailProgress || $v.amountToProduce.$invalid || !feasibilityOk"
+          :disable="hasCocktailProgress || v.amountToProduce.$invalid || !feasibilityOk"
         >
           Make cocktail
         </q-btn>
@@ -217,7 +216,7 @@ export default {
   name: 'CMakeCocktailDialog',
   components: { CIngredientSelector },
   props: {
-    value: {
+    show: {
       type: Boolean,
       required: false
     },
@@ -226,7 +225,7 @@ export default {
       required: true
     }
   },
-  emits: ['input'],
+  emits: ['update:show'],
   data () {
     return {
       amountToProduce: 250,
@@ -245,9 +244,11 @@ export default {
     }
   },
   setup () {
-    this.mdiPlay = mdiPlay
-    this.mdiAlertOutline = mdiAlertOutline
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiPlay: mdiPlay,
+      mdiAlertOutline: mdiAlertOutline
+    }
   },
   watch: {
     recipe: {

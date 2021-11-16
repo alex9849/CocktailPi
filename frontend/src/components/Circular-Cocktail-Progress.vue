@@ -25,7 +25,7 @@
           <h5 style="margin: 0 0 10px 0">Currently fabricated cocktail</h5>
           <q-splitter
             horizontal
-            :value="10"
+            :model-value="10"
             style="padding-bottom: 10px"
           />
           <div v-if="hasCocktailProgress">

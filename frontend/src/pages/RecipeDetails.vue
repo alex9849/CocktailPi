@@ -54,7 +54,7 @@
               big
               alternateRowColors
               class="bg-grey-3 shadow-2"
-              v-model="recipe.productionSteps"
+              v-model:model-value="recipe.productionSteps"
             />
           </div>
         </div>
@@ -73,7 +73,7 @@
       </div>
     </div>
     <c-question
-      v-model="deleteDialog"
+      v-model:show="deleteDialog"
       :loading="deleting"
       ok-color="red"
       ok-button-text="Delete"

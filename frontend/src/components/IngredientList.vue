@@ -1,7 +1,8 @@
 <template>
   <draggable
-    :value="productionSteps"
-    @input="onProductionStepListDrag($event)"
+    :itemKey="step => productionSteps.indexOf(step)"
+    :model-value="productionSteps"
+    @update:model-value="onProductionStepListDrag($event)"
     :disabled="!editable"
     :delay="400"
     :delayOnTouchOnly="true"
@@ -12,142 +13,147 @@
     class="rounded-borders q-list q-list--bordered q-list--separator"
     :animation="200"
   >
-    <q-item
-      v-for="(productionStep, index) in productionSteps"
-      :key="index"
-      class="dragItem"
-      :class="{'alternateGrey': alternateRowColors}"
-    >
-      <q-item-section avatar>
-        <q-avatar color="grey">{{ index + 1}}.</q-avatar>
-      </q-item-section>
-      <q-item-section v-if="productionStep.type === 'writtenInstruction'">
-        <q-list>
-          <q-item>
-            <q-item-section>
-              <q-item-label caption>
-                Manual instruction:
-              </q-item-label>
-              {{ productionStep.message }}
-            </q-item-section>
-            <q-item-section side v-if="editable">
-              <q-btn
-                :icon="mdiPencilOutline"
-                @click.native="showManualInstructionEditor(productionStep)"
-                dense
-                flat
-                rounded
-              />
-            </q-item-section>
-            <q-item-section side v-if="editable">
-              <q-btn
-                :icon="mdiDelete"
-                @click.native="removeManualInstruction(productionStep)"
-                dense
-                flat
-                rounded
-              />
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-item-section>
-      <q-item-section v-if="productionStep.type === 'addIngredients'">
-        <draggable
-          :value="productionStep.stepIngredients"
-          @input="onStepIngredientsListDrag(productionStep, $event)"
-          :disabled="!editable"
-          :delay="400"
-          :delayOnTouchOnly="true"
-          :touchStartThreshold="10"
-          draggable=".dragItem"
-          group="ingredients"
-          tag="div"
-          class="q-list q-list--bordered q-list--separator"
-          :animation="200"
-        >
-          <q-item v-for="(stepIngredient, index) in productionStep.stepIngredients" :key="index" class="dragItem">
-            <q-item-section>
-              <div style="display: ruby">
-                {{ stepIngredient.amount }} {{ stepIngredient.ingredient.unit }} {{ stepIngredient.ingredient.name }}
-                <q-item-label v-if="!stepIngredient.scale" caption>
-                  (Unscaled)
-                </q-item-label>
-              </div>
-              <q-item-label v-if="stepIngredient.ingredient.alcoholContent !== 0" caption>
-                {{ stepIngredient.ingredient.alcoholContent }}% alcohol content
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side v-if="editable">
-              <q-btn
-                v-if="productionStep.stepIngredients.length > 1"
-                :icon="mdiCallSplit"
-                @click.native="splitUpStepIngredient(productionStep, stepIngredient)"
-                dense
-                flat
-                rounded
-              />
-            </q-item-section>
-            <q-item-section side v-if="editable">
-              <q-btn
-                :icon="mdiPencilOutline"
-                @click.native="showStepIngredientEditor(productionStep, stepIngredient)"
-                dense
-                flat
-                rounded
-              />
-            </q-item-section>
-            <q-item-section side v-if="editable">
-              <q-btn
-                :icon="mdiDelete"
-                @click.native="removeStepIngredient(productionStep, stepIngredient)"
-                dense
-                flat
-                rounded
-              />
-            </q-item-section>
-          </q-item>
-        </draggable>
-      </q-item-section>
-    </q-item>
-    <q-item slot="header">
-      <q-item-section>
-        <q-item-label header style="padding: 0" class="text-black">
-          <b v-if="big">
-            Production-Steps
-          </b>
-          <div v-else>
-            Production-Steps
-          </div>
-        </q-item-label>
-      </q-item-section>
-
-      <q-item-section side v-if="editable">
-        <q-btn
-          :icon="mdiPlusCircleOutline"
-          @click="showAddProductionStepEditor()"
-          dense
-          flat
-          rounded
-        />
-      </q-item-section>
-
-      <c-edit-dialog
-        v-model="editor.visible"
-        :title="editor.isCreatingNew? 'Add Production-Step':'Edit Production-Step'"
-        :valid="editor.valid"
-        @clickAbort="closeProductionStepEditor"
-        @clickSave="saveEditProductionStep"
+    <template #item="{element, index}">
+      <q-item
+        :class="{'alternateGrey': alternateRowColors}"
+        class="dragItem"
       >
-        <q-splitter horizontal :value="10" />
-        <production-step-list-editor
-          @valid="editor.valid = true"
-          @invalid="editor.valid = false"
-          v-model="editor.editingObject"
-          :new-production-step="editor.isCreatingNew"
-        />
-      </c-edit-dialog>
+        <q-item-section avatar>
+          <q-avatar color="grey">{{ index + 1}}.</q-avatar>
+        </q-item-section>
+        <q-item-section v-if="element.type === 'writtenInstruction'">
+          <q-list>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>
+                  Manual instruction:
+                </q-item-label>
+                {{ element.message }}
+              </q-item-section>
+              <q-item-section v-if="editable" side>
+                <q-btn
+                  :icon="mdiPencilOutline"
+                  dense
+                  flat
+                  rounded
+                  @click.native="showManualInstructionEditor(element)"
+                />
+              </q-item-section>
+              <q-item-section v-if="editable" side>
+                <q-btn
+                  :icon="mdiDelete"
+                  dense
+                  flat
+                  rounded
+                  @click.native="removeManualInstruction(element)"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-item-section>
+        <q-item-section v-if="element.type === 'addIngredients'">
+          <draggable
+            :animation="200"
+            :delay="400"
+            :delayOnTouchOnly="true"
+            :disabled="!editable"
+            :itemKey="step => productionSteps.indexOf(step)"
+            :model-value="element.stepIngredients"
+            :touchStartThreshold="10"
+            class="q-list q-list--bordered q-list--separator"
+            draggable=".dragItem"
+            group="ingredients"
+            tag="div"
+            @update:model-value="onStepIngredientsListDrag(element, $event)"
+          >
+            <template #item="sublist">
+              <q-item class="dragItem">
+                <q-item-section>
+                  <div style="display: ruby">
+                    {{ sublist.element.ingredient.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
+                    <q-item-label v-if="!element.scale" caption>
+                      (Unscaled)
+                    </q-item-label>
+                  </div>
+                  <q-item-label v-if="sublist.element.ingredient.alcoholContent !== 0" caption>
+                    {{ sublist.element.ingredient.alcoholContent }}% alcohol content
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section v-if="editable" side>
+                  <q-btn
+                    v-if="element.stepIngredients.length > 1"
+                    :icon="mdiCallSplit"
+                    dense
+                    flat
+                    rounded
+                    @click.native="splitUpStepIngredient(element, sublist.element)"
+                  />
+                </q-item-section>
+                <q-item-section v-if="editable" side>
+                  <q-btn
+                    :icon="mdiPencilOutline"
+                    dense
+                    flat
+                    rounded
+                    @click.native="showStepIngredientEditor(element, sublist.element)"
+                  />
+                </q-item-section>
+                <q-item-section v-if="editable" side>
+                  <q-btn
+                    :icon="mdiDelete"
+                    dense
+                    flat
+                    rounded
+                    @click.native="removeStepIngredient(element, sublist.element)"
+                  />
+                </q-item-section>
+              </q-item>
+            </template>
+          </draggable>
+        </q-item-section>
+      </q-item>
+    </template>
+    <template #header>
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-black" header style="padding: 0">
+            <b v-if="big">
+              Production-Steps
+            </b>
+            <div v-else>
+              Production-Steps
+            </div>
+          </q-item-label>
+        </q-item-section>
 
-    </q-item>
+        <q-item-section v-if="editable" side>
+          <q-btn
+            :icon="mdiPlusCircleOutline"
+            dense
+            flat
+            rounded
+            @click="showAddProductionStepEditor()"
+          />
+        </q-item-section>
+
+        <c-edit-dialog
+          v-model:show="editor.visible"
+          :title="editor.isCreatingNew? 'Add Production-Step':'Edit Production-Step'"
+          :valid="editor.valid"
+          @clickAbort="closeProductionStepEditor"
+          @clickSave="saveEditProductionStep"
+        >
+          <q-splitter :model-value="10" horizontal />
+          <production-step-list-editor
+            v-model="editor.editingObject"
+            :new-production-step="editor.isCreatingNew"
+            @invalid="editor.valid = false"
+            @valid="editor.valid = true"
+          />
+        </c-edit-dialog>
+
+      </q-item>
+    </template>
   </draggable>
 </template>
 
@@ -162,7 +168,7 @@ export default {
   name: 'IngredientList',
   components: { ProductionStepListEditor, CEditDialog, draggable },
   props: {
-    value: {
+    modelValue: {
       type: Array,
       required: true,
       default: () => []
@@ -180,7 +186,7 @@ export default {
       default: false
     }
   },
-  emits: ['input'],
+  emits: ['update:modelValue'],
   data () {
     return {
       productionSteps: [],
@@ -195,11 +201,11 @@ export default {
     }
   },
   watch: {
-    value: {
+    modelValue: {
       immediate: true,
       deep: true,
       handler () {
-        this.productionSteps = cloneDeep(this.value)
+        this.productionSteps = cloneDeep(this.modelValue)
       }
     }
   },
@@ -208,7 +214,7 @@ export default {
       console.log(el)
     },
     emitChange () {
-      this.$emit('input', this.productionSteps)
+      this.$emit('update:modelValue', this.productionSteps)
     },
     showAddProductionStepEditor () {
       this.editor.isCreatingNew = true
