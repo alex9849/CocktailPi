@@ -19,19 +19,19 @@
                   class="row justify-evenly q-col-gutter-sm q-pa-sm"
                 >
                   <q-checkbox
-                    v-model="value.fabricableWithOwnedIngredients"
+                    v-model="filter.fabricableWithOwnedIngredients"
                     class="col-12 col-sm-6"
                   >
                     Fabricable with owned ingredients
                   </q-checkbox>
                   <q-checkbox
-                    v-model="value.automaticallyFabricable"
+                    v-model="filter.automaticallyFabricable"
                     class="col-12 col-sm-6"
                   >
                     Can be fabricated fully automatic
                   </q-checkbox>
                   <c-ingredient-selector
-                    v-model="value.containsIngredients"
+                    v-model="filter.containsIngredients"
                     class="col-12 col-sm-8"
                     dense
                     label="Contains ingredients"
@@ -41,7 +41,7 @@
                     use-chips
                   />
                   <q-select
-                    v-model="value.orderBy"
+                    v-model="filter.orderBy"
                     class="col-12 col-sm-4"
                     label="Order by"
                     emit-value
@@ -67,7 +67,7 @@
         </div>
         <div class="block">
           <q-input
-            v-model="value.query"
+            v-model="filter.query"
             outlined
             label="Search"
             dense
@@ -98,7 +98,7 @@ export default {
   name: 'CRecipeSearchFilterCard',
   components: { CIngredientSelector },
   props: {
-    value: {
+    filter: {
       type: Object,
       required: true
     }
@@ -121,9 +121,11 @@ export default {
       }]
     }
   },
-  emits: ['clickSearch', 'input'],
-  created () {
-    this.mdiMagnify = mdiMagnify
+  emits: ['clickSearch', 'update:filter'],
+  setup () {
+    return {
+      mdiMagnify: mdiMagnify
+    }
   },
   methods: {
     defaultFilter () {
@@ -139,7 +141,7 @@ export default {
       this.$emit('clickSearch')
     },
     resetFilter () {
-      this.$emit('input', this.defaultFilter())
+      this.$emit('update:filter', this.defaultFilter())
     }
   }
 }

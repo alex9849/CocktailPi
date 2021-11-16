@@ -1,7 +1,7 @@
 <template>
   <div class="q-gutter-md">
     <c-recipe-search-filter-card
-      v-model="filter"
+      v-model:filter="filter"
       ref="filter"
       class="bg-grey-1"
       @clickSearch="updateRecipes"
@@ -55,8 +55,8 @@
     </c-recipe-list>
     <q-pagination
       class="flex justify-center"
-      :value="pagination.page + 1"
-      @input="onPageClick($event - 1)"
+      :model-value="pagination.page + 1"
+      @update:model-value="onPageClick($event - 1)"
       color="grey-8"
       :max="pagination.totalPages"
       :max-pages="9"

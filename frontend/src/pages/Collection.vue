@@ -81,12 +81,12 @@
               <q-input label="Name"
                        outlined
                        :disable="!editData.editMode || editData.saving"
-                       v-model="editData.collection.name"
+                       v-model:model-value="editData.collection.name"
                        hide-bottom-space
                        :rules="[
-                        val => $v.editData.collection.name.required || 'Required',
-                        val => $v.editData.collection.name.maxLength || 'Maximal length 20',
-                        val => $v.editData.collection.name.minLength || 'Minimal length 3']"
+                        val => !v.editData.collection.name.required.$invalid || 'Required',
+                        val => !v.editData.collection.name.maxLength.$invalid || 'Maximal length 20',
+                        val => !v.editData.collection.name.minLength.$invalid || 'Minimal length 3']"
               >
 
               </q-input>
@@ -99,7 +99,7 @@
                             color="red"
                             :disable="editData.saving"
                             v-if="collection.hasImage && !editData.newImage"
-                            v-model="editData.removeImage"
+                            v-model:model-value="editData.removeImage"
                             @change="onChangeRemoveImage($event)"
                   />
                   <q-file label="Image"
@@ -107,7 +107,7 @@
                           bottom-slots
                           :disable="editData.saving"
                           v-if="!editData.removeImage"
-                          v-model="editData.newImage"
+                          v-model:model-value="editData.newImage"
                           @change="onImageSelect($event)"
                           max-file-size="20971520"
                           accept="image/*"
@@ -125,7 +125,7 @@
               </div>
               <q-checkbox label="complete"
                           :disable="!editData.editMode || editData.saving"
-                          v-model="editData.collection.completed"
+                          v-model:model-value="editData.collection.completed"
               />
               <q-input label="description"
                        outlined
@@ -133,10 +133,10 @@
                        hide-bottom-space
                        type="textarea"
                        :disable="!editData.editMode || editData.saving"
-                       v-model="editData.collection.description"
+                       v-model:model-value="editData.collection.description"
                        :rules="[
-                        val => $v.editData.collection.description.required || 'Required',
-                        val => $v.editData.collection.description.maxLength || 'Maximal length 2000']"
+                        val => !v.editData.collection.description.required.$invalid || 'Required',
+                        val => !v.editData.collection.description.maxLength.$invalid || 'Maximal length 2000']"
               >
               </q-input>
               <q-btn
@@ -175,11 +175,11 @@
       @clickAbort="showDeleteCollectionDialog = false"
       @clickOk="onDeleteCollection"
       :question="'Delete collection \'' + collection.name + '\'?'"
-      v-model="showDeleteCollectionDialog"
+      v-model:show="showDeleteCollectionDialog"
     />
     <c-edit-dialog
       title="Add recipe"
-      v-model="editData.showAddRecipeDialog"
+      v-model:show="editData.showAddRecipeDialog"
     >
       <c-recipe-selector/>
     </c-edit-dialog>
@@ -187,9 +187,9 @@
 </template>
 
 <script>
-import { maxLength, minLength, required } from '@vuelidate/validators'
+import {maxLength, minLength, required} from '@vuelidate/validators'
 import CollectionService from 'src/services/collection.service'
-import { mdiDelete, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import {mdiDelete, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CQuestion from 'components/CQuestion'
 import CEditDialog from 'components/CEditDialog'
@@ -245,9 +245,11 @@ export default {
     }
   },
   setup () {
-    this.mdiDelete = mdiDelete
-    this.mdiPlusCircleOutline = mdiPlusCircleOutline
-    return { v$: useVuelidate() }
+    return {
+      v: useVuelidate(),
+      mdiDelete: mdiDelete,
+      mdiPlusCircleOutline: mdiPlusCircleOutline
+    }
   },
   watch: {
     collection: {
@@ -334,7 +336,7 @@ export default {
     }
   },
   validations () {
-    const validations = {
+    return {
       editData: {
         collection: {
           name: {
@@ -345,11 +347,11 @@ export default {
           description: {
             required,
             maxLength: maxLength(2000)
-          }
+          },
+          complete: {}
         }
       }
     }
-    return validations
   }
 }
 </script>
