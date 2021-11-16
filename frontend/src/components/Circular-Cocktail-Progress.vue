@@ -75,6 +75,7 @@
                   :value="cocktailProgress.progress / 100"
                   stripe
                   rounded
+                  :animation-speed="500"
                   :color="loadingBarColor"
                   size="20px"
                   style="margin: 10px 0"

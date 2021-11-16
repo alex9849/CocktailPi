@@ -61,7 +61,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { mdiAccountBox, mdiAlert, mdiPower } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
 import SockJS from 'sockjs-client'
-import Stomp from 'stompjs'
+import { Stomp } from '@stomp/stompjs'
 import authHeader from '../services/auth-header'
 
 export default {
