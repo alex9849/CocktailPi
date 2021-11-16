@@ -71,7 +71,7 @@
                 <q-item-section>
                   <div style="display: ruby">
                     {{ sublist.element.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
-                    <q-item-label v-if="!element.scale" caption>
+                    <q-item-label v-if="!sublist.element.scale" caption>
                       (Unscaled)
                     </q-item-label>
                   </div>

@@ -91,8 +91,8 @@ export default {
     connectWebsocket (websocketAutoreconnect) {
       const socket = new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + '/ws')
       this.stompClient = Stomp.over(socket)
-      if (!process.env.DEV) {
-        this.stompClient.debug = null
+      if (process.env.DEV) {
+        this.stompClient.debug = function (str) {}
       }
       for (const id of this.reconnectTasks) {
         clearTimeout(id)
