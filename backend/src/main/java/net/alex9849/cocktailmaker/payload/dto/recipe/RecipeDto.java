@@ -47,6 +47,8 @@ public class RecipeDto {
     @NotNull
     private Set<CategoryDto> categories;
 
+    private boolean hasImage;
+
     @NotNull
     private long defaultAmountToFill;
 
@@ -74,6 +76,14 @@ public class RecipeDto {
 
     public void setInPublic(boolean inPublic) {
         this.inPublic = inPublic;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public OwnerDto getOwner() {

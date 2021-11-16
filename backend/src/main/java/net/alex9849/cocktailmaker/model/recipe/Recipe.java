@@ -10,6 +10,7 @@ public class Recipe {
     private long id;
     private String name;
     private boolean inPublic;
+    private boolean hasImage;
     private User owner;
     private Long ownerId;
     private String description;
@@ -36,6 +37,14 @@ public class Recipe {
 
     public boolean isInPublic() {
         return inPublic;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public void setInPublic(boolean inPublic) {

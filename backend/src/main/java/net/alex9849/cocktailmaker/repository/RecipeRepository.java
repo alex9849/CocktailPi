@@ -45,9 +45,6 @@ public class RecipeRepository extends JdbcDaoSupport {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private IngredientRepository ingredientRepository;
-
     public long count() {
         return getJdbcTemplate().execute((ConnectionCallback<Long>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT count(*) as number FROM recipes");
@@ -340,6 +337,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setName(rs.getString("name"));
         recipe.setInPublic(rs.getBoolean("in_public"));
         recipe.setLastUpdate(rs.getTimestamp("last_update"));
+        recipe.setHasImage(rs.getObject("image") != null);
         recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
         return recipe;
     }
