@@ -41,8 +41,16 @@
         <div class="col-12 col-sm-6">
           <div>
             <q-img
-              :src="(!!recipe.id)? ($store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()):null"
-              placeholder-src="../assets/cocktail-solid.png"
+              v-if="recipe.hasImage"
+              :ratio="16/9"
+              :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+              class="rounded-borders shadow-1"
+              placeholder-src="~assets/cocktail-solid.png"
+            />
+            <q-img
+              v-else
+              placeholder-src="~assets/cocktail-solid.png"
+              src="~assets/cocktail-solid.png"
               :ratio="16/9"
               class="rounded-borders shadow-1"
             />

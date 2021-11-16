@@ -26,33 +26,37 @@
         multiple
         outlined
       />
-      <div style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
-        <q-toggle
-          label="Remove image if existing"
-          :disable="disabled"
-          :model-value="modelValue.removeImage"
-          @update:model-value="v.modelValue.removeImage.$model = $event; $emit('update:modelValue', modelValue)"
-        />
-        <q-file
-          v-if="!modelValue.removeImage"
-          filled
-          :disable="disabled"
-          bottom-slots
-          :model-value="modelValue.image"
-          @update:model-value="v.modelValue.image.$model = $event; $emit('update:modelValue', modelValue)"
-          label="Image"
-          max-file-size="20971520"
-          counter
-          accept="image/*"
-          clearable
-        >
-          <template v-slot:prepend>
-            <q-icon
-              name="cloud_upload"
-              @click.stop
-            />
-          </template>
-        </q-file>
+      <div :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.recipe.hasImage && !modelValue.image && !modelValue.removeImage}"
+           class="row"
+      >
+        <div class="col">
+          <q-toggle v-if="modelValue.recipe.hasImage && !modelValue.image"
+                    :disable="disabled"
+                    :model-value="modelValue.removeImage"
+                    color="red"
+                    label="remove existing image"
+                    @update:model-value="v.modelValue.removeImage.$model = $event; $emit('update:modelValue', modelValue)"
+          />
+          <q-file v-if="!modelValue.removeImage"
+                  :disable="disabled"
+                  :model-value="modelValue.image"
+                  accept="image/*"
+                  bottom-slots
+                  clearable
+                  hide-bottom-space
+                  label="Image"
+                  max-file-size="20971520"
+                  outlined
+                  @update:model-value="v.modelValue.image.$model = $event; $emit('update:modelValue', modelValue)"
+          >
+            <template v-slot:prepend>
+              <q-icon
+                name="cloud_upload"
+                @click.stop
+              />
+            </template>
+          </q-file>
+        </div>
       </div>
       <q-input
         outlined
