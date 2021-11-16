@@ -88,20 +88,16 @@ export default {
       this.storeLogout()
       this.$router.push({ name: 'login' })
     },
-    connectWebsocket (websocketAutoreconnect) {
-      const socket = new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + '/ws')
-      this.stompClient = Stomp.over(socket)
-      if (process.env.DEV) {
-        this.stompClient.debug = function (str) {}
-      }
-      for (const id of this.reconnectTasks) {
-        clearTimeout(id)
+    connectWebsocket (websocketAutoReconnect) {
+      this.stompClient = Stomp.over(() => new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + '/ws'))
+      this.stompClient.connectHeaders = {
+        Authorization: authHeader()
       }
       const vm = this
-      const connectCallback = function () {
+      this.stompClient.onConnect = function () {
         vm.reconnectThrottleInSeconds = 5
         vm.showWebsocketReconnectDialog = false
-        vm.stompClient.subscribe('/topic/cocktailprogress', function (cocktailProgressMessage) {
+        vm.stompClient.subscribe('/topic/cocktailprogress', cocktailProgressMessage => {
           if (cocktailProgressMessage.body === 'DELETE') {
             vm.setCocktailProgress(null)
           } else {
@@ -110,12 +106,19 @@ export default {
             vm.setCocktailProgress(progress)
           }
         })
-        vm.stompClient.subscribe('/topic/pumplayout', function (layoutMessage) {
+        vm.stompClient.subscribe('/topic/pumplayout', layoutMessage => {
           vm.setPumpLayout(JSON.parse(layoutMessage.body))
         })
       }
-      const disconnectCallback = function () {
-        if (websocketAutoreconnect) {
+      if (!process.env.DEV) {
+        this.stompClient.debug = function (str) {}
+      }
+      for (const id of this.reconnectTasks) {
+        clearTimeout(id)
+      }
+      this.reconnectTasks = []
+      this.stompClient.onWebSocketClose = function () {
+        if (websocketAutoReconnect) {
           vm.showWebsocketReconnectDialog = true
           const reconnectThrottle = vm.reconnectThrottleInSeconds
           vm.reconnectThrottleInSeconds = Math.min(20, vm.reconnectThrottleInSeconds * 2)
@@ -129,14 +132,12 @@ export default {
           }, reconnectThrottle * 1000))
         }
       }
-      const headers = {
-        Authorization: authHeader()
-      }
-      this.stompClient.connect(headers, connectCallback, disconnectCallback)
+      this.stompClient.activate()
     },
     disconnectWebsocket () {
       if (this.stompClient != null) {
-        this.stompClient.disconnect()
+        this.stompClient.onWebSocketClose = () => {}
+        this.stompClient.deactivate()
       }
     },
     destroyWebsocket () {
