@@ -4,9 +4,9 @@
     behavior="menu"
     :loading="loading"
     :dense="dense"
-    :value="value"
+    :model-value="selection"
     :bg-color="bgColor"
-    @input="$emit('input', $event)"
+    @update:model-value="$emit('update:selection', $event)"
     use-input
     :clearable="clearable"
     :disable="disable"
@@ -35,8 +35,8 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'CRecipeSelector',
   props: {
-    value: {
-      type: Object | Array
+    selection: {
+      type: [Object, Array]
     },
     label: {
       type: String,
@@ -79,7 +79,7 @@ export default {
       default: () => []
     }
   },
-  emits: ['input'],
+  emits: ['update:selection'],
   data () {
     return {
       fetchedOptions: []

@@ -37,7 +37,7 @@
                 :loading="editRecipeMode.addingRecipe"
                 label="Add recipe"
                 class="bg-grey-2"
-                @input="!!$event ? onAddRecipe($event.id) : ''"
+                @update:selection="!!$event ? onAddRecipe($event.id) : ''"
               >
                 <template v-slot:prepend>
                   <q-icon :name="mdiPlusCircleOutline" />
