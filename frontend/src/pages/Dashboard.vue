@@ -18,7 +18,7 @@ export default {
         'Let the evening beGIN...',
         'You look like you need a drink.',
         'Civilization begins with distillation.',
-        'Keep Calm and drink a cocktail!',
+        'Keep calm and drink a cocktail!',
         'Theres always time for a cocktail!',
         'I\'ll drink to that!',
         'Trust me, you can dance!'
