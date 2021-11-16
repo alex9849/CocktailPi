@@ -1,33 +1,32 @@
 <template>
   <div>
     <c-ingredient-selector
-      v-model="value.ingredient"
-      @input="() => {$emit('input', value); $v.value.ingredient.$touch();}"
-      :rules="[val => $v.value.ingredient.required || 'Required']"
+      :rules="[val => !v.modelValue.ingredient.required.$invalid || 'Required']"
+      :selected="modelValue.ingredient"
+      @update:selected="v.modelValue.ingredient.$model = $event; $emit('update:modelValue', modelValue)"
     />
     <q-input
       :label="amountLabel"
       type="number"
       outlined
-      v-model.number="value.amount"
-      @input="() => {$emit('input', value); $v.value.amount.$touch();}"
+      :model-value.number="modelValue.amount"
       :rules="[
-        val => $v.value.amount.required || 'Required',
-        val => $v.value.amount.minValue || 'Min 1ml'
+        val => !v.modelValue.amount.required.$invalid || 'Required',
+        val => !v.modelValue.amount.minValue.$invalid || 'Min 1ml'
       ]"
+      @update:model-value="v.modelValue.amount.$model = $event; $emit('update:modelValue', modelValue)"
     />
     <q-checkbox
       label="Scale with volume"
-      v-model="value.scale"
-      @input="$emit('input', value)"
+      :model-value="modelValue.scale"
+      @update:model-value="v.modelValue.scale.$model = $event; $emit('update:modelValue', modelValue)"
     />
     <slot name="below"/>
   </div>
 </template>
 
 <script>
-import IngridientService from '../services/ingredient.service'
-import { minValue, required } from '@vuelidate/validators'
+import {minValue, required} from '@vuelidate/validators'
 import CIngredientSelector from './CIngredientSelector'
 import useVuelidate from '@vuelidate/core'
 
@@ -35,74 +34,49 @@ export default {
   name: 'IngredientProductionStepForm',
   components: { CIngredientSelector },
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
     }
   },
-  emits: ['input', 'valid', 'invalid'],
+  emits: ['update:modelValue', 'valid', 'invalid'],
   data () {
     return {
       ingredientOptions: []
     }
   },
   setup () {
-    return { v$: useVuelidate() }
-  },
-  methods: {
-    filterIngredients (val, update, abort) {
-      if (val.length < 1) {
-        abort()
-        return
-      }
-      IngridientService.getIngredientsFilter(val)
-        .then(ingredients => {
-          update(() => {
-            this.ingredientOptions = ingredients
-          })
-        }, () => abort)
-    },
-    abortFilterIngredients () {
-    }
+    return { v: useVuelidate() }
   },
   validations () {
-    const validations = {
-      value: {
+    return {
+      modelValue: {
         ingredient: {
           required
         },
         amount: {
           required,
           minValue: minValue(1)
-        }
+        },
+        scale: {}
       }
     }
-    return validations
   },
   computed: {
     amountLabel () {
-      if (this.value.ingredient) {
-        return 'Amount (in ' + this.value.ingredient.unit + ')'
+      if (this.modelValue.ingredient) {
+        return 'Amount (in ' + this.modelValue.ingredient.unit + ')'
       }
       return 'Amount'
     }
   },
   watch: {
-    '$v.value.$invalid': function _watch$vValue$invalid (value) {
-      if (!value) {
-        this.$emit('valid')
-      } else {
-        this.$emit('invalid')
-      }
-    },
-    value: {
-      immediate: true,
-      handler () {
-        this.$v.value.$touch()
-        if (this.$v.value.$invalid) {
-          this.$emit('invalid')
-        } else {
+    'v.modelValue.$invalid': {
+      handler (value) {
+        if (!value) {
           this.$emit('valid')
+        } else {
+          this.$emit('invalid')
         }
       }
     }

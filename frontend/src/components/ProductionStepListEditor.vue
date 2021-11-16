@@ -3,8 +3,8 @@
     <q-tabs
       class="text-teal"
       inline-label
-      v-model="selectedTab"
-      @input="onProductionStepTypeChange($event)"
+      :model-value="selectedTab"
+      @update:model-value="onProductionStepTypeChange($event)"
     >
       <q-tab
         :icon="mdiCupWater"
@@ -20,7 +20,7 @@
       />
     </q-tabs>
     <q-tab-panels
-      :value="selectedTab"
+      :model-value="selectedTab"
     >
       <q-tab-panel
         name="ingredient"
@@ -28,8 +28,8 @@
       >
         <ingredient-production-step-form
           v-if="selectedTab === 'ingredient'"
-          :value="editStep"
-          @input="$emit('input', $event)"
+          :model-value="editStep"
+          @update:model-value="$emit('update:modelValue', $event)"
           @valid="$emit('valid')"
           @invalid="$emit('invalid')"
         />
@@ -40,8 +40,8 @@
       >
         <written-instruction-production-step-form
           v-if="selectedTab === 'writtenInstruction'"
-          :value="editStep"
-          @input="$emit('input', $event)"
+          :model-value="editStep"
+          @update:model-value="$emit('update:modelValue', $event)"
           @valid="$emit('valid')"
           @invalid="$emit('invalid')"
         />
@@ -60,7 +60,7 @@ export default {
   name: 'ProductionStepListEditor',
   components: { WrittenInstructionProductionStepForm, IngredientProductionStepForm },
   props: {
-    value: {
+    modelValue: {
       type: Object
     },
     newProductionStep: {
@@ -68,7 +68,7 @@ export default {
       default: false
     }
   },
-  emits: ['input', 'valid', 'invalid'],
+  emits: ['update:modelValue', 'valid', 'invalid'],
   data () {
     return {
       selectedTab: 'ingredient',
@@ -82,7 +82,7 @@ export default {
     this.mdiCupWater = mdiCupWater
   },
   watch: {
-    value: {
+    modelValue: {
       immediate: true,
       handler (newValue) {
         if (newValue) {
@@ -92,7 +92,7 @@ export default {
         }
         this.selectedTab = 'ingredient'
         this.editStep = {
-          ingredient: '',
+          ingredient: null,
           amount: '',
           scale: true
         }
@@ -107,9 +107,10 @@ export default {
       return 'ingredient'
     },
     onProductionStepTypeChange (newType) {
+      this.selectedTab = newType
       if (newType === 'ingredient') {
         this.editStep = Object.assign({}, {
-          ingredient: '',
+          ingredient: null,
           amount: '',
           scale: true
         })

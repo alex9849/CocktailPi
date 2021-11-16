@@ -1,68 +1,58 @@
 <template>
   <div>
     <q-input
-      v-model="value.message"
-      @input="() => {$emit('input', value); $v.value.message.$touch();}"
+      :model-value="modelValue.message"
+      :rules="[
+        val => !v.modelValue.message.required.$invalid || 'Required',
+        val => !v.modelValue.message.maxLength.$invalid || 'Max 500'
+      ]"
       tcype="textarea"
       label="Instruction"
       counter
       outlined
       autogrow
-      :rules="[
-        val => $v.value.message.required || 'Required',
-        val => $v.value.message.maxLength || 'Max 500'
-      ]"
+      @update:model-value="v.modelValue.message.$model = $event; $emit('update:modelValue', modelValue)"
     />
   </div>
 </template>
 
 <script>
 
-import { maxLength, required } from '@vuelidate/validators'
+import {maxLength, required} from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'WrittenInstructionProductionStepForm',
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: false
     }
   },
-  emits: ['input', 'valid', 'invalid'],
+  emits: ['update:modelValue', 'valid', 'invalid'],
   setup () {
-    return { v$: useVuelidate() }
+    return { v: useVuelidate() }
   },
   watch: {
-    value: {
-      immediate: true,
-      handler () {
-        this.$v.value.$touch()
-        if (this.$v.value.$invalid) {
-          this.$emit('invalid')
-        } else {
+    'v.modelValue.$invalid': {
+      handler (value) {
+        if (!value) {
           this.$emit('valid')
+        } else {
+          this.$emit('invalid')
         }
-      }
-    },
-    '$v.value.$invalid': function _watch$vValue$invalid (value) {
-      if (!value) {
-        this.$emit('valid')
-      } else {
-        this.$emit('invalid')
       }
     }
   },
   validations () {
-    const validations = {
-      value: {
+    return {
+      modelValue: {
         message: {
           required,
           maxLength: maxLength(500)
         }
       }
     }
-    return validations
   }
 }
 </script>

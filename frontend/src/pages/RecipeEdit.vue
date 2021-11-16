@@ -8,8 +8,7 @@
       flat
     >
       <recipe-editor-form
-        allowImageRemoving
-        v-model="editRecipe"
+        v-model:model-value="editRecipe"
         @valid="isValid = true"
         @invalid="isValid = false"
       >

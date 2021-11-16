@@ -70,7 +70,7 @@
               <q-item class="dragItem">
                 <q-item-section>
                   <div style="display: ruby">
-                    {{ sublist.element.ingredient.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
+                    {{ sublist.element.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
                     <q-item-label v-if="!element.scale" caption>
                       (Unscaled)
                     </q-item-label>
@@ -145,7 +145,7 @@
         >
           <q-splitter :model-value="10" horizontal />
           <production-step-list-editor
-            v-model="editor.editingObject"
+            v-model:model-value="editor.editingObject"
             :new-production-step="editor.isCreatingNew"
             @invalid="editor.valid = false"
             @valid="editor.valid = true"

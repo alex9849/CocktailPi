@@ -8,37 +8,38 @@
       <q-input
         outlined
         :disable="disabled"
-        v-model="value.recipe.name"
-        @input="() => {$emit('input', value); $v.value.recipe.name.$touch();}"
-        label="Recipe-Name"
+        :model-value="modelValue.recipe.name"
         :rules="[
-        val => $v.value.recipe.name.required || 'Required',
-        val => $v.value.recipe.name.minLength || 'Minimal length 3',
-        val => $v.value.recipe.name.maxLength || 'Maximal length 20']"
+        val => !v.modelValue.recipe.name.required.$invalid || 'Required',
+        val => !v.modelValue.recipe.name.minLength.$invalid || 'Minimal length 3',
+        val => !v.modelValue.recipe.name.maxLength.$invalid || 'Maximal length 20']"
+        label="Recipe-Name"
+        @update:model-value="v.modelValue.recipe.name.$model = $event; $emit('update:modelValue', modelValue)"
       />
       <q-select
         :disable="disabled"
         label="Categories"
-        v-model="value.recipe.categories"
+        :model-value="modelValue.recipe.categories"
+        @update:model-value="v.modelValue.recipe.categories.$model = $event; $emit('update:modelValue', modelValue)"
         :options="categories"
         option-label="name"
         multiple
         outlined
       />
-      <div v-if="allowImageRemoving" style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
+      <div style="border: 1px solid #c2c2c2; border-radius: 5px; padding: 3px">
         <q-toggle
           label="Remove image if existing"
           :disable="disabled"
-          v-model="value.removeImage"
-          @input="$emit('input', value)"
+          :model-value="modelValue.removeImage"
+          @update:model-value="v.modelValue.removeImage.$model = $event; $emit('update:modelValue', modelValue)"
         />
         <q-file
-          v-if="!value.removeImage"
+          v-if="!modelValue.removeImage"
           filled
           :disable="disabled"
           bottom-slots
-          v-model="value.image"
-          @input="$emit('input', value)"
+          :model-value="modelValue.image"
+          @update:model-value="v.modelValue.image.$model = $event; $emit('update:modelValue', modelValue)"
           label="Image"
           max-file-size="20971520"
           counter
@@ -53,63 +54,44 @@
           </template>
         </q-file>
       </div>
-      <q-file
-        v-else
-        filled
-        bottom-slots
-        v-model="value.image"
-        :disable="disabled"
-        @input="$emit('input', value)"
-        label="Image"
-        max-file-size="20971520"
-        counter
-        accept="image/*"
-        clearable
-      >
-        <template v-slot:prepend>
-          <q-icon
-            name="cloud_upload"
-            @click.stop
-          />
-        </template>
-      </q-file>
       <q-input
         outlined
         :disable="disabled"
-        v-model="value.recipe.description"
-        @input="() => {$emit('input', value); $v.value.recipe.description.$touch();}"
+        :model-value="modelValue.recipe.description"
+        :rules="[
+          val => !v.modelValue.recipe.description.required.$invalid || 'Required',
+          val => !v.modelValue.recipe.description.maxLength.$invalid || 'Maximal length 2000']"
         type="textarea"
         label="Description"
         counter
         maxlength="2000"
-        :rules="[
-          val => $v.value.recipe.description.required || 'Required',
-          val => $v.value.recipe.description.maxLength || 'Maximal length 2000']"
+        @update:model-value="v.modelValue.recipe.description.$model = $event; $emit('update:modelValue', modelValue)"
       />
       <q-input
         label="Default amount to produce"
         :disable="disabled"
         type="number"
         outlined
-        v-model.number="value.recipe.defaultAmountToFill"
-        @input="() => {$emit('input', value); $v.value.recipe.defaultAmountToFill.$touch();}"
+        :model-value.number="modelValue.recipe.defaultAmountToFill"
         :rules="[
-        val => $v.value.recipe.defaultAmountToFill.required || 'Required',
-        val => $v.value.recipe.defaultAmountToFill.minValue || 'Min 50ml']"
+        val => !v.modelValue.recipe.defaultAmountToFill.required.$invalid || 'Required',
+        val => !v.modelValue.recipe.defaultAmountToFill.minValue.$invalid || 'Min 50ml']"
+        @update:model-value="v.modelValue.recipe.defaultAmountToFill.$model = $event; $emit('update:modelValue', modelValue)"
       >
         <template v-slot:append>
           ml
         </template>
       </q-input>
       <IngredientList
-        v-model="value.recipe.productionSteps"
+        :model-value="modelValue.recipe.productionSteps"
+        @update:model-value="v.modelValue.recipe.productionSteps.$model = $event; $emit('update:modelValue', modelValue)"
         :editable="!disabled"
       />
       <q-checkbox
-        v-model="value.recipe.inPublic"
+        :model-value="modelValue.recipe.inPublic"
         :disable="disabled"
         label="Public recipe"
-        @input="$emit('input', value)"
+        @update:model-value="v.modelValue.recipe.inPublic.$model = $event; $emit('update:modelValue', modelValue)"
       />
       <slot name="below"/>
     </q-form>
@@ -117,40 +99,42 @@
 </template>
 
 <script>
-import { maxLength, minLength, minValue, required } from '@vuelidate/validators'
+import {maxLength, minLength, minValue, required} from '@vuelidate/validators'
 import IngredientList from './IngredientList'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import useVuelidate from '@vuelidate/core'
 
 export default {
   name: 'RecipeEditorForm',
   components: { IngredientList },
   props: {
-    value: {
+    modelValue: {
       type: Object,
       required: true
-    },
-    allowImageRemoving: {
-      type: Boolean,
-      default: false
     },
     disabled: {
       type: Boolean,
       default: false
     }
   },
-  emits: ['submit', 'input', 'valid', 'invalid'],
+  emits: ['submit', 'update:modelValue', 'valid', 'invalid'],
   data () {
     return {
       image: null
     }
   },
   setup () {
-    return { v$: useVuelidate() }
+    return { v: useVuelidate() }
+  },
+  methods: {
+    setValue(attribute, value) {
+      this.v.modelValue[attribute].$model = value;
+      this.$emit('update:modelValue', this.modelValue)
+    }
   },
   validations () {
-    const validations = {
-      value: {
+    return {
+      modelValue: {
         recipe: {
           name: {
             required,
@@ -164,18 +148,24 @@ export default {
           defaultAmountToFill: {
             required,
             minValue: minValue(50)
-          }
-        }
+          },
+          productionSteps: {},
+          inPublic: {},
+          categories: {}
+        },
+        image: {},
+        removeImage: {}
       }
     }
-    return validations
   },
   watch: {
-    '$v.value.recipe.$invalid': function _watch$vValueRecipe$invalid (value) {
-      if (!value) {
-        this.$emit('valid')
-      } else {
-        this.$emit('invalid')
+    'v.modelValue.recipe.$invalid': {
+      handler (value) {
+        if (!value) {
+          this.$emit('valid')
+        } else {
+          this.$emit('invalid')
+        }
       }
     }
   },
