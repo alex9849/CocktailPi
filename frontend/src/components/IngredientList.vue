@@ -154,6 +154,15 @@
 
       </q-item>
     </template>
+    <template v-if="productionSteps.length === 0"
+              #footer
+    >
+      <q-item>
+        <q-item-section class="text-center">
+          No Production-Steps added!
+        </q-item-section>
+      </q-item>
+    </template>
   </draggable>
 </template>
 

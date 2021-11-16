@@ -153,7 +153,10 @@ export default {
             required,
             minValue: minValue(50)
           },
-          productionSteps: {},
+          productionSteps: {
+            required,
+            minLength: minLength(1)
+          },
           inPublic: {},
           categories: {}
         },
