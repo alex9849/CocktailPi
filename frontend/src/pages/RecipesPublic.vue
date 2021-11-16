@@ -20,7 +20,7 @@
       </top-button-arranger>
       <div class="q-py-md">
         <c-recipe-search-list
-          :category-id="$route.params.cid"
+          :category-id="categoryId"
           ref="recipeSearchList"
         />
       </div>
@@ -63,7 +63,12 @@ export default {
     ...mapGetters({
       recipeCategories: 'category/getCategories',
       isRecipeCreatorRole: 'auth/isRecipeCreator'
-    })
+    }),
+    categoryId () {
+      if (!!this.$route.meta.category) {
+        return this.$route.meta.category.id
+      }
+    }
   }
 }
 </script>
