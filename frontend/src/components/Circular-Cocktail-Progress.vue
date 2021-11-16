@@ -16,7 +16,7 @@
       <q-icon :name="circularProgressIcon" size="20px"/>
     </q-circular-progress>
     <q-dialog
-      v-model="showDialog"
+      v-model:model-value="showDialog"
     >
       <q-card q-card-section class="text-center" style="width: 100%">
         <q-card-section
