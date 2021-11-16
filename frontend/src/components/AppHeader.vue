@@ -167,10 +167,12 @@ export default {
       }
     }
   },
-  created () {
-    this.mdiAccountBox = mdiAccountBox
-    this.mdiPower = mdiPower
-    this.mdiAlert = mdiAlert
+  setup () {
+    return {
+      mdiAccountBox: mdiAccountBox,
+      mdiPower: mdiPower,
+      mdiAlert: mdiAlert
+    }
   },
   unmounted () {
     this.destroyWebsocket()

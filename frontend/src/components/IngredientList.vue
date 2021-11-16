@@ -323,11 +323,13 @@ export default {
       this.emitChange()
     }
   },
-  created () {
-    this.mdiPlusCircleOutline = mdiPlusCircleOutline
-    this.mdiPencilOutline = mdiPencilOutline
-    this.mdiDelete = mdiDelete
-    this.mdiCallSplit = mdiCallSplit
+  setup () {
+    return {
+      mdiPlusCircleOutline: mdiPlusCircleOutline,
+      mdiPencilOutline: mdiPencilOutline,
+      mdiDelete: mdiDelete,
+      mdiCallSplit: mdiCallSplit
+    }
   }
 }
 </script>
