@@ -56,7 +56,7 @@
               </div>
               <q-separator></q-separator>
               <ul style="text-align: start">
-                <li v-for="ingredient in unassignedIngredients">
+                <li v-for="ingredient in unassignedIngredients" :key="ingredient.id">
                   {{ ingredient.name }}
                   <q-chip :color="isIngredientInBar(ingredient.id)? 'green-4' : 'red-4'"
                           dense
@@ -93,7 +93,7 @@
               </div>
               <q-separator></q-separator>
               <ul style="text-align: start">
-                <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients">
+                <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients" :key="insufficientIngredient.ingredient.id">
                   {{ insufficientIngredient.ingredient.name }}:
                   {{ insufficientIngredient.amountRemaining }} ml
                 </li>

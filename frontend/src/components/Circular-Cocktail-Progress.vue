@@ -43,7 +43,7 @@
                     <div class="row">
                       <div class="col-12 col-sm">
                         <ul>
-                          <li v-for="recipeIngredient in cocktailProgress.currentIngredientsToAddManually">
+                          <li v-for="recipeIngredient in cocktailProgress.currentIngredientsToAddManually" :key="recipeIngredient.ingredient.id">
                             {{ recipeIngredient.amount + ' ' + recipeIngredient.ingredient.unit + ' ' + recipeIngredient.ingredient.name }}
                           </li>
                         </ul>

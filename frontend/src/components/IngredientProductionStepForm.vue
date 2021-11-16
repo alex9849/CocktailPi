@@ -9,7 +9,7 @@
       :label="amountLabel"
       type="number"
       outlined
-      :model-value.number="modelValue.amount"
+      :model-value="modelValue.amount"
       :rules="[
         val => !v.modelValue.amount.required.$invalid || 'Required',
         val => !v.modelValue.amount.minValue.$invalid || 'Min 1ml'
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import {minValue, required} from '@vuelidate/validators'
+import { minValue, required } from '@vuelidate/validators'
 import CIngredientSelector from './CIngredientSelector'
 import useVuelidate from '@vuelidate/core'
 

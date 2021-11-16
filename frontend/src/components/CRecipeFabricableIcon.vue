@@ -64,7 +64,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { mdiAlert, mdiCheckBold, mdiClose } from '@quasar/extras/mdi-v5'
-import { getPumpIngredients } from 'src/store/modules/pumplayout/getters'
 
 export default {
   name: 'CRecipeFabricableIcon',

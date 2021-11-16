@@ -8,8 +8,9 @@ if (serverAddress === null || serverAddress === undefined) {
 const currentDate = new Date()
 
 const initialAuthToken = (function () {
-  const status = { status: { loggedIn: false }, user: null }
-  if (!authToken || !authToken.tokenExpiration) { return null }
+  if (!authToken || !authToken.tokenExpiration) {
+    return null
+  }
   authToken.tokenExpiration = new Date(authToken.tokenExpiration)
   if (authToken.tokenExpiration < currentDate) {
     return null

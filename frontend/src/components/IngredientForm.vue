@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import {mdiCogs, mdiHandRight, mdiInformation} from '@quasar/extras/mdi-v5'
-import {maxLength, maxValue, minValue, required, requiredIf} from '@vuelidate/validators'
+import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
+import { maxLength, maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 
 export default {
@@ -106,24 +106,24 @@ export default {
     }
   },
   emits: ['update:modelValue', 'invalid', 'valid'],
-  data() {
+  data () {
     return {
       units: [
-        {label: 'gram (g)', value: 'g'},
-        {label: 'milliliter (ml)', value: 'ml'},
-        {label: 'piece(s)', value: 'piece(s)'},
-        {label: 'teaspoon(s)', value: 'teaspoon(s)'},
-        {label: 'tablespoon(s)', value: 'tablespoon(s)'}
+        { label: 'gram (g)', value: 'g' },
+        { label: 'milliliter (ml)', value: 'ml' },
+        { label: 'piece(s)', value: 'piece(s)' },
+        { label: 'teaspoon(s)', value: 'teaspoon(s)' },
+        { label: 'tablespoon(s)', value: 'tablespoon(s)' }
       ]
     }
   },
   methods: {
-    setValue(attribute, value) {
-      this.v.modelValue[attribute].$model = value;
+    setValue (attribute, value) {
+      this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
     }
   },
-  setup() {
+  setup () {
     return {
       v: useVuelidate(),
       mdiInformation: mdiInformation,
@@ -131,7 +131,7 @@ export default {
       mdiHandRight: mdiHandRight
     }
   },
-  validations() {
+  validations () {
     return {
       modelValue: {
         name: {
@@ -181,7 +181,7 @@ export default {
   watch: {
     'v.modelValue.$invalid': {
       immediate: true,
-      handler(value) {
+      handler (value) {
         if (!value) {
           this.$emit('valid')
         } else {

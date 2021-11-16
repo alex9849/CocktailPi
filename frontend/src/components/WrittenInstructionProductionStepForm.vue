@@ -18,7 +18,7 @@
 
 <script>
 
-import {maxLength, required} from '@vuelidate/validators'
+import { maxLength, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 
 export default {

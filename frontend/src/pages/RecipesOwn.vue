@@ -48,7 +48,9 @@ export default {
     onRefreshButton () {
       this.refreshing = true
       this.$refs.recipeSearchList.updateRecipes()
-        .finally(() => this.refreshing = false)
+        .finally(() => {
+          this.refreshing = false
+        })
     }
   }
 }

@@ -5,7 +5,6 @@ import pumpLayout from './modules/pumplayout/index'
 import category from './modules/category/index'
 import bar from './modules/bar/index'
 
-
 const store = createStore({
   modules: {
     auth: auth,
@@ -26,4 +25,4 @@ export default function (/* { ssrContext } */) {
 
 export {
   store
-};
+}

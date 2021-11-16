@@ -19,19 +19,22 @@
                   class="row justify-evenly q-col-gutter-sm q-pa-sm"
                 >
                   <q-checkbox
-                    v-model="filter.fabricableWithOwnedIngredients"
+                    :model-value="filter.fabricableWithOwnedIngredients"
+                    @update:model-value="$emit('update:filter', {...filter, fabricableWithOwnedIngredients: $event})"
                     class="col-12 col-sm-6"
                   >
                     Fabricable with owned ingredients
                   </q-checkbox>
                   <q-checkbox
-                    v-model="filter.automaticallyFabricable"
+                    :model-value="filter.automaticallyFabricable"
+                    @update:model-value="$emit('update:filter', {...filter, automaticallyFabricable: $event})"
                     class="col-12 col-sm-6"
                   >
                     Can be fabricated fully automatic
                   </q-checkbox>
                   <c-ingredient-selector
-                    v-model="filter.containsIngredients"
+                    :model-value="filter.containsIngredients"
+                    @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
                     class="col-12 col-sm-8"
                     dense
                     label="Contains ingredients"
@@ -41,7 +44,8 @@
                     use-chips
                   />
                   <q-select
-                    v-model="filter.orderBy"
+                    :model-value="filter.orderBy"
+                    @update:model-value="$emit('update:filter', {...filter, orderBy: $event})"
                     class="col-12 col-sm-4"
                     label="Order by"
                     emit-value
@@ -67,7 +71,8 @@
         </div>
         <div class="block">
           <q-input
-            v-model="filter.query"
+            :model-value="filter.query"
+            @update:model-value="$emit('update:filter', {...filter, query: $event})"
             outlined
             label="Search"
             dense

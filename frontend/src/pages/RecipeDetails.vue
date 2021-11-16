@@ -30,7 +30,7 @@
         </q-btn>
         <q-btn
           color="red"
-          @click.native="deleteDialog = true"
+          @click="deleteDialog = true"
           :loading="deleting"
           v-if="isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole)"
         >

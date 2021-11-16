@@ -55,10 +55,10 @@
 import CCollectionCard from 'components/CCollectionCard'
 import CollectionService from '../services/collection.service'
 import store from '../store'
-import {mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
+import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CEditDialog from 'components/CEditDialog'
-import {mapGetters} from 'vuex'
-import {maxLength, minLength, required} from '@vuelidate/validators'
+import { mapGetters } from 'vuex'
+import { maxLength, minLength, required } from '@vuelidate/validators'
 import TopButtonArranger from 'components/TopButtonArranger'
 import useVuelidate from '@vuelidate/core'
 
@@ -111,7 +111,9 @@ export default {
           .then(collections => {
             vm.collections = collections
           })
-          .finally(() => vm.isLoading = false)
+          .finally(() => {
+            vm.isLoading = false
+          })
       }, 500)
     },
     onClickSafeNewCollection () {

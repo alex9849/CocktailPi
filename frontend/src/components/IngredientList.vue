@@ -36,7 +36,7 @@
                   dense
                   flat
                   rounded
-                  @click.native="showManualInstructionEditor(element)"
+                  @click="showManualInstructionEditor(element)"
                 />
               </q-item-section>
               <q-item-section v-if="editable" side>
@@ -45,7 +45,7 @@
                   dense
                   flat
                   rounded
-                  @click.native="removeManualInstruction(element)"
+                  @click="removeManualInstruction(element)"
                 />
               </q-item-section>
             </q-item>
@@ -86,7 +86,7 @@
                     dense
                     flat
                     rounded
-                    @click.native="splitUpStepIngredient(element, sublist.element)"
+                    @click="splitUpStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
                 <q-item-section v-if="editable" side>
@@ -95,7 +95,7 @@
                     dense
                     flat
                     rounded
-                    @click.native="showStepIngredientEditor(element, sublist.element)"
+                    @click="showStepIngredientEditor(element, sublist.element)"
                   />
                 </q-item-section>
                 <q-item-section v-if="editable" side>
@@ -104,7 +104,7 @@
                     dense
                     flat
                     rounded
-                    @click.native="removeStepIngredient(element, sublist.element)"
+                    @click="removeStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
               </q-item>

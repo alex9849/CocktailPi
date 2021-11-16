@@ -64,6 +64,7 @@
           <div class="row justify-center">
             <q-btn
               v-for="link in projectLinks"
+              :key="link.link"
               round
               dense
               flat
@@ -234,9 +235,9 @@ export default {
     desktopMode () {
       return this.windowWidth > this.desktopModeBreakPoint
     },
-    permittedSidebarItems() {
-      let sidebarItems = []
-      for (let item of this.sidebarItems) {
+    permittedSidebarItems () {
+      const sidebarItems = []
+      for (const item of this.sidebarItems) {
         if (item.reqLevel <= this.getAdminLevel) {
           sidebarItems.push(item)
         }

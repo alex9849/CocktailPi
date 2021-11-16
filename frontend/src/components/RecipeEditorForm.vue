@@ -76,7 +76,7 @@
         :disable="disabled"
         type="number"
         outlined
-        :model-value.number="modelValue.recipe.defaultAmountToFill"
+        :model-value="modelValue.recipe.defaultAmountToFill"
         :rules="[
         val => !v.modelValue.recipe.defaultAmountToFill.required.$invalid || 'Required',
         val => !v.modelValue.recipe.defaultAmountToFill.minValue.$invalid || 'Min 50ml']"
@@ -103,9 +103,9 @@
 </template>
 
 <script>
-import {maxLength, minLength, minValue, required} from '@vuelidate/validators'
+import { maxLength, minLength, minValue, required } from '@vuelidate/validators'
 import IngredientList from './IngredientList'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 
 export default {
@@ -131,8 +131,8 @@ export default {
     return { v: useVuelidate() }
   },
   methods: {
-    setValue(attribute, value) {
-      this.v.modelValue[attribute].$model = value;
+    setValue (attribute, value) {
+      this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
     }
   },

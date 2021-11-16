@@ -1,4 +1,4 @@
-export const notEmptyString = v => !!v && v !== '' || 'Required'
+export const notEmptyString = v => (!!v && v !== '') || 'Required'
 export const minLengthString = (v, min) => !v || v.length >= min || ('Minimal length ' + min)
 export const maxLengthString = (v, max) => !v || v.length <= max || ('Maximal length ' + max)
 export const emailString = v => {

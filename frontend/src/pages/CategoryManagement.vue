@@ -175,7 +175,6 @@ import { maxLength, required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import { mapActions, mapGetters } from 'vuex'
-import { createCategory, fetchCategories, updateCategory } from 'src/store/modules/category/actions'
 import useVuelidate from '@vuelidate/core'
 
 export default {
@@ -225,7 +224,9 @@ export default {
       const vm = this
       setTimeout(() => {
         vm.fetchCategories()
-          .finally(() => vm.loading = false)
+          .finally(() => {
+            vm.loading = false
+          })
       }, 500)
     },
     showEditDialog (category) {

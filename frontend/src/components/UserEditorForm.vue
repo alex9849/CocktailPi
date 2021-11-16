@@ -127,8 +127,8 @@ export default {
     }
   },
   methods: {
-    setValue(attribute, value) {
-      this.v.modelValue[attribute].$model = value;
+    setValue (attribute, value) {
+      this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
     }
   },

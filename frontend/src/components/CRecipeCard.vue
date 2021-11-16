@@ -60,7 +60,8 @@
           </div>
           <div class="row" style="margin-top: 10px">
             <q-chip
-              v-for="(ingredient) in uniqueIngredientNames(recipe.productionSteps)"
+              v-for="ingredient in uniqueIngredientNames(recipe.productionSteps)"
+              :key="ingredient.id"
               dense
               style="margin-left: 0; margin-right: 5px"
               square

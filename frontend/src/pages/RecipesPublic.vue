@@ -56,7 +56,9 @@ export default {
     onRefreshButton () {
       this.refreshing = true
       this.$refs.recipeSearchList.updateRecipes()
-        .finally(() => this.refreshing = false)
+        .finally(() => {
+          this.refreshing = false
+        })
     }
   },
   computed: {
@@ -65,9 +67,10 @@ export default {
       isRecipeCreatorRole: 'auth/isRecipeCreator'
     }),
     categoryId () {
-      if (!!this.$route.meta.category) {
+      if (this.$route.meta.category) {
         return this.$route.meta.category.id
       }
+      return null
     }
   }
 }

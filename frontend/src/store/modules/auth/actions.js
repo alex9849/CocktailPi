@@ -45,5 +45,5 @@ export const updateCurrentUser = ({ dispatch }, updateRequest) => {
 
 export const serverAddress = ({ commit }, serverAddress) => {
   const trimmed = serverAddress.trim()
-  commit('serverAddress', serverAddress)
+  commit('serverAddress', trimmed)
 }

@@ -104,11 +104,11 @@
 
 <script>
 import CIngredientSelector from 'components/CIngredientSelector'
-import {required} from '@vuelidate/validators'
+import { required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
-import {mdiDelete} from '@quasar/extras/mdi-v5'
+import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 
 export default {
@@ -152,7 +152,9 @@ export default {
       this.loading = true
       setTimeout(() => {
         this.fetchIngredientsAction()
-          .finally(() => this.loading = false)
+          .finally(() => {
+            this.loading = false
+          })
       }, 500)
     },
     closeEditDialog () {
@@ -181,7 +183,9 @@ export default {
       this.editOptions.saving = true
       this.addOwnedIngredientAction(this.editOptions.addIngredient.id)
         .then(onSuccess, onError)
-        .finally(() => this.editOptions.saving = false)
+        .finally(() => {
+          this.editOptions.saving = false
+        })
     },
     onRemoveOwnedIngredient (id) {
       this.removeOwnedIngredientAction(id)

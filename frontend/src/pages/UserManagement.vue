@@ -112,10 +112,10 @@
             </q-btn>
           </q-td>
         </template>
-        <template v-slot:header-selection="selected">
+        <template v-slot:header-selection>
           <q-checkbox
-            v-model:model-value="isAllSelectedCeckboxState"
-            @input="v => v? selectAll() : $refs.userTable.clearSelection()"
+            :model-value="isAllSelectedCeckboxState"
+            @update:model-value="v => v? selectAll() : $refs.userTable.clearSelection()"
           />
         </template>
         <template
