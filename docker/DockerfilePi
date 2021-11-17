@@ -1,8 +1,9 @@
 FROM balenalib/raspberry-pi-debian:buster
 RUN apt update
 RUN apt -y full-upgrade
-RUN apt -yq install pigpio python-pigpio python3-pigpio
-RUN apt -yq install openjdk-11-jdk-headless
+RUN apt -yq install pigpio python-pigpio python3-pigpio wget
+COPY docker/install-java.sh /install-java.sh
+RUN chmod u+x /install-java.sh && /install-java.sh
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
