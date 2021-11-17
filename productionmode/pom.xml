@@ -11,7 +11,27 @@
 
     <artifactId>productionmode</artifactId>
 
+    <properties>
+        <pi4j.version>2.0</pi4j.version>
+    </properties>
+
+
     <dependencies>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-raspberrypi</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-pigpio</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>net.alex9849.cocktailmaker</groupId>
             <artifactId>interface</artifactId>

@@ -1,23 +1,35 @@
 package net.alex9849.cocktailmaker.iface;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.Pin;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputConfigBuilder;
+import com.pi4j.io.gpio.digital.DigitalState;
 
 import java.util.HashMap;
 
 public class ProdModeGpioController implements IGpioController {
 
-    public GpioController controller = GpioFactory.getInstance();
-    private HashMap<Pin, ProdModeGpioPin> pinMap = new HashMap<>();
+    private final HashMap<Integer, ProdModeGpioPin> pinMap = new HashMap<>();
+    public Context context = Pi4J.newAutoContext();
 
     @Override
-    public synchronized IGpioPin provideGpioPin(Pin pin) {
-        return pinMap.computeIfAbsent(pin, (p) -> new ProdModeGpioPin(controller.provisionDigitalOutputPin(p)));
+    public synchronized IGpioPin getGpioPin(int bcmPinNr) {
+        if(!pinMap.containsKey(bcmPinNr)) {
+            DigitalOutputConfigBuilder config = DigitalOutput
+                    .newConfigBuilder(context)
+                    .address(bcmPinNr)
+                    .shutdown(DigitalState.HIGH)
+                    .initial(DigitalState.HIGH)
+                    .provider("pigpio-digital-input");
+            DigitalOutput pi4jPin = context.create(config);
+            pinMap.put(bcmPinNr, new ProdModeGpioPin(pi4jPin));
+        }
+        return pinMap.get(bcmPinNr);
     }
 
     @Override
     public synchronized void shutdown() {
-        controller.shutdown();
+        context.shutdown();
     }
 }

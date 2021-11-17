@@ -1,28 +1,28 @@
 package net.alex9849.cocktailmaker.iface;
 
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutput;
 
 public class ProdModeGpioPin implements IGpioPin {
-    private GpioPinDigitalOutput gpioPin;
+    private DigitalOutput pin;
 
-    ProdModeGpioPin(GpioPinDigitalOutput gpioPin) {
-        this.gpioPin = gpioPin;
+    ProdModeGpioPin(DigitalOutput pin) {
+        this.pin = pin;
     }
 
     @Override
     public synchronized boolean isHigh() {
-        return this.gpioPin.isHigh();
+        return pin.isHigh();
     }
 
     @Override
     public synchronized void setHigh() {
-        this.gpioPin.high();
-        System.out.println("Pin " + gpioPin.getPin().getAddress() + " stopped!");
+        pin.high();
+        System.out.println("Pin " + pin.getAddress() + " stopped!");
     }
 
     @Override
     public synchronized void setLow() {
-        this.gpioPin.low();
-        System.out.println("Pin " + gpioPin.getPin().getAddress() + " started!");
+        pin.low();
+        System.out.println("Pin " + pin.getAddress() + " started!");
     }
 }

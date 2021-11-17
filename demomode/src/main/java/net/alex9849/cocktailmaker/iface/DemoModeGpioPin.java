@@ -1,13 +1,11 @@
 package net.alex9849.cocktailmaker.iface;
 
-import com.pi4j.io.gpio.Pin;
-
 public class DemoModeGpioPin implements IGpioPin {
-    private Pin pin;
+    private int bcmPinNr;
     private boolean isHigh;
 
-    DemoModeGpioPin(Pin pin) {
-        this.pin = pin;
+    DemoModeGpioPin(int bcmPinNr) {
+        this.bcmPinNr = bcmPinNr;
     }
 
     @Override
@@ -18,12 +16,12 @@ public class DemoModeGpioPin implements IGpioPin {
     @Override
     public synchronized void setHigh() {
         this.isHigh = true;
-        System.out.println("Pin " + pin.getAddress() + " stopped!");
+        System.out.println("Pin " + bcmPinNr + " stopped!");
     }
 
     @Override
     public synchronized void setLow() {
         this.isHigh = false;
-        System.out.println("Pin " + pin.getAddress() + " started!");
+        System.out.println("Pin " + bcmPinNr + " started!");
     }
 }

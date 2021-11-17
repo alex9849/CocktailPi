@@ -1,10 +1,8 @@
 package net.alex9849.cocktailmaker.iface;
 
-import com.pi4j.io.gpio.Pin;
-
 public interface IGpioController {
 
-    IGpioPin provideGpioPin(Pin pin);
+    IGpioPin getGpioPin(int bcmPinNr);
 
     void shutdown();
 

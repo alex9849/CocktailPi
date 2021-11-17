@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.service;
 
-import com.pi4j.io.gpio.RaspiPin;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
@@ -51,7 +50,7 @@ public class PumpService {
         List<Pump> pumps = getAllPumps();
         //Turn off all pumps
         pumps.forEach(pump -> {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
         });
     }
 
@@ -73,7 +72,7 @@ public class PumpService {
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
-        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+        gpioController.getGpioPin(pump.getGpioPin()).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
@@ -91,8 +90,8 @@ public class PumpService {
         }
         pumpRepository.update(pump);
         if(beforeUpdate.get().getGpioPin() != pump.getGpioPin()) {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(beforeUpdate.get().getGpioPin())).setHigh();
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+            gpioController.getGpioPin(beforeUpdate.get().getGpioPin()).setHigh();
+            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
@@ -118,7 +117,7 @@ public class PumpService {
         }
         pumpRepository.delete(id);
         //Turn off pump
-        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+        gpioController.getGpioPin(pump.getGpioPin()).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
@@ -227,10 +226,10 @@ public class PumpService {
             throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
         }
         this.cleaningPumpIds.add(pump.getId());
-        gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setLow();
+        gpioController.getGpioPin(pump.getGpioPin()).setLow();
         webSocketService.broadcastPumpLayout(getAllPumps());
         scheduler.schedule(() -> {
-            gpioController.provideGpioPin(RaspiPin.getPinByAddress(pump.getGpioPin())).setHigh();
+            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
             this.cleaningPumpIds.remove(pump.getId());
             webSocketService.broadcastPumpLayout(getAllPumps());
         }, runTime, TimeUnit.MILLISECONDS);

@@ -14,7 +14,7 @@ public class Config {
 
     private IGpioController gpioController;
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public IGpioController getGpioController() {
         if(gpioController == null) {
             try {

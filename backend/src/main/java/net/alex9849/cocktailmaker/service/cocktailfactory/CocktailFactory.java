@@ -201,7 +201,6 @@ public class CocktailFactory {
                 automaticWorker.cancel();
             }
         }
-        this.gpioController.shutdown();
     }
 
     public boolean isFinished() {
