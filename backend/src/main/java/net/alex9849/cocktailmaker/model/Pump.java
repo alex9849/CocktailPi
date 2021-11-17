@@ -6,7 +6,7 @@ public class Pump {
     private long id;
     private int timePerClInMs;
     private int tubeCapacityInMl;
-    private int gpioPin;
+    private int bcmPin;
     private int fillingLevelInMl;
     private Long currentIngredientId;
     private AutomatedIngredient currentIngredient;
@@ -35,12 +35,12 @@ public class Pump {
         this.tubeCapacityInMl = tubeCapacityInMl;
     }
 
-    public int getGpioPin() {
-        return gpioPin;
+    public int getBcmPin() {
+        return bcmPin;
     }
 
-    public void setGpioPin(int gpioPin) {
-        this.gpioPin = gpioPin;
+    public void setBcmPin(int bcmPin) {
+        this.bcmPin = bcmPin;
     }
 
     public AutomatedIngredient getCurrentIngredient() {

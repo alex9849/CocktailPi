@@ -40,7 +40,7 @@ export default {
   margin-left: -100%;
   margin-right: -100%;
   text-align: center;
-  font-size: x-large;
+  font-size: large;
   max-width: 100%;
 }
 </style>

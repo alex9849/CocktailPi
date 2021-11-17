@@ -50,7 +50,7 @@ public class PumpService {
         List<Pump> pumps = getAllPumps();
         //Turn off all pumps
         pumps.forEach(pump -> {
-            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
+            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
         });
     }
 
@@ -67,12 +67,12 @@ public class PumpService {
     }
 
     public Pump createPump(Pump pump) {
-        if(pumpRepository.findByGpioPin(pump.getGpioPin()).isPresent()) {
+        if(pumpRepository.findByBcmPin(pump.getBcmPin()).isPresent()) {
             throw new IllegalArgumentException("GPOI-Pin already in use!");
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
-        gpioController.getGpioPin(pump.getGpioPin()).setHigh();
+        gpioController.getGpioPin(pump.getBcmPin()).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
@@ -82,16 +82,16 @@ public class PumpService {
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        Optional<Pump> optPumpWithGpio = pumpRepository.findByGpioPin(pump.getGpioPin());
+        Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());
         if(optPumpWithGpio.isPresent()) {
             if(optPumpWithGpio.get().getId() != pump.getId()) {
                 throw new IllegalArgumentException("GPOI-Pin already in use!");
             }
         }
         pumpRepository.update(pump);
-        if(beforeUpdate.get().getGpioPin() != pump.getGpioPin()) {
-            gpioController.getGpioPin(beforeUpdate.get().getGpioPin()).setHigh();
-            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
+        if(beforeUpdate.get().getBcmPin() != pump.getBcmPin()) {
+            gpioController.getGpioPin(beforeUpdate.get().getBcmPin()).setHigh();
+            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
@@ -117,7 +117,7 @@ public class PumpService {
         }
         pumpRepository.delete(id);
         //Turn off pump
-        gpioController.getGpioPin(pump.getGpioPin()).setHigh();
+        gpioController.getGpioPin(pump.getBcmPin()).setHigh();
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
@@ -226,10 +226,10 @@ public class PumpService {
             throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
         }
         this.cleaningPumpIds.add(pump.getId());
-        gpioController.getGpioPin(pump.getGpioPin()).setLow();
+        gpioController.getGpioPin(pump.getBcmPin()).setLow();
         webSocketService.broadcastPumpLayout(getAllPumps());
         scheduler.schedule(() -> {
-            gpioController.getGpioPin(pump.getGpioPin()).setHigh();
+            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
             this.cleaningPumpIds.remove(pump.getId());
             webSocketService.broadcastPumpLayout(getAllPumps());
         }, runTime, TimeUnit.MILLISECONDS);

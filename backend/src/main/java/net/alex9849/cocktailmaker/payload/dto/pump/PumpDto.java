@@ -23,7 +23,7 @@ public class PumpDto {
 
     @NotNull
     @Min(0) @Max(31)
-    private int gpioPin;
+    private int bcmPin;
 
     @NotNull
     @Min(0)
@@ -67,16 +67,16 @@ public class PumpDto {
         this.tubeCapacityInMl = tubeCapacityInMl;
     }
 
-    public int getGpioPin() {
-        return gpioPin;
+    public int getBcmPin() {
+        return bcmPin;
     }
 
     public boolean isCleaning() {
         return isCleaning;
     }
 
-    public void setGpioPin(int gpioPin) {
-        this.gpioPin = gpioPin;
+    public void setBcmPin(int bcmPin) {
+        this.bcmPin = bcmPin;
     }
 
     public AutomatedIngredientDto getCurrentIngredient() {

@@ -1,1 +1,0 @@
-alter table pumps add column filling_level_in_ml int4 default 0 not null;

@@ -74,10 +74,10 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         for (Map.Entry<Pump, List<PumpPhase>> currPumpWithTimings : this.pumpPumpPhases.entrySet()) {
             for (PumpPhase pumpPhase : currPumpWithTimings.getValue()) {
                 scheduledPumpFutures.add(scheduler.schedule(() -> {
-                    gpioController.getGpioPin(pumpPhase.getPump().getGpioPin()).setLow();
+                    gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setLow();
                 }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
                 scheduledPumpFutures.add(scheduler.schedule(() -> {
-                    gpioController.getGpioPin(pumpPhase.getPump().getGpioPin()).setHigh();
+                    gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setHigh();
                 }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
         }
@@ -132,7 +132,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
 
     private void stopAllPumps() {
         for(Pump pump : this.pumpPumpPhases.keySet()) {
-            IGpioPin gpioPin = gpioController.getGpioPin(pump.getGpioPin());
+            IGpioPin gpioPin = gpioController.getGpioPin(pump.getBcmPin());
             if(!gpioPin.isHigh()) {
                 gpioPin.setHigh();
             }

@@ -68,10 +68,10 @@
               {{ props.row.tubeCapacityInMl }} ml
             </q-td>
             <q-td
-              key="gpioPin"
+              key="bcmPin"
               :props="props"
             >
-              {{ props.row.gpioPin }}
+              {{ props.row.bcmPin }}
             </q-td>
             <q-td
               key="currentIngredient"
@@ -226,7 +226,7 @@ export default {
           id: -1,
           timePerClInMs: '',
           tubeCapacityInMl: '',
-          gpioPin: '',
+          bcmPin: '',
           fillingLevelInMl: 0,
           currentIngredient: null
         },
@@ -234,7 +234,7 @@ export default {
           id: -1,
           timePerClInMs: '',
           tubeCapacityInMl: '',
-          gpioPin: '',
+          bcmPin: '',
           fillingLevelInMl: 0,
           currentIngredient: null
         }
@@ -250,7 +250,7 @@ export default {
           field: 'tubeCapacityInMl',
           align: 'center'
         },
-        { name: 'gpioPin', label: 'GPIO-Pin', field: 'gpioPin', align: 'center' },
+        { name: 'bcmPin', label: 'BCM-Pin', field: 'bcmPin', align: 'center' },
         { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
         { name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }

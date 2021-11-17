@@ -21,15 +21,7 @@
         <q-icon
           :name="mdiInformation"
           @click="showHelpTubeFillingLevel = !showHelpTubeFillingLevel"
-        >
-          <q-dialog v-model="showHelpTubeFillingLevel">
-            <q-card>
-              <q-card-section>
-                The amount of remaining liquid in the attached container.
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </q-icon>
+        />
       </template>
     </q-input>
     <q-input
@@ -46,16 +38,7 @@
         <q-icon
           :name="mdiInformation"
           @click="showHelpPumpTime = !showHelpPumpTime"
-        >
-          <q-dialog v-model="showHelpPumpTime">
-            <q-card>
-              <q-card-section>
-                How long does one pump need to deliver one cl?
-                Warning! This number often varies even is all pumps are the exact same model!
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </q-icon>
+        />
       </template>
     </q-input>
     <q-input
@@ -72,43 +55,59 @@
         <q-icon
           :name="mdiInformation"
           @click="showHelpTubeCapacity = !showHelpTubeCapacity"
-        >
-          <q-dialog v-model="showHelpTubeCapacity">
-            <q-card>
-              <q-card-section>
-                The number of ml the pump should try to deliver on pump up.
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </q-icon>
+        />
       </template>
     </q-input>
     <q-input
-      label="WiringPi-Pin"
+      :model-value="v.modelValue.bcmPin.$model"
       type="number"
       outlined
-      :model-value="v.modelValue.gpioPin.$model"
-      :rules="[val => !v.modelValue.gpioPin.required.$invalid || 'Required',
-              val => !v.modelValue.gpioPin.minValue.$invalid || 'Min 1',
-              val => !v.modelValue.gpioPin.maxValue.$invalid || 'Max 30']"
-      @update:model-value="setValue('gpioPin', $event)"
+      :rules="[val => !v.modelValue.bcmPin.required.$invalid || 'Required',
+              val => !v.modelValue.bcmPin.minValue.$invalid || 'Min 0',
+              val => !v.modelValue.bcmPin.maxValue.$invalid || 'Max 30']"
+      label="BCM-Pin"
+      @update:model-value="setValue('bcmPin', $event)"
     >
       <template v-slot:append>
         <q-icon
           :name="mdiInformation"
           @click="showHelpWiringPi = !showHelpWiringPi"
-        >
-          <q-dialog v-model="showHelpWiringPi">
-            <q-card>
-              <q-card-section>
-                The WiringPi-Pin is the GPIO-Pin according to the Wiring-Pi library.
-                In most cases these are NOT the same.
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </q-icon>
+        />
       </template>
     </q-input>
+    <q-dialog v-model:model-value="showHelpTubeFillingLevel">
+      <q-card>
+        <q-card-section>
+          The amount of remaining liquid in the attached container.
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model:model-value="showHelpPumpTime">
+      <q-card>
+        <q-card-section>
+          How long does one pump need to deliver one cl?
+          Warning! This number often varies even is all pumps are the exact same model!
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model:model-value="showHelpTubeCapacity">
+      <q-card>
+        <q-card-section>
+          The number of ml the pump should try to deliver on pump up.
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model:model-value="showHelpWiringPi">
+      <q-card>
+        <q-card-section>
+          The number that is used to specify the GPIO to be used.
+          BCM refers to the “Broadcom SOC channel” number, which is the numbering inside the chip which is used on the Raspberry Pi.
+          These numbers changed between board versions as you can see in the previous tables for the
+          26-pin header type 1 versus 2, and or not sequential. These links may help:
+          <a href="https://pi4j.com/getting-started/understanding-the-pins/#overview" target="_blank">Pi4J - Understanding the pins</a>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <slot name="below"/>
   </div>
 </template>
@@ -162,9 +161,9 @@ export default {
           required,
           minValue: minValue(1)
         },
-        gpioPin: {
+        bcmPin: {
           required,
-          minValue: minValue(1),
+          minValue: minValue(0),
           maxValue: maxValue(30)
         },
         fillingLevelInMl: {

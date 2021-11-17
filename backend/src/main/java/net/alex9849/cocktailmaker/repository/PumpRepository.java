@@ -33,9 +33,9 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public Pump create(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (gpio_pin, time_per_cl_in_ms, " +
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (bcm_pin, time_per_cl_in_ms, " +
                     "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, pump.getGpioPin());
+            pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
@@ -52,9 +52,9 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public boolean update(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET gpio_pin = ?, time_per_cl_in_ms = ?, " +
+            PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET bcm_pin = ?, time_per_cl_in_ms = ?, " +
                     "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ? WHERE id = ?");
-            pstmt.setInt(1, pump.getGpioPin());
+            pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
             pstmt.setInt(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
@@ -76,10 +76,10 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
-    public Optional<Pump> findByGpioPin(int gpioPin) {
+    public Optional<Pump> findByBcmPin(int bcmPin) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where gpio_pin = ?");
-            pstmt.setInt(1, gpioPin);
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where bcm_pin = ?");
+            pstmt.setInt(1, bcmPin);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return Optional.of(populateEntity(parseRs(rs)));
@@ -121,7 +121,7 @@ public class PumpRepository extends JdbcDaoSupport {
     private Pump parseRs(ResultSet rs) throws SQLException {
         Pump pump = new Pump();
         pump.setId(rs.getLong("id"));
-        pump.setGpioPin(rs.getInt("gpio_pin"));
+        pump.setBcmPin(rs.getInt("bcm_pin"));
         pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
         pump.setTubeCapacityInMl(rs.getInt("tube_capacity_in_ml"));
         pump.setCurrentIngredientId(rs.getLong("current_ingredient_id"));
