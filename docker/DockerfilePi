@@ -1,8 +1,8 @@
-FROM balenalib/raspberry-pi-debian:latest
+FROM balenalib/raspberry-pi-debian:buster
 RUN apt update
 RUN apt -y full-upgrade
 RUN apt -yq install pigpio python-pigpio python3-pigpio
-RUN apt -yq install openjdk-11-jdk
+RUN apt -yq install openjdk-11-jdk-headless
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
