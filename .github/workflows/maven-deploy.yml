@@ -91,7 +91,7 @@ jobs:
       run: |
         docker build -t alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }} -f docker/Dockerfile .
         docker tag alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }} alex9849/pi-cocktailmaker:latest
-        docker build -t alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }}-pi -f docker/DockerfilePi .
+        docker buildx build --platform linux/arm/v7 -t alex9849/pi-cocktailmaker:dev-pi -f docker/DockerfilePi .
         docker tag alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }}-pi alex9849/pi-cocktailmaker:latest-pi
     - name: Push images
       run: docker push alex9849/pi-cocktailmaker --all-tags
