@@ -21,7 +21,7 @@ public class ProdModeGpioController implements IGpioController {
                     .address(bcmPinNr)
                     .shutdown(DigitalState.HIGH)
                     .initial(DigitalState.HIGH)
-                    .provider("pigpio-digital-input");
+                    .provider("pigpio-digital-output");
             DigitalOutput pi4jPin = context.create(config);
             pinMap.put(bcmPinNr, new ProdModeGpioPin(pi4jPin));
         }
