@@ -14,14 +14,16 @@ export default {
     return {
       quotes: [
         'What a wonderful day for a cocktail!',
-        'Every good story starts with whisky.',
         'Let the evening beGIN...',
-        'You look like you need a drink.',
-        'Civilization begins with distillation.',
-        'Keep calm and drink a cocktail!',
+        'Keep calm and drink a cocktail!'
+      ],
+      otherQuotes: [
         'Theres always time for a cocktail!',
         'I\'ll drink to that!',
-        'Trust me, you can dance!'
+        'Trust me, you can dance!',
+        'You look like you need a drink.',
+        'Civilization begins with distillation.',
+        'Every good story starts with whisky.'
       ]
     }
   },
