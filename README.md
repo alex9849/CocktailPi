@@ -29,7 +29,8 @@ for multiple pumps, which pump the different liquids into the glass.
 The user can add new pumps in the webinterface, where he has to specify a GPIO-Pin
 for every pump and how long that pumps needs to pump exactly one centiliter in 
 milliseconds. You can build your machine as you like. The only important thing
-is that you need to be able to apply that concept to your setup.
+is that you need to be able to apply that concept to your setup. This is an example setup:
+![Blueprint](./documentation/img/blueprint.png "Blueprint")
 
 ### This is the hardware that I've used for my machine:
  * 1x RaspberryPi: https://amzn.to/3metGLm (needs to be able to run docker for a simpler setup)
