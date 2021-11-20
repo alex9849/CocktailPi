@@ -91,12 +91,6 @@
         @update:model-value="v.modelValue.recipe.productionSteps.$model = $event; $emit('update:modelValue', modelValue)"
         :editable="!disabled"
       />
-      <q-checkbox
-        :model-value="modelValue.recipe.inPublic"
-        :disable="disabled"
-        label="Public recipe"
-        @update:model-value="v.modelValue.recipe.inPublic.$model = $event; $emit('update:modelValue', modelValue)"
-      />
       <slot name="below"/>
     </q-form>
   </div>
@@ -157,7 +151,6 @@ export default {
             required,
             minLength: minLength(1)
           },
-          inPublic: {},
           categories: {}
         },
         image: {},

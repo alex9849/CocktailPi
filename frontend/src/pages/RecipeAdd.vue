@@ -50,7 +50,7 @@ export default {
   data () {
     return {
       addRecipe: {
-        recipe: new Recipe(0, '', true, {}, '', [], [], 250),
+        recipe: new Recipe(0, '', {}, '', [], [], 250),
         image: null
       },
       error: '',

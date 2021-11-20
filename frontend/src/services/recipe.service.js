@@ -18,15 +18,13 @@ class RecipeService {
       .then(response => response.data)
   }
 
-  getRecipes (page, ownerId, permittedForUser, inCollection, inPublic, fabricable, inBar, containsIngredients,
+  getRecipes (page, ownerId, inCollection, fabricable, inBar, containsIngredients,
     searchName, inCategoryId, orderBy) {
     const querystring = require('querystring')
     const inCategory = inCategoryId
     let params = {
       page,
       ownerId,
-      inPublic,
-      permittedForUser,
       inCollection,
       fabricable,
       inBar,
