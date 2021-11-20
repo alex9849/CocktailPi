@@ -93,7 +93,7 @@ volumes:
 ````
 Don't forget to change the JWT_SECRET! If you want to enable https for the 
 webinterface you may be able to do that by tunneling the app-traffic 
-though a reverse-proxy.
+though a proxy.
 
 Start the application by executing the following command as root user in the same
 directory as your docker-compose.yml
