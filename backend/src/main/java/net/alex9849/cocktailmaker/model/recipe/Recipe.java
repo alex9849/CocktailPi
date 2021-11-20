@@ -9,7 +9,6 @@ import java.util.List;
 public class Recipe {
     private long id;
     private String name;
-    private boolean inPublic;
     private boolean hasImage;
     private User owner;
     private Long ownerId;
@@ -35,20 +34,12 @@ public class Recipe {
         this.name = name;
     }
 
-    public boolean isInPublic() {
-        return inPublic;
-    }
-
     public boolean isHasImage() {
         return hasImage;
     }
 
     public void setHasImage(boolean hasImage) {
         this.hasImage = hasImage;
-    }
-
-    public void setInPublic(boolean inPublic) {
-        this.inPublic = inPublic;
     }
 
     public String getDescription() {

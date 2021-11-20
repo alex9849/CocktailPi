@@ -32,9 +32,6 @@ public class CocktailEndpoint {
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
         if(amount == null) {
             amount = (int) recipe.getDefaultAmountToFill();
         } else if (amount < 50) {
@@ -46,13 +43,9 @@ public class CocktailEndpoint {
 
     @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.GET)
     public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", required = false) Integer amount) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(recipeId);
         if(recipe == null) {
             return ResponseEntity.notFound().build();
-        }
-        if(!recipe.isInPublic() && !Objects.equals(user.getId(), recipe.getOwner().getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if(amount == null) {
             amount = (int) recipe.getDefaultAmountToFill();

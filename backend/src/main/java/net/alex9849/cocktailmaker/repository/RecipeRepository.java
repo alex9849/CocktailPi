@@ -92,9 +92,6 @@ public class RecipeRepository extends JdbcDaoSupport {
                 query = "SELECT * FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
                 params.add(con.createArrayOf("int8", ids));
             } else {
-                if (ids.length == 0) {
-                    return new ArrayList<>();
-                }
                 query = "SELECT * FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
             }
             params.add(limit);
@@ -116,13 +113,12 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, in_public, last_update, " +
-                    "owner_id, default_amount_to_fill) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, last_update, " +
+                    "owner_id, default_amount_to_fill) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
-            pstmt.setBoolean(3, recipe.isInPublic());
-            pstmt.setLong(4, recipe.getOwnerId());
-            pstmt.setLong(5, recipe.getDefaultAmountToFill());
+            pstmt.setLong(3, recipe.getOwnerId());
+            pstmt.setLong(4, recipe.getDefaultAmountToFill());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -140,14 +136,13 @@ public class RecipeRepository extends JdbcDaoSupport {
     public boolean update(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
-                    "description = ?, in_public = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
+                    "description = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
                     "default_amount_to_fill = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
-            pstmt.setBoolean(3, recipe.isInPublic());
-            pstmt.setLong(4, recipe.getOwnerId());
-            pstmt.setLong(5, recipe.getDefaultAmountToFill());
-            pstmt.setLong(6, recipe.getId());
+            pstmt.setLong(3, recipe.getOwnerId());
+            pstmt.setLong(4, recipe.getDefaultAmountToFill());
+            pstmt.setLong(5, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());
@@ -162,7 +157,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id as id FROM collections c " +
                     "JOIN collection_recipes cr ON cr.collection_id = c.id " +
-                    "JOIN recipes r ON cr.recipe_id = r.id AND (r.in_public OR r.owner_id = c.owner_id) " +
+                    "JOIN recipes r ON cr.recipe_id = r.id " +
                     "WHERE c.id = ?");
             pstmt.setLong(1, collectionId);
             return DbUtils.executeGetIdsPstmt(pstmt);
@@ -210,25 +205,10 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> getIdsInPublic() {
-        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where in_public = true");
-            return DbUtils.executeGetIdsPstmt(pstmt);
-        });
-    }
-
     public Set<Long> getIdsByOwnerId(long id) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where owner_id = ?");
             pstmt.setLong(1, id);
-            return DbUtils.executeGetIdsPstmt(pstmt);
-        });
-    }
-
-    public Set<Long> getIdsPermittedForUserId(Long userId) {
-        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes WHERE owner_id = ? OR in_public");
-            pstmt.setLong(1, userId);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -335,7 +315,6 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setId(rs.getLong("id"));
         recipe.setDescription(rs.getString("description"));
         recipe.setName(rs.getString("name"));
-        recipe.setInPublic(rs.getBoolean("in_public"));
         recipe.setLastUpdate(rs.getTimestamp("last_update"));
         recipe.setHasImage(rs.getObject("image") != null);
         recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
