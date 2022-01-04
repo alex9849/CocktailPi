@@ -16,6 +16,7 @@
         :loading="loading"
         @click="onRefresh"
         no-caps
+        v-if="getAdminLevel >= 2"
       />
     </TopButtonArranger>
     <div class="q-py-md">
@@ -27,7 +28,9 @@
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
         no-data-label="No ingredients found"
       >
-        <template v-slot:body-cell-actions="props">
+        <template v-if="getAdminLevel >= 2"
+                  v-slot:body-cell-actions="props"
+        >
           <q-td :props="props"
                 key="actions"
                 class="q-pa-md q-gutter-x-sm"
@@ -108,7 +111,7 @@ import { required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import { mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import IngredientService from '../services/ingredient.service'
 
@@ -117,11 +120,6 @@ export default {
   components: { TopButtonArranger, CEditDialog, CIngredientSelector },
   data () {
     return {
-      columns: [
-        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
-        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
-      ],
       ownedIngredients: [],
       loading: false,
       editOptions: {
@@ -146,11 +144,22 @@ export default {
       mdiDelete: mdiDelete
     }
   },
-  methods: {
-    ...mapActions({
-      addOwnedIngredientAction: 'bar/addIngredient',
-      removeOwnedIngredientAction: 'bar/removeIngredient'
+  computed: {
+    ...mapGetters({
+      getAdminLevel: 'auth/getAdminLevel'
     }),
+    columns () {
+      const columns = [
+        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
+        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' }
+      ]
+      if (this.getAdminLevel >= 2) {
+        columns.push({ name: 'actions', label: 'Actions', field: '', align: 'center' })
+      }
+      return columns
+    }
+  },
+  methods: {
     onRefresh () {
       this.loading = true
       setTimeout(() => {
@@ -171,6 +180,7 @@ export default {
     onAddOwnedIngredient () {
       const vm = this
       const onSuccess = function () {
+        vm.onRefresh()
         vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
@@ -188,15 +198,16 @@ export default {
       }
 
       this.editOptions.saving = true
-      this.addOwnedIngredientAction(this.editOptions.addIngredient.id)
+      IngredientService.addToBar(this.editOptions.addIngredient.id)
         .then(onSuccess, onError)
         .finally(() => {
           this.editOptions.saving = false
         })
     },
     onRemoveOwnedIngredient (id) {
-      this.removeOwnedIngredientAction(id)
+      IngredientService.removeFromBar(id)
         .then(() => {
+          this.onRefresh()
           this.$q.notify({
             type: 'positive',
             message: 'Ingredient removed successfully'

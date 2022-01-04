@@ -29,6 +29,14 @@ class IngredientService {
   deleteIngredient (ingredient) {
     return axios.delete(API_PATH + ingredient.id)
   }
+
+  addToBar (ingredientId) {
+    return axios.put(API_PATH + ingredientId + '/bar')
+  }
+
+  removeFromBar (ingredientId) {
+    return axios.delete(API_PATH + ingredientId + '/bar')
+  }
 }
 
 export default new IngredientService()
