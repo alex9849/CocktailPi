@@ -213,7 +213,6 @@ export default {
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),
-      store.dispatch('bar/fetchIngredients'),
       store.dispatch('auth/fetchCurrentUser')
     ]).then(() => next())
   },

@@ -69,4 +69,18 @@ public class IngredientEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "{id}/bar", method = RequestMethod.PUT)
+    ResponseEntity<?> addToBar(@PathVariable("id") long id) {
+        ingredientService.setInBar(id, true);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "{id}/bar", method = RequestMethod.DELETE)
+    ResponseEntity<?> removeFromBar(@PathVariable("id") long id) {
+        ingredientService.setInBar(id, false);
+        return ResponseEntity.ok().build();
+    }
+
 }

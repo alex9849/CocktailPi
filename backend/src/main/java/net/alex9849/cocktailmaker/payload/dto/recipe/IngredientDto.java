@@ -27,6 +27,8 @@ public abstract class IngredientDto {
     @Min(0) @Max(100)
     private int alcoholContent;
 
+    private boolean inBar;
+
     public IngredientDto() {}
 
     public IngredientDto(Ingredient ingredient) {
@@ -62,6 +64,14 @@ public abstract class IngredientDto {
     }
 
     public abstract String getType();
+
+    public boolean isInBar() {
+        return inBar;
+    }
+
+    public void setInBar(boolean inBar) {
+        this.inBar = inBar;
+    }
 
     public static IngredientDto toDto(Ingredient ingredient) {
         if(ingredient instanceof ManualIngredient) {

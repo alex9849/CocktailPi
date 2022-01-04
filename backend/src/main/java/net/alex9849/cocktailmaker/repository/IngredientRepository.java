@@ -62,11 +62,9 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findIdsOwnedByUser(long userId) {
+    public Set<Long> findIdsInBar() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i JOIN " +
-                    "user_owned_ingredients uo ON uo.ingredient_id = i.id WHERE uo.user_id = ?");
-            pstmt.setLong(1, userId);
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i WHERE i.in_bar");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -102,7 +100,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier, in_bar) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -112,6 +110,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
+            pstmt.setBoolean(6, ingredient.isInBar());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -125,7 +124,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ? WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ?, in_bar = ? WHERE id = ?");
             pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, ingredient.getName());
             pstmt.setDouble(3, ingredient.getAlcoholContent());
@@ -135,7 +134,8 @@ public class IngredientRepository extends JdbcDaoSupport {
             } else {
                 pstmt.setNull(5, Types.DOUBLE);
             }
-            pstmt.setLong(6, ingredient.getId());
+            pstmt.setBoolean(6, ingredient.isInBar());
+            pstmt.setLong(7, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -165,6 +165,7 @@ public class IngredientRepository extends JdbcDaoSupport {
         ingredient.setName(resultSet.getString("name"));
         ingredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
         ingredient.setId(resultSet.getLong("id"));
+        ingredient.setInBar(resultSet.getBoolean("in_bar"));
         return ingredient;
     }
 }

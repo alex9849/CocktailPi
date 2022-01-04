@@ -8,6 +8,7 @@ public abstract class Ingredient {
     private long id;
     private String name;
     private int alcoholContent;
+    private boolean inBar;
 
     public long getId() {
         return id;
@@ -34,6 +35,14 @@ public abstract class Ingredient {
     }
 
     public abstract Unit getUnit();
+
+    public boolean isInBar() {
+        return inBar;
+    }
+
+    public void setInBar(boolean inBar) {
+        this.inBar = inBar;
+    }
 
     @Override
     public boolean equals(Object o) {
