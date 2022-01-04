@@ -33,9 +33,9 @@ const routes = [
       component: () => import('pages/Dashboard'),
       name: 'dashboard'
     }, {
-      path: 'mybar',
-      component: () => import('pages/MyBar'),
-      name: 'mybar'
+      path: 'bar',
+      component: () => import('pages/Bar'),
+      name: 'bar'
     }, {
       path: 'collection/own',
       component: () => import('pages/MyCollections'),

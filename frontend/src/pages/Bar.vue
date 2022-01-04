@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Ingredients you own</h5>
+    <h5>Ingredients owned</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
@@ -8,6 +8,7 @@
         :disable="loading"
         @click="editOptions.editDialog = true"
         no-caps
+        v-if="getAdminLevel >= 2"
       />
       <q-btn
         color="info"
@@ -16,7 +17,6 @@
         :loading="loading"
         @click="onRefresh"
         no-caps
-        v-if="getAdminLevel >= 2"
       />
     </TopButtonArranger>
     <div class="q-py-md">
@@ -116,7 +116,7 @@ import useVuelidate from '@vuelidate/core'
 import IngredientService from '../services/ingredient.service'
 
 export default {
-  name: 'MyBar',
+  name: 'Bar',
   components: { TopButtonArranger, CEditDialog, CIngredientSelector },
   data () {
     return {

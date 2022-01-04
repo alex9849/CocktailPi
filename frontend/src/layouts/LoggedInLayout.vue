@@ -138,8 +138,8 @@ export default {
               exact: false
             }, {
               reqLevel: 0,
-              label: 'My bar',
-              to: { name: 'mybar' },
+              label: 'Bar',
+              to: { name: 'bar' },
               exact: false
             }, {
               reqLevel: 0,
