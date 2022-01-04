@@ -9,7 +9,7 @@
       <TopButtonArranger>
         <q-btn
           color="grey"
-          :to="{name: 'recipeedit', params: {id: $route.params.id}}"
+          :to="{name: 'recipeedit', params: {id: recipe.id}}"
           v-if="isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole)"
         >
           Edit
@@ -111,6 +111,7 @@ export default {
   data () {
     return {
       recipe: {
+        owner: {},
         productionSteps: []
       },
       loaded: false,
