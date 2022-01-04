@@ -91,7 +91,7 @@
     />
     <c-make-cocktail-dialog
       v-if="loaded"
-      v-model="showMakeCocktailDialog"
+      v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
     />
   </q-page>

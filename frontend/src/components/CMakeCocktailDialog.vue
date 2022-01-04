@@ -58,11 +58,11 @@
               <ul style="text-align: start">
                 <li v-for="ingredient in unassignedIngredients" :key="ingredient.id">
                   {{ ingredient.name }}
-                  <q-chip :color="isIngredientInBar(ingredient.id)? 'green-4' : 'red-4'"
+                  <q-chip :color="ingredient.inBar? 'green-4' : 'red-4'"
                           dense
                           square
                   >
-                    <div v-if="isIngredientInBar(ingredient.id)">in bar</div>
+                    <div v-if="ingredient.inBar">in bar</div>
                     <div v-else>not in bar</div>
                   </q-chip>
                 </li>
@@ -258,7 +258,13 @@ export default {
       }
     },
     amountToProduce: {
-      immediate: true,
+      handler () {
+        if (this.recipe) {
+          this.checkFeasibility()
+        }
+      }
+    },
+    getPumpLayout: {
       handler () {
         if (this.recipe) {
           this.checkFeasibility()
@@ -347,9 +353,6 @@ export default {
             message: error.response.data.message
           })
         })
-    },
-    isIngredientInBar (ingredientId) {
-      return this.ownedIngredients.some(x => x.id === ingredientId)
     }
   },
   computed: {
@@ -359,8 +362,7 @@ export default {
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
       getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      isCleaning: 'pumpLayout/isCleaning',
-      ownedIngredients: 'bar/getOwnedIngredients'
+      isCleaning: 'pumpLayout/isCleaning'
     }),
     feasibilityOk () {
       return this.feasibilityReport.insufficientIngredients.length === 0 && !this.checkingFeasibility
