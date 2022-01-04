@@ -34,6 +34,9 @@ public class IngredientService {
         if(filterManualIngredients) {
             idsToFindSetList.add(ingredientRepository.findIdsNotManual());
         }
+        if(inBar) {
+            idsToFindSetList.add(ingredientRepository.findIdsInBar());
+        }
 
         if(idsToFindSetList.isEmpty()) {
             return ingredientRepository.findAll();

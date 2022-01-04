@@ -108,8 +108,9 @@ import { required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import useVuelidate from '@vuelidate/core'
+import IngredientService from '../services/ingredient.service'
 
 export default {
   name: 'MyBar',
@@ -121,6 +122,7 @@ export default {
         { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
+      ownedIngredients: [],
       loading: false,
       editOptions: {
         editErrorMessage: '',
@@ -131,27 +133,32 @@ export default {
       }
     }
   },
+  async beforeRouteEnter (to, from, next) {
+    const ownedIngredients = await IngredientService
+      .getIngredientsFilter(null, null, true)
+    next(vm => {
+      vm.ownedIngredients = ownedIngredients
+    })
+  },
   setup () {
     return {
       v: useVuelidate(),
       mdiDelete: mdiDelete
     }
   },
-  computed: {
-    ...mapGetters({
-      ownedIngredients: 'bar/getOwnedIngredients'
-    })
-  },
   methods: {
     ...mapActions({
-      fetchIngredientsAction: 'bar/fetchIngredients',
       addOwnedIngredientAction: 'bar/addIngredient',
       removeOwnedIngredientAction: 'bar/removeIngredient'
     }),
     onRefresh () {
       this.loading = true
       setTimeout(() => {
-        this.fetchIngredientsAction()
+        IngredientService
+          .getIngredientsFilter(null, null, true)
+          .then(data => {
+            this.ownedIngredients = data
+          })
           .finally(() => {
             this.loading = false
           })

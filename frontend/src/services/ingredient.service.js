@@ -7,11 +7,12 @@ class IngredientService {
       .then(response => response.data)
   }
 
-  getIngredientsFilter (autocomplete, filterManualIngredients) {
+  getIngredientsFilter (autocomplete, filterManualIngredients, inBar) {
     return axios.get(API_PATH, {
       params: {
         autocomplete: autocomplete,
-        filterManualIngredients: filterManualIngredients
+        filterManualIngredients: filterManualIngredients,
+        inBar: inBar
       }
     })
       .then(response => response.data)

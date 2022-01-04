@@ -130,7 +130,7 @@ export default {
       return 'red'
     },
     ingredientChipTooltip (ingredient) {
-      if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
+      if (this.getPumpIngredients.some(x => x.id === ingredient.id)) {
         return ''
       }
       if (ingredient.inBar) {
