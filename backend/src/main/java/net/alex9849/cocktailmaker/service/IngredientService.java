@@ -25,7 +25,7 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients) {
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {

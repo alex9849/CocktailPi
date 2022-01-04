@@ -66,12 +66,12 @@
               style="margin-left: 0; margin-right: 5px"
               square
               outline
-              :color="ingredientChipColor(ingredient.id)"
+              :color="ingredientChipColor(ingredient)"
             >
               <q-tooltip
-                v-if="!!ingredientChipTooltip(ingredient.id)"
+                v-if="!!ingredientChipTooltip(ingredient)"
               >
-                {{ ingredientChipTooltip(ingredient.id) }}
+                {{ ingredientChipTooltip(ingredient) }}
               </q-tooltip>
               {{ ingredient.name }}
             </q-chip>
@@ -113,28 +113,27 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      ownedIngredients: 'bar/getOwnedIngredients'
+      getPumpIngredients: 'pumpLayout/getPumpIngredients'
     })
   },
   methods: {
     hasPumpLayoutIngredient (ingredientId) {
       return this.getPumpIngredients.some(x => x.id === ingredientId)
     },
-    ingredientChipColor (ingredientId) {
-      if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
+    ingredientChipColor (ingredient) {
+      if (this.getPumpIngredients.some(x => x.id === ingredient.id)) {
         return 'green'
       }
-      if (this.ownedIngredients.some(x => x.id === ingredientId)) {
+      if (ingredient.inBar) {
         return 'orange-6'
       }
       return 'red'
     },
-    ingredientChipTooltip (ingredientId) {
+    ingredientChipTooltip (ingredient) {
       if (this.getPumpIngredients.some(x => x.id === ingredientId)) {
         return ''
       }
-      if (this.ownedIngredients.some(x => x.id === ingredientId)) {
+      if (ingredient.inBar) {
         return 'add manually'
       }
       return 'not owned'

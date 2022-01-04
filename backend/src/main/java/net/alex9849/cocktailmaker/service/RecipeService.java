@@ -44,7 +44,7 @@ public class RecipeService {
 
     public Page<Recipe> getRecipesByFilter(Long ownerId, Long inCollection,
                                            Long inCategory, Long[] containsIngredients,
-                                           String searchName, boolean isFabricable, Long isInBarUserId, int pageNumber,
+                                           String searchName, boolean isFabricable, boolean isInBar, int pageNumber,
                                            int pageSize, Sort sort) {
         long offset = (long) pageNumber * pageSize;
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
@@ -67,8 +67,8 @@ public class RecipeService {
         if(isFabricable) {
             idsToFindSetList.add(recipeRepository.getIdsOfFullyAutomaticallyFabricableRecipes());
         }
-        if(isInBarUserId != null) {
-            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(isInBarUserId));
+        if(isInBar) {
+            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsInBarOrOnPumps());
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         if(idsToFindSetList.isEmpty()) {

@@ -35,7 +35,7 @@ public class IngredientEndpoint {
                 throw new IllegalArgumentException("Autocomplete too short");
             }
         }
-        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients)
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients, false)
                 .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
     }
 

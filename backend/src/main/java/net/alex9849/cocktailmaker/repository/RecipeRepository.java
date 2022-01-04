@@ -280,24 +280,22 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(long userId) {
+    public Set<Long> getIdsOfRecipesWithAllIngredientsInBarOrOnPumps() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement(
                     "SELECT recipeId\n" +
-                            "from (SELECT r.id           AS recipeId,\n" +
+                            "from (SELECT r.id AS recipeId,\n" +
                             "             CASE\n" +
                             "                 WHEN p.current_ingredient_id IS NOT NULL\n" +
-                            "                     OR uoi.ingredient_id IS NOT NULL THEN 1\n" +
+                            "                     OR i.in_bar THEN 1\n" +
                             "                 ELSE 0 END AS owned\n" +
                             "      FROM recipes r\n" +
                             "               join production_steps ps on ps.recipe_id = r.id\n" +
                             "               join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                             "               join ingredients i on i.id = psi.ingredient_id\n" +
-                            "               left join pumps p on i.id = p.current_ingredient_id AND i.dtype = 'AutomatedIngredient'\n" +
-                            "               left join user_owned_ingredients uoi on i.id = uoi.ingredient_id AND uoi.user_id = ?) as sub\n" +
+                            "               left join pumps p on i.id = p.current_ingredient_id AND i.dtype = 'AutomatedIngredient') as sub\n" +
                             "group by recipeId\n" +
                             "having count(*) - sum(owned) = 0");
-            pstmt.setLong(1, userId);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
