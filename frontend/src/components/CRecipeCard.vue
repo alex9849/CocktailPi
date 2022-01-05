@@ -66,6 +66,7 @@
               style="margin-left: 0; margin-right: 5px"
               square
               outline
+              :ripple="false"
               :color="ingredientChipColor(ingredient)"
             >
               <q-tooltip

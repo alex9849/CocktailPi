@@ -61,6 +61,7 @@
                   <q-chip :color="ingredient.inBar? 'green-4' : 'red-4'"
                           dense
                           square
+                          :ripple="false"
                   >
                     <div v-if="ingredient.inBar">in bar</div>
                     <div v-else>not in bar</div>
@@ -95,7 +96,7 @@
               <ul style="text-align: start">
                 <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients" :key="insufficientIngredient.ingredient.id">
                   {{ insufficientIngredient.ingredient.name }}:
-                  {{ insufficientIngredient.amountRemaining }} ml
+                  <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
                 </li>
               </ul>
             </div>
@@ -328,7 +329,6 @@ export default {
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
           array.splice(array.indexOf(newPump.id), 1)
-          this.checkFeasibility()
         })
     },
     onClickCleanPump (pump) {
