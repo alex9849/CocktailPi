@@ -14,7 +14,7 @@
         val => !v.modelValue.amount.required.$invalid || 'Required',
         val => !v.modelValue.amount.minValue.$invalid || 'Min 1ml'
       ]"
-      @update:model-value="v.modelValue.amount.$model = $event; $emit('update:modelValue', modelValue)"
+      @update:model-value="v.modelValue.amount.$model = Number.parseInt($event); $emit('update:modelValue', modelValue)"
     />
     <q-checkbox
       label="Scale with volume"
