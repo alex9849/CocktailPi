@@ -53,6 +53,8 @@
     >
       <c-event-action-editor-form
         v-model:modelValue="editOptions.editEventAction"
+        @invalid="editOptions.valid = false"
+        @valid="editOptions.valid = true"
       />
     </c-edit-dialog>
   </q-page>
@@ -118,6 +120,8 @@ export default {
       this.editOptions.editEventAction = new EventAction(-1, null)
     },
     onClickSaveEventAction () {
+      this.closeEditDialog()
+      this.onRefreshButton()
     }
   },
   computed: {

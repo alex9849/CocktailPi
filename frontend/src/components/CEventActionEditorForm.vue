@@ -86,6 +86,18 @@ export default {
         }
       }
     }
+  },
+  watch: {
+    'v.modelValue.$invalid': {
+      immediate: true,
+      handler (value) {
+        if (!value) {
+          this.$emit('valid')
+        } else {
+          this.$emit('invalid')
+        }
+      }
+    }
   }
 }
 </script>
