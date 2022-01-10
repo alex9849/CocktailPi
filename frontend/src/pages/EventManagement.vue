@@ -11,6 +11,7 @@
         color="positive"
         label="Add action"
         no-caps
+        @click="showEditDialog"
       />
       <q-btn
         color="info"
@@ -27,7 +28,7 @@
         :columns="columns"
         :loading="isLoading"
         :pagination="{rowsPerPage: 0, sortBy: 'trigger'}"
-        :rows="actions"
+        :rows="eventActions"
         hide-bottom
         selection="multiple"
       >
@@ -41,25 +42,44 @@
         </template>
       </q-table>
     </div>
+    <c-edit-dialog
+      v-model:show="editOptions.editDialog"
+      :error-message="editOptions.editErrorMessage"
+      :saving="editOptions.saving"
+      :title="editDialogHeadline"
+      :valid="editOptions.valid"
+      @clickAbort="closeEditDialog"
+      @clickSave="onClickSaveEventAction"
+    >
+    </c-edit-dialog>
   </q-page>
 </template>
 
 <script>
 
 import TopButtonArranger from 'components/TopButtonArranger'
+import CEditDialog from 'components/CEditDialog'
+import EventAction from '../models/EventAction'
 import EventService from '../services/event.service'
 
 export default {
   name: 'EventManagement',
-  components: { TopButtonArranger },
+  components: { TopButtonArranger, CEditDialog },
   data () {
     return {
       selected: [],
-      actions: [],
+      eventActions: [],
       isLoading: false,
+      editOptions: {
+        editDialog: false,
+        editErrorMessage: '',
+        saving: false,
+        valid: false,
+        editEventAction: new EventAction(-1, null)
+      },
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
-        { name: 'action', label: 'Action', field: 'action', align: 'center' },
+        { name: 'action', label: 'Action', field: 'eventAction', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
@@ -78,10 +98,31 @@ export default {
     initialize () {
       this.isLoading = true
       EventService.getAllEvents()
-        .then(actions => {
-          this.actions = actions
+        .then(eventActions => {
+          this.eventActions = eventActions
           this.isLoading = false
         })
+    },
+    showEditDialog (eventAction) {
+      if (eventAction) {
+        this.editOptions.editEventAction = eventAction
+      }
+      this.editOptions.editDialog = true
+    },
+    closeEditDialog () {
+      this.editOptions.editDialog = false
+      this.editOptions.editEventAction = new EventAction(-1, null)
+    },
+    onClickSaveEventAction () {
+    }
+  },
+  computed: {
+    editDialogHeadline () {
+      if (this.editOptions.editEventAction.id === -1) {
+        return 'Create new action'
+      } else {
+        return 'Edit action'
+      }
     }
   }
 }
