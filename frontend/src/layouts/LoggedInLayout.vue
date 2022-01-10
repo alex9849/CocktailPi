@@ -190,6 +190,11 @@ export default {
               reqLevel: 3,
               to: { name: 'pumpmanagement' },
               exact: false
+            }, {
+              label: 'Events',
+              reqLevel: 3,
+              to: { name: 'eventmanagement' },
+              exact: false
             }
           ]
         }
