@@ -16,6 +16,9 @@
         color="info"
         label="Refresh"
         no-caps
+        :disable="isLoading"
+        :loading="isLoading"
+        @click="onRefreshButton"
       />
     </TopButtonArranger>
     <div class="q-py-md">
@@ -44,6 +47,7 @@
 <script>
 
 import TopButtonArranger from 'components/TopButtonArranger'
+import EventService from '../services/event.service'
 
 export default {
   name: 'EventManagement',
@@ -58,6 +62,26 @@ export default {
         { name: 'action', label: 'Action', field: 'action', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
+    }
+  },
+  created () {
+    this.initialize()
+  },
+  methods: {
+    onRefreshButton () {
+      this.isLoading = true
+      const vm = this
+      setTimeout(() => {
+        vm.initialize()
+      }, 500)
+    },
+    initialize () {
+      this.isLoading = true
+      EventService.getAllEvents()
+        .then(actions => {
+          this.actions = actions
+          this.isLoading = false
+        })
     }
   }
 }
