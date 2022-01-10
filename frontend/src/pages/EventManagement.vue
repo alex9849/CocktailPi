@@ -25,10 +25,8 @@
         :loading="isLoading"
         :pagination="{rowsPerPage: 0, sortBy: 'trigger'}"
         :rows="actions"
-        :table-style="{margin: '15px'}"
         hide-bottom
         selection="multiple"
-        style="background-color: #f3f3fa"
       >
         <template
           v-slot:loading
