@@ -11,7 +11,7 @@
         color="positive"
         label="Add action"
         no-caps
-        @click="showEditDialog"
+        @click="showEditDialog(null)"
       />
       <q-btn
         color="info"
@@ -51,6 +51,9 @@
       @clickAbort="closeEditDialog"
       @clickSave="onClickSaveEventAction"
     >
+      <c-event-action-editor-form
+        v-model:modelValue="editOptions.editEventAction"
+      />
     </c-edit-dialog>
   </q-page>
 </template>
@@ -61,10 +64,11 @@ import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
 import EventService from '../services/event.service'
+import CEventActionEditorForm from 'components/CEventActionEditorForm'
 
 export default {
   name: 'EventManagement',
-  components: { TopButtonArranger, CEditDialog },
+  components: { CEventActionEditorForm, TopButtonArranger, CEditDialog },
   data () {
     return {
       selected: [],
