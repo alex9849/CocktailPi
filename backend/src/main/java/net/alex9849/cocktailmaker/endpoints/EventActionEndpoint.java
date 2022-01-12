@@ -28,6 +28,16 @@ public class EventActionEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> getAction(@PathVariable long id) {
+        EventAction eventAction = eventService.getEventAction(id);
+        if(eventAction == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(eventAction);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createAction(@Valid @RequestBody EventActionDto eventActionDto, UriComponentsBuilder uriBuilder) {
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto));
@@ -37,7 +47,7 @@ public class EventActionEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAction(@Valid @RequestBody EventActionDto eventActionDto, @PathVariable Long id) {
+    public ResponseEntity<?> updateAction(@Valid @RequestBody EventActionDto eventActionDto, @PathVariable long id) {
         eventActionDto.setId(id);
         EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto));
         return ResponseEntity.ok(updatedAction);
