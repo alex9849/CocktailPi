@@ -11,7 +11,11 @@ import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EventActionRepository extends JdbcDaoSupport {
@@ -41,6 +45,62 @@ public class EventActionRepository extends JdbcDaoSupport {
             }
             throw new IllegalStateException("Error saving eventAction");
         });
+    }
+
+    public EventAction update(EventAction eventAction) {
+        return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE event_actions SET dType = ?, trigger = ? WHERE id = ?");
+            pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
+            pstmt.setString(2, eventAction.getTrigger().name());
+            pstmt.setLong(3, eventAction.getId());
+            pstmt.executeUpdate();
+            eventAction.setExecutionGroup(executionGroupRepository
+                    .getEventExecutionGroups(eventAction.getId()));
+            return eventAction;
+        });
+    }
+
+    public Optional<EventAction> getById(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<EventAction>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM event_actions WHERE id = ?");
+            pstmt.setLong(1, id);
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        });
+    }
+
+    public List<EventAction> getAll() {
+        return getJdbcTemplate().execute((ConnectionCallback<? extends List<EventAction>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM event_actions ORDER BY id");
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<EventAction> eventActions = new ArrayList<>();
+            while (rs.next()) {
+                eventActions.add(parseRs(rs));
+            }
+            return eventActions;
+        });
+    }
+
+    public boolean delete(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("DELETE from event_actions WHERE id = ?");
+            pstmt.setLong(1, id);
+            return pstmt.executeUpdate() != 0;
+        });
+    }
+
+
+    private EventAction parseRs(ResultSet rs) throws SQLException {
+        long id = rs.getLong("id");
+        executionGroupRepository.getEventExecutionGroups(id);
+
+        //TODO
+        return null;
     }
 
 
