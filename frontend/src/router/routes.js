@@ -96,6 +96,10 @@ const routes = [
       path: 'admin/categorymanagement',
       component: () => import('pages/CategoryManagement'),
       name: 'categorymanagement'
+    }, {
+      path: 'admin/eventmanagement',
+      component: () => import('pages/EventManagement'),
+      name: 'eventmanagement'
     }
     ]
   }, {
