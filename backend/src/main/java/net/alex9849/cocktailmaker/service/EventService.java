@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @Transactional
 public class EventService {
     private final Map<Long, RunningAction> runningActions = new HashMap<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Autowired
     private EventActionRepository eventActionRepository;
@@ -61,14 +65,19 @@ public class EventService {
     }
 
     public void triggerActions(EventTrigger trigger) {
-        List<EventAction> actions = eventActionRepository.getByTrigger(trigger);
         synchronized (runningActions) {
             for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());
                 CompletableFuture<?> future = CompletableFuture.runAsync(action::trigger);
                 RunningAction runningAction = new RunningAction(action, future);
                 runningActions.put(runningAction.getRunId(), runningAction);
-                future.thenAccept((x) -> cancelRunningAction(runningAction.getRunId()));
+                future.thenAccept(x -> cancelRunningAction(runningAction.getRunId()));
+                future.exceptionally(x -> {
+                    x.printStackTrace();
+                    cancelRunningAction(runningAction.getRunId());
+                    return null;
+                });
+                executor.submit(() -> future.complete(null));
             }
         }
     }
