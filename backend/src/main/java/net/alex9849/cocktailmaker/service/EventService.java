@@ -20,7 +20,7 @@ public class EventService {
         List<EventAction> actions = new ArrayList<>();
         synchronized (runningActions) {
             for(EventAction action : actions) {
-                cancelWithoutExecutionGroups(action.getExecutionGroups());
+                cancelAllWithoutExecutionGroups(action.getExecutionGroups());
                 CompletableFuture<?> future = CompletableFuture.runAsync(action::trigger);
                 RunningAction runningAction = new RunningAction(action, future);
                 runningActions.put(runningAction.getRunId(), runningAction);
@@ -40,7 +40,7 @@ public class EventService {
      * Cancels all running actions that have one or more ExecutionGroups
      * @param executionGroups A Set of ExecutionGroups. Function won't cancel anything if empty
      */
-    private void cancelWithoutExecutionGroups(Set<String> executionGroups) {
+    private void cancelAllWithoutExecutionGroups(Set<String> executionGroups) {
         if(executionGroups.isEmpty()) {
             return;
         }
