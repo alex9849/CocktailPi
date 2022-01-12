@@ -20,11 +20,6 @@ public class EventService {
     @Autowired
     private EventActionRepository eventActionRepository;
 
-    public static EventAction fromDto(EventActionDto dto) {
-        //Todo
-        return null;
-    }
-
     public void cancelAllRunningActions() {
         synchronized (runningActions) {
             runningActions.values().forEach(x -> x.getFuture().cancel(true));
@@ -99,5 +94,10 @@ public class EventService {
             throw new IllegalArgumentException("EventAction with id " + updatedEventAction.getId() + " doesn't exist!");
         }
         return eventActionRepository.update(updatedEventAction);
+    }
+
+    public static EventAction fromDto(EventActionDto dto) {
+        //Todo
+        return null;
     }
 }
