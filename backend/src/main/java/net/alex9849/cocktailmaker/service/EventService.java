@@ -4,6 +4,8 @@ import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.repository.EventActionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,18 +17,12 @@ import java.util.concurrent.CompletableFuture;
 public class EventService {
     private final Map<Long, RunningAction> runningActions = new HashMap<>();
 
-    public void triggerActions(EventTrigger trigger) {
-        //Todo get actions with trigger from DB
-        List<EventAction> actions = new ArrayList<>();
-        synchronized (runningActions) {
-            for(EventAction action : actions) {
-                cancelAllWithoutExecutionGroups(action.getExecutionGroups());
-                CompletableFuture<?> future = CompletableFuture.runAsync(action::trigger);
-                RunningAction runningAction = new RunningAction(action, future);
-                runningActions.put(runningAction.getRunId(), runningAction);
-                future.thenAccept((x) -> cancelRunningAction(runningAction.getRunId()));
-            }
-        }
+    @Autowired
+    private EventActionRepository eventActionRepository;
+
+    public static EventAction fromDto(EventActionDto dto) {
+        //Todo
+        return null;
     }
 
     public void cancelAllRunningActions() {
@@ -69,34 +65,39 @@ public class EventService {
         }
     }
 
-    public static EventAction fromDto(EventActionDto dto) {
-        //Todo
-        return null;
+    public void triggerActions(EventTrigger trigger) {
+        List<EventAction> actions = new ArrayList<>();
+        synchronized (runningActions) {
+            for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
+                cancelAllWithoutExecutionGroups(action.getExecutionGroups());
+                CompletableFuture<?> future = CompletableFuture.runAsync(action::trigger);
+                RunningAction runningAction = new RunningAction(action, future);
+                runningActions.put(runningAction.getRunId(), runningAction);
+                future.thenAccept((x) -> cancelRunningAction(runningAction.getRunId()));
+            }
+        }
     }
 
     public List<EventAction> getEventActions() {
-        //TODO
-        return new ArrayList<>();
+        return eventActionRepository.getAll();
     }
 
     public EventAction getEventAction(long id) {
-        //TODO
-        return null;
+        return eventActionRepository.getById(id).orElse(null);
     }
 
     public boolean deleteEventAction(long id) {
-        //TODO
-        return false;
+        return eventActionRepository.delete(id);
     }
 
     public EventAction createEventAction(EventAction eventAction) {
-        //TODO
-        return null;
+        return eventActionRepository.create(eventAction);
     }
 
     public EventAction updateEventAction(EventAction updatedEventAction) {
-        //TODO
-        //Check if exists
-        return null;
+        if(eventActionRepository.getById(updatedEventAction.getId()).isEmpty()) {
+            throw new IllegalArgumentException("EventAction with id " + updatedEventAction.getId() + " doesn't exist!");
+        }
+        return eventActionRepository.update(updatedEventAction);
     }
 }

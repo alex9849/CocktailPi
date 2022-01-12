@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.eventaction.EventAction;
+import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -76,6 +77,20 @@ public class EventActionRepository extends JdbcDaoSupport {
     public List<EventAction> getAll() {
         return getJdbcTemplate().execute((ConnectionCallback<? extends List<EventAction>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM event_actions ORDER BY id");
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<EventAction> eventActions = new ArrayList<>();
+            while (rs.next()) {
+                eventActions.add(parseRs(rs));
+            }
+            return eventActions;
+        });
+    }
+
+    public List<EventAction> getByTrigger(EventTrigger trigger) {
+        return getJdbcTemplate().execute((ConnectionCallback<? extends List<EventAction>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM event_actions WHERE trigger = ? ORDER BY id");
+            pstmt.setString(1, trigger.name());
             pstmt.execute();
             ResultSet rs = pstmt.getResultSet();
             List<EventAction> eventActions = new ArrayList<>();
