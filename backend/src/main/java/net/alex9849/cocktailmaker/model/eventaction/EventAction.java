@@ -47,5 +47,9 @@ public abstract class EventAction {
         this.executionGroups = executionGroups;
     }
 
+    /**
+     * This methods contains the behaviour of the EventAction.
+     * The trigger always gets executed asynchronous.
+     */
     public abstract void trigger();
 }
