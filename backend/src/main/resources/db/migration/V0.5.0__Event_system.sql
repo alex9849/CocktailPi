@@ -16,6 +16,6 @@ create table event_actions
 create table event_actions_execution_groups
 (
     id    bigserial    not null references event_actions,
-    group varchar(255) not null,
+    "group" varchar(255) not null,
     primary key (id, group)
 )
