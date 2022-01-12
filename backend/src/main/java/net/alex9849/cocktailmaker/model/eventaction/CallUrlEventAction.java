@@ -30,6 +30,11 @@ public class CallUrlEventAction extends EventAction {
     }
 
     @Override
+    protected String generateDescription() {
+        return "Call URL: " + url;
+    }
+
+    @Override
     public void trigger() {
         HttpURLConnection con = null;
 

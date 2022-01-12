@@ -5,6 +5,7 @@ import java.io.*;
 
 @DiscriminatorValue("ExecPy")
 public class ExecutePythonEventAction extends EventAction {
+    private String filename;
     private String program;
 
     public String getProgram() {
@@ -13,6 +14,11 @@ public class ExecutePythonEventAction extends EventAction {
 
     public void setProgram(String program) {
         this.program = program;
+    }
+
+    @Override
+    protected String generateDescription() {
+        return "Execute python script: " + filename;
     }
 
     @Override

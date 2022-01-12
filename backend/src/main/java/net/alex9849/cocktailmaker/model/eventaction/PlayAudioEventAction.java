@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 @DiscriminatorValue("PlayAudio")
 public class PlayAudioEventAction extends EventAction {
     private boolean onRepeat;
+    private String fileName;
     private AudioInputStream audioInputStream;
 
     public boolean isOnRepeat() {
@@ -24,6 +25,11 @@ public class PlayAudioEventAction extends EventAction {
 
     public void setAudioInputStream(AudioInputStream audioInputStream) {
         this.audioInputStream = audioInputStream;
+    }
+
+    @Override
+    protected String generateDescription() {
+        return "Play audiofile: " + fileName;
     }
 
     @Override

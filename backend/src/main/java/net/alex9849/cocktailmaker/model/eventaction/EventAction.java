@@ -6,6 +6,7 @@ public abstract class EventAction {
     private long id;
     private EventTrigger trigger;
     private Set<String> executionGroups;
+    private String description;
 
     public long getId() {
         return id;
@@ -47,4 +48,13 @@ public abstract class EventAction {
      * The trigger always gets executed asynchronous.
      */
     public abstract void trigger();
+
+    protected abstract String generateDescription();
+
+    public String getDescription() {
+        if(description != null) {
+            return description;
+        }
+        return generateDescription();
+    }
 }
