@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-const API_PATH = 'api/event/'
+const API_PATH = 'api/eventaction/'
 
-class EventService {
+class EventActionService {
   getAllEvents () {
     return axios.get(API_PATH)
       .then(response => response.data)
@@ -21,4 +21,4 @@ class EventService {
   }
 }
 
-export default new EventService()
+export default new EventActionService()

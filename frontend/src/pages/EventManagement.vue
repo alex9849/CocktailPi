@@ -65,7 +65,7 @@
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
-import EventService from '../services/event.service'
+import EventActionService from '../services/eventaction.service'
 import CEventActionEditorForm from 'components/CEventActionEditorForm'
 
 export default {
@@ -103,7 +103,7 @@ export default {
     },
     initialize () {
       this.isLoading = true
-      EventService.getAllEvents()
+      EventActionService.getAllEvents()
         .then(eventActions => {
           this.eventActions = eventActions
           this.isLoading = false
