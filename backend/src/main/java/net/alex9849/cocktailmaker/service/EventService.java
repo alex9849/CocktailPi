@@ -61,7 +61,7 @@ public class EventService {
     }
 
     public void triggerActions(EventTrigger trigger) {
-        List<EventAction> actions = new ArrayList<>();
+        List<EventAction> actions = eventActionRepository.getByTrigger(trigger);
         synchronized (runningActions) {
             for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());

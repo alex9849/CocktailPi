@@ -26,7 +26,8 @@ public class CocktailFactory {
 
     private int requestedAmount;
     private Cocktailprogress cocktailprogress;
-    private Cocktailprogress.State state;
+    private Cocktailprogress.State previousState = null;
+    private Cocktailprogress.State state = null;
 
     /**
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
@@ -60,7 +61,7 @@ public class CocktailFactory {
         currentWorker.setOnFinishCallback(() -> this.onFinish());
 
         this.productionStepWorkers.forEach(x -> x.subscribeToProgress(this::onSubscriptionChange));
-        this.state = Cocktailprogress.State.READY_TO_START;
+        setState(Cocktailprogress.State.READY_TO_START);
     }
 
     private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
@@ -113,11 +114,11 @@ public class CocktailFactory {
 
     private void onSubscriptionChange(StepProgress stepProgress) {
         if(stepProgress instanceof ManualStepProgress) {
-            this.state = Cocktailprogress.State.MANUAL_INGREDIENT_ADD;
+            setState(Cocktailprogress.State.MANUAL_INGREDIENT_ADD);
         } else if(stepProgress instanceof WrittenInstructionStepProgress) {
-            this.state = Cocktailprogress.State.MANUAL_ACTION_REQUIRED;
+            setState(Cocktailprogress.State.MANUAL_ACTION_REQUIRED);
         } else {
-            this.state = Cocktailprogress.State.RUNNING;
+            setState(Cocktailprogress.State.RUNNING);
         }
         this.notifySubscribers();
     }
@@ -164,8 +165,9 @@ public class CocktailFactory {
         if(this.state != Cocktailprogress.State.READY_TO_START) {
             throw new IllegalStateException("Factory not ready to start!");
         }
-        this.state = Cocktailprogress.State.RUNNING;
+        setState(Cocktailprogress.State.RUNNING);
         this.cocktailprogress = new Cocktailprogress();
+        this.notifySubscribers();
         this.currentProductionStepWorker.start();
     }
 
@@ -173,7 +175,7 @@ public class CocktailFactory {
         if(isFinished() || isCanceled()) {
             return;
         }
-        this.state = Cocktailprogress.State.FINISHED;
+        setState(Cocktailprogress.State.FINISHED);
         this.shutDown();
         this.notifySubscribers();
     }
@@ -183,7 +185,7 @@ public class CocktailFactory {
             throw new IllegalStateException("Cocktail already done!");
         }
         this.shutDown();
-        this.state = Cocktailprogress.State.CANCELLED;
+        setState(Cocktailprogress.State.CANCELLED);
         this.notifySubscribers();
     }
 
@@ -201,6 +203,11 @@ public class CocktailFactory {
                 automaticWorker.cancel();
             }
         }
+    }
+
+    private void setState(Cocktailprogress.State state) {
+        this.previousState = this.state;
+        this.state = state;
     }
 
     public boolean isFinished() {
@@ -230,6 +237,7 @@ public class CocktailFactory {
         Cocktailprogress cocktailprogress = new Cocktailprogress();
         cocktailprogress.setUser(this.user);
         cocktailprogress.setRecipe(this.recipe);
+        cocktailprogress.setPreviousState(this.previousState);
         cocktailprogress.setState(this.state);
         cocktailprogress.setProgress(getProgressInPercent());
 
