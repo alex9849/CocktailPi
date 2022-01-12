@@ -19,7 +19,7 @@ public class Config {
         if(gpioController == null) {
             try {
                 if(demoMode) {
-                    gpioController = (IGpioController) Class.forName("net.alex9849.cocktailmaker.iface.DemomodeGpioController").newInstance();
+                    gpioController = (IGpioController) Class.forName("net.alex9849.cocktailmaker.iface.DemoModeGpioController").newInstance();
                 } else {
                     gpioController = (IGpioController) Class.forName("net.alex9849.cocktailmaker.iface.ProdModeGpioController").newInstance();
                 }
