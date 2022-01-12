@@ -7,11 +7,6 @@ public abstract class EventAction {
     private EventTrigger trigger;
     private Set<String> executionGroups;
 
-    protected EventAction(long id, EventTrigger trigger) {
-        this.id = id;
-        this.trigger = trigger;
-    }
-
     public long getId() {
         return id;
     }
