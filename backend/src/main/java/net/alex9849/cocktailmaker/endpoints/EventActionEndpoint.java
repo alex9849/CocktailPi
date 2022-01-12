@@ -28,7 +28,7 @@ public class EventActionEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);
         if(eventAction == null) {
