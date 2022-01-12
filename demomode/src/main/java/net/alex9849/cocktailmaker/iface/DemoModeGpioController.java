@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.iface;
 
 import java.util.HashMap;
 
-public class DemomodeGpioController implements IGpioController {
+public class DemoModeGpioController implements IGpioController {
     private HashMap<Integer, DemoModeGpioPin> pinMap = new HashMap<>();
 
     @Override
