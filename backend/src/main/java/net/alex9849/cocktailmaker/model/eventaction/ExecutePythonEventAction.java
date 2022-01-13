@@ -4,21 +4,21 @@ import javax.persistence.DiscriminatorValue;
 import java.io.*;
 
 @DiscriminatorValue("ExecPy")
-public class ExecutePythonEventAction extends EventAction {
-    private String filename;
-    private String program;
+public class ExecutePythonEventAction extends FileEventAction {
+    private InputStream program;
 
-    public String getProgram() {
+    @Override
+    public InputStream getFileInputStream() {
         return program;
     }
 
-    public void setProgram(String program) {
+    public void setFileInputStream(InputStream stream) {
         this.program = program;
     }
 
     @Override
     protected String generateDescription() {
-        return "Execute python script: " + filename;
+        return "Execute python script: " + getFileName();
     }
 
     @Override
@@ -29,9 +29,15 @@ public class ExecutePythonEventAction extends EventAction {
             file = File.createTempFile("cocktailmaker_py_eventaction_", ".py");
             file.deleteOnExit();
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(program);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(program));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+            }
             writer.flush();
             writer.close();
+            reader.close();
 
             process = Runtime.getRuntime().exec("python " + file.getAbsolutePath());
             process.waitFor();
