@@ -42,8 +42,11 @@ public class CallUrlEventAction extends EventAction {
             URL url = new URL(this.url);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(requestMethod.name());
+            con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.close();
+            con.getResponseCode();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
