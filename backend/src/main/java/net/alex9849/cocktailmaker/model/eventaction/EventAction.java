@@ -6,7 +6,7 @@ public abstract class EventAction {
     private long id;
     private EventTrigger trigger;
     private Set<String> executionGroups;
-    private String description;
+    private String comment;
 
     public long getId() {
         return id;
@@ -49,12 +49,13 @@ public abstract class EventAction {
      */
     public abstract void trigger();
 
-    protected abstract String generateDescription();
+    public abstract String getDescription();
 
-    public String getDescription() {
-        if(description != null) {
-            return description;
-        }
-        return generateDescription();
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

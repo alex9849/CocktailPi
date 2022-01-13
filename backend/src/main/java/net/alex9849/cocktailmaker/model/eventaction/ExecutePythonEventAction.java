@@ -7,7 +7,7 @@ import java.io.*;
 public class ExecutePythonEventAction extends FileEventAction {
 
     @Override
-    protected String generateDescription() {
+    public String getDescription() {
         return "Execute python script: " + getFileName();
     }
 

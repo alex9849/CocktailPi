@@ -32,11 +32,11 @@ public class EventActionRepository extends JdbcDaoSupport {
 
     public EventAction create(EventAction eventAction) {
         return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO event_actions (dType, trigger, description, on_repeat, filename, " +
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO event_actions (dType, trigger, comment, on_repeat, filename, " +
                     "requestMethod, url) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
-            pstmt.setString(3, eventAction.getDescription());
+            pstmt.setString(3, eventAction.getComment());
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -124,12 +124,12 @@ public class EventActionRepository extends JdbcDaoSupport {
 
     public EventAction update(EventAction eventAction) {
         return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE event_actions SET dType = ?, trigger = ?, description = ?, " +
+            PreparedStatement pstmt = con.prepareStatement("UPDATE event_actions SET dType = ?, trigger = ?, comment = ?, " +
                     "on_repeat = ?, filename = ?, requestMethod = ?, url = ? WHERE id = ?");
 
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
-            pstmt.setString(3, eventAction.getDescription());
+            pstmt.setString(3, eventAction.getComment());
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -250,6 +250,10 @@ public class EventActionRepository extends JdbcDaoSupport {
             throw new IllegalArgumentException("Unknown dType: " + dType);
         }
 
+        eventAction.setComment(rs.getString("comment"));
+        if(eventAction.getComment() == null) {
+            eventAction.setComment("");
+        }
         eventAction.setExecutionGroup(eventExecutionGroups);
         eventAction.setTrigger(EventTrigger.valueOf(rs.getString("trigger")));
         eventAction.setId(id);

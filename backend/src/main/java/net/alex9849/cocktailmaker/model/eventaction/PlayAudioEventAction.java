@@ -19,7 +19,7 @@ public class PlayAudioEventAction extends FileEventAction {
     }
 
     @Override
-    protected String generateDescription() {
+    public String getDescription() {
         return "Play audiofile: " + getFileName();
     }
 

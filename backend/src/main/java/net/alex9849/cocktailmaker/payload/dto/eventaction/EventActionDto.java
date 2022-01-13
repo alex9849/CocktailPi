@@ -17,6 +17,7 @@ public abstract class EventActionDto {
     private EventTrigger trigger;
     private Set<String> executionGroups;
     private String description;
+    private String comment;
 
     public static EventActionDto toDto(EventAction eventAction) {
         if(eventAction instanceof CallUrlEventAction) {
@@ -61,6 +62,14 @@ public abstract class EventActionDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public abstract String getType();

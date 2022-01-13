@@ -30,8 +30,8 @@ public class CallUrlEventAction extends EventAction {
     }
 
     @Override
-    protected String generateDescription() {
-        return "Call URL: " + url;
+    public String getDescription() {
+        return "Call URL (" + this.requestMethod.name() + "): " + url;
     }
 
     @Override

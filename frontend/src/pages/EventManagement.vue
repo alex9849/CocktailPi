@@ -40,6 +40,35 @@
             showing
           />
         </template>
+        <template v-slot:body-cell-actions="props">
+          <q-td
+            key="actions"
+            :props="props"
+            class="q-pa-md q-gutter-x-sm"
+          >
+            <q-btn
+              :icon="mdiPencilOutline"
+              :style="{backgroundColor: '#31ccec'}"
+              dense
+              rounded
+              text-color="white"
+            >
+              <q-tooltip>
+                Edit
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              :icon="mdiDelete"
+              color="red"
+              dense
+              rounded
+            >
+              <q-tooltip>
+                Delete
+              </q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
       </q-table>
     </div>
     <c-edit-dialog
@@ -62,6 +91,7 @@
 
 <script>
 
+import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
@@ -85,13 +115,15 @@ export default {
       },
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
-        { name: 'action', label: 'Action', field: 'eventAction', align: 'center' },
         { name: 'description', label: 'Description', field: 'description', align: 'center' },
+        { name: 'comment', label: 'Comment', field: 'comment', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
   },
   created () {
+    this.mdiDelete = mdiDelete
+    this.mdiPencilOutline = mdiPencilOutline
     this.initialize()
   },
   methods: {

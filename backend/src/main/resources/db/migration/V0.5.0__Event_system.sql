@@ -11,7 +11,7 @@ create table event_actions
     id            bigserial    not null primary key,
     dType         varchar(20) check (dType = 'PlayAudio' OR dType = 'ExecPy' OR dType = 'CallUrl'),
     trigger       varchar(255) not null,
-    description   varchar(40)  null,
+    comment   varchar(40) null,
     on_repeat      boolean check ((dType = 'CallUrl' AND on_repeat IS NULL) OR
                                  ((dType = 'ExecPy' OR dType = 'CallUrl') AND on_repeat IS NOT NULL)),
     fileName      varchar(255) check ((dType = 'CallUrl' AND fileName IS NULL) OR
