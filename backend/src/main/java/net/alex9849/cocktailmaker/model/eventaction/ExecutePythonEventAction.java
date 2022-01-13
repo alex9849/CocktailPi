@@ -5,16 +5,6 @@ import java.io.*;
 
 @DiscriminatorValue("ExecPy")
 public class ExecutePythonEventAction extends FileEventAction {
-    private InputStream program;
-
-    @Override
-    public InputStream getFileInputStream() {
-        return program;
-    }
-
-    public void setFileInputStream(InputStream stream) {
-        this.program = program;
-    }
 
     @Override
     protected String generateDescription() {
@@ -29,7 +19,7 @@ public class ExecutePythonEventAction extends FileEventAction {
             file = File.createTempFile("cocktailmaker_py_eventaction_", ".py");
             file.deleteOnExit();
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(program));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(getFile())));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 writer.write(line);

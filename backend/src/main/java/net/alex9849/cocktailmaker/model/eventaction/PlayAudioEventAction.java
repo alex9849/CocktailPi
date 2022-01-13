@@ -2,13 +2,13 @@ package net.alex9849.cocktailmaker.model.eventaction;
 
 import javax.persistence.DiscriminatorValue;
 import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 @DiscriminatorValue("PlayAudio")
 public class PlayAudioEventAction extends FileEventAction {
     private boolean onRepeat;
-    private AudioInputStream audioInputStream;
 
     public boolean isOnRepeat() {
         return onRepeat;
@@ -16,15 +16,6 @@ public class PlayAudioEventAction extends FileEventAction {
 
     public void setOnRepeat(boolean onRepeat) {
         this.onRepeat = onRepeat;
-    }
-
-    @Override
-    public AudioInputStream getFileInputStream() {
-        return audioInputStream;
-    }
-
-    public void setAudioInputStream(AudioInputStream audioInputStream) {
-        this.audioInputStream = audioInputStream;
     }
 
     @Override
@@ -44,7 +35,7 @@ public class PlayAudioEventAction extends FileEventAction {
                     syncLatch.countDown();
                 }
             });
-
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new ByteArrayInputStream(getFile()));
             clip.open(audioInputStream);
             clip.loop(onRepeat? Clip.LOOP_CONTINUOUSLY : 0);
             clip.start();
@@ -55,7 +46,7 @@ public class PlayAudioEventAction extends FileEventAction {
                 clip.stop();
                 clip.close();
             }
-        } catch (LineUnavailableException | IOException e) {
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
             e.printStackTrace();
         } finally {
             if(clip != null) {

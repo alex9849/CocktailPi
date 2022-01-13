@@ -1,11 +1,23 @@
 package net.alex9849.cocktailmaker.model.eventaction;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public abstract class FileEventAction extends EventAction {
     private String fileName;
+    private byte[] file;
 
-    public abstract InputStream getFileInputStream();
+    public InputStream getFileInputStream() {
+        return new ByteArrayInputStream(file);
+    }
+
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
+    }
 
     public String getFileName() {
         return fileName;

@@ -12,8 +12,8 @@ create table event_actions
     dType         varchar(20) check (dType = 'PlayAudio' OR dType = 'ExecPy' OR dType = 'CallUrl'),
     trigger       varchar(255) not null,
     description   varchar(40)  null,
-    onRepeat      boolean check ((dType = 'CallUrl' AND onRepeat IS NULL) OR
-                                 ((dType = 'ExecPy' OR dType = 'CallUrl') AND onRepeat IS NOT NULL)),
+    on_repeat      boolean check ((dType = 'CallUrl' AND on_repeat IS NULL) OR
+                                 ((dType = 'ExecPy' OR dType = 'CallUrl') AND on_repeat IS NOT NULL)),
     fileName      varchar(255) check ((dType = 'CallUrl' AND fileName IS NULL) OR
                                       ((dType = 'ExecPy' OR dType = 'CallUrl') AND fileName IS NOT NULL)),
     file          oid check ((dType = 'CallUrl' AND file IS NULL) OR
