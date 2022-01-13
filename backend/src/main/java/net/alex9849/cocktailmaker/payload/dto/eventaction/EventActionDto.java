@@ -1,18 +1,34 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
-import net.alex9849.cocktailmaker.model.eventaction.EventAction;
-import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import net.alex9849.cocktailmaker.model.eventaction.*;
 
 import java.util.Set;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = CallUrlEventActionDto.class, name = "callUrl"),
+        @JsonSubTypes.Type(value = ExecutePythonEventActionDto.class, name = "execPy"),
+        @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio")
+})
 public abstract class EventActionDto {
     private long id;
     private EventTrigger trigger;
     private Set<String> executionGroups;
+    private String description;
 
     public static EventActionDto toDto(EventAction eventAction) {
-        //Todo
-        return null;
+        if(eventAction instanceof CallUrlEventAction) {
+            return new CallUrlEventActionDto((CallUrlEventAction) eventAction);
+        }
+        if(eventAction instanceof ExecutePythonEventAction) {
+            return new ExecutePythonEventActionDto((ExecutePythonEventAction) eventAction);
+        }
+        if(eventAction instanceof PlayAudioEventAction) {
+            return new PlayAudioEventActionDto((PlayAudioEventAction) eventAction);
+        }
+        throw new IllegalStateException("EventAction-Type is not supported yet!");
     }
 
     public long getId() {
@@ -37,5 +53,13 @@ public abstract class EventActionDto {
 
     public void setExecutionGroups(Set<String> executionGroups) {
         this.executionGroups = executionGroups;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
