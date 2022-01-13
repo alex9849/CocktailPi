@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.repository.EventActionExecutionGroupRepository;
 import net.alex9849.cocktailmaker.repository.EventActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class EventService {
 
     @Autowired
     private EventActionRepository eventActionRepository;
+
+    @Autowired
+    private EventActionExecutionGroupRepository executionGroupRepository;
 
     public void cancelAllRunningActions() {
         synchronized (runningActions) {
@@ -108,5 +112,9 @@ public class EventService {
     public static EventAction fromDto(EventActionDto dto) {
         //Todo
         return null;
+    }
+
+    public List<String> getExecutionGroups() {
+        return executionGroupRepository.getAllEventExecutionGroups();
     }
 }

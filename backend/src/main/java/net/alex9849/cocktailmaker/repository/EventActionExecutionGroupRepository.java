@@ -9,10 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -79,4 +76,16 @@ public class EventActionExecutionGroupRepository extends JdbcDaoSupport {
         });
     }
 
+    public List<String> getAllEventExecutionGroups() {
+        return getJdbcTemplate().execute((ConnectionCallback<List<String>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT DISTINCT \"group\" from event_actions_execution_groups ORDER BY \"group\" asc");
+            pstmt.execute();
+            ResultSet rs = pstmt.getResultSet();
+            List<String> groups = new ArrayList<>();
+            while (rs.next()) {
+                groups.add(rs.getString("group"));
+            }
+            return groups;
+        });
+    }
 }

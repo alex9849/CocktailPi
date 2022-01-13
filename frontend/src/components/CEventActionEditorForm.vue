@@ -2,8 +2,11 @@
   <div
     class="q-gutter-y-sm"
   >
+    <q-inner-loading
+      :showing="groupsLoading"
+    />
     <q-input
-      :disable="disable"
+      :disable="disable || groupsLoading"
       :model-value="modelValue.comment"
       :rules="[
                 val => !v.modelValue.comment.maxLength.$invalid || 'Max 40'
@@ -16,7 +19,7 @@
     />
     <q-select
       ref="executionGroupsSelector"
-      :disable="disable"
+      :disable="disable || groupsLoading"
       :model-value="modelValue.executionGroups"
       :options="executionGroupOptions"
       filled
@@ -66,7 +69,7 @@
       </template>
     </q-select>
     <q-select
-      :disable="disable"
+      :disable="disable || groupsLoading"
       :model-value="modelValue.trigger"
       :options="triggerOptions"
       emit-value
@@ -105,6 +108,7 @@
 <script>
 
 import useVuelidate from '@vuelidate/core'
+import EventActionService from '../services/eventaction.service'
 import { maxLength, required } from '@vuelidate/validators'
 
 export default {
@@ -124,8 +128,17 @@ export default {
       default: false
     }
   },
+  created () {
+    this.groupsLoading = true
+    EventActionService.getAllExecutionGroups()
+      .then(groups => {
+        this.groupsLoading = false
+        this.existingExecutionGroups = groups
+      })
+  },
   data () {
     return {
+      groupsLoading: false,
       existingExecutionGroups: [],
       currentExecutionGroupFilter: '',
       triggerOptions: [{

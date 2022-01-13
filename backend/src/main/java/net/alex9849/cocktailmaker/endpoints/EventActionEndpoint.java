@@ -28,6 +28,12 @@ public class EventActionEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/executiongroup", method = RequestMethod.GET)
+    public ResponseEntity<?> getExecutionGroups() {
+        return ResponseEntity.ok(eventService.getExecutionGroups());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);

@@ -19,6 +19,11 @@ class EventActionService {
   deleteEvent (event) {
     return axios.delete(API_PATH + event.id)
   }
+
+  getAllExecutionGroups () {
+    return axios.get(API_PATH + '/executiongroup')
+      .then(response => response.data)
+  }
 }
 
 export default new EventActionService()
