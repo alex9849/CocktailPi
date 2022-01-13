@@ -2,6 +2,69 @@
   <div
     class="q-gutter-y-sm"
   >
+    <q-input
+      :disable="disable"
+      :model-value="modelValue.comment"
+      :rules="[
+                val => !v.modelValue.comment.maxLength.$invalid || 'Max 40'
+              ]"
+      filled
+      hide-bottom-space
+      label="Comment"
+      outlined
+      @update:model-value="setValue('comment', $event)"
+    />
+    <q-select
+      ref="executionGroupsSelector"
+      :disable="disable"
+      :model-value="modelValue.executionGroups"
+      :options="executionGroupOptions"
+      filled
+      input-debounce="0"
+      label="Execution-groups"
+      multiple
+      new-value-mode="add-unique"
+      use-chips
+      use-input
+      @filter="onFilterExecGroups"
+      @update:model-value="setValue('executionGroups', $event)"
+    >
+      <template v-slot:before-options>
+        <q-item
+          v-if="currentExecutionGroupFilter && isExecutionGroupFilterUnique"
+          clickable
+          @click="addNewGroup(currentExecutionGroupFilter)"
+        >
+          <q-item-section>
+            <div class="inline-block">
+              <b>Create new:</b> {{ currentExecutionGroupFilter }}
+            </div>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template v-slot:no-option>
+        <div>
+          <q-item
+            v-if="currentExecutionGroupFilter && isExecutionGroupFilterUnique"
+            clickable
+            @click="addNewGroup(currentExecutionGroupFilter)"
+          >
+            <q-item-section>
+              <div class="inline-block">
+                <b>Create new:</b> {{ currentExecutionGroupFilter }}
+              </div>
+            </q-item-section>
+          </q-item>
+          <q-item v-else>
+            <q-item-section>
+              <div class="text-grey-7 text-italic text-center">
+                Write to add new group...
+              </div>
+            </q-item-section>
+          </q-item>
+        </div>
+      </template>
+    </q-select>
     <q-select
       :disable="disable"
       :model-value="modelValue.trigger"
@@ -42,7 +105,7 @@
 <script>
 
 import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import { maxLength, required } from '@vuelidate/validators'
 
 export default {
   name: 'CEventActionEditorForm',
@@ -63,6 +126,8 @@ export default {
   },
   data () {
     return {
+      existingExecutionGroups: [],
+      currentExecutionGroupFilter: '',
       triggerOptions: [{
         label: 'Demo 1',
         value: 'demo1'
@@ -76,6 +141,14 @@ export default {
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
+    },
+    onFilterExecGroups (inputValue, doneFn, abortFn) {
+      this.currentExecutionGroupFilter = inputValue
+      doneFn()
+    },
+    addNewGroup (addGroup) {
+      this.$refs.executionGroupsSelector.add(addGroup, true)
+      this.$refs.executionGroupsSelector.updateInputValue('')
     }
   },
   validations () {
@@ -83,7 +156,11 @@ export default {
       modelValue: {
         trigger: {
           required
-        }
+        },
+        comment: {
+          maxLength: maxLength(40)
+        },
+        executionGroups: {}
       }
     }
   },
@@ -97,6 +174,30 @@ export default {
           this.$emit('invalid')
         }
       }
+    }
+  },
+  computed: {
+    executionGroupOptions () {
+      const executionGroupOptions = []
+      if (!this.currentExecutionGroupFilter) {
+        return this.existingExecutionGroups
+      }
+      for (const existingGroup of this.existingExecutionGroups) {
+        if (existingGroup.toLowerCase().includes(this.currentExecutionGroupFilter.toLowerCase())) {
+          executionGroupOptions.push(existingGroup)
+        }
+      }
+      return executionGroupOptions
+    },
+    isExecutionGroupFilterUnique () {
+      let unique = true
+      if (this.modelValue.executionGroups) {
+        unique &&= !this.modelValue.executionGroups
+          .some(x => x.toLowerCase() === this.currentExecutionGroupFilter.toLowerCase())
+      }
+      unique &&= !this.executionGroupOptions
+        .some(x => x.toLowerCase() === this.currentExecutionGroupFilter.toLowerCase())
+      return unique
     }
   }
 }
