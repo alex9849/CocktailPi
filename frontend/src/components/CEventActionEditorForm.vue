@@ -71,7 +71,7 @@
     <q-select
       :disable="disable || groupsLoading"
       :model-value="modelValue.trigger"
-      :options="triggerOptions"
+      :options="eventActionTriggerDisplayNames"
       emit-value
       filled
       label="Trigger"
@@ -110,9 +110,11 @@
 import useVuelidate from '@vuelidate/core'
 import EventActionService from '../services/eventaction.service'
 import { maxLength, required } from '@vuelidate/validators'
+import { eventActionTriggerDisplayNames } from '../mixins/constants'
 
 export default {
   name: 'CEventActionEditorForm',
+  mixins: [eventActionTriggerDisplayNames],
   setup () {
     return {
       v: useVuelidate()

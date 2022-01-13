@@ -40,6 +40,13 @@
             showing
           />
         </template>
+        <template v-slot:body-cell-trigger="props">
+          <q-td
+            :props="props"
+          >
+          {{ eventTriggerToDisplayName(props.value) }}
+          </q-td>
+        </template>
         <template v-slot:body-cell-actions="props">
           <q-td
             key="actions"
@@ -97,9 +104,11 @@ import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
 import EventActionService from '../services/eventaction.service'
 import CEventActionEditorForm from 'components/CEventActionEditorForm'
+import { eventActionTriggerDisplayNames } from '../mixins/constants'
 
 export default {
   name: 'EventManagement',
+  mixins: [eventActionTriggerDisplayNames],
   components: { CEventActionEditorForm, TopButtonArranger, CEditDialog },
   data () {
     return {
