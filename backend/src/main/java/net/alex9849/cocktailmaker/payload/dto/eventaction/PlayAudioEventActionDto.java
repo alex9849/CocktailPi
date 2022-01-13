@@ -17,4 +17,9 @@ public class PlayAudioEventActionDto extends FileEventActionDto {
     public void setOnRepeat(boolean onRepeat) {
         this.onRepeat = onRepeat;
     }
+
+    @Override
+    public String getType() {
+        return "playAudio";
+    }
 }

@@ -7,4 +7,9 @@ public class ExecutePythonEventActionDto extends FileEventActionDto {
     public ExecutePythonEventActionDto(ExecutePythonEventAction eventAction) {
         BeanUtils.copyProperties(eventAction, this);
     }
+
+    @Override
+    public String getType() {
+        return "execPy";
+    }
 }

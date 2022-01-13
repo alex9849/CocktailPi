@@ -86,6 +86,7 @@ export default {
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
         { name: 'action', label: 'Action', field: 'eventAction', align: 'center' },
+        { name: 'description', label: 'Description', field: 'description', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }

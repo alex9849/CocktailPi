@@ -62,4 +62,6 @@ public abstract class EventActionDto {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public abstract String getType();
 }

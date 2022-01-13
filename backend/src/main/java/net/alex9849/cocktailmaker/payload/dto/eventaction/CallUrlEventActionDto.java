@@ -27,4 +27,9 @@ public class CallUrlEventActionDto extends EventActionDto {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String getType() {
+        return "callUrl";
+    }
 }
