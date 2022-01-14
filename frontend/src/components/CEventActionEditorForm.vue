@@ -88,6 +88,16 @@
       map-options
       @update:model-value="setValue('trigger', $event)"
     />
+    <q-select
+      :disable="disable || groupsLoading"
+      :model-value="modelValue.type"
+      :options="existingActions"
+      emit-value
+      filled
+      label="Action"
+      map-options
+      @update:model-value="setAction($event)"
+    />
     <transition
       appear
       enter-active-class="animated bounceIn"
@@ -95,17 +105,22 @@
       <div>
         <q-splitter :model-value="10" />
         <q-tab-panels
-          v-if="modelValue.trigger !== null"
-          :model-value="modelValue.trigger"
+          v-if="modelValue.type !== null"
+          :model-value="modelValue.type"
           animated
         >
           <q-tab-panel
-            name="demo1"
+            name="callUrl"
           >
             demo1 Lorem ipsum bla bla bla
           </q-tab-panel>
           <q-tab-panel
-            name="demo2"
+            name="playAudio"
+          >
+            demo2 Lorem ipsum blubb blubb blubb
+          </q-tab-panel>
+          <q-tab-panel
+            name="execPy"
           >
             demo2 Lorem ipsum blubb blubb blubb
           </q-tab-panel>
@@ -152,10 +167,26 @@ export default {
     return {
       groupsLoading: false,
       existingExecutionGroups: [],
-      currentExecutionGroupFilter: ''
+      currentExecutionGroupFilter: '',
+      existingActions: [{
+        label: 'Call URL',
+        value: 'callUrl'
+      }, {
+        label: 'Play audio file',
+        value: 'playAudio'
+      }, {
+        label: 'Execute python script',
+        value: 'execPy'
+      }]
     }
   },
   methods: {
+    setAction (actionValue) {
+      if (this.modelValue.type === actionValue) {
+        return
+      }
+      this.v.modelValue.type.$model = actionValue
+    },
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
@@ -183,13 +214,17 @@ export default {
   validations () {
     return {
       modelValue: {
-        trigger: {
-          required
-        },
         comment: {
           maxLength: maxLength(40)
         },
-        executionGroups: {}
+
+        executionGroups: {},
+        trigger: {
+          required
+        },
+        type: {
+          required
+        }
       }
     }
   },
