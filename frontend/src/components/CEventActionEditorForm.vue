@@ -29,28 +29,16 @@
       new-value-mode="add-unique"
       use-chips
       use-input
+      @new-value="onAddNewValueExecGroups"
       @filter="onFilterExecGroups"
       @update:model-value="setValue('executionGroups', $event)"
     >
       <template v-slot:before-options>
-        <q-item
-          v-if="currentExecutionGroupFilter && isExecutionGroupFilterUnique"
-          clickable
-          @click="addNewGroup(currentExecutionGroupFilter)"
-        >
-          <q-item-section>
-            <div class="inline-block">
-              <b>Create new:</b> {{ currentExecutionGroupFilter }}
-            </div>
-          </q-item-section>
-        </q-item>
-      </template>
-      <template v-slot:no-option>
         <div>
           <q-item
             v-if="currentExecutionGroupFilter && isExecutionGroupFilterUnique"
             clickable
-            @click="addNewGroup(currentExecutionGroupFilter)"
+            @click="addNewExecGroup(currentExecutionGroupFilter)"
           >
             <q-item-section>
               <div class="inline-block">
@@ -61,7 +49,29 @@
           <q-item v-else>
             <q-item-section>
               <div class="text-grey-7 text-italic text-center">
-                Write to add new group...
+                Write to create new group...
+              </div>
+            </q-item-section>
+          </q-item>
+        </div>
+      </template>
+      <template v-slot:no-option>
+        <div>
+          <q-item
+            v-if="currentExecutionGroupFilter && isExecutionGroupFilterUnique"
+            clickable
+            @click="addNewExecGroup(currentExecutionGroupFilter)"
+          >
+            <q-item-section>
+              <div class="inline-block">
+                <b>Create new:</b> {{ currentExecutionGroupFilter }}
+              </div>
+            </q-item-section>
+          </q-item>
+          <q-item v-else>
+            <q-item-section>
+              <div class="text-grey-7 text-italic text-center">
+                Write to create new group...
               </div>
             </q-item-section>
           </q-item>
@@ -142,14 +152,7 @@ export default {
     return {
       groupsLoading: false,
       existingExecutionGroups: [],
-      currentExecutionGroupFilter: '',
-      triggerOptions: [{
-        label: 'Demo 1',
-        value: 'demo1'
-      }, {
-        label: 'Demo 2',
-        value: 'demo2'
-      }]
+      currentExecutionGroupFilter: ''
     }
   },
   methods: {
@@ -161,7 +164,18 @@ export default {
       this.currentExecutionGroupFilter = inputValue
       doneFn()
     },
-    addNewGroup (addGroup) {
+    // Triggers if the new value field submits an new value through usage of the **enter button**
+    onAddNewValueExecGroups (inputValue, doneFn) {
+      for (const existingGroup of this.existingExecutionGroups) {
+        if (existingGroup.toLowerCase() === inputValue.toLowerCase()) {
+          doneFn(existingGroup, 'add-unique')
+          return
+        }
+      }
+      doneFn(inputValue, 'add-unique')
+    },
+    // Triggers if the new new value field of the execGroup has been **Clicked**
+    addNewExecGroup (addGroup) {
       this.$refs.executionGroupsSelector.add(addGroup, true)
       this.$refs.executionGroupsSelector.updateInputValue('')
     }
