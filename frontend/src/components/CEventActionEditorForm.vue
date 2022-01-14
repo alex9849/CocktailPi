@@ -138,13 +138,50 @@
           </q-tab-panel>
           <q-tab-panel
             name="playAudio"
+            class="q-gutter-y-md q-px-none"
           >
-            demo2 Lorem ipsum blubb blubb blubb
+            <q-file :model-value="selectedFile"
+                    accept=".wav"
+                    bottom-slots
+                    filled
+                    hide-bottom-space
+                    label="Audio (max. 20 MB)"
+                    max-file-size="20971520"
+                    @update:model-value="setSelectedFile($event)"
+            >
+              <template v-slot:prepend>
+                <q-icon
+                  name="cloud_upload"
+                  @click.stop
+                />
+              </template>
+            </q-file>
+            <q-checkbox
+              :model-value="!!modelValue.onRepeat"
+              label="On repeat"
+              @update:model-value="setValue('onRepeat', $event)"
+            />
           </q-tab-panel>
           <q-tab-panel
             name="execPy"
+            class="q-gutter-y-md q-px-none"
           >
-            demo2 Lorem ipsum blubb blubb blubb
+            <q-file :model-value="selectedFile"
+                    accept=".py"
+                    bottom-slots
+                    filled
+                    hide-bottom-space
+                    label="Python (max. 20 MB)"
+                    max-file-size="20971520"
+                    @update:model-value="setSelectedFile($event)"
+            >
+              <template v-slot:prepend>
+                <q-icon
+                  name="cloud_upload"
+                  @click.stop
+                />
+              </template>
+            </q-file>
           </q-tab-panel>
         </q-tab-panels>
       </q-card-section>
@@ -171,6 +208,9 @@ export default {
     modelValue: {
       type: Object,
       required: true
+    },
+    selectedFile: {
+      type: Object
     },
     disable: {
       type: Boolean,
@@ -208,8 +248,15 @@ export default {
       if (this.modelValue.type === actionValue) {
         return
       }
+      if (this.selectedFile) {
+        this.v.selectedFile.$model = null
+      }
       this.v.modelValue.type.$model = actionValue
       this.$emit('update:modelValue', this.modelValue)
+    },
+    setSelectedFile (file) {
+      this.v.selectedFile.$model = file
+      this.$emit('update:selectedFile', this.modelValue)
     },
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
@@ -236,34 +283,45 @@ export default {
     }
   },
   validations () {
-    const modelValue = {
-      comment: {
-        maxLength: maxLength(40)
-      },
-      executionGroups: {},
-      trigger: {
-        required
-      },
-      type: {
-        required
+    const val = {
+      modelValue: {
+        comment: {
+          maxLength: maxLength(40)
+        },
+        executionGroups: {},
+        trigger: {
+          required
+        },
+        type: {
+          required
+        }
       }
     }
     if (this.modelValue.type === 'callUrl') {
-      modelValue.requestMethod = {
+      val.modelValue.requestMethod = {
         required
       }
-      modelValue.url = {
+      val.modelValue.url = {
         required,
         url,
         maxLength: maxLength(255)
       }
     }
-    return {
-      modelValue
+    if (this.modelValue.type === 'playAudio') {
+      val.modelValue.onRepeat = {}
+      val.selectedFile = {
+        required
+      }
     }
+    if (this.modelValue.type === 'execPy') {
+      val.selectedFile = {
+        required
+      }
+    }
+    return val
   },
   watch: {
-    'v.modelValue.$invalid': {
+    'v.$invalid': {
       immediate: true,
       handler (value) {
         if (!value) {
