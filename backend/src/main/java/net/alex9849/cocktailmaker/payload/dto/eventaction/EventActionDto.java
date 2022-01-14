@@ -18,6 +18,7 @@ public abstract class EventActionDto {
     private long id;
     @NotNull
     private EventTrigger trigger;
+    @NotNull
     private Set<@NotNull @Size(max = 40) String> executionGroups;
     private String description;
     @Size(max = 40)

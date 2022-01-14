@@ -7,7 +7,6 @@ import net.alex9849.cocktailmaker.payload.dto.eventaction.ExecutePythonEventActi
 import net.alex9849.cocktailmaker.payload.dto.eventaction.PlayAudioEventActionDto;
 import net.alex9849.cocktailmaker.repository.EventActionExecutionGroupRepository;
 import net.alex9849.cocktailmaker.repository.EventActionRepository;
-import org.aspectj.weaver.ast.Call;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -137,6 +136,7 @@ public class EventService {
         }
         CallUrlEventAction eventAction = new CallUrlEventAction();
         BeanUtils.copyProperties(dto, eventAction);
+        eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;
     }
 
@@ -147,6 +147,7 @@ public class EventService {
         PlayAudioEventAction eventAction = new PlayAudioEventAction();
         BeanUtils.copyProperties(dto, eventAction);
         eventAction.setFile(file);
+        eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;
     }
 
@@ -157,6 +158,7 @@ public class EventService {
         ExecutePythonEventAction eventAction = new ExecutePythonEventAction();
         BeanUtils.copyProperties(dto, eventAction);
         eventAction.setFile(file);
+        eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;
     }
 

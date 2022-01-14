@@ -33,7 +33,7 @@ public class EventActionExecutionGroupRepository extends JdbcDaoSupport {
             return new HashSet<>();
         }
         getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-            String query = "INSERT INTO event_actions_execution_groups (id, group) VALUES ";
+            String query = "INSERT INTO event_actions_execution_groups (id, \"group\") VALUES ";
             query += groups.stream().map(x -> "(?, ?)").collect(Collectors.joining(","));
             PreparedStatement pstmt = con.prepareStatement(query);
             int index = 0;

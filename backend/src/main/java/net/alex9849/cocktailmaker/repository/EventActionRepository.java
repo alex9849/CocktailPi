@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.PostConstruct;
 import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -73,8 +72,9 @@ public class EventActionRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 eventAction.setId(rs.getLong(1));
-                eventAction.setExecutionGroup(executionGroupRepository
-                        .getEventExecutionGroups(eventAction.getId()));
+                eventAction.setExecutionGroups(executionGroupRepository
+                        .setEventActionExecutionGroups(eventAction.getId(),
+                                eventAction.getExecutionGroups()));
                 return eventAction;
             }
             throw new IllegalStateException("Error saving eventAction");
@@ -159,7 +159,7 @@ public class EventActionRepository extends JdbcDaoSupport {
 
             pstmt.setLong(8, eventAction.getId());
             pstmt.executeUpdate();
-            eventAction.setExecutionGroup(executionGroupRepository
+            eventAction.setExecutionGroups(executionGroupRepository
                     .getEventExecutionGroups(eventAction.getId()));
             if(eventAction instanceof FileEventAction) {
                 //setFile(eventAction.getId(), ((FileEventAction) eventAction).getFile());
@@ -256,7 +256,7 @@ public class EventActionRepository extends JdbcDaoSupport {
         if(eventAction.getComment() == null) {
             eventAction.setComment("");
         }
-        eventAction.setExecutionGroup(eventExecutionGroups);
+        eventAction.setExecutionGroups(eventExecutionGroups);
         eventAction.setTrigger(EventTrigger.valueOf(rs.getString("trigger")));
         eventAction.setId(id);
         return eventAction;

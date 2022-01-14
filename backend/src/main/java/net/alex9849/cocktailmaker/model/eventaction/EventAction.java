@@ -39,7 +39,7 @@ public abstract class EventAction {
         return executionGroups;
     }
 
-    public void setExecutionGroup(Set<String> executionGroups) {
+    public void setExecutionGroups(Set<String> executionGroups) {
         this.executionGroups = executionGroups;
     }
 

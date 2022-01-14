@@ -123,7 +123,7 @@ export default {
         saving: false,
         valid: false,
         selectedFile: null,
-        editEventAction: new EventAction(-1, null)
+        editEventAction: new EventAction(-1, null, [])
       },
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
@@ -162,7 +162,7 @@ export default {
     },
     closeEditDialog () {
       this.editOptions.editDialog = false
-      this.editOptions.editEventAction = new EventAction(-1, null)
+      this.editOptions.editEventAction = new EventAction(-1, null, [])
     },
     onClickSaveEventAction () {
       if (this.isNewEditEventAction) {
