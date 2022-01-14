@@ -84,7 +84,7 @@
       :options="eventActionTriggerDisplayNames"
       emit-value
       filled
-      label="Trigger"
+      label="Trigger*"
       map-options
       @update:model-value="setValue('trigger', $event)"
     />
@@ -94,25 +94,47 @@
       :options="existingActions"
       emit-value
       filled
-      label="Action"
+      label="Action*"
       map-options
       @update:model-value="setAction($event)"
     />
-    <transition
-      appear
-      enter-active-class="animated bounceIn"
+    <q-splitter :model-value="10" />
+    <q-card
+      bordered
+      flat
     >
-      <div>
-        <q-splitter :model-value="10" />
+      <q-card-section
+        v-if="!modelValue.type"
+        class="text-italic text-grey-7"
+      >
+        Select action to view options...
+      </q-card-section>
+      <q-card-section
+        v-else
+        class="q-px-sm q-py-none"
+      >
         <q-tab-panels
-          v-if="modelValue.type !== null"
           :model-value="modelValue.type"
           animated
         >
           <q-tab-panel
             name="callUrl"
+            class="q-gutter-y-md q-px-none"
           >
-            demo1 Lorem ipsum bla bla bla
+            <q-select
+              :model-value="modelValue.requestMethod"
+              :options="urlRequestMethods"
+              filled
+              label="Request method*"
+              @update:model-value="setValue('requestMethod', $event)"
+            />
+            <q-input
+              :model-value="modelValue.url"
+              filled
+              label="URL*"
+              placeholder="https://google.com"
+              @update:model-value="setValue('url', $event)"
+            />
           </q-tab-panel>
           <q-tab-panel
             name="playAudio"
@@ -125,8 +147,8 @@
             demo2 Lorem ipsum blubb blubb blubb
           </q-tab-panel>
         </q-tab-panels>
-      </div>
-    </transition>
+      </q-card-section>
+    </q-card>
   </div>
 </template>
 
@@ -134,7 +156,7 @@
 
 import useVuelidate from '@vuelidate/core'
 import EventActionService from '../services/eventaction.service'
-import { maxLength, required } from '@vuelidate/validators'
+import { maxLength, required, url } from '@vuelidate/validators'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
 
 export default {
@@ -168,6 +190,7 @@ export default {
       groupsLoading: false,
       existingExecutionGroups: [],
       currentExecutionGroupFilter: '',
+      urlRequestMethods: ['GET', 'POST', 'PUT', 'DELETE'],
       existingActions: [{
         label: 'Call URL',
         value: 'callUrl'
@@ -186,6 +209,7 @@ export default {
         return
       }
       this.v.modelValue.type.$model = actionValue
+      this.$emit('update:modelValue', this.modelValue)
     },
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
@@ -212,20 +236,30 @@ export default {
     }
   },
   validations () {
-    return {
-      modelValue: {
-        comment: {
-          maxLength: maxLength(40)
-        },
-
-        executionGroups: {},
-        trigger: {
-          required
-        },
-        type: {
-          required
-        }
+    const modelValue = {
+      comment: {
+        maxLength: maxLength(40)
+      },
+      executionGroups: {},
+      trigger: {
+        required
+      },
+      type: {
+        required
       }
+    }
+    if (this.modelValue.type === 'callUrl') {
+      modelValue.requestMethod = {
+        required
+      }
+      modelValue.url = {
+        required,
+        url,
+        maxLength: maxLength(255)
+      }
+    }
+    return {
+      modelValue
     }
   },
   watch: {
