@@ -32,11 +32,12 @@
 </template>
 
 <script>
+
 import CQuestion from 'components/CQuestion'
 
 export default {
   name: 'CDeleteWarning',
-  components: [CQuestion],
+  components: { CQuestion },
   props: {
     deleteMethod: {
       type: Function,
@@ -59,6 +60,7 @@ export default {
       required: true
     }
   },
+  emits: ['deleteSuccess', 'deleteFailure'],
   data () {
     return {
       deleteLoading: false,
@@ -82,7 +84,7 @@ export default {
       const vm = this
       const promises = []
       this.deleteItems.forEach(eventAction => {
-        promises.push(this.deleteMethod(eventAction))
+        promises.push(this.deleteMethod(this.idGetterMethod(eventAction)))
       })
       Promise.all(promises)
         .then(() => {
@@ -92,10 +94,11 @@ export default {
           })
           vm.closeDialog()
           vm.deleteLoading = false
-          vm.$emit('deleted')
+          vm.$emit('deleteSuccess')
         }, () => {
           vm.deleteLoading = false
           vm.closeDialog()
+          vm.$emit('deleteFailure')
         })
     }
   },

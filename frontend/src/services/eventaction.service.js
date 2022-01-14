@@ -26,8 +26,8 @@ class EventActionService {
     return axios.put(API_PATH + event.id, event)
   }
 
-  deleteEvent (event) {
-    return axios.delete(API_PATH + event.id)
+  deleteEvent (eventId) {
+    return axios.delete(API_PATH + eventId)
   }
 
   getAllExecutionGroups () {
