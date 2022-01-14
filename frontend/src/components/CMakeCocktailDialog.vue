@@ -251,6 +251,11 @@ export default {
       mdiAlertOutline: mdiAlertOutline
     }
   },
+  created () {
+    if (this.recipe) {
+      this.checkFeasibility()
+    }
+  },
   watch: {
     recipe: {
       immediate: true,

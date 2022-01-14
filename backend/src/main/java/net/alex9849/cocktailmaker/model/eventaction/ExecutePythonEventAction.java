@@ -30,12 +30,12 @@ public class ExecutePythonEventAction extends FileEventAction {
             reader.close();
 
             process = Runtime.getRuntime().exec("python " + file.getAbsolutePath());
-            BufferedReader stdInput = new BufferedReader(new
+            /*BufferedReader stdInput = new BufferedReader(new
                     InputStreamReader(process.getInputStream()));
             String s = null;
             while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
-            }
+                System.out.print(s);
+            }*/
             process.waitFor();
             file.delete();
         } catch (InterruptedException e) {
