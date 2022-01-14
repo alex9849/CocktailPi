@@ -123,11 +123,24 @@ public class EventService {
         return eventActionRepository.create(eventAction);
     }
 
-    public EventAction updateEventAction(EventAction updatedEventAction) {
-        if(eventActionRepository.getById(updatedEventAction.getId()).isEmpty()) {
-            throw new IllegalArgumentException("EventAction with id " + updatedEventAction.getId() + " doesn't exist!");
+    public EventAction updateEventAction(EventAction toUpdateEventAction) {
+        Optional<EventAction> oOldEventAction = eventActionRepository.getById(toUpdateEventAction.getId());
+        if(oOldEventAction.isEmpty()) {
+            throw new IllegalArgumentException("EventAction with id " + toUpdateEventAction.getId() + " doesn't exist!");
         }
-        return eventActionRepository.update(updatedEventAction);
+        EventAction oldEventAction = oOldEventAction.get();
+        if(toUpdateEventAction instanceof FileEventAction) {
+            FileEventAction toUpdateFileEventAction = (FileEventAction) toUpdateEventAction;
+            if(toUpdateFileEventAction.getFile() == null) {
+                if(oldEventAction.getClass() != toUpdateEventAction.getClass()) {
+                    throw new IllegalArgumentException("File update required on type change!");
+                } else {
+                    toUpdateFileEventAction.setFile(((FileEventAction) oldEventAction).getFile());
+                }
+            }
+        }
+
+        return eventActionRepository.update(toUpdateEventAction);
     }
 
     public static CallUrlEventAction fromDto(CallUrlEventActionDto dto) {

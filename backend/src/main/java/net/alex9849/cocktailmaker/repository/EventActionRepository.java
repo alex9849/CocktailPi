@@ -178,12 +178,11 @@ public class EventActionRepository extends JdbcDaoSupport {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
             }
 
+            pstmt.setLong(9, eventAction.getId());
             pstmt.executeUpdate();
             eventAction.setExecutionGroups(executionGroupRepository
-                    .getEventExecutionGroups(eventAction.getId()));
-            if(eventAction instanceof FileEventAction) {
-                //setFile(eventAction.getId(), ((FileEventAction) eventAction).getFile());
-            }
+                    .setEventActionExecutionGroups(eventAction.getId(),
+                            eventAction.getExecutionGroups()));
             return eventAction;
         });
     }

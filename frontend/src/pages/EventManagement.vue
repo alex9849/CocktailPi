@@ -200,14 +200,21 @@ export default {
     onClickSaveEventAction () {
       this.editOptions.saving = true
       let promise
+      let successMessage
       if (this.isNewEditEventAction) {
         promise = EventActionService.createEvent(this.editOptions.editEventAction,
           this.editOptions.selectedFile)
+        successMessage = 'Action created successfully!'
       } else {
         promise = EventActionService.updateEvent(this.editOptions.editEventAction,
           this.editOptions.selectedFile)
+        successMessage = 'Action updated successfully!'
       }
       promise.then(() => {
+        this.$q.notify({
+          type: 'positive',
+          message: successMessage
+        })
         this.closeEditDialog()
         this.onRefreshButton()
       }, err => {

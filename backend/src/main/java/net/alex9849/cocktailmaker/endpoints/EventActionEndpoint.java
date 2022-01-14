@@ -76,7 +76,7 @@ public class EventActionEndpoint {
             fileBytes = file.getBytes();
         }
         EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto, fileBytes));
-        return ResponseEntity.ok(updatedAction);
+        return ResponseEntity.ok(EventActionDto.toDto(updatedAction));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
