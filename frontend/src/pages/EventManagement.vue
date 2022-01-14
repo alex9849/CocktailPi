@@ -58,6 +58,7 @@
               :style="{backgroundColor: '#31ccec'}"
               dense
               rounded
+              @click="showEditDialog(props.row)"
               text-color="white"
             >
               <q-tooltip>
@@ -89,6 +90,7 @@
     >
       <c-event-action-editor-form
         v-model:modelValue="editOptions.editEventAction"
+        v-model:selectedFile="editOptions.selectedFile"
         @invalid="editOptions.valid = false"
         @valid="editOptions.valid = true"
       />
@@ -120,6 +122,7 @@ export default {
         editErrorMessage: '',
         saving: false,
         valid: false,
+        selectedFile: null,
         editEventAction: new EventAction(-1, null)
       },
       columns: [
@@ -162,13 +165,24 @@ export default {
       this.editOptions.editEventAction = new EventAction(-1, null)
     },
     onClickSaveEventAction () {
-      this.closeEditDialog()
-      this.onRefreshButton()
+      if (this.isNewEditEventAction) {
+        EventActionService.createEvent(this.editOptions.editEventAction,
+          this.editOptions.selectedFile)
+          .then(() => {
+            this.closeEditDialog()
+            this.onRefreshButton()
+          }, err => {
+            this.editOptions.editErrorMessage = err.message
+          })
+      }
     }
   },
   computed: {
+    isNewEditEventAction () {
+      return this.editOptions.editEventAction.id === -1
+    },
     editDialogHeadline () {
-      if (this.editOptions.editEventAction.id === -1) {
+      if (this.isNewEditEventAction) {
         return 'Create new action'
       } else {
         return 'Edit action'

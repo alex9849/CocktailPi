@@ -6,6 +6,8 @@ import org.springframework.beans.BeanUtils;
 public class PlayAudioEventActionDto extends FileEventActionDto {
     private boolean onRepeat;
 
+    public PlayAudioEventActionDto() {}
+
     public PlayAudioEventActionDto(PlayAudioEventAction eventAction) {
         BeanUtils.copyProperties(eventAction, this);
     }

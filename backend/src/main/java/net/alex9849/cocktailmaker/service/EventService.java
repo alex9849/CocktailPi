@@ -1,11 +1,14 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.eventaction.EventAction;
-import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
-import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
+import net.alex9849.cocktailmaker.model.eventaction.*;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.CallUrlEventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.ExecutePythonEventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.PlayAudioEventActionDto;
 import net.alex9849.cocktailmaker.repository.EventActionExecutionGroupRepository;
 import net.alex9849.cocktailmaker.repository.EventActionRepository;
+import org.aspectj.weaver.ast.Call;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +89,22 @@ public class EventService {
         }
     }
 
+    public static EventAction fromDto(EventActionDto dto, byte[] file) {
+        if(dto == null) {
+            return null;
+        }
+        if(dto instanceof CallUrlEventActionDto) {
+            return fromDto((CallUrlEventActionDto) dto);
+        }
+        if(dto instanceof PlayAudioEventActionDto) {
+            return fromDto((PlayAudioEventActionDto) dto, file);
+        }
+        if(dto instanceof ExecutePythonEventActionDto) {
+            return fromDto((ExecutePythonEventActionDto) dto, file);
+        }
+        throw new IllegalStateException("DtoType not supported yet: " + dto.getClass().getName());
+    }
+
     public List<EventAction> getEventActions() {
         return eventActionRepository.getAll();
     }
@@ -109,9 +128,33 @@ public class EventService {
         return eventActionRepository.update(updatedEventAction);
     }
 
-    public static EventAction fromDto(EventActionDto dto) {
-        //Todo
-        return null;
+    public static CallUrlEventAction fromDto(CallUrlEventActionDto dto) {
+        if(dto == null) {
+            return null;
+        }
+        CallUrlEventAction eventAction = new CallUrlEventAction();
+        BeanUtils.copyProperties(dto, eventAction);
+        return eventAction;
+    }
+
+    public static PlayAudioEventAction fromDto(PlayAudioEventActionDto dto, byte[] file) {
+        if(dto == null) {
+            return null;
+        }
+        PlayAudioEventAction eventAction = new PlayAudioEventAction();
+        BeanUtils.copyProperties(dto, eventAction);
+        eventAction.setFile(file);
+        return eventAction;
+    }
+
+    public static ExecutePythonEventAction fromDto(ExecutePythonEventActionDto dto, byte[] file) {
+        if(dto == null) {
+            return null;
+        }
+        ExecutePythonEventAction eventAction = new ExecutePythonEventAction();
+        BeanUtils.copyProperties(dto, eventAction);
+        eventAction.setFile(file);
+        return eventAction;
     }
 
     public List<String> getExecutionGroups() {

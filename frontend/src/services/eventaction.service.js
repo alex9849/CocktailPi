@@ -8,8 +8,18 @@ class EventActionService {
       .then(response => response.data)
   }
 
-  createEvent (event) {
-    return axios.post(API_PATH, event)
+  createEvent (eventAction, file) {
+    const uploadData = new FormData()
+    const stringEventAction = JSON.stringify(eventAction)
+    const blobEventAction = new Blob([stringEventAction], {
+      type: 'application/json'
+    })
+    uploadData.append('eventAction', blobEventAction)
+    if (file) {
+      uploadData.append('file', file)
+    }
+    return axios.post(API_PATH, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .then(response => response.data)
   }
 
   updateEvent (event) {

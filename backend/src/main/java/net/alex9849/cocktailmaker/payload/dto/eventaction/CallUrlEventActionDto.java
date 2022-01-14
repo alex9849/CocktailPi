@@ -8,6 +8,8 @@ public class CallUrlEventActionDto extends EventActionDto {
     private RequestMethod requestMethod;
     private String url;
 
+    public CallUrlEventActionDto() {}
+
     public CallUrlEventActionDto(CallUrlEventAction eventAction) {
         BeanUtils.copyProperties(eventAction, this);
     }

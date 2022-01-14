@@ -251,12 +251,15 @@ export default {
       if (this.selectedFile) {
         this.v.selectedFile.$model = null
       }
+      if (this.v.modelValue.filename) {
+        this.v.modelValue.filename.$model = null
+      }
       this.v.modelValue.type.$model = actionValue
       this.$emit('update:modelValue', this.modelValue)
     },
     setSelectedFile (file) {
-      this.v.selectedFile.$model = file
-      this.$emit('update:selectedFile', this.modelValue)
+      this.setValue('fileName', file.name)
+      this.$emit('update:selectedFile', file)
     },
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
@@ -312,9 +315,15 @@ export default {
       val.selectedFile = {
         required
       }
+      val.modelValue.fileName = {
+        required
+      }
     }
     if (this.modelValue.type === 'execPy') {
       val.selectedFile = {
+        required
+      }
+      val.modelValue.fileName = {
         required
       }
     }

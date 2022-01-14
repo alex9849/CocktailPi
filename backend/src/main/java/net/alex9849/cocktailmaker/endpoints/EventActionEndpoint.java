@@ -2,15 +2,18 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,17 +48,29 @@ public class EventActionEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createAction(@Valid @RequestBody EventActionDto eventActionDto, UriComponentsBuilder uriBuilder) {
-        EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto));
+    public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto eventActionDto,
+                                          @RequestPart(value = "file", required = false) MultipartFile file,
+                                          UriComponentsBuilder uriBuilder) throws IOException {
+        byte[] fileBytes = null;
+        if(file != null) {
+            fileBytes = file.getBytes();
+        }
+        EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, fileBytes));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());
         return ResponseEntity.ok(uriComponents.toUri());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAction(@Valid @RequestBody EventActionDto eventActionDto, @PathVariable long id) {
+    public ResponseEntity<?> updateAction(@Valid @RequestPart("eventAction") EventActionDto eventActionDto,
+                                          @RequestPart(value = "file", required = false) MultipartFile file,
+                                          @PathVariable long id) throws IOException {
         eventActionDto.setId(id);
-        EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto));
+        byte[] fileBytes = null;
+        if(file != null) {
+            fileBytes = file.getBytes();
+        }
+        EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto, fileBytes));
         return ResponseEntity.ok(updatedAction);
     }
 
