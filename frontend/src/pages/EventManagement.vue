@@ -6,6 +6,7 @@
         color="negative"
         label="Delete selected actions"
         no-caps
+        @click="openDeleteDialog(true)"
       />
       <q-btn
         color="positive"
@@ -44,7 +45,14 @@
           <q-td
             :props="props"
           >
-          {{ eventTriggerToDisplayName(props.value) }}
+            {{ eventTriggerToDisplayName(props.value) }}
+          </q-td>
+        </template>
+        <template v-slot:body-cell-executionGroups="props">
+          <q-td
+            :props="props"
+          >
+            {{ props.value.join(', ') }}
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
@@ -66,6 +74,7 @@
               </q-tooltip>
             </q-btn>
             <q-btn
+              @click="() => {deleteOptions.eventActions.push(props.row); openDeleteDialog(false);}"
               :icon="mdiDelete"
               color="red"
               dense
@@ -95,6 +104,36 @@
         @valid="editOptions.valid = true"
       />
     </c-edit-dialog>
+    <c-question
+      v-model:show="deleteOptions.dialog"
+      :loading="deleteOptions.loading"
+      :question="deleteQuestionMessage"
+      ok-button-text="Delete"
+      ok-color="red"
+      @clickAbort="closeDeleteDialog"
+      @clickOk="deleteSelected"
+    >
+      <template v-slot:buttons>
+        <q-btn
+          v-if="deleteOptions.eventActions.length === 0"
+          color="grey"
+          style="width: 150px"
+          @click="closeDeleteDialog"
+        >
+          Ok
+        </q-btn>
+      </template>
+      <template v-slot:default>
+        <ul style="padding: 0; list-style: none">
+          <li
+            v-for="(eventAction, index) in deleteOptions.eventActions"
+            :key="index"
+          >
+            {{ eventAction.description }}
+          </li>
+        </ul>
+      </template>
+    </c-question>
   </q-page>
 </template>
 
@@ -102,6 +141,7 @@
 
 import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
+import CQuestion from 'components/CQuestion'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
 import EventActionService from '../services/eventaction.service'
@@ -111,12 +151,17 @@ import { eventActionTriggerDisplayNames } from '../mixins/constants'
 export default {
   name: 'EventManagement',
   mixins: [eventActionTriggerDisplayNames],
-  components: { CEventActionEditorForm, TopButtonArranger, CEditDialog },
+  components: { CEventActionEditorForm, TopButtonArranger, CEditDialog, CQuestion },
   data () {
     return {
       selected: [],
       eventActions: [],
       isLoading: false,
+      deleteOptions: {
+        dialog: false,
+        eventActions: [],
+        loading: false
+      },
       editOptions: {
         editDialog: false,
         editErrorMessage: '',
@@ -129,6 +174,7 @@ export default {
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
         { name: 'description', label: 'Description', field: 'description', align: 'center' },
         { name: 'comment', label: 'Comment', field: 'comment', align: 'center' },
+        { name: 'executionGroups', label: 'Execution-groups', field: 'executionGroups', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
@@ -164,7 +210,41 @@ export default {
       this.editOptions.editDialog = false
       this.editOptions.editEventAction = new EventAction(-1, null, [])
     },
+    openDeleteDialog (forSelectedEventActions) {
+      if (forSelectedEventActions) {
+        this.deleteOptions.eventActions.push(...this.selected)
+      }
+      this.deleteOptions.dialog = true
+    },
+    closeDeleteDialog () {
+      this.deleteOptions.eventActions.splice(0, this.deleteOptions.eventActions.length)
+      this.deleteOptions.dialog = false
+    },
+    deleteSelected () {
+      this.deleteOptions.loading = true
+      const vm = this
+      const promises = []
+      this.deleteOptions.eventActions.forEach(eventAction => {
+        promises.push(EventActionService.deleteEvent(eventAction))
+      })
+      Promise.all(promises)
+        .then(() => {
+          vm.$q.notify({
+            type: 'positive',
+            message: ((vm.deleteOptions.eventActions.length > 1) ? 'Actions' : 'Action') + ' deleted successfully'
+          })
+          vm.closeDeleteDialog()
+          vm.selected.splice(0, vm.selected.length)
+          vm.deleteOptions.loading = false
+          vm.initialize()
+        }, () => {
+          vm.deleteOptions.dialog = false
+          vm.selected.splice(0, vm.selected.length)
+          vm.initialize()
+        })
+    },
     onClickSaveEventAction () {
+      this.editOptions.saving = true
       if (this.isNewEditEventAction) {
         EventActionService.createEvent(this.editOptions.editEventAction,
           this.editOptions.selectedFile)
@@ -173,6 +253,8 @@ export default {
             this.onRefreshButton()
           }, err => {
             this.editOptions.editErrorMessage = err.message
+          }).finally(() => {
+            this.editOptions.saving = false
           })
       }
     }
@@ -180,6 +262,15 @@ export default {
   computed: {
     isNewEditEventAction () {
       return this.editOptions.editEventAction.id === -1
+    },
+    deleteQuestionMessage () {
+      if (this.deleteOptions.eventActions.length === 0) {
+        return 'No actions selected!'
+      }
+      if (this.deleteOptions.eventActions.length === 1) {
+        return 'The following actions will be deleted:'
+      }
+      return 'The following action will be deleted:'
     },
     editDialogHeadline () {
       if (this.isNewEditEventAction) {
