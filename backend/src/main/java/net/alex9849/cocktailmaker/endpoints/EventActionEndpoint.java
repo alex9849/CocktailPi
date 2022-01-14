@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.FileEventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,10 @@ public class EventActionEndpoint {
         byte[] fileBytes = null;
         if(file != null) {
             fileBytes = file.getBytes();
+        } else {
+            if(eventActionDto instanceof FileEventActionDto) {
+                throw new IllegalArgumentException("file required!");
+            }
         }
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, fileBytes));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());

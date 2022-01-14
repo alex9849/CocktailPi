@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import net.alex9849.cocktailmaker.model.eventaction.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -14,9 +16,11 @@ import java.util.Set;
 })
 public abstract class EventActionDto {
     private long id;
+    @NotNull
     private EventTrigger trigger;
-    private Set<String> executionGroups;
+    private Set<@NotNull @Size(max = 40) String> executionGroups;
     private String description;
+    @Size(max = 40)
     private String comment;
 
     public static EventActionDto toDto(EventAction eventAction) {

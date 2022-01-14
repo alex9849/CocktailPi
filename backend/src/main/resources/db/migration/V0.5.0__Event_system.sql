@@ -27,6 +27,6 @@ create table event_actions
 create table event_actions_execution_groups
 (
     id      bigserial   not null references event_actions on delete cascade,
-    "group" varchar(25) not null,
+    "group" varchar(40) not null,
     primary key (id, "group")
 );

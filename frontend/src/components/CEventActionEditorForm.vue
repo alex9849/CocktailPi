@@ -9,7 +9,7 @@
       :disable="disable || groupsLoading"
       :model-value="modelValue.comment"
       :rules="[
-                val => !v.modelValue.comment.maxLength.$invalid || 'Max 40'
+                val => !v.modelValue.comment.maxLength.$invalid || 'Max length: 40'
               ]"
       filled
       hide-bottom-space
@@ -87,6 +87,9 @@
       label="Trigger*"
       map-options
       @update:model-value="setValue('trigger', $event)"
+      :rules="[
+                val => !v.modelValue.trigger.required.$invalid || 'Required'
+              ]"
     />
     <q-select
       :disable="disable || groupsLoading"
@@ -97,6 +100,9 @@
       label="Action*"
       map-options
       @update:model-value="setAction($event)"
+      :rules="[
+                val => !v.modelValue.type.required.$invalid || 'Required'
+              ]"
     />
     <q-splitter :model-value="10" />
     <q-card
@@ -127,6 +133,9 @@
               filled
               label="Request method*"
               @update:model-value="setValue('requestMethod', $event)"
+              :rules="[
+                val => !v.modelValue.requestMethod.required.$invalid || 'Required'
+              ]"
             />
             <q-input
               :model-value="modelValue.url"
@@ -134,6 +143,11 @@
               label="URL*"
               placeholder="https://google.com"
               @update:model-value="setValue('url', $event)"
+              :rules="[
+                val => !v.modelValue.url.required.$invalid || 'Required',
+                val => !v.modelValue.url.url.$invalid || 'URL format invalid',
+                val => !v.modelValue.url.maxLength.$invalid || 'Max length: 255'
+              ]"
             />
           </q-tab-panel>
           <q-tab-panel
@@ -148,6 +162,9 @@
                     label="Audio (max. 20 MB)"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
+                    :rules="[
+                      val => !v.selectedFile.required.$invalid || 'Required'
+                    ]"
             >
               <template v-slot:prepend>
                 <q-icon
@@ -174,6 +191,9 @@
                     label="Python (max. 20 MB)"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
+                    :rules="[
+                      val => !v.selectedFile.required.$invalid || 'Required'
+                    ]"
             >
               <template v-slot:prepend>
                 <q-icon
@@ -249,7 +269,7 @@ export default {
         return
       }
       if (this.selectedFile) {
-        this.v.selectedFile.$model = null
+        this.$emit('update:selectedFile', null)
       }
       if (this.v.modelValue.filename) {
         this.v.modelValue.filename.$model = null
@@ -316,7 +336,8 @@ export default {
         required
       }
       val.modelValue.fileName = {
-        required
+        required,
+        maxLength: maxLength(255)
       }
     }
     if (this.modelValue.type === 'execPy') {
@@ -324,7 +345,8 @@ export default {
         required
       }
       val.modelValue.fileName = {
-        required
+        required,
+        maxLength: maxLength(255)
       }
     }
     return val
