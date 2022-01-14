@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Service
 @Transactional
@@ -75,16 +72,22 @@ public class EventService {
         synchronized (runningActions) {
             for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());
-                CompletableFuture<?> future = CompletableFuture.runAsync(action::trigger);
-                RunningAction runningAction = new RunningAction(action, future);
+
+                RunningAction runningAction = new RunningAction(action);
                 runningActions.put(runningAction.getRunId(), runningAction);
-                future.thenAccept(x -> cancelRunningAction(runningAction.getRunId()));
-                future.exceptionally(x -> {
-                    x.printStackTrace();
-                    cancelRunningAction(runningAction.getRunId());
-                    return null;
+                CountDownLatch syncLatch = new CountDownLatch(1);
+                Future<?> future = executor.submit(() -> {
+                    try {
+                        syncLatch.await();
+                        action.trigger();
+                        cancelRunningAction(runningAction.getRunId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        cancelRunningAction(runningAction.getRunId());
+                    }
                 });
-                executor.submit(() -> future.complete(null));
+                runningAction.setFuture(future);
+                syncLatch.countDown();
             }
         }
     }

@@ -42,7 +42,6 @@ public class PlayAudioEventAction extends FileEventAction {
             syncLatch.await();
         } catch (InterruptedException e) {
             if(clip != null) {
-                clip.drain();
                 clip.stop();
                 clip.close();
             }
@@ -50,7 +49,6 @@ public class PlayAudioEventAction extends FileEventAction {
             e.printStackTrace();
         } finally {
             if(clip != null) {
-                clip.drain();
                 clip.stop();
                 clip.close();
             }
