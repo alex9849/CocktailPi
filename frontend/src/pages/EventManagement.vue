@@ -52,7 +52,13 @@
           <q-td
             :props="props"
           >
-            {{ props.value.join(', ') }}
+            <q-chip v-for="(item, index) in props.value"
+                    :key="index"
+                    :label="item"
+                    :ripple="false"
+                    dense
+                    square
+            />
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
