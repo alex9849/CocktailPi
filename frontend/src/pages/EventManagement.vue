@@ -199,18 +199,22 @@ export default {
     },
     onClickSaveEventAction () {
       this.editOptions.saving = true
+      let promise
       if (this.isNewEditEventAction) {
-        EventActionService.createEvent(this.editOptions.editEventAction,
+        promise = EventActionService.createEvent(this.editOptions.editEventAction,
           this.editOptions.selectedFile)
-          .then(() => {
-            this.closeEditDialog()
-            this.onRefreshButton()
-          }, err => {
-            this.editOptions.editErrorMessage = err.message
-          }).finally(() => {
-            this.editOptions.saving = false
-          })
+      } else {
+        promise = EventActionService.updateEvent(this.editOptions.editEventAction,
+          this.editOptions.selectedFile)
       }
+      promise.then(() => {
+        this.closeEditDialog()
+        this.onRefreshButton()
+      }, err => {
+        this.editOptions.editErrorMessage = err.message
+      }).finally(() => {
+        this.editOptions.saving = false
+      })
     }
   },
   computed: {

@@ -44,7 +44,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.VARCHAR);
-                pstmt.setNull(5, Types.BLOB);
+                pstmt.setNull(6, Types.BLOB);
                 pstmt.setString(7, callUrlEventAction.getRequestMethod().name());
                 pstmt.setString(8, callUrlEventAction.getUrl());
 
@@ -92,8 +92,6 @@ public class EventActionRepository extends JdbcDaoSupport {
                     fileOid = resultSet.getObject("file", Long.class);
                 }
             }
-            boolean autoCommit = con.getAutoCommit();
-            con.setAutoCommit(false);
             LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
             if(fileOid == null) {
                 fileOid = lobApi.createLO(LargeObjectManager.READWRITE);
@@ -101,6 +99,22 @@ public class EventActionRepository extends JdbcDaoSupport {
             LargeObject lobObject = lobApi.open(fileOid, LargeObjectManager.READWRITE);
             lobObject.write(file);
             return fileOid;
+        });
+    }
+
+    private void deleteFile(long eventActionId) {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT file FROM event_actions where id = ? AND file IS NOT NULL");
+            pstmt.setLong(1, eventActionId);
+            ResultSet resultSet = pstmt.executeQuery();
+            if (!resultSet.next()) {
+                return null;
+
+            }
+            Long fileOid = resultSet.getObject("file", Long.class);
+            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
+            lobApi.delete(fileOid);
+            return null;
         });
     }
 
@@ -127,7 +141,7 @@ public class EventActionRepository extends JdbcDaoSupport {
     public EventAction update(EventAction eventAction) {
         return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE event_actions SET dType = ?, trigger = ?, comment = ?, " +
-                    "on_repeat = ?, filename = ?, requestMethod = ?, url = ? WHERE id = ?");
+                    "on_repeat = ?, filename = ?, file = ?, requestMethod = ?, url = ? WHERE id = ?");
 
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
@@ -136,28 +150,34 @@ public class EventActionRepository extends JdbcDaoSupport {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.VARCHAR);
-                pstmt.setString(6, callUrlEventAction.getRequestMethod().name());
-                pstmt.setString(7, callUrlEventAction.getUrl());
+                pstmt.setNull(6, Types.BLOB);
+                deleteFile(eventAction.getId());
+                pstmt.setString(7, callUrlEventAction.getRequestMethod().name());
+                pstmt.setString(8, callUrlEventAction.getUrl());
+                pstmt.setLong(9, eventAction.getId());
 
             } else if (eventAction instanceof PlayAudioEventAction) {
                 PlayAudioEventAction playAudioEventAction = (PlayAudioEventAction) eventAction;
                 pstmt.setBoolean(4, playAudioEventAction.isOnRepeat());
                 pstmt.setString(5, playAudioEventAction.getFileName());
-                pstmt.setNull(6, Types.VARCHAR);
+                long fileOid = setFile(Optional.ofNullable(eventAction.getId()), ((FileEventAction) eventAction).getFile());
+                pstmt.setLong(6, fileOid);
                 pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.VARCHAR);
 
             } else if (eventAction instanceof ExecutePythonEventAction) {
                 ExecutePythonEventAction executePythonEventAction = (ExecutePythonEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setString(5, executePythonEventAction.getFileName());
-                pstmt.setNull(6, Types.VARCHAR);
+                long fileOid = setFile(Optional.ofNullable(eventAction.getId()), ((FileEventAction) eventAction).getFile());
+                pstmt.setLong(6, fileOid);
                 pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.VARCHAR);
 
             } else {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
             }
 
-            pstmt.setLong(8, eventAction.getId());
             pstmt.executeUpdate();
             eventAction.setExecutionGroups(executionGroupRepository
                     .getEventExecutionGroups(eventAction.getId()));

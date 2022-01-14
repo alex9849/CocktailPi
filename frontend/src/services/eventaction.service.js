@@ -22,12 +22,22 @@ class EventActionService {
       .then(response => response.data)
   }
 
-  updateEvent (event) {
-    return axios.put(API_PATH + event.id, event)
+  updateEvent (eventAction, file) {
+    const uploadData = new FormData()
+    const stringEventAction = JSON.stringify(eventAction)
+    const blobEventAction = new Blob([stringEventAction], {
+      type: 'application/json'
+    })
+    uploadData.append('eventAction', blobEventAction)
+    if (file) {
+      uploadData.append('file', file)
+    }
+    return axios.put(API_PATH + eventAction.id, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .then(response => response.data)
   }
 
-  deleteEvent (eventId) {
-    return axios.delete(API_PATH + eventId)
+  deleteEvent (eventActionId) {
+    return axios.delete(API_PATH + eventActionId)
   }
 
   getAllExecutionGroups () {
