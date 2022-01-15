@@ -61,6 +61,38 @@
             />
           </q-td>
         </template>
+        <template v-slot:body-cell-status="props">
+          <q-td
+            :props="props"
+          >
+            <div v-if="true">
+              <q-chip :ripple="false"
+                      color="green"
+                      dense
+                      label="Running"
+                      square
+                      text-color="white"
+              />
+              <q-btn :icon="mdiSkullCrossbones"
+                     dense
+                     label="Kill process"
+                     no-caps
+                     size="sm"
+                     text-color="red"
+                     unelevated
+              />
+            </div>
+            <div v-else>
+              <q-chip :ripple="false"
+                      color="red"
+                      dense
+                      label="Stopped"
+                      square
+                      text-color="white"
+              />
+            </div>
+          </q-td>
+        </template>
         <template v-slot:body-cell-actions="props">
           <q-td
             key="actions"
@@ -126,7 +158,7 @@
 
 <script>
 
-import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
@@ -159,6 +191,7 @@ export default {
         { name: 'description', label: 'Description', field: 'description', align: 'center' },
         { name: 'comment', label: 'Comment', field: 'comment', align: 'center' },
         { name: 'executionGroups', label: 'Execution-groups', field: 'executionGroups', align: 'center' },
+        { name: 'status', label: 'Status', field: 'status', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
@@ -166,6 +199,7 @@ export default {
   created () {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
+    this.mdiSkullCrossbones = mdiSkullCrossbones
     this.initialize()
   },
   methods: {
