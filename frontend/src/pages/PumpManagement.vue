@@ -157,7 +157,6 @@
       @clickSave="onClickSavePump"
     >
       <pump-editor-form
-        class="innerpadding"
         v-model:model-value="editOptions.editPump"
         :persistent="editOptions.editPumpSaving"
         @hide="closeEditDialog"
