@@ -12,7 +12,8 @@ import java.util.Set;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CallUrlEventActionDto.class, name = "callUrl"),
         @JsonSubTypes.Type(value = ExecutePythonEventActionDto.class, name = "execPy"),
-        @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio")
+        @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio"),
+        @JsonSubTypes.Type(value = DoNothingEventActionDto.class, name = "doNothing")
 })
 public abstract class EventActionDto {
     private long id;
@@ -33,6 +34,9 @@ public abstract class EventActionDto {
         }
         if(eventAction instanceof PlayAudioEventAction) {
             return new PlayAudioEventActionDto((PlayAudioEventAction) eventAction);
+        }
+        if(eventAction instanceof DoNothingEventAction) {
+            return new DoNothingEventActionDto((DoNothingEventAction) eventAction);
         }
         throw new IllegalStateException("EventAction-Type is not supported yet!");
     }

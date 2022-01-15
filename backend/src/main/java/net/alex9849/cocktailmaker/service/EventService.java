@@ -1,10 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.eventaction.*;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.CallUrlEventActionDto;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.ExecutePythonEventActionDto;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.PlayAudioEventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.*;
 import net.alex9849.cocktailmaker.repository.EventActionExecutionGroupRepository;
 import net.alex9849.cocktailmaker.repository.EventActionRepository;
 import org.springframework.beans.BeanUtils;
@@ -102,6 +99,9 @@ public class EventService {
         if(dto instanceof CallUrlEventActionDto) {
             return fromDto((CallUrlEventActionDto) dto);
         }
+        if(dto instanceof DoNothingEventActionDto) {
+            return fromDto((DoNothingEventActionDto) dto);
+        }
         if(dto instanceof PlayAudioEventActionDto) {
             return fromDto((PlayAudioEventActionDto) dto, file);
         }
@@ -154,6 +154,16 @@ public class EventService {
             return null;
         }
         CallUrlEventAction eventAction = new CallUrlEventAction();
+        BeanUtils.copyProperties(dto, eventAction);
+        eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
+        return eventAction;
+    }
+
+    public static DoNothingEventAction fromDto(DoNothingEventActionDto dto) {
+        if(dto == null) {
+            return null;
+        }
+        DoNothingEventAction eventAction = new DoNothingEventAction();
         BeanUtils.copyProperties(dto, eventAction);
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;

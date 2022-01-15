@@ -207,6 +207,12 @@
               </template>
             </q-file>
           </q-tab-panel>
+          <q-tab-panel
+            class="q-gutter-y-md q-px-none"
+            name="doNothing"
+          >
+            This action does nothing. But it will cancel other running actions that don't share execution-groups with it
+          </q-tab-panel>
         </q-tab-panels>
       </q-card-section>
     </q-card>
@@ -272,6 +278,9 @@ export default {
       }, {
         label: 'Execute python script',
         value: 'execPy'
+      }, {
+        label: 'Do nothing',
+        value: 'doNothing'
       }]
     }
   },

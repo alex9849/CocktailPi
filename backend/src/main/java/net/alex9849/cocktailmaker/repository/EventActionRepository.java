@@ -64,6 +64,13 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(7, Types.VARCHAR);
                 pstmt.setNull(8, Types.VARCHAR);
 
+            } else if (eventAction instanceof DoNothingEventAction) {
+                pstmt.setNull(4, Types.BOOLEAN);
+                pstmt.setNull(5, Types.VARCHAR);
+                pstmt.setNull(6, Types.BLOB);
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.VARCHAR);
+
             } else {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
             }
@@ -174,6 +181,13 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(7, Types.VARCHAR);
                 pstmt.setNull(8, Types.VARCHAR);
 
+            } else if (eventAction instanceof DoNothingEventAction) {
+                pstmt.setNull(4, Types.BOOLEAN);
+                pstmt.setNull(5, Types.VARCHAR);
+                pstmt.setNull(6, Types.BLOB);
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.VARCHAR);
+
             } else {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
             }
@@ -266,6 +280,9 @@ public class EventActionRepository extends JdbcDaoSupport {
             executePythonEventAction.setFile(getFile(id).orElseThrow());
             executePythonEventAction.setFileName(rs.getString("filename"));
             eventAction = executePythonEventAction;
+
+        } else if (Objects.equals(dType, DoNothingEventAction.class.getAnnotation(DiscriminatorValue.class).value())) {
+            eventAction = new DoNothingEventAction();
 
         } else {
             throw new IllegalArgumentException("Unknown dType: " + dType);
