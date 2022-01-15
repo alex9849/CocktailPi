@@ -150,10 +150,10 @@ public class PumpService {
         if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
-                this.webSocketService.broadcastCurrentCocktail(null);
+                this.webSocketService.broadcastCurrentCocktailProgress(null);
             }, 5000, TimeUnit.MILLISECONDS);
         }
-        this.webSocketService.broadcastCurrentCocktail(progress);
+        this.webSocketService.broadcastCurrentCocktailProgress(progress);
 
         switch (progress.getState()) {
             case RUNNING:

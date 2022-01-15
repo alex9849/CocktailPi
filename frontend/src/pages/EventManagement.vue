@@ -100,6 +100,17 @@
             class="q-pa-md q-gutter-x-sm"
           >
             <q-btn
+              :icon="mdiFormatListText"
+              :style="{backgroundColor: '#31ccec'}"
+              dense
+              rounded
+              text-color="white"
+            >
+              <q-tooltip>
+                View logs
+              </q-tooltip>
+            </q-btn>
+            <q-btn
               :icon="mdiPencilOutline"
               :style="{backgroundColor: '#31ccec'}"
               dense
@@ -158,7 +169,7 @@
 
 <script>
 
-import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiFormatListText } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
@@ -200,6 +211,7 @@ export default {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiSkullCrossbones = mdiSkullCrossbones
+    this.mdiFormatListText = mdiFormatListText
     this.initialize()
   },
   methods: {

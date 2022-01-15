@@ -1,7 +1,5 @@
 package net.alex9849.cocktailmaker.config.websocket;
 
-import net.alex9849.cocktailmaker.model.user.ERole;
-import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,13 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionSubscribeEvent event) throws IllegalAccessException {
         if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/cocktailprogress")) {
-            webSocketService.broadcastCurrentCocktail(pumpService.getCurrentCocktailProgress());
+            webSocketService.sendCurrentCocktailProgessToUser(pumpService.getCurrentCocktailProgress(), event.getUser().getName());
         }
         if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/pumplayout")) {
-            webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
+            webSocketService.sendPumpLayoutToUser(pumpService.getAllPumps(), event.getUser().getName());
         }
         if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/runningactions")) {
-            webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
+            //webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }
     }
 }

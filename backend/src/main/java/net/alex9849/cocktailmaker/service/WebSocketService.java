@@ -22,7 +22,7 @@ public class WebSocketService {
     private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
     private static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
 
-    public void broadcastCurrentCocktail(@Nullable Cocktailprogress cocktailprogress) {
+    public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
         if(cocktailprogress != null) {
             cocktailprogressDto = new CocktailprogressDto(cocktailprogress);
@@ -30,7 +30,20 @@ public class WebSocketService {
         simpMessagingTemplate.convertAndSend(WS_COCKTAIL_DESTINATION, cocktailprogressDto);
     }
 
+    public void sendCurrentCocktailProgessToUser(@Nullable Cocktailprogress cocktailProgress, String name) {
+        Object cocktailprogressDto = "DELETE";
+        if(cocktailProgress != null) {
+            cocktailprogressDto = new CocktailprogressDto(cocktailProgress);
+        }
+        simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailprogressDto);
+    }
+
     public void broadcastPumpLayout(List<Pump> pumps) {
         simpMessagingTemplate.convertAndSend(WS_PUMP_LAYOUT_DESTINATION, pumps.stream().map(PumpDto::new).collect(Collectors.toList()));
+    }
+
+    public void sendPumpLayoutToUser(List<Pump> pumps, String username) {
+        simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION,
+                pumps.stream().map(PumpDto::new).collect(Collectors.toList()));
     }
 }
