@@ -135,6 +135,7 @@ public class EventService {
     }
 
     public boolean deleteEventAction(long id) {
+        cancelRunningWithSameActionId(id);
         return eventActionRepository.delete(id);
     }
 
@@ -161,6 +162,7 @@ public class EventService {
             }
         }
 
+        cancelRunningWithSameActionId(toUpdateEventAction.getId());
         return eventActionRepository.update(toUpdateEventAction);
     }
 
