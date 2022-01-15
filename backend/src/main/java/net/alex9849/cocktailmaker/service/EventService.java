@@ -43,6 +43,7 @@ public class EventService {
             return;
         }
         synchronized (runningActions) {
+            Set<Long> actionsToCancel = new HashSet<>();
             for(RunningAction runningAction : runningActions.values()) {
                 if(runningAction.getEventAction().getExecutionGroups().isEmpty()) {
                     continue;
@@ -50,8 +51,11 @@ public class EventService {
                 Set<String> matchingGroups = new HashSet<>(runningAction.getEventAction().getExecutionGroups());
                 matchingGroups.retainAll(executionGroups);
                 if(matchingGroups.isEmpty()) {
-                    cancelRunningAction(runningAction.getRunId());
+                    actionsToCancel.add(runningAction.getRunId());
                 }
+            }
+            for(Long runningActionId : actionsToCancel) {
+                cancelRunningAction(runningActionId);
             }
         }
     }
