@@ -189,7 +189,8 @@ export default {
     },
     showEditDialog (eventAction) {
       if (eventAction) {
-        this.editOptions.editEventAction = eventAction
+        const eventActionCopy = Object.assign({}, eventAction)
+        this.editOptions.editEventAction = eventActionCopy
       }
       this.editOptions.editDialog = true
     },
