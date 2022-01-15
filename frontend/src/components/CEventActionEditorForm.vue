@@ -411,7 +411,11 @@ export default {
       return unique
     },
     fileName () {
-      if (this.previousEventActionType && this.modelValue.type === this.previousEventActionType) {
+      if (
+        this.previousEventActionType &&
+        this.modelValue.type === this.previousEventActionType &&
+        !this.modelValue.fileName
+      ) {
         return this.previousFileName
       }
       return this.modelValue.fileName
