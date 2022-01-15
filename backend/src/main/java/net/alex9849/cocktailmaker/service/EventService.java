@@ -57,6 +57,20 @@ public class EventService {
         }
     }
 
+    public void cancelRunningWithSameActionId(long id) {
+        synchronized (runningActions) {
+            Set<Long> actionsToCancel = new HashSet<>();
+            for(RunningAction runningAction : runningActions.values()) {
+                if(runningAction.getEventAction().getId() == id) {
+                    actionsToCancel.add(runningAction.getRunId());
+                }
+            }
+            for(Long runningActionId : actionsToCancel) {
+                cancelRunningAction(runningActionId);
+            }
+        }
+    }
+
     public boolean cancelRunningAction(long id) {
         synchronized (runningActions) {
             RunningAction runningAction = runningActions.remove(id);
@@ -71,6 +85,7 @@ public class EventService {
     public void triggerActions(EventTrigger trigger) {
         synchronized (runningActions) {
             for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
+                cancelRunningWithSameActionId(action.getId());
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());
 
                 RunningAction runningAction = new RunningAction(action);
