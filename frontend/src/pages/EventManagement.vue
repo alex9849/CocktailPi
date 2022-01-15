@@ -107,6 +107,7 @@
         v-model:modelValue="editOptions.editEventAction"
         v-model:selectedFile="editOptions.selectedFile"
         :previousEventActionType="editOptions.previousEventActionType"
+        :previous-file-name="editOptions.previousFileName"
         @invalid="editOptions.valid = false"
         @valid="editOptions.valid = true"
       />
@@ -150,7 +151,8 @@ export default {
         valid: false,
         selectedFile: null,
         editEventAction: new EventAction(-1, null, []),
-        previousEventActionType: null
+        previousEventActionType: null,
+        previousFileName: undefined
       },
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
@@ -194,6 +196,7 @@ export default {
         const eventActionCopy = Object.assign({}, eventAction)
         this.editOptions.editEventAction = eventActionCopy
         this.editOptions.previousEventActionType = eventAction.type
+        this.editOptions.previousFileName = eventAction.fileName
       }
       this.editOptions.editDialog = true
     },
@@ -201,7 +204,9 @@ export default {
       this.editOptions.editDialog = false
       this.editOptions.editEventAction = new EventAction(-1, null, [])
       this.editOptions.selectedFile = null
+      this.editOptions.previousFileName = undefined
       this.editOptions.previousEventActionType = null
+      this.editOptions.editErrorMessage = ''
     },
     onClickSaveEventAction () {
       this.editOptions.saving = true

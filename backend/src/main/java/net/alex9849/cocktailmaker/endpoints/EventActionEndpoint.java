@@ -57,7 +57,7 @@ public class EventActionEndpoint {
             if(file == null) {
                 throw new IllegalArgumentException("file required!");
             }
-            ((FileEventActionDto) eventActionDto).setFileName(file.getName());
+            ((FileEventActionDto) eventActionDto).setFileName(file.getOriginalFilename());
             fileBytes = file.getBytes();
         }
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, fileBytes));
@@ -74,7 +74,7 @@ public class EventActionEndpoint {
         byte[] fileBytes = null;
         if(eventActionDto instanceof FileEventActionDto) {
             if(file != null) {
-                ((FileEventActionDto) eventActionDto).setFileName(file.getName());
+                ((FileEventActionDto) eventActionDto).setFileName(file.getOriginalFilename());
                 fileBytes = file.getBytes();
             }
         }

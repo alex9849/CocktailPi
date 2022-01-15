@@ -158,7 +158,8 @@
                     accept=".wav"
                     bottom-slots
                     filled
-                    :display-value="modelValue.fileName"
+                    :clearable="!!previousFileName"
+                    :display-value="fileName"
                     hide-bottom-space
                     label="Audio (max. 20 MB)"
                     max-file-size="20971520"
@@ -188,7 +189,8 @@
                     accept=".py"
                     bottom-slots
                     filled
-                    :display-value="modelValue.fileName"
+                    :clearable="!!previousFileName"
+                    :display-value="fileName"
                     hide-bottom-space
                     label="Python (max. 20 MB)"
                     max-file-size="20971520"
@@ -241,6 +243,10 @@ export default {
     previousEventActionType: {
       type: String,
       required: false
+    },
+    previousFileName: {
+      type: String,
+      required: false
     }
   },
   created () {
@@ -284,7 +290,7 @@ export default {
       this.$emit('update:modelValue', this.modelValue)
     },
     setSelectedFile (file) {
-      this.setValue('fileName', file.name)
+      this.setValue('fileName', file ? file.name : undefined)
       this.$emit('update:selectedFile', file)
     },
     setValue (attribute, value) {
@@ -341,7 +347,7 @@ export default {
       val.modelValue.fileName = {
         maxLength: maxLength(255)
       }
-      if (!!this.previousEventActionType && this.modelValue.type !== this.previousEventActionType) {
+      if (!this.previousEventActionType || this.modelValue.type !== this.previousEventActionType) {
         val.selectedFile = {
           required
         }
@@ -390,6 +396,12 @@ export default {
       unique &&= !this.executionGroupOptions
         .some(x => x.toLowerCase() === this.currentExecutionGroupFilter.toLowerCase())
       return unique
+    },
+    fileName () {
+      if (this.previousEventActionType && this.modelValue.type === this.previousEventActionType) {
+        return this.previousFileName
+      }
+      return this.modelValue.fileName
     }
   }
 }
