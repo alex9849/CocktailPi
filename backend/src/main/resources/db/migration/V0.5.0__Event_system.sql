@@ -9,7 +9,7 @@ alter table ingredients
 create table event_actions
 (
     id            bigserial    not null primary key,
-    dType         varchar(20) check (dType IN ('ExecPy', 'CallUrl',' PlayAudio', 'DoNothing')),
+    dType         varchar(20) check (dType IN ('ExecPy', 'CallUrl','PlayAudio', 'DoNothing')),
     trigger       varchar(255) not null,
     comment       varchar(40)  null,
     on_repeat     boolean check (((dType IN ('ExecPy', 'CallUrl', 'DoNothing')) AND on_repeat IS NULL) OR

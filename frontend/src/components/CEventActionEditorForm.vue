@@ -23,6 +23,7 @@
       :model-value="modelValue.executionGroups"
       :options="executionGroupOptions"
       filled
+      hide-bottom-space
       input-debounce="0"
       label="Execution-groups"
       multiple
@@ -83,6 +84,7 @@
       :model-value="modelValue.trigger"
       :options="eventActionTriggerDisplayNames"
       emit-value
+      hide-bottom-space
       filled
       label="Trigger*"
       map-options
@@ -96,6 +98,7 @@
       :model-value="modelValue.type"
       :options="existingActions"
       emit-value
+      hide-bottom-space
       filled
       label="Action*"
       map-options
@@ -117,7 +120,7 @@
       </q-card-section>
       <q-card-section
         v-else
-        class="q-px-sm q-py-none"
+        class="q-px-sm q-py-none q-pa-sm"
       >
         <q-tab-panels
           :model-value="modelValue.type"
@@ -131,6 +134,7 @@
               :model-value="modelValue.requestMethod"
               :options="urlRequestMethods"
               filled
+              hide-bottom-space
               label="Request method*"
               @update:model-value="setValue('requestMethod', $event)"
               :rules="[
@@ -140,6 +144,7 @@
             <q-input
               :model-value="modelValue.url"
               filled
+              hide-bottom-space
               label="URL*"
               placeholder="https://google.com"
               @update:model-value="setValue('url', $event)"
@@ -183,7 +188,7 @@
           </q-tab-panel>
           <q-tab-panel
             name="execPy"
-            class="q-gutter-y-md q-px-none"
+            class="q-gutter-y-sm q-px-none"
           >
             <q-file :model-value="selectedFile"
                     accept=".py"
@@ -208,7 +213,6 @@
             </q-file>
           </q-tab-panel>
           <q-tab-panel
-            class="q-gutter-y-md q-px-none"
             name="doNothing"
           >
             This action does nothing. But it will cancel other running actions that don't share execution-groups with it

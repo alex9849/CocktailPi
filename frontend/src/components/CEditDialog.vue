@@ -6,7 +6,7 @@
     @hide="$emit('clickAbort')"
   >
     <q-card class="width-desktop">
-      <q-card-section class="text-center">
+      <q-card-section class="text-center q-gutter-y-md">
         <h5
           v-if="title !== ''"
           style="margin-bottom: 10px"
@@ -18,7 +18,6 @@
           rounded
           dense
           class="text-white bg-red-5"
-          style="margin: 10px"
         >
           {{ errorMessage }}
         </q-banner>
