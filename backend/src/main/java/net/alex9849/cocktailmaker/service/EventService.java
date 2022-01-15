@@ -135,7 +135,9 @@ public class EventService {
                 if(oldEventAction.getClass() != toUpdateEventAction.getClass()) {
                     throw new IllegalArgumentException("File update required on type change!");
                 } else {
-                    toUpdateFileEventAction.setFile(((FileEventAction) oldEventAction).getFile());
+                    FileEventAction oldFileEventAction = (FileEventAction) oldEventAction;
+                    toUpdateFileEventAction.setFile(oldFileEventAction.getFile());
+                    toUpdateFileEventAction.setFileName(oldFileEventAction.getFileName());
                 }
             }
         }

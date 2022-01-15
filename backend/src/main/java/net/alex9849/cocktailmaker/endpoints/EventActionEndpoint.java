@@ -53,12 +53,12 @@ public class EventActionEndpoint {
                                           @RequestPart(value = "file", required = false) MultipartFile file,
                                           UriComponentsBuilder uriBuilder) throws IOException {
         byte[] fileBytes = null;
-        if(file != null) {
-            fileBytes = file.getBytes();
-        } else {
-            if(eventActionDto instanceof FileEventActionDto) {
+        if(eventActionDto instanceof FileEventActionDto) {
+            if(file == null) {
                 throw new IllegalArgumentException("file required!");
             }
+            ((FileEventActionDto) eventActionDto).setFileName(file.getName());
+            fileBytes = file.getBytes();
         }
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, fileBytes));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());
@@ -72,8 +72,11 @@ public class EventActionEndpoint {
                                           @PathVariable long id) throws IOException {
         eventActionDto.setId(id);
         byte[] fileBytes = null;
-        if(file != null) {
-            fileBytes = file.getBytes();
+        if(eventActionDto instanceof FileEventActionDto) {
+            if(file != null) {
+                ((FileEventActionDto) eventActionDto).setFileName(file.getName());
+                fileBytes = file.getBytes();
+            }
         }
         EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto, fileBytes));
         return ResponseEntity.ok(EventActionDto.toDto(updatedAction));

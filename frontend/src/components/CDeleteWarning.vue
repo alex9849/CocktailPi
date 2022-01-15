@@ -108,9 +108,9 @@ export default {
         return 'No ' + this.itemNamePlural + '  selected!'
       }
       if (this.deleteItems.length === 1) {
-        return 'The following ' + this.itemNamePlural + ' will be deleted:'
+        return 'The following ' + this.itemNameSingular + ' will be deleted:'
       }
-      return 'The following ' + this.itemNameSingular + ' will be deleted:'
+      return 'The following ' + this.itemNamePlural + ' will be deleted:'
     }
   }
 }

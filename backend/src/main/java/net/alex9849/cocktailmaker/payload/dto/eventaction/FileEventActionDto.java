@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.Size;
 
 public abstract class FileEventActionDto extends EventActionDto {
@@ -10,6 +12,7 @@ public abstract class FileEventActionDto extends EventActionDto {
         return fileName;
     }
 
+    @JsonIgnore
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }

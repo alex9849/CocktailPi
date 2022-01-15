@@ -158,12 +158,13 @@
                     accept=".wav"
                     bottom-slots
                     filled
+                    :display-value="modelValue.fileName"
                     hide-bottom-space
                     label="Audio (max. 20 MB)"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
                     :rules="[
-                      val => !v.selectedFile.required.$invalid || 'Required'
+                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || 'Required'
                     ]"
             >
               <template v-slot:prepend>
@@ -187,12 +188,13 @@
                     accept=".py"
                     bottom-slots
                     filled
+                    :display-value="modelValue.fileName"
                     hide-bottom-space
                     label="Python (max. 20 MB)"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
                     :rules="[
-                      val => !v.selectedFile.required.$invalid || 'Required'
+                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || 'Required'
                     ]"
             >
               <template v-slot:prepend>
@@ -235,6 +237,10 @@ export default {
     disable: {
       type: Boolean,
       default: false
+    },
+    previousEventActionType: {
+      type: String,
+      required: false
     }
   },
   created () {
@@ -271,8 +277,8 @@ export default {
       if (this.selectedFile) {
         this.$emit('update:selectedFile', null)
       }
-      if (this.v.modelValue.filename) {
-        this.v.modelValue.filename.$model = null
+      if (this.modelValue.fileName) {
+        this.setValue('fileName', undefined)
       }
       this.v.modelValue.type.$model = actionValue
       this.$emit('update:modelValue', this.modelValue)
@@ -330,24 +336,23 @@ export default {
         maxLength: maxLength(255)
       }
     }
-    if (this.modelValue.type === 'playAudio') {
-      val.modelValue.onRepeat = {}
-      val.selectedFile = {
-        required
-      }
+    if (['execPy', 'playAudio'].some(x => x === this.modelValue.type)) {
+      val.selectedFile = {}
       val.modelValue.fileName = {
-        required,
         maxLength: maxLength(255)
+      }
+      if (!!this.previousEventActionType && this.modelValue.type !== this.previousEventActionType) {
+        val.selectedFile = {
+          required
+        }
+        val.modelValue.fileName = {
+          required,
+          maxLength: maxLength(255)
+        }
       }
     }
-    if (this.modelValue.type === 'execPy') {
-      val.selectedFile = {
-        required
-      }
-      val.modelValue.fileName = {
-        required,
-        maxLength: maxLength(255)
-      }
+    if (this.modelValue.type === 'playAudio') {
+      val.modelValue.onRepeat = {}
     }
     return val
   },

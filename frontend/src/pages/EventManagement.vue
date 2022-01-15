@@ -106,6 +106,7 @@
       <c-event-action-editor-form
         v-model:modelValue="editOptions.editEventAction"
         v-model:selectedFile="editOptions.selectedFile"
+        :previousEventActionType="editOptions.previousEventActionType"
         @invalid="editOptions.valid = false"
         @valid="editOptions.valid = true"
       />
@@ -148,7 +149,8 @@ export default {
         saving: false,
         valid: false,
         selectedFile: null,
-        editEventAction: new EventAction(-1, null, [])
+        editEventAction: new EventAction(-1, null, []),
+        previousEventActionType: null
       },
       columns: [
         { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
@@ -191,12 +193,15 @@ export default {
       if (eventAction) {
         const eventActionCopy = Object.assign({}, eventAction)
         this.editOptions.editEventAction = eventActionCopy
+        this.editOptions.previousEventActionType = eventAction.type
       }
       this.editOptions.editDialog = true
     },
     closeEditDialog () {
       this.editOptions.editDialog = false
       this.editOptions.editEventAction = new EventAction(-1, null, [])
+      this.editOptions.selectedFile = null
+      this.editOptions.previousEventActionType = null
     },
     onClickSaveEventAction () {
       this.editOptions.saving = true
