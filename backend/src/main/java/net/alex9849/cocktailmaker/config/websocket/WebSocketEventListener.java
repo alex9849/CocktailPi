@@ -26,7 +26,7 @@ public class WebSocketEventListener {
         if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/pumplayout")) {
             webSocketService.sendPumpLayoutToUser(pumpService.getAllPumps(), event.getUser().getName());
         }
-        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/runningactions")) {
+        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/eventactionstatus")) {
             //webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }
     }
