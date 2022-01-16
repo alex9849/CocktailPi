@@ -7,6 +7,8 @@ import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,10 @@ public class WebSocketService {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private SimpUserRegistry simpUserRegistry;
+
     private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
     private static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
 
@@ -27,7 +33,11 @@ public class WebSocketService {
         if(cocktailprogress != null) {
             cocktailprogressDto = new CocktailprogressDto(cocktailprogress);
         }
-        simpMessagingTemplate.convertAndSend(WS_COCKTAIL_DESTINATION, cocktailprogressDto);
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).collect(Collectors.toList());
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_COCKTAIL_DESTINATION, cocktailprogressDto);
+        }
     }
 
     public void sendCurrentCocktailProgessToUser(@Nullable Cocktailprogress cocktailProgress, String name) {
@@ -39,7 +49,12 @@ public class WebSocketService {
     }
 
     public void broadcastPumpLayout(List<Pump> pumps) {
-        simpMessagingTemplate.convertAndSend(WS_PUMP_LAYOUT_DESTINATION, pumps.stream().map(PumpDto::new).collect(Collectors.toList()));
+        List<PumpDto> pumpDtos = pumps.stream().map(PumpDto::new).collect(Collectors.toList());
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).collect(Collectors.toList());
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION, pumpDtos);
+        }
     }
 
     public void sendPumpLayoutToUser(List<Pump> pumps, String username) {

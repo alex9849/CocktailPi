@@ -97,7 +97,7 @@ export default {
       this.stompClient.onConnect = function () {
         vm.reconnectThrottleInSeconds = 5
         vm.showWebsocketReconnectDialog = false
-        vm.stompClient.subscribe('/topic/cocktailprogress', cocktailProgressMessage => {
+        vm.stompClient.subscribe('/user/topic/cocktailprogress', cocktailProgressMessage => {
           if (cocktailProgressMessage.body === 'DELETE') {
             vm.setCocktailProgress(null)
           } else {
@@ -106,7 +106,7 @@ export default {
             vm.setCocktailProgress(progress)
           }
         })
-        vm.stompClient.subscribe('/topic/pumplayout', layoutMessage => {
+        vm.stompClient.subscribe('/user/topic/pumplayout', layoutMessage => {
           vm.setPumpLayout(JSON.parse(layoutMessage.body))
         })
       }

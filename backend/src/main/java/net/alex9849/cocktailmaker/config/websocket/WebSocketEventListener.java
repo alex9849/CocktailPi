@@ -20,13 +20,13 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionSubscribeEvent event) throws IllegalAccessException {
-        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/cocktailprogress")) {
+        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/cocktailprogress")) {
             webSocketService.sendCurrentCocktailProgessToUser(pumpService.getCurrentCocktailProgress(), event.getUser().getName());
         }
-        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/pumplayout")) {
+        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/pumplayout")) {
             webSocketService.sendPumpLayoutToUser(pumpService.getAllPumps(), event.getUser().getName());
         }
-        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/topic/runningactions")) {
+        if(Objects.equals(event.getMessage().getHeaders().get("simpDestination"), "/user/topic/runningactions")) {
             //webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }
     }
