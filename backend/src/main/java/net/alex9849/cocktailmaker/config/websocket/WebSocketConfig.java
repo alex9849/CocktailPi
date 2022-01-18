@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new WebSocketTopicSubscriptionInterceptor("topic/runningactions", ERole.ROLE_ADMIN));
+        registration.interceptors(new WebSocketTopicSubscriptionInterceptor("topic/eventactionstatus", ERole.ROLE_ADMIN));
     }
 
     @Override

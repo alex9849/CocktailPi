@@ -2,7 +2,9 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailprogressDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionInformationDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -27,6 +29,7 @@ public class WebSocketService {
 
     private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
     private static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
+    private static final String WS_RUNNING_ACTIONS_DESTINATION = "topic/eventactionstatus";
 
     public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
@@ -61,4 +64,21 @@ public class WebSocketService {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION,
                 pumps.stream().map(PumpDto::new).collect(Collectors.toList()));
     }
+
+    public void broadcastRunningEventActionsStatus(List<EventActionInformation> eai) {
+        List<EventActionInformationDto> pumpDtos = eai.stream()
+                .map(EventActionInformationDto::new).collect(Collectors.toList());
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).collect(Collectors.toList());
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_RUNNING_ACTIONS_DESTINATION, pumpDtos);
+        }
+    }
+
+    public void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
+        simpMessagingTemplate.convertAndSendToUser(username, WS_RUNNING_ACTIONS_DESTINATION,
+                eai.stream().map(EventActionInformationDto::new).collect(Collectors.toList()));
+    }
+
+
 }

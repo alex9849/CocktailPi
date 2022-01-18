@@ -19,6 +19,9 @@ public class EventService {
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Autowired
+    private WebSocketService webSocketService;
+
+    @Autowired
     private EventActionRepository eventActionRepository;
 
     @Autowired
@@ -28,7 +31,23 @@ public class EventService {
         synchronized (runningActions) {
             runningActions.values().forEach(x -> x.getFuture().cancel(true));
             runningActions.clear();
+            webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
         }
+    }
+
+    public List<EventActionInformation> getRunningActionsInformation() {
+        List<EventActionInformation> information = new ArrayList<>();
+        synchronized (runningActions) {
+            for(RunningAction runningAction : runningActions.values()) {
+                EventActionInformation eai = new EventActionInformation();
+                eai.setEventActionId(runningAction.getEventAction().getId());
+                eai.setRunId(runningAction.getRunId());
+                eai.setHasLog(false);
+                eai.setStatus(EventActionInformation.Status.RUNNING);
+                information.add(eai);
+            }
+        }
+        return information;
     }
 
     /**
@@ -57,7 +76,7 @@ public class EventService {
         }
     }
 
-    public void cancelRunningWithSameActionId(long id) {
+    private void cancelRunningWithSameActionId(long id) {
         synchronized (runningActions) {
             Set<Long> actionsToCancel = new HashSet<>();
             for(RunningAction runningAction : runningActions.values()) {
@@ -71,11 +90,12 @@ public class EventService {
         }
     }
 
-    public boolean cancelRunningAction(long id) {
+    private boolean cancelRunningAction(long runId) {
         synchronized (runningActions) {
-            RunningAction runningAction = runningActions.remove(id);
+            RunningAction runningAction = runningActions.remove(runId);
             if(runningAction != null) {
                 runningAction.getFuture().cancel(true);
+                webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
                 return true;
             }
             return false;
@@ -104,6 +124,7 @@ public class EventService {
                 runningAction.setFuture(future);
                 syncLatch.countDown();
             }
+            webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
         }
     }
 

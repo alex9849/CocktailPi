@@ -205,7 +205,11 @@ export default {
         { name: 'executionGroups', label: 'Execution-groups', field: 'executionGroups', align: 'center' },
         { name: 'status', label: 'Status', field: 'status', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
-      ]
+      ],
+      runningActions: {
+        runningActions: [],
+        log: []
+      }
     }
   },
   created () {
@@ -216,10 +220,13 @@ export default {
     this.initialize()
   },
   mounted () {
-    WebSocketService.subscribe('topic/runningactions', () => {})
+    const vm = this
+    WebSocketService.subscribe('/user/topic/eventactionstatus', (data) => {
+      vm.runningActions.runningActions = data
+    })
   },
   unmounted () {
-    WebSocketService.unsubscribe('topic/runningactions')
+    WebSocketService.unsubscribe('/user/topic/eventactionstatus')
   },
   methods: {
     onDeleteFailure () {
