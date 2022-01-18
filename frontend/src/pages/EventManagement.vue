@@ -170,6 +170,7 @@
 <script>
 
 import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiFormatListText } from '@quasar/extras/mdi-v5'
+import WebSocketService from '../services/websocket.service'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
@@ -213,6 +214,12 @@ export default {
     this.mdiSkullCrossbones = mdiSkullCrossbones
     this.mdiFormatListText = mdiFormatListText
     this.initialize()
+  },
+  mounted () {
+    WebSocketService.subscribe('topic/runningactions', () => {})
+  },
+  unmounted () {
+    WebSocketService.unsubscribe('topic/runningactions')
   },
   methods: {
     onDeleteFailure () {

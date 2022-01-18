@@ -3,13 +3,15 @@ import auth from './modules/auth/index'
 import cocktailProgress from './modules/cocktailprogress/index'
 import pumpLayout from './modules/pumplayout/index'
 import category from './modules/category/index'
+import websocket from './modules/websocket/index'
 
 const store = createStore({
   modules: {
     auth: auth,
     cocktailProgress: cocktailProgress,
     pumpLayout: pumpLayout,
-    category: category
+    category: category,
+    websocket: websocket
   },
 
   // enable strict mode (adds overhead!)
