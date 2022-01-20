@@ -65,7 +65,7 @@
           <q-td
             :props="props"
           >
-            <div v-if="true">
+            <div v-if="getEventActionStatus(props.row.id).status === 'RUNNING'">
               <q-chip :ripple="false"
                       color="green"
                       dense
@@ -82,11 +82,20 @@
                      unelevated
               />
             </div>
-            <div v-else>
+            <div v-else-if="getEventActionStatus(props.row.id).status === 'STOPPED'">
               <q-chip :ripple="false"
                       color="red"
                       dense
                       label="Stopped"
+                      square
+                      text-color="white"
+              />
+            </div>
+            <div v-else>
+              <q-chip :ripple="false"
+                      color="red"
+                      dense
+                      label="Error"
                       square
                       text-color="white"
               />
@@ -100,6 +109,7 @@
             class="q-pa-md q-gutter-x-sm"
           >
             <q-btn
+              v-if="getEventActionStatus(props.row.id).hasLog"
               :icon="mdiFormatListText"
               :style="{backgroundColor: '#31ccec'}"
               dense
@@ -206,8 +216,8 @@ export default {
         { name: 'status', label: 'Status', field: 'status', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
-      runningActions: {
-        runningActions: [],
+      actionStatus: {
+        actionStatus: new Map(),
         log: []
       }
     }
@@ -222,7 +232,11 @@ export default {
   mounted () {
     const vm = this
     WebSocketService.subscribe('/user/topic/eventactionstatus', (data) => {
-      vm.runningActions.runningActions = data
+      vm.actionStatus.actionStatus.clear()
+      data = JSON.parse(data.body)
+      for (const actionStatus of data) {
+        vm.actionStatus.actionStatus.set(actionStatus.eventActionId, actionStatus)
+      }
     })
   },
   unmounted () {
@@ -293,6 +307,18 @@ export default {
       }).finally(() => {
         this.editOptions.saving = false
       })
+    },
+    getEventActionStatus (eventActionId) {
+      const status = this.actionStatus.actionStatus.get(eventActionId)
+      if (status) {
+        return status
+      }
+      return {
+        eventActionId: -1,
+        runId: -1,
+        hasLog: false,
+        status: 'STOPPED'
+      }
     }
   },
   computed: {

@@ -39,6 +39,6 @@ public class EventActionInformation {
     }
 
     public enum Status {
-        RUNNING, EXCEPTIONAL, ERROR
+        RUNNING, ERROR, STOPPED
     }
 }
