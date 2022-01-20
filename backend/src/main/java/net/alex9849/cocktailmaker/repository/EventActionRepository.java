@@ -185,6 +185,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.VARCHAR);
                 pstmt.setNull(6, Types.BLOB);
+                deleteFile(eventAction.getId());
                 pstmt.setNull(7, Types.VARCHAR);
                 pstmt.setNull(8, Types.VARCHAR);
 
