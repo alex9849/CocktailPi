@@ -80,6 +80,7 @@
                      size="sm"
                      text-color="red"
                      unelevated
+                     @click="killEventActionProcess(getEventActionStatus(props.row.id).runId)"
               />
             </div>
             <div v-else-if="getEventActionStatus(props.row.id).status === 'STOPPED'">
@@ -243,6 +244,9 @@ export default {
     WebSocketService.unsubscribe('/user/topic/eventactionstatus')
   },
   methods: {
+    killEventActionProcess (processId) {
+      EventActionService.killEventAction(processId)
+    },
     onDeleteFailure () {
       this.selected.splice(0, this.selected.length)
       this.initialize()

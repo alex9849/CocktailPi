@@ -90,7 +90,7 @@ public class EventService {
         }
     }
 
-    private boolean cancelRunningAction(long runId) {
+    public boolean cancelRunningAction(long runId) {
         synchronized (runningActions) {
             RunningAction runningAction = runningActions.remove(runId);
             if(runningAction != null) {

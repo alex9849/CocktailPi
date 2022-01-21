@@ -38,6 +38,15 @@ public class EventActionEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/process/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> killProcess(@PathVariable long id) {
+        if(eventService.cancelRunningAction(id)) {
+            return ResponseEntity.accepted().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);
