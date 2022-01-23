@@ -57,8 +57,8 @@ export default {
       storeLogout: 'auth/logout'
     }),
     logout () {
-      this.storeLogout()
       this.$router.push({ name: 'login' })
+      this.storeLogout()
     }
   },
   computed: {

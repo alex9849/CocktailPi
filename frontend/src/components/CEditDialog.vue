@@ -5,7 +5,7 @@
     :persistent="saving"
     @hide="$emit('clickAbort')"
   >
-    <q-card class="width-desktop">
+    <q-card class="full-width">
       <q-card-section class="text-center q-gutter-y-md">
         <h5
           v-if="title !== ''"
@@ -77,11 +77,3 @@ export default {
   emits: ['update:show', 'clickAbort', 'clickSave']
 }
 </script>
-
-<style scoped>
-  @media screen and (min-width: 600px) {
-    .width-desktop {
-      width: 500px;
-    }
-  }
-</style>

@@ -54,8 +54,10 @@ class WebsocketService {
 
   disconnectWebsocket () {
     if (this.stompClient != null) {
+      store().commit('websocket/setConnected', false)
       this.stompClient.onWebSocketClose = () => {}
       this.stompClient.deactivate()
+      this.stompClient = null
     }
     this.activeSubscriptions.clear()
   }
