@@ -105,6 +105,7 @@ public class EventActionRepository extends JdbcDaoSupport {
             }
             LargeObject lobObject = lobApi.open(fileOid, LargeObjectManager.READWRITE);
             lobObject.write(file);
+            lobObject.truncate(file.length);
             return fileOid;
         });
     }
