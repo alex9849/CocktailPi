@@ -33,11 +33,12 @@ public class ExecutePythonEventAction extends FileEventAction {
 
             process = Runtime.getRuntime().exec("python -u " + file.getAbsolutePath());
 
-            /* BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = stdInput.readLine()) != null) {
-                System.out.print(line);
-            }
-            stdInput.close(); */
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errorInput = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            new Thread(new LogReader(stdInput)).start();
+            new Thread(new LogReader(errorInput)).start();
+
             process.waitFor();
             file.delete();
         } catch (InterruptedException e) {
@@ -49,6 +50,28 @@ public class ExecutePythonEventAction extends FileEventAction {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    private static class LogReader implements Runnable {
+        private final BufferedReader reader;
+
+        public LogReader(BufferedReader reader) {
+            this.reader = reader;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String s = null;
+                while ((s = reader.readLine()) != null) {
+                    System.out.println(s);
+                }
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
