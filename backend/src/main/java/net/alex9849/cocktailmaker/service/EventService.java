@@ -52,6 +52,13 @@ public class EventService {
         return information;
     }
 
+    public List<RunningAction.LogEntry> getEventActionLog(long actionId) {
+        if(!latestRunningActionInstancesByActionId.containsKey(actionId)) {
+            return new ArrayList<>();
+        }
+        return latestRunningActionInstancesByActionId.get(actionId).getLog();
+    }
+
     /**
      * Cancels all running actions that have one or more ExecutionGroups
      * @param executionGroups A Set of ExecutionGroups. Function won't cancel anything if empty

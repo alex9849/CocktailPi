@@ -28,10 +28,10 @@ public class WebSocketService {
     @Autowired
     private SimpUserRegistry simpUserRegistry;
 
-    private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
-    private static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
-    private static final String WS_RUNNING_ACTIONS_DESTINATION = "topic/eventactionstatus";
-    private static final String WS_ACTIONS_LOG_DESTINATION = "topic/eventactionlog";
+    public static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
+    public static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
+    public static final String WS_ACTIONS_STATUS_DESTINATION = "/topic/eventactionstatus";
+    public static final String WS_ACTIONS_LOG_DESTINATION = "/topic/eventactionlog";
 
     public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
@@ -73,12 +73,12 @@ public class WebSocketService {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
         for(String username : subscribers) {
-            simpMessagingTemplate.convertAndSendToUser(username, WS_RUNNING_ACTIONS_DESTINATION, pumpDtos);
+            simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_STATUS_DESTINATION, pumpDtos);
         }
     }
 
     public void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
-        simpMessagingTemplate.convertAndSendToUser(username, WS_RUNNING_ACTIONS_DESTINATION,
+        simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_STATUS_DESTINATION,
                 eai.stream().map(EventActionInformationDto::new).collect(Collectors.toList()));
     }
 

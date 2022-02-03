@@ -35,7 +35,10 @@ public class WebSocketTopicSubscriptionInterceptor implements ChannelInterceptor
     }
 
     private boolean validateSubscription(User user, String topicDestination) {
-        if(!Objects.equals(topicDestination, destination)) {
+        if(topicDestination == null) {
+            return true;
+        }
+        if(!topicDestination.startsWith(destination)) {
             return true;
         }
         if (user == null) {
