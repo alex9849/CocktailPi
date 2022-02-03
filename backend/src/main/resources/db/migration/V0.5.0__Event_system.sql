@@ -14,6 +14,8 @@ create table event_actions
     comment       varchar(40)  null,
     on_repeat     boolean check (((dType IN ('ExecPy', 'CallUrl', 'DoNothing')) AND on_repeat IS NULL) OR
                                  (dType = 'PlayAudio' AND on_repeat IS NOT NULL)),
+    volume        numeric(3) check (((dType IN ('ExecPy', 'CallUrl', 'DoNothing')) AND volume IS NULL) OR
+                                    (dType = 'PlayAudio' AND volume IS NOT NULL AND (volume BETWEEN 0 and 100))),
     fileName      varchar(255) check (((dType IN ('CallUrl', 'DoNothing')) AND fileName IS NULL) OR
                                       ((dType IN ('ExecPy', 'PlayAudio')) AND fileName IS NOT NULL)),
     file          oid check (((dType IN ('CallUrl', 'DoNothing')) AND file IS NULL) OR

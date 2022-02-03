@@ -208,6 +208,23 @@
                 />
               </template>
             </q-file>
+            <q-item>
+              <q-item-section avatar>
+                <q-icon color="teal" name="volume_up" />
+              </q-item-section>
+              <q-item-section>
+                <q-slider
+                  :label-value="'Volume: ' + modelValue.volume + '%'"
+                  :max="100"
+                  :min="0"
+                  :model-value="modelValue.volume"
+                  color="teal"
+                  label
+                  label-always
+                  @update:model-value="setValue('volume', $event)"
+                />
+              </q-item-section>
+            </q-item>
             <q-checkbox
               :model-value="!!modelValue.onRepeat"
               label="On repeat"
@@ -257,7 +274,7 @@
 
 import useVuelidate from '@vuelidate/core'
 import EventActionService from '../services/eventaction.service'
-import { maxLength, required, url } from '@vuelidate/validators'
+import { maxLength, maxValue, minValue, required, url } from '@vuelidate/validators'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
 import { mdiInformation } from '@quasar/extras/mdi-v5'
 
@@ -333,6 +350,9 @@ export default {
         this.setValue('fileName', undefined)
       }
       this.v.modelValue.type.$model = actionValue
+      if (actionValue === 'playAudio' && !this.modelValue.volume) {
+        this.v.modelValue.volume.$model = 100
+      }
       this.$emit('update:modelValue', this.modelValue)
     },
     setSelectedFile (file) {
@@ -375,7 +395,12 @@ export default {
         },
         type: {
           required
-        }
+        },
+        requestMethod: {},
+        url: {},
+        fileName: {},
+        onRepeat: {},
+        volume: {}
       }
     }
     if (this.modelValue.type === 'callUrl') {
@@ -405,6 +430,11 @@ export default {
     }
     if (this.modelValue.type === 'playAudio') {
       val.modelValue.onRepeat = {}
+      val.modelValue.volume = {
+        required,
+        minValue: minValue(0),
+        maxValue: maxValue(100)
+      }
     }
     return val
   },

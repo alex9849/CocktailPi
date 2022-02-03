@@ -9,6 +9,7 @@ import java.util.concurrent.CountDownLatch;
 @DiscriminatorValue("PlayAudio")
 public class PlayAudioEventAction extends FileEventAction {
     private boolean onRepeat;
+    private int volume;
 
     public boolean isOnRepeat() {
         return onRepeat;
@@ -18,9 +19,21 @@ public class PlayAudioEventAction extends FileEventAction {
         this.onRepeat = onRepeat;
     }
 
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
+
     @Override
     public String getDescription() {
-        return "Play audiofile: " + getFileName();
+        String desc = "Play audiofile: " + getFileName() + " (Volume: " + this.volume + "%)";
+        if(this.onRepeat) {
+            desc += " (Repeating)";
+        }
+        return desc;
     }
 
     @Override
@@ -38,6 +51,13 @@ public class PlayAudioEventAction extends FileEventAction {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new ByteArrayInputStream(getFile()));
             clip.open(audioInputStream);
             clip.loop(onRepeat? Clip.LOOP_CONTINUOUSLY : 0);
+            FloatControl floatControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            if(floatControl != null) {
+                float volume = ((floatControl.getMaximum() - floatControl.getMinimum()) / 100 * this.volume) + floatControl.getMinimum();
+                volume = Math.min(volume, floatControl.getMaximum());
+                volume = Math.max(volume, floatControl.getMinimum());
+                floatControl.setValue(volume);
+            }
             clip.start();
             syncLatch.await();
         } catch (InterruptedException e) {
