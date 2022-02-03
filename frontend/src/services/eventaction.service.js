@@ -41,12 +41,12 @@ class EventActionService {
   }
 
   getAllExecutionGroups () {
-    return axios.get(API_PATH + '/executiongroup')
+    return axios.get(API_PATH + 'executiongroup')
       .then(response => response.data)
   }
 
   killEventAction (processId) {
-    return axios.delete(API_PATH + '/process/' + processId)
+    return axios.delete(API_PATH + 'process/' + processId)
   }
 }
 
