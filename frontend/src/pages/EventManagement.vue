@@ -180,13 +180,16 @@
       v-model:model-value="actionLog.show"
       @hide="hideEventActionLog"
     >
-      <q-card flat>
-        <q-card-section>
+      <q-card
+        class="full-width bg-black text-white"
+        flat
+      >
+        <q-card-section style="height: 300px;">
           <p
             v-for="entry of actionLog.log"
             :key="entry.date"
           >
-            {{ entry }}
+            ({{ entry.timeStamp.toLocaleTimeString() }}) [{{ entry.type }}]: {{ entry.message}}
           </p>
         </q-card-section>
       </q-card>
@@ -274,6 +277,9 @@ export default {
           vm.actionLog.log.splice(0, vm.actionLog.log.length)
         } else {
           data = JSON.parse(data.body)
+          for (const entry of data) {
+            entry.timeStamp = new Date(entry.timeStamp)
+          }
           vm.actionLog.log.push(...data)
         }
       })
