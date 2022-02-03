@@ -1,7 +1,11 @@
 FROM balenalib/raspberry-pi-debian:buster
 RUN apt update
 RUN apt -y full-upgrade
-RUN apt -yq install pigpio python-pigpio python3-pigpio wget
+RUN apt -yq install python python3-pip pigpio python-pigpio python3-pigpio wget
+RUN pip3 install --upgrade setuptools
+RUN pip3 install RPI.GPIO --quiet
+RUN pip3 install adafruit-blinka --quiet
+RUN pip3 install adafruit-io --quiet
 COPY docker/install-java.sh /install-java.sh
 RUN chmod u+x /install-java.sh && /install-java.sh
 EXPOSE 8080/tcp
