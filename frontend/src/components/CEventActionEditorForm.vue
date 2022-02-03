@@ -17,6 +17,27 @@
       outlined
       @update:model-value="setValue('comment', $event)"
     />
+    <q-dialog v-model:model-value="showHelpExecutionGroup">
+      <q-card>
+        <q-card-section>
+          <h6>Execution-groups:</h6>
+          Actions within the same execution-group can be executed concurrently.
+          There are 2 cases:
+          <ul>
+            <li><b>An action has no execution group:</b> The action won't cancel any running actions.
+              It also won't be canceled by other starting actions.
+              The action will only get canceled if it gets executed a second time.
+            </li>
+            <li><b>The action shares an execution group with another action:</b>
+              The action will cancel all other running actions (except the ones with no execution groups)
+              that don't share any execution groups with it.
+              The action will also get canceled if it gets executed a second time.
+              Actions with common execution-groups can be executed concurrently.
+            </li>
+          </ul>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-select
       ref="executionGroupsSelector"
       :disable="disable || groupsLoading"
@@ -34,6 +55,13 @@
       @filter="onFilterExecGroups"
       @update:model-value="setValue('executionGroups', $event)"
     >
+      <template v-slot:append>
+        <q-icon
+          :name="mdiInformation"
+          style="cursor: pointer"
+          @click.stop.prevent="showHelpExecutionGroup = !showHelpExecutionGroup"
+        />
+      </template>
       <template v-slot:before-options>
         <div>
           <q-item
@@ -190,6 +218,8 @@
             name="execPy"
             class="q-gutter-y-sm q-px-none"
           >
+            <p>Executes a python file. The docker image uses python 3 and provides these libraries: pigpio, gpiozero,
+              RPI.GPIO, adafruit-blinka and adafruit-io. You can also view the console output of your program in real time.</p>
             <q-file :model-value="selectedFile"
                     accept=".py"
                     bottom-slots
@@ -229,13 +259,15 @@ import useVuelidate from '@vuelidate/core'
 import EventActionService from '../services/eventaction.service'
 import { maxLength, required, url } from '@vuelidate/validators'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
+import { mdiInformation } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'CEventActionEditorForm',
   mixins: [eventActionTriggerDisplayNames],
   setup () {
     return {
-      v: useVuelidate()
+      v: useVuelidate(),
+      mdiInformation: mdiInformation
     }
   },
   props: {
@@ -269,6 +301,7 @@ export default {
   },
   data () {
     return {
+      showHelpExecutionGroup: false,
       groupsLoading: false,
       existingExecutionGroups: [],
       currentExecutionGroupFilter: '',
