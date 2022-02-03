@@ -118,7 +118,13 @@ public class EventService {
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());
 
                 RunningAction runningAction = new RunningAction(action);
-                runningAction.subscribeToLog(x -> webSocketService.broadcastEventActionLog(action.getId(), x));
+                runningAction.subscribeToLog(x -> {
+                    webSocketService.broadcastEventActionLog(action.getId(), x);
+                    // On first log entry broadcast running actions information
+                    if(!x.isEmpty() && x.size() == runningAction.getLog().size()) {
+                        webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
+                    }
+                });
                 runningActionsByRunId.put(runningAction.getRunId(), runningAction);
                 latestRunningActionInstancesByActionId.put(action.getId(), runningAction);
                 CountDownLatch syncLatch = new CountDownLatch(1);
@@ -134,6 +140,7 @@ public class EventService {
                     }
                 });
                 runningAction.setFuture(future);
+                webSocketService.broadcastClearEventActionLog(action.getId());
                 //Start process
                 syncLatch.countDown();
             }

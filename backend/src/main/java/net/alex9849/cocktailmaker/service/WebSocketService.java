@@ -82,6 +82,13 @@ public class WebSocketService {
                 eai.stream().map(EventActionInformationDto::new).collect(Collectors.toList()));
     }
 
+    public void broadcastClearEventActionLog(long runningActionId) {
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).collect(Collectors.toList());
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId, "DELETE");
+        }
+    }
     public void broadcastEventActionLog(long runningActionId, List<RunningAction.LogEntry> logEntries) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());

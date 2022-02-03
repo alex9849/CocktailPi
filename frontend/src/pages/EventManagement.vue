@@ -113,6 +113,7 @@
               v-if="getEventActionStatus(props.row.id).hasLog"
               :icon="mdiFormatListText"
               :style="{backgroundColor: '#31ccec'}"
+              @click="showEventActionLog(props.row.id)"
               dense
               rounded
               text-color="white"
@@ -175,6 +176,21 @@
       @deleteFailure="initialize"
       @deleteSuccess="onDeleteFailure"
     />
+    <q-dialog
+      v-model:model-value="actionLog.show"
+      @hide="hideEventActionLog"
+    >
+      <q-card flat>
+        <q-card-section>
+          <p
+            v-for="entry of actionLog.log"
+            :key="entry.date"
+          >
+            {{ entry }}
+          </p>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -220,6 +236,11 @@ export default {
       actionStatus: {
         actionStatus: new Map(),
         log: []
+      },
+      actionLog: {
+        topic: null,
+        show: false,
+        log: []
       }
     }
   },
@@ -244,6 +265,25 @@ export default {
     WebSocketService.unsubscribe('/user/topic/eventactionstatus')
   },
   methods: {
+    showEventActionLog (actionId) {
+      this.actionLog.show = true
+      this.actionLog.topic = '/user/topic/eventactionlog/' + actionId
+      const vm = this
+      WebSocketService.subscribe(this.actionLog.topic, (data) => {
+        if (data.body === 'DELETE') {
+          vm.actionLog.log.splice(0, vm.actionLog.log.length)
+        } else {
+          data = JSON.parse(data.body)
+          vm.actionLog.log.push(...data)
+        }
+      })
+    },
+    hideEventActionLog () {
+      this.actionLog.show = false
+      WebSocketService.unsubscribe(this.actionLog.topic)
+      this.actionLog.topic = null
+      this.actionLog.log.splice(0, this.actionLog.log.length)
+    },
     killEventActionProcess (processId) {
       EventActionService.killEventAction(processId)
     },

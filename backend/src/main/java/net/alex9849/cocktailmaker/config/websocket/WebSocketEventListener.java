@@ -38,10 +38,11 @@ public class WebSocketEventListener {
             webSocketService.sendRunningEventActionsStatusToUser(eventService.getRunningActionsInformation(), event.getUser().getName());
         }
 
-        if(simpDestination.startsWith("/user" + WebSocketService.WS_ACTIONS_LOG_DESTINATION + "/")) {
+        final String userDestinationActionsLogDestination = "/user" + WebSocketService.WS_ACTIONS_LOG_DESTINATION + "/";
+        if(simpDestination.startsWith(userDestinationActionsLogDestination)) {
             long actionId;
             try {
-                String stringActionId = simpDestination.substring(WebSocketService.WS_ACTIONS_LOG_DESTINATION.length() + 1);
+                String stringActionId = simpDestination.substring(userDestinationActionsLogDestination.length());
                 actionId = Long.parseLong(stringActionId);
             } catch (NumberFormatException e) {
                 actionId = -1L;
