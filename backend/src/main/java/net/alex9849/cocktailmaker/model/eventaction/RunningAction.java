@@ -40,7 +40,7 @@ public class RunningAction {
         return Collections.unmodifiableList(log);
     }
 
-    public void subSubscribeToLog(Consumer<List<LogEntry>> consumer) {
+    public void subscribeToLog(Consumer<List<LogEntry>> consumer) {
         logSubscribers.add(consumer);
     }
 

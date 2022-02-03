@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
+import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailprogressDto;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionInformationDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -30,6 +31,7 @@ public class WebSocketService {
     private static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
     private static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
     private static final String WS_RUNNING_ACTIONS_DESTINATION = "topic/eventactionstatus";
+    private static final String WS_ACTIONS_LOG_DESTINATION = "topic/eventactionlog";
 
     public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
@@ -78,6 +80,19 @@ public class WebSocketService {
     public void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_RUNNING_ACTIONS_DESTINATION,
                 eai.stream().map(EventActionInformationDto::new).collect(Collectors.toList()));
+    }
+
+    public void broadcastEventActionLog(long runningActionId, List<RunningAction.LogEntry> logEntries) {
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).collect(Collectors.toList());
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId, logEntries);
+        }
+    }
+
+    public void sendEventActionLogToUser(long runningActionId, List<RunningAction.LogEntry> logEntries, String username) {
+        simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId,
+                logEntries);
     }
 
 

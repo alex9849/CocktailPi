@@ -24,7 +24,7 @@ public class PlayAudioEventAction extends FileEventAction {
     }
 
     @Override
-    public void trigger() {
+    public void trigger(RunningAction runningAction) {
         CountDownLatch syncLatch = new CountDownLatch(1);
         Clip clip = null;
 

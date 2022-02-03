@@ -4,6 +4,9 @@ import javax.persistence.DiscriminatorValue;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @DiscriminatorValue("ExecPy")
 public class ExecutePythonEventAction extends FileEventAction {
@@ -14,7 +17,7 @@ public class ExecutePythonEventAction extends FileEventAction {
     }
 
     @Override
-    public void trigger() {
+    public void trigger(RunningAction runningAction) {
         Process process = null;
         File file = null;
         try {
@@ -36,8 +39,8 @@ public class ExecutePythonEventAction extends FileEventAction {
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errorInput = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-            new Thread(new LogReader(stdInput)).start();
-            new Thread(new LogReader(errorInput)).start();
+            new Thread(new LogReader(stdInput, runningAction, RunningAction.LogEntry.Type.INFO)).start();
+            new Thread(new LogReader(errorInput, runningAction, RunningAction.LogEntry.Type.ERROR)).start();
 
             process.waitFor();
             file.delete();
@@ -56,9 +59,13 @@ public class ExecutePythonEventAction extends FileEventAction {
 
     private static class LogReader implements Runnable {
         private final BufferedReader reader;
+        private final RunningAction runningAction;
+        private final RunningAction.LogEntry.Type logType;
 
-        public LogReader(BufferedReader reader) {
+        public LogReader(BufferedReader reader, RunningAction runningAction, RunningAction.LogEntry.Type logType) {
             this.reader = reader;
+            this.runningAction = runningAction;
+            this.logType = logType;
         }
 
         @Override
@@ -66,7 +73,7 @@ public class ExecutePythonEventAction extends FileEventAction {
             try {
                 String s = null;
                 while ((s = reader.readLine()) != null) {
-                    System.out.println(s);
+                    runningAction.addLog(s, logType);
                 }
                 reader.close();
             } catch (IOException e) {

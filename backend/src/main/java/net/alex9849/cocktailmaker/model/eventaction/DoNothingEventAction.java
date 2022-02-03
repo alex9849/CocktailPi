@@ -6,7 +6,7 @@ import javax.persistence.DiscriminatorValue;
 public class DoNothingEventAction extends EventAction {
 
     @Override
-    public void trigger() {
+    public void trigger(RunningAction runningAction) {
 
     }
 

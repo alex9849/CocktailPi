@@ -47,7 +47,7 @@ public abstract class EventAction {
      * This methods contains the behaviour of the EventAction.
      * The trigger always gets executed asynchronous.
      */
-    public abstract void trigger();
+    public abstract void trigger(RunningAction runningAction);
 
     public abstract String getDescription();
 

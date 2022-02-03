@@ -15,7 +15,8 @@ import java.util.concurrent.*;
 @Service
 @Transactional
 public class EventService {
-    private final Map<Long, RunningAction> runningActions = new HashMap<>();
+    private final Map<Long, RunningAction> latestRunningActionInstancesByActionId = new HashMap<>();
+    private final Map<Long, RunningAction> runningActionsByRunId = new HashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Autowired
@@ -28,22 +29,23 @@ public class EventService {
     private EventActionExecutionGroupRepository executionGroupRepository;
 
     public void cancelAllRunningActions() {
-        synchronized (runningActions) {
-            runningActions.values().forEach(x -> x.getFuture().cancel(true));
-            runningActions.clear();
+        synchronized (runningActionsByRunId) {
+            runningActionsByRunId.values().forEach(x -> x.getFuture().cancel(true));
+            runningActionsByRunId.clear();
             webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
         }
     }
 
     public List<EventActionInformation> getRunningActionsInformation() {
         List<EventActionInformation> information = new ArrayList<>();
-        synchronized (runningActions) {
-            for(RunningAction runningAction : runningActions.values()) {
+        synchronized (runningActionsByRunId) {
+            for(RunningAction runningAction : latestRunningActionInstancesByActionId.values()) {
                 EventActionInformation eai = new EventActionInformation();
                 eai.setEventActionId(runningAction.getEventAction().getId());
                 eai.setRunId(runningAction.getRunId());
-                eai.setHasLog(false);
-                eai.setStatus(EventActionInformation.Status.RUNNING);
+                eai.setHasLog(!runningAction.getLog().isEmpty());
+                eai.setStatus(runningActionsByRunId.containsKey(runningAction.getRunId())
+                        ? EventActionInformation.Status.RUNNING : EventActionInformation.Status.STOPPED);
                 information.add(eai);
             }
         }
@@ -58,9 +60,9 @@ public class EventService {
         if(executionGroups.isEmpty()) {
             return;
         }
-        synchronized (runningActions) {
+        synchronized (runningActionsByRunId) {
             Set<Long> actionsToCancel = new HashSet<>();
-            for(RunningAction runningAction : runningActions.values()) {
+            for(RunningAction runningAction : runningActionsByRunId.values()) {
                 if(runningAction.getEventAction().getExecutionGroups().isEmpty()) {
                     continue;
                 }
@@ -77,9 +79,9 @@ public class EventService {
     }
 
     private void cancelRunningWithSameActionId(long id) {
-        synchronized (runningActions) {
+        synchronized (runningActionsByRunId) {
             Set<Long> actionsToCancel = new HashSet<>();
-            for(RunningAction runningAction : runningActions.values()) {
+            for(RunningAction runningAction : runningActionsByRunId.values()) {
                 if(runningAction.getEventAction().getId() == id) {
                     actionsToCancel.add(runningAction.getRunId());
                 }
@@ -91,8 +93,8 @@ public class EventService {
     }
 
     public boolean cancelRunningAction(long runId) {
-        synchronized (runningActions) {
-            RunningAction runningAction = runningActions.remove(runId);
+        synchronized (runningActionsByRunId) {
+            RunningAction runningAction = runningActionsByRunId.remove(runId);
             if(runningAction != null) {
                 runningAction.getFuture().cancel(true);
                 webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
@@ -103,18 +105,21 @@ public class EventService {
     }
 
     public void triggerActions(EventTrigger trigger) {
-        synchronized (runningActions) {
+        synchronized (runningActionsByRunId) {
             for(EventAction action : eventActionRepository.getByTrigger(trigger)) {
                 cancelRunningWithSameActionId(action.getId());
                 cancelAllWithoutExecutionGroups(action.getExecutionGroups());
 
                 RunningAction runningAction = new RunningAction(action);
-                runningActions.put(runningAction.getRunId(), runningAction);
+                runningAction.subscribeToLog(x -> webSocketService.broadcastEventActionLog(action.getId(), x));
+                runningActionsByRunId.put(runningAction.getRunId(), runningAction);
+                latestRunningActionInstancesByActionId.put(action.getId(), runningAction);
                 CountDownLatch syncLatch = new CountDownLatch(1);
                 Future<?> future = executor.submit(() -> {
                     try {
+                        //Wait till runningaction is constructed completely
                         syncLatch.await();
-                        action.trigger();
+                        action.trigger(runningAction);
                         cancelRunningAction(runningAction.getRunId());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -122,6 +127,7 @@ public class EventService {
                     }
                 });
                 runningAction.setFuture(future);
+                //Start process
                 syncLatch.countDown();
             }
             webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());

@@ -35,7 +35,7 @@ public class CallUrlEventAction extends EventAction {
     }
 
     @Override
-    public void trigger() {
+    public void trigger(RunningAction runningAction) {
         HttpURLConnection con = null;
 
         try {
