@@ -10,6 +10,13 @@ export default boot(({ app }) => {
     cfg.baseURL = store().getters['auth/getFormattedServerAddress']
     return cfg
   })
+  axios.interceptors.response.use(cfg => cfg, error => {
+    app.config.globalProperties.$q.notify({
+      type: 'negative',
+      message: error.response.data.message
+    })
+    throw error
+  })
   app.config.globalProperties.$axios = axios
 })
 export { axios }
