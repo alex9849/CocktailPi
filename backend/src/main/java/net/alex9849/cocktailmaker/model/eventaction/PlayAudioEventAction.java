@@ -68,7 +68,7 @@ public class PlayAudioEventAction extends FileEventAction {
                 clip.stop();
                 clip.close();
             }
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             runningAction.addLog(e);
         } finally {
