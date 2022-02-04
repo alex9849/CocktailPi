@@ -181,8 +181,9 @@
       @hide="hideEventActionLog"
     >
       <q-card
-        class="full-width bg-black text-white"
+        class="bg-black text-white"
         flat
+        style="resize: both; overflow-wrap: break-word; max-width: none"
       >
         <q-card-section style="height: 300px;">
           <p
