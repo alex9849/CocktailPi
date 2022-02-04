@@ -18,4 +18,4 @@ ENV DEMOMODE=false
 
 COPY backend/target/server.jar /app.jar
 
-CMD ["java","-jar","/app.jar"]
+CMD ["bash -c \"dockerize -wait tcp://${DB_HOST}:${DB_PORT} -timeout 300s -wait-retry-interval 30s java -jar /app.jar\""]
