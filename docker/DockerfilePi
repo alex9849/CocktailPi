@@ -1,13 +1,16 @@
 FROM balenalib/raspberry-pi-debian:buster
+ENV DOCKERIZE_VERSION v0.6.1
 RUN apt update
 RUN apt -y full-upgrade
-RUN apt -yq install python python3-pip pigpio python-pigpio python3-pigpio wget
+RUN apt -yq install python python3-pip pigpio python-pigpio python3-pigpio wget openssl
 RUN pip3 install --upgrade setuptools
 RUN pip3 install RPI.GPIO gpiozero adafruit-blinka adafruit-io --quiet
 COPY docker/install-java.sh /install-java.sh
 RUN chmod u+x /install-java.sh && /install-java.sh
-COPY docker/wait-for-it.sh /wait-for-it.sh
-RUN chmod u+x /wait-for-it.sh
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
