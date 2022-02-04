@@ -6,6 +6,7 @@ import net.alex9849.cocktailmaker.repository.EventActionExecutionGroupRepository
 import net.alex9849.cocktailmaker.repository.EventActionRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,6 +28,9 @@ public class EventService {
 
     @Autowired
     private EventActionExecutionGroupRepository executionGroupRepository;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
     public void cancelAllRunningActions() {
         synchronized (runningActionsByRunId) {
@@ -176,15 +180,24 @@ public class EventService {
     }
 
     public boolean deleteEventAction(long id) {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Deleting Event-Actions isn't allowed in demomode!");
+        }
         cancelRunningWithSameActionId(id);
         return eventActionRepository.delete(id);
     }
 
     public EventAction createEventAction(EventAction eventAction) {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Creating Event-Actions isn't allowed in demomode!");
+        }
         return eventActionRepository.create(eventAction);
     }
 
     public EventAction updateEventAction(EventAction toUpdateEventAction) {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Updating Event-Actions isn't allowed in demomode!");
+        }
         Optional<EventAction> oOldEventAction = eventActionRepository.getById(toUpdateEventAction.getId());
         if(oOldEventAction.isEmpty()) {
             throw new IllegalArgumentException("EventAction with id " + toUpdateEventAction.getId() + " doesn't exist!");
