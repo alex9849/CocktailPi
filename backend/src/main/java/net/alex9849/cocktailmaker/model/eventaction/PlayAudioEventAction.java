@@ -4,7 +4,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 @DiscriminatorValue("PlayAudio")
 public class PlayAudioEventAction extends FileEventAction {
@@ -67,6 +70,7 @@ public class PlayAudioEventAction extends FileEventAction {
             }
         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
             e.printStackTrace();
+            runningAction.addLog(e);
         } finally {
             if(clip != null) {
                 clip.stop();

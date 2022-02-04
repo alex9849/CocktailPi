@@ -53,6 +53,7 @@ public class ExecutePythonEventAction extends FileEventAction {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            runningAction.addLog(e);
         }
     }
 
@@ -73,7 +74,7 @@ public class ExecutePythonEventAction extends FileEventAction {
             try {
                 String s = null;
                 while ((s = reader.readLine()) != null) {
-                    runningAction.addLog(s, logType);
+                    runningAction.addLog(logType, s);
                 }
                 reader.close();
             } catch (IOException e) {

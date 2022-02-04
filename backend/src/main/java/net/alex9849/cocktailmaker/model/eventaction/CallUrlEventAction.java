@@ -49,6 +49,7 @@ public class CallUrlEventAction extends EventAction {
 
         } catch (IOException e) {
             e.printStackTrace();
+            runningAction.addLog(e);
         }
     }
 }

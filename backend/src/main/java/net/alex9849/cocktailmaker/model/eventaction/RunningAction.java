@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.model.eventaction;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class RunningAction {
     private static long nextRunId;
@@ -44,8 +45,16 @@ public class RunningAction {
         logSubscribers.add(consumer);
     }
 
-    protected void addLog(String message, LogEntry.Type type) {
+    protected void addLog(LogEntry.Type type, String message) {
         addLog(type, Collections.singletonList(message));
+    }
+
+    protected void addLog(Throwable throwable) {
+        List<String> stackTraceList = Arrays.stream(throwable.getStackTrace())
+                .map(StackTraceElement::toString)
+                .collect(Collectors.toList());
+        stackTraceList.add(0, throwable.toString());
+        addLog(RunningAction.LogEntry.Type.ERROR, stackTraceList);
     }
 
     protected void addLog(LogEntry.Type type, List<String> messages) {
