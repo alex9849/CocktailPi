@@ -15,7 +15,9 @@ EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
 ENV DEMOMODE=false
+ENV DB_HOST=db
+ENV DB_PORT=5432
 
 COPY backend/target/server.jar /app.jar
 
-CMD ["bash -c \"dockerize -wait tcp://${DB_HOST}:${DB_PORT} -timeout 300s -wait-retry-interval 30s java -jar /app.jar\""]
+CMD ["sh", "-c", "dockerize -wait tcp://${DB_HOST}:${DB_PORT} -timeout 300s -wait-retry-interval 30s java -jar /app.jar"]
