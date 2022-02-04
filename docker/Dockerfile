@@ -8,7 +8,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
-ENV DEMOMODE=false
+ENV DEMOMODE=true
 ENV IS_RASPBERRY_PI=false
 ENV DB_HOST=db
 ENV DB_PORT=5432
