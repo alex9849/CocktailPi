@@ -7,9 +7,9 @@ RUN pip3 install --upgrade setuptools
 RUN pip3 install RPI.GPIO gpiozero adafruit-blinka adafruit-io --quiet
 COPY docker/install-java.sh /install-java.sh
 RUN chmod u+x /install-java.sh && /install-java.sh
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-armhf-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-armhf-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-armhf-$DOCKERIZE_VERSION.tar.gz
 
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
