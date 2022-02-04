@@ -15,4 +15,4 @@ ENV DEMOMODE=false
 
 COPY backend/target/server.jar /app.jar
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+CMD ["java","-jar","/app.jar"]
