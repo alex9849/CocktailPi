@@ -6,6 +6,8 @@ RUN pip3 install --upgrade setuptools
 RUN pip3 install RPI.GPIO gpiozero adafruit-blinka adafruit-io --quiet
 COPY docker/install-java.sh /install-java.sh
 RUN chmod u+x /install-java.sh && /install-java.sh
+COPY docker/wait-for-it.sh /wait-for-it.sh
+RUN chmod u+x /wait-for-it.sh
 EXPOSE 8080/tcp
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin
