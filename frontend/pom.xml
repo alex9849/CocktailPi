@@ -34,7 +34,7 @@
           </includes>
           <regex>false</regex>
           <token>%MAVEN_PROJECT_VERSION%</token>
-          <value>${project.version}</value>
+          <value>${project.parent.version}</value>
         </configuration>
       </plugin>
       <plugin>
