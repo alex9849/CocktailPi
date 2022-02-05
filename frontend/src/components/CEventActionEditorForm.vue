@@ -237,12 +237,12 @@
           >
             <p>
               Executes a python file. The docker image uses python 3.
-              You can also view the console output of your program in real time.
+              You can also view the console output of your program in real-time.
             </p>
             <p
               class="q-pa-sm"
             >
-              Install new libraries using: <b>pip3 install &#60;library&#62;</b>
+              Install new libraries by using: <b>pip3 install &#60;library&#62;</b>
             </p>
             <q-card bordered flat>
               <q-expansion-item
