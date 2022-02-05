@@ -354,7 +354,7 @@ export default {
         this.closeEditDialog()
         this.onRefreshButton()
       }, err => {
-        this.editOptions.editErrorMessage = err.message
+        this.editOptions.editErrorMessage = err.response.data.message
       }).finally(() => {
         this.editOptions.saving = false
       })
