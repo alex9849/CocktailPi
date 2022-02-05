@@ -135,7 +135,7 @@
                 val => !v.modelValue.type.required.$invalid || 'Required'
               ]"
     />
-    <q-splitter :model-value="10" />
+    <q-splitter :model-value="10"/>
     <q-card
       bordered
       flat
@@ -210,7 +210,7 @@
             </q-file>
             <q-item>
               <q-item-section avatar>
-                <q-icon color="teal" name="volume_up" />
+                <q-icon color="teal" name="volume_up"/>
               </q-item-section>
               <q-item-section>
                 <q-slider
@@ -235,8 +235,49 @@
             name="execPy"
             class="q-gutter-y-sm q-px-none"
           >
-            <p>Executes a python file. The docker image uses python 3 and provides these libraries: pigpio, gpiozero,
-              RPI.GPIO, adafruit-blinka and adafruit-io. You can also view the console output of your program in real time.</p>
+            <p>
+              Executes a python file. The docker image uses python 3.
+              You can also view the console output of your program in real time.
+            </p>
+            <q-card bordered flat>
+              <q-expansion-item
+                v-model="installedPythonLibraries.loaded"
+                label="Installed python libraries"
+                @show="getInstalledPythonLibraries()"
+              >
+                <q-inner-loading
+                  :showing="installedPythonLibraries.loading"
+                  label="Fetching Libraries"
+                  style="display: contents"
+                  transition-hide="none"
+                />
+                <q-splitter
+                  v-if="!installedPythonLibraries.loading"
+                  :model-value="10"
+                  horizontal
+                />
+                <table
+                  v-if="!installedPythonLibraries.loading && installedPythonLibraries.libraries.length !== 0"
+                  style="width: 100%"
+                >
+                  <thead>
+                  <tr>
+                    <th>Library</th>
+                    <th>Version</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr
+                    v-for="info of installedPythonLibraries.libraries"
+                    :key="info.name"
+                  >
+                    <td>{{ info.name }}</td>
+                    <td>{{ info.version }}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </q-expansion-item>
+            </q-card>
             <q-file :model-value="selectedFile"
                     accept=".py"
                     bottom-slots
@@ -274,6 +315,7 @@
 
 import useVuelidate from '@vuelidate/core'
 import EventActionService from '../services/eventaction.service'
+import SystemService from '../services/system.service'
 import { maxLength, maxValue, minValue, required, url } from '@vuelidate/validators'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
 import { mdiInformation } from '@quasar/extras/mdi-v5'
@@ -318,6 +360,10 @@ export default {
   },
   data () {
     return {
+      installedPythonLibraries: {
+        libraries: [],
+        loading: false
+      },
       showHelpExecutionGroup: false,
       groupsLoading: false,
       existingExecutionGroups: [],
@@ -339,6 +385,17 @@ export default {
     }
   },
   methods: {
+    getInstalledPythonLibraries () {
+      this.installedPythonLibraries.loading = true
+      const vm = this
+      SystemService.getInstalledPythonLibraries()
+        .then(data => {
+          vm.installedPythonLibraries.libraries.splice(0, vm.installedPythonLibraries.libraries.length)
+          vm.installedPythonLibraries.libraries.push(...data)
+        }).finally(() => {
+          vm.installedPythonLibraries.loading = false
+        })
+    },
     setAction (actionValue) {
       if (this.modelValue.type === actionValue) {
         return
