@@ -75,6 +75,8 @@ services:
       DB_USER: 'postgres'
       DB_PASSWORD: 'Chang3M3OnPr0duct1on'
       JWT_SECRET: 'SecretSecretKey8375324'
+    devices:
+      - "/dev/snd/:/dev/snd/"
   db:
     image: postgres:latest
     restart: always

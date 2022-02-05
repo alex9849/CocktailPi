@@ -256,6 +256,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             }
             LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
             lobObject.write(image);
+            lobObject.truncate(image.length);
             PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE recipes SET image = ? where id = ?");
             updateLobOidPstmt.setLong(1, imageOid);
             updateLobOidPstmt.setLong(2, recipeId);

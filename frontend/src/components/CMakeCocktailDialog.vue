@@ -3,11 +3,9 @@
     :model-value="show"
     ref="mcDialog"
     @update:model-value="$emit('update:show', $event)"
-    style="max-width: max-content"
   >
     <q-card
-      class="text-center"
-      style=""
+      class="text-center full-width"
     >
       <q-card-section class="q-gutter-md">
         <p class="text-h5">Order Cocktail</p>
@@ -251,6 +249,11 @@ export default {
       mdiAlertOutline: mdiAlertOutline
     }
   },
+  created () {
+    if (this.recipe) {
+      this.checkFeasibility()
+    }
+  },
   watch: {
     recipe: {
       immediate: true,
@@ -412,7 +415,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

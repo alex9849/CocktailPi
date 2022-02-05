@@ -60,6 +60,9 @@
       >
         <q-card-section>
           <div class="row justify-center text-h6">CocktailMaker</div>
+          <div class="row justify-center text-subtitle1">
+            v%MAVEN_PROJECT_VERSION%
+          </div>
           <div class="row justify-center text-subtitle2">©2022 Alexander Liggesmeyer</div>
           <div class="row justify-center">
             <q-btn
@@ -189,6 +192,11 @@ export default {
               label: 'Pumps',
               reqLevel: 3,
               to: { name: 'pumpmanagement' },
+              exact: false
+            }, {
+              label: 'Events',
+              reqLevel: 3,
+              to: { name: 'eventmanagement' },
               exact: false
             }
           ]

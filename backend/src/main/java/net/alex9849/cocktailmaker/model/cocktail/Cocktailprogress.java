@@ -10,6 +10,7 @@ public class Cocktailprogress {
     private Recipe recipe;
     private int progress;
     private User user;
+    private State previousState;
     private State state;
     private List<ProductionStepIngredient> currentIngredientsToAddManually;
     private String writtenInstruction;
@@ -44,6 +45,14 @@ public class Cocktailprogress {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    public void setPreviousState(State previousState) {
+        this.previousState = previousState;
     }
 
     public State getState() {

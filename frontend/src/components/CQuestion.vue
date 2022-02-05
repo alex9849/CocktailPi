@@ -4,8 +4,8 @@
     @update:model-value="$emit('update:show', $event)"
     @hide="$emit('clickAbort')"
   >
-    <q-card>
-      <q-card-section class="text-center with-desktop">
+    <q-card class="full-width">
+      <q-card-section class="text-center">
         <h5>{{ question }}</h5>
         <q-splitter
           horizontal
@@ -65,13 +65,3 @@ export default {
   emits: ['update:show', 'clickAbort', 'clickOk']
 }
 </script>
-
-<style scoped>
-
-  @media screen and (min-width: 600px) {
-    .with-desktop {
-      width: 500px;
-    }
-  }
-
-</style>
