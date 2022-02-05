@@ -183,7 +183,7 @@
       <q-card
         class="bg-black text-white"
         flat
-        style="resize: both; overflow-wrap: break-word; max-width: none"
+        style="resize: both; overflow-wrap: break-word; max-width: none; width: 560px"
       >
         <q-card-section style="height: 300px;">
           <p
@@ -386,7 +386,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 
 </style>
