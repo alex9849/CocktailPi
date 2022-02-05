@@ -2,6 +2,9 @@ FROM openjdk:11-jdk-buster
 EXPOSE 8080/tcp
 ENV DOCKERIZE_VERSION v0.6.1
 
+RUN apt update
+RUN apt -y full-upgrade
+RUN apt -yq install python python3-pip wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
