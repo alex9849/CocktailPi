@@ -251,31 +251,38 @@
                   style="display: contents"
                   transition-hide="none"
                 />
-                <q-splitter
-                  v-if="!installedPythonLibraries.loading"
-                  :model-value="10"
-                  horizontal
-                />
-                <table
-                  v-if="!installedPythonLibraries.loading && installedPythonLibraries.libraries.length !== 0"
-                  style="width: 100%"
-                >
-                  <thead>
-                  <tr>
-                    <th>Library</th>
-                    <th>Version</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                    v-for="info of installedPythonLibraries.libraries"
-                    :key="info.name"
+                <div v-if="!installedPythonLibraries.loading">
+                  <q-splitter
+                    :model-value="10"
+                    horizontal
+                  />
+                  <table
+                    v-if="installedPythonLibraries.libraries.length !== 0"
+                    style="width: 100%"
                   >
-                    <td>{{ info.name }}</td>
-                    <td>{{ info.version }}</td>
-                  </tr>
-                  </tbody>
-                </table>
+                    <thead>
+                    <tr>
+                      <th>Library</th>
+                      <th>Version</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      v-for="info of installedPythonLibraries.libraries"
+                      :key="info.name"
+                    >
+                      <td>{{ info.name }}</td>
+                      <td>{{ info.version }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                  <p
+                    v-else
+                    class="q-pa-sm"
+                  >
+                    No libraries installed
+                  </p>
+                </div>
               </q-expansion-item>
             </q-card>
             <q-file :model-value="selectedFile"
@@ -386,6 +393,7 @@ export default {
   },
   methods: {
     getInstalledPythonLibraries () {
+      return
       this.installedPythonLibraries.loading = true
       const vm = this
       SystemService.getInstalledPythonLibraries()
