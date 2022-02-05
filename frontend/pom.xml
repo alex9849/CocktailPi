@@ -15,6 +15,29 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>1.5.2</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <basedir>${project.basedir}/dist</basedir>
+          <includes>
+            <include>**/*.js</include>
+          </includes>
+          <regex>false</regex>
+          <token>%MAVEN_PROJECT_VERSION%</token>
+          <value>${project.version}</value>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.10.0</version>

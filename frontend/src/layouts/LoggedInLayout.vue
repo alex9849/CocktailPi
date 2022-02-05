@@ -59,7 +59,7 @@
         square
       >
         <q-card-section>
-          <div class="row justify-center text-h6">CocktailMaker</div>
+          <div class="row justify-center text-h6">CocktailMaker v%MAVEN_PROJECT_VERSION%</div>
           <div class="row justify-center text-subtitle2">©2022 Alexander Liggesmeyer</div>
           <div class="row justify-center">
             <q-btn
