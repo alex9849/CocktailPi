@@ -239,6 +239,11 @@
               Executes a python file. The docker image uses python 3.
               You can also view the console output of your program in real time.
             </p>
+            <p
+              class="q-pa-sm"
+            >
+              Install new libraries using: <b>pip3 install &#60;library&#62;</b>
+            </p>
             <q-card bordered flat>
               <q-expansion-item
                 v-model="installedPythonLibraries.loaded"
@@ -393,7 +398,6 @@ export default {
   },
   methods: {
     getInstalledPythonLibraries () {
-      return
       this.installedPythonLibraries.loading = true
       const vm = this
       SystemService.getInstalledPythonLibraries()
