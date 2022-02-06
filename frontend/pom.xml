@@ -21,6 +21,7 @@
         <executions>
           <execution>
             <id>install node and npm</id>
+            <phase>compile</phase>
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
@@ -30,6 +31,7 @@
           </execution>
           <execution>
             <id>npm install webApp</id>
+            <phase>compile</phase>
             <goals>
               <goal>npm</goal>
             </goals>
@@ -39,6 +41,7 @@
           </execution>
           <execution>
             <id>npm run build</id>
+            <phase>compile</phase>
             <goals>
               <goal>npm</goal>
             </goals>
@@ -63,7 +66,7 @@
         <version>1.5.2</version>
         <executions>
           <execution>
-            <phase>prepare-package</phase>
+            <phase>compile</phase>
             <goals>
               <goal>replace</goal>
             </goals>
