@@ -25,17 +25,20 @@ public class IngredientEndpoint {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
-                                     @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients) {
-        if(autocomplete == null){
-            if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(ERole.ROLE_ADMIN)) {
-                ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        } else {
-            if(autocomplete.length() < 2) {
-                throw new IllegalArgumentException("Autocomplete too short");
+                                     @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients,
+                                     @RequestParam(value = "inBar", defaultValue = "false") boolean inBar) {
+        if(!inBar) {
+            if(autocomplete == null){
+                if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(ERole.ROLE_ADMIN)) {
+                    ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+            } else {
+                if(autocomplete.length() < 2) {
+                    throw new IllegalArgumentException("Autocomplete too short");
+                }
             }
         }
-        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients)
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients, inBar)
                 .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
     }
 
@@ -66,6 +69,20 @@ public class IngredientEndpoint {
         if(!ingredientService.deleteIngredient(id)) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "{id}/bar", method = RequestMethod.PUT)
+    ResponseEntity<?> addToBar(@PathVariable("id") long id) {
+        ingredientService.setInBar(id, true);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "{id}/bar", method = RequestMethod.DELETE)
+    ResponseEntity<?> removeFromBar(@PathVariable("id") long id) {
+        ingredientService.setInBar(id, false);
         return ResponseEntity.ok().build();
     }
 

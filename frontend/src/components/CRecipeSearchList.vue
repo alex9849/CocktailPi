@@ -141,9 +141,7 @@ export default {
         setTimeout(() => {
           RecipeService.getRecipes(this.pagination.page,
             this.onlyOwnRecipes ? this.user.id : null,
-            null,
             this.collectionId,
-            this.onlyOwnRecipes ? null : true,
             this.filter.automaticallyFabricable,
             this.filter.fabricableWithOwnedIngredients,
             this.filter.containsIngredients,

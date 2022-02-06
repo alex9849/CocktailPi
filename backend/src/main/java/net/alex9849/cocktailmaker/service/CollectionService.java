@@ -64,9 +64,6 @@ public class CollectionService {
         if(foundRecipe == null) {
             throw new IllegalArgumentException("Recipe not found!");
         }
-        if(foundRecipe.getOwner().getId() != foundRecipe.getOwner().getId() && !foundRecipe.isInPublic()) {
-            throw new IllegalArgumentException("Recipe addition not permitted!");
-        }
         collectionRepository.removeRecipe(collectionId, recipeId);
         return collectionRepository.addRecipe(collectionId, recipeId);
     }

@@ -33,9 +33,9 @@ const routes = [
       component: () => import('pages/Dashboard'),
       name: 'dashboard'
     }, {
-      path: 'mybar',
-      component: () => import('pages/MyBar'),
-      name: 'mybar'
+      path: 'bar',
+      component: () => import('pages/Bar'),
+      name: 'bar'
     }, {
       path: 'collection/own',
       component: () => import('pages/MyCollections'),
@@ -96,6 +96,10 @@ const routes = [
       path: 'admin/categorymanagement',
       component: () => import('pages/CategoryManagement'),
       name: 'categorymanagement'
+    }, {
+      path: 'admin/eventmanagement',
+      component: () => import('pages/EventManagement'),
+      name: 'eventmanagement'
     }
     ]
   }, {

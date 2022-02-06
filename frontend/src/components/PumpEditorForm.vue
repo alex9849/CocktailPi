@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-gutter-y-sm">
     <c-ingredient-selector
       label="Current ingredient"
       :selected="modelValue.currentIngredient"
@@ -11,6 +11,7 @@
       label="Current filling level"
       type="number"
       outlined
+      hide-bottom-space
       :model-value="v.modelValue.fillingLevelInMl.$model"
       :rules="[val => !v.modelValue.fillingLevelInMl.required.$invalid || 'Required',
               val => !v.modelValue.fillingLevelInMl.minValue.$invalid || 'Min 0']"
@@ -28,6 +29,7 @@
       label="Pump time per cl"
       type="number"
       outlined
+      hide-bottom-space
       :model-value="v.modelValue.timePerClInMs.$model"
       :rules="[val => !v.modelValue.timePerClInMs.required.$invalid || 'Required',
               val => !v.modelValue.timePerClInMs.minValue.$invalid || 'Min 1']"
@@ -45,6 +47,7 @@
       label="Tube capacity"
       type="number"
       outlined
+      hide-bottom-space
       :model-value="v.modelValue.tubeCapacityInMl.$model"
       :rules="[val => !v.modelValue.tubeCapacityInMl.required.$invalid || 'Required',
               val => !v.modelValue.tubeCapacityInMl.minValue.$invalid || 'Min 1']"
@@ -62,6 +65,7 @@
       :model-value="v.modelValue.bcmPin.$model"
       type="number"
       outlined
+      hide-bottom-space
       :rules="[val => !v.modelValue.bcmPin.required.$invalid || 'Required',
               val => !v.modelValue.bcmPin.minValue.$invalid || 'Min 0',
               val => !v.modelValue.bcmPin.maxValue.$invalid || 'Max 30']"

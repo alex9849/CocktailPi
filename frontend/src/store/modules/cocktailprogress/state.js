@@ -4,7 +4,6 @@ export default function () {
       recipe: {
         id: Number,
         name: String,
-        inPublic: Boolean,
         owner: {
           id: Number,
           username: String

@@ -110,62 +110,6 @@ public class UserEndpoint {
         return ResponseEntity.ok(new UserDto(user));
     }
 
-    @RequestMapping(value = {"{userId}/ownedingredients", "current/ownedingredients"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getOwnedIngredients(@PathVariable(value = "userId", required = false) Long userId, HttpServletRequest request) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userId == null) {
-            userId = principal.getId();
-        } else {
-            if(!principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        }
-        User user = userService.getUser(userId);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        List<IngredientDto> ownedIngredients = ingredientService.getIngredientsOwnedByUSer(userId)
-                .stream().map(IngredientDto::toDto).collect(Collectors.toList());
-
-        return ResponseEntity.ok(ownedIngredients);
-    }
-
-    @RequestMapping(value = {"{userId}/ownedingredients/{ingredientId}", "current/ownedingredients/{ingredientId}"}, method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteOwnedIngredient(@PathVariable(value = "userId", required = false) Long userId, @PathVariable("ingredientId") long ingredientId) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userId == null) {
-            userId = principal.getId();
-        } else {
-            if(!principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        }
-        User user = userService.getUser(userId);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        userService.removeOwnedIngredient(userId, ingredientId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @RequestMapping(value = {"{userId}/ownedingredients/add", "current/ownedingredients/add"}, method = RequestMethod.PUT)
-    public ResponseEntity<Object> addOwnedIngredient(@PathVariable(value = "userId", required = false) Long userId, @RequestBody(required = true) long ingredientId) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userId == null) {
-            userId = principal.getId();
-        } else {
-            if(!principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        }
-        User user = userService.getUser(userId);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        userService.addOwnedIngredient(userId, ingredientId);
-        return ResponseEntity.ok().build();
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getUsers() {

@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -40,6 +41,9 @@ public class PumpService {
 
     @Autowired
     private IGpioController gpioController;
+
+    @Autowired
+    private EventService eventService;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
@@ -134,15 +138,7 @@ public class PumpService {
             throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
         }
         this.cocktailFactory = new CocktailFactory(recipe, user, new HashSet<>(getAllPumps()), gpioController)
-                .subscribeProgress(progress -> {
-                    if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
-                        this.scheduler.schedule(() -> {
-                            this.cocktailFactory = null;
-                            this.webSocketService.broadcastCurrentCocktail(null);
-                        }, 5000, TimeUnit.MILLISECONDS);
-                    }
-                    this.webSocketService.broadcastCurrentCocktail(progress);
-                });
+                .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         for(Pump pump : this.cocktailFactory.getUsedPumps()) {
             this.pumpRepository.update(pump);
         }
@@ -150,9 +146,38 @@ public class PumpService {
         this.cocktailFactory.makeCocktail();
     }
 
+    private void onCocktailProgressSubscriptionChange(Cocktailprogress progress) {
+        if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
+            this.scheduler.schedule(() -> {
+                this.cocktailFactory = null;
+                this.webSocketService.broadcastCurrentCocktailProgress(null);
+            }, 5000, TimeUnit.MILLISECONDS);
+        }
+        this.webSocketService.broadcastCurrentCocktailProgress(progress);
+
+        switch (progress.getState()) {
+            case RUNNING:
+                if (progress.getPreviousState() == Cocktailprogress.State.READY_TO_START) {
+                    eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_STARTED);
+                }
+                break;
+            case MANUAL_ACTION_REQUIRED:
+            case MANUAL_INGREDIENT_ADD:
+                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_MANUAL_INTERACTION_REQUESTED);
+                break;
+            case CANCELLED:
+                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_CANCELED);
+                break;
+            case FINISHED:
+                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_FINISHED);
+                break;
+        }
+    }
+
     public FeasibilityReport checkFeasibility(Recipe recipe, int amount) {
         return checkFeasibility(CocktailFactory.transformToAmountOfLiquid(recipe, amount));
     }
+
     public FeasibilityReport checkFeasibility(Recipe recipe) {
         Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
         Map<Long, List<Pump>> pumpsByIngredientId = getAllPumps().stream().filter(x -> x.getCurrentIngredient() != null)

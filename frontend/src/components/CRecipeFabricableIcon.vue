@@ -85,7 +85,6 @@ export default {
   computed: {
     ...mapGetters({
       doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-      ownedIngredients: 'bar/getOwnedIngredients',
       pumpIngredients: 'pumpLayout/getPumpIngredients'
     })
   },
@@ -97,7 +96,7 @@ export default {
         }
         for (const ingredientStep of productionStep.stepIngredients) {
           if (
-            !this.ownedIngredients.some(x => x.id === ingredientStep.ingredient.id) &&
+            !ingredientStep.ingredient.inBar &&
             !this.pumpIngredients.some(x => x.id === ingredientStep.ingredient.id)
           ) {
             return false

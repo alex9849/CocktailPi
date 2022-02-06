@@ -48,8 +48,6 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
-                                         @RequestParam(value = "inPublic", required = false) Boolean inPublic,
-                                         @RequestParam(value = "permittedForUser", required = false) Long permittedForUserId,
                                          @RequestParam(value = "inCollection", required = false) Long inCollectionId,
                                          @RequestParam(value = "fabricable", defaultValue = "false") boolean isFabricable,
                                          @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
@@ -69,13 +67,6 @@ public class RecipeEndpoint {
                 }
             }
         }
-        if (!Objects.equals(principal.getId(), ownerId)
-                && (inPublic == null || !inPublic)
-                && !Objects.equals(principal.getId(), permittedForUserId)
-                && inCollectionId == null
-        ) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
         final int pageSize = 10;
         page = Math.max(page, 0);
         Sort sort;
@@ -93,9 +84,9 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
-        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId, inPublic, permittedForUserId,
+        Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId,
                 inCollectionId, inCategory, containsIngredients, searchName, isFabricable,
-                isInBar? principal.getId():null, page, pageSize, sort);
+                isInBar, page, pageSize, sort);
         List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
@@ -106,9 +97,6 @@ public class RecipeEndpoint {
         Recipe recipe = recipeService.getById(id);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
-        }
-        if (recipe.getOwner().getId() != principal.getId() && !recipe.isInPublic()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(new RecipeDto(recipe));
     }

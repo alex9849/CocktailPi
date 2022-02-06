@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
-import net.alex9849.cocktailmaker.repository.UserOwnedRecipeIngredientRepository;
 import net.alex9849.cocktailmaker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,6 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    UserOwnedRecipeIngredientRepository userOwnedRecipeIngredientRepository;
 
     @Autowired
     IngredientService ingredientService;
@@ -82,26 +78,6 @@ public class UserService {
         }
         userRepository.update(user);
         return user;
-    }
-
-    public void addOwnedIngredient(long userId, long id) {
-        Optional<User> user = userRepository.findById(userId);
-        if(!user.isPresent()) {
-            throw new IllegalArgumentException("User doesn't exist!");
-        }
-        if(ingredientService.getIngredient(id) == null) {
-            throw new IllegalArgumentException("Ingredient doesn't exist!");
-        }
-        userOwnedRecipeIngredientRepository.delete(userId, id);
-        userOwnedRecipeIngredientRepository.create(userId, id);
-    }
-
-    public void removeOwnedIngredient(long userId, long ingredientId) {
-        Optional<User> user = userRepository.findById(userId);
-        if(!user.isPresent()) {
-            throw new IllegalArgumentException("User doesn't exist!");
-        }
-        userOwnedRecipeIngredientRepository.delete(userId, ingredientId);
     }
 
     public void deleteUser(long id) {

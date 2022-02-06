@@ -60,7 +60,10 @@
       >
         <q-card-section>
           <div class="row justify-center text-h6">CocktailMaker</div>
-          <div class="row justify-center text-subtitle2">©2021 Alexander Liggesmeyer</div>
+          <div class="row justify-center text-subtitle1">
+            v%MAVEN_PROJECT_VERSION%
+          </div>
+          <div class="row justify-center text-subtitle2">©2022 Alexander Liggesmeyer</div>
           <div class="row justify-center">
             <q-btn
               v-for="link in projectLinks"
@@ -138,8 +141,8 @@ export default {
               exact: false
             }, {
               reqLevel: 0,
-              label: 'My bar',
-              to: { name: 'mybar' },
+              label: 'Bar',
+              to: { name: 'bar' },
               exact: false
             }, {
               reqLevel: 0,
@@ -190,6 +193,11 @@ export default {
               reqLevel: 3,
               to: { name: 'pumpmanagement' },
               exact: false
+            }, {
+              label: 'Events',
+              reqLevel: 3,
+              to: { name: 'eventmanagement' },
+              exact: false
             }
           ]
         }
@@ -213,7 +221,6 @@ export default {
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),
-      store.dispatch('bar/fetchIngredients'),
       store.dispatch('auth/fetchCurrentUser')
     ]).then(() => next())
   },

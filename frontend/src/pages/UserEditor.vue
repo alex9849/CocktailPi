@@ -52,7 +52,7 @@ export default {
   data () {
     return {
       user: {},
-      userId: this.$route.params.userId,
+      userId: Number(this.$route.params.userId),
       loading: false,
       isValid: false,
       error: ''

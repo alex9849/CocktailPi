@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Ingredients you own</h5>
+    <h5>Ingredients owned</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
@@ -8,6 +8,7 @@
         :disable="loading"
         @click="editOptions.editDialog = true"
         no-caps
+        v-if="getAdminLevel >= 2"
       />
       <q-btn
         color="info"
@@ -27,7 +28,9 @@
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
         no-data-label="No ingredients found"
       >
-        <template v-slot:body-cell-actions="props">
+        <template v-if="getAdminLevel >= 2"
+                  v-slot:body-cell-actions="props"
+        >
           <q-td :props="props"
                 key="actions"
                 class="q-pa-md q-gutter-x-sm"
@@ -108,19 +111,16 @@ import { required } from '@vuelidate/validators'
 import CEditDialog from 'components/CEditDialog'
 import { mdiDelete } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
+import IngredientService from '../services/ingredient.service'
 
 export default {
-  name: 'MyBar',
+  name: 'Bar',
   components: { TopButtonArranger, CEditDialog, CIngredientSelector },
   data () {
     return {
-      columns: [
-        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
-        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
-      ],
+      ownedIngredients: [],
       loading: false,
       editOptions: {
         editErrorMessage: '',
@@ -131,6 +131,13 @@ export default {
       }
     }
   },
+  async beforeRouteEnter (to, from, next) {
+    const ownedIngredients = await IngredientService
+      .getIngredientsFilter(null, null, true)
+    next(vm => {
+      vm.ownedIngredients = ownedIngredients
+    })
+  },
   setup () {
     return {
       v: useVuelidate(),
@@ -139,19 +146,28 @@ export default {
   },
   computed: {
     ...mapGetters({
-      ownedIngredients: 'bar/getOwnedIngredients'
-    })
+      getAdminLevel: 'auth/getAdminLevel'
+    }),
+    columns () {
+      const columns = [
+        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
+        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' }
+      ]
+      if (this.getAdminLevel >= 2) {
+        columns.push({ name: 'actions', label: 'Actions', field: '', align: 'center' })
+      }
+      return columns
+    }
   },
   methods: {
-    ...mapActions({
-      fetchIngredientsAction: 'bar/fetchIngredients',
-      addOwnedIngredientAction: 'bar/addIngredient',
-      removeOwnedIngredientAction: 'bar/removeIngredient'
-    }),
     onRefresh () {
       this.loading = true
       setTimeout(() => {
-        this.fetchIngredientsAction()
+        IngredientService
+          .getIngredientsFilter(null, null, true)
+          .then(data => {
+            this.ownedIngredients = data
+          })
           .finally(() => {
             this.loading = false
           })
@@ -164,6 +180,7 @@ export default {
     onAddOwnedIngredient () {
       const vm = this
       const onSuccess = function () {
+        vm.onRefresh()
         vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
@@ -181,15 +198,16 @@ export default {
       }
 
       this.editOptions.saving = true
-      this.addOwnedIngredientAction(this.editOptions.addIngredient.id)
+      IngredientService.addToBar(this.editOptions.addIngredient.id)
         .then(onSuccess, onError)
         .finally(() => {
           this.editOptions.saving = false
         })
     },
     onRemoveOwnedIngredient (id) {
-      this.removeOwnedIngredientAction(id)
+      IngredientService.removeFromBar(id)
         .then(() => {
+          this.onRefresh()
           this.$q.notify({
             type: 'positive',
             message: 'Ingredient removed successfully'

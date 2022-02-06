@@ -42,24 +42,18 @@ public class RecipeService {
         return recipeRepository.create(recipe);
     }
 
-    public Page<Recipe> getRecipesByFilter(Long ownerId, Boolean inPublic, Long permittedForUserId, Long inCollection,
+    public Page<Recipe> getRecipesByFilter(Long ownerId, Long inCollection,
                                            Long inCategory, Long[] containsIngredients,
-                                           String searchName, boolean isFabricable, Long isInBarUserId, int pageNumber,
+                                           String searchName, boolean isFabricable, boolean isInBar, int pageNumber,
                                            int pageSize, Sort sort) {
         long offset = (long) pageNumber * pageSize;
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
-        if(inPublic != null) {
-            idsToFindSetList.add(recipeRepository.getIdsInPublic());
-        }
         if(inCategory != null) {
             idsToFindSetList.add(recipeRepository.getIdsInCategory(inCategory));
         }
         if(ownerId != null) {
             idsToFindSetList.add(recipeRepository.getIdsByOwnerId(ownerId));
-        }
-        if(permittedForUserId != null) {
-            idsToFindSetList.add(recipeRepository.getIdsPermittedForUserId(permittedForUserId));
         }
         if(inCollection != null) {
             idsToFindSetList.add(recipeRepository.findIdsInCollection(inCollection));
@@ -73,8 +67,8 @@ public class RecipeService {
         if(isFabricable) {
             idsToFindSetList.add(recipeRepository.getIdsOfFullyAutomaticallyFabricableRecipes());
         }
-        if(isInBarUserId != null) {
-            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsOwnedOrOnPumps(isInBarUserId));
+        if(isInBar) {
+            idsToFindSetList.add(recipeRepository.getIdsOfRecipesWithAllIngredientsInBarOrOnPumps());
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         if(idsToFindSetList.isEmpty()) {

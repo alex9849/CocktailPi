@@ -3,11 +3,9 @@
     :model-value="show"
     ref="mcDialog"
     @update:model-value="$emit('update:show', $event)"
-    style="max-width: max-content"
   >
     <q-card
-      class="text-center"
-      style=""
+      class="text-center full-width"
     >
       <q-card-section class="q-gutter-md">
         <p class="text-h5">Order Cocktail</p>
@@ -58,11 +56,12 @@
               <ul style="text-align: start">
                 <li v-for="ingredient in unassignedIngredients" :key="ingredient.id">
                   {{ ingredient.name }}
-                  <q-chip :color="isIngredientInBar(ingredient.id)? 'green-4' : 'red-4'"
+                  <q-chip :color="ingredient.inBar? 'green-4' : 'red-4'"
                           dense
                           square
+                          :ripple="false"
                   >
-                    <div v-if="isIngredientInBar(ingredient.id)">in bar</div>
+                    <div v-if="ingredient.inBar">in bar</div>
                     <div v-else>not in bar</div>
                   </q-chip>
                 </li>
@@ -95,7 +94,7 @@
               <ul style="text-align: start">
                 <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients" :key="insufficientIngredient.ingredient.id">
                   {{ insufficientIngredient.ingredient.name }}:
-                  {{ insufficientIngredient.amountRemaining }} ml
+                  <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
                 </li>
               </ul>
             </div>
@@ -250,6 +249,11 @@ export default {
       mdiAlertOutline: mdiAlertOutline
     }
   },
+  created () {
+    if (this.recipe) {
+      this.checkFeasibility()
+    }
+  },
   watch: {
     recipe: {
       immediate: true,
@@ -258,7 +262,13 @@ export default {
       }
     },
     amountToProduce: {
-      immediate: true,
+      handler () {
+        if (this.recipe) {
+          this.checkFeasibility()
+        }
+      }
+    },
+    getPumpLayout: {
       handler () {
         if (this.recipe) {
           this.checkFeasibility()
@@ -322,7 +332,6 @@ export default {
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
           array.splice(array.indexOf(newPump.id), 1)
-          this.checkFeasibility()
         })
     },
     onClickCleanPump (pump) {
@@ -347,9 +356,6 @@ export default {
             message: error.response.data.message
           })
         })
-    },
-    isIngredientInBar (ingredientId) {
-      return this.ownedIngredients.some(x => x.id === ingredientId)
     }
   },
   computed: {
@@ -359,8 +365,7 @@ export default {
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
       getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      isCleaning: 'pumpLayout/isCleaning',
-      ownedIngredients: 'bar/getOwnedIngredients'
+      isCleaning: 'pumpLayout/isCleaning'
     }),
     feasibilityOk () {
       return this.feasibilityReport.insufficientIngredients.length === 0 && !this.checkingFeasibility
@@ -410,7 +415,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

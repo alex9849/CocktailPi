@@ -32,8 +32,6 @@ public class RecipeDto {
     @Size(min = 1, max = 30)
     private String name;
 
-    private boolean inPublic;
-
     @NotNull
     private OwnerDto owner;
 
@@ -68,14 +66,6 @@ public class RecipeDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isInPublic() {
-        return inPublic;
-    }
-
-    public void setInPublic(boolean inPublic) {
-        this.inPublic = inPublic;
     }
 
     public boolean isHasImage() {

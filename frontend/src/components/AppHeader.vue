@@ -1,21 +1,8 @@
 <template>
   <q-header reveal bordered>
-    <q-dialog v-model="showWebsocketReconnectDialog" seamless position="top">
-      <q-banner inline-actions rounded class="bg-orange text-white">
-        Connection lost! Reconnecting in: {{ secondsTillWebsocketReconnect }}
-        <template v-slot:avatar>
-          <q-icon :name="mdiAlert"
-                  color="primary"
-          />
-        </template>
-        <template v-slot:action>
-          <q-btn flat
-                 label="Reconnect now"
-                 @click="connectWebsocket(true)"
-          />
-        </template>
-      </q-banner>
-    </q-dialog>
+    <app-socket
+      ref="appSocket"
+    />
     <q-toolbar>
       <slot name="left" />
 
@@ -57,91 +44,21 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { mdiAccountBox, mdiAlert, mdiPower } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
-import SockJS from 'sockjs-client'
-import { Stomp } from '@stomp/stompjs'
-import authHeader from '../services/auth-header'
+import AppSocket from 'components/AppSocket'
 
 export default {
   name: 'AppHeader',
-  components: { CircularCocktailProgress },
-  data () {
-    return {
-      reconnectTasks: [],
-      showWebsocketReconnectDialog: false,
-      reconnectThrottleInSeconds: 5,
-      secondsTillWebsocketReconnect: 0,
-      stompClient: null
-    }
-  },
+  components: { AppSocket, CircularCocktailProgress },
   methods: {
-    ...mapMutations({
-      setCocktailProgress: 'cocktailProgress/setCocktailProgress',
-      setPumpLayout: 'pumpLayout/setLayout'
-    }),
     ...mapActions({
       storeLogout: 'auth/logout'
     }),
     logout () {
-      this.storeLogout()
       this.$router.push({ name: 'login' })
-    },
-    connectWebsocket (websocketAutoReconnect) {
-      this.stompClient = Stomp.over(() => new SockJS(this.$store.getters['auth/getFormattedServerAddress'] + '/ws'))
-      this.stompClient.connectHeaders = {
-        Authorization: authHeader()
-      }
-      const vm = this
-      this.stompClient.onConnect = function () {
-        vm.reconnectThrottleInSeconds = 5
-        vm.showWebsocketReconnectDialog = false
-        vm.stompClient.subscribe('/topic/cocktailprogress', cocktailProgressMessage => {
-          if (cocktailProgressMessage.body === 'DELETE') {
-            vm.setCocktailProgress(null)
-          } else {
-            const progress = JSON.parse(cocktailProgressMessage.body)
-            progress.recipe.lastUpdate = new Date(progress.recipe.lastUpdate)
-            vm.setCocktailProgress(progress)
-          }
-        })
-        vm.stompClient.subscribe('/topic/pumplayout', layoutMessage => {
-          vm.setPumpLayout(JSON.parse(layoutMessage.body))
-        })
-      }
-      if (!process.env.DEV) {
-        this.stompClient.debug = function (str) {}
-      }
-      for (const id of this.reconnectTasks) {
-        clearTimeout(id)
-      }
-      this.reconnectTasks = []
-      this.stompClient.onWebSocketClose = function () {
-        if (websocketAutoReconnect) {
-          vm.showWebsocketReconnectDialog = true
-          const reconnectThrottle = vm.reconnectThrottleInSeconds
-          vm.reconnectThrottleInSeconds = Math.min(20, vm.reconnectThrottleInSeconds * 2)
-          for (let i = reconnectThrottle; i > 0; i--) {
-            vm.reconnectTasks.push(setTimeout(() => {
-              vm.secondsTillWebsocketReconnect = i
-            }, (reconnectThrottle - i) * 1000))
-          }
-          vm.reconnectTasks.push(setTimeout(() => {
-            vm.connectWebsocket(true)
-          }, reconnectThrottle * 1000))
-        }
-      }
-      this.stompClient.activate()
-    },
-    disconnectWebsocket () {
-      if (this.stompClient != null) {
-        this.stompClient.onWebSocketClose = () => {}
-        this.stompClient.deactivate()
-      }
-    },
-    destroyWebsocket () {
-      this.disconnectWebsocket()
+      this.storeLogout()
     }
   },
   computed: {
@@ -156,27 +73,12 @@ export default {
       return ''
     }
   },
-  watch: {
-    isLoggedIn: {
-      immediate: true,
-      handler (val) {
-        if (val) {
-          this.connectWebsocket(true)
-        } else {
-          this.destroyWebsocket()
-        }
-      }
-    }
-  },
   setup () {
     return {
       mdiAccountBox: mdiAccountBox,
       mdiPower: mdiPower,
       mdiAlert: mdiAlert
     }
-  },
-  unmounted () {
-    this.destroyWebsocket()
   }
 }
 </script>

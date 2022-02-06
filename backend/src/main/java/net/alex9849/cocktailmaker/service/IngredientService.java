@@ -25,7 +25,7 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients) {
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -33,6 +33,9 @@ public class IngredientService {
         }
         if(filterManualIngredients) {
             idsToFindSetList.add(ingredientRepository.findIdsNotManual());
+        }
+        if(inBar) {
+            idsToFindSetList.add(ingredientRepository.findIdsInBar());
         }
 
         if(idsToFindSetList.isEmpty()) {
@@ -53,9 +56,9 @@ public class IngredientService {
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
-    public List<Ingredient> getIngredientsOwnedByUSer(long userId) {
+    public List<Ingredient> getIngredientsInBar(long userId) {
         return ingredientRepository.findByIds(ingredientRepository
-                .findIdsOwnedByUser(userId).toArray(new Long[1]));
+                .findIdsInBar().toArray(new Long[1]));
     }
 
     public static Ingredient fromDto(IngredientDto ingredientDto) {
@@ -89,16 +92,26 @@ public class IngredientService {
         return ingredient;
     }
 
+    public void setInBar(long id, boolean inBar) {
+        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(id);
+        if(optionalIngredient.isEmpty()) {
+            throw new IllegalArgumentException("Ingredient doesn't exist!");
+        }
+        optionalIngredient.get().setInBar(inBar);
+        ingredientRepository.update(optionalIngredient.get());
+    }
+
     public Ingredient updateIngredient(Ingredient ingredient) {
-        if(!ingredientRepository.findById(ingredient.getId()).isPresent()) {
+        if(ingredientRepository.findById(ingredient.getId()).isEmpty()) {
             throw new IllegalArgumentException("Ingredient doesn't exist!");
         }
         Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
-        if(optionalIngredient.isPresent()
-                && !Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
-            throw new IllegalArgumentException("An ingredient with this name already exists!");
+        if(optionalIngredient.isPresent()) {
+            if(!Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
+                throw new IllegalArgumentException("An ingredient with this name already exists!");
+            }
+            ingredient.setInBar(optionalIngredient.get().isInBar());
         }
-
         ingredientRepository.update(ingredient);
         return ingredient;
     }
@@ -108,6 +121,7 @@ public class IngredientService {
         if(optionalIngredient.isPresent()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
+        ingredient.setInBar(false);
         return ingredientRepository.create(ingredient);
     }
 

@@ -9,8 +9,8 @@
       <TopButtonArranger>
         <q-btn
           color="grey"
-          :to="{name: 'recipeedit', params: {id: $route.params.id}}"
-          v-if="isAdminRole || (recipe.owner && user.id === recipe.owner.id && isRecipeCreatorRole)"
+          :to="{name: 'recipeedit', params: {id: recipe.id}}"
+          v-if="isAdminRole || (recipe.owner && user?.id === recipe.owner.id && isRecipeCreatorRole)"
         >
           Edit
         </q-btn>
@@ -32,7 +32,7 @@
           color="red"
           @click="deleteDialog = true"
           :loading="deleting"
-          v-if="isAdminRole || (user.id === recipe.owner.id && isRecipeCreatorRole)"
+          v-if="isAdminRole || (user?.id === recipe.owner.id && isRecipeCreatorRole)"
         >
           Delete
         </q-btn>
@@ -91,7 +91,7 @@
     />
     <c-make-cocktail-dialog
       v-if="loaded"
-      v-model="showMakeCocktailDialog"
+      v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
     />
   </q-page>
@@ -111,6 +111,7 @@ export default {
   data () {
     return {
       recipe: {
+        owner: {},
         productionSteps: []
       },
       loaded: false,
