@@ -4,27 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Objects;
 
-public abstract class Ingredient {
-    private long id;
-    private String name;
+public abstract class Ingredient extends IngredientGroup {
     private int alcoholContent;
     private boolean inBar;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public int getAlcoholContent() {
         return alcoholContent;
@@ -42,19 +24,6 @@ public abstract class Ingredient {
 
     public void setInBar(boolean inBar) {
         this.inBar = inBar;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Ingredient that = (Ingredient) o;
-        return id == that.id && alcoholContent == that.alcoholContent && Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, alcoholContent);
     }
 
     public enum Unit {
