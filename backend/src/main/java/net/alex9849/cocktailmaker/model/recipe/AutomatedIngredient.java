@@ -13,9 +13,4 @@ public class AutomatedIngredient extends Ingredient {
     public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
         this.pumpTimeMultiplier = pumpTimeMultiplier;
     }
-
-    @Override
-    public Unit getUnit() {
-        return Unit.MILLILITER;
-    }
 }
