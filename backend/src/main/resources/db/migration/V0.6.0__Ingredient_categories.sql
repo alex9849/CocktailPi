@@ -3,7 +3,7 @@ ALTER TABLE ingredients
 
 
 -- forbid update of and to dtype-value ingredientGroup
-CREATE FUNCTION check_illegal_ingredient_dtype_change_function()
+CREATE OR REPLACE FUNCTION check_illegal_ingredient_dtype_change_function()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -24,24 +24,24 @@ EXECUTE PROCEDURE check_illegal_ingredient_dtype_change_function();
 
 
 -- check for illegal parent (only groups can be parents)
-CREATE FUNCTION check_illegal_ingredient_parent_function()
+CREATE OR REPLACE FUNCTION check_illegal_ingredient_parent_function()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    is_illegal bool;
+    is_illegal_parent bool;
 BEGIN
     IF (NEW.parent_group_id IS NULL) THEN
         RETURN NEW;
     END IF;
     SELECT count(*) != 0
-    INTO is_illegal
+    INTO is_illegal_parent
     FROM ingredients
     WHERE id = NEW.parent_group_id
       AND dtype != 'IngredientGroup';
 
-    if (NOT is_illegal) THEN
+    if (NOT is_illegal_parent) THEN
         RETURN NEW;
     END IF;
 
@@ -111,5 +111,7 @@ ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_dType_check CHECK (dType IN ('ManualIngredient', 'AutomatedIngredient', 'IngredientGroup'));
 ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_pump_time_multiplier_check CHECK ((dType = 'AutomatedIngredient' AND pump_time_multiplier IS NOT NULL) OR
-                                                                 pump_time_multiplier IS NULL)
+                                                                 pump_time_multiplier IS NULL);
+ALTER TABLE ingredients
+    ADD CONSTRAINT ingredients_parent_check CHECK (unit = 'MILLILITER' OR parent_group_id IS NULL);
 
