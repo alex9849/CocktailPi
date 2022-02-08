@@ -90,3 +90,26 @@ CREATE TRIGGER check_illegal_ingredient_cycle
     ON ingredients
     FOR EACH ROW
 EXECUTE PROCEDURE check_illegal_ingredient_cycle_function();
+
+-- update ingredients in order to support IngredientGroup dtype
+ALTER TABLE ingredients
+    DROP CONSTRAINT ingredients_check;
+ALTER TABLE ingredients
+    DROP CONSTRAINT ingredients_alcohol_content_check;
+ALTER TABLE ingredients
+    DROP CONSTRAINT ingredients_dtype_check;
+ALTER TABLE ingredients
+    ALTER COLUMN alcohol_content DROP NOT NULL;
+ALTER TABLE ingredients
+    ALTER COLUMN unit DROP NOT NULL;
+ALTER TABLE ingredients
+    ADD CONSTRAINT ingredients_alcohol_content_check CHECK ((alcohol_content BETWEEN 0 AND 100 AND
+                                                             alcohol_content IS NOT NULL AND
+                                                             dtype IN ('ManualIngredient', 'AutomatedIngredient')) OR
+                                                            alcohol_content IS NULL);
+ALTER TABLE ingredients
+    ADD CONSTRAINT ingredients_dType_check CHECK (dType IN ('ManualIngredient', 'AutomatedIngredient', 'IngredientGroup'));
+ALTER TABLE ingredients
+    ADD CONSTRAINT ingredients_pump_time_multiplier_check CHECK ((dType = 'AutomatedIngredient' AND pump_time_multiplier IS NOT NULL) OR
+                                                                 pump_time_multiplier IS NULL)
+
