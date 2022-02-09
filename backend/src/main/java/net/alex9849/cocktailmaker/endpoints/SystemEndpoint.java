@@ -23,4 +23,10 @@ public class SystemEndpoint {
         return ResponseEntity.ok(systemService.getInstalledPythonLibraries());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/audiodevices", method = RequestMethod.GET)
+    public ResponseEntity<?> getAudioDevices() throws IOException {
+        return ResponseEntity.ok(systemService.getAudioDevices());
+    }
+
 }

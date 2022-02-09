@@ -5,11 +5,14 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class PlayAudioEventActionDto extends FileEventActionDto {
     private boolean onRepeat;
     @Min(0) @Max(100)
     private int volume;
+    @NotNull()
+    private String soundDevice;
 
     public PlayAudioEventActionDto() {}
 
@@ -31,6 +34,14 @@ public class PlayAudioEventActionDto extends FileEventActionDto {
 
     public void setVolume(int volume) {
         this.volume = volume;
+    }
+
+    public String getSoundDevice() {
+        return soundDevice;
+    }
+
+    public void setSoundDevice(String soundDevice) {
+        this.soundDevice = soundDevice;
     }
 
     @Override
