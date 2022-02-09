@@ -101,8 +101,6 @@ ALTER TABLE ingredients
 ALTER TABLE ingredients
     ALTER COLUMN alcohol_content DROP NOT NULL;
 ALTER TABLE ingredients
-    ALTER COLUMN unit DROP NOT NULL;
-ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_alcohol_content_check CHECK ((alcohol_content BETWEEN 0 AND 100 AND
                                                              alcohol_content IS NOT NULL AND
                                                              dtype IN ('ManualIngredient', 'AutomatedIngredient')) OR

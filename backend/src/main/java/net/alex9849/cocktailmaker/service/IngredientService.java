@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
 import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
@@ -21,11 +22,11 @@ public class IngredientService {
     @Autowired
     private IngredientRepository ingredientRepository;
 
-    public Ingredient getIngredient(long id) {
+    public IngredientGroup getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
+    public List<IngredientGroup> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -56,7 +57,7 @@ public class IngredientService {
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
-    public List<Ingredient> getIngredientsInBar(long userId) {
+    public List<IngredientGroup> getIngredientsInBar(long userId) {
         return ingredientRepository.findByIds(ingredientRepository
                 .findIdsInBar().toArray(new Long[1]));
     }
