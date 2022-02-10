@@ -22,31 +22,6 @@ public class IngredientRepository extends JdbcDaoSupport {
         setDataSource(dataSource);
     }
 
-    private static void setParameters(Ingredient ingredient, PreparedStatement pstmt) throws SQLException {
-        pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
-        pstmt.setString(2, ingredient.getName());
-        pstmt.setLong(7, ingredient.getParentGroupId());
-
-        if(ingredient instanceof AddableIngredient) {
-            AddableIngredient aIngredient = (AddableIngredient) ingredient
-            pstmt.setInt(3, aIngredient.getAlcoholContent());
-            pstmt.setBoolean(6, aIngredient.isInBar());
-        } else {
-            pstmt.setNull(3, Types.INTEGER);
-            pstmt.setNull(6, Types.BOOLEAN);
-        }
-        if(ingredient instanceof ManualIngredient) {
-            pstmt.setString(4, ingredient.getUnit().toString());
-        } else {
-            pstmt.setNull(4, Types.VARCHAR);
-        }
-        if(ingredient instanceof AutomatedIngredient) {
-            pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
-        } else {
-            pstmt.setNull(5, Types.DOUBLE);
-        }
-    }
-
     public List<Ingredient> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();
@@ -89,16 +64,29 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public List<Ingredient> findAll() {
-        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
-            ResultSet rs = pstmt.executeQuery();
-            List<IngredientGroup> results = new ArrayList<>();
-            while (rs.next()) {
-                results.add(parseRs(rs));
-            }
-            return results;
-        });
+    private static void setParameters(Ingredient ingredient, PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
+        pstmt.setString(2, ingredient.getName());
+        pstmt.setLong(7, ingredient.getParentGroupId());
+
+        if(ingredient instanceof AddableIngredient) {
+            AddableIngredient aIngredient = (AddableIngredient) ingredient;
+            pstmt.setInt(3, aIngredient.getAlcoholContent());
+            pstmt.setBoolean(6, aIngredient.isInBar());
+        } else {
+            pstmt.setNull(3, Types.INTEGER);
+            pstmt.setNull(6, Types.BOOLEAN);
+        }
+        if(ingredient instanceof ManualIngredient) {
+            pstmt.setString(4, ingredient.getUnit().toString());
+        } else {
+            pstmt.setNull(4, Types.VARCHAR);
+        }
+        if(ingredient instanceof AutomatedIngredient) {
+            pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
+        } else {
+            pstmt.setNull(5, Types.DOUBLE);
+        }
     }
 
     public Set<Long> findIdsNotManual() {
@@ -185,5 +173,17 @@ public class IngredientRepository extends JdbcDaoSupport {
         ingredient.setParentGroupId(resultSet.getLong("parent_group_id"));
         ingredient.setId(resultSet.getLong("id"));
         return ingredient;
+    }
+
+    public List<Ingredient> findAll() {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
+            ResultSet rs = pstmt.executeQuery();
+            List<Ingredient> results = new ArrayList<>();
+            while (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        });
     }
 }

@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
@@ -22,11 +19,11 @@ public class IngredientService {
     @Autowired
     private IngredientRepository ingredientRepository;
 
-    public IngredientGroup getIngredient(long id) {
+    public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<IngredientGroup> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -57,7 +54,7 @@ public class IngredientService {
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
-    public List<IngredientGroup> getIngredientsInBar(long userId) {
+    public List<Ingredient> getIngredientsInBar(long userId) {
         return ingredientRepository.findByIds(ingredientRepository
                 .findIdsInBar().toArray(new Long[1]));
     }
@@ -94,12 +91,16 @@ public class IngredientService {
     }
 
     public void setInBar(long id, boolean inBar) {
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(id);
-        if(optionalIngredient.isEmpty()) {
-            throw new IllegalArgumentException("Ingredient doesn't exist!");
+        Ingredient ingredient = ingredientRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient doesn't exist!"));
+
+        if(!(ingredient instanceof AddableIngredient)) {
+            throw new IllegalArgumentException("Ingredient needs to be an ManualIngredient or AutomatedIngredient!");
         }
-        optionalIngredient.get().setInBar(inBar);
-        ingredientRepository.update(optionalIngredient.get());
+        AddableIngredient aIngredient = (AddableIngredient) ingredient;
+        aIngredient.setInBar(inBar);
+        ingredientRepository.update(aIngredient);
     }
 
     public Ingredient updateIngredient(Ingredient ingredient) {
@@ -111,7 +112,9 @@ public class IngredientService {
             if(!Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
                 throw new IllegalArgumentException("An ingredient with this name already exists!");
             }
-            ingredient.setInBar(optionalIngredient.get().isInBar());
+            if(ingredient instanceof AddableIngredient) {
+                ((AddableIngredient) ingredient).setInBar(optionalIngredient.get().isInBar());
+            }
         }
         ingredientRepository.update(ingredient);
         return ingredient;
@@ -122,7 +125,9 @@ public class IngredientService {
         if(optionalIngredient.isPresent()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
-        ingredient.setInBar(false);
+        if(ingredient instanceof AddableIngredient) {
+            ((AddableIngredient) ingredient).setInBar(false);
+        }
         return ingredientRepository.create(ingredient);
     }
 
