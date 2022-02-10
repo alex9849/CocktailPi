@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.model.recipe;
 import javax.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("AutomatedIngredient")
-public class AutomatedIngredient extends Ingredient {
+public class AutomatedIngredient extends AddableIngredient {
     private double pumpTimeMultiplier;
 
     public double getPumpTimeMultiplier() {
@@ -12,5 +12,10 @@ public class AutomatedIngredient extends Ingredient {
 
     public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
         this.pumpTimeMultiplier = pumpTimeMultiplier;
+    }
+
+    @Override
+    public Unit getUnit() {
+        return Unit.MILLILITER;
     }
 }

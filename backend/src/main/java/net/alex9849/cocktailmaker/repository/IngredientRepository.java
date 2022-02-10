@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -25,17 +22,42 @@ public class IngredientRepository extends JdbcDaoSupport {
         setDataSource(dataSource);
     }
 
-    public List<IngredientGroup> findByIds(Long... ids) {
+    private static void setParameters(Ingredient ingredient, PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
+        pstmt.setString(2, ingredient.getName());
+        pstmt.setLong(7, ingredient.getParentGroupId());
+
+        if(ingredient instanceof AddableIngredient) {
+            AddableIngredient aIngredient = (AddableIngredient) ingredient
+            pstmt.setInt(3, aIngredient.getAlcoholContent());
+            pstmt.setBoolean(6, aIngredient.isInBar());
+        } else {
+            pstmt.setNull(3, Types.INTEGER);
+            pstmt.setNull(6, Types.BOOLEAN);
+        }
+        if(ingredient instanceof ManualIngredient) {
+            pstmt.setString(4, ingredient.getUnit().toString());
+        } else {
+            pstmt.setNull(4, Types.VARCHAR);
+        }
+        if(ingredient instanceof AutomatedIngredient) {
+            pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
+        } else {
+            pstmt.setNull(5, Types.DOUBLE);
+        }
+    }
+
+    public List<Ingredient> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();
         }
-        return getJdbcTemplate().execute((ConnectionCallback<List<IngredientGroup>>) con -> {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i " +
                     "WHERE i.id = ANY(?) order by i.name");
 
             pstmt.setArray(1, con.createArrayOf("int8", ids));
             ResultSet rs = pstmt.executeQuery();
-            List<IngredientGroup> results = new ArrayList<>();
+            List<Ingredient> results = new ArrayList<>();
             while (rs.next()) {
                 results.add(parseRs(rs));
             }
@@ -43,24 +65,12 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public Optional<IngredientGroup> findById(long id) {
-        List<IngredientGroup> foundList = findByIds(id);
+    public Optional<Ingredient> findById(long id) {
+        List<Ingredient> foundList = findByIds(id);
         if(foundList.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(foundList.get(0));
-    }
-
-    public List<IngredientGroup> findAll() {
-        return getJdbcTemplate().execute((ConnectionCallback<List<IngredientGroup>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
-            ResultSet rs = pstmt.executeQuery();
-            List<IngredientGroup> results = new ArrayList<>();
-            while (rs.next()) {
-                results.add(parseRs(rs));
-            }
-            return results;
-        });
     }
 
     //Todo ingredientgroups
@@ -79,6 +89,18 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
+    public List<Ingredient> findAll() {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
+            ResultSet rs = pstmt.executeQuery();
+            List<IngredientGroup> results = new ArrayList<>();
+            while (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        });
+    }
+
     public Set<Long> findIdsNotManual() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE dtype != 'ManualIngredient'");
@@ -86,8 +108,15 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public Optional<IngredientGroup> findByNameIgnoringCase(String name) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<IngredientGroup>>) con -> {
+    public Set<Long> findIdsNotAutomatic() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE dtype != 'AutomatedIngredient'");
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
+    public Optional<Ingredient> findByNameIgnoringCase(String name) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
             pstmt.setString(1, name);
             pstmt.execute();
@@ -99,20 +128,11 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public IngredientGroup create(Ingredient ingredient) {
-        return getJdbcTemplate().execute((ConnectionCallback<IngredientGroup>) con -> {
+    public Ingredient create(Ingredient ingredient) {
+        return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier, in_bar) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
-            pstmt.setString(2, ingredient.getName());
-            pstmt.setDouble(3, ingredient.getAlcoholContent());
-            pstmt.setString(4, ingredient.getUnit().name());
-            if(ingredient instanceof AutomatedIngredient) {
-                pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
-            } else {
-                pstmt.setNull(5, Types.DOUBLE);
-            }
-            pstmt.setBoolean(6, ingredient.isInBar());
+                    "unit, pump_time_multiplier, in_bar, parent_group_id) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            setParameters(ingredient, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -126,23 +146,9 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, in_bar = ? WHERE id = ?");
-            pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
-            pstmt.setString(2, ingredient.getName());
-            pstmt.setString(4, ingredient.getUnit().toString());
-            if(ingredient instanceof AutomatedIngredient) {
-                pstmt.setDouble(5, ((AutomatedIngredient) ingredient).getPumpTimeMultiplier());
-            } else {
-                pstmt.setNull(5, Types.DOUBLE);
-            }
-            if(ingredient instanceof Ingredient) {
-                pstmt.setInt(3, ingredient.getAlcoholContent());
-                pstmt.setBoolean(6, ingredient.isInBar());
-            } else {
-                pstmt.setNull(3, Types.INTEGER);
-                pstmt.setNull(6, Types.BOOLEAN);
-            }
-            pstmt.setLong(7, ingredient.getId());
+                    "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ? WHERE id = ?");
+            setParameters(ingredient, pstmt);
+            pstmt.setLong(8, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -155,8 +161,8 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    private IngredientGroup parseRs(ResultSet resultSet) throws SQLException {
-        IngredientGroup ingredient;
+    private Ingredient parseRs(ResultSet resultSet) throws SQLException {
+        Ingredient ingredient;
         String dType = resultSet.getString("dType");
         if(Objects.equals(dType, "ManualIngredient")) {
             ManualIngredient mIngredient = new ManualIngredient();

@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.model.recipe;
 import javax.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("ManualIngredient")
-public class ManualIngredient extends Ingredient {
+public class ManualIngredient extends AddableIngredient {
     private Unit unit;
 
     public Unit getUnit() {
