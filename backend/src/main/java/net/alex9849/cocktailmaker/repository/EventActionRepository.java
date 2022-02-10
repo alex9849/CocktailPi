@@ -32,7 +32,7 @@ public class EventActionRepository extends JdbcDaoSupport {
     public EventAction create(EventAction eventAction) {
         return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO event_actions (dType, trigger, comment, on_repeat, volume, " +
-                    "filename, file, requestMethod, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "filename, file, requestMethod, url, audio_device) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
             pstmt.setString(3, eventAction.getComment());
@@ -48,6 +48,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(7, Types.BLOB);
                 pstmt.setString(8, callUrlEventAction.getRequestMethod().name());
                 pstmt.setString(9, callUrlEventAction.getUrl());
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else if (eventAction instanceof PlayAudioEventAction) {
                 PlayAudioEventAction playAudioEventAction = (PlayAudioEventAction) eventAction;
@@ -57,6 +58,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setLong(7, fileOid);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setString(10, playAudioEventAction.getSoundDevice());
 
             } else if (eventAction instanceof ExecutePythonEventAction) {
                 ExecutePythonEventAction executePythonEventAction = (ExecutePythonEventAction) eventAction;
@@ -66,6 +68,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setLong(7, fileOid);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else if (eventAction instanceof DoNothingEventAction) {
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -74,6 +77,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(7, Types.BLOB);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
@@ -153,7 +157,7 @@ public class EventActionRepository extends JdbcDaoSupport {
     public EventAction update(EventAction eventAction) {
         return getJdbcTemplate().execute((ConnectionCallback<EventAction>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE event_actions SET dType = ?, trigger = ?, comment = ?, " +
-                    "on_repeat = ?, volume = ?, filename = ?, file = ?, requestMethod = ?, url = ? WHERE id = ?");
+                    "on_repeat = ?, volume = ?, filename = ?, file = ?, requestMethod = ?, url = ?, audio_device = ? WHERE id = ?");
 
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
@@ -167,7 +171,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 deleteFile(eventAction.getId());
                 pstmt.setString(8, callUrlEventAction.getRequestMethod().name());
                 pstmt.setString(9, callUrlEventAction.getUrl());
-                pstmt.setLong(10, eventAction.getId());
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else if (eventAction instanceof PlayAudioEventAction) {
                 PlayAudioEventAction playAudioEventAction = (PlayAudioEventAction) eventAction;
@@ -178,6 +182,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setLong(7, fileOid);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setString(10, playAudioEventAction.getSoundDevice());
 
             } else if (eventAction instanceof ExecutePythonEventAction) {
                 ExecutePythonEventAction executePythonEventAction = (ExecutePythonEventAction) eventAction;
@@ -188,6 +193,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setLong(7, fileOid);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else if (eventAction instanceof DoNothingEventAction) {
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -197,12 +203,13 @@ public class EventActionRepository extends JdbcDaoSupport {
                 deleteFile(eventAction.getId());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
+                pstmt.setNull(10, Types.VARCHAR);
 
             } else {
                 throw new IllegalArgumentException("EventAction type not supported yet!");
             }
 
-            pstmt.setLong(10, eventAction.getId());
+            pstmt.setLong(11, eventAction.getId());
             pstmt.executeUpdate();
             eventAction.setExecutionGroups(executionGroupRepository
                     .setEventActionExecutionGroups(eventAction.getId(),
@@ -284,6 +291,7 @@ public class EventActionRepository extends JdbcDaoSupport {
             playAudioEventAction.setVolume(rs.getInt("volume"));
             playAudioEventAction.setFile(getFile(id).orElseThrow());
             playAudioEventAction.setFileName(rs.getString("filename"));
+            playAudioEventAction.setSoundDevice(rs.getString("audio_device"));
             eventAction = playAudioEventAction;
 
         } else if (Objects.equals(dType, ExecutePythonEventAction.class.getAnnotation(DiscriminatorValue.class).value())) {

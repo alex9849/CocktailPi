@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class PlayAudioEventAction extends FileEventAction {
     private boolean onRepeat;
     private int volume;
+    private String soundDevice;
 
     public boolean isOnRepeat() {
         return onRepeat;
@@ -30,6 +32,14 @@ public class PlayAudioEventAction extends FileEventAction {
         this.volume = volume;
     }
 
+    public String getSoundDevice() {
+        return soundDevice;
+    }
+
+    public void setSoundDevice(String soundDevice) {
+        this.soundDevice = soundDevice;
+    }
+
     @Override
     public String getDescription() {
         String desc = "Play audiofile: " + getFileName() + " (Volume: " + this.volume + "%)";
@@ -45,7 +55,21 @@ public class PlayAudioEventAction extends FileEventAction {
         Clip clip = null;
 
         try {
-            clip = AudioSystem.getClip();
+            Line.Info sourceInfo = new Line.Info(SourceDataLine.class);
+            for(Mixer.Info info : AudioSystem.getMixerInfo()) {
+                Mixer mixer = AudioSystem.getMixer(info);
+                if(!mixer.isLineSupported((sourceInfo))) {
+                    continue;
+                }
+                if(!Objects.equals(mixer.getMixerInfo().getName(), this.soundDevice)) {
+                    continue;
+                }
+                clip = AudioSystem.getClip(info);
+            }
+            if(clip == null) {
+                throw new IllegalStateException("Sound device \"" + this.soundDevice + "\" not found!");
+            }
+
             clip.addLineListener(e -> {
                 if (e.getType() == LineEvent.Type.STOP) {
                     syncLatch.countDown();

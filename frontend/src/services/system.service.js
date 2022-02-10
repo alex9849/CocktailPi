@@ -7,6 +7,11 @@ class SystemService {
     return axios.get(API_PATH + 'pythonlibraries')
       .then(response => response.data)
   }
+
+  getAudioDevices () {
+    return axios.get(API_PATH + 'audiodevices')
+      .then(response => response.data)
+  }
 }
 
 export default new SystemService()

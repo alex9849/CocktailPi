@@ -3,10 +3,10 @@
     class="q-gutter-y-sm"
   >
     <q-inner-loading
-      :showing="groupsLoading"
+      :showing="initializing"
     />
     <q-input
-      :disable="disable || groupsLoading"
+      :disable="disable || initializing"
       :model-value="modelValue.comment"
       :rules="[
                 val => !v.modelValue.comment.maxLength.$invalid || 'Max length: 40'
@@ -40,7 +40,7 @@
     </q-dialog>
     <q-select
       ref="executionGroupsSelector"
-      :disable="disable || groupsLoading"
+      :disable="disable || initializing"
       :model-value="modelValue.executionGroups"
       :options="executionGroupOptions"
       filled
@@ -108,7 +108,7 @@
       </template>
     </q-select>
     <q-select
-      :disable="disable || groupsLoading"
+      :disable="disable || initializing"
       :model-value="modelValue.trigger"
       :options="eventActionTriggerDisplayNames"
       emit-value
@@ -122,7 +122,7 @@
               ]"
     />
     <q-select
-      :disable="disable || groupsLoading"
+      :disable="disable || initializing"
       :model-value="modelValue.type"
       :options="existingActions"
       emit-value
@@ -225,6 +225,17 @@
                 />
               </q-item-section>
             </q-item>
+            <q-select
+              :model-value="modelValue.soundDevice"
+              :options="audioDevices"
+              :rules="[
+                val => !v.modelValue.soundDevice.required.$invalid || 'Required'
+              ]"
+              filled
+              hide-bottom-space
+              label="Output device"
+              @update:model-value="setValue('soundDevice', $event)"
+            />
             <q-checkbox
               :model-value="!!modelValue.onRepeat"
               label="On repeat"
@@ -363,11 +374,18 @@ export default {
     }
   },
   created () {
-    this.groupsLoading = true
-    EventActionService.getAllExecutionGroups()
+    this.initializing = true
+    const execGroupsPromise = EventActionService.getAllExecutionGroups()
       .then(groups => {
-        this.groupsLoading = false
         this.existingExecutionGroups = groups
+      })
+    const audioDevices = SystemService.getAudioDevices()
+      .then(devices => {
+        this.audioDevices = devices
+      })
+    Promise.all([execGroupsPromise, audioDevices])
+      .then(() => {
+        this.initializing = false
       })
   },
   data () {
@@ -377,8 +395,9 @@ export default {
         loading: false
       },
       showHelpExecutionGroup: false,
-      groupsLoading: false,
+      initializing: false,
       existingExecutionGroups: [],
+      audioDevices: [],
       currentExecutionGroupFilter: '',
       urlRequestMethods: ['GET', 'POST', 'PUT', 'DELETE'],
       existingActions: [{
@@ -469,6 +488,7 @@ export default {
         url: {},
         fileName: {},
         onRepeat: {},
+        soundDevice: {},
         volume: {}
       }
     }
@@ -503,6 +523,9 @@ export default {
         required,
         minValue: minValue(0),
         maxValue: maxValue(100)
+      }
+      val.modelValue.soundDevice = {
+        required
       }
     }
     return val
