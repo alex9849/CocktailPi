@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientGroupDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +24,52 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients, boolean inBar) {
+    public static Ingredient fromDto(IngredientDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
+        if(ingredientDto instanceof ManualIngredientDto) {
+            return fromDto((ManualIngredientDto) ingredientDto);
+        }
+        if(ingredientDto instanceof AutomatedIngredientDto) {
+            return fromDto((AutomatedIngredientDto) ingredientDto);
+        }
+        if(ingredientDto instanceof IngredientGroupDto) {
+            return fromDto((IngredientGroupDto) ingredientDto);
+        }
+        throw new IllegalStateException("IngredientType not supported yet!");
+    }
+
+    public static IngredientGroup fromDto(IngredientGroupDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
+        IngredientGroup ingredient = new IngredientGroup();
+        BeanUtils.copyProperties(ingredientDto, ingredient);
+        return ingredient;
+    }
+
+    public static AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
+        AutomatedIngredient ingredient = new AutomatedIngredient();
+        BeanUtils.copyProperties(ingredientDto, ingredient);
+        return ingredient;
+    }
+
+    public static ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
+        if(ingredientDto == null) {
+            return null;
+        }
+        ManualIngredient ingredient = new ManualIngredient();
+        BeanUtils.copyProperties(ingredientDto, ingredient);
+        return ingredient;
+    }
+
+    public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients,
+                                                  boolean filterAutomaticIngredients, boolean filterIngredientGroups,
+                                                  boolean inBar) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -31,6 +77,12 @@ public class IngredientService {
         }
         if(filterManualIngredients) {
             idsToFindSetList.add(ingredientRepository.findIdsNotManual());
+        }
+        if(filterAutomaticIngredients) {
+            idsToFindSetList.add(ingredientRepository.findIdsNotAutomatic());
+        }
+        if(filterIngredientGroups) {
+            idsToFindSetList.add(ingredientRepository.findIdsNotGroup());
         }
         if(inBar) {
             idsToFindSetList.add(ingredientRepository.findAddableIngredientsIdsInBar());
@@ -52,42 +104,6 @@ public class IngredientService {
             return Collections.emptyList();
         }
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
-    }
-
-    public List<Ingredient> getIngredientsInBar(long userId) {
-        return ingredientRepository.findByIds(ingredientRepository
-                .findAddableIngredientsIdsInBar().toArray(new Long[1]));
-    }
-
-    public static Ingredient fromDto(IngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        if(ingredientDto instanceof ManualIngredientDto) {
-            return fromDto((ManualIngredientDto) ingredientDto);
-        }
-        if(ingredientDto instanceof AutomatedIngredientDto) {
-            return fromDto((AutomatedIngredientDto) ingredientDto);
-        }
-        throw new IllegalStateException("IngredientType not supported yet!");
-    }
-
-    public static AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        AutomatedIngredient ingredient = new AutomatedIngredient();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
-    }
-
-    public static ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        ManualIngredient ingredient = new ManualIngredient();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
     }
 
     public void setInBar(long id, boolean inBar) {

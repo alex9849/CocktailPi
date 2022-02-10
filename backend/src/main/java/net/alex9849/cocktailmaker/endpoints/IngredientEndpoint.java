@@ -26,6 +26,8 @@ public class IngredientEndpoint {
     @RequestMapping(value = "", method = RequestMethod.GET)
     ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
                                      @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients,
+                                     @RequestParam(value = "filterAutomaticIngredients", defaultValue = "false") boolean filterAutomaticIngredients,
+                                     @RequestParam(value = "filterIngredientGroups", defaultValue = "false") boolean filterIngredientGroups,
                                      @RequestParam(value = "inBar", defaultValue = "false") boolean inBar) {
         if(!inBar) {
             if(autocomplete == null){
@@ -38,7 +40,8 @@ public class IngredientEndpoint {
                 }
             }
         }
-        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients, inBar)
+        return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
+                filterAutomaticIngredients, filterIngredientGroups, inBar)
                 .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
     }
 

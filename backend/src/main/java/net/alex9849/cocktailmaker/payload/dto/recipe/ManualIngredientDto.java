@@ -6,7 +6,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 
-public class ManualIngredientDto extends IngredientDto {
+public class ManualIngredientDto extends AddableIngredientDto {
 
     @NotNull
     private Ingredient.Unit unit;

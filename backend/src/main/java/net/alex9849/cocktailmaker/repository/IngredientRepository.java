@@ -81,7 +81,11 @@ public class IngredientRepository extends JdbcDaoSupport {
     private static void setParameters(Ingredient ingredient, PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
         pstmt.setString(2, ingredient.getName());
-        pstmt.setLong(7, ingredient.getParentGroupId());
+        if(ingredient.getParentGroupId() != null) {
+            pstmt.setLong(7, ingredient.getParentGroupId());
+        } else {
+            pstmt.setNull(7, Types.BIGINT);
+        }
 
         if(ingredient instanceof AddableIngredient) {
             AddableIngredient aIngredient = (AddableIngredient) ingredient;
@@ -113,6 +117,13 @@ public class IngredientRepository extends JdbcDaoSupport {
     public Set<Long> findIdsNotAutomatic() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE dtype != 'AutomatedIngredient'");
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
+    public Set<Long> findIdsNotGroup() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE dtype != 'IngredientGroup'");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -185,6 +196,9 @@ public class IngredientRepository extends JdbcDaoSupport {
         }
         ingredient.setName(resultSet.getString("name"));
         ingredient.setParentGroupId(resultSet.getLong("parent_group_id"));
+        if(resultSet.wasNull()) {
+            ingredient.setParentGroupId(null);
+        }
         ingredient.setId(resultSet.getLong("id"));
         return ingredient;
     }

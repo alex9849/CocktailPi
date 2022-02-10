@@ -58,11 +58,11 @@ public class IngredientGroup extends Ingredient {
         return alcoholContent;
     }
 
-    public Set<AddableIngredient> getMatchingAddableIngredients() {
+    public Set<AddableIngredient> getAddableIngredientChildren() {
         Set<AddableIngredient> leaves = new HashSet<>();
         for(Ingredient ingredient : this.getChildren()) {
             if(ingredient instanceof IngredientGroup) {
-                leaves.addAll(((IngredientGroup) ingredient).getMatchingAddableIngredients());
+                leaves.addAll(((IngredientGroup) ingredient).getAddableIngredientChildren());
             } else if(ingredient instanceof AddableIngredient) {
                 leaves.add((AddableIngredient) ingredient);
             } else {
