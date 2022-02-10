@@ -33,7 +33,7 @@ public class IngredientService {
             idsToFindSetList.add(ingredientRepository.findIdsNotManual());
         }
         if(inBar) {
-            idsToFindSetList.add(ingredientRepository.findIdsInBar());
+            idsToFindSetList.add(ingredientRepository.findAddableIngredientsIdsInBar());
         }
 
         if(idsToFindSetList.isEmpty()) {
@@ -56,7 +56,7 @@ public class IngredientService {
 
     public List<Ingredient> getIngredientsInBar(long userId) {
         return ingredientRepository.findByIds(ingredientRepository
-                .findIdsInBar().toArray(new Long[1]));
+                .findAddableIngredientsIdsInBar().toArray(new Long[1]));
     }
 
     public static Ingredient fromDto(IngredientDto ingredientDto) {
@@ -133,5 +133,9 @@ public class IngredientService {
 
     public boolean deleteIngredient(long id) {
         return ingredientRepository.delete(id);
+    }
+
+    public Set<Ingredient> getGroupChildren(long id) {
+        return ingredientRepository.findGroupChildren(id);
     }
 }

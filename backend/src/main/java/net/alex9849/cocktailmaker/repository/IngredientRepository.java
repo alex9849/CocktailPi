@@ -48,10 +48,24 @@ public class IngredientRepository extends JdbcDaoSupport {
         return Optional.of(foundList.get(0));
     }
 
-    //Todo ingredientgroups
-    public Set<Long> findIdsInBar() {
+    public Set<Ingredient> findGroupChildren(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Ingredient>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE i.parent_group_id = ?");
+            pstmt.setLong(1, id);
+
+            ResultSet rs = pstmt.executeQuery();
+            Set<Ingredient> results = new HashSet<>();
+            while (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        });
+    }
+
+    public Set<Long> findAddableIngredientsIdsInBar() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i WHERE i.in_bar");
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id as id FROM ingredients i WHERE i.in_bar " +
+                    "AND dType IN ('ManualIngredient', 'AutomatedIngredient')");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }

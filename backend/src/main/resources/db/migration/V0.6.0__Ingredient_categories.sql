@@ -108,6 +108,9 @@ ALTER TABLE ingredients
     ALTER COLUMN unit DROP NOT NULL;
 
 ALTER TABLE ingredients
+    ALTER COLUMN in_bar DROP NOT NULL;
+
+ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_alcohol_content_check CHECK ((alcohol_content BETWEEN 0 AND 100 AND
                                                              alcohol_content IS NOT NULL AND
                                                              dtype IN ('ManualIngredient', 'AutomatedIngredient')) OR
@@ -128,4 +131,7 @@ WHERE dtype = 'AutomatedIngredient';
 
 ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_unit_check CHECK ((dtype = 'ManualIngredient' AND unit IS NOT NULL) OR unit IS NULL);
+
+ALTER TABLE ingredients
+    ADD CONSTRAINT ingredients_in_bar_check CHECK ((dType IN ('ManualIngredient', 'AutomatedIngredient') AND ingredients.in_bar IS NOT NULL) OR ingredients.in_bar IS NULL);
 
