@@ -11,6 +11,7 @@
     :clearable="clearable"
     :disable="disable"
     hide-dropdown-icon
+    :filled="filled"
     :label="label"
     :options="ingredientOptions"
     :emit-value="emitValue"
@@ -32,8 +33,13 @@
         <q-item-section>
           {{ scope.opt.name }}
           <slot name="afterIngredientName" :scope="scope">
-            <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
-              {{ scope.opt.alcoholContent }}% alcohol content
+            <div v-if="scope.opt.type !== 'group'">
+              <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
+                {{ scope.opt.alcoholContent }}% alcohol content
+              </q-item-label>
+            </div>
+            <q-item-label v-else caption>
+              {{ ingredientGroupAlcoholContentString(scope.opt.minAlcoholContent, scope.opt.maxAlcoholContent) }} alcohol content
             </q-item-label>
           </slot>
         </q-item-section>
@@ -64,6 +70,10 @@ export default {
       default: false
     },
     disable: {
+      type: Boolean,
+      default: false
+    },
+    filled: {
       type: Boolean,
       default: false
     },
@@ -129,6 +139,12 @@ export default {
     }
   },
   methods: {
+    ingredientGroupAlcoholContentString (min, max) {
+      if (min === max) {
+        return min + '%'
+      }
+      return min + '-' + max + '%'
+    },
     filterIngredients (val, update, abort) {
       this.stringInput = val
       if (val.length < 2) {

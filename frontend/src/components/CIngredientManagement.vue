@@ -30,10 +30,8 @@
       :loading="loading"
       :pagination="{rowsPerPage: 10, sortBy: 'name'}"
       :rows="ingredients"
-      :table-style="{margin: '15px'}"
       hide-no-data
       selection="multiple"
-      style="background-color: #f3f3fa"
     >
       <template v-slot:body-selection="props">
         <div class="text-center">
@@ -96,8 +94,8 @@
     :delete-method="deleteIngredient"
     :list-point-method="x => x.name"
     banner-warning="This also removes the selected ingredients from all associated recipes!"
-    item-name-plural="Ingredients"
-    item-name-singular="Ingredient"
+    item-name-plural="ingredients"
+    item-name-singular="ingredient"
     @deleteFailure="fetchAll"
     @deleteSuccess="onDeleteSuccess"
   />
@@ -205,10 +203,6 @@ export default {
       const onError = function (error) {
         vm.editOptions.editIngredientSaving = false
         vm.editOptions.editErrorMessage = error.response.data.message
-        vm.$q.notify({
-          type: 'negative',
-          message: error.response.data.message
-        })
       }
 
       if (this.isEditIngredientNew) {
