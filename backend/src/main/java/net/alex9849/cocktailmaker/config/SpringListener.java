@@ -25,13 +25,13 @@ public class SpringListener {
     private Flyway flyway;
 
     @EventListener
-    public void handleApplicationPrepared(ContextRefreshedEvent event) {
+    public void handleContextRefreshed(ContextRefreshedEvent event) {
         flyway.migrate();
         pumpService.turnAllPumpsOff();
     }
 
     @EventListener
-    public void handleContextStart(ApplicationReadyEvent event) {
+    public void handleApplicationReady(ApplicationReadyEvent event) {
         eventService.triggerActions(EventTrigger.APPLICATION_STARTUP);
     }
 }
