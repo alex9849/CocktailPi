@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class R__Insert_Default_Data extends BaseJavaMigration {
 
     private final UserRepository userRepository = SpringUtility.getBean(UserRepository.class);
+    private final RecipeService recipeService = SpringUtility.getBean(RecipeService.class);
     private final RecipeRepository recipeRepository = SpringUtility.getBean(RecipeRepository.class);
     private final CategoryRepository categoryRepository = SpringUtility.getBean(CategoryRepository.class);
     private final IngredientRepository ingredientRepository = SpringUtility.getBean(IngredientRepository.class);
@@ -61,7 +62,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         OwnerDto defaultOwnerDto = new OwnerDto(defaultUser);
         for(RecipeDto recipeDto : recipeDtos) {
             recipeDto.setOwner(defaultOwnerDto);
-            Recipe recipe = RecipeService.fromDtoWithoutOwner(recipeDto);
+            Recipe recipe = recipeService.fromDto(recipeDto);
             recipe.setOwner(defaultUser);
             recipe.setOwnerId(defaultUser.getId());
             long recipeId = createRecipe(recipe).getId();

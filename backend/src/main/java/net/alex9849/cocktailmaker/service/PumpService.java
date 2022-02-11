@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class PumpService {
-
     private static PumpService instance;
 
     private CocktailFactory cocktailFactory;
@@ -45,21 +44,27 @@ public class PumpService {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private IngredientService ingredientService;
+
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
+
+    public static PumpService getInstance() {
+        return instance;
+    }
 
     @PostConstruct
     public void init() {
         PumpService.instance = this;
+    }
+
+    public void turnAllPumpsOff() {
         List<Pump> pumps = getAllPumps();
         //Turn off all pumps
         pumps.forEach(pump -> {
             gpioController.getGpioPin(pump.getBcmPin()).setHigh();
         });
-    }
-
-    public static PumpService getInstance() {
-        return instance;
     }
 
     public List<Pump> getAllPumps() {
@@ -101,13 +106,14 @@ public class PumpService {
         return pump;
     }
 
-    public static Pump fromDto(PumpDto pumpDto) {
+    public Pump fromDto(PumpDto pumpDto) {
         if(pumpDto == null) {
             return null;
         }
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
-        pump.setCurrentIngredient(IngredientService.fromDto(pumpDto.getCurrentIngredient()));
+        AutomatedIngredient aIngredient = (AutomatedIngredient) ingredientService.fromDto(pumpDto.getCurrentIngredient());
+        pump.setCurrentIngredient(aIngredient);
         if(pump.getCurrentIngredient() != null) {
             pump.setCurrentIngredientId(pump.getCurrentIngredient().getId());
         }

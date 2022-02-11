@@ -30,11 +30,14 @@ public class IngredientService {
         }
         Long parentGroupId =  ingredientDto.getParentGroupId();
         IngredientGroup parentGroup = null;
-        Ingredient parentIngredient = getIngredient(parentGroupId);
-        if(!(parentGroup instanceof IngredientGroup)) {
-            throw new IllegalArgumentException("parentGroup has to be a IngredientGroup");
+
+        if(parentGroupId != null) {
+            Ingredient parentIngredient = getIngredient(parentGroupId);
+            if(!(parentIngredient instanceof IngredientGroup)) {
+                throw new IllegalArgumentException("parentGroup has to be a IngredientGroup");
+            }
+            parentGroup = (IngredientGroup) parentIngredient;
         }
-        parentGroup = (IngredientGroup) parentIngredient;
 
         Ingredient ingredient;
         if(ingredientDto instanceof ManualIngredientDto) {

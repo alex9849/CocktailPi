@@ -31,7 +31,7 @@ public class PumpEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto pumpDto, UriComponentsBuilder uriBuilder) {
-        Pump createdPump = pumpService.createPump(PumpService.fromDto(pumpDto));
+        Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
@@ -41,7 +41,7 @@ public class PumpEndpoint {
     public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto pumpDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         pumpDto.setId(id);
-        Pump updatePump = PumpService.fromDto(pumpDto);
+        Pump updatePump = pumpService.fromDto(pumpDto);
         if(!user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             Pump oldPump = pumpService.getPump(id);
             if(oldPump != null) {

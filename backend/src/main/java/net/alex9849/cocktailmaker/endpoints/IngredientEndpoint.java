@@ -60,8 +60,8 @@ public class IngredientEndpoint {
         if(ingredientService.getIngredient(id) == null) {
             return ResponseEntity.notFound().build();
         }
+        ingredientDto.setId(id);
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
-        ingredient.setId(id);
         ingredientService.updateIngredient(ingredient);
         return ResponseEntity.ok().build();
     }
