@@ -135,7 +135,7 @@ export default {
       columns: [
         { name: 'name', label: 'Group', field: 'name', align: 'center' },
         { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
-        { name: 'parentGroup', label: 'Parent group', field: 'parentGroup', align: 'center' },
+        { name: 'parentGroup', label: 'Parent group', field: 'parentGroupName', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       loading: false,

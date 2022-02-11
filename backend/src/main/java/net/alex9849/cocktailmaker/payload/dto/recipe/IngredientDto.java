@@ -27,11 +27,13 @@ public abstract class IngredientDto {
     private String name;
 
     private Long parentGroupId;
+    private String parentGroupName;
 
     public IngredientDto() {}
 
     public IngredientDto(Ingredient ingredient) {
         BeanUtils.copyProperties(ingredient, this);
+        this.parentGroupName = ingredient.getParentGroupName();
     }
 
     public long getId() {
@@ -48,6 +50,14 @@ public abstract class IngredientDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getParentGroupName() {
+        return parentGroupName;
+    }
+
+    public void setParentGroupName(String parentGroupName) {
+        this.parentGroupName = parentGroupName;
     }
 
     public static IngredientDto toDto(Ingredient ingredient) {

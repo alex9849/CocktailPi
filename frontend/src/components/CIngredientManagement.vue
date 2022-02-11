@@ -136,6 +136,7 @@ export default {
         { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
         { name: 'unit', label: 'Unit', field: 'unit', align: 'center' },
         { name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center' },
+        { name: 'parentGroup', label: 'Parent group', field: 'parentGroupName', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       ingredients: [],

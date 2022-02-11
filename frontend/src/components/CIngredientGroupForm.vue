@@ -15,13 +15,13 @@
       @update:model-value="e => setValue('name', e)"
     />
     <c-ingredient-selector
-      :selected="modelValue.parentGroupId"
+      :selected="parentGroup"
       clearable
       filled
       filter-automatic-ingredients
       filter-manual-ingredients
       label="Parent group"
-      @update:selected="e => setValue('parentGroupId', e)"
+      @update:selected="e => setParentGroup(e)"
     />
   </div>
 </template>
@@ -49,6 +49,11 @@ export default {
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
+    },
+    setParentGroup (parentGroup) {
+      this.v.modelValue.parentGroupId.$model = parentGroup?.id
+      this.v.modelValue.parentGroupName.$model = parentGroup?.name
+      this.$emit('update:modelValue', this.modelValue)
     }
   },
   setup () {
@@ -63,7 +68,19 @@ export default {
           required,
           maxLength: maxLength(30)
         },
-        parentGroupId: {}
+        parentGroupId: {},
+        parentGroupName: {}
+      }
+    }
+  },
+  computed: {
+    parentGroup () {
+      if (!this.modelValue.parentGroupId) {
+        return null
+      }
+      return {
+        id: this.modelValue.parentGroupId,
+        name: this.modelValue.parentGroupName
       }
     }
   },
