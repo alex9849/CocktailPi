@@ -11,6 +11,10 @@ import java.util.Set;
 public class IngredientGroup extends Ingredient {
     private Set<Ingredient> children;
 
+    public IngredientGroup(long id, Long parentGroupId) {
+        super(id, parentGroupId);
+    }
+
     public Unit getUnit() {
         return Unit.MILLILITER;
     }

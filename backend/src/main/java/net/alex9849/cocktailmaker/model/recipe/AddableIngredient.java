@@ -4,6 +4,10 @@ public abstract class AddableIngredient extends Ingredient {
     private int alcoholContent;
     private boolean inBar;
 
+    public AddableIngredient(long id, Long parentGroupId) {
+        super(id, parentGroupId);
+    }
+
     public int getAlcoholContent() {
         return alcoholContent;
     }

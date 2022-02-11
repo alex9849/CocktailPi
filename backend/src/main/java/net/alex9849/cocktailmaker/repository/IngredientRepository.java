@@ -149,8 +149,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                ingredient.setId(rs.getLong(1));
-                return ingredient;
+                return findById(rs.getLong(1)).orElse(null);
             }
             throw new IllegalStateException("Error saving ingredient");
         });
@@ -177,29 +176,30 @@ public class IngredientRepository extends JdbcDaoSupport {
     private Ingredient parseRs(ResultSet resultSet) throws SQLException {
         Ingredient ingredient;
         String dType = resultSet.getString("dType");
+        long id = resultSet.getLong("id");
+        Long parentGroupId = resultSet.getLong("parent_group_id");
+        if(resultSet.wasNull()) {
+            parentGroupId = null;
+        }
+
         if(Objects.equals(dType, "ManualIngredient")) {
-            ManualIngredient mIngredient = new ManualIngredient();
+            ManualIngredient mIngredient = new ManualIngredient(id, parentGroupId);
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
             mIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             mIngredient.setInBar(resultSet.getBoolean("in_bar"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
-            AutomatedIngredient aIngredient = new AutomatedIngredient();
+            AutomatedIngredient aIngredient = new AutomatedIngredient(id, parentGroupId);
             aIngredient.setPumpTimeMultiplier(resultSet.getDouble("pump_time_multiplier"));
             aIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             aIngredient.setInBar(resultSet.getBoolean("in_bar"));
             ingredient = aIngredient;
         } else if (Objects.equals(dType, "IngredientGroup")) {
-            ingredient = new IngredientGroup();
+            ingredient = new IngredientGroup(id, parentGroupId);
         } else {
             throw new IllegalArgumentException("IngredientType doesn't exist: " + dType);
         }
         ingredient.setName(resultSet.getString("name"));
-        ingredient.setParentGroupId(resultSet.getLong("parent_group_id"));
-        if(resultSet.wasNull()) {
-            ingredient.setParentGroupId(null);
-        }
-        ingredient.setId(resultSet.getLong("id"));
         return ingredient;
     }
 

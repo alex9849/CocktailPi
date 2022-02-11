@@ -33,7 +33,6 @@ public abstract class IngredientDto {
 
     public IngredientDto(Ingredient ingredient) {
         BeanUtils.copyProperties(ingredient, this);
-        this.parentGroupName = ingredient.getParentGroupName();
     }
 
     public long getId() {

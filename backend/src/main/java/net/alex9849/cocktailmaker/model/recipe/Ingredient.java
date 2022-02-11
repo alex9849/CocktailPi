@@ -5,17 +5,18 @@ import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
 public abstract class Ingredient {
-    private long id;
+    private final long id;
     private String name;
     private Long parentGroupId;
-    private String parentGroupName;
+    private IngredientGroup parentGroup;
+
+    public Ingredient(long id, Long parentGroupId) {
+        this.id = id;
+        this.parentGroupId = parentGroupId;
+    }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -26,30 +27,26 @@ public abstract class Ingredient {
         this.name = name;
     }
 
-    public String getParentGroupName() {
-        //Lazy load
-        if(parentGroupId == null) {
-            return null;
-        }
-        if(parentGroupName == null) {
+    public IngredientGroup getParentGroupName() {
+        if(parentGroupId != null && parentGroup == null) {
             IngredientService iService = SpringUtility.getBean(IngredientService.class);
-            Ingredient parent = iService.getIngredient(parentGroupId);
-            if(parent == null) {
-                parentGroupId = null;
-                return null;
-            }
-            parentGroupName = parent.getName();
+            parentGroup = (IngredientGroup) iService.getIngredient(parentGroupId);
+            parentGroupId = parentGroup.getId();
         }
-        return parentGroupName;
+        return parentGroup;
+    }
+
+    public void setParentGroup(IngredientGroup ingredientGroup) {
+        parentGroup = ingredientGroup;
+        if(ingredientGroup == null) {
+            parentGroupId = null;
+            return;
+        }
+        parentGroupId = parentGroup.getId();
     }
 
     public Long getParentGroupId() {
         return parentGroupId;
-    }
-
-    public void setParentGroupId(Long parentGroupId) {
-        this.parentGroupName = null;
-        this.parentGroupId = parentGroupId;
     }
 
     public abstract boolean isInBar();

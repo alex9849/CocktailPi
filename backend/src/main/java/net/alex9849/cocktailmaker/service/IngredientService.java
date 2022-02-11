@@ -24,46 +24,33 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public static Ingredient fromDto(IngredientDto ingredientDto) {
+    public Ingredient fromDto(IngredientDto ingredientDto) {
         if(ingredientDto == null) {
             return null;
         }
+        Long parentGroupId =  ingredientDto.getParentGroupId();
+        IngredientGroup parentGroup = null;
+        Ingredient parentIngredient = getIngredient(parentGroupId);
+        if(!(parentGroup instanceof IngredientGroup)) {
+            throw new IllegalArgumentException("parentGroup has to be a IngredientGroup");
+        }
+        parentGroup = (IngredientGroup) parentIngredient;
+
+        Ingredient ingredient;
         if(ingredientDto instanceof ManualIngredientDto) {
-            return fromDto((ManualIngredientDto) ingredientDto);
-        }
-        if(ingredientDto instanceof AutomatedIngredientDto) {
-            return fromDto((AutomatedIngredientDto) ingredientDto);
-        }
-        if(ingredientDto instanceof IngredientGroupDto) {
-            return fromDto((IngredientGroupDto) ingredientDto);
-        }
-        throw new IllegalStateException("IngredientType not supported yet!");
-    }
+            ingredient = new ManualIngredient(ingredientDto.getId(), null);
 
-    public static IngredientGroup fromDto(IngredientGroupDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        IngredientGroup ingredient = new IngredientGroup();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
-    }
+        } else if(ingredientDto instanceof AutomatedIngredientDto) {
+            ingredient = new AutomatedIngredient(ingredientDto.getId(), null);
 
-    public static AutomatedIngredient fromDto(AutomatedIngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
-        }
-        AutomatedIngredient ingredient = new AutomatedIngredient();
-        BeanUtils.copyProperties(ingredientDto, ingredient);
-        return ingredient;
-    }
+        } else if(ingredientDto instanceof IngredientGroupDto) {
+            ingredient = new IngredientGroup(ingredientDto.getId(), null);
 
-    public static ManualIngredient fromDto(ManualIngredientDto ingredientDto) {
-        if(ingredientDto == null) {
-            return null;
+        } else {
+            throw new IllegalStateException("IngredientType not supported yet!");
         }
-        ManualIngredient ingredient = new ManualIngredient();
         BeanUtils.copyProperties(ingredientDto, ingredient);
+        ingredient.setParentGroup(parentGroup);
         return ingredient;
     }
 
