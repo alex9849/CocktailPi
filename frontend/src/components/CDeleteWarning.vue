@@ -8,6 +8,17 @@
     @clickAbort="closeDialog"
     @clickOk="onClickDelete"
   >
+    <template v-slot:error-area>
+      <div v-if="bannerWarning && deleteItems.length !== 0">
+        <q-banner class="text-white bg-red-5"
+                  dense
+                  rounded
+                  style="margin: 10px"
+        >
+          {{ bannerWarning }}
+        </q-banner>
+      </div>
+    </template>
     <template v-slot:buttons>
       <q-btn
         v-if="deleteItems.length === 0"
@@ -39,6 +50,10 @@ export default {
   name: 'CDeleteWarning',
   components: { CQuestion },
   props: {
+    bannerWarning: {
+      type: String,
+      required: false
+    },
     deleteMethod: {
       type: Function,
       required: true

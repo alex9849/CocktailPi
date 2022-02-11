@@ -28,8 +28,8 @@ class IngredientService {
     return axios.post(API_PATH, ingredient)
   }
 
-  deleteIngredient (ingredient) {
-    return axios.delete(API_PATH + ingredient.id)
+  deleteIngredient (id) {
+    return axios.delete(API_PATH + id)
   }
 
   addToBar (ingredientId) {

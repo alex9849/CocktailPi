@@ -174,7 +174,7 @@
       item-name-plural="Actions"
       item-name-singular="Action"
       @deleteFailure="initialize"
-      @deleteSuccess="onDeleteFailure"
+      @deleteSuccess="onDeleteSuccess"
     />
     <q-dialog
       v-model:model-value="actionLog.show"
@@ -294,7 +294,7 @@ export default {
     killEventActionProcess (processId) {
       EventActionService.killEventAction(processId)
     },
-    onDeleteFailure () {
+    onDeleteSuccess () {
       this.selected.splice(0, this.selected.length)
       this.initialize()
     },
