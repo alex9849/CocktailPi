@@ -13,6 +13,18 @@ import java.util.List;
 import java.util.Set;
 
 public enum RecipeDto {;
+    private interface Id { long getId(); }
+    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
+    private interface OwnerName { String getOwnerName(); }
+    private interface OwnerId { long getOwnerId(); }
+    private interface Description { @NotNull @Size(min = 0, max = 3000) String getDescription(); }
+    private interface ProductionSteps { @NotNull List<ProductionStepDto> getProductionSteps(); }
+    private interface HasImage { boolean isHasImage(); }
+    private interface Ingredients { Set<IngredientDto> getIngredients(); };
+    private interface Categories { @NotNull Set<CategoryDto> getCategories(); }
+    private interface DefaultAmountToFill { @NotNull long getDefaultAmountToFill(); }
+    private interface LastUpdate { Date getLastUpdate(); }
+
     public enum Request {;
         @Data
         public static class Create implements Name, OwnerId, Description, ProductionSteps, Categories, DefaultAmountToFill {
@@ -24,6 +36,7 @@ public enum RecipeDto {;
             long defaultAmountToFill;
         }
     }
+
     public enum Response {;
         @Value public static class Detailed implements Name, OwnerId, Description, ProductionSteps, Categories, DefaultAmountToFill {
             long id;
@@ -44,18 +57,5 @@ public enum RecipeDto {;
             Set<IngredientDto> ingredients;
         }
     }
-    private interface Id { long getId(); }
-    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
-    private interface OwnerName { String getOwnerName(); }
-    private interface OwnerId { long getOwnerId(); }
-    private interface Description { @NotNull @Size(min = 0, max = 3000) String getDescription(); }
-        private interface ProductionSteps { @NotNull List<ProductionStepDto> getProductionSteps(); };
-    private interface HasImage { boolean isHasImage(); }
-private interface Ingredients { Set<IngredientDto> getIngredients(); }
-    private interface Categories { @NotNull Set<CategoryDto> getCategories(); }
-
-    private interface DefaultAmountToFill { @NotNull long getDefaultAmountToFill(); }
-
-    private interface LastUpdate { Date getLastUpdate(); }
 
 }
