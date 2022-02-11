@@ -32,7 +32,6 @@
       :rows="ingredients"
       :table-style="{margin: '15px'}"
       hide-no-data
-      no-data-label="No ingredients found"
       selection="multiple"
       style="background-color: #f3f3fa"
     >
