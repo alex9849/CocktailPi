@@ -98,6 +98,7 @@
       <c-ingredient-selector
         label="Ingredient"
         :disable="editOptions.saving"
+        filter-ingredient-groups
         v-model:selected="v.editOptions.addIngredient.$model"
         :rules="[() => !v.editOptions.addIngredient.$error || 'Required']"
       />
@@ -133,7 +134,7 @@ export default {
   },
   async beforeRouteEnter (to, from, next) {
     const ownedIngredients = await IngredientService
-      .getIngredientsFilter(null, null, true)
+      .getIngredientsFilter(null, null, null, null, true)
     next(vm => {
       vm.ownedIngredients = ownedIngredients
     })
@@ -164,7 +165,7 @@ export default {
       this.loading = true
       setTimeout(() => {
         IngredientService
-          .getIngredientsFilter(null, null, true)
+          .getIngredientsFilter(null, null, null, null, true)
           .then(data => {
             this.ownedIngredients = data
           })

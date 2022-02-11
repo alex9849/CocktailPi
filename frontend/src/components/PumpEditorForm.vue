@@ -6,6 +6,7 @@
       @update:selected="setValue('currentIngredient', $event)"
       clearable
       filter-manual-ingredients
+      filter-ingredient-groups
     />
     <q-input
       label="Current filling level"

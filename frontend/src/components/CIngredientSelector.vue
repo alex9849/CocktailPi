@@ -99,6 +99,14 @@ export default {
       type: Boolean,
       default: false
     },
+    filterAutomaticIngredients: {
+      type: Boolean,
+      default: false
+    },
+    filterIngredientGroups: {
+      type: Boolean,
+      default: false
+    },
     noInputOptions: {
       type: Array,
       default: () => []
@@ -127,7 +135,8 @@ export default {
         update()
         return
       }
-      IngredientService.getIngredientsFilter(val, this.filterManualIngredients)
+      IngredientService.getIngredientsFilter(val, this.filterManualIngredients, this.filterAutomaticIngredients,
+        this.filterIngredientGroups, false)
         .then(ingredients => {
           update(() => {
             this.fetchedOptions = ingredients
