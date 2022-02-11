@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 public class IngredientGroupDto extends IngredientDto {
     private Set<Long> leafIds;
     private boolean inBar;
+    private int minAlcoholContent;
+    private int maxAlcoholContent;
 
     public IngredientGroupDto() {}
 
@@ -17,10 +19,20 @@ public class IngredientGroupDto extends IngredientDto {
         leafIds = ingredient.getAddableIngredientChildren().stream()
                 .map(Ingredient::getId).collect(Collectors.toSet());
         inBar = ingredient.isInBar();
+        minAlcoholContent = ingredient.getMinAlcoholContent();
+        maxAlcoholContent = ingredient.getMaxAlcoholContent();
     }
 
     public Set<Long> getLeafIds() {
         return leafIds;
+    }
+
+    public int getMinAlcoholContent() {
+        return minAlcoholContent;
+    }
+
+    public int getMaxAlcoholContent() {
+        return maxAlcoholContent;
     }
 
     @Override
