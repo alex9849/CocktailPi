@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
 
@@ -18,7 +15,7 @@ public class IngredientGroupDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-
+        @Getter @Setter @EqualsAndHashCode
         public static class Create extends IngredientDto.Request.Create {
 
             @Override
@@ -35,7 +32,7 @@ public class IngredientGroupDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter
+        @Getter @Setter @EqualsAndHashCode
         public static class Detailed extends IngredientDto.Response.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
             Set<Long> leafIds;
             int minAlcoholContent;
@@ -60,7 +57,7 @@ public class IngredientGroupDto {
             }
         }
 
-        @Getter @Setter
+        @Getter @Setter @EqualsAndHashCode
         public static class Reduced extends IngredientDto.Response.Reduced {
             boolean inBar;
 

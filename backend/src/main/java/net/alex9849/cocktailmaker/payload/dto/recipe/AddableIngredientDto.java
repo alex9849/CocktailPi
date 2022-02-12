@@ -1,32 +1,44 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
+import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.AddableIngredient;
-import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-public abstract class AddableIngredientDto extends IngredientDto {
-    @Min(0) @Max(100)
-    private int alcoholContent;
-    private boolean inBar;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public abstract class AddableIngredientDto {
+    private interface AlcoholContent { @Min(0) @Max(100) double getAlcoholContent(); }
 
-    public AddableIngredientDto() {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent {
+            double alcoholContent;
+        }
 
-    public AddableIngredientDto(AddableIngredient ingredient) {
-        BeanUtils.copyProperties(ingredient, this);
     }
 
-    public int getAlcoholContent() {
-        return alcoholContent;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
 
-    public void setAlcoholContent(int alcoholContent) {
-        this.alcoholContent = alcoholContent;
-    }
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent {
+            double alcoholContent;
+            boolean inBar;
 
-    @Override
-    public boolean isInBar() {
-        return this.inBar;
+            protected Detailed(AddableIngredient ingredient) {
+                super(ingredient);
+            }
+        }
+
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class Reduced extends IngredientDto.Response.Reduced {
+            boolean inBar;
+
+            protected Reduced(AddableIngredient ingredient) {
+                super(ingredient);
+            }
+        }
     }
 }

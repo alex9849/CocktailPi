@@ -2,10 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import org.springframework.beans.BeanUtils;
 
@@ -24,12 +21,12 @@ public class IngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter
+        @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "manual"),
-                @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automated"),
-                @JsonSubTypes.Type(value = IngredientGroupDto.class, name = "group")
+                @JsonSubTypes.Type(value = ManualIngredientDto.Request.Create.class, name = "manual"),
+                @JsonSubTypes.Type(value = AutomatedIngredientDto.Request.Create.class, name = "automated"),
+                @JsonSubTypes.Type(value = IngredientGroupDto.Request.Create.class, name = "group")
         })
         public abstract static class Create implements Name, ParentGroupId, Type, Unit {
             String name;
@@ -39,7 +36,7 @@ public class IngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter
+        @Getter @Setter @EqualsAndHashCode
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit {
             final long id;
             String name;
@@ -56,7 +53,7 @@ public class IngredientDto {
             }
         }
 
-        @Getter @Setter
+        @Getter @Setter @EqualsAndHashCode
         public abstract static class Reduced implements Id, Name, Type, InBar {
             final long id;
             String name;

@@ -1,42 +1,69 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
+import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class AutomatedIngredientDto extends AddableIngredientDto {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class AutomatedIngredientDto {
+    private interface PumpTimeMultiplier { @NotNull @Min(1) double getPumpTimeMultiplier(); }
 
-    @NotNull
-    @Min(1)
-    private double pumpTimeMultiplier;
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Create extends AddableIngredientDto.Request.Create {
+            double pumpTimeMultiplier;
 
-    public AutomatedIngredientDto() {}
+            @Override
+            public String getType() {
+                return "automated";
+            }
 
-    public AutomatedIngredientDto(AutomatedIngredient ingredient) {
-        super(ingredient);
-        BeanUtils.copyProperties(ingredient, this);
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
+            }
+
+        }
+
     }
 
-    @Override
-    public String getType() {
-        return "automated";
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
+            double pumpTimeMultiplier;
+
+            protected Detailed(AutomatedIngredient ingredient) {
+                super(ingredient);
+            }
+
+            @Override
+            public String getType() {
+                return "automated";
+            }
+
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
+            }
+
+        }
+
+        @Getter @Setter @EqualsAndHashCode
+        public static class Reduced extends AddableIngredientDto.Response.Reduced {
+
+            protected Reduced(AutomatedIngredient ingredient) {
+                super(ingredient);
+            }
+
+            @Override
+            public String getType() {
+                return "automated";
+            }
+        }
     }
-
-    @Override
-    public Ingredient.Unit getUnit() {
-        return Ingredient.Unit.MILLILITER;
-    }
-
-    public double getPumpTimeMultiplier() {
-        return pumpTimeMultiplier;
-    }
-
-    public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
-        this.pumpTimeMultiplier = pumpTimeMultiplier;
-    }
-
-
 }

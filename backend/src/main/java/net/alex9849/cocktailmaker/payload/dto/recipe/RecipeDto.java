@@ -1,10 +1,12 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
+import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -12,111 +14,76 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecipeDto {
+    private interface Id { long getId(); }
+    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
+    private interface Description { @NotNull @Size(min = 1, max = 3000) String getDescription(); }
+    private interface ProductionSteps { @NotNull @NotEmpty List<ProductionStepDto> getProductionSteps(); }
+    private interface Categories { @NotNull Set<CategoryDto> getCategories(); }
+    private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
 
-    public RecipeDto() {}
+    private interface OwnerName { String getOwnerName(); }
+    private interface HasImage { boolean isHasImage(); }
+    private interface Ingredients { Set<IngredientDto> getIngredients(); };
+    private interface LastUpdate { Date getLastUpdate(); }
+    private interface OwnerId { long getOwnerId(); }
 
-    public RecipeDto(Recipe recipe) {
-        BeanUtils.copyProperties(recipe, this);
-        this.owner = new OwnerDto(recipe.getOwner());
-        this.lastUpdate = recipe.getLastUpdate();
-        this.productionSteps = recipe.getProductionSteps().stream()
-                .map(ProductionStepDto::toDto).collect(Collectors.toList());
-        this.categories = recipe.getCategories().stream().map(CategoryDto::new)
-                .collect(Collectors.toSet());
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Create implements Name, OwnerId, Description, ProductionSteps, Categories, DefaultAmountToFill {
+            String name;
+            long ownerId;
+            String description;
+            List<ProductionStepDto> productionSteps;
+            Set<CategoryDto> categories;
+            long defaultAmountToFill;
+        }
     }
 
-    private long id;
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
 
-    @NotNull
-    @Size(min = 1, max = 30)
-    private String name;
+        @Getter @Setter @EqualsAndHashCode
+        public static class Detailed implements Name, OwnerId, Description, ProductionSteps, Categories,
+                HasImage, DefaultAmountToFill, LastUpdate {
+            final long id;
+            String name;
+            long ownerId;
+            String description;
+            List<ProductionStepDto> productionSteps;
+            Set<CategoryDto> categories;
+            boolean hasImage;
+            long defaultAmountToFill;
+            Date lastUpdate;
 
-    @NotNull
-    private OwnerDto owner;
+            public Detailed(Recipe recipe) {
+                this.id = recipe.getId();
+                BeanUtils.copyProperties(recipe, this);
+                this.productionSteps = recipe.getProductionSteps().stream()
+                        .map(ProductionStepDto::toDto).collect(Collectors.toList());
+                this.categories = recipe.getCategories().stream().map(CategoryDto::new)
+                        .collect(Collectors.toSet());
+            }
+        }
 
-    @NotNull
-    @Size(min = 0, max = 3000)
-    private String description;
+        @Getter @Setter @EqualsAndHashCode
+        public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, Ingredients {
+            final long id;
+            String name;
+            String ownerName;
+            String description;
+            boolean hasImage;
+            Set<IngredientDto> ingredients;
 
-    @NotNull
-    private List<ProductionStepDto> productionSteps;
-
-    @NotNull
-    private Set<CategoryDto> categories;
-
-    private boolean hasImage;
-
-    @NotNull
-    private long defaultAmountToFill;
-
-    private Date lastUpdate;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public OwnerDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(OwnerDto owner) {
-        this.owner = owner;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<ProductionStepDto> getProductionSteps() {
-        return productionSteps;
-    }
-
-    public void setProductionSteps(List<ProductionStepDto> productionSteps) {
-        this.productionSteps = productionSteps;
-    }
-
-    public Set<CategoryDto> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<CategoryDto> categories) {
-        this.categories = categories;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public long getDefaultAmountToFill() {
-        return defaultAmountToFill;
-    }
-
-    public void setDefaultAmountToFill(long defaultAmountToFill) {
-        this.defaultAmountToFill = defaultAmountToFill;
+            public SearchResult(Recipe recipe) {
+                this.id = recipe.getId();
+                BeanUtils.copyProperties(recipe, this);
+                this.setOwnerName(recipe.getOwner().getUsername());
+                //TODO Ingredients
+                this.ingredients = null;
+            }
+        }
     }
 }
