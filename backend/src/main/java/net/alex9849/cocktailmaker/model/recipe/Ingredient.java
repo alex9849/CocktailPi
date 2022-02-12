@@ -27,7 +27,7 @@ public abstract class Ingredient {
         this.name = name;
     }
 
-    public IngredientGroup getParentGroupName() {
+    public IngredientGroup getParentGroup() {
         if(parentGroupId != null && parentGroup == null) {
             IngredientService iService = SpringUtility.getBean(IngredientService.class);
             parentGroup = (IngredientGroup) iService.getIngredient(parentGroupId);

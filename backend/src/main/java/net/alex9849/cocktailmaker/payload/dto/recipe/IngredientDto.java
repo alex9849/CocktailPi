@@ -2,89 +2,69 @@ package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "manual"),
-        @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automated"),
-        @JsonSubTypes.Type(value = IngredientGroupDto.class, name = "group")
-})
-public abstract class IngredientDto {
-    private long id;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class IngredientDto {
+    private interface Id { long getId(); }
+    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
+    private interface ParentGroupId { Long getParentGroupId(); }
+    private interface ParentGroupName { String getParentGroupName(); }
+    private interface Type { String getType(); }
+    private interface InBar { boolean isInBar(); }
+    private interface Unit { Ingredient.Unit getUnit(); }
 
-    @NotNull
-    @Size(min = 1, max = 30)
-    private String name;
-
-    private Long parentGroupId;
-    private String parentGroupName;
-
-    public IngredientDto() {}
-
-    public IngredientDto(Ingredient ingredient) {
-        BeanUtils.copyProperties(ingredient, this);
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getParentGroupName() {
-        return parentGroupName;
-    }
-
-    public void setParentGroupName(String parentGroupName) {
-        this.parentGroupName = parentGroupName;
-    }
-
-    public static IngredientDto toDto(Ingredient ingredient) {
-        if(ingredient instanceof ManualIngredient) {
-            return new ManualIngredientDto((ManualIngredient) ingredient);
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = ManualIngredientDto.class, name = "manual"),
+                @JsonSubTypes.Type(value = AutomatedIngredientDto.class, name = "automated"),
+                @JsonSubTypes.Type(value = IngredientGroupDto.class, name = "group")
+        })
+        public abstract static class Create implements Name, ParentGroupId, Type, Unit {
+            String name;
+            Long parentGroupId;
         }
-        if(ingredient instanceof AutomatedIngredient) {
-            return new AutomatedIngredientDto((AutomatedIngredient) ingredient);
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter
+        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit {
+            final long id;
+            String name;
+            Long parentGroupId;
+            String parentGroupName;
+
+            protected Detailed(Ingredient ingredient) {
+                this.id = ingredient.getId();
+                BeanUtils.copyProperties(ingredient, this);
+                if(ingredient.getParentGroup() == null) {
+                    this.parentGroupId = ingredient.getParentGroupId();
+                    this.parentGroupName = ingredient.getParentGroup().getName();
+                }
+            }
         }
-        if(ingredient instanceof IngredientGroup) {
-            return new IngredientGroupDto((IngredientGroup) ingredient);
+
+        @Getter @Setter
+        public abstract static class Reduced implements Id, Name, Type, InBar {
+            final long id;
+            String name;
+
+            protected Reduced(Ingredient ingredient) {
+                this.id = ingredient.getId();
+                BeanUtils.copyProperties(ingredient, this);
+            }
         }
-        throw new IllegalStateException("IngredientType is not supported yet!");
     }
-
-    public Long getParentGroupId() {
-        return parentGroupId;
-    }
-
-    public abstract String getType();
-
-    public void setParentGroupId(Long parentGroupId) {
-        this.parentGroupId = parentGroupId;
-    }
-
-    public abstract boolean isInBar();
-
-    public abstract Ingredient.Unit getUnit();
-
-
 }

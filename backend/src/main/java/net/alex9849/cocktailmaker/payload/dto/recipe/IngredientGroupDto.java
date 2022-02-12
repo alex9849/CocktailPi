@@ -1,52 +1,77 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class IngredientGroupDto extends IngredientDto {
-    private Set<Long> leafIds;
-    private boolean inBar;
-    private int minAlcoholContent;
-    private int maxAlcoholContent;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class IngredientGroupDto {
+    private interface Leaves { Set<Long> getLeafIds(); }
+    private interface MinAlcoholContent { int getMinAlcoholContent(); }
+    private interface MaxAlcoholContent { int getMaxAlcoholContent(); }
 
-    public IngredientGroupDto() {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
 
-    public IngredientGroupDto(IngredientGroup ingredient) {
-        super(ingredient);
-        leafIds = ingredient.getAddableIngredientChildren().stream()
-                .map(Ingredient::getId).collect(Collectors.toSet());
-        inBar = ingredient.isInBar();
-        minAlcoholContent = ingredient.getMinAlcoholContent();
-        maxAlcoholContent = ingredient.getMaxAlcoholContent();
+        public static class Create extends IngredientDto.Request.Create {
+
+            @Override
+            public String getType() {
+                return "group";
+            }
+
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
+            }
+        }
     }
 
-    public Set<Long> getLeafIds() {
-        return leafIds;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter
+        public static class Detailed extends IngredientDto.Response.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
+            Set<Long> leafIds;
+            int minAlcoholContent;
+            int maxAlcoholContent;
+            boolean inBar;
 
-    public int getMinAlcoholContent() {
-        return minAlcoholContent;
-    }
+            public Detailed(IngredientGroup ingredientGroup) {
+                super(ingredientGroup);
+                this.leafIds = ingredientGroup.getAddableIngredientChildren()
+                        .stream().map(Ingredient::getId)
+                        .collect(Collectors.toSet());
+            }
 
-    public int getMaxAlcoholContent() {
-        return maxAlcoholContent;
-    }
+            @Override
+            public String getType() {
+                return "group";
+            }
 
-    @Override
-    public String getType() {
-        return "group";
-    }
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
+            }
+        }
 
-    @Override
-    public boolean isInBar() {
-        return inBar;
-    }
+        @Getter @Setter
+        public static class Reduced extends IngredientDto.Response.Reduced {
+            boolean inBar;
 
-    @Override
-    public Ingredient.Unit getUnit() {
-        return Ingredient.Unit.MILLILITER;
+            public Reduced(IngredientGroup ingredient) {
+                super(ingredient);
+            }
+
+            @Override
+            public String getType() {
+                return "group";
+            }
+        }
     }
 }
