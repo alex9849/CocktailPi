@@ -1,51 +1,41 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
+import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.PlayAudioEventAction;
-import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class PlayAudioEventActionDto extends FileEventActionDto {
-    private boolean onRepeat;
-    @Min(0) @Max(100)
-    private int volume;
-    @NotNull()
-    private String soundDevice;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class PlayAudioEventActionDto {
+    private interface OnRepeat { boolean isOnRepeat(); }
+    private interface Volume { @Min(0) @Max(100) int getVolume(); }
+    private interface SoundDevice { @NotNull() String getSoundDevice(); }
 
-    public PlayAudioEventActionDto() {}
 
-    public PlayAudioEventActionDto(PlayAudioEventAction eventAction) {
-        BeanUtils.copyProperties(eventAction, this);
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Create extends FileEventActionDto.Request.Create implements OnRepeat, Volume, SoundDevice {
+            boolean onRepeat;
+            int volume;
+            String soundDevice;
+        }
     }
 
-    public boolean isOnRepeat() {
-        return onRepeat;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Detailed extends FileEventActionDto.Response.Detailed {
 
-    public void setOnRepeat(boolean onRepeat) {
-        this.onRepeat = onRepeat;
-    }
+            protected Detailed(PlayAudioEventAction eventAction) {
+                super(eventAction);
+            }
 
-    public int getVolume() {
-        return volume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
-
-    public String getSoundDevice() {
-        return soundDevice;
-    }
-
-    public void setSoundDevice(String soundDevice) {
-        this.soundDevice = soundDevice;
-    }
-
-    @Override
-    public String getType() {
-        return "playAudio";
+            public String getType() {
+                return "playAudio";
+            }
+        }
     }
 }

@@ -2,84 +2,90 @@ package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.*;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = CallUrlEventActionDto.class, name = "callUrl"),
-        @JsonSubTypes.Type(value = ExecutePythonEventActionDto.class, name = "execPy"),
-        @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio"),
-        @JsonSubTypes.Type(value = DoNothingEventActionDto.class, name = "doNothing")
-})
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class EventActionDto {
-    private long id;
-    @NotNull
-    private EventTrigger trigger;
-    @NotNull
-    private Set<@NotNull @Size(max = 40) String> executionGroups;
-    private String description;
-    @Size(max = 40)
-    private String comment;
+    private interface Id { long getId(); }
+    private interface Trigger { @NotNull EventTrigger getTrigger(); }
+    private interface ExecutionGroups { @NotNull Set<@NotNull @Size(max = 40) String> getExecutionGroups(); }
+    private interface Description { String getDescription(); }
+    private interface Comment { @Size(max = 40) String getComment(); }
+    private interface Type { String getType(); }
 
-    public static EventActionDto toDto(EventAction eventAction) {
-        if(eventAction instanceof CallUrlEventAction) {
-            return new CallUrlEventActionDto((CallUrlEventAction) eventAction);
+    private interface EventActionId { long getEventActionId(); }
+    private interface RunId { long getRunId(); }
+    private interface HasLog { boolean isHasLog(); }
+    private interface Status { EventActionInformation.Status getStatus(); }
+
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = CallUrlEventActionDto.class, name = "callUrl"),
+                @JsonSubTypes.Type(value = ExecutePythonEventActionDto.class, name = "execPy"),
+                @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio"),
+                @JsonSubTypes.Type(value = DoNothingEventActionDto.class, name = "doNothing")
+        })
+        @Getter @Setter @EqualsAndHashCode
+        public static class Create implements Trigger, ExecutionGroups, Comment {
+            EventTrigger trigger;
+            Set<String> executionGroups;
+            String comment;
         }
-        if(eventAction instanceof ExecutePythonEventAction) {
-            return new ExecutePythonEventActionDto((ExecutePythonEventAction) eventAction);
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class Detailed implements Id, Trigger, ExecutionGroups, Description, Comment, Type {
+            long id;
+            EventTrigger trigger;
+            Set<String> executionGroups;
+            String description;
+            String comment;
+
+            protected Detailed(EventAction eventAction) {
+                BeanUtils.copyProperties(eventAction, this);
+            }
+
+            public static EventActionDto.Response.Detailed toDto(EventAction eventAction) {
+                if(eventAction == null) {
+                    return null;
+                }
+                if(eventAction instanceof CallUrlEventAction) {
+                    return new CallUrlEventActionDto.Response.Detailed((CallUrlEventAction) eventAction);
+                }
+                if(eventAction instanceof ExecutePythonEventAction) {
+                    return new ExecutePythonEventActionDto.Response.Detailed((ExecutePythonEventAction) eventAction);
+                }
+                if(eventAction instanceof PlayAudioEventAction) {
+                    return new PlayAudioEventActionDto.Response.Detailed((PlayAudioEventAction) eventAction);
+                }
+                if(eventAction instanceof DoNothingEventAction) {
+                    return new DoNothingEventActionDto.Response.Detailed((DoNothingEventAction) eventAction);
+                }
+                throw new IllegalStateException("EventAction-Type is not supported yet!");
+            }
         }
-        if(eventAction instanceof PlayAudioEventAction) {
-            return new PlayAudioEventActionDto((PlayAudioEventAction) eventAction);
+
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class RunInformation implements EventActionId, RunId, HasLog, Status {
+            long eventActionId;
+            long runId;
+            boolean hasLog;
+            EventActionInformation.Status status;
+
+            public RunInformation(EventActionInformation eai) {
+                BeanUtils.copyProperties(eai, this);
+            }
         }
-        if(eventAction instanceof DoNothingEventAction) {
-            return new DoNothingEventActionDto((DoNothingEventAction) eventAction);
-        }
-        throw new IllegalStateException("EventAction-Type is not supported yet!");
     }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public EventTrigger getTrigger() {
-        return trigger;
-    }
-
-    public void setTrigger(EventTrigger trigger) {
-        this.trigger = trigger;
-    }
-
-    public Set<String> getExecutionGroups() {
-        return executionGroups;
-    }
-
-    public void setExecutionGroups(Set<String> executionGroups) {
-        this.executionGroups = executionGroups;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public abstract String getType();
 }

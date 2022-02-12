@@ -1,44 +1,40 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
+import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.CallUrlEventAction;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class CallUrlEventActionDto extends EventActionDto {
-    @NotNull
-    private RequestMethod requestMethod;
-    @NotNull
-    @Size(max = 255)
-    private String url;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class CallUrlEventActionDto {
+    private interface RequestCommand { @NotNull RequestMethod getRequestMethod(); }
+    private interface Url { @NotNull @Size(max = 255) String getUrl(); }
 
-    public CallUrlEventActionDto() {}
-
-    public CallUrlEventActionDto(CallUrlEventAction eventAction) {
-        BeanUtils.copyProperties(eventAction, this);
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Create extends EventActionDto.Request.Create implements RequestCommand, Url {
+            RequestMethod requestMethod;
+            String url;
+        }
     }
 
-    public RequestMethod getRequestMethod() {
-        return requestMethod;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Detailed extends EventActionDto.Response.Detailed implements RequestCommand, Url {
+            RequestMethod requestMethod;
+            String url;
 
-    public void setRequestMethod(RequestMethod requestMethod) {
-        this.requestMethod = requestMethod;
-    }
+            protected Detailed(CallUrlEventAction eventAction) {
+                super(eventAction);
+            }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @Override
-    public String getType() {
-        return "callUrl";
+            public String getType() {
+                return "callUrl";
+            }
+        }
     }
 }
