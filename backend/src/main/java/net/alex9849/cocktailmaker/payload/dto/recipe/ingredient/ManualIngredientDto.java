@@ -9,7 +9,7 @@ public class ManualIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends AddableIngredientDto.Request.Create {
             Ingredient.Unit unit;
 
@@ -22,7 +22,7 @@ public class ManualIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends AddableIngredientDto.Response.Detailed {
             Ingredient.Unit unit;
 
@@ -37,7 +37,7 @@ public class ManualIngredientDto {
 
         }
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
 
             protected Reduced(ManualIngredient ingredient) {

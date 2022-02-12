@@ -12,7 +12,7 @@ public abstract class AddableIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent {
             double alcoholContent;
         }
@@ -22,7 +22,7 @@ public abstract class AddableIngredientDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent {
             double alcoholContent;
             boolean inBar;
@@ -32,7 +32,7 @@ public abstract class AddableIngredientDto {
             }
         }
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Reduced extends IngredientDto.Response.Reduced {
             boolean inBar;
 

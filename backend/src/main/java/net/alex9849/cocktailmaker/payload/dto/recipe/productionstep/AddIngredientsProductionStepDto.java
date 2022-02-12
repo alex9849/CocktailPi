@@ -13,7 +13,7 @@ public class AddIngredientsProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends ProductionStepDto.Request.Create {
             List<ProductionStepIngredientDto.Request.Create> stepIngredients;
 
@@ -26,7 +26,7 @@ public class AddIngredientsProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends ProductionStepDto.Response.Detailed {
             List<ProductionStepIngredientDto.Response.Detailed> stepIngredients;
 

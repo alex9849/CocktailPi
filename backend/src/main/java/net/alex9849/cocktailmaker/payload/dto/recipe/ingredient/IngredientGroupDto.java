@@ -15,7 +15,7 @@ public class IngredientGroupDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends IngredientDto.Request.Create {
 
             @Override
@@ -32,7 +32,7 @@ public class IngredientGroupDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends IngredientDto.Response.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
             Set<Long> leafIds;
             int minAlcoholContent;
@@ -57,7 +57,7 @@ public class IngredientGroupDto {
             }
         }
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends IngredientDto.Response.Reduced {
             boolean inBar;
 

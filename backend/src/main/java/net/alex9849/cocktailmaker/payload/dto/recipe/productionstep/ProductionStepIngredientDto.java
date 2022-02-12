@@ -16,7 +16,7 @@ public class ProductionStepIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create implements Ingredient, Amount, Scale {
             IngredientDto.Response.Detailed ingredient;
             int amount;
@@ -26,7 +26,7 @@ public class ProductionStepIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed implements Ingredient, Amount, Scale {
             IngredientDto.Response.Detailed ingredient;
             int amount;

@@ -13,7 +13,7 @@ public class AutomatedIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends AddableIngredientDto.Request.Create {
             double pumpTimeMultiplier;
 
@@ -33,7 +33,7 @@ public class AutomatedIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
             double pumpTimeMultiplier;
 
@@ -53,7 +53,7 @@ public class AutomatedIngredientDto {
 
         }
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
 
             protected Reduced(AutomatedIngredient ingredient) {

@@ -15,7 +15,7 @@ public class ProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = WrittenInstructionProductionStepDto.class, name = "writtenInstruction"),
@@ -28,7 +28,7 @@ public class ProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Detailed implements Type {
 
             protected Detailed(ProductionStep productionStep) {

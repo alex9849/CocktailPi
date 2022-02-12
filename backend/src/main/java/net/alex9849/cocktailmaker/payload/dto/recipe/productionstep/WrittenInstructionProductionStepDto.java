@@ -11,7 +11,7 @@ public class WrittenInstructionProductionStepDto {
     public static class Request {
         @Getter
         @Setter
-        @EqualsAndHashCode
+        @EqualsAndHashCode(callSuper = true)
         public static class Create extends ProductionStepDto.Request.Create implements Message {
             String message;
 
@@ -26,7 +26,7 @@ public class WrittenInstructionProductionStepDto {
     public static class Response {
         @Getter
         @Setter
-        @EqualsAndHashCode
+        @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends ProductionStepDto.Response.Detailed implements Message {
             String message;
 
