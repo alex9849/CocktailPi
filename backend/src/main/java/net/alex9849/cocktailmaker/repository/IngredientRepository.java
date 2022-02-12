@@ -176,28 +176,28 @@ public class IngredientRepository extends JdbcDaoSupport {
     private Ingredient parseRs(ResultSet resultSet) throws SQLException {
         Ingredient ingredient;
         String dType = resultSet.getString("dType");
-        long id = resultSet.getLong("id");
-        Long parentGroupId = resultSet.getLong("parent_group_id");
-        if(resultSet.wasNull()) {
-            parentGroupId = null;
-        }
 
         if(Objects.equals(dType, "ManualIngredient")) {
-            ManualIngredient mIngredient = new ManualIngredient(id, parentGroupId);
+            ManualIngredient mIngredient = new ManualIngredient();
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
             mIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             mIngredient.setInBar(resultSet.getBoolean("in_bar"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
-            AutomatedIngredient aIngredient = new AutomatedIngredient(id, parentGroupId);
+            AutomatedIngredient aIngredient = new AutomatedIngredient();
             aIngredient.setPumpTimeMultiplier(resultSet.getDouble("pump_time_multiplier"));
             aIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             aIngredient.setInBar(resultSet.getBoolean("in_bar"));
             ingredient = aIngredient;
         } else if (Objects.equals(dType, "IngredientGroup")) {
-            ingredient = new IngredientGroup(id, parentGroupId);
+            ingredient = new IngredientGroup();
         } else {
             throw new IllegalArgumentException("IngredientType doesn't exist: " + dType);
+        }
+        ingredient.setId(resultSet.getLong("id"));
+        ingredient.setParentGroupId(resultSet.getLong("parent_group_id"));
+        if(resultSet.wasNull()) {
+            ingredient.setParentGroupId(null);
         }
         ingredient.setName(resultSet.getString("name"));
         return ingredient;

@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.collection;
 
 import net.alex9849.cocktailmaker.model.Collection;
-import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
@@ -20,7 +19,6 @@ public class CollectionDto {
     private String description;
     private boolean completed;
     private boolean hasImage;
-    private OwnerDto owner;
     private int size;
     private Date lastUpdate;
 
@@ -28,7 +26,6 @@ public class CollectionDto {
 
     public CollectionDto(Collection collection) {
         BeanUtils.copyProperties(collection, this);
-        this.owner = new OwnerDto(collection.getOwner());
     }
 
     public boolean isHasImage() {
@@ -77,14 +74,6 @@ public class CollectionDto {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-    public OwnerDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(OwnerDto owner) {
-        this.owner = owner;
     }
 
     public int getSize() {

@@ -80,7 +80,7 @@ public class Recipe {
     }
 
     public void setOwnerId(Long ownerId) {
-        if(Objects.equals(this.ownerId, ownerId)) {
+        if(!Objects.equals(this.ownerId, ownerId)) {
             this.owner = null;
         }
         this.ownerId = ownerId;

@@ -6,10 +6,6 @@ import javax.persistence.DiscriminatorValue;
 public class AutomatedIngredient extends AddableIngredient {
     private double pumpTimeMultiplier;
 
-    public AutomatedIngredient(long id, Long parentGroupId) {
-        super(id, parentGroupId);
-    }
-
     public double getPumpTimeMultiplier() {
         return pumpTimeMultiplier;
     }

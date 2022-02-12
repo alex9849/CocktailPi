@@ -6,10 +6,6 @@ import javax.persistence.DiscriminatorValue;
 public class ManualIngredient extends AddableIngredient {
     private Unit unit;
 
-    public ManualIngredient(long id, Long parentGroupId) {
-        super(id, parentGroupId);
-    }
-
     public Unit getUnit() {
         return unit;
     }

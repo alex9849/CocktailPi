@@ -7,7 +7,6 @@ import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
@@ -56,12 +55,11 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         InputStream recipeStream = this.getClass().getResourceAsStream("/db/defaultdata/recipes.json");
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        TypeReference<List<RecipeDto>> typeReference = new TypeReference<List<RecipeDto>>(){};
-        List<RecipeDto> recipeDtos = mapper.readValue(recipeStream, typeReference);
+        TypeReference<List<RecipeDto.Request.Create>> typeReference = new TypeReference<List<RecipeDto.Request.Create>>(){};
+        List<RecipeDto.Request.Create> recipeDtos = mapper.readValue(recipeStream, typeReference);
         User defaultUser = createDefaultUser();
-        OwnerDto defaultOwnerDto = new OwnerDto(defaultUser);
-        for(RecipeDto recipeDto : recipeDtos) {
-            recipeDto.setOwner(defaultOwnerDto);
+        for(RecipeDto.Request.Create recipeDto : recipeDtos) {
+            recipeDto.setOwnerId(defaultUser.getId());
             Recipe recipe = recipeService.fromDto(recipeDto);
             recipe.setOwner(defaultUser);
             recipe.setOwnerId(defaultUser.getId());

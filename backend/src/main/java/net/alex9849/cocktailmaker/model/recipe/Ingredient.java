@@ -4,19 +4,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
+import java.util.Objects;
+
 public abstract class Ingredient {
-    private final long id;
+    private Long id;
     private String name;
     private Long parentGroupId;
     private IngredientGroup parentGroup;
 
-    public Ingredient(long id, Long parentGroupId) {
-        this.id = id;
-        this.parentGroupId = parentGroupId;
-    }
-
     public long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -25,6 +26,14 @@ public abstract class Ingredient {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setParentGroupId(Long parentGroupId) {
+        if(!Objects.equals(parentGroupId, id)) {
+            return;
+        }
+        this.parentGroupId = parentGroupId;
+        this.parentGroup = null;
     }
 
     public IngredientGroup getParentGroup() {

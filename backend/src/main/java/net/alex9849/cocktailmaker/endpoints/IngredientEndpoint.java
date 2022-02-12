@@ -47,7 +47,7 @@ public class IngredientEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    ResponseEntity<?> createIngredient(@Valid @RequestBody IngredientDto ingredientDto, UriComponentsBuilder uriBuilder) {
+    ResponseEntity<?> createIngredient(@Valid @RequestBody IngredientDto.Request.Create ingredientDto, UriComponentsBuilder uriBuilder) {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
         ingredient = ingredientService.createIngredient(ingredient);
         UriComponents uriComponents = uriBuilder.path("/api/ingredient/{id}").buildAndExpand(ingredient.getId());
@@ -56,12 +56,12 @@ public class IngredientEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateIngredient(@Valid @PathVariable("id") long id, @RequestBody IngredientDto ingredientDto) {
+    ResponseEntity<?> updateIngredient(@Valid @PathVariable("id") long id, @RequestBody IngredientDto.Request.Create ingredientDto) {
         if(ingredientService.getIngredient(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        ingredientDto.setId(id);
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
+        ingredient.setId(id);
         ingredientService.updateIngredient(ingredient);
         return ResponseEntity.ok().build();
     }

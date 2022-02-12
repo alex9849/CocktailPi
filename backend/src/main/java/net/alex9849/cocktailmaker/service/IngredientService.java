@@ -24,7 +24,7 @@ public class IngredientService {
         return ingredientRepository.findById(id).orElse(null);
     }
 
-    public Ingredient fromDto(IngredientDto ingredientDto) {
+    public Ingredient fromDto(IngredientDto.Request.Create ingredientDto) {
         if(ingredientDto == null) {
             return null;
         }
@@ -40,14 +40,14 @@ public class IngredientService {
         }
 
         Ingredient ingredient;
-        if(ingredientDto instanceof ManualIngredientDto) {
-            ingredient = new ManualIngredient(ingredientDto.getId(), null);
+        if(ingredientDto instanceof ManualIngredientDto.Request.Create) {
+            ingredient = new ManualIngredient();
 
-        } else if(ingredientDto instanceof AutomatedIngredientDto) {
-            ingredient = new AutomatedIngredient(ingredientDto.getId(), null);
+        } else if(ingredientDto instanceof AutomatedIngredientDto.Request.Create) {
+            ingredient = new AutomatedIngredient();
 
-        } else if(ingredientDto instanceof IngredientGroupDto) {
-            ingredient = new IngredientGroup(ingredientDto.getId(), null);
+        } else if(ingredientDto instanceof IngredientGroupDto.Request.Create) {
+            ingredient = new IngredientGroup();
 
         } else {
             throw new IllegalStateException("IngredientType not supported yet!");

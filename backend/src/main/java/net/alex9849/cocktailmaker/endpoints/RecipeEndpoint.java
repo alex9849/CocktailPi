@@ -87,7 +87,7 @@ public class RecipeEndpoint {
         Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId,
                 inCollectionId, inCategory, containsIngredients, searchName, isFabricable,
                 isInBar, page, pageSize, sort);
-        List<RecipeDto> recipeDtos = recipePage.stream().map(RecipeDto::new).collect(Collectors.toList());
+        List<RecipeDto.Response.SearchResult> recipeDtos = recipePage.stream().map(RecipeDto.Response.SearchResult::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
 
@@ -98,12 +98,12 @@ public class RecipeEndpoint {
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new RecipeDto(recipe));
+        return ResponseEntity.ok(new RecipeDto.Response.Detailed(recipe));
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
+    ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
@@ -122,18 +122,18 @@ public class RecipeEndpoint {
             recipeService.setImage(recipe.getId(), out.toByteArray());
         }
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
-        return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto(recipe));
+        return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto.Response.Detailed(recipe));
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto recipeDto,
+    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file,
                                    @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
                                    @PathVariable("id") long id, HttpServletRequest request) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        recipeDto.setId(id);
         Recipe recipe = recipeService.fromDto(recipeDto);
+        recipe.setId(id);
         Recipe oldRecipe = recipeService.getById(id);
         if (oldRecipe == null) {
             return ResponseEntity.notFound().build();
