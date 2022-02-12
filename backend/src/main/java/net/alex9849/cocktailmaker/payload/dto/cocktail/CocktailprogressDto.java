@@ -2,8 +2,8 @@ package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.payload.dto.OwnerDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

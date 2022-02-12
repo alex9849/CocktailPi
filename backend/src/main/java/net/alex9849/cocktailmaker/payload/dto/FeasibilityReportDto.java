@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto;
 
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

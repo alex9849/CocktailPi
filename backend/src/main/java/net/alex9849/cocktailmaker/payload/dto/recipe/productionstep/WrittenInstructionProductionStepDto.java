@@ -1,0 +1,44 @@
+package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
+
+import lombok.*;
+import net.alex9849.cocktailmaker.model.recipe.WrittenInstructionProductionStep;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class WrittenInstructionProductionStepDto {
+    private interface Message { String getMessage(); }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter
+        @Setter
+        @EqualsAndHashCode
+        public static class Create extends ProductionStepDto.Request.Create implements Message {
+            String message;
+
+            @Override
+            public String getType() {
+                return "writtenInstruction";
+            }
+        }
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter
+        @Setter
+        @EqualsAndHashCode
+        public static class Detailed extends ProductionStepDto.Response.Detailed implements Message {
+            String message;
+
+            public Detailed(WrittenInstructionProductionStep productionStep) {
+                super(productionStep);
+            }
+
+            @Override
+            public String getType() {
+                return "writtenInstruction";
+            }
+        }
+    }
+
+}

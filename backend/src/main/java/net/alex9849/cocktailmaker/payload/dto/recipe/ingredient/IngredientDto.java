@@ -1,9 +1,12 @@
-package net.alex9849.cocktailmaker.payload.dto.recipe;
+package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
+import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.IngredientGroup;
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
@@ -51,6 +54,23 @@ public class IngredientDto {
                     this.parentGroupName = ingredient.getParentGroup().getName();
                 }
             }
+
+            public static Detailed toDto(Ingredient ingredient) {
+                if(ingredient == null) {
+                    return null;
+                }
+                if(ingredient instanceof IngredientGroup) {
+                    return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
+                }
+                if(ingredient instanceof ManualIngredient) {
+                    return new ManualIngredientDto.Response.Detailed((ManualIngredient) ingredient);
+                }
+                if(ingredient instanceof AutomatedIngredient) {
+                    return new AutomatedIngredientDto.Response.Detailed((AutomatedIngredient) ingredient);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
+
+            }
         }
 
         @Getter @Setter @EqualsAndHashCode
@@ -61,6 +81,23 @@ public class IngredientDto {
             protected Reduced(Ingredient ingredient) {
                 this.id = ingredient.getId();
                 BeanUtils.copyProperties(ingredient, this);
+            }
+
+            public static Reduced toDto(Ingredient ingredient) {
+                if(ingredient == null) {
+                    return null;
+                }
+                if(ingredient instanceof IngredientGroup) {
+                    return new IngredientGroupDto.Response.Reduced((IngredientGroup) ingredient);
+                }
+                if(ingredient instanceof ManualIngredient) {
+                    return new ManualIngredientDto.Response.Reduced((ManualIngredient) ingredient);
+                }
+                if(ingredient instanceof AutomatedIngredient) {
+                    return new AutomatedIngredientDto.Response.Reduced((AutomatedIngredient) ingredient);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
+
             }
         }
     }

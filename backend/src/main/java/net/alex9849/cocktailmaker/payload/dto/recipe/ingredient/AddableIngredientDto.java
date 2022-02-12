@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.payload.dto.recipe;
+package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.AddableIngredient;

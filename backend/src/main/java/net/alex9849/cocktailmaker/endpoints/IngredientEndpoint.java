@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +42,7 @@ public class IngredientEndpoint {
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
                 filterAutomaticIngredients, filterIngredientGroups, inBar)
-                .stream().map(IngredientDto::toDto).collect(Collectors.toList()));
+                .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

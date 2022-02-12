@@ -1,8 +1,8 @@
-package net.alex9849.cocktailmaker.payload.dto.recipe;
+package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ManualIngredientDto {
@@ -26,7 +26,7 @@ public class ManualIngredientDto {
         public static class Detailed extends AddableIngredientDto.Response.Detailed {
             Ingredient.Unit unit;
 
-            protected Detailed(AutomatedIngredient ingredient) {
+            protected Detailed(ManualIngredient ingredient) {
                 super(ingredient);
             }
 
@@ -40,7 +40,7 @@ public class ManualIngredientDto {
         @Getter @Setter @EqualsAndHashCode
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
 
-            protected Reduced(AutomatedIngredient ingredient) {
+            protected Reduced(ManualIngredient ingredient) {
                 super(ingredient);
             }
 

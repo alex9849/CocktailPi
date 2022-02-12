@@ -1,10 +1,10 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.recipe.*;
-import net.alex9849.cocktailmaker.payload.dto.recipe.AutomatedIngredientDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientGroupDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ManualIngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

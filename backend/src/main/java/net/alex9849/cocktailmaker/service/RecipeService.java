@@ -1,7 +1,11 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.recipe.*;
-import net.alex9849.cocktailmaker.payload.dto.recipe.*;
+import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
 import net.alex9849.cocktailmaker.repository.CollectionRepository;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
