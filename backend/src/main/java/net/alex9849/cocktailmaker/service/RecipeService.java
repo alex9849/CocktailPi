@@ -109,7 +109,7 @@ public class RecipeService {
     }
 
     public boolean updateRecipe(Recipe recipe) {
-        if(!recipeRepository.findById(recipe.getId()).isPresent()) {
+        if(recipeRepository.findById(recipe.getId()).isEmpty()) {
             throw new IllegalArgumentException("Recipe doesn't exist!");
         }
         return recipeRepository.update(recipe);
@@ -119,7 +119,7 @@ public class RecipeService {
         recipeRepository.delete(recipeId);
     }
 
-    public Recipe fromDto(RecipeDto recipeDto) {
+    public Recipe fromDto(RecipeDto.Request.Create recipeDto) {
         if(recipeDto == null) {
             return null;
         }
@@ -132,27 +132,24 @@ public class RecipeService {
         recipe.setCategories(recipeDto.getCategories()
                 .stream().map(CategoryService::fromDto)
                 .collect(Collectors.toList()));
-        recipe.setOwner(userService.getUser(recipeDto.getOwner().getId()));
-        if(recipe.getOwner() != null) {
-            recipe.setOwnerId(recipe.getOwner().getId());
-        }
+        recipe.setOwner(userService.getUser(recipeDto.getOwnerId()));
         return recipe;
     }
 
-    public ProductionStep fromDto(ProductionStepDto productionStepDto) {
+    private ProductionStep fromDto(ProductionStepDto.Request.Create productionStepDto) {
         if(productionStepDto == null) {
             return null;
         }
-        if(productionStepDto instanceof WrittenInstructionProductionStepDto) {
-            return fromDto((WrittenInstructionProductionStepDto) productionStepDto);
+        if(productionStepDto instanceof WrittenInstructionProductionStepDto.Request.Create) {
+            return fromDto((WrittenInstructionProductionStepDto.Request.Create) productionStepDto);
         }
-        if(productionStepDto instanceof AddIngredientsProductionStepDto) {
-            return fromDto((AddIngredientsProductionStepDto) productionStepDto);
+        if(productionStepDto instanceof AddIngredientsProductionStepDto.Request.Create) {
+            return fromDto((AddIngredientsProductionStepDto.Request.Create) productionStepDto);
         }
         throw new IllegalStateException("ProductionSteDtoType not supported: " + productionStepDto.getType());
     }
 
-    public WrittenInstructionProductionStep fromDto(WrittenInstructionProductionStepDto dto) {
+    private WrittenInstructionProductionStep fromDto(WrittenInstructionProductionStepDto.Request.Create dto) {
         if(dto == null) {
             return null;
         }
@@ -161,7 +158,7 @@ public class RecipeService {
         return pStep;
     }
 
-    public AddIngredientsProductionStep fromDto(AddIngredientsProductionStepDto dto) {
+    private AddIngredientsProductionStep fromDto(AddIngredientsProductionStepDto.Request.Create dto) {
         if(dto == null) {
             return null;
         }
@@ -172,13 +169,18 @@ public class RecipeService {
         return pStep;
     }
 
-    public ProductionStepIngredient fromDto(ProductionStepIngredientDto dto) {
+    private ProductionStepIngredient fromDto(ProductionStepIngredientDto.Request.Create dto) {
         if(dto == null) {
             return null;
         }
         ProductionStepIngredient psi = new ProductionStepIngredient();
         BeanUtils.copyProperties(dto, psi);
-        psi.setIngredient(ingredientService.fromDto(dto.getIngredient()));
+        Ingredient ingredient = ingredientService.getIngredient(dto.getIngredient().getId());
+        if(ingredient == null) {
+            throw new IllegalArgumentException("Ingredient with Id \""
+                    + dto.getIngredient().getId() + "\" doesn't exist!");
+        }
+        psi.setIngredient(ingredient);
         return psi;
     }
 }

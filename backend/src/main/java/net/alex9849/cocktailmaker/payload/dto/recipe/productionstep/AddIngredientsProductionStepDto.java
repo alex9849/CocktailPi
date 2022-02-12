@@ -14,7 +14,7 @@ public class AddIngredientsProductionStepDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Created extends ProductionStepDto.Request.Create {
+        public static class Create extends ProductionStepDto.Request.Create {
             List<ProductionStepIngredientDto.Request.Create> stepIngredients;
 
             @Override

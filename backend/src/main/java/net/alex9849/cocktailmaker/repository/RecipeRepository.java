@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class RecipeRepository extends JdbcDaoSupport {
@@ -107,7 +106,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             while (rs.next()) {
                 results.add(parseRs(rs));
             }
-            return results.stream().map(this::populateEntity).collect(Collectors.toList());
+            return results;
         });
     }
 
@@ -299,13 +298,6 @@ public class RecipeRepository extends JdbcDaoSupport {
                             "having count(*) - sum(owned) = 0");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
-    }
-
-    private Recipe populateEntity(Recipe recipe) {
-        recipe.setProductionSteps(productionStepRepository.loadByRecipeId(recipe.getId()));
-        recipe.setOwner(userRepository.findById(recipe.getOwnerId()).get());
-        recipe.setCategories(categoryRepository.findByRecipeId(recipe.getId()));
-        return recipe;
     }
 
     private Recipe parseRs(ResultSet rs) throws SQLException {

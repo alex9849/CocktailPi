@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Repository
+public
 class ProductionStepRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
