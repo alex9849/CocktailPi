@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.model;
 
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.service.UserService;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
 
 import java.util.Date;
 
@@ -39,14 +41,6 @@ public class Collection {
         this.hasImage = hasImage;
     }
 
-    public long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public String getName() {
         return name;
     }
@@ -63,14 +57,6 @@ public class Collection {
         this.description = description;
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
     public boolean isCompleted() {
         return completed;
     }
@@ -85,5 +71,29 @@ public class Collection {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(long ownerId) {
+        if(ownerId != this.ownerId) {
+            this.owner = null;
+        }
+        this.ownerId = ownerId;
+    }
+
+    public User getOwner() {
+        if(owner == null) {
+            UserService uService = SpringUtility.getBean(UserService.class);
+            owner = uService.getUser(ownerId);
+        }
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.ownerId = owner.getId();
+        this.owner = owner;
     }
 }

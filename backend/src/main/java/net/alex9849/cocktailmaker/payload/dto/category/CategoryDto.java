@@ -1,38 +1,34 @@
 package net.alex9849.cocktailmaker.payload.dto.category;
 
-import net.alex9849.cocktailmaker.model.Category;
+import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryDto {
+    private interface Id { long getId(); }
+    private interface Name { @NotNull @Size(min = 1, max = 15) String getName(); }
 
-    private long id;
-
-    @NotNull
-    @Size(min = 1, max = 15)
-    private String name;
-
-    public CategoryDto() {}
-
-    public CategoryDto(Category category) {
-        BeanUtils.copyProperties(category, this);
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Create implements Name {
+            String name;
+        }
     }
 
-    public long getId() {
-        return id;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Detailed implements Id, Name {
+            long id;
+            String name;
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+            public Detailed(net.alex9849.cocktailmaker.model.Category category) {
+                BeanUtils.copyProperties(category, this);
+            }
+        }
     }
 }

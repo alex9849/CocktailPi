@@ -1,114 +1,56 @@
 package net.alex9849.cocktailmaker.payload.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import net.alex9849.cocktailmaker.model.user.User;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserDto {
-    private long id;
+    public interface Id { long getId(); }
+    public interface Username { @NotNull @Size(min = 3, max = 20) String getUsername(); }
+    public interface Firstname { @NotNull @Size(max = 20)String getFirstname(); }
+    public interface Lastname { @NotNull @Size(max = 20) String getLastname(); }
+    public interface IsAccountNonLocked { @NotNull boolean isAccountNonLocked(); }
+    public interface Email { @Size(max = 50) @NotBlank @javax.validation.constraints.Email String getEmail(); }
+    public interface Password { @NotBlank @Size(min = 6, max = 40) String getPassword(); }
+    public interface AdminLevel { int getAdminLevel(); }
 
-    @NotBlank
-    @Size(min = 3, max = 20)
-    private String username;
-
-    @NotNull
-    @Size(max = 20)
-    private String firstname;
-
-    @NotNull
-    @Size(max = 20)
-    private String lastname;
-
-    @NotNull
-    private boolean isAccountNonLocked;
-
-    @Size(max = 50)
-    @NotBlank
-    @Email
-    private String email;
-
-    @NotBlank
-    @Size(min = 6, max = 40)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
-
-    private int adminLevel;
-
-    public UserDto() {}
-
-    public UserDto(User user) {
-        BeanUtils.copyProperties(user, this);
-        if(user.getAuthority() != null) {
-            this.adminLevel = user.getAuthority().getLevel();
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Request {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Create implements Username, Firstname, Lastname, IsAccountNonLocked, Email, Password, AdminLevel {
+            String username;
+            String firstname;
+            String lastname;
+            boolean isAccountNonLocked;
+            String email;
+            String password;
+            int adminLevel;
         }
     }
 
-    public long getId() {
-        return id;
-    }
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
+        @Getter @Setter @EqualsAndHashCode
+        public static class Detailed implements Id, Username, Firstname, Lastname, IsAccountNonLocked, Email, AdminLevel {
+            long id;
+            String username;
+            String firstname;
+            String lastname;
+            boolean isAccountNonLocked;
+            String email;
+            int adminLevel;
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        isAccountNonLocked = accountNonLocked;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getAdminLevel() {
-        return adminLevel;
-    }
-
-    public void setAdminLevel(int adminLevel) {
-        this.adminLevel = adminLevel;
+            public Detailed(User user) {
+                BeanUtils.copyProperties(user, this);
+                if(user.getAuthority() != null) {
+                    this.adminLevel = user.getAuthority().getLevel();
+                }
+            }
+        }
     }
 }

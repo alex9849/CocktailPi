@@ -173,7 +173,6 @@ public class CollectionRepository extends JdbcDaoSupport {
     }
 
     private Collection populateEntity(Collection collection) {
-        collection.setOwner(userRepository.findById(collection.getOwnerId()).orElse(null));
         collection.setSize(recipeRepository.findIdsInCollection(collection.getId()).size());
         return collection;
     }

@@ -23,7 +23,7 @@ public class CategoryEndpoint {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories()
-                .stream().map(CategoryDto::new).collect(Collectors.toList()));
+                .stream().map(CategoryDto.Response.Detailed::new).collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -32,7 +32,7 @@ public class CategoryEndpoint {
         if(category == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new CategoryDto(category));
+        return ResponseEntity.ok(new CategoryDto.Response.Detailed(category));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,8 +46,9 @@ public class CategoryEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCategory(@PathVariable(value = "id") long id, @Valid @RequestBody CategoryDto categoryDto) {
-        categoryDto.setId(id);
-        categoryService.updateCategory(categoryService.fromDto(categoryDto));
+        Category category = categoryService.fromDto(categoryDto);
+        category.setId(id);
+        categoryService.updateCategory(category);
         return ResponseEntity.ok().build();
     }
 

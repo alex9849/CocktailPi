@@ -85,7 +85,6 @@ public class CollectionEndpoint {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Collection updateCollection = collectionService.fromDto(collectionDto);
-        updateCollection.setOwner(existingCollection.getOwner());
         updateCollection.setOwnerId(existingCollection.getOwnerId());
         BufferedImage image = null;
         if(file != null) {

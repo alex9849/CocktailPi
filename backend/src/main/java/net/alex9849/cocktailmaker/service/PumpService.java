@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class PumpService {
-    private static PumpService instance;
 
     private CocktailFactory cocktailFactory;
 
@@ -49,15 +47,6 @@ public class PumpService {
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
-
-    public static PumpService getInstance() {
-        return instance;
-    }
-
-    @PostConstruct
-    public void init() {
-        PumpService.instance = this;
-    }
 
     public void turnAllPumpsOff() {
         List<Pump> pumps = getAllPumps();
@@ -106,15 +95,21 @@ public class PumpService {
         return pump;
     }
 
-    public Pump fromDto(PumpDto pumpDto) {
+    public Pump fromDto(PumpDto.Request.Create pumpDto) {
         if(pumpDto == null) {
             return null;
         }
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
-        AutomatedIngredient aIngredient = (AutomatedIngredient) ingredientService.fromDto(pumpDto.getCurrentIngredient());
-        pump.setCurrentIngredient(aIngredient);
         if(pump.getCurrentIngredient() != null) {
+            Ingredient ingredient = ingredientService.getIngredient(pumpDto.getCurrentIngredient().getId());
+            if(ingredient == null) {
+                throw new IllegalArgumentException("Ingredient with id \"" + pump.getCurrentIngredient().getId() + "\" not found!");
+            }
+            if(!(ingredient instanceof AutomatedIngredient)) {
+                throw new IllegalArgumentException("Ingredient must be an AutomatedIngredient!");
+            }
+            pump.setCurrentIngredient((AutomatedIngredient) ingredient);
             pump.setCurrentIngredientId(pump.getCurrentIngredient().getId());
         }
         return pump;

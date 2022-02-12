@@ -37,7 +37,7 @@ public class AutomatedIngredientDto {
         public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
             double pumpTimeMultiplier;
 
-            protected Detailed(AutomatedIngredient ingredient) {
+            public Detailed(AutomatedIngredient ingredient) {
                 super(ingredient);
             }
 
@@ -56,7 +56,7 @@ public class AutomatedIngredientDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
 
-            protected Reduced(AutomatedIngredient ingredient) {
+            public Reduced(AutomatedIngredient ingredient) {
                 super(ingredient);
             }
 
