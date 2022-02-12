@@ -4,7 +4,7 @@ import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.payload.dto.FeasibilityReportDto;
+import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;

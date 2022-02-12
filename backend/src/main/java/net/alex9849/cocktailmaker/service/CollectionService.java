@@ -88,7 +88,7 @@ public class CollectionService {
         return collectionRepository.findByIds(ids.toArray(new Long[1]));
     }
 
-    public Collection fromDto(CollectionDto collectionDto) {
+    public Collection fromDto(CollectionDto.Request.Create collectionDto) {
         if(collectionDto == null) {
             return null;
         }
