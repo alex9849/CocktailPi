@@ -81,6 +81,15 @@ public class RecipeDto {
             String description;
             boolean hasImage;
             Set<IngredientDto> ingredients;
+
+            public static SearchResult fromEntity(Recipe recipe) {
+                SearchResult dto = new SearchResult(recipe.getId());
+                BeanUtils.copyProperties(recipe, dto);
+                dto.setOwnerName(recipe.getOwner().getUsername());
+                //TODO Ingredients
+                dto.ingredients = null;
+                return dto;
+            }
         }
     }
 }
