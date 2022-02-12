@@ -24,7 +24,7 @@ public class IngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = ManualIngredientDto.Request.Create.class, name = "manual"),
@@ -39,7 +39,7 @@ public class IngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit {
             final long id;
             String name;
@@ -73,7 +73,7 @@ public class IngredientDto {
             }
         }
 
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         public abstract static class Reduced implements Id, Name, Type, InBar {
             final long id;
             String name;

@@ -36,7 +36,7 @@ public class RecipeDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         public static class Create implements Name, OwnerId, Description, ProductionStepsCreated, Categories, DefaultAmountToFill {
             String name;
             long ownerId;
@@ -50,7 +50,7 @@ public class RecipeDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
                 HasImage, DefaultAmountToFill, LastUpdate {
             final long id;
@@ -73,7 +73,7 @@ public class RecipeDto {
             }
         }
 
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode
         public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients {
             final long id;
             String name;
