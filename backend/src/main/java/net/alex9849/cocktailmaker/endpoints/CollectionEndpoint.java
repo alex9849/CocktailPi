@@ -31,7 +31,7 @@ public class CollectionEndpoint {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCollection(@Valid @RequestBody CollectionDto.Request.Create collectionDto, UriComponentsBuilder uriBuilder) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Collection collection = collectionService.fromDto(collectionDto);
+        Collection collection = collectionService.fromDto(collectionDto, principal.getId());
         collection.setOwner(principal);
         collection = collectionService.createCollection(collection);
         UriComponents uriComponents = uriBuilder.path("/api/collection/{id}").buildAndExpand(collection.getId());
@@ -83,9 +83,8 @@ public class CollectionEndpoint {
         if (existingCollection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Collection updateCollection = collectionService.fromDto(collectionDto);
+        Collection updateCollection = collectionService.fromDto(collectionDto, existingCollection.getOwnerId());
         updateCollection.setId(id);
-        updateCollection.setOwnerId(existingCollection.getOwnerId());
         BufferedImage image = null;
         if(file != null) {
             try {

@@ -88,16 +88,13 @@ public class CollectionService {
         return collectionRepository.findByIds(ids.toArray(new Long[1]));
     }
 
-    public Collection fromDto(CollectionDto.Request.Create collectionDto) {
+    public Collection fromDto(CollectionDto.Request.Create collectionDto, long ownerId) {
         if(collectionDto == null) {
             return null;
         }
         Collection collection = new Collection();
         BeanUtils.copyProperties(collectionDto, collection);
-        if(collectionDto.getOwner() != null) {
-            collection.setOwner(userService.getUser(collectionDto.getOwner().getId()));
-            collection.setOwnerId(collection.getOwner().getId());
-        }
+        collection.setOwnerId(ownerId);
         return collection;
     }
 
