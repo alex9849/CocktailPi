@@ -29,10 +29,10 @@ public abstract class EventActionDto {
     public static class Request {
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = CallUrlEventActionDto.class, name = "callUrl"),
-                @JsonSubTypes.Type(value = ExecutePythonEventActionDto.class, name = "execPy"),
-                @JsonSubTypes.Type(value = PlayAudioEventActionDto.class, name = "playAudio"),
-                @JsonSubTypes.Type(value = DoNothingEventActionDto.class, name = "doNothing")
+                @JsonSubTypes.Type(value = CallUrlEventActionDto.Request.Create.class, name = "callUrl"),
+                @JsonSubTypes.Type(value = ExecutePythonEventActionDto.Request.Create.class, name = "execPy"),
+                @JsonSubTypes.Type(value = PlayAudioEventActionDto.Request.Create.class, name = "playAudio"),
+                @JsonSubTypes.Type(value = DoNothingEventActionDto.Request.Create.class, name = "doNothing")
         })
         @Getter @Setter @EqualsAndHashCode
         public static class Create implements Trigger, ExecutionGroups, Comment {

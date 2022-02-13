@@ -249,14 +249,15 @@ public class EventService {
         if(dto == null) {
             return null;
         }
-        if(file == null) {
-            throw new IllegalArgumentException("file required!");
-        }
         PlayAudioEventAction eventAction = new PlayAudioEventAction();
         BeanUtils.copyProperties(dto, eventAction);
         eventAction.setFile(file.getBytes());
         eventAction.setFileName(file.getOriginalFilename());
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
+        if(file != null) {
+            eventAction.setFile(file.getBytes());
+            eventAction.setFileName(file.getOriginalFilename());
+        }
         return eventAction;
     }
 
@@ -264,14 +265,13 @@ public class EventService {
         if(dto == null) {
             return null;
         }
-        if(file == null) {
-            throw new IllegalArgumentException("file required!");
-        }
         ExecutePythonEventAction eventAction = new ExecutePythonEventAction();
         BeanUtils.copyProperties(dto, eventAction);
-        eventAction.setFile(file.getBytes());
-        eventAction.setFileName(file.getOriginalFilename());
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
+        if(file != null) {
+            eventAction.setFile(file.getBytes());
+            eventAction.setFileName(file.getOriginalFilename());
+        }
         return eventAction;
     }
 

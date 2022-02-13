@@ -8,13 +8,13 @@ import javax.validation.constraints.Min;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class AddableIngredientDto {
-    private interface AlcoholContent { @Min(0) @Max(100) double getAlcoholContent(); }
+    private interface AlcoholContent { @Min(0) @Max(100) int getAlcoholContent(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent {
-            double alcoholContent;
+            int alcoholContent;
         }
 
     }
@@ -24,7 +24,7 @@ public abstract class AddableIngredientDto {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent {
-            double alcoholContent;
+            int alcoholContent;
             boolean inBar;
 
             protected Detailed(AddableIngredient ingredient) {

@@ -30,10 +30,9 @@ public abstract class Ingredient {
 
     public void setParentGroupId(Long parentGroupId) {
         if(!Objects.equals(parentGroupId, id)) {
-            return;
+            this.parentGroup = null;
         }
         this.parentGroupId = parentGroupId;
-        this.parentGroup = null;
     }
 
     public IngredientGroup getParentGroup() {

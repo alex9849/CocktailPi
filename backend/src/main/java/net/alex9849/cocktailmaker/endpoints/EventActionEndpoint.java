@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.FileEventActionDto;
 import net.alex9849.cocktailmaker.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class EventActionEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/process/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> killProcess(@PathVariable long id) {
-        if(eventService.cancelRunningAction(id)) {
+        if (eventService.cancelRunningAction(id)) {
             return ResponseEntity.accepted().build();
         }
         return ResponseEntity.notFound().build();
@@ -48,7 +49,7 @@ public class EventActionEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);
-        if(eventAction == null) {
+        if (eventAction == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(eventAction);
@@ -59,6 +60,9 @@ public class EventActionEndpoint {
     public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
                                           UriComponentsBuilder uriBuilder) throws IOException {
+        if(eventActionDto instanceof FileEventActionDto.Request.Create && file == null) {
+            throw new IllegalArgumentException("file required!");
+        }
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, file));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());
         return ResponseEntity.ok(uriComponents.toUri());
@@ -78,7 +82,7 @@ public class EventActionEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAction(@PathVariable long id) {
-        if(!eventService.deleteEventAction(id)) {
+        if (!eventService.deleteEventAction(id)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();

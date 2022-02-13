@@ -27,7 +27,10 @@ public class PlayAudioEventActionDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Detailed extends FileEventActionDto.Response.Detailed {
+        public static class Detailed extends FileEventActionDto.Response.Detailed implements OnRepeat, Volume, SoundDevice {
+            boolean onRepeat;
+            int volume;
+            String soundDevice;
 
             protected Detailed(PlayAudioEventAction eventAction) {
                 super(eventAction);

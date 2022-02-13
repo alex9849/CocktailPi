@@ -49,7 +49,7 @@ public class IngredientDto {
             protected Detailed(Ingredient ingredient) {
                 this.id = ingredient.getId();
                 BeanUtils.copyProperties(ingredient, this);
-                if(ingredient.getParentGroup() == null) {
+                if(ingredient.getParentGroup() != null) {
                     this.parentGroupId = ingredient.getParentGroupId();
                     this.parentGroupName = ingredient.getParentGroup().getName();
                 }
