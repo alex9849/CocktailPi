@@ -47,7 +47,7 @@
                 style="display: contents; max-width: max-content;">
                 <slot name="topRight">
                   <c-recipe-fabricable-icon
-                    :recipe="recipe"
+                    :ingredients="recipe.ingredients"
                   />
                 </slot>
               </div>
@@ -92,7 +92,6 @@
 
 <script>
 
-import {mapGetters} from 'vuex'
 import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
 
 export default {
@@ -112,17 +111,9 @@ export default {
       default: '#fafafa'
     }
   },
-  computed: {
-    ...mapGetters({
-      getPumpIngredients: 'pumpLayout/getPumpIngredients'
-    })
-  },
   methods: {
-    hasPumpLayoutIngredient (ingredientId) {
-      return this.getPumpIngredients.some(x => x.id === ingredientId)
-    },
     ingredientChipColor (ingredient) {
-      if (this.getPumpIngredients.some(x => x.id === ingredient.id)) {
+      if (ingredient.onPump) {
         return 'green'
       }
       if (ingredient.inBar) {
@@ -131,7 +122,7 @@ export default {
       return 'red'
     },
     ingredientChipTooltip (ingredient) {
-      if (this.getPumpIngredients.some(x => x.id === ingredient.id)) {
+      if (ingredient.onPump) {
         return ''
       }
       if (ingredient.inBar) {

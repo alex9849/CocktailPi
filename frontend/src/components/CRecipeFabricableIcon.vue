@@ -2,7 +2,7 @@
   <div>
     <div v-if="asChip">
       <q-chip
-        v-if="doPumpsHaveAllIngredients(recipe)"
+        v-if="allIngredientsOnPump"
         color="green"
         outline
         square
@@ -11,7 +11,7 @@
         Full-Automatic
       </q-chip>
       <q-chip
-        v-else-if="allIngredientsOwned(recipe)"
+        v-else-if="allIngredientsOwned"
         color="warning"
         outline
         square
@@ -31,7 +31,7 @@
     </div>
     <div v-else>
       <q-icon
-        v-if="doPumpsHaveAllIngredients(recipe)"
+        v-if="allIngredientsOnPump"
         :name="mdiCheckBold"
         size="md"
         color="positive">
@@ -40,7 +40,7 @@
         </q-tooltip>
       </q-icon>
       <q-icon
-        v-else-if="allIngredientsOwned(recipe)"
+        v-else-if="allIngredientsOwned"
         :name="mdiCheckBold"
         size="md"
         color="warning">
@@ -62,14 +62,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { mdiAlert, mdiCheckBold, mdiClose } from '@quasar/extras/mdi-v5'
+import {mdiAlert, mdiCheckBold, mdiClose} from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'CRecipeFabricableIcon',
   props: {
-    recipe: {
-      type: Object,
+    ingredients: {
+      type: Array,
       required: true
     },
     asChip: {
@@ -83,10 +82,22 @@ export default {
     this.mdiClose = mdiClose
   },
   computed: {
-    ...mapGetters({
-      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-      pumpIngredients: 'pumpLayout/getPumpIngredients'
-    })
+    allIngredientsOwned () {
+      for (const ingredient of this.ingredients) {
+        if (!ingredient.inBar) {
+          return false
+        }
+      }
+      return true
+    },
+    allIngredientsOnPump () {
+      for (const ingredient of this.ingredients) {
+        if (!ingredient.onPump) {
+          return false
+        }
+      }
+      return true
+    }
   },
   methods: {
     allIngredientsOwned (recipe) {

@@ -74,13 +74,14 @@ public class RecipeDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients {
+        public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients, LastUpdate {
             final long id;
             String name;
             String ownerName;
             String description;
             boolean hasImage;
             Set<IngredientDto.Response.Reduced> ingredients;
+            Date lastUpdate;
 
             public SearchResult(Recipe recipe) {
                 this.id = recipe.getId();
