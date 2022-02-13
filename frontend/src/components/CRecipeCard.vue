@@ -60,7 +60,7 @@
           </div>
           <div class="row" style="margin-top: 10px">
             <q-chip
-              v-for="ingredient in uniqueIngredientNames(recipe.productionSteps)"
+              v-for="ingredient in recipe.ingredients"
               :key="ingredient.id"
               dense
               style="margin-left: 0; margin-right: 5px"
@@ -80,7 +80,7 @@
           <div class="row">
             <div class="col"/>
             <div class="col" style="display: contents; max-width: max-content">
-              by {{ recipe.owner.username }}
+              by {{ recipe.ownerName }}
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
 
 export default {
