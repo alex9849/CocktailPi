@@ -1,6 +1,9 @@
 package net.alex9849.cocktailmaker.service;
 
+import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
@@ -129,9 +132,25 @@ public class RecipeService {
             recipe.setProductionSteps(recipeDto.getProductionSteps().stream()
                     .map(this::fromDto).collect(Collectors.toList()));
         }
-        recipe.setCategories(recipeDto.getCategories()
-                .stream().map(categoryService::fromDto)
-                .collect(Collectors.toList()));
+        Long[] categoryIds = recipeDto.getCategories()
+                .stream()
+                .map(CategoryDto.Response.Detailed::getId)
+                .collect(Collectors.toList())
+                .toArray(new Long[]{});
+
+        List<Category> categories = new ArrayList<>();
+        for(CategoryDto.Response.Detailed categoryDto : recipeDto.getCategories()) {
+            Category category = categoryService.getCategory(categoryDto.getId());
+            if(category == null) {
+                throw new IllegalArgumentException("Category with id " + category.getId() + " doesn't exist!");
+            }
+            categories.add(category);
+        }
+        recipe.setCategories(categories);
+        User user = userService.getUser(recipeDto.getOwnerId());
+        if(user == null) {
+            throw new IllegalArgumentException("User with id " + recipeDto.getOwnerId() + " doesn't exist!");
+        }
         recipe.setOwner(userService.getUser(recipeDto.getOwnerId()));
         return recipe;
     }

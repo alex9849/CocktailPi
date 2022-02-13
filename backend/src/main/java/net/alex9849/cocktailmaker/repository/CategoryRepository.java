@@ -79,14 +79,27 @@ public class CategoryRepository extends JdbcDaoSupport {
     }
 
     public Optional<Category> findById(long id) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<Category>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories WHERE id = ?");
-            pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(parseRs(rs));
-            }
+        List<Category> found = findByIds(id);
+        if(found.isEmpty()) {
             return Optional.empty();
+        }
+        return Optional.of(found.get(0));
+    }
+
+    public List<Category> findByIds(Long... ids) {
+        if(ids == null) {
+            return new ArrayList<>();
+        }
+        return getJdbcTemplate().execute((ConnectionCallback<List<Category>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories where id = ANY(?) " +
+                    "ORDER BY name ASC");
+            pstmt.setObject(1, con.createArrayOf("int8", ids));
+            ResultSet rs = pstmt.executeQuery();
+            List<Category> categories = new ArrayList<>();
+            if (rs.next()) {
+                categories.add(parseRs(rs));
+            }
+            return categories;
         });
     }
 

@@ -42,7 +42,7 @@ public class RecipeDto {
             long ownerId;
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
-            Set<CategoryDto.Request.Detailed> categories;
+            Set<CategoryDto.Response.Detailed> categories;
             long defaultAmountToFill;
         }
     }

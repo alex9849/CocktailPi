@@ -37,7 +37,7 @@ public class CategoryEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto.Request.Create categoryDto, UriComponentsBuilder uriBuilder) {
         Category category = categoryService.createCategory(categoryService.fromDto(categoryDto));
         UriComponents uriComponents = uriBuilder.path("/api/category/{id}").buildAndExpand(category.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
@@ -45,7 +45,7 @@ public class CategoryEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateCategory(@PathVariable(value = "id") long id, @Valid @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<?> updateCategory(@PathVariable(value = "id") long id, @Valid @RequestBody CategoryDto.Request.Create categoryDto) {
         Category category = categoryService.fromDto(categoryDto);
         category.setId(id);
         categoryService.updateCategory(category);
