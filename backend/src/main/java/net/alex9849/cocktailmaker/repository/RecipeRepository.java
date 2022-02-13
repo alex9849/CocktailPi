@@ -64,7 +64,7 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     public List<Recipe> findAll(long offset, long limit, Sort sort) {
-        return this.findByIds(offset, limit, sort);
+        return this.findByIds(offset, limit, sort, null);
     }
 
     public List<Recipe> findByIds(long offset, long limit, Sort sort, Long... ids) {

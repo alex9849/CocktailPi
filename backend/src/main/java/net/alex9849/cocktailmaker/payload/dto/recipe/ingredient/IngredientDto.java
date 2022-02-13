@@ -20,6 +20,7 @@ public class IngredientDto {
     private interface ParentGroupName { String getParentGroupName(); }
     private interface Type { String getType(); }
     private interface InBar { boolean isInBar(); }
+    private interface OnPump { boolean isOnPump(); }
     private interface Unit { Ingredient.Unit getUnit(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,7 +41,7 @@ public class IngredientDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit {
+        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit, OnPump {
             final long id;
             String name;
             Long parentGroupId;
@@ -74,7 +75,7 @@ public class IngredientDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public abstract static class Reduced implements Id, Name, Type, InBar {
+        public abstract static class Reduced implements Id, Name, Type, InBar, OnPump {
             final long id;
             String name;
 

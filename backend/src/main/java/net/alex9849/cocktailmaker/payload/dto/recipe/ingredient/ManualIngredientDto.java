@@ -35,6 +35,10 @@ public class ManualIngredientDto {
                 return "manual";
             }
 
+            @Override
+            public boolean isOnPump() {
+                return false;
+            }
         }
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
@@ -47,6 +51,11 @@ public class ManualIngredientDto {
             @Override
             public String getType() {
                 return "manual";
+            }
+
+            @Override
+            public boolean isOnPump() {
+                return false;
             }
         }
     }

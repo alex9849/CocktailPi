@@ -38,6 +38,7 @@ public class IngredientGroupDto {
             int minAlcoholContent;
             int maxAlcoholContent;
             boolean inBar;
+            boolean onPump;
 
             public Detailed(IngredientGroup ingredientGroup) {
                 super(ingredientGroup);
@@ -60,6 +61,7 @@ public class IngredientGroupDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends IngredientDto.Response.Reduced {
             boolean inBar;
+            boolean onPump;
 
             public Reduced(IngredientGroup ingredient) {
                 super(ingredient);

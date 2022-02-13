@@ -36,6 +36,7 @@ public class AutomatedIngredientDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
             double pumpTimeMultiplier;
+            boolean onPump;
 
             public Detailed(AutomatedIngredient ingredient) {
                 super(ingredient);
@@ -55,6 +56,7 @@ public class AutomatedIngredientDto {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
+            boolean onPump;
 
             public Reduced(AutomatedIngredient ingredient) {
                 super(ingredient);

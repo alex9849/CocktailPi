@@ -84,6 +84,11 @@ public class IngredientGroup extends Ingredient {
 
     @Override
     public boolean isOnPump() {
+        for(Ingredient leaf : this.getChildren()) {
+            if(leaf.isOnPump()) {
+                return true;
+            }
+        }
         return false;
     }
 }
