@@ -138,21 +138,6 @@ export default {
         return 'add manually'
       }
       return 'not owned'
-    },
-    uniqueIngredientNames (productionSteps) {
-      if (!this.showIngredients) {
-        return []
-      }
-      const unique = new Map()
-      for (const productionStep of productionSteps) {
-        if (productionStep.type !== 'addIngredients') {
-          continue
-        }
-        for (const ingredient of productionStep.stepIngredients) {
-          unique.set(ingredient.ingredient.id, ingredient.ingredient)
-        }
-      }
-      return Array.from(unique.values())
     }
   }
 }
