@@ -2,8 +2,6 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.eventaction.EventAction;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.FileEventActionDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +26,7 @@ public class EventActionEndpoint {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getActions() {
         return ResponseEntity.ok(eventService.getEventActions().stream()
-                .map(EventActionDto::toDto).collect(Collectors.toList()));
+                .map(EventActionDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -58,37 +56,23 @@ public class EventActionEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto eventActionDto,
+    public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
                                           UriComponentsBuilder uriBuilder) throws IOException {
-        byte[] fileBytes = null;
-        if(eventActionDto instanceof FileEventActionDto) {
-            if(file == null) {
-                throw new IllegalArgumentException("file required!");
-            }
-            ((FileEventActionDto) eventActionDto).setFileName(file.getOriginalFilename());
-            fileBytes = file.getBytes();
-        }
-        EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, fileBytes));
+        EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, file));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());
         return ResponseEntity.ok(uriComponents.toUri());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAction(@Valid @RequestPart("eventAction") EventActionDto eventActionDto,
+    public ResponseEntity<?> updateAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
                                           @PathVariable long id) throws IOException {
-        eventActionDto.setId(id);
-        byte[] fileBytes = null;
-        if(eventActionDto instanceof FileEventActionDto) {
-            if(file != null) {
-                ((FileEventActionDto) eventActionDto).setFileName(file.getOriginalFilename());
-                fileBytes = file.getBytes();
-            }
-        }
-        EventAction updatedAction = eventService.updateEventAction(EventService.fromDto(eventActionDto, fileBytes));
-        return ResponseEntity.ok(EventActionDto.toDto(updatedAction));
+        EventAction eventAction = EventService.fromDto(eventActionDto, file);
+        eventAction.setId(id);
+        EventAction updatedAction = eventService.updateEventAction(eventAction);
+        return ResponseEntity.ok(EventActionDto.Response.Detailed.toDto(updatedAction));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

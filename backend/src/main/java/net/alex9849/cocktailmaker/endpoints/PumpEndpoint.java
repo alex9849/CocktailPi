@@ -25,12 +25,12 @@ public class PumpEndpoint {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllPumps() {
-        return ResponseEntity.ok(pumpService.getAllPumps().stream().map(PumpDto::new).collect(Collectors.toList()));
+        return ResponseEntity.ok(pumpService.getAllPumps().stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto pumpDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
@@ -38,10 +38,10 @@ public class PumpEndpoint {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto pumpDto) {
+    public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        pumpDto.setId(id);
         Pump updatePump = pumpService.fromDto(pumpDto);
+        updatePump.setId(id);
         if(!user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             Pump oldPump = pumpService.getPump(id);
             if(oldPump != null) {

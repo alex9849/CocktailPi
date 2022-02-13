@@ -8,10 +8,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 @Transactional
@@ -152,21 +157,21 @@ public class EventService {
         }
     }
 
-    public static EventAction fromDto(EventActionDto dto, byte[] file) {
+    public static EventAction fromDto(EventActionDto.Request.Create dto, MultipartFile file) throws IOException {
         if(dto == null) {
             return null;
         }
-        if(dto instanceof CallUrlEventActionDto) {
-            return fromDto((CallUrlEventActionDto) dto);
+        if(dto instanceof CallUrlEventActionDto.Request.Create) {
+            return fromDto((CallUrlEventActionDto.Request.Create) dto);
         }
-        if(dto instanceof DoNothingEventActionDto) {
-            return fromDto((DoNothingEventActionDto) dto);
+        if(dto instanceof DoNothingEventActionDto.Request.Create) {
+            return fromDto((DoNothingEventActionDto.Request.Create) dto);
         }
-        if(dto instanceof PlayAudioEventActionDto) {
-            return fromDto((PlayAudioEventActionDto) dto, file);
+        if(dto instanceof PlayAudioEventActionDto.Request.Create) {
+            return fromDto((PlayAudioEventActionDto.Request.Create) dto, file);
         }
-        if(dto instanceof ExecutePythonEventActionDto) {
-            return fromDto((ExecutePythonEventActionDto) dto, file);
+        if(dto instanceof ExecutePythonEventActionDto.Request.Create) {
+            return fromDto((ExecutePythonEventActionDto.Request.Create) dto, file);
         }
         throw new IllegalStateException("DtoType not supported yet: " + dto.getClass().getName());
     }
@@ -220,7 +225,7 @@ public class EventService {
         return eventActionRepository.update(toUpdateEventAction);
     }
 
-    public static CallUrlEventAction fromDto(CallUrlEventActionDto dto) {
+    public static CallUrlEventAction fromDto(CallUrlEventActionDto.Request.Create dto) {
         if(dto == null) {
             return null;
         }
@@ -230,7 +235,7 @@ public class EventService {
         return eventAction;
     }
 
-    public static DoNothingEventAction fromDto(DoNothingEventActionDto dto) {
+    public static DoNothingEventAction fromDto(DoNothingEventActionDto.Request.Create dto) {
         if(dto == null) {
             return null;
         }
@@ -240,24 +245,32 @@ public class EventService {
         return eventAction;
     }
 
-    public static PlayAudioEventAction fromDto(PlayAudioEventActionDto dto, byte[] file) {
+    public static PlayAudioEventAction fromDto(PlayAudioEventActionDto.Request.Create dto, MultipartFile file) throws IOException {
         if(dto == null) {
             return null;
         }
+        if(file == null) {
+            throw new IllegalArgumentException("file required!");
+        }
         PlayAudioEventAction eventAction = new PlayAudioEventAction();
         BeanUtils.copyProperties(dto, eventAction);
-        eventAction.setFile(file);
+        eventAction.setFile(file.getBytes());
+        eventAction.setFileName(file.getOriginalFilename());
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;
     }
 
-    public static ExecutePythonEventAction fromDto(ExecutePythonEventActionDto dto, byte[] file) {
+    public static ExecutePythonEventAction fromDto(ExecutePythonEventActionDto.Request.Create dto, MultipartFile file) throws IOException {
         if(dto == null) {
             return null;
         }
+        if(file == null) {
+            throw new IllegalArgumentException("file required!");
+        }
         ExecutePythonEventAction eventAction = new ExecutePythonEventAction();
         BeanUtils.copyProperties(dto, eventAction);
-        eventAction.setFile(file);
+        eventAction.setFile(file.getBytes());
+        eventAction.setFileName(file.getOriginalFilename());
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         return eventAction;
     }

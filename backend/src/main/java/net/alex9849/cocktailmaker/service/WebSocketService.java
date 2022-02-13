@@ -5,7 +5,7 @@ import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
 import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailprogressDto;
-import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionInformationDto;
+import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -36,7 +36,7 @@ public class WebSocketService {
     public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
         if(cocktailprogress != null) {
-            cocktailprogressDto = new CocktailprogressDto(cocktailprogress);
+            cocktailprogressDto = new CocktailprogressDto.Response.Detailed(cocktailprogress);
         }
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
@@ -46,15 +46,15 @@ public class WebSocketService {
     }
 
     public void sendCurrentCocktailProgessToUser(@Nullable Cocktailprogress cocktailProgress, String name) {
-        Object cocktailprogressDto = "DELETE";
+        Object cocktailProgressDto = "DELETE";
         if(cocktailProgress != null) {
-            cocktailprogressDto = new CocktailprogressDto(cocktailProgress);
+            cocktailProgressDto = new CocktailprogressDto.Response.Detailed(cocktailProgress);
         }
-        simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailprogressDto);
+        simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailProgressDto);
     }
 
     public void broadcastPumpLayout(List<Pump> pumps) {
-        List<PumpDto> pumpDtos = pumps.stream().map(PumpDto::new).collect(Collectors.toList());
+        List<PumpDto.Response.Detailed> pumpDtos = pumps.stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList());
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
         for(String username : subscribers) {
@@ -64,12 +64,12 @@ public class WebSocketService {
 
     public void sendPumpLayoutToUser(List<Pump> pumps, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION,
-                pumps.stream().map(PumpDto::new).collect(Collectors.toList()));
+                pumps.stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList()));
     }
 
     public void broadcastRunningEventActionsStatus(List<EventActionInformation> eai) {
-        List<EventActionInformationDto> pumpDtos = eai.stream()
-                .map(EventActionInformationDto::new).collect(Collectors.toList());
+        List<EventActionDto.Response.RunInformation> pumpDtos = eai.stream()
+                .map(EventActionDto.Response.RunInformation::new).collect(Collectors.toList());
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
         for(String username : subscribers) {
@@ -79,7 +79,7 @@ public class WebSocketService {
 
     public void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_STATUS_DESTINATION,
-                eai.stream().map(EventActionInformationDto::new).collect(Collectors.toList()));
+                eai.stream().map(EventActionDto.Response.RunInformation::new).collect(Collectors.toList()));
     }
 
     public void broadcastClearEventActionLog(long runningActionId) {

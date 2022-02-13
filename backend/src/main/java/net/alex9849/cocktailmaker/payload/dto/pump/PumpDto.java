@@ -14,10 +14,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PumpDto {
     private interface Id { long getId(); }
-    private interface TimePerClInMs { @NotNull @Min(1) long getTimePerClInMs(); }
-    private interface TubeCapacityInMl { @NotNull @Min(1)long getTubeCapacityInMl(); }
-    private interface BcmPin { @NotNull @Min(0) @Max(31)long getBcmPin(); }
-    private interface FillingLevelInMl { @NotNull @Min(0) long getFillingLevelInMl(); }
+    private interface TimePerClInMs { @NotNull @Min(1) int getTimePerClInMs(); }
+    private interface TubeCapacityInMl { @NotNull @Min(1) int getTubeCapacityInMl(); }
+    private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
+    private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
     private interface CurrentIngredientResponse { AutomatedIngredientDto.Response.Detailed getCurrentIngredient(); }
     private interface IsCleaning { boolean isCleaning(); }
 

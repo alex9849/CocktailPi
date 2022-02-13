@@ -25,7 +25,7 @@ public class RecipeDto {
     private interface Description { @NotNull @Size(min = 1, max = 3000) String getDescription(); }
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
-    private interface Categories { @NotNull Set<CategoryDto> getCategories(); }
+    private interface Categories { @NotNull Set<CategoryDto.Response.Detailed> getCategories(); }
     private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
 
     private interface OwnerName { String getOwnerName(); }
@@ -42,7 +42,7 @@ public class RecipeDto {
             long ownerId;
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
-            Set<CategoryDto> categories;
+            Set<CategoryDto.Request.Detailed> categories;
             long defaultAmountToFill;
         }
     }
@@ -58,7 +58,7 @@ public class RecipeDto {
             long ownerId;
             String description;
             List<ProductionStepDto.Response.Detailed> productionSteps;
-            Set<CategoryDto> categories;
+            Set<CategoryDto.Response.Detailed> categories;
             boolean hasImage;
             long defaultAmountToFill;
             Date lastUpdate;
@@ -68,7 +68,7 @@ public class RecipeDto {
                 BeanUtils.copyProperties(recipe, this);
                 this.productionSteps = recipe.getProductionSteps().stream()
                         .map(ProductionStepDto.Response.Detailed::toDto).collect(Collectors.toList());
-                this.categories = recipe.getCategories().stream().map(CategoryDto::new)
+                this.categories = recipe.getCategories().stream().map(CategoryDto.Response.Detailed::new)
                         .collect(Collectors.toSet());
             }
         }

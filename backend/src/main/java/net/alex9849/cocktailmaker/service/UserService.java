@@ -95,7 +95,7 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
-    public static ERole toRole(int level) {
+    public ERole toRole(int level) {
         for(ERole role : ERole.values()) {
             if(role.getLevel() == level) {
                 return role;
@@ -104,7 +104,7 @@ public class UserService {
         return ERole.ROLE_USER;
     }
 
-    public static User fromDto(UserDto userDto) {
+    public User fromDto(UserDto.Request.Create userDto) {
         if(userDto == null) {
             return null;
         }

@@ -130,7 +130,7 @@ public class RecipeService {
                     .map(this::fromDto).collect(Collectors.toList()));
         }
         recipe.setCategories(recipeDto.getCategories()
-                .stream().map(CategoryService::fromDto)
+                .stream().map(categoryService::fromDto)
                 .collect(Collectors.toList()));
         recipe.setOwner(userService.getUser(recipeDto.getOwnerId()));
         return recipe;

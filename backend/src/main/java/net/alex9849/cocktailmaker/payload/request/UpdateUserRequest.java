@@ -11,7 +11,7 @@ public class UpdateUserRequest {
 
     @NotNull
     @Valid
-    private UserDto userDto;
+    private UserDto.Request.Create userDto;
 
     public boolean isUpdatePassword() {
         return updatePassword;
@@ -21,11 +21,11 @@ public class UpdateUserRequest {
         this.updatePassword = updatePassword;
     }
 
-    public UserDto getUserDto() {
+    public UserDto.Request.Create getUserDto() {
         return userDto;
     }
 
-    public void setUserDto(UserDto userDto) {
+    public void setUserDto(UserDto.Request.Create userDto) {
         this.userDto = userDto;
     }
 }

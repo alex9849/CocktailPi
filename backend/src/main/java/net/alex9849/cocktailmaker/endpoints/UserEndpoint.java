@@ -32,7 +32,7 @@ public class UserEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto createUser, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto.Request.Create createUser, UriComponentsBuilder uriBuilder) {
         User user = userService.fromDto(createUser);
         user.setAuthority(userService.toRole(createUser.getAdminLevel()));
         user = userService.createUser(user);
@@ -51,6 +51,7 @@ public class UserEndpoint {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         }
+        updateUser.setId(userId);
         User beforeUpdate = userService.getUser(userId);
         if(beforeUpdate == null) {
             return ResponseEntity.notFound().build();
@@ -72,8 +73,7 @@ public class UserEndpoint {
         if(!updateUserRequest.isUpdatePassword()) {
             updateUser.setPassword(beforeUpdate.getPassword());
         }
-        updateUser.setId(userId);
-        return ResponseEntity.ok(new UserDto(userService.updateUser(updateUser, updateUserRequest.isUpdatePassword())));
+        return ResponseEntity.ok(new UserDto.Response.Detailed(userService.updateUser(updateUser, updateUserRequest.isUpdatePassword())));
     }
 
 
@@ -106,14 +106,14 @@ public class UserEndpoint {
         if(user == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new UserDto(user));
+        return ResponseEntity.ok(new UserDto.Response.Detailed(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getUsers() {
-        List<UserDto> userDtoList = userService.getUsers()
-                .stream().map(UserDto::new)
+        List<UserDto.Response.Detailed> userDtoList = userService.getUsers()
+                .stream().map(UserDto.Response.Detailed::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(userDtoList);
     }

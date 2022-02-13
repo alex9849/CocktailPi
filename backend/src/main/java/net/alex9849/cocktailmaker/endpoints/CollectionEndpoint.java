@@ -29,7 +29,7 @@ public class CollectionEndpoint {
     private CollectionService collectionService;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createCollection(@Valid @RequestBody CollectionDto collectionDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createCollection(@Valid @RequestBody CollectionDto.Request.Create collectionDto, UriComponentsBuilder uriBuilder) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection collection = collectionService.fromDto(collectionDto);
         collection.setOwner(principal);
@@ -48,7 +48,7 @@ public class CollectionEndpoint {
         if(collection.getOwner().getId() != principal.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(new CollectionDto(collection));
+        return ResponseEntity.ok(new CollectionDto.Response.Detailed(collection));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -58,7 +58,7 @@ public class CollectionEndpoint {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId)
-                .stream().map(CollectionDto::new));
+                .stream().map(CollectionDto.Response.Detailed::new));
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
@@ -71,11 +71,10 @@ public class CollectionEndpoint {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateCollection(@Valid @RequestPart("collection") CollectionDto collectionDto,
+    public ResponseEntity<?> updateCollection(@Valid @RequestPart("collection") CollectionDto.Request.Create collectionDto,
                                               @RequestPart(value = "image", required = false) MultipartFile file,
                                               @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
                                               @PathVariable("id") long id, HttpServletRequest request) throws IOException {
-        collectionDto.setId(id);
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection existingCollection = collectionService.getCollectionById(id);
         if(existingCollection == null) {
@@ -85,6 +84,7 @@ public class CollectionEndpoint {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Collection updateCollection = collectionService.fromDto(collectionDto);
+        updateCollection.setId(id);
         updateCollection.setOwnerId(existingCollection.getOwnerId());
         BufferedImage image = null;
         if(file != null) {

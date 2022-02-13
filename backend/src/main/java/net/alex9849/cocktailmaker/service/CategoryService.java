@@ -51,7 +51,7 @@ public class CategoryService {
         categoryRepository.delete(categoryId);
     }
 
-    public Category fromDto(CategoryDto categoryDto) {
+    public Category fromDto(CategoryDto.Request.Create categoryDto) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDto, category);
         return category;

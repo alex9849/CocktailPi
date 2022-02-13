@@ -77,7 +77,7 @@ public abstract class EventActionDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public abstract static class RunInformation implements EventActionId, RunId, HasLog, Status {
+        public static class RunInformation implements EventActionId, RunId, HasLog, Status {
             long eventActionId;
             long runId;
             boolean hasLog;

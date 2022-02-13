@@ -15,9 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -44,7 +42,7 @@ public class AuthEndpoint {
                 loginRequest.isRemember());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(new JwtResponse(token,
-                jwtUtils.getExpirationDateFromJwtToken(token), new UserDto(user)));
+                jwtUtils.getExpirationDateFromJwtToken(token), new UserDto.Response.Detailed(user)));
     }
 
     @RequestMapping(value = "refreshToken", method = RequestMethod.GET)
@@ -55,6 +53,6 @@ public class AuthEndpoint {
         String jwt = jwtUtils.generateJwtToken(authentication, jwtUtils.isRemember(token));
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                jwtUtils.getExpirationDateFromJwtToken(jwt), new UserDto(user)));
+                jwtUtils.getExpirationDateFromJwtToken(jwt), new UserDto.Response.Detailed(user)));
     }
 }

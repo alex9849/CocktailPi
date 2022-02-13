@@ -8,9 +8,9 @@ public class JwtResponse {
     private String accessToken;
     private Date tokenExpiration;
     private String tokenType = "Bearer";
-    private UserDto user;
+    private UserDto.Response.Detailed user;
 
-    public JwtResponse(String accessToken, Date tokenExpiration, UserDto user) {
+    public JwtResponse(String accessToken, Date tokenExpiration, UserDto.Response.Detailed user) {
         this.accessToken = accessToken;
         this.tokenExpiration = tokenExpiration;
         this.user = user;
@@ -40,11 +40,11 @@ public class JwtResponse {
         this.tokenType = tokenType;
     }
 
-    public UserDto getUser() {
+    public UserDto.Response.Detailed getUser() {
         return user;
     }
 
-    public void setUser(UserDto user) {
+    public void setUser(UserDto.Response.Detailed user) {
         this.user = user;
     }
 }

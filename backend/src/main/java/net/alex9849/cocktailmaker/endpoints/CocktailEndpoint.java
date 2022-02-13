@@ -52,7 +52,7 @@ public class CocktailEndpoint {
         } else if (amount < 50) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(new FeasibilityReportDto(pumpService.checkFeasibility(recipe, amount)));
+        return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(pumpService.checkFeasibility(recipe, amount)));
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
