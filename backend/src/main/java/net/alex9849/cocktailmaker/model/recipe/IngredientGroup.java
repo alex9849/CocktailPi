@@ -81,4 +81,9 @@ public class IngredientGroup extends Ingredient {
         }
         return false;
     }
+
+    @Override
+    public boolean isOnPump() {
+        return false;
+    }
 }

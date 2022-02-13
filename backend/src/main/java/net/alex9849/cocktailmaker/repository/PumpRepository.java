@@ -76,6 +76,19 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
+    public List<Pump> findPumpsWithIngredient(long ingredientId) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Pump>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where current_ingredient_id = ?");
+            pstmt.setLong(1, ingredientId);
+            ResultSet rs = pstmt.executeQuery();
+            List<Pump> results = new ArrayList<>();
+            while (rs.next()) {
+                results.add(populateEntity(parseRs(rs)));
+            }
+            return results;
+        });
+    }
+
     public Optional<Pump> findByBcmPin(int bcmPin) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where bcm_pin = ?");

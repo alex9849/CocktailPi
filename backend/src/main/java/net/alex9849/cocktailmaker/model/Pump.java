@@ -1,6 +1,9 @@
 package net.alex9849.cocktailmaker.model;
 
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.repository.IngredientRepository;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
 
 public class Pump {
     private long id;
@@ -44,6 +47,16 @@ public class Pump {
     }
 
     public AutomatedIngredient getCurrentIngredient() {
+        if(currentIngredientId != null && currentIngredient == null) {
+            IngredientRepository pRepository = SpringUtility.getBean(IngredientRepository.class);
+            Ingredient ingredient = pRepository.findById(currentIngredientId).orElse(null);
+
+            if(!(ingredient instanceof AutomatedIngredient)) {
+                currentIngredientId = null;
+                return null;
+            }
+            currentIngredient = (AutomatedIngredient) ingredient;
+        }
         return currentIngredient;
     }
 
@@ -51,8 +64,9 @@ public class Pump {
         return currentIngredientId;
     }
 
-    public void setCurrentIngredientId(Long currentIngredientId) {
-        this.currentIngredientId = currentIngredientId;
+    public void setCurrentIngredient(AutomatedIngredient currentIngredient) {
+        this.currentIngredient = currentIngredient;
+        this.currentIngredientId = (currentIngredient != null)? currentIngredient.getId() : null;
     }
 
     public int getFillingLevelInMl() {
@@ -63,7 +77,8 @@ public class Pump {
         this.fillingLevelInMl = fillingLevelInMl;
     }
 
-    public void setCurrentIngredient(AutomatedIngredient currentIngredient) {
-        this.currentIngredient = currentIngredient;
+    public void setCurrentIngredientId(Long currentIngredientId) {
+        this.currentIngredientId = currentIngredientId;
+        this.currentIngredient = null;
     }
 }

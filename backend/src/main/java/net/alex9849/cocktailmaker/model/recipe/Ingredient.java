@@ -59,6 +59,8 @@ public abstract class Ingredient {
 
     public abstract boolean isInBar();
 
+    public abstract boolean isOnPump();
+
     public abstract Unit getUnit();
 
     public enum Unit {

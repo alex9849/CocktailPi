@@ -13,4 +13,9 @@ public class ManualIngredient extends AddableIngredient {
     public void setUnit(Unit unit) {
         this.unit = unit;
     }
+
+    @Override
+    public boolean isOnPump() {
+        return false;
+    }
 }
