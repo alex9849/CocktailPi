@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductionStepIngredientDto {
-    private interface Ingredient { @NotNull IngredientDto.Response.Detailed getIngredient(); }
+    private interface Ingredient { @NotNull IngredientDto.Duplex.Detailed getIngredient(); }
     private interface Amount { @Min(1) int getAmount(); }
     private interface Scale { boolean isScale(); }
 
@@ -18,7 +18,7 @@ public class ProductionStepIngredientDto {
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
         public static class Create implements Ingredient, Amount, Scale {
-            IngredientDto.Response.Detailed ingredient;
+            IngredientDto.Duplex.Detailed ingredient;
             int amount;
             boolean scale;
         }
@@ -28,13 +28,13 @@ public class ProductionStepIngredientDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Ingredient, Amount, Scale {
-            IngredientDto.Response.Detailed ingredient;
+            IngredientDto.Duplex.Detailed ingredient;
             int amount;
             boolean scale;
 
             public Detailed(ProductionStepIngredient stepIngredient) {
                 BeanUtils.copyProperties(stepIngredient, this);
-                this.ingredient = IngredientDto.Response.Detailed.toDto(stepIngredient.getIngredient());
+                this.ingredient = IngredientDto.Duplex.Detailed.toDto(stepIngredient.getIngredient());
             }
         }
     }

@@ -25,7 +25,7 @@ public class RecipeDto {
     private interface Description { @NotNull @Size(min = 1, max = 3000) String getDescription(); }
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
-    private interface Categories { @NotNull Set<CategoryDto.Response.Detailed> getCategories(); }
+    private interface Categories { @NotNull Set<CategoryDto.Duplex.Detailed> getCategories(); }
     private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
 
     private interface OwnerName { String getOwnerName(); }
@@ -42,7 +42,7 @@ public class RecipeDto {
             long ownerId;
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
-            Set<CategoryDto.Response.Detailed> categories;
+            Set<CategoryDto.Duplex.Detailed> categories;
             long defaultAmountToFill;
         }
     }
@@ -53,12 +53,12 @@ public class RecipeDto {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
                 HasImage, DefaultAmountToFill, LastUpdate {
-            final long id;
+            long id;
             String name;
             long ownerId;
             String description;
             List<ProductionStepDto.Response.Detailed> productionSteps;
-            Set<CategoryDto.Response.Detailed> categories;
+            Set<CategoryDto.Duplex.Detailed> categories;
             boolean hasImage;
             long defaultAmountToFill;
             Date lastUpdate;
@@ -68,14 +68,14 @@ public class RecipeDto {
                 BeanUtils.copyProperties(recipe, this);
                 this.productionSteps = recipe.getProductionSteps().stream()
                         .map(ProductionStepDto.Response.Detailed::toDto).collect(Collectors.toList());
-                this.categories = recipe.getCategories().stream().map(CategoryDto.Response.Detailed::new)
+                this.categories = recipe.getCategories().stream().map(CategoryDto.Duplex.Detailed::new)
                         .collect(Collectors.toSet());
             }
         }
 
         @Getter @Setter @EqualsAndHashCode
         public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients, LastUpdate {
-            final long id;
+            long id;
             String name;
             String ownerName;
             String description;

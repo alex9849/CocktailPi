@@ -101,7 +101,7 @@ public class PumpService {
         }
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
-        if(pump.getCurrentIngredient() != null) {
+        if(pumpDto.getCurrentIngredient() != null) {
             Ingredient ingredient = ingredientService.getIngredient(pumpDto.getCurrentIngredient().getId());
             if(ingredient == null) {
                 throw new IllegalArgumentException("Ingredient with id \"" + pump.getCurrentIngredient().getId() + "\" not found!");

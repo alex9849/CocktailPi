@@ -23,7 +23,7 @@ public class CategoryEndpoint {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories()
-                .stream().map(CategoryDto.Response.Detailed::new).collect(Collectors.toList()));
+                .stream().map(CategoryDto.Duplex.Detailed::new).collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -32,7 +32,7 @@ public class CategoryEndpoint {
         if(category == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new CategoryDto.Response.Detailed(category));
+        return ResponseEntity.ok(new CategoryDto.Duplex.Detailed(category));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

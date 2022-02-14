@@ -20,11 +20,13 @@ public class CategoryDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
+    public static class Duplex {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Id, Name {
             long id;
             String name;
+
+            public Detailed() {}
 
             public Detailed(net.alex9849.cocktailmaker.model.Category category) {
                 BeanUtils.copyProperties(category, this);

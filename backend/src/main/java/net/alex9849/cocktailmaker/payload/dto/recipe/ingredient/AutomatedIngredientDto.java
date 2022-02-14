@@ -32,11 +32,14 @@ public class AutomatedIngredientDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
+    public static class Duplex {
+
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
+        public static class Detailed extends AddableIngredientDto.Duplex.Detailed implements PumpTimeMultiplier {
             double pumpTimeMultiplier;
             boolean onPump;
+
+            public Detailed() {}
 
             public Detailed(AutomatedIngredient ingredient) {
                 super(ingredient);
@@ -53,6 +56,11 @@ public class AutomatedIngredientDto {
             }
 
         }
+    }
+
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {

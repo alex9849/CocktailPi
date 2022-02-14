@@ -39,40 +39,47 @@ public class IngredientDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
+    public static class Duplex {
+
         @Getter @Setter @EqualsAndHashCode
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit, OnPump {
-            final long id;
+            long id;
             String name;
             Long parentGroupId;
             String parentGroupName;
 
+            protected Detailed() {}
+
             protected Detailed(Ingredient ingredient) {
                 this.id = ingredient.getId();
                 BeanUtils.copyProperties(ingredient, this);
-                if(ingredient.getParentGroup() != null) {
+                if (ingredient.getParentGroup() != null) {
                     this.parentGroupId = ingredient.getParentGroupId();
                     this.parentGroupName = ingredient.getParentGroup().getName();
                 }
             }
 
             public static Detailed toDto(Ingredient ingredient) {
-                if(ingredient == null) {
+                if (ingredient == null) {
                     return null;
                 }
-                if(ingredient instanceof IngredientGroup) {
-                    return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
+                if (ingredient instanceof IngredientGroup) {
+                    return new IngredientGroupDto.Duplex.Detailed((IngredientGroup) ingredient);
                 }
-                if(ingredient instanceof ManualIngredient) {
-                    return new ManualIngredientDto.Response.Detailed((ManualIngredient) ingredient);
+                if (ingredient instanceof ManualIngredient) {
+                    return new ManualIngredientDto.Duplex.Detailed((ManualIngredient) ingredient);
                 }
-                if(ingredient instanceof AutomatedIngredient) {
-                    return new AutomatedIngredientDto.Response.Detailed((AutomatedIngredient) ingredient);
+                if (ingredient instanceof AutomatedIngredient) {
+                    return new AutomatedIngredientDto.Duplex.Detailed((AutomatedIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
 
             }
         }
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
         public abstract static class Reduced implements Id, Name, Type, InBar, OnPump {

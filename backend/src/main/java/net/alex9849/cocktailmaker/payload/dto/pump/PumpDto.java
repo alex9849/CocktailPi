@@ -18,7 +18,7 @@ public class PumpDto {
     private interface TubeCapacityInMl { @NotNull @Min(1) int getTubeCapacityInMl(); }
     private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
     private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
-    private interface CurrentIngredientResponse { AutomatedIngredientDto.Response.Detailed getCurrentIngredient(); }
+    private interface CurrentIngredientResponse { AutomatedIngredientDto.Duplex.Detailed getCurrentIngredient(); }
     private interface IsCleaning { boolean isCleaning(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,7 +29,7 @@ public class PumpDto {
             int tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
-            AutomatedIngredientDto.Response.Detailed currentIngredient;
+            AutomatedIngredientDto.Duplex.Detailed currentIngredient;
         }
     }
 
@@ -43,7 +43,7 @@ public class PumpDto {
             int tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
-            AutomatedIngredientDto.Response.Detailed currentIngredient;
+            AutomatedIngredientDto.Duplex.Detailed currentIngredient;
             boolean isCleaning;
 
             public Detailed(Pump pump) {
@@ -51,7 +51,7 @@ public class PumpDto {
                 PumpService pService = SpringUtility.getBean(PumpService.class);
                 this.isCleaning = pService.isCleaning(pump);
                 if(pump.getCurrentIngredient() != null) {
-                    this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
+                    this.currentIngredient = new AutomatedIngredientDto.Duplex.Detailed(pump.getCurrentIngredient());
                 }
             }
         }

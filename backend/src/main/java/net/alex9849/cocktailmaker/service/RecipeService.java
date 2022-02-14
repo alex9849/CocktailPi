@@ -134,12 +134,12 @@ public class RecipeService {
         }
         Long[] categoryIds = recipeDto.getCategories()
                 .stream()
-                .map(CategoryDto.Response.Detailed::getId)
+                .map(CategoryDto.Duplex.Detailed::getId)
                 .collect(Collectors.toList())
                 .toArray(new Long[]{});
 
         List<Category> categories = new ArrayList<>();
-        for(CategoryDto.Response.Detailed categoryDto : recipeDto.getCategories()) {
+        for(CategoryDto.Duplex.Detailed categoryDto : recipeDto.getCategories()) {
             Category category = categoryService.getCategory(categoryDto.getId());
             if(category == null) {
                 throw new IllegalArgumentException("Category with id " + category.getId() + " doesn't exist!");

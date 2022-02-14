@@ -20,17 +20,23 @@ public abstract class AddableIngredientDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
+    public static class Duplex {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent {
+        public abstract static class Detailed extends IngredientDto.Duplex.Detailed implements AlcoholContent {
             int alcoholContent;
             boolean inBar;
+
+            protected Detailed() {}
 
             protected Detailed(AddableIngredient ingredient) {
                 super(ingredient);
             }
         }
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Response {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Reduced extends IngredientDto.Response.Reduced {
