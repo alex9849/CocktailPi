@@ -42,7 +42,7 @@ public class IngredientEndpoint {
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
                 filterAutomaticIngredients, filterIngredientGroups, inBar)
-                .stream().map(IngredientDto.Duplex.Detailed::toDto).collect(Collectors.toList()));
+                .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

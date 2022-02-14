@@ -67,14 +67,23 @@ export default {
   methods: {
     updateRecipe () {
       this.sending = true
-      RecipeService.updateRecipe(this.editRecipe.recipe, this.editRecipe.image, this.editRecipe.removeImage)
+      const copy = Object.assign({}, this.editRecipe.recipe)
+      for (const pStep of copy.productionSteps) {
+        if (pStep.type !== 'addIngredients') {
+          continue
+        }
+        for (const stepIngredient of pStep.stepIngredients) {
+          stepIngredient.ingredientId = stepIngredient.ingredient.id
+        }
+      }
+      RecipeService.updateRecipe(copy, this.editRecipe.image, this.editRecipe.removeImage)
         .then(response => {
           this.sending = false
           this.$q.notify({
             type: 'positive',
             message: 'Recipe updated successfully'
           })
-          this.$router.push({ name: 'recipedetails', params: { id: this.$route.params.id } })
+          this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
         }, error => {
           this.sending = false
           this.error = error.response.data.message

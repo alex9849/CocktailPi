@@ -18,8 +18,8 @@ public class ProductionStepDto {
         @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = WrittenInstructionProductionStepDto.class, name = "writtenInstruction"),
-                @JsonSubTypes.Type(value = AddIngredientsProductionStepDto.class, name = "addIngredients")
+                @JsonSubTypes.Type(value = WrittenInstructionProductionStepDto.Request.Create.class, name = "writtenInstruction"),
+                @JsonSubTypes.Type(value = AddIngredientsProductionStepDto.Request.Create.class, name = "addIngredients")
         })
         public abstract static class Create implements Type {
 

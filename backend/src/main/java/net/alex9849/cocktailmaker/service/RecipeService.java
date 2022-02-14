@@ -194,10 +194,10 @@ public class RecipeService {
         }
         ProductionStepIngredient psi = new ProductionStepIngredient();
         BeanUtils.copyProperties(dto, psi);
-        Ingredient ingredient = ingredientService.getIngredient(dto.getIngredient().getId());
+        Ingredient ingredient = ingredientService.getIngredient(dto.getIngredientId());
         if(ingredient == null) {
             throw new IllegalArgumentException("Ingredient with Id \""
-                    + dto.getIngredient().getId() + "\" doesn't exist!");
+                    + dto.getIngredientId() + "\" doesn't exist!");
         }
         psi.setIngredient(ingredient);
         return psi;

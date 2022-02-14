@@ -42,7 +42,7 @@
 import RecipeEditorForm from '../components/RecipeEditorForm'
 import RecipeService from '../services/recipe.service'
 import Recipe from '../models/Recipe'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'RecipeAdd',
@@ -61,16 +61,24 @@ export default {
   methods: {
     createRecipe () {
       this.loading = true
-      this.addRecipe.recipe.owner = this.user
-
-      RecipeService.createRecipe(this.addRecipe.recipe, this.addRecipe.image)
+      this.addRecipe.recipe.ownerId = this.user.id
+      const copy = Object.assign({}, this.addRecipe.recipe)
+      for (const pStep of copy.productionSteps) {
+        if (pStep.type !== 'addIngredients') {
+          continue
+        }
+        for (const stepIngredient of pStep.stepIngredients) {
+          stepIngredient.ingredientId = stepIngredient.ingredient.id
+        }
+      }
+      RecipeService.createRecipe(copy, this.addRecipe.image)
         .then((recipe) => {
           this.loading = false
           this.$q.notify({
             type: 'positive',
             message: 'Recipe created successfully'
           })
-          this.$router.push({ name: 'recipedetails', params: { id: recipe.id } })
+          this.$router.push({name: 'recipedetails', params: {id: recipe.id}})
         }, error => {
           this.loading = false
           this.error = error.response.data.message

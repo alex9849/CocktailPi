@@ -39,16 +39,16 @@ public class IngredientDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Duplex {
+    public static class Response {
 
-        @Getter @Setter @EqualsAndHashCode
+        @Getter
+        @Setter
+        @EqualsAndHashCode
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit, OnPump {
             long id;
             String name;
             Long parentGroupId;
             String parentGroupName;
-
-            protected Detailed() {}
 
             protected Detailed(Ingredient ingredient) {
                 this.id = ingredient.getId();
@@ -64,22 +64,18 @@ public class IngredientDto {
                     return null;
                 }
                 if (ingredient instanceof IngredientGroup) {
-                    return new IngredientGroupDto.Duplex.Detailed((IngredientGroup) ingredient);
+                    return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
                 }
                 if (ingredient instanceof ManualIngredient) {
-                    return new ManualIngredientDto.Duplex.Detailed((ManualIngredient) ingredient);
+                    return new ManualIngredientDto.Response.Detailed((ManualIngredient) ingredient);
                 }
                 if (ingredient instanceof AutomatedIngredient) {
-                    return new AutomatedIngredientDto.Duplex.Detailed((AutomatedIngredient) ingredient);
+                    return new AutomatedIngredientDto.Response.Detailed((AutomatedIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
 
             }
         }
-    }
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
         public abstract static class Reduced implements Id, Name, Type, InBar, OnPump {

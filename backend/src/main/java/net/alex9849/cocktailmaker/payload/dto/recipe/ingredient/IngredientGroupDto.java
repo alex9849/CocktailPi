@@ -31,16 +31,16 @@ public class IngredientGroupDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Duplex {
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Detailed extends IngredientDto.Duplex.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
+    public static class Response {
+        @Getter
+        @Setter
+        @EqualsAndHashCode(callSuper = true)
+        public static class Detailed extends IngredientDto.Response.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
             Set<Long> leafIds;
             int minAlcoholContent;
             int maxAlcoholContent;
             boolean inBar;
             boolean onPump;
-
-            public Detailed() {}
 
             public Detailed(IngredientGroup ingredientGroup) {
                 super(ingredientGroup);
@@ -59,10 +59,6 @@ public class IngredientGroupDto {
                 return Ingredient.Unit.MILLILITER;
             }
         }
-    }
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Response {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends IngredientDto.Response.Reduced {
