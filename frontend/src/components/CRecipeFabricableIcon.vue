@@ -98,24 +98,6 @@ export default {
       }
       return true
     }
-  },
-  methods: {
-    allIngredientsOwned (recipe) {
-      for (const productionStep of recipe.productionSteps) {
-        if (productionStep.type !== 'addIngredients') {
-          continue
-        }
-        for (const ingredientStep of productionStep.stepIngredients) {
-          if (
-            !ingredientStep.ingredient.inBar &&
-            !this.pumpIngredients.some(x => x.id === ingredientStep.ingredient.id)
-          ) {
-            return false
-          }
-        }
-      }
-      return true
-    }
   }
 }
 </script>

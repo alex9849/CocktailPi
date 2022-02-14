@@ -33,6 +33,7 @@
               :recipe="cocktailProgress.recipe"
               class="text-left"
               background-color="#EEEEEE"
+              :show-ingredients="false"
             >
               <template v-slot:bottom>
                 <q-card v-if="cocktailProgress.state === 'MANUAL_INGREDIENT_ADD'"
@@ -110,7 +111,7 @@
                     :loading="canceling"
                     :disable="hasCocktailProgress && (cocktailProgress.state === 'CANCELLED' || cocktailProgress.state === 'FINISHED')"
                     @click="onCancelCocktail()"
-                    v-if="isAdmin || currentUser.id === cocktailProgress.user.id"
+                    v-if="isAdmin || currentUser.id === cocktailProgress.userid"
                   />
                 </div>
               </template>
@@ -143,8 +144,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty } from '@quasar/extras/mdi-v5'
+import {mapGetters} from 'vuex'
+import {mdiAlertOutline, mdiCheckBold, mdiMagnify, mdiStop, mdiTimerSandEmpty} from '@quasar/extras/mdi-v5'
 import CocktailService from '../services/cocktail.service'
 import CRecipeCard from './CRecipeCard'
 

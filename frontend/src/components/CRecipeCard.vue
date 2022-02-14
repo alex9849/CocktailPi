@@ -58,7 +58,10 @@
               {{ recipe.description }}
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div v-if="showIngredients"
+               class="row"
+               style="margin-top: 10px"
+          >
             <q-chip
               v-for="ingredient in recipe.ingredients"
               :key="ingredient.id"
@@ -104,7 +107,7 @@ export default {
     },
     showIngredients: {
       type: Boolean,
-      default: false
+      default: true
     },
     backgroundColor: {
       type: String,
