@@ -118,8 +118,8 @@
 </template>
 
 <script>
-import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
-import IngredientService from '../services/ingredient.service'
+import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import IngredientService, {ingredientDtoMapper, IngredientDtoMapper} from '../services/ingredient.service'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import IngredientForm from 'components/IngredientForm'
@@ -205,12 +205,12 @@ export default {
         vm.editOptions.editIngredientSaving = false
         vm.editOptions.editErrorMessage = error.response.data.message
       }
-
+      const dtoIngredient = ingredientDtoMapper.toIngredientCreateDto(this.editOptions.editIngredient)
       if (this.isEditIngredientNew) {
-        IngredientService.createIngredient(this.editOptions.editIngredient)
+        IngredientService.createIngredient(dtoIngredient)
           .then(onSuccess, error => onError(error))
       } else {
-        IngredientService.updateIngredient(this.editOptions.editIngredient)
+        IngredientService.updateIngredient(this.editOptions.editIngredient.id, dtoIngredient)
           .then(onSuccess, error => onError(error))
       }
     },

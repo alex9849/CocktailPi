@@ -44,7 +44,7 @@ class IngredientService {
 
 export default new IngredientService()
 
-export class IngredientDtoMapper {
+class IngredientDtoMapper {
   toIngredientCreateDto (ingredient) {
     if (ingredient.type === 'group') {
       return {
@@ -72,3 +72,5 @@ export class IngredientDtoMapper {
     throw new Error('Unknown ingredient type: ' + ingredient.type)
   }
 }
+
+export const ingredientDtoMapper = new IngredientDtoMapper()
