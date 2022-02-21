@@ -1,10 +1,9 @@
 import axios from 'axios'
-import FeasibilityReportDto from 'FeasibilityReportDto/Response'
 
 const API_PATH = 'api/cocktail/'
 
 class CocktailService {
-  order (recipeId: bigint, amount: number) {
+  order (recipeId, amount) {
     return axios.put(API_PATH + String(recipeId), null, {
       params: {
         amount: amount
@@ -12,8 +11,8 @@ class CocktailService {
     })
   }
 
-  checkFeasibility (recipeId: bigint, amount: number) {
-    return axios.get<FeasibilityReportDto.Detailed>(API_PATH + String(recipeId) + '/feasibility', {
+  checkFeasibility (recipeId, amount) {
+    return axios.get(API_PATH + String(recipeId) + '/feasibility', {
       params: {
         amount: amount
       }

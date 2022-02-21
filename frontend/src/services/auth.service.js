@@ -1,13 +1,11 @@
 import axios from 'axios'
-import LoginRequest from 'src/models/request/LoginRequest';
-import JwtResponse from 'src/models/response/JwtResponse';
 
 const API_PATH = 'api/auth/'
 
 class AuthService {
-  login (loginRequest: LoginRequest) {
+  login (loginRequest) {
     return axios
-      .post<JwtResponse>(API_PATH + 'login', loginRequest)
+      .post(API_PATH + 'login', loginRequest)
       .then(response => {
         // JwtResponse
         response.data.tokenExpiration = new Date(response.data.tokenExpiration)
@@ -17,7 +15,7 @@ class AuthService {
 
   refreshToken () {
     return axios
-      .get<JwtResponse>(API_PATH + 'refreshToken')
+      .get(API_PATH + 'refreshToken')
       .then(response => {
         // JwtResponse
         response.data.tokenExpiration = new Date(response.data.tokenExpiration)
