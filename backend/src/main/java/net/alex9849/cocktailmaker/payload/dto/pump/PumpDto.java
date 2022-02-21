@@ -17,27 +17,20 @@ public class PumpDto {
     private interface TimePerClInMs { @NotNull @Min(1) int getTimePerClInMs(); }
     private interface TubeCapacityInMl { @NotNull @Min(1) int getTubeCapacityInMl(); }
     private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
-    private interface FillingLevelInMl {
-        @NotNull @Min(0) int getFillingLevelInMl();
-    }
-
-    private interface CurrentIngredientResponse {
-        AutomatedIngredientDto.Response.Detailed getCurrentIngredient();
-    }
-
-    private interface IsCleaning {
-        boolean isCleaning();
-    }
+    private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
+    private interface CurrentIngredientId { Long getCurrentIngredientId();}
+    private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
+    private interface IsCleaning { boolean isCleaning(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientResponse {
+        public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientId {
             int timePerClInMs;
             int tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
-            AutomatedIngredientDto.Response.Detailed currentIngredient;
+            Long currentIngredientId;
         }
     }
 
@@ -45,7 +38,7 @@ public class PumpDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Id, TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl,
-                CurrentIngredientResponse, IsCleaning {
+                CurrentIngredient, IsCleaning {
             long id;
             int timePerClInMs;
             int tubeCapacityInMl;

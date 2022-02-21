@@ -5,6 +5,8 @@ import net.alex9849.cocktailmaker.model.recipe.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
+import java.util.Objects;
+
 public class Pump {
     private long id;
     private int timePerClInMs;
@@ -78,7 +80,9 @@ public class Pump {
     }
 
     public void setCurrentIngredientId(Long currentIngredientId) {
+        if(!Objects.equals(this.currentIngredientId, currentIngredientId)) {
+            this.currentIngredient = null;
+        }
         this.currentIngredientId = currentIngredientId;
-        this.currentIngredient = null;
     }
 }

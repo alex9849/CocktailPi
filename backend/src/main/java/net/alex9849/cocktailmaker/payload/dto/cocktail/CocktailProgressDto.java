@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 
@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CocktailprogressDto {
+public class CocktailProgressDto {
     public interface Recipe { RecipeDto.Response.SearchResult getRecipe(); }
     public interface Progress { int getProgress(); }
-    public interface State { Cocktailprogress.State getState(); }
+    public interface State { CocktailProgress.State getState(); }
     public interface CurrentIngredientsToAddManually { List<ProductionStepIngredientDto.Response.Detailed> getCurrentIngredientsToAddManually(); }
     public interface WrittenInstruction { String getWrittenInstruction(); }
 
@@ -25,11 +25,11 @@ public class CocktailprogressDto {
             RecipeDto.Response.SearchResult recipe;
             int progress;
             long userId;
-            Cocktailprogress.State state;
+            CocktailProgress.State state;
             List<ProductionStepIngredientDto.Response.Detailed> currentIngredientsToAddManually;
             String writtenInstruction;
 
-            public Detailed(Cocktailprogress cocktailprogress) {
+            public Detailed(CocktailProgress cocktailprogress) {
                 this.progress = cocktailprogress.getProgress();
                 this.state = cocktailprogress.getState();
                 if(cocktailprogress.getCurrentIngredientsToAddManually() != null) {

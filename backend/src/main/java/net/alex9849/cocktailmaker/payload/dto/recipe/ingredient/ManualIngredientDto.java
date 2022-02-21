@@ -9,8 +9,10 @@ public class ManualIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Create extends AddableIngredientDto.Request.Create {
+        @Getter
+        @Setter
+        @EqualsAndHashCode(callSuper = true)
+        public static class Create extends AddableIngredientDto.Request.Create implements IngredientDto.Unit {
             Ingredient.Unit unit;
 
             @Override

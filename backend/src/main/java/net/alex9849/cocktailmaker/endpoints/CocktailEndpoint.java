@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
-import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
@@ -58,7 +58,7 @@ public class CocktailEndpoint {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     public ResponseEntity<?> cancelCocktail() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Cocktailprogress progress = pumpService.getCurrentCocktailProgress();
+        CocktailProgress progress = pumpService.getCurrentCocktailProgress();
         if(progress == null) {
             return ResponseEntity.notFound().build();
         }

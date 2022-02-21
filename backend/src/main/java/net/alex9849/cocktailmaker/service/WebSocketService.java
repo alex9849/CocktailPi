@@ -1,10 +1,10 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
-import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailprogressDto;
+import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailProgressDto;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,10 @@ public class WebSocketService {
     public static final String WS_ACTIONS_STATUS_DESTINATION = "/topic/eventactionstatus";
     public static final String WS_ACTIONS_LOG_DESTINATION = "/topic/eventactionlog";
 
-    public void broadcastCurrentCocktailProgress(@Nullable Cocktailprogress cocktailprogress) {
+    public void broadcastCurrentCocktailProgress(@Nullable CocktailProgress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
         if(cocktailprogress != null) {
-            cocktailprogressDto = new CocktailprogressDto.Response.Detailed(cocktailprogress);
+            cocktailprogressDto = new CocktailProgressDto.Response.Detailed(cocktailprogress);
         }
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
@@ -45,10 +45,10 @@ public class WebSocketService {
         }
     }
 
-    public void sendCurrentCocktailProgessToUser(@Nullable Cocktailprogress cocktailProgress, String name) {
+    public void sendCurrentCocktailProgessToUser(@Nullable CocktailProgress cocktailProgress, String name) {
         Object cocktailProgressDto = "DELETE";
         if(cocktailProgress != null) {
-            cocktailProgressDto = new CocktailprogressDto.Response.Detailed(cocktailProgress);
+            cocktailProgressDto = new CocktailProgressDto.Response.Detailed(cocktailProgress);
         }
         simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailProgressDto);
     }

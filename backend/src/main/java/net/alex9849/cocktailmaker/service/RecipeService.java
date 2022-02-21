@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
@@ -132,15 +131,10 @@ public class RecipeService {
             recipe.setProductionSteps(recipeDto.getProductionSteps().stream()
                     .map(this::fromDto).collect(Collectors.toList()));
         }
-        Long[] categoryIds = recipeDto.getCategories()
-                .stream()
-                .map(CategoryDto.Duplex.Detailed::getId)
-                .collect(Collectors.toList())
-                .toArray(new Long[]{});
 
         List<Category> categories = new ArrayList<>();
-        for(CategoryDto.Duplex.Detailed categoryDto : recipeDto.getCategories()) {
-            Category category = categoryService.getCategory(categoryDto.getId());
+        for(Long categoryId : recipeDto.getCategoryIds()) {
+            Category category = categoryService.getCategory(categoryId);
             if(category == null) {
                 throw new IllegalArgumentException("Category with id " + category.getId() + " doesn't exist!");
             }

@@ -22,11 +22,6 @@ public class IngredientGroupDto {
             public String getType() {
                 return "group";
             }
-
-            @Override
-            public Ingredient.Unit getUnit() {
-                return Ingredient.Unit.MILLILITER;
-            }
         }
     }
 

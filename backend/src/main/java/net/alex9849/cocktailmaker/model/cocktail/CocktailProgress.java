@@ -6,7 +6,7 @@ import net.alex9849.cocktailmaker.model.user.User;
 
 import java.util.List;
 
-public class Cocktailprogress {
+public class CocktailProgress {
     private Recipe recipe;
     private int progress;
     private User user;

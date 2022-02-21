@@ -14,25 +14,50 @@ import javax.validation.constraints.Size;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IngredientDto {
-    private interface Id { long getId(); }
-    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
-    private interface ParentGroupId { Long getParentGroupId(); }
-    private interface ParentGroupName { String getParentGroupName(); }
-    private interface Type { String getType(); }
-    private interface InBar { boolean isInBar(); }
-    private interface OnPump { boolean isOnPump(); }
-    private interface Unit { Ingredient.Unit getUnit(); }
+    protected interface Id {
+        long getId();
+    }
+
+    protected interface Name {
+        @NotNull @Size(min = 1, max = 30) String getName();
+    }
+
+    protected interface ParentGroupId {
+        Long getParentGroupId();
+    }
+
+    protected interface ParentGroupName {
+        String getParentGroupName();
+    }
+
+    protected interface Type {
+        String getType();
+    }
+
+    protected interface InBar {
+        boolean isInBar();
+    }
+
+    protected interface OnPump {
+        boolean isOnPump();
+    }
+
+    protected interface Unit {
+        Ingredient.Unit getUnit();
+    }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
+        @Getter
+        @Setter
+        @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = ManualIngredientDto.Request.Create.class, name = "manual"),
                 @JsonSubTypes.Type(value = AutomatedIngredientDto.Request.Create.class, name = "automated"),
                 @JsonSubTypes.Type(value = IngredientGroupDto.Request.Create.class, name = "group")
         })
-        public abstract static class Create implements Name, ParentGroupId, Type, Unit {
+        public abstract static class Create implements Name, ParentGroupId, Type {
             String name;
             Long parentGroupId;
         }
@@ -44,7 +69,7 @@ public class IngredientDto {
         @Getter
         @Setter
         @EqualsAndHashCode
-        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, InBar, Unit, OnPump {
+        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump {
             long id;
             String name;
             Long parentGroupId;

@@ -26,6 +26,7 @@ public class RecipeDto {
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
     private interface Categories { @NotNull Set<CategoryDto.Duplex.Detailed> getCategories(); }
+    private interface CategoryIds { @NotNull Set<Long> getCategoryIds(); }
     private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
 
     private interface OwnerName { String getOwnerName(); }
@@ -37,12 +38,12 @@ public class RecipeDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements Name, OwnerId, Description, ProductionStepsCreated, Categories, DefaultAmountToFill {
+        public static class Create implements Name, OwnerId, Description, ProductionStepsCreated, CategoryIds, DefaultAmountToFill {
             String name;
             long ownerId;
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
-            Set<CategoryDto.Duplex.Detailed> categories;
+            Set<Long> categoryIds;
             long defaultAmountToFill;
         }
     }

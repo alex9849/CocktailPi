@@ -35,7 +35,7 @@ public class CollectionEndpoint {
         collection.setOwner(principal);
         collection = collectionService.createCollection(collection);
         UriComponents uriComponents = uriBuilder.path("/api/collection/{id}").buildAndExpand(collection.getId());
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(new CollectionDto.Response.Detailed(collection));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)

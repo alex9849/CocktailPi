@@ -22,11 +22,6 @@ public class AutomatedIngredientDto {
                 return "automated";
             }
 
-            @Override
-            public Ingredient.Unit getUnit() {
-                return Ingredient.Unit.MILLILITER;
-            }
-
         }
 
     }

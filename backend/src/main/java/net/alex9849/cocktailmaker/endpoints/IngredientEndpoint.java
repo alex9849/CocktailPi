@@ -51,7 +51,7 @@ public class IngredientEndpoint {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
         ingredient = ingredientService.createIngredient(ingredient);
         UriComponents uriComponents = uriBuilder.path("/api/ingredient/{id}").buildAndExpand(ingredient.getId());
-        return ResponseEntity.ok(uriComponents.toUri());
+        return ResponseEntity.created(uriComponents.toUri()).body(IngredientDto.Response.Detailed.toDto(ingredient));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

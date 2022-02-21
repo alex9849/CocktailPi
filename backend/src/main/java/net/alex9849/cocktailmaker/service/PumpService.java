@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Ingredient;
@@ -101,16 +101,15 @@ public class PumpService {
         }
         Pump pump = new Pump();
         BeanUtils.copyProperties(pumpDto, pump);
-        if(pumpDto.getCurrentIngredient() != null) {
-            Ingredient ingredient = ingredientService.getIngredient(pumpDto.getCurrentIngredient().getId());
+        if(pumpDto.getCurrentIngredientId() != null) {
+            Ingredient ingredient = ingredientService.getIngredient(pumpDto.getCurrentIngredientId());
             if(ingredient == null) {
-                throw new IllegalArgumentException("Ingredient with id \"" + pump.getCurrentIngredient().getId() + "\" not found!");
+                throw new IllegalArgumentException("Ingredient with id \"" + pump.getCurrentIngredientId() + "\" not found!");
             }
             if(!(ingredient instanceof AutomatedIngredient)) {
                 throw new IllegalArgumentException("Ingredient must be an AutomatedIngredient!");
             }
             pump.setCurrentIngredient((AutomatedIngredient) ingredient);
-            pump.setCurrentIngredientId(pump.getCurrentIngredient().getId());
         }
         return pump;
     }
@@ -147,8 +146,8 @@ public class PumpService {
         this.cocktailFactory.makeCocktail();
     }
 
-    private void onCocktailProgressSubscriptionChange(Cocktailprogress progress) {
-        if(progress.getState() == Cocktailprogress.State.CANCELLED || progress.getState() == Cocktailprogress.State.FINISHED) {
+    private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
+        if(progress.getState() == CocktailProgress.State.CANCELLED || progress.getState() == CocktailProgress.State.FINISHED) {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
@@ -158,7 +157,7 @@ public class PumpService {
 
         switch (progress.getState()) {
             case RUNNING:
-                if (progress.getPreviousState() == Cocktailprogress.State.READY_TO_START) {
+                if (progress.getPreviousState() == CocktailProgress.State.READY_TO_START) {
                     eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_STARTED);
                 }
                 break;
@@ -232,7 +231,7 @@ public class PumpService {
         return true;
     }
 
-    public Cocktailprogress getCurrentCocktailProgress() {
+    public CocktailProgress getCurrentCocktailProgress() {
         if(this.cocktailFactory == null) {
             return null;
         }

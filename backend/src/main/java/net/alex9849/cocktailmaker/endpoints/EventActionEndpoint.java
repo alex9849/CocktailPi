@@ -65,7 +65,7 @@ public class EventActionEndpoint {
         }
         EventAction createdAction = eventService.createEventAction(EventService.fromDto(eventActionDto, file));
         UriComponents uriComponents = uriBuilder.path("/api/eventaction/{id}").buildAndExpand(createdAction.getId());
-        return ResponseEntity.ok(uriComponents.toUri());
+        return ResponseEntity.created(uriComponents.toUri()).body(EventActionDto.Response.Detailed.toDto(createdAction));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

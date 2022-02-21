@@ -40,7 +40,7 @@ public class CategoryEndpoint {
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto.Request.Create categoryDto, UriComponentsBuilder uriBuilder) {
         Category category = categoryService.createCategory(categoryService.fromDto(categoryDto));
         UriComponents uriComponents = uriBuilder.path("/api/category/{id}").buildAndExpand(category.getId());
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(new CategoryDto.Duplex.Detailed(category));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.service.cocktailfactory;
 
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.cocktail.Cocktailprogress;
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.*;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
@@ -16,7 +16,7 @@ public class CocktailFactory {
     private final int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
     private final int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
 
-    private final List<Consumer<Cocktailprogress>> subscribers = new ArrayList<>();
+    private final List<Consumer<CocktailProgress>> subscribers = new ArrayList<>();
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
     private AbstractProductionStepWorker currentProductionStepWorker = null;
     private final Set<Pump> pumps;
@@ -25,9 +25,9 @@ public class CocktailFactory {
     private final User user;
 
     private int requestedAmount;
-    private Cocktailprogress cocktailprogress;
-    private Cocktailprogress.State previousState = null;
-    private Cocktailprogress.State state = null;
+    private CocktailProgress cocktailprogress;
+    private CocktailProgress.State previousState = null;
+    private CocktailProgress.State state = null;
 
     /**
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
@@ -61,7 +61,7 @@ public class CocktailFactory {
         currentWorker.setOnFinishCallback(() -> this.onFinish());
 
         this.productionStepWorkers.forEach(x -> x.subscribeToProgress(this::onSubscriptionChange));
-        setState(Cocktailprogress.State.READY_TO_START);
+        setState(CocktailProgress.State.READY_TO_START);
     }
 
     private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
@@ -114,11 +114,11 @@ public class CocktailFactory {
 
     private void onSubscriptionChange(StepProgress stepProgress) {
         if(stepProgress instanceof ManualStepProgress) {
-            setState(Cocktailprogress.State.MANUAL_INGREDIENT_ADD);
+            setState(CocktailProgress.State.MANUAL_INGREDIENT_ADD);
         } else if(stepProgress instanceof WrittenInstructionStepProgress) {
-            setState(Cocktailprogress.State.MANUAL_ACTION_REQUIRED);
+            setState(CocktailProgress.State.MANUAL_ACTION_REQUIRED);
         } else {
-            setState(Cocktailprogress.State.RUNNING);
+            setState(CocktailProgress.State.RUNNING);
         }
         this.notifySubscribers();
     }
@@ -162,11 +162,11 @@ public class CocktailFactory {
     }
 
     public void makeCocktail() {
-        if(this.state != Cocktailprogress.State.READY_TO_START) {
+        if(this.state != CocktailProgress.State.READY_TO_START) {
             throw new IllegalStateException("Factory not ready to start!");
         }
-        setState(Cocktailprogress.State.RUNNING);
-        this.cocktailprogress = new Cocktailprogress();
+        setState(CocktailProgress.State.RUNNING);
+        this.cocktailprogress = new CocktailProgress();
         this.notifySubscribers();
         this.currentProductionStepWorker.start();
     }
@@ -175,7 +175,7 @@ public class CocktailFactory {
         if(isFinished() || isCanceled()) {
             return;
         }
-        setState(Cocktailprogress.State.FINISHED);
+        setState(CocktailProgress.State.FINISHED);
         this.shutDown();
         this.notifySubscribers();
     }
@@ -185,7 +185,7 @@ public class CocktailFactory {
             throw new IllegalStateException("Cocktail already done!");
         }
         this.shutDown();
-        setState(Cocktailprogress.State.CANCELLED);
+        setState(CocktailProgress.State.CANCELLED);
         this.notifySubscribers();
     }
 
@@ -205,36 +205,36 @@ public class CocktailFactory {
         }
     }
 
-    private void setState(Cocktailprogress.State state) {
+    private void setState(CocktailProgress.State state) {
         this.previousState = this.state;
         this.state = state;
     }
 
     public boolean isFinished() {
-        return this.state == Cocktailprogress.State.FINISHED;
+        return this.state == CocktailProgress.State.FINISHED;
     }
 
     public boolean isCanceled() {
-        return this.state == Cocktailprogress.State.CANCELLED;
+        return this.state == CocktailProgress.State.CANCELLED;
     }
 
     public boolean isRunning() {
-        return this.state == Cocktailprogress.State.RUNNING;
+        return this.state == CocktailProgress.State.RUNNING;
     }
 
-    public CocktailFactory subscribeProgress(Consumer<Cocktailprogress> consumer) {
+    public CocktailFactory subscribeProgress(Consumer<CocktailProgress> consumer) {
         this.subscribers.add(consumer);
         return this;
     }
 
     private void notifySubscribers() {
-        for(Consumer<Cocktailprogress> consumer : this.subscribers) {
+        for(Consumer<CocktailProgress> consumer : this.subscribers) {
             consumer.accept(getCocktailprogress());
         }
     }
 
-    public Cocktailprogress getCocktailprogress() {
-        Cocktailprogress cocktailprogress = new Cocktailprogress();
+    public CocktailProgress getCocktailprogress() {
+        CocktailProgress cocktailprogress = new CocktailProgress();
         cocktailprogress.setUser(this.user);
         cocktailprogress.setRecipe(this.recipe);
         cocktailprogress.setPreviousState(this.previousState);
@@ -253,10 +253,10 @@ public class CocktailFactory {
     }
 
     private int getProgressInPercent() {
-        if(this.state == Cocktailprogress.State.READY_TO_START) {
+        if(this.state == CocktailProgress.State.READY_TO_START) {
             return 0;
         }
-        if(this.state == Cocktailprogress.State.FINISHED) {
+        if(this.state == CocktailProgress.State.FINISHED) {
             return 100;
         }
 
