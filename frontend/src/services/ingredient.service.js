@@ -69,6 +69,6 @@ export class IngredientDtoMapper {
         pumpTimeMultiplier: ingredient.pumpTimeMultiplier
       }
     }
-    throw 'Unknown ingredient type: ' + ingredient.type
+    throw new Error('Unknown ingredient type: ' + ingredient.type)
   }
 }

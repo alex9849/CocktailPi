@@ -55,17 +55,15 @@ class EventActionService {
 export default new EventActionService()
 
 export class EventActionDtoMapper {
-
-  toEventActionCreateDto(detailed) {
-    if(detailed.type === 'doNothing') {
+  toEventActionCreateDto (detailed) {
+    if (detailed.type === 'doNothing') {
       return {
         type: detailed.type,
         comment: detailed.comment,
         executionGroups: detailed.executionGroups,
         trigger: detailed.trigger
       }
-    }
-    else if(detailed.type === 'callUrl') {
+    } else if (detailed.type === 'callUrl') {
       return {
         type: detailed.type,
         comment: detailed.comment,
@@ -74,8 +72,7 @@ export class EventActionDtoMapper {
         url: detailed.url,
         requestMethod: detailed.requestMethod
       }
-    }
-    else if(detailed.type === 'playAudio') {
+    } else if (detailed.type === 'playAudio') {
       return {
         type: detailed.type,
         comment: detailed.comment,
@@ -85,8 +82,7 @@ export class EventActionDtoMapper {
         soundDevice: detailed.soundDevice,
         volume: detailed.volume
       }
-    }
-    else if(detailed.type === 'execPy') {
+    } else if (detailed.type === 'execPy') {
       return {
         type: detailed.type,
         comment: detailed.comment,
@@ -94,7 +90,6 @@ export class EventActionDtoMapper {
         executionGroups: detailed.executionGroups
       }
     }
-    throw 'Unknown event-action type: ' + detailed.type
+    throw new Error('Unknown event-action type: ' + detailed.type)
   }
-
 }
