@@ -118,9 +118,9 @@
 </template>
 
 <script>
-import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import IngredientService, {ingredientDtoMapper} from 'src/services/ingredient.service'
+import IngredientService, { ingredientDtoMapper } from 'src/services/ingredient.service'
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import CIngredientGroupForm from 'components/CIngredientGroupForm'

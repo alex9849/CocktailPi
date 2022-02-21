@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import {mdiAlert, mdiCheckBold, mdiClose} from '@quasar/extras/mdi-v5'
+import { mdiAlert, mdiCheckBold, mdiClose } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'CRecipeFabricableIcon',

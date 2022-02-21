@@ -154,13 +154,12 @@
 import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import UserService from '../services/user.service'
-import CQuestion from '../components/CQuestion'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CDeleteWarning from 'components/CDeleteWarning'
 
 export default {
   name: 'UserManagement',
-  components: { CDeleteWarning, TopButtonArranger, CQuestion },
+  components: { CDeleteWarning, TopButtonArranger },
   data () {
     return {
       selected: [],

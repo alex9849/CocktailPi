@@ -182,14 +182,13 @@ import { mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
 import PumpService, { pumpDtoMapper } from '../services/pump.service'
-import CQuestion from '../components/CQuestion'
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
   name: 'PumpManagement',
-  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion, CDeleteWarning },
+  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
   data () {
     return {
       isLoading: false,
