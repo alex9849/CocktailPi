@@ -59,6 +59,7 @@ export default {
   methods: {
     createUser () {
       this.loading = true
+
       userService.createUser(this.newUser)
         .then(() => {
           this.loading = false

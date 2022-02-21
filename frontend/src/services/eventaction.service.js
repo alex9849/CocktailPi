@@ -93,3 +93,5 @@ export class EventActionDtoMapper {
     throw new Error('Unknown event-action type: ' + detailed.type)
   }
 }
+
+export const eventActionDtoMapper = new EventActionDtoMapper()

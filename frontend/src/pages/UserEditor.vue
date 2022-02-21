@@ -81,7 +81,9 @@ export default {
       UserService.updateUser({
         updatePassword,
         userDto: updateUser
-      }).then(() => {
+      },
+      this.userId
+      ).then(() => {
         this.loading = false
         this.$q.notify({
           type: 'positive',

@@ -123,3 +123,5 @@ export class RecipeDtoMapper {
 }
 
 export default new RecipeService()
+
+export const recipeDtoMapper = new RecipeDtoMapper()

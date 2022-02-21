@@ -187,9 +187,9 @@
 </template>
 
 <script>
-import { maxLength, minLength, required } from '@vuelidate/validators'
-import CollectionService from 'src/services/collection.service'
-import { mdiDelete, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import {maxLength, minLength, required} from '@vuelidate/validators'
+import CollectionService, {collectionDtoMapper} from 'src/services/collection.service'
+import {mdiDelete, mdiPlusCircleOutline} from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CQuestion from 'components/CQuestion'
 import CEditDialog from 'components/CEditDialog'
@@ -321,10 +321,15 @@ export default {
     },
     onClickSafe () {
       this.editData.saving = true
-      CollectionService.updateCollection(this.editData.collection, this.collection.id, this.editData.newImage, this.editData.removeImage)
+      const dto = collectionDtoMapper.toCreateCollectionDto(this.editData.collection)
+      CollectionService.updateCollection(dto, this.collection.id, this.editData.newImage, this.editData.removeImage)
         .then(() => {
           this.refreshCollection()
           this.editData.editMode = false
+          this.$q.notify({
+            type: 'positive',
+            message: 'Collection updated successfully'
+          })
         }).finally(() => {
           this.editData.saving = false
         })

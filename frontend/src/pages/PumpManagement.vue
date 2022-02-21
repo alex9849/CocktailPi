@@ -7,7 +7,7 @@
         label="Delete selected pumps"
         no-caps
         :disable="isLoading"
-        @click="openDeleteDialog(true)"
+        @click="$refs.deleteDialog.openForItems(selected)"
       />
       <q-btn
         color="positive"
@@ -116,7 +116,7 @@
               <q-btn
                 :icon="mdiDelete"
                 color="red"
-                @click="() => {deletePumps.push(props.row); openDeleteDialog(false);}"
+                @click="$refs.deleteDialog.openForItems([props.row])"
                 dense
                 rounded
               >
@@ -164,36 +164,15 @@
         @invalid="editOptions.valid = false"
       />
     </c-edit-dialog>
-    <c-question
-      :question="deleteQuestionMessage"
-      ok-color="red"
-      ok-button-text="Delete"
-      :loading="deleteLoading"
-      v-model:show="deleteDialog"
-      @clickOk="deleteSelected"
-      @clickAbort="closeDeleteDialog"
-    >
-      <template v-slot:buttons>
-        <q-btn
-          v-if="deletePumps.length === 0"
-          color="grey"
-          style="width: 150px"
-          @click="closeDeleteDialog"
-        >
-          Ok
-        </q-btn>
-      </template>
-      <template v-slot:default>
-        <ul style="padding: 0; list-style: none">
-          <li
-            :key="index"
-            v-for="(pump, index) in deletePumps"
-          >
-            Pump #{{ pump.id }}
-          </li>
-        </ul>
-      </template>
-    </c-question>
+    <c-delete-warning
+      ref="deleteDialog"
+      :delete-method="deletePump"
+      :list-point-method="x => 'Pump #' + x.id"
+      item-name-plural="pumps"
+      item-name-singular="pump"
+      @deleteFailure="fetchAll"
+      @deleteSuccess="onDeleteSuccess"
+    />
   </q-page>
 </template>
 
@@ -202,19 +181,17 @@
 import { mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
-import PumpService from '../services/pump.service'
+import PumpService, { pumpDtoMapper } from '../services/pump.service'
 import CQuestion from '../components/CQuestion'
+import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 
 export default {
   name: 'PumpManagement',
-  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion },
+  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CQuestion, CDeleteWarning },
   data () {
     return {
-      deleteDialog: false,
-      deletePumps: [],
-      deleteLoading: false,
       isLoading: false,
       editOptions: {
         editErrorMessage: '',
@@ -260,17 +237,17 @@ export default {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay
-    this.initialize()
+    this.fetchAll()
   },
   methods: {
     onRefreshButton () {
       this.isLoading = true
       const vm = this
       setTimeout(() => {
-        vm.initialize()
+        vm.fetchAll()
       }, 500)
     },
-    initialize () {
+    fetchAll () {
       this.isLoading = true
       PumpService.getAllPumps()
         .then(pumps => {
@@ -287,38 +264,12 @@ export default {
           })
         })
     },
-    openDeleteDialog (forSelectedPumps) {
-      if (forSelectedPumps) {
-        this.deletePumps.push(...this.selected)
-      }
-      this.deleteDialog = true
+    deletePump (id) {
+      return PumpService.deletePump(id)
     },
-    closeDeleteDialog () {
-      this.deletePumps.splice(0, this.deletePumps.length)
-      this.deleteDialog = false
-    },
-    deleteSelected () {
-      this.deleteLoading = true
-      const vm = this
-      const promises = []
-      this.deletePumps.forEach(pump => {
-        promises.push(PumpService.deletePump(pump))
-      })
-      Promise.all(promises)
-        .then(() => {
-          vm.$q.notify({
-            type: 'positive',
-            message: ((vm.deletePumps.length > 1) ? 'Pumps' : 'Pump') + ' deleted successfully'
-          })
-          vm.closeDeleteDialog()
-          vm.selected.splice(0, vm.selected.length)
-          vm.deleteLoading = false
-          vm.initialize()
-        }, err => {
-          vm.deleteLoading = false
-          vm.selected.splice(0, vm.selected.length)
-          vm.initialize()
-        })
+    onDeleteSuccess () {
+      this.selected.splice(0, this.selected.length)
+      this.fetchAll()
     },
     closeEditDialog () {
       this.editOptions.editPump = Object.assign({}, this.editOptions.newPump)
@@ -342,7 +293,7 @@ export default {
           message: 'Pump ' + (vm.isEditIngredientNew ? 'created' : 'updated') + ' successfully'
         })
         vm.closeEditDialog()
-        vm.initialize()
+        vm.fetchAll()
       }
 
       const onError = function (error) {
@@ -353,12 +304,12 @@ export default {
           message: error.response.data.message
         })
       }
-
+      const dto = pumpDtoMapper.toPumpCreateDto(this.editOptions.editPump)
       if (this.isEditPumpNew) {
-        PumpService.createPump(this.editOptions.editPump)
+        PumpService.createPump(dto)
           .then(onSuccess, error => onError(error))
       } else {
-        PumpService.updatePump(this.editOptions.editPump)
+        PumpService.updatePump(this.editOptions.editPump.id, dto)
           .then(onSuccess, error => onError(error))
       }
     }

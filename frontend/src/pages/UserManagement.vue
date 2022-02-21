@@ -7,7 +7,7 @@
         label="Delete selected users"
         no-caps
         :disable="isLoading"
-        @click="openDeleteDialog(true)"
+        @click="$refs.deleteDialog.openForItems(selected)"
       />
       <q-btn
         color="positive"
@@ -101,7 +101,7 @@
             <q-btn
               :icon="mdiDelete"
               v-if="getUser.id !== props.row.id"
-              @click="() => {deleteUsers.push(props.row); openDeleteDialog(false);}"
+              @click="() => $refs.deleteDialog.openForItems([props.row])"
               color="red"
               dense
               rounded
@@ -114,7 +114,7 @@
         </template>
         <template v-slot:header-selection>
           <q-checkbox
-            :model-value="isAllSelectedCeckboxState"
+            :model-value="isAllSelectedCheckboxState"
             @update:model-value="v => v? selectAll() : $refs.userTable.clearSelection()"
           />
         </template>
@@ -138,36 +138,15 @@
         </template>
       </q-table>
     </div>
-    <c-question
-      :question="deleteQuestionMessage"
-      ok-color="red"
-      ok-button-text="Delete"
-      :loading="deleteLoading"
-      v-model:show="deleteDialog"
-      @clickOk="deleteSelected"
-      @clickAbort="closeDeleteDialog"
-    >
-      <template v-slot:buttons>
-        <q-btn
-          v-if="deleteUsers.length === 0"
-          color="grey"
-          style="width: 150px"
-          @click="closeDeleteDialog"
-        >
-          Ok
-        </q-btn>
-      </template>
-      <template v-slot:default>
-        <ul style="padding: 0; list-style: none">
-          <li
-            :key="index"
-            v-for="(user, index) in deleteUsers"
-          >
-            {{ user.username }} ({{ user.email }})
-          </li>
-        </ul>
-      </template>
-    </c-question>
+    <c-delete-warning
+      ref="deleteDialog"
+      :delete-method="deleteUser"
+      :list-point-method="x => x.username + ' (' + x.email + ')'"
+      item-name-plural="users"
+      item-name-singular="user"
+      @deleteFailure="fetchAll"
+      @deleteSuccess="onDeleteSuccess"
+    />
   </q-page>
 </template>
 
@@ -177,15 +156,13 @@ import { mapGetters } from 'vuex'
 import UserService from '../services/user.service'
 import CQuestion from '../components/CQuestion'
 import TopButtonArranger from 'components/TopButtonArranger'
+import CDeleteWarning from 'components/CDeleteWarning'
 
 export default {
   name: 'UserManagement',
-  components: { TopButtonArranger, CQuestion },
+  components: { CDeleteWarning, TopButtonArranger, CQuestion },
   data () {
     return {
-      deleteDialog: false,
-      deleteUsers: [],
-      deleteLoading: false,
       selected: [],
       isLoading: false,
       data: [],
@@ -219,22 +196,13 @@ export default {
     this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
-    this.initialize()
+    this.fetchAll()
   },
   computed: {
     ...mapGetters({
       getUser: 'auth/getUser'
     }),
-    deleteQuestionMessage () {
-      if (this.deleteUsers.length === 0) {
-        return 'No users selected!'
-      }
-      if (this.deleteUsers.length === 1) {
-        return 'The following user will be deleted:'
-      }
-      return 'The following users will be deleted:'
-    },
-    isAllSelectedCeckboxState () {
+    isAllSelectedCheckboxState () {
       if (this.selected.length === 0) {
         return false
       }
@@ -245,47 +213,7 @@ export default {
     }
   },
   methods: {
-    selectAll () {
-      const toSelect = this.data.filter(x => x.id !== this.getUser.id)
-      this.selected.push(...toSelect)
-    },
-    onRefreshButton () {
-      this.isLoading = true
-      const vm = this
-      setTimeout(() => {
-        vm.initialize()
-      }, 500)
-    },
-    openDeleteDialog (forSelectedUsers) {
-      if (forSelectedUsers) {
-        this.deleteUsers.push(...this.selected)
-      }
-      this.deleteDialog = true
-    },
-    closeDeleteDialog () {
-      this.deleteUsers.splice(0, this.deleteUsers.length)
-      this.deleteDialog = false
-    },
-    deleteSelected () {
-      this.deleteLoading = true
-      const vm = this
-      const promises = []
-      this.deleteUsers.forEach(user => {
-        promises.push(UserService.deleteUser(user.id))
-      })
-      Promise.all(promises)
-        .then(() => {
-          vm.closeDeleteDialog()
-          vm.selected.splice(0, this.selected.length)
-          vm.deleteLoading = false
-          vm.initialize()
-          vm.$q.notify({
-            type: 'positive',
-            message: 'User(s) deleted successfully'
-          })
-        })
-    },
-    initialize () {
+    fetchAll () {
       this.isLoading = true
       UserService.getAllUsers()
         .then(users => {
@@ -294,6 +222,24 @@ export default {
         }, err => {
           this.loading = false
         })
+    },
+    deleteUser (id) {
+      return UserService.deleteUser(id)
+    },
+    selectAll () {
+      const toSelect = this.data.filter(x => x.id !== this.getUser.id)
+      this.selected.push(...toSelect)
+    },
+    onDeleteSuccess () {
+      this.selected.splice(0, this.selected.length)
+      this.fetchAll()
+    },
+    onRefreshButton () {
+      this.isLoading = true
+      const vm = this
+      setTimeout(() => {
+        vm.fetchAll()
+      }, 500)
     }
   }
 }

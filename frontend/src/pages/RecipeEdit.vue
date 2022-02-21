@@ -40,7 +40,7 @@
 
 <script>
 import RecipeEditorForm from '../components/RecipeEditorForm'
-import RecipeService from '../services/recipe.service'
+import RecipeService, { recipeDtoMapper } from '../services/recipe.service'
 
 export default {
   name: 'RecipeEdit',
@@ -67,23 +67,15 @@ export default {
   methods: {
     updateRecipe () {
       this.sending = true
-      const copy = Object.assign({}, this.editRecipe.recipe)
-      for (const pStep of copy.productionSteps) {
-        if (pStep.type !== 'addIngredients') {
-          continue
-        }
-        for (const stepIngredient of pStep.stepIngredients) {
-          stepIngredient.ingredientId = stepIngredient.ingredient.id
-        }
-      }
-      RecipeService.updateRecipe(copy, this.editRecipe.image, this.editRecipe.removeImage)
+      const dto = recipeDtoMapper.toRecipeCreateDto(this.editRecipe.recipe)
+      RecipeService.updateRecipe(this.editRecipe.recipe.id, dto, this.editRecipe.image, this.editRecipe.removeImage)
         .then(response => {
           this.sending = false
           this.$q.notify({
             type: 'positive',
             message: 'Recipe updated successfully'
           })
-          this.$router.push({name: 'recipedetails', params: {id: this.$route.params.id}})
+          this.$router.push({ name: 'recipedetails', params: { id: this.$route.params.id } })
         }, error => {
           this.sending = false
           this.error = error.response.data.message

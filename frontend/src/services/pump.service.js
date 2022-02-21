@@ -38,3 +38,5 @@ export class PumpDtoMapper {
 }
 
 export default new PumpService()
+
+export const pumpDtoMapper = new PumpDtoMapper()

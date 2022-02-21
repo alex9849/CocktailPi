@@ -205,7 +205,7 @@ import WebSocketService from '../services/websocket.service'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import EventAction from '../models/EventAction'
-import EventActionService from '../services/eventaction.service'
+import EventActionService, { eventActionDtoMapper } from '../services/eventaction.service'
 import CEventActionEditorForm from 'components/CEventActionEditorForm'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
 import CDeleteWarning from 'components/CDeleteWarning'
@@ -337,12 +337,13 @@ export default {
       this.editOptions.saving = true
       let promise
       let successMessage
+      const dto = eventActionDtoMapper.toEventActionCreateDto(this.editOptions.editEventAction)
       if (this.isNewEditEventAction) {
-        promise = EventActionService.createEvent(this.editOptions.editEventAction,
+        promise = EventActionService.createEvent(dto,
           this.editOptions.selectedFile)
         successMessage = 'Action created successfully!'
       } else {
-        promise = EventActionService.updateEvent(this.editOptions.editEventAction,
+        promise = EventActionService.updateEvent(this.editOptions.editEventAction.id, dto,
           this.editOptions.selectedFile)
         successMessage = 'Action updated successfully!'
       }

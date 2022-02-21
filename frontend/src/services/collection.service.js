@@ -64,8 +64,8 @@ class CollectionService {
 
 export default new CollectionService()
 
-export class EventActionDtoMapper {
-  toCreateCollectionDto(detailed) {
+export class CollectionDtoMapper {
+  toCreateCollectionDto (detailed) {
     return {
       name: detailed.name,
       description: detailed.description,
@@ -73,3 +73,5 @@ export class EventActionDtoMapper {
     }
   }
 }
+
+export const collectionDtoMapper = new CollectionDtoMapper()
