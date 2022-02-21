@@ -1,6 +1,5 @@
 import axios from 'axios'
 import JsUtils from './JsUtils'
-import RecipeDtoResponse from 'RecipeDto/Response'
 import Querystring from 'querystring'
 
 const API_PATH = 'api/recipe/'
@@ -16,7 +15,7 @@ class RecipeService {
     if (image) {
       uploadData.append('image', image)
     }
-    return axios.post < RecipeDtoResponse.Detailed > (API_PATH, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    return axios.post(API_PATH, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then(response => response.data)
   }
 
@@ -34,7 +33,6 @@ class RecipeService {
       inCategory,
       orderBy
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     params = JsUtils.cleanObject(params)
     const config = {
       params,
