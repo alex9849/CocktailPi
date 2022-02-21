@@ -1,7 +1,7 @@
 import CategoryService from 'src/services/category.service'
 
-export const createCategory = ({ dispatch, commit }, category) => {
-  return CategoryService.createCategory(category)
+export const createCategory = ({ dispatch, commit }, categoryName) => {
+  return CategoryService.createCategory(categoryName)
     .then(() => {
       return dispatch('fetchCategories')
     })

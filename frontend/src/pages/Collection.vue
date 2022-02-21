@@ -321,7 +321,7 @@ export default {
     },
     onClickSafe () {
       this.editData.saving = true
-      CollectionService.updateCollection(this.editData.collection, this.editData.newImage, this.editData.removeImage)
+      CollectionService.updateCollection(this.editData.collection, this.collection.id, this.editData.newImage, this.editData.removeImage)
         .then(() => {
           this.refreshCollection()
           this.editData.editMode = false

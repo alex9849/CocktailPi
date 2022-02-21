@@ -263,7 +263,7 @@ export default {
       }
 
       if (this.iseditCategoryNew) {
-        this.createCategory(this.editOptions.editCategory)
+        this.createCategory(this.editOptions.editCategory.name)
           .then(onSuccess, error => onError(error))
       } else {
         this.updateCategory(this.editOptions.editCategory)
