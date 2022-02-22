@@ -203,7 +203,7 @@
 </template>
 
 <script>
-import PumpService from '../services/pump.service'
+import PumpService, { pumpDtoMapper } from '../services/pump.service'
 import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
 import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
@@ -299,10 +299,10 @@ export default {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
     updatePumpIngredient (pump, newIngredient) {
-      const newPump = Object.assign({}, pump)
-      newPump.currentIngredient = newIngredient
-      this.loadingPumpIdsCurrentIngredient.push(newPump.id)
-      PumpService.updatePump(newPump)
+      const dto = pumpDtoMapper.toPumpCreateDto(pump)
+      dto.currentIngredientId = newIngredient?.id
+      this.loadingPumpIdsCurrentIngredient.push(pump.id)
+      PumpService.updatePump(pump.id, dto)
         .catch(error => {
           this.$q.notify({
             type: 'negative',
