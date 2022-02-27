@@ -52,8 +52,17 @@
     >
       <q-tab-panel
         name="automated"
-        style="padding: 0"
+        class="q-gutter-y-sm q-pa-none"
       >
+        <c-ingredient-selector
+          :selected="parentGroup"
+          clearable
+          filled
+          filter-automatic-ingredients
+          filter-manual-ingredients
+          label="Parent group"
+          @update:selected="e => setParentGroup(e)"
+        />
         <q-input
           label="Pump time multiplier"
           outlined
@@ -71,7 +80,18 @@
       </q-tab-panel>
       <q-tab-panel
         name="manual"
+        class="q-gutter-y-sm q-pa-none"
       >
+        <c-ingredient-selector
+          :selected="parentGroup"
+          clearable
+          filled
+          filter-automatic-ingredients
+          filter-manual-ingredients
+          label="Parent group"
+          :disable="isDisableParentGroup"
+          @update:selected="e => setParentGroup(e)"
+        />
         <q-select
           filled
           clearable
@@ -92,9 +112,11 @@
 import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
 import { maxLength, maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import CIngredientSelector from 'components/CIngredientSelector'
 
 export default {
   name: 'IngredientForm',
+  components: { CIngredientSelector },
   props: {
     modelValue: {
       type: Object,
@@ -121,6 +143,11 @@ export default {
     setValue (attribute, value) {
       this.v.modelValue[attribute].$model = value
       this.$emit('update:modelValue', this.modelValue)
+    },
+    setParentGroup (parentGroup) {
+      this.v.modelValue.parentGroupId.$model = parentGroup?.id
+      this.v.modelValue.parentGroupName.$model = parentGroup?.name
+      this.$emit('update:modelValue', this.modelValue)
     }
   },
   setup () {
@@ -144,6 +171,8 @@ export default {
           maxValue: maxValue(100)
         },
         type: {},
+        parentGroupId: {},
+        parentGroupName: {},
         pumpTimeMultiplier: {
           required: requiredIf(() => this.modelValue.type === 'automated'),
           minValue: minValue(0),
@@ -176,6 +205,20 @@ export default {
           this.modelValue.pumpTimeMultiplier = parseFloat(value)
         }
       }
+    },
+    parentGroup () {
+      if (!this.modelValue.parentGroupId) {
+        return null
+      }
+      return {
+        id: this.modelValue.parentGroupId,
+        name: this.modelValue.parentGroupName
+      }
+    },
+    isDisableParentGroup () {
+      return !!this.modelValue.unit &&
+        this.modelValue.unit !== 'ml' &&
+        this.modelValue.type === 'manual'
     }
   },
   watch: {

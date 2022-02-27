@@ -19,6 +19,14 @@ public class ManualIngredientDto {
             public String getType() {
                 return "manual";
             }
+
+            @Override
+            public Long getParentGroupId() {
+                if(this.unit != Ingredient.Unit.MILLILITER) {
+                    return null;
+                }
+                return super.getParentGroupId();
+            }
         }
     }
 
