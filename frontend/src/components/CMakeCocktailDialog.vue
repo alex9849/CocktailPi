@@ -311,7 +311,7 @@ export default {
         })
         .finally(() => {
           const array = this.loadingPumpIdsCurrentIngredient
-          array.splice(array.indexOf(newPump.id), 1)
+          array.splice(array.indexOf(pump.id), 1)
           this.checkFeasibility()
         })
     },
@@ -319,10 +319,10 @@ export default {
       if (!newFillingLevel || newFillingLevel < 0) {
         return
       }
-      const newPump = Object.assign({}, pump)
-      newPump.fillingLevelInMl = newFillingLevel
-      this.loadingPumpIdsFillingLevel.push(newPump.id)
-      PumpService.updatePump(newPump)
+      const dto = pumpDtoMapper.toPumpCreateDto(pump)
+      dto.fillingLevelInMl = newFillingLevel
+      this.loadingPumpIdsFillingLevel.push(pump.id)
+      PumpService.updatePump(pump.id, dto)
         .catch(error => {
           this.$q.notify({
             type: 'negative',
@@ -331,7 +331,7 @@ export default {
         })
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
-          array.splice(array.indexOf(newPump.id), 1)
+          array.splice(array.indexOf(pump.id), 1)
         })
     },
     onClickCleanPump (pump) {
