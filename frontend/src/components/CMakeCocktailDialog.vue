@@ -2,17 +2,32 @@
   <q-dialog
     :model-value="show"
     ref="mcDialog"
+    maximized
+    :transition-duration="400"
+    transition-show="slide-up"
+    transition-hide="slide-down"
     @update:model-value="$emit('update:show', $event)"
   >
     <q-card
-      class="text-center full-width"
+      class="text-center"
     >
       <q-card-section class="q-gutter-md">
-        <p class="text-h5">Order Cocktail</p>
+        <q-toolbar>
+          <q-toolbar-title><h5>Order Cocktail</h5></q-toolbar-title>
+          <q-btn flat
+                 round
+                 size="lg"
+                 dense
+                 icon="close"
+                 v-close-popup
+          />
+        </q-toolbar>
         <q-splitter
           horizontal
           :model-value="10"
         />
+      </q-card-section>
+      <q-card-section class="page-content q-gutter-md">
         <q-input
           v-model.number="v.amountToProduce.$model"
           label="Amount to produce"
@@ -30,6 +45,17 @@
             ml
           </template>
         </q-input>
+        <q-card flat
+                bordered
+                class="bg-info"
+        >
+          <q-card-section class="q-pa-none">
+            <div class="q-pa-sm">
+              The following ingredient-groups have to get real existing ingredients assigned:
+            </div>
+            <q-separator></q-separator>
+          </q-card-section>
+        </q-card>
         <q-card flat
                 bordered
                 class="bg-warning"
@@ -107,8 +133,6 @@
           :pagination="{rowsPerPage: 0}"
           hide-bottom
           flat
-          :table-style="{margin: '15px'}"
-          style="background-color: #f3f3fa"
         >
           <template v-slot:body-cell-currentIngredient="props">
             <q-td
@@ -323,19 +347,13 @@ export default {
       dto.fillingLevelInMl = newFillingLevel
       this.loadingPumpIdsFillingLevel.push(pump.id)
       PumpService.updatePump(pump.id, dto)
-        .catch(error => {
-          this.$q.notify({
-            type: 'negative',
-            message: error.response.data.message
-          })
-        })
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
           array.splice(array.indexOf(pump.id), 1)
         })
     },
     onClickCleanPump (pump) {
-      PumpService.cleanPump(pump)
+      PumpService.cleanPump(pump.id)
         .catch(error => {
           this.$q.notify({
             type: 'negative',
@@ -349,12 +367,6 @@ export default {
           this.$refs.mcDialog.hide()
           this.showProgressDialog = true
           this.checkFeasibility()
-        })
-        .catch(error => {
-          this.$q.notify({
-            type: 'negative',
-            message: error.response.data.message
-          })
         })
     }
   },
