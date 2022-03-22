@@ -11,10 +11,12 @@ export default boot(({ app }) => {
     return cfg
   })
   axios.interceptors.response.use(cfg => cfg, error => {
-    app.config.globalProperties.$q.notify({
-      type: 'negative',
-      message: error.response.data.message
-    })
+    if (error?.response?.data?.message) {
+      app.config.globalProperties.$q.notify({
+        type: 'negative',
+        message: error.response.data.message
+      })
+    }
     throw error
   })
   app.config.globalProperties.$axios = axios

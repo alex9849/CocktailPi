@@ -139,11 +139,24 @@ ALTER TABLE ingredients
     ADD CONSTRAINT ingredients_in_bar_check CHECK ((dType IN ('ManualIngredient', 'AutomatedIngredient') AND
                                                     in_bar IS NOT NULL) OR in_bar IS NULL);
 
-CREATE VIEW ingredient_dependencies AS
+CREATE VIEW concrete_ingredient_dependencies AS
 WITH RECURSIVE list_dependencies(leaf, current, parent) AS (
     SELECT i.id as leaf, i.id as current, i.parent_group_id as parent
     FROM ingredients AS i
     WHERE i.dtype != 'IngredientGroup'
+    UNION ALL
+    SELECT leaf, i.id as current, i.parent_group_id as parent
+    FROM ingredients AS i
+             join list_dependencies lp on i.id = lp.parent
+)
+SELECT leaf, current as is_a
+FROM list_dependencies;
+
+
+CREATE VIEW all_ingredient_dependencies AS
+WITH RECURSIVE list_dependencies(leaf, current, parent) AS (
+    SELECT i.id as leaf, i.id as current, i.parent_group_id as parent
+    FROM ingredients AS i
     UNION ALL
     SELECT leaf, i.id as current, i.parent_group_id as parent
     FROM ingredients AS i
@@ -160,7 +173,7 @@ $$
 BEGIN
     return EXISTS(
             SELECT *
-            FROM ingredient_dependencies ide
+            FROM concrete_ingredient_dependencies ide
                      JOIN ingredients i ON i.id = ide.leaf
                      JOIN pumps p ON i.id = p.current_ingredient_id AND i.dtype = 'AutomatedIngredient'
             WHERE ide.is_a = ingredient_id
@@ -181,7 +194,7 @@ BEGIN
 
     return EXISTS(
             SELECT *
-            FROM ingredient_dependencies ide
+            FROM concrete_ingredient_dependencies ide
                      JOIN ingredients i ON i.id = ide.leaf
             WHERE ide.is_a = ingredient_id
               AND i.in_bar
