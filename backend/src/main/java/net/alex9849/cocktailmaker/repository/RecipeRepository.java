@@ -187,11 +187,10 @@ public class RecipeRepository extends JdbcDaoSupport {
                     "         join production_steps ps on ps.recipe_id = r.id\n" +
                     "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                     "         join ingredients i on i.id = psi.ingredient_id\n" +
-                    "         join unnest(?) requiredIngredientId on requiredIngredientId = i.id\n" +
+                    "         join all_ingredient_dependencies id on i.id = id.leaf\n" +
                     "group by r.id\n" +
-                    "having count(distinct i.id) = cardinality(?)");
+                    "having ? <@ array_agg(id.is_a)");
             pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
-            pstmt.setArray(2, con.createArrayOf("int8", ingredientIds));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -274,7 +273,7 @@ public class RecipeRepository extends JdbcDaoSupport {
                     "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                     "         join ingredients i on i.id = psi.ingredient_id\n" +
                     "group by r.id\n" +
-                    "having every(is_ingredient_on_pump(i.id));");
+                    "having every(is_ingredient_on_pump(i.id))");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -288,7 +287,7 @@ public class RecipeRepository extends JdbcDaoSupport {
                             "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                             "         join ingredients i on i.id = psi.ingredient_id\n" +
                             "group by r.id\n" +
-                            "having every(is_ingredient_in_bar(i.id));");
+                            "having every(is_ingredient_in_bar(i.id))");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
