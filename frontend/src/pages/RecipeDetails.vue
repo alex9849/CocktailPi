@@ -91,6 +91,7 @@
     />
     <c-make-cocktail-dialog
       v-if="loaded"
+      :show="showMakeCocktailDialog"
       v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
     />
@@ -116,11 +117,15 @@ export default {
       },
       loaded: false,
       deleting: false,
-      deleteDialog: false,
-      showMakeCocktailDialog: false
+      deleteDialog: false
     }
   },
   async beforeRouteEnter (to, from, next) {
+    if ((from?.name === 'recipedetails' ||
+        from?.name === 'recipeorder') && from?.params?.id === to?.params?.id) {
+      next()
+      return
+    }
     const recipe = await RecipeService.getRecipe(to.params.id)
     next(vm => {
       vm.recipe = recipe
@@ -128,7 +133,9 @@ export default {
     })
   },
   async beforeRouteUpdate (to, from, next) {
-    this.recipe = await RecipeService.getRecipe(to.params.id)
+    if (this.recipe.id !== Number.parseInt(to.params.id)) {
+      this.recipe = await RecipeService.getRecipe(to.params.id)
+    }
     next()
   },
   created () {
@@ -156,7 +163,26 @@ export default {
       isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
       doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
       areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
-    })
+    }),
+    showMakeCocktailDialog: {
+      get () {
+        return this.$route.name === 'recipeorder' && this.loaded
+      },
+      set (value) {
+        const params = {
+          id: this.$route.params.id
+        }
+        if (value) {
+          this.$router.push({
+            name: 'recipeorder', params
+          })
+        } else {
+          this.$router.push({
+            name: 'recipedetails', params
+          })
+        }
+      }
+    }
   }
 }
 </script>

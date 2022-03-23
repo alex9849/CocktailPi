@@ -69,6 +69,10 @@ const routes = [
       component: () => import('pages/RecipeDetails'),
       name: 'recipedetails'
     }, {
+      path: 'recipe/:id/order',
+      component: () => import('pages/RecipeDetails'),
+      name: 'recipeorder'
+    }, {
       path: 'recipe/:id/edit',
       component: () => import('pages/RecipeEdit'),
       name: 'recipeedit'
