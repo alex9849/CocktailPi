@@ -3,6 +3,7 @@
     :model-value="show"
     ref="mcDialog"
     maximized
+    persistent
     :transition-duration="400"
     transition-show="slide-up"
     transition-hide="slide-down"
