@@ -15,19 +15,18 @@
           Edit
         </q-btn>
         <q-btn
-          v-if="doPumpsHaveAllIngredients(recipe)"
           color="positive"
           @click="showMakeCocktailDialog = true"
         >
           Make cocktail
         </q-btn>
-        <q-btn
+        <!--q-btn
           v-else
           color="warning"
           @click="showMakeCocktailDialog = true"
         >
           Make cocktail (Half-Automatic)
-        </q-btn>
+        </q-btn-->
         <q-btn
           color="red"
           @click="deleteDialog = true"
@@ -160,9 +159,7 @@ export default {
       user: 'auth/getUser',
       isAdminRole: 'auth/isAdmin',
       isRecipeCreatorRole: 'auth/isRecipeCreator',
-      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
-      doPumpsHaveAllIngredients: 'pumpLayout/doPumpsHaveAllIngredientsForRecipe',
-      areEnoughPumpsAvailable: 'pumpLayout/areEnoughPumpsAvailable'
+      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor'
     }),
     showMakeCocktailDialog: {
       get () {
