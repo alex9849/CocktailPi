@@ -75,8 +75,8 @@
                       (Unscaled)
                     </q-item-label>
                   </div>
-                  <q-item-label v-if="sublist.element.ingredient.alcoholContent !== 0" caption>
-                    {{ sublist.element.ingredient.alcoholContent }}% alcohol content
+                  <q-item-label v-if="getAlcoholContentString(sublist.element.ingredient)" caption>
+                    {{ getAlcoholContentString(sublist.element.ingredient) }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section v-if="editable" side>
@@ -219,8 +219,20 @@ export default {
     }
   },
   methods: {
-    log (el) {
-      console.log(el)
+    getAlcoholContentString (ingredient) {
+      if (ingredient.type === 'group') {
+        if (ingredient.minAlcoholContent === ingredient.maxAlcoholContent) {
+          if (ingredient.minAlcoholContent === 0) {
+            return null
+          }
+          return ingredient.minAlcoholContent + '% alcohol content'
+        }
+        return ingredient.minAlcoholContent + ' - ' + ingredient.maxAlcoholContent + '% alcohol content'
+      }
+      if (ingredient.alcoholContent === 0) {
+        return null
+      }
+      return ingredient.alcoholContent + '% alcohol content'
     },
     emitChange () {
       this.$emit('update:modelValue', this.productionSteps)

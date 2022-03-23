@@ -206,7 +206,7 @@ export default {
       if (min === max) {
         return min + '%'
       }
-      return min + '-' + max + '%'
+      return min + ' - ' + max + '%'
     },
     onDeleteSuccess () {
       this.selected.splice(0, this.selected.length)
