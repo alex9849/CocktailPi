@@ -5,6 +5,8 @@ import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
+import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
+import net.alex9849.cocktailmaker.model.recipe.IngredientGroupReplacements;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -137,7 +139,12 @@ public class PumpService {
         if(!report.getInsufficientIngredients().isEmpty()) {
             throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
         }
-        this.cocktailFactory = new CocktailFactory(recipe, user, new HashSet<>(getAllPumps()), gpioController)
+        //Toto Replacement source
+        FeasibilityFactory feasibilityFactory = new FeasibilityFactory(recipe, new IngredientGroupReplacements(), getAllPumps());
+        if(!feasibilityFactory.getFeasibilityReport().isFeasible()) {
+            throw new IllegalArgumentException("Cocktail not feasible!");
+        }
+        this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()), gpioController)
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         for(Pump pump : this.cocktailFactory.getUsedPumps()) {
             this.pumpRepository.update(pump);
@@ -179,37 +186,9 @@ public class PumpService {
     }
 
     public FeasibilityReport checkFeasibility(Recipe recipe) {
-        Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
-        Map<Long, List<Pump>> pumpsByIngredientId = getAllPumps().stream().filter(x -> x.getCurrentIngredient() != null)
-                .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));
-        List<FeasibilityReport.InsufficientIngredient> insufficientIngredients = new ArrayList<>();
-
-        for(Ingredient ingredient : neededAmountPerIngredientId.keySet()) {
-            int remainingNeededAmount = neededAmountPerIngredientId.get(ingredient);
-            if(!pumpsByIngredientId.containsKey(ingredient.getId())) {
-                //We only check for automated ingredients
-                continue;
-            }
-            for(Pump pump : pumpsByIngredientId.get(ingredient.getId())) {
-                if(remainingNeededAmount > pump.getFillingLevelInMl()) {
-                    remainingNeededAmount -= pump.getFillingLevelInMl();
-                } else {
-                    remainingNeededAmount = 0;
-                    continue;
-                }
-            }
-            if(remainingNeededAmount > 0) {
-                FeasibilityReport.InsufficientIngredient insufficientIngredient = new FeasibilityReport.InsufficientIngredient();
-                insufficientIngredient.setIngredient(ingredient);
-                insufficientIngredient.setAmountRemaining(remainingNeededAmount);
-                insufficientIngredient.setAmountNeeded(neededAmountPerIngredientId.get(ingredient));
-                insufficientIngredients.add(insufficientIngredient);
-            }
-        }
-
-        FeasibilityReport report = new FeasibilityReport();
-        report.setInsufficientIngredients(insufficientIngredients);
-        return report;
+        //Todo Replacement source
+        FeasibilityFactory feasibilityFactory = new FeasibilityFactory(recipe, new IngredientGroupReplacements(), this.getAllPumps());
+        return feasibilityFactory.getFeasibilityReport();
     }
 
     public synchronized void continueCocktailProduction() {

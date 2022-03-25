@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
@@ -21,7 +22,7 @@ public class Recipe {
     private String description;
     private Date lastUpdate;
     private long defaultAmountToFill;
-    private List<ProductionStep> productionSteps;
+    private List<ProductionStep<Ingredient>> productionSteps;
     private List<Category> categories;
 
     public long getId() {
@@ -106,7 +107,7 @@ public class Recipe {
         this.owner = owner;
     }
 
-    public List<ProductionStep> getProductionSteps() {
+    public List<ProductionStep<Ingredient>> getProductionSteps() {
         if(this.productionSteps == null) {
             ProductionStepRepository psRepository = SpringUtility.getBean(ProductionStepRepository.class);
             this.productionSteps = psRepository.loadByRecipeId(this.id);
@@ -114,7 +115,7 @@ public class Recipe {
         return this.productionSteps;
     }
 
-    public void setProductionSteps(List<ProductionStep> productionSteps) {
+    public void setProductionSteps(List<ProductionStep<Ingredient>> productionSteps) {
         this.productionSteps = productionSteps;
     }
 

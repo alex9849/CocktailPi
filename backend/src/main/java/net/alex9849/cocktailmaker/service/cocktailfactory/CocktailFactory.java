@@ -28,7 +28,7 @@ public class CocktailFactory {
     private AbstractProductionStepWorker currentProductionStepWorker = null;
     private final Set<Pump> pumps;
     private final IGpioController gpioController;
-    private final Recipe recipe;
+    private final FeasibleRecipe feasibleRecipe;
     private final User user;
 
     private int requestedAmount;
@@ -37,19 +37,19 @@ public class CocktailFactory {
     private CocktailProgress.State state = null;
 
     /**
-     * @param recipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
+     * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
-    public CocktailFactory(Recipe recipe, User user, Set<Pump> pumps, IGpioController gpioController) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, IGpioController gpioController) {
         this.pumps = pumps;
         this.gpioController = gpioController;
-        this.recipe = recipe;
+        this.feasibleRecipe = feasibleRecipe;
         this.user = user;
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(x -> x.getCurrentIngredient().getId()));
 
-        for(ProductionStep pStep : recipe.getProductionSteps()) {
+        for(ProductionStep pStep : feasibleRecipe.getFeasibleProductionSteps()) {
             this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
         }
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
@@ -132,7 +132,7 @@ public class CocktailFactory {
     }
 
     private Set<Ingredient> getNeededIngredientIds() {
-        return new HashSet<Ingredient>(this.recipe.getProductionSteps().stream()
+        return new HashSet<Ingredient>(this.feasibleRecipe.getFeasibleProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
@@ -158,7 +158,7 @@ public class CocktailFactory {
     }
 
     public int getRecipeAmountOfLiquid() {
-        return this.recipe.getProductionSteps().stream()
+        return this.feasibleRecipe.getFeasibleProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
@@ -244,7 +244,7 @@ public class CocktailFactory {
     public CocktailProgress getCocktailprogress() {
         CocktailProgress cocktailprogress = new CocktailProgress();
         cocktailprogress.setUser(this.user);
-        cocktailprogress.setRecipe(this.recipe);
+        cocktailprogress.setRecipe(this.feasibleRecipe.getRecipe());
         cocktailprogress.setPreviousState(this.previousState);
         cocktailprogress.setState(this.state);
         cocktailprogress.setProgress(getProgressInPercent());
