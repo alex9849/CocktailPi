@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.service.IngredientService;

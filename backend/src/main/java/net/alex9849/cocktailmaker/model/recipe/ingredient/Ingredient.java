@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model.recipe;
+package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailmaker.service.IngredientService;

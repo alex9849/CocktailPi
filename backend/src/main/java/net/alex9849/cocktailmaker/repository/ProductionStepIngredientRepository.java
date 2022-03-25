@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;

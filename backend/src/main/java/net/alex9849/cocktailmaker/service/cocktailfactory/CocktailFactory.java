@@ -4,6 +4,13 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
 
@@ -30,7 +37,8 @@ public class CocktailFactory {
     private CocktailProgress.State state = null;
 
     /**
-     * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
+     * @param recipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
+     * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
     public CocktailFactory(Recipe recipe, User user, Set<Pump> pumps, IGpioController gpioController) {
         this.pumps = pumps;

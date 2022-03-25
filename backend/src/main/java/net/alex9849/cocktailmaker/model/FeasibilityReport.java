@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model;
 
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 
 import java.util.List;
 

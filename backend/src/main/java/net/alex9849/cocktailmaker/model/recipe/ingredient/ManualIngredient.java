@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model.recipe;
+package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
 import javax.persistence.DiscriminatorValue;
 

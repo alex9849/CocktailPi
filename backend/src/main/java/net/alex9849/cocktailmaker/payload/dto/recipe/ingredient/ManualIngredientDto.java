@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ManualIngredientDto {

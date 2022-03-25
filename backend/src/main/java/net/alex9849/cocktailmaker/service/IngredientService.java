@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.*;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;

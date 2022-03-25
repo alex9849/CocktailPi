@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.WrittenInstructionProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WrittenInstructionProductionStepDto {

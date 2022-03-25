@@ -1,4 +1,6 @@
-package net.alex9849.cocktailmaker.model.recipe;
+package net.alex9849.cocktailmaker.model.recipe.productionstep;
+
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 
 public class ProductionStepIngredient {
 

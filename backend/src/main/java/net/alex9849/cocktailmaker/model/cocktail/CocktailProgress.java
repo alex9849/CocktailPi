@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model.cocktail;
 
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 

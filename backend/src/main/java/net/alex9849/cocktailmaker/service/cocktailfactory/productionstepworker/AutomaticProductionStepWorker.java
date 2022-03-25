@@ -3,8 +3,8 @@ package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpTimingStepCalculator;
 

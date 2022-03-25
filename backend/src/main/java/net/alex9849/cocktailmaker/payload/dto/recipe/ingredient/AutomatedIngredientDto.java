@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

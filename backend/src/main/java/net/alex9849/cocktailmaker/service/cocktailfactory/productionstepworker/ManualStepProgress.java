@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 
 import java.util.List;
 

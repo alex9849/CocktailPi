@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.model;
 
-import net.alex9849.cocktailmaker.model.recipe.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 

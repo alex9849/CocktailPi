@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.AddIngredientsProductionStep;
-import net.alex9849.cocktailmaker.model.recipe.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;

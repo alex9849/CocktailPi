@@ -2,6 +2,11 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;

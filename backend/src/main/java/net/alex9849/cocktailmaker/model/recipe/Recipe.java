@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
