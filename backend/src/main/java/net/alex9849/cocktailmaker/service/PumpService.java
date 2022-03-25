@@ -139,7 +139,7 @@ public class PumpService {
         if(!report.getInsufficientIngredients().isEmpty()) {
             throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
         }
-        //Toto Replacement source
+        //Todo Replacement source
         FeasibilityFactory feasibilityFactory = new FeasibilityFactory(recipe, new IngredientGroupReplacements(), getAllPumps());
         if(!feasibilityFactory.getFeasibilityReport().isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
