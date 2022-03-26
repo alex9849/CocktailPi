@@ -52,24 +52,25 @@
             </template>
           </q-input>
         </div>
-        <q-card flat
-                bordered
-                class="bg-info"
-        >
-          <q-card-section class="q-pa-none">
-            <div class="q-pa-sm">
-              The following ingredient-groups have to get real existing ingredients assigned:
-            </div>
-            <q-separator></q-separator>
-          </q-card-section>
-        </q-card>
-        <c-make-cocktail-dialog-insufficient-ingredients
-          v-if="feasibilityReport.insufficientIngredients.length !== 0"
-          :feasibility-report="feasibilityReport"
-        />
-        <c-make-cocktail-dialog-ingredients-to-add-manually
-          :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
-        />
+        <div class="q-gutter-sm">
+          <q-card flat
+                  bordered
+                  class="bg-info"
+          >
+            <q-card-section class="q-pa-none">
+              <div class="q-pa-sm">
+                The following ingredient-groups have to get real existing ingredients assigned:
+              </div>
+              <q-separator></q-separator>
+            </q-card-section>
+          </q-card>
+          <c-make-cocktail-dialog-insufficient-ingredients
+            :insufficient-ingredients="feasibilityReport.insufficientIngredients"
+          />
+          <c-make-cocktail-dialog-ingredients-to-add-manually
+            :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
+          />
+        </div>
         <c-make-cocktail-dialog-pump-editor
           v-if="isUserPumpIngredientEditor"
           :needed-ingredients="neededIngredients"

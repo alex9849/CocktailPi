@@ -1,43 +1,31 @@
 <template>
-  <q-card flat
-          bordered
-          class="bg-red-5"
+  <c-q-headlined-card
+    :headline="headline"
+    :card-class="cardClass"
+    :icon="icon"
+    :icon-background-class="iconBackgroundClass"
+    :icon-class="iconClass"
   >
-    <q-card-section horizontal>
-      <div class="flex items-center col-auto"
-           v-if="!$q.platform.is.mobile"
-      >
-        <q-icon :name="mdiAlertOutline"
-                size="lg"
-                class="text-orange-14 q-pa-sm"
-        ></q-icon>
-      </div>
-      <q-separator vertical
-                   v-if="!$q.platform.is.mobile"
-      />
-      <div class="col">
-        <div class="q-pa-sm">
-          Can't make cocktail! Some pumps don't have enough liquid left:
-        </div>
-        <q-separator></q-separator>
-        <ul style="text-align: start">
-          <li v-for="insufficientIngredient in feasibilityReport.insufficientIngredients" :key="insufficientIngredient.ingredient.id">
-            {{ insufficientIngredient.ingredient.name }}:
-            <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
-          </li>
-        </ul>
-      </div>
-    </q-card-section>
-  </q-card>
+    <template v-slot:content v-if="!isFulfilled">
+      <ul style="text-align: start">
+        <li v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.ingredient.id">
+          {{ insufficientIngredient.ingredient.name }}:
+          <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
+        </li>
+      </ul>
+    </template>
+  </c-q-headlined-card>
 </template>
 
 <script>
-import { mdiAlertOutline } from '@quasar/extras/mdi-v5'
+import { mdiAlertOutline, mdiCheck } from '@quasar/extras/mdi-v5'
+import CQHeadlinedCard from 'components/CQHeadlinedCard'
 
 export default {
   name: 'CMakeCocktailDialogInsufficientIngredients',
+  components: { CQHeadlinedCard },
   props: {
-    feasibilityReport: {
+    insufficientIngredients: {
       type: Object,
       required: true
     }
@@ -45,6 +33,33 @@ export default {
   setup () {
     return {
       mdiAlertOutline: mdiAlertOutline
+    }
+  },
+  computed: {
+    isFulfilled () {
+      return this.insufficientIngredients.length === 0
+    },
+    cardClass () {
+      return {
+        'bg-red-5': !this.isFulfilled,
+        'bg-info': this.isFulfilled
+      }
+    },
+    headline () {
+      if (this.isFulfilled) {
+        return 'Enough liquid left to make cocktail!'
+      } else {
+        return 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+      }
+    },
+    iconClass () {
+      return this.isFulfilled ? 'text-white' : 'text-orange-14'
+    },
+    iconBackgroundClass () {
+      return this.isFulfilled ? 'bg-light-green-14' : 'bg-red-5'
+    },
+    icon () {
+      return this.isFulfilled ? mdiCheck : mdiAlertOutline
     }
   }
 }

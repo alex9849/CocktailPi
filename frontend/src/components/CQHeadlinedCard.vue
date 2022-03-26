@@ -11,7 +11,7 @@
         :class="iconBackgroundClass"
       >
         <q-icon :name="icon"
-                size="xl"
+                size="md"
                 class="q-pa-xs"
                 :class="iconClass"
         ></q-icon>
@@ -40,7 +40,11 @@ export default {
     iconClass: null,
     iconBackgroundClass: null,
     cardClass: null,
-    headline: String
+    headline: String,
+    iconSize: {
+      type: String,
+      default: 'xl'
+    }
   }
 }
 </script>
