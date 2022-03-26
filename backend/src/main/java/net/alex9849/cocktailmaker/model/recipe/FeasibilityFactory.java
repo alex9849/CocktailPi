@@ -10,10 +10,7 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FeasibilityFactory {
@@ -39,6 +36,7 @@ public class FeasibilityFactory {
     private void compute() {
         this.computeIngredientGroupReplacements();
         this.computeInsufficientIngredients();
+        this.computeIngredientsToAddManually();
     }
 
     private void computeIngredientGroupReplacements() {
@@ -75,6 +73,7 @@ public class FeasibilityFactory {
                     List<IngredientGroup> missingIngredientGroups = missingIngredientGroupReplacements
                             .computeIfAbsent((long) i, (x) -> new ArrayList<>());
                     missingIngredientGroups.add(toReplaceIngredientGroup);
+                    feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
                 } else {
                     if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
                             .anyMatch(x -> x.getId() == addableIngredient.getId())) {
@@ -118,6 +117,22 @@ public class FeasibilityFactory {
             }
         }
         this.feasibilityReport.setInsufficientIngredients(insufficientIngredients);
+    }
+
+    private void computeIngredientsToAddManually() {
+        Set<Ingredient> ingredientsToAddManually = new HashSet<>();
+        for(ProductionStep pStep : this.feasibleRecipe.getFeasibleProductionSteps()) {
+            if(!(pStep instanceof AddIngredientsProductionStep)) {
+                continue;
+            }
+            AddIngredientsProductionStep aiPStep = (AddIngredientsProductionStep) pStep;
+            for(ProductionStepIngredient pStepIngredient : aiPStep.getStepIngredients()) {
+                if(!pStepIngredient.getIngredient().isOnPump()) {
+                    ingredientsToAddManually.add(pStepIngredient.getIngredient());
+                }
+            }
+        }
+        this.feasibilityReport.setIngredientsToAddManually(ingredientsToAddManually);
     }
 
     public FeasibilityReport getFeasibilityReport() {

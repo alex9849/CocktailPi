@@ -9,6 +9,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupD
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,13 +17,17 @@ public class FeasibilityReportDto {
     private interface InsufficientIngredients { List<InsufficientIngredientDto.Response.Detailed> getInsufficientIngredients(); }
     private interface MissingIngredientGroupReplacements { HashMap<Long, List<IngredientGroupDto.Response.Reduced>> getMissingIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
+    private interface IngredientsToAddManually { Set<IngredientDto.Response.Reduced> getIngredientsToAddManually(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements InsufficientIngredients, MissingIngredientGroupReplacements, IsFeasible {
+        public static class Detailed implements InsufficientIngredients, MissingIngredientGroupReplacements,
+                IngredientsToAddManually, IsFeasible {
+
             List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
             HashMap<Long, List<IngredientGroupDto.Response.Reduced>> missingIngredientGroupReplacements;
+            Set<IngredientDto.Response.Reduced> ingredientsToAddManually;
             boolean isFeasible;
 
             public Detailed(FeasibilityReport report) {
@@ -34,6 +39,9 @@ public class FeasibilityReportDto {
                     List<IngredientGroupDto.Response.Reduced> dtoIngredientGroups = entry.getValue().stream().map(IngredientGroupDto.Response.Reduced::new).collect(Collectors.toList());
                     this.missingIngredientGroupReplacements.put(entry.getKey(), dtoIngredientGroups);
                 }
+                this.ingredientsToAddManually = report.getIngredientsToAddManually()
+                        .stream().map(IngredientDto.Response.Reduced::toDto)
+                        .collect(Collectors.toSet());
                 this.isFeasible = report.isFeasible();
             }
         }
