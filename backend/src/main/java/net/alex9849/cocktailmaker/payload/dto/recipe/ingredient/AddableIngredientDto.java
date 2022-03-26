@@ -2,6 +2,8 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -32,6 +34,19 @@ public abstract class AddableIngredientDto {
             protected Detailed(AddableIngredient ingredient) {
                 super(ingredient);
             }
+
+            public static Detailed toDto(AddableIngredient ingredient) {
+                if(ingredient == null) {
+                    return null;
+                }
+                if (ingredient instanceof ManualIngredient) {
+                    return new ManualIngredientDto.Response.Detailed((ManualIngredient) ingredient);
+                }
+                if (ingredient instanceof AutomatedIngredient) {
+                    return new AutomatedIngredientDto.Response.Detailed((AutomatedIngredient) ingredient);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
+            }
         }
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
@@ -40,6 +55,19 @@ public abstract class AddableIngredientDto {
 
             protected Reduced(AddableIngredient ingredient) {
                 super(ingredient);
+            }
+
+            public static Reduced toDto(AddableIngredient ingredient) {
+                if(ingredient == null) {
+                    return null;
+                }
+                if(ingredient instanceof ManualIngredient) {
+                    return new ManualIngredientDto.Response.Reduced((ManualIngredient) ingredient);
+                }
+                if(ingredient instanceof AutomatedIngredient) {
+                    return new AutomatedIngredientDto.Response.Reduced((AutomatedIngredient) ingredient);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
             }
         }
     }

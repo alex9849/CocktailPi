@@ -2,31 +2,30 @@ package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeasibilityReportDto {
     private interface InsufficientIngredients { List<InsufficientIngredientDto.Response.Detailed> getInsufficientIngredients(); }
-    private interface MissingIngredientGroupReplacements { HashMap<Long, List<IngredientGroupDto.Response.Reduced>> getMissingIngredientGroupReplacements(); }
+    private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface IngredientsToAddManually { Set<IngredientDto.Response.Reduced> getIngredientsToAddManually(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements InsufficientIngredients, MissingIngredientGroupReplacements,
+        public static class Detailed implements InsufficientIngredients, IngredientGroupReplacements,
                 IngredientsToAddManually, IsFeasible {
 
             List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
-            HashMap<Long, List<IngredientGroupDto.Response.Reduced>> missingIngredientGroupReplacements;
+            List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
             Set<IngredientDto.Response.Reduced> ingredientsToAddManually;
             boolean isFeasible;
 
@@ -34,10 +33,10 @@ public class FeasibilityReportDto {
                 this.insufficientIngredients = report.getInsufficientIngredients().stream()
                         .map(InsufficientIngredientDto.Response.Detailed::new)
                         .collect(Collectors.toList());
-                this.missingIngredientGroupReplacements = new HashMap<>();
-                for (Map.Entry<Long, List<IngredientGroup>> entry : report.getMissingIngredientGroupReplacements().entrySet()) {
-                    List<IngredientGroupDto.Response.Reduced> dtoIngredientGroups = entry.getValue().stream().map(IngredientGroupDto.Response.Reduced::new).collect(Collectors.toList());
-                    this.missingIngredientGroupReplacements.put(entry.getKey(), dtoIngredientGroups);
+                this.ingredientGroupReplacements = new ArrayList<>();
+                for (List<FeasibilityReport.IngredientGroupReplacement> pStepReplacements : report.getIngredientGroupReplacements()) {
+                    List<IngredientGroupReplacementDto.Response.Detailed> pStepReplacementsDtos = pStepReplacements.stream().map(IngredientGroupReplacementDto.Response.Detailed::new).collect(Collectors.toList());
+                    this.ingredientGroupReplacements.add(pStepReplacementsDtos);
                 }
                 this.ingredientsToAddManually = report.getIngredientsToAddManually()
                         .stream().map(IngredientDto.Response.Reduced::toDto)
@@ -70,4 +69,28 @@ public class FeasibilityReportDto {
             }
         }
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class IngredientGroupReplacementDto {
+        private interface IngredientGroupToReplace { IngredientGroupDto.Response.Reduced getIngredientGroup(); }
+        private interface ReplacementAutoSelected { boolean isReplacementAutoSelected(); }
+        private interface SelectedReplacement { AddableIngredientDto.Response.Detailed getSelectedReplacement(); }
+
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Response {
+            @Getter @Setter @EqualsAndHashCode
+            public static class Detailed implements IngredientGroupToReplace, ReplacementAutoSelected, SelectedReplacement {
+                IngredientGroupDto.Response.Reduced ingredientGroup;
+                boolean replacementAutoSelected;
+                AddableIngredientDto.Response.Detailed selectedReplacement;
+
+                public Detailed(FeasibilityReport.IngredientGroupReplacement value) {
+                    this.ingredientGroup = new IngredientGroupDto.Response.Reduced(value.getIngredientGroup());
+                    this.replacementAutoSelected = value.isReplacementAutoSelected();
+                    this.selectedReplacement = AddableIngredientDto.Response.Detailed.toDto(value.getSelectedReplacement());
+                }
+            }
+        }
+    }
+
 }

@@ -1,5 +1,9 @@
 package net.alex9849.cocktailmaker.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import net.alex9849.cocktailmaker.model.recipe.IngredientGroupReplacements;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 
@@ -7,15 +11,16 @@ import java.util.*;
 
 public class FeasibilityReport {
     private List<InsufficientIngredient> insufficientIngredients = new ArrayList<>();
-    private Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements = new HashMap<>();
+    private List<List<IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
     private Set<Ingredient> ingredientsToAddManually = new HashSet<>();
+    private boolean isFeasible = false;
 
-    public Map<Long, List<IngredientGroup>> getMissingIngredientGroupReplacements() {
-        return missingIngredientGroupReplacements;
+    public List<List<IngredientGroupReplacement>> getIngredientGroupReplacements() {
+        return ingredientGroupReplacements;
     }
 
-    public void setMissingIngredientGroupReplacements(Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements) {
-        this.missingIngredientGroupReplacements = missingIngredientGroupReplacements;
+    public void setIngredientGroupReplacements(List<List<IngredientGroupReplacement>> ingredientGroupReplacements) {
+        this.ingredientGroupReplacements = ingredientGroupReplacements;
     }
 
     public Set<Ingredient> getIngredientsToAddManually() {
@@ -34,37 +39,25 @@ public class FeasibilityReport {
         this.insufficientIngredients = insufficientIngredients;
     }
 
-    public boolean isFeasible() {
-        return this.insufficientIngredients.isEmpty() && this.missingIngredientGroupReplacements.isEmpty();
+    public void setFeasible(boolean feasible) {
+        isFeasible = feasible;
     }
 
+    public boolean isFeasible() {
+        return isFeasible;
+    }
+
+    @Getter @Setter
     public static class InsufficientIngredient {
         private Ingredient ingredient;
         private int amountNeeded;
         private int amountRemaining;
+    }
 
-        public Ingredient getIngredient() {
-            return ingredient;
-        }
-
-        public void setIngredient(Ingredient ingredient) {
-            this.ingredient = ingredient;
-        }
-
-        public int getAmountNeeded() {
-            return amountNeeded;
-        }
-
-        public void setAmountNeeded(int amountNeeded) {
-            this.amountNeeded = amountNeeded;
-        }
-
-        public int getAmountRemaining() {
-            return amountRemaining;
-        }
-
-        public void setAmountRemaining(int amountRemaining) {
-            this.amountRemaining = amountRemaining;
-        }
+    @Getter @Setter
+    public static class IngredientGroupReplacement {
+        private IngredientGroup ingredientGroup;
+        private boolean replacementAutoSelected;
+        private AddableIngredient selectedReplacement;
     }
 }

@@ -3,10 +3,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.*;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
@@ -91,11 +88,8 @@ public class IngredientDto {
                 if (ingredient instanceof IngredientGroup) {
                     return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
                 }
-                if (ingredient instanceof ManualIngredient) {
-                    return new ManualIngredientDto.Response.Detailed((ManualIngredient) ingredient);
-                }
-                if (ingredient instanceof AutomatedIngredient) {
-                    return new AutomatedIngredientDto.Response.Detailed((AutomatedIngredient) ingredient);
+                if (ingredient instanceof AddableIngredient) {
+                    return AddableIngredientDto.Response.Detailed.toDto((AddableIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
 
@@ -119,11 +113,8 @@ public class IngredientDto {
                 if(ingredient instanceof IngredientGroup) {
                     return new IngredientGroupDto.Response.Reduced((IngredientGroup) ingredient);
                 }
-                if(ingredient instanceof ManualIngredient) {
-                    return new ManualIngredientDto.Response.Reduced((ManualIngredient) ingredient);
-                }
-                if(ingredient instanceof AutomatedIngredient) {
-                    return new AutomatedIngredientDto.Response.Reduced((AutomatedIngredient) ingredient);
+                if(ingredient instanceof AddableIngredient) {
+                    return AddableIngredientDto.Response.Reduced.toDto((AddableIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
 

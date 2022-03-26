@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class FeasibilityFactory {
     private final List<Pump> pumps;
     private final FeasibilityReport feasibilityReport;
     private final FeasibleRecipe feasibleRecipe;
+    private boolean allIngredientGroupsReplaced;
 
     /**
      * @param recipe The recipe that should be checked. Note: IngredientGroups within this instance will be replaced. Don't continue to use this object
@@ -30,6 +32,7 @@ public class FeasibilityFactory {
         this.feasibilityReport = new FeasibilityReport();
         this.feasibleRecipe = new FeasibleRecipe();
         this.feasibleRecipe.setRecipe(recipe);
+        this.allIngredientGroupsReplaced = true;
         this.compute();
     }
 
@@ -37,16 +40,19 @@ public class FeasibilityFactory {
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeInsufficientIngredients();
         this.computeIngredientsToAddManually();
+        this.feasibilityReport.setFeasible(this.allIngredientGroupsReplaced && this.feasibilityReport.getInsufficientIngredients().isEmpty());
     }
 
     private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
-        Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements = new HashMap<>();
+        List<List<FeasibilityReport.IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
         for (ProductionStep productionStep : recipe.getProductionSteps()) {
             if (!(productionStep instanceof AddIngredientsProductionStep)) {
                 feasibleProductionSteps.add(productionStep);
                 continue;
             }
+            List<FeasibilityReport.IngredientGroupReplacement> stepIngredientGroupReplacements = new ArrayList<>();
+            ingredientGroupReplacements.add(stepIngredientGroupReplacements);
             AddIngredientsProductionStep aipStep = (AddIngredientsProductionStep) productionStep;
             AddIngredientsProductionStep feasibleAddIngredientsProductionStep = new AddIngredientsProductionStep();
             feasibleProductionSteps.add(feasibleAddIngredientsProductionStep);
@@ -66,27 +72,38 @@ public class FeasibilityFactory {
                     feasibleProductionStepIngredient.setIngredient(psIngredient.getIngredient());
                     continue;
                 }
+                FeasibilityReport.IngredientGroupReplacement ingredientGroupReplacement = new FeasibilityReport.IngredientGroupReplacement();
+                stepIngredientGroupReplacements.add(ingredientGroupReplacement);
 
                 IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
+                ingredientGroupReplacement.setIngredientGroup(toReplaceIngredientGroup);
+                ingredientGroupReplacement.setReplacementAutoSelected(false);
+
                 AddableIngredient addableIngredient = replacements.getReplacement(i, psIngredient.getIngredient().getId());
-                if (addableIngredient == null) {
-                    List<IngredientGroup> missingIngredientGroups = missingIngredientGroupReplacements
-                            .computeIfAbsent((long) i, (x) -> new ArrayList<>());
-                    missingIngredientGroups.add(toReplaceIngredientGroup);
-                    feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
-                } else {
+                if (addableIngredient != null) {
                     if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
-                            .anyMatch(x -> x.getId() == addableIngredient.getId())) {
-                        feasibleProductionStepIngredient.setIngredient(addableIngredient);
-                    } else {
+                            .noneMatch(x -> x.getId() == addableIngredient.getId())) {
                         throw new IllegalArgumentException(toReplaceIngredientGroup.getName()
                                 + " can't be replaced with " + addableIngredient.getName());
+                    }
+                    feasibleProductionStepIngredient.setIngredient(addableIngredient);
+                    ingredientGroupReplacement.setSelectedReplacement(addableIngredient);
+                } else {
+                    AddableIngredient autoSelectedReplacement = findIngredientGroupReplacement(toReplaceIngredientGroup, this.pumps);
+                    ingredientGroupReplacement.setSelectedReplacement(autoSelectedReplacement);
+                    if(autoSelectedReplacement != null) {
+                        feasibleProductionStepIngredient.setIngredient(autoSelectedReplacement);
+                        ingredientGroupReplacement.setReplacementAutoSelected(true);
+                    } else {
+                        this.allIngredientGroupsReplaced = false;
+                        feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
+                        ingredientGroupReplacement.setReplacementAutoSelected(false);
                     }
                 }
             }
         }
         this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
-        this.feasibilityReport.setMissingIngredientGroupReplacements(missingIngredientGroupReplacements);
+        this.feasibilityReport.setIngredientGroupReplacements(ingredientGroupReplacements);
     }
 
     private void computeInsufficientIngredients() {
@@ -127,12 +144,46 @@ public class FeasibilityFactory {
             }
             AddIngredientsProductionStep aiPStep = (AddIngredientsProductionStep) pStep;
             for(ProductionStepIngredient pStepIngredient : aiPStep.getStepIngredients()) {
+
                 if(!pStepIngredient.getIngredient().isOnPump()) {
                     ingredientsToAddManually.add(pStepIngredient.getIngredient());
                 }
             }
         }
         this.feasibilityReport.setIngredientsToAddManually(ingredientsToAddManually);
+    }
+
+    private AddableIngredient findIngredientGroupReplacement(IngredientGroup ingredientGroup, List<Pump> pumps) {
+        class IngredientWithRemainingLiquid {
+            AddableIngredient ingredient;
+            int fillingLevel;
+        }
+        Map<Long, Integer> ingredientFillingLevel = pumps.stream()
+                .filter(x -> x.getCurrentIngredientId() != null)
+                .collect(Collectors.toMap(Pump::getCurrentIngredientId, Pump::getFillingLevelInMl, Integer::sum));
+        List<AddableIngredient> inBar = new ArrayList<>();
+        List<IngredientWithRemainingLiquid> onPump = new ArrayList<>();
+        for (AddableIngredient addableIngredient : ingredientGroup.getAddableIngredientChildren()) {
+            if(addableIngredient.isOnPump()) {
+                IngredientWithRemainingLiquid ingredientWithRemainingLiquid = new IngredientWithRemainingLiquid();
+                ingredientWithRemainingLiquid.ingredient = addableIngredient;
+                ingredientWithRemainingLiquid.fillingLevel = ingredientFillingLevel.getOrDefault(addableIngredient.getId(), 0);
+                onPump.add(ingredientWithRemainingLiquid);
+            }
+            if(addableIngredient.isInBar()) {
+                inBar.add(addableIngredient);
+            }
+        }
+        onPump.sort(Comparator.comparingInt(x -> x.fillingLevel));
+        if(onPump.isEmpty() && inBar.isEmpty()) {
+            return null;
+        }
+        //First element
+        if(onPump.isEmpty()) {
+            return inBar.get(0);
+        }
+        //Last element (the one with most liquid left
+        return onPump.get(onPump.size() - 1).ingredient;
     }
 
     public FeasibilityReport getFeasibilityReport() {
