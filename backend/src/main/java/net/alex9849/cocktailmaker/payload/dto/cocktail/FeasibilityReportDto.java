@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeasibilityReportDto {
     private interface InsufficientIngredients { List<InsufficientIngredientDto.Response.Detailed> getInsufficientIngredients(); }
+    private interface RequiredIngredients { Set<AddableIngredientDto.Response.Detailed> getRequiredIngredients(); }
     private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
@@ -23,11 +24,12 @@ public class FeasibilityReportDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements InsufficientIngredients, IngredientGroupReplacements,
-                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced {
+                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced, RequiredIngredients {
 
             List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
             List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
             Set<IngredientDto.Response.Reduced> ingredientsToAddManually;
+            Set<AddableIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
 
@@ -42,6 +44,9 @@ public class FeasibilityReportDto {
                 }
                 this.ingredientsToAddManually = report.getIngredientsToAddManually()
                         .stream().map(IngredientDto.Response.Reduced::toDto)
+                        .collect(Collectors.toSet());
+                this.requiredIngredients = report.getRequiredIngredients().stream()
+                        .map(AddableIngredientDto.Response.Detailed::toDto)
                         .collect(Collectors.toSet());
                 this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
                 this.isFeasible = report.isFeasible();

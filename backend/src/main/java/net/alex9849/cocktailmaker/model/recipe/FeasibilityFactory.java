@@ -36,7 +36,7 @@ public class FeasibilityFactory {
     private void compute() {
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeInsufficientIngredients();
-        this.computeIngredientsToAddManually();
+        this.computeIngredientsToAddManuallyAndRequiredIngredients();
     }
 
     private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
@@ -131,21 +131,25 @@ public class FeasibilityFactory {
         this.feasibilityReport.setInsufficientIngredients(insufficientIngredients);
     }
 
-    private void computeIngredientsToAddManually() {
+    private void computeIngredientsToAddManuallyAndRequiredIngredients() {
         Set<Ingredient> ingredientsToAddManually = new HashSet<>();
+        Set<AddableIngredient> requiredIngredients = new HashSet<>();
         for(ProductionStep pStep : this.feasibleRecipe.getFeasibleProductionSteps()) {
             if(!(pStep instanceof AddIngredientsProductionStep)) {
                 continue;
             }
             AddIngredientsProductionStep aiPStep = (AddIngredientsProductionStep) pStep;
             for(ProductionStepIngredient pStepIngredient : aiPStep.getStepIngredients()) {
-
                 if(!pStepIngredient.getIngredient().isOnPump()) {
                     ingredientsToAddManually.add(pStepIngredient.getIngredient());
+                }
+                if(pStepIngredient.getIngredient() instanceof AddableIngredient) {
+                    requiredIngredients.add((AddableIngredient) pStepIngredient.getIngredient());
                 }
             }
         }
         this.feasibilityReport.setIngredientsToAddManually(ingredientsToAddManually);
+        this.feasibilityReport.setRequiredIngredients(requiredIngredients);
     }
 
     private AddableIngredient findIngredientGroupReplacement(IngredientGroup ingredientGroup, List<Pump> pumps) {

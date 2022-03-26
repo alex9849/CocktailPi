@@ -68,8 +68,7 @@
         </div>
         <c-make-cocktail-dialog-pump-editor
           v-if="isUserPumpIngredientEditor"
-          :needed-ingredients="neededIngredients"
-          :unassigned-ingredients="unassignedIngredients"
+          :needed-ingredients="feasibilityReport.requiredIngredients"
         />
       </q-card-section>
       <q-card-actions
@@ -129,6 +128,7 @@ export default {
         insufficientIngredients: [],
         ingredientGroupReplacements: [],
         ingredientsToAddManually: [],
+        requiredIngredients: [],
         feasible: false
       },
       checkingFeasibility: true
@@ -228,24 +228,7 @@ export default {
       getPumpIngredients: 'pumpLayout/getPumpIngredients'
     }),
     feasibilityOk () {
-      return this.feasibilityReport.insufficientIngredients.length === 0 && !this.checkingFeasibility
-    },
-    neededIngredients () {
-      const ingredients = []
-      for (const productionStep of this.recipe.productionSteps) {
-        if (productionStep.type !== 'addIngredients') {
-          continue
-        }
-        for (const ingredientStep of productionStep.stepIngredients) {
-          if (!ingredients.some(x => x.id === ingredientStep.ingredient.id)) {
-            ingredients.push(ingredientStep.ingredient)
-          }
-        }
-      }
-      return ingredients
-    },
-    unassignedIngredients () {
-      return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id))
+      return this.feasibilityReport.feasible && !this.checkingFeasibility
     }
   },
   validations () {

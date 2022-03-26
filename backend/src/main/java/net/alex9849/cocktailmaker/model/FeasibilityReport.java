@@ -12,6 +12,7 @@ public class FeasibilityReport {
     private List<InsufficientIngredient> insufficientIngredients = new ArrayList<>();
     private List<List<IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
     private Set<Ingredient> ingredientsToAddManually = new HashSet<>();
+    private Set<AddableIngredient> requiredIngredients = new HashSet<>();
     private boolean allIngredientGroupsReplaced;
 
     public List<List<IngredientGroupReplacement>> getIngredientGroupReplacements() {
@@ -24,6 +25,14 @@ public class FeasibilityReport {
 
     public Set<Ingredient> getIngredientsToAddManually() {
         return ingredientsToAddManually;
+    }
+
+    public Set<AddableIngredient> getRequiredIngredients() {
+        return requiredIngredients;
+    }
+
+    public void setRequiredIngredients(Set<AddableIngredient> requiredIngredients) {
+        this.requiredIngredients = requiredIngredients;
     }
 
     public void setIngredientsToAddManually(Set<Ingredient> ingredientsToAddManually) {

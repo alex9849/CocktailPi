@@ -93,10 +93,6 @@ export default {
     neededIngredients: {
       type: Array,
       required: true
-    },
-    unassignedIngredients: {
-      type: Array,
-      required: true
     }
   },
   setup () {
@@ -166,6 +162,9 @@ export default {
       const sorted = []
       sorted.push(...this.getPumpLayout)
       return sorted.sort((a, b) => a.id - b.id)
+    },
+    unassignedIngredients () {
+      return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id))
     },
     missingAutomaticIngredients () {
       return this.unassignedIngredients.filter(x => x.type === 'automated')
