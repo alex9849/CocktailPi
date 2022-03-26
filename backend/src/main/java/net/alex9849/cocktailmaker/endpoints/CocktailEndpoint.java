@@ -1,9 +1,11 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
+import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.RecipeService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 @RestController
@@ -26,33 +29,31 @@ public class CocktailEndpoint {
     private PumpService pumpService;
 
     @RequestMapping(value = "{recipeId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", required = false) Integer amount) {
+    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(recipeId);
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(amount == null) {
-            amount = (int) recipe.getDefaultAmountToFill();
-        } else if (amount < 50) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if(orderConfigDto.getAmountOrderedInMl() == null) {
+            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
         }
-        pumpService.orderCocktail(user, recipe, amount);
+        CocktailOrderConfiguration orderConfig = pumpService.fromDto(orderConfigDto);
+        pumpService.orderCocktail(user, recipe, orderConfig);
         return ResponseEntity.accepted().build();
     }
 
-    @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.GET)
-    public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId, @RequestParam(value = "amount", required = false) Integer amount) {
+    @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.PUT)
+    public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId, @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
         Recipe recipe = recipeService.getById(recipeId);
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        if(amount == null) {
-            amount = (int) recipe.getDefaultAmountToFill();
-        } else if (amount < 50) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if(orderConfigDto.getAmountOrderedInMl() == null) {
+            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
         }
-        return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(pumpService.checkFeasibility(recipe, amount)));
+        CocktailOrderConfiguration orderConfig = pumpService.fromDto(orderConfigDto);
+        return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(pumpService.checkFeasibility(recipe, orderConfig).getFeasibilityReport()));
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)

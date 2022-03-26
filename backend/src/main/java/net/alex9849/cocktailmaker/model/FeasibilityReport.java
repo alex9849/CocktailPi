@@ -2,7 +2,6 @@ package net.alex9849.cocktailmaker.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.alex9849.cocktailmaker.model.recipe.IngredientGroupReplacements;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
@@ -61,7 +60,6 @@ public class FeasibilityReport {
     @Getter @Setter
     public static class IngredientGroupReplacement {
         private IngredientGroup ingredientGroup;
-        private boolean replacementAutoSelected;
         private AddableIngredient selectedReplacement;
     }
 }

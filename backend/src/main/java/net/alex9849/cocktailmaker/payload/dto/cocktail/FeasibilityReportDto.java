@@ -76,20 +76,28 @@ public class FeasibilityReportDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class IngredientGroupReplacementDto {
         private interface IngredientGroupToReplace { IngredientGroupDto.Response.Reduced getIngredientGroup(); }
-        private interface ReplacementAutoSelected { boolean isReplacementAutoSelected(); }
+        private interface IngredientGroupIdToReplace { long getIngredientGroupId(); }
         private interface SelectedReplacement { AddableIngredientDto.Response.Detailed getSelectedReplacement(); }
+        private interface SelectedReplacementId { long getReplacementId(); }
+
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Request {
+            @Getter @Setter @EqualsAndHashCode
+            public static class Create implements IngredientGroupIdToReplace, SelectedReplacementId {
+                long ingredientGroupId;
+                long replacementId;
+            }
+        }
 
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Response {
             @Getter @Setter @EqualsAndHashCode
-            public static class Detailed implements IngredientGroupToReplace, ReplacementAutoSelected, SelectedReplacement {
+            public static class Detailed implements IngredientGroupToReplace, SelectedReplacement {
                 IngredientGroupDto.Response.Reduced ingredientGroup;
-                boolean replacementAutoSelected;
                 AddableIngredientDto.Response.Detailed selectedReplacement;
 
                 public Detailed(FeasibilityReport.IngredientGroupReplacement value) {
                     this.ingredientGroup = new IngredientGroupDto.Response.Reduced(value.getIngredientGroup());
-                    this.replacementAutoSelected = value.isReplacementAutoSelected();
                     this.selectedReplacement = AddableIngredientDto.Response.Detailed.toDto(value.getSelectedReplacement());
                 }
             }

@@ -53,11 +53,11 @@
                   <c-ingredient-selector
                     dense
                     outlined
-                    :label="getReplacementLabel(row)"
+                    label="Replacement"
                     :selected="row.replacement"
                   >
                     <template v-slot:label>
-                      <p class="text-grey-10 text-weight-medium">{{ getReplacementLabel(row) }}</p>
+                      <p class="text-grey-10 text-weight-medium">Replacement</p>
                     </template>
                   </c-ingredient-selector>
                 </div>
@@ -91,14 +91,6 @@ export default {
       ]
     }
   },
-  methods: {
-    getReplacementLabel (row) {
-      if (row.replacementAutoSelected) {
-        return 'Replacement (Auto-select)'
-      }
-      return 'Replacement'
-    }
-  },
   computed: {
     tableRows () {
       const data = []
@@ -109,7 +101,6 @@ export default {
           data.push({
             productionStep: prodStepNr,
             ingredientGroup: ingredientGroupReplacement.ingredientGroup.name,
-            replacementAutoSelected: ingredientGroupReplacement.replacementAutoSelected,
             replacement: ingredientGroupReplacement.selectedReplacement
           })
         }

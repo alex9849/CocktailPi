@@ -8,7 +8,6 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 
 import java.util.*;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class FeasibilityFactory {
     private final Recipe recipe;
-    private final IngredientGroupReplacements replacements;
+    private final CocktailOrderConfiguration replacements;
     private final List<Pump> pumps;
     private final FeasibilityReport feasibilityReport;
     private final FeasibleRecipe feasibleRecipe;
@@ -24,7 +23,7 @@ public class FeasibilityFactory {
     /**
      * @param recipe The recipe that should be checked. Note: IngredientGroups within this instance will be replaced. Don't continue to use this object
      */
-    public FeasibilityFactory(Recipe recipe, IngredientGroupReplacements replacements, List<Pump> pumps) {
+    public FeasibilityFactory(Recipe recipe, CocktailOrderConfiguration replacements, List<Pump> pumps) {
         this.recipe = recipe;
         this.replacements = replacements;
         this.pumps = pumps;
@@ -75,7 +74,6 @@ public class FeasibilityFactory {
 
                 IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
                 ingredientGroupReplacement.setIngredientGroup(toReplaceIngredientGroup);
-                ingredientGroupReplacement.setReplacementAutoSelected(false);
 
                 AddableIngredient addableIngredient = replacements.getReplacement(i, psIngredient.getIngredient().getId());
                 if (addableIngredient != null) {
@@ -91,11 +89,9 @@ public class FeasibilityFactory {
                     ingredientGroupReplacement.setSelectedReplacement(autoSelectedReplacement);
                     if(autoSelectedReplacement != null) {
                         feasibleProductionStepIngredient.setIngredient(autoSelectedReplacement);
-                        ingredientGroupReplacement.setReplacementAutoSelected(true);
                     } else {
                         allIngredientGroupsReplaced = false;
                         feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
-                        ingredientGroupReplacement.setReplacementAutoSelected(false);
                     }
                 }
             }

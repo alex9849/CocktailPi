@@ -6,11 +6,15 @@ import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
-import net.alex9849.cocktailmaker.model.recipe.IngredientGroupReplacements;
+import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
+import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
@@ -24,7 +28,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -116,6 +119,38 @@ public class PumpService {
         return pump;
     }
 
+    public CocktailOrderConfiguration fromDto(CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
+        if(orderConfigDto == null) {
+            return null;
+        }
+        CocktailOrderConfiguration orderConfig = new CocktailOrderConfiguration();
+        BeanUtils.copyProperties(orderConfigDto, orderConfig);
+        long pStep = 0;
+        Map<Long, Map<Long, AddableIngredient>> replacements = new HashMap<>();
+        for(List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> pStepDto : orderConfigDto.getProductionStepReplacements()) {
+            Map<Long, AddableIngredient> stepReplacements = replacements.computeIfAbsent(pStep, k -> new HashMap());
+            for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : pStepDto) {
+                Ingredient toReplace = ingredientService.getIngredient(replacementDto.getIngredientGroupId());
+                Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
+                if(toReplace == null) {
+                    throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
+                }
+                if(!(toReplace instanceof IngredientGroup)) {
+                    throw new IllegalArgumentException("Ingredient to replace with id \"" + replacementDto.getIngredientGroupId() + "\" is not a IngredientGroup!");
+                }
+                if(replacement == null) {
+                    throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
+                }
+                if(!(replacement instanceof AddableIngredient)) {
+                    throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacementDto.getReplacementId() + "\" is not an AddableIngredient!");
+                }
+                stepReplacements.put(toReplace.getId(), (AddableIngredient) replacement);
+            }
+            pStep++;
+        }
+        return orderConfig;
+    }
+
     public void deletePump(long id) {
         Pump pump = getPump(id);
         if(pump == null) {
@@ -127,21 +162,19 @@ public class PumpService {
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
-    public synchronized void orderCocktail(User user, Recipe recipe, int amount) {
+    public synchronized void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
         if(this.isMakingCocktail()) {
             throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
         if(isAnyCleaning()) {
             throw new IllegalStateException("There are pumps getting cleaned currently!");
         }
-        CocktailFactory.transformToAmountOfLiquid(recipe, amount);
-        FeasibilityReport report = this.checkFeasibility(recipe);
+        FeasibilityFactory feasibilityFactory = this.checkFeasibility(recipe, orderConfiguration);
+        FeasibilityReport report = feasibilityFactory.getFeasibilityReport();
         if(!report.getInsufficientIngredients().isEmpty()) {
             throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
         }
-        //Todo Replacement source
-        FeasibilityFactory feasibilityFactory = new FeasibilityFactory(recipe, new IngredientGroupReplacements(), getAllPumps());
-        if(!feasibilityFactory.getFeasibilityReport().isFeasible()) {
+        if(!report.isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()), gpioController)
@@ -181,14 +214,9 @@ public class PumpService {
         }
     }
 
-    public FeasibilityReport checkFeasibility(Recipe recipe, int amount) {
-        return checkFeasibility(CocktailFactory.transformToAmountOfLiquid(recipe, amount));
-    }
-
-    public FeasibilityReport checkFeasibility(Recipe recipe) {
-        //Todo Replacement source
-        FeasibilityFactory feasibilityFactory = new FeasibilityFactory(recipe, new IngredientGroupReplacements(), this.getAllPumps());
-        return feasibilityFactory.getFeasibilityReport();
+    public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
+        CocktailFactory.transformToAmountOfLiquid(recipe, orderConfig.getAmountOrderedInMl());
+        return new FeasibilityFactory(recipe, orderConfig, this.getAllPumps());
     }
 
     public synchronized void continueCocktailProduction() {

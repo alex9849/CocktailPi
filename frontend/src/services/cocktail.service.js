@@ -3,20 +3,13 @@ import axios from 'axios'
 const API_PATH = 'api/cocktail/'
 
 class CocktailService {
-  order (recipeId, amount) {
-    return axios.put(API_PATH + String(recipeId), null, {
-      params: {
-        amount: amount
-      }
-    })
+  order (recipeId, orderConfig) {
+    return axios.put(API_PATH + String(recipeId), orderConfig)
   }
 
-  checkFeasibility (recipeId, amount) {
-    return axios.get(API_PATH + String(recipeId) + '/feasibility', {
-      params: {
-        amount: amount
-      }
-    }).then(response => response.data)
+  checkFeasibility (recipeId, orderConfig) {
+    return axios.put(API_PATH + String(recipeId) + '/feasibility', orderConfig)
+      .then(response => response.data)
   }
 
   cancelCocktail () {
