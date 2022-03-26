@@ -1,16 +1,18 @@
 <template>
   <q-card flat
           bordered
-          class="bg-warning"
-          v-if="unassignedIngredients.length !== 0"
+          :class="cardClass"
   >
-    <q-card-section horizontal>
+    <q-card-section
+      horizontal
+      v-if="unassignedIngredients.length !== 0"
+    >
       <div class="flex items-center col-auto"
            v-if="!$q.platform.is.mobile"
       >
         <q-icon :name="mdiAlertOutline"
-                size="lg"
-                class="text-orange-14 q-pa-sm"
+                size="xl"
+                class="text-orange-14 q-pa-xs"
         ></q-icon>
       </div>
       <q-separator vertical
@@ -37,14 +39,31 @@
         </ul>
       </div>
     </q-card-section>
+    <q-card-section
+      horizontal
+      v-else
+    >
+      <div class="flex items-center col-auto bg-light-green-14"
+      >
+        <q-icon :name="mdiCheck"
+                size="xl"
+                class="text-white q-pa-xs"
+        ></q-icon>
+      </div>
+      <q-separator vertical
+      />
+      <div class="col flex justify-center items-center">
+        <p class="q-pa-sm" style="text-wrap: normal">All ingredients assigned to pumps! Cocktail can be produced fully automatic!</p>
+      </div>
+    </q-card-section>
   </q-card>
 </template>
 
 <script>
-import { mdiAlertOutline } from '@quasar/extras/mdi-v5'
+import { mdiAlertOutline, mdiCheckOutline, mdiCheck } from '@quasar/extras/mdi-v5'
 
 export default {
-  name: 'CMakeCocktailDialogMissingIngredients',
+  name: 'CMakeCocktailDialogIngredientsToAddManually',
   props: {
     unassignedIngredients: {
       type: Array,
@@ -53,7 +72,17 @@ export default {
   },
   setup () {
     return {
-      mdiAlertOutline: mdiAlertOutline
+      mdiAlertOutline: mdiAlertOutline,
+      mdiCheckOutline: mdiCheckOutline,
+      mdiCheck: mdiCheck
+    }
+  },
+  computed: {
+    cardClass () {
+      return {
+        'bg-warning': this.unassignedIngredients.length !== 0,
+        'bg-info': this.unassignedIngredients.length === 0
+      }
     }
   }
 }

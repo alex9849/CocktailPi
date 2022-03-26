@@ -35,7 +35,7 @@
 import { mdiAlertOutline } from '@quasar/extras/mdi-v5'
 
 export default {
-  name: 'CFeasibilityReport',
+  name: 'CMakeCocktailDialogInsufficientIngredients',
   props: {
     feasibilityReport: {
       type: Object,

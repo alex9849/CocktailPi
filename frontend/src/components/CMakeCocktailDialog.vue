@@ -63,12 +63,12 @@
             <q-separator></q-separator>
           </q-card-section>
         </q-card>
-        <c-feasibility-report
+        <c-make-cocktail-dialog-insufficient-ingredients
           v-if="feasibilityReport.insufficientIngredients.length !== 0"
           :feasibility-report="feasibilityReport"
         />
-        <c-make-cocktail-dialog-missing-ingredients
-          :unassigned-ingredients="unassignedIngredients"
+        <c-make-cocktail-dialog-ingredients-to-add-manually
+          :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
         />
         <c-make-cocktail-dialog-pump-editor
           v-if="isUserPumpIngredientEditor"
@@ -97,20 +97,19 @@
 </template>
 
 <script>
-import PumpService, { pumpDtoMapper } from '../services/pump.service'
 import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
 import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from '../components/CIngredientSelector'
 import { maxValue, minValue, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import CFeasibilityReport from 'components/CFeasibilityReport'
+import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
 import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEditor'
-import CMakeCocktailDialogMissingIngredients from 'components/CMakeCocktailDialogMissingIngredients'
+import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
 
 export default {
   name: 'CMakeCocktailDialog',
-  components: { CMakeCocktailDialogMissingIngredients, CMakeCocktailDialogPumpEditor, CFeasibilityReport, CIngredientSelector },
+  components: { CMakeCocktailDialogIngredientsToAddManually, CMakeCocktailDialogPumpEditor, CMakeCocktailDialogInsufficientIngredients, CIngredientSelector },
   props: {
     show: {
       type: Boolean,
@@ -126,7 +125,10 @@ export default {
     return {
       amountToProduce: 250,
       feasibilityReport: {
-        insufficientIngredients: []
+        insufficientIngredients: [],
+        missingIngredientGroupReplacements: [],
+        ingredientsToAddManually: [],
+        feasible: false
       },
       checkingFeasibility: true
     }
