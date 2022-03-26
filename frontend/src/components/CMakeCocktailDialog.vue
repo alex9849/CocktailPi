@@ -57,6 +57,7 @@
           <c-make-cocktail-dialog-ingredient-group-replacements
             :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
             :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
+            @ReplacementUpdate="onReplacementUpdate($event.prodStepNr, $event.toReplaceId, $event.replacement)"
           />
           <c-make-cocktail-dialog-insufficient-ingredients
             :insufficient-ingredients="feasibilityReport.insufficientIngredients"
@@ -138,7 +139,7 @@ export default {
   },
   created () {
     if (this.recipe) {
-      this.checkFeasibility()
+      this.checkFeasibility(this.currentOrderConfigurationDto)
     }
   },
   watch: {
@@ -150,19 +151,37 @@ export default {
     },
     amountToProduce: {
       handler () {
-        this.checkFeasibility()
+        this.checkFeasibility(this.currentOrderConfigurationDto)
       }
     },
     getPumpLayout: {
       handler () {
-        this.checkFeasibility()
+        this.checkFeasibility(this.currentOrderConfigurationDto)
       }
     }
   },
   methods: {
-    checkFeasibility () {
+    onOrderedAmountUpdate (newAmount) {
+      const config = this.currentOrderConfigurationDto
+      config.amountOrderedInMl = newAmount
+      this.checkFeasibility(config)
+    },
+    onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
+      const config = this.currentOrderConfigurationDto
+      let currentProdStepNr = 0
+      for (const prodStep of config.productionStepReplacements) {
+        for (const ingredientGroupReplacement of prodStep) {
+          if (currentProdStepNr === prodStepNr && ingredientGroupReplacement.ingredientGroup.id === toReplaceId) {
+            ingredientGroupReplacement.replacementId = replacement?.id
+          }
+        }
+        currentProdStepNr++
+      }
+      this.checkFeasibility(config)
+    },
+    checkFeasibility (orderConfig) {
       this.checkingFeasibility = true
-      CocktailService.checkFeasibility(this.recipe.id, this.amountToProduce)
+      CocktailService.checkFeasibility(this.recipe.id, orderConfig)
         .then(report => {
           this.feasibilityReport = report
         }).finally(() => {
@@ -170,7 +189,7 @@ export default {
         })
     },
     onMakeCocktail () {
-      CocktailService.order(this.recipe.id, this.amountToProduce)
+      CocktailService.order(this.recipe.id, orderConfig)
         .then(() => {
           this.$refs.mcDialog.hide()
           this.showProgressDialog = true
@@ -212,6 +231,24 @@ export default {
       set (val) {
         return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
       }
+    },
+    currentOrderConfigurationDto () {
+      const config = {
+        amountOrderedInMl: this.amountToProduce
+      }
+      const newReplacements = []
+      for (const prodStep of this.feasibilityReport.ingredientGroupReplacements) {
+        const prodStepReplacements = []
+        for (const ingredientGroupReplacement of prodStep) {
+          prodStepReplacements.push({
+            ingredientGroupId: ingredientGroupReplacement.ingredientGroup.id,
+            replacementId: ingredientGroupReplacement?.selectedReplacement?.id
+          })
+        }
+        newReplacements.push(prodStepReplacements)
+      }
+      config.productionStepReplacements = newReplacements
+      return config
     }
   },
   validations () {

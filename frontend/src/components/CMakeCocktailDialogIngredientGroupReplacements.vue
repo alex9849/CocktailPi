@@ -55,6 +55,7 @@
                     outlined
                     label="Replacement"
                     :selected="row.replacement"
+                    @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
                   >
                     <template v-slot:label>
                       <p class="text-grey-10 text-weight-medium">Replacement</p>
@@ -82,6 +83,7 @@ export default {
     ingredientGroupReplacements: Array,
     allIngredientGroupsReplaced: Boolean
   },
+  emits: ['ReplacementUpdate'],
   data () {
     return {
       columns: [
@@ -89,6 +91,11 @@ export default {
         { name: 'ingredientGroup', label: 'Ingredient group', field: 'ingredientGroup' },
         { name: 'replacement', label: 'Replacement', field: 'replacement' }
       ]
+    }
+  },
+  methods: {
+    onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
+      this.$emit('ReplacementUpdate', { prodStepNr, toReplaceId, replacement })
     }
   },
   computed: {
