@@ -167,11 +167,6 @@ export default {
     }
   },
   methods: {
-    onOrderedAmountUpdate (newAmount) {
-      const config = this.getCurrentOrderConfigurationDto()
-      config.amountOrderedInMl = newAmount
-      this.checkFeasibility(config)
-    },
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
       const config = this.getCurrentOrderConfigurationDto()
       let currentProdStepNr = 0
