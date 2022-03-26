@@ -3,12 +3,14 @@ package net.alex9849.cocktailmaker.model;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FeasibilityReport {
-    private List<InsufficientIngredient> insufficientIngredients;
-    private Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements;
+    private List<InsufficientIngredient> insufficientIngredients = new ArrayList<>();
+    private Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements = new HashMap<>();
 
     public Map<Long, List<IngredientGroup>> getMissingIngredientGroupReplacements() {
         return missingIngredientGroupReplacements;

@@ -33,14 +33,15 @@ public class FeasibilityFactory {
         this.feasibilityReport = new FeasibilityReport();
         this.feasibleRecipe = new FeasibleRecipe();
         this.feasibleRecipe.setRecipe(recipe);
+        this.compute();
     }
 
     private void compute() {
-        this.checkAndReplaceIngredientGroupReplacements();
-        this.checkInsufficientIngredients();
+        this.computeIngredientGroupReplacements();
+        this.computeInsufficientIngredients();
     }
 
-    private void checkAndReplaceIngredientGroupReplacements() {
+    private void computeIngredientGroupReplacements() {
         Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements = new HashMap<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
         for (ProductionStep productionStep : recipe.getProductionSteps()) {
@@ -89,7 +90,7 @@ public class FeasibilityFactory {
         }
     }
 
-    private void checkInsufficientIngredients() {
+    private void computeInsufficientIngredients() {
         Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
         Map<Long, List<Pump>> pumpsByIngredientId = this.pumps.stream().filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class IngredientGroupReplacements {
     //ProductionStep, IngredientGroupId, Replacement
-    private Map<Long, Map<Long, AddableIngredient>> productionStepReplacements;
+    private Map<Long, Map<Long, AddableIngredient>> productionStepReplacements = new HashMap<>();
 
     public Map<Long, Map<Long, AddableIngredient>> getProductionStepReplacements() {
         return productionStepReplacements;
