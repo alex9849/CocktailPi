@@ -6,24 +6,70 @@
     :icon-background-class="iconBackgroundClass"
     :icon-class="iconClass"
   >
-    <template v-slot:content>
+    <template v-slot:content v-if="ingredientGroupReplacements.length !== 0">
       <div class="row justify-center items-center q-pa-sm">
         <q-table
           :columns="columns"
           :rows="tableRows"
           hide-bottom
+          hide-header
           dense
           flat
-          class="q-ma-none"
-          table-class="q-ma-none"
+          grid
+          class="full-width"
+          :class="cardClass"
+          card-container-class="justify-center"
         >
-          <thead>
-          <tr>
-            <th>Production step</th>
-            <th>Ingredient group</th>
-            <th>Replacement</th>
-          </tr>
-          </thead>
+          <template v-slot:item="{ row }">
+            <div
+              class="q-pa-xs col-xs-12 col-sm-10 col-md-6 col-lg-3 grid-style-transition"
+            >
+            <q-card :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }">
+              <q-card-section class="q-pa-sm">
+                <table class="full-width">
+                  <tr>
+                    <td class="text-left text-weight-medium" style="width: max-content">Prod. step</td>
+                    <td class="text-left">
+                      <q-input
+                        outlined
+                        disable
+                        label="Production step"
+                        readonly
+                        :model-value="row.productionStep"
+                        dense
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left text-weight-medium" style="width: max-content">Ingred. group</td>
+                    <td class="text-left">
+                      <q-input
+                        outlined
+                        disable
+                        label="Ingredient group"
+                        readonly
+                        :model-value="row.ingredientGroup"
+                        dense
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left text-weight-medium" style="width: max-content">Replacement</td>
+                    <td class="text-left">
+                      <c-ingredient-selector
+                        dense
+                        outlined
+                        :label="getReplacementLabel(row)"
+                        :selected="row.replacement"
+                      >
+                      </c-ingredient-selector>
+                    </td>
+                  </tr>
+                </table>
+              </q-card-section>
+            </q-card>
+            </div>
+          </template>
         </q-table>
       </div>
     </template>
@@ -33,35 +79,50 @@
 <script>
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 import { mdiAlertOutline, mdiCheck } from '@quasar/extras/mdi-v5'
+import CIngredientSelector from 'components/CIngredientSelector'
 export default {
   name: 'CMakeCocktailDialogIngredientGroupReplacements',
-  components: { CQHeadlinedCard },
+  components: { CIngredientSelector, CQHeadlinedCard },
   props: {
-    missingIngredientGroupReplacements: Array
+    ingredientGroupReplacements: Array,
+    allIngredientGroupsReplaced: Boolean
   },
   data () {
     return {
       columns: [
-        { name: 'productionStep', style: 'width: 30px', headerStyle: 'width: 30px', label: 'Production step', field: 'productionStep', align: 'center' },
-        { name: 'ingredientGroup', label: 'Ingredient group', field: 'ingredientGroup', align: 'center' },
-        { name: 'replacement', label: 'Replacement', field: 'replacement', align: 'center' }
-      ],
-      tableRows: [
-        {
-          productionStep: 1,
-          ingredientGroup: 1,
-          replacement: 1
-        }, {
-          productionStep: 1,
-          ingredientGroup: 1,
-          replacement: 1
-        }
+        { name: 'productionStep', label: 'Production step', field: 'productionStep' },
+        { name: 'ingredientGroup', label: 'Ingredient group', field: 'ingredientGroup' },
+        { name: 'replacement', label: 'Replacement', field: 'replacement' }
       ]
     }
   },
+  methods: {
+    getReplacementLabel (row) {
+      if (row.replacementAutoSelected) {
+        return 'Replacement (Auto-select)'
+      }
+      return 'Replacement'
+    }
+  },
   computed: {
+    tableRows () {
+      const data = []
+      let prodStepNr = 0
+      for (const prodStep of this.ingredientGroupReplacements) {
+        prodStepNr++
+        for (const ingredientGroupReplacement of prodStep) {
+          data.push({
+            productionStep: prodStepNr,
+            ingredientGroup: ingredientGroupReplacement.ingredientGroup.name,
+            replacementAutoSelected: ingredientGroupReplacement.replacementAutoSelected,
+            replacement: ingredientGroupReplacement.selectedReplacement
+          })
+        }
+      }
+      return data
+    },
     isFulfilled () {
-      return this.missingIngredientGroupReplacements.length === 0
+      return this.allIngredientGroupsReplaced
     },
     cardClass () {
       return {

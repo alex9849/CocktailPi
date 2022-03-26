@@ -34,7 +34,6 @@
         selection="multiple"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'id'}"
-        :table-style="{margin: '15px'}"
         style="background-color: #f3f3fa"
       >
         <template v-slot:body="props">

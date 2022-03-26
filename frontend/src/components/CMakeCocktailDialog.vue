@@ -55,7 +55,8 @@
         </div>
         <div class="q-gutter-y-sm">
           <c-make-cocktail-dialog-ingredient-group-replacements
-            :missing-ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
+            :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
+            :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
           />
           <c-make-cocktail-dialog-insufficient-ingredients
             :insufficient-ingredients="feasibilityReport.insufficientIngredients"

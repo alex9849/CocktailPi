@@ -13,7 +13,7 @@ public class FeasibilityReport {
     private List<InsufficientIngredient> insufficientIngredients = new ArrayList<>();
     private List<List<IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
     private Set<Ingredient> ingredientsToAddManually = new HashSet<>();
-    private boolean isFeasible = false;
+    private boolean allIngredientGroupsReplaced;
 
     public List<List<IngredientGroupReplacement>> getIngredientGroupReplacements() {
         return ingredientGroupReplacements;
@@ -39,12 +39,16 @@ public class FeasibilityReport {
         this.insufficientIngredients = insufficientIngredients;
     }
 
-    public void setFeasible(boolean feasible) {
-        isFeasible = feasible;
+    public boolean isAllIngredientGroupsReplaced() {
+        return allIngredientGroupsReplaced;
+    }
+
+    public void setAllIngredientGroupsReplaced(boolean allIngredientGroupsReplaced) {
+        this.allIngredientGroupsReplaced = allIngredientGroupsReplaced;
     }
 
     public boolean isFeasible() {
-        return isFeasible;
+        return allIngredientGroupsReplaced && insufficientIngredients.isEmpty();
     }
 
     @Getter @Setter

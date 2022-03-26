@@ -16,17 +16,19 @@ public class FeasibilityReportDto {
     private interface InsufficientIngredients { List<InsufficientIngredientDto.Response.Detailed> getInsufficientIngredients(); }
     private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
+    private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
     private interface IngredientsToAddManually { Set<IngredientDto.Response.Reduced> getIngredientsToAddManually(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements InsufficientIngredients, IngredientGroupReplacements,
-                IngredientsToAddManually, IsFeasible {
+                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced {
 
             List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
             List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
             Set<IngredientDto.Response.Reduced> ingredientsToAddManually;
+            boolean allIngredientGroupsReplaced;
             boolean isFeasible;
 
             public Detailed(FeasibilityReport report) {
@@ -41,6 +43,7 @@ public class FeasibilityReportDto {
                 this.ingredientsToAddManually = report.getIngredientsToAddManually()
                         .stream().map(IngredientDto.Response.Reduced::toDto)
                         .collect(Collectors.toSet());
+                this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
                 this.isFeasible = report.isFeasible();
             }
         }

@@ -20,7 +20,6 @@ public class FeasibilityFactory {
     private final List<Pump> pumps;
     private final FeasibilityReport feasibilityReport;
     private final FeasibleRecipe feasibleRecipe;
-    private boolean allIngredientGroupsReplaced;
 
     /**
      * @param recipe The recipe that should be checked. Note: IngredientGroups within this instance will be replaced. Don't continue to use this object
@@ -32,7 +31,6 @@ public class FeasibilityFactory {
         this.feasibilityReport = new FeasibilityReport();
         this.feasibleRecipe = new FeasibleRecipe();
         this.feasibleRecipe.setRecipe(recipe);
-        this.allIngredientGroupsReplaced = true;
         this.compute();
     }
 
@@ -40,10 +38,10 @@ public class FeasibilityFactory {
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeInsufficientIngredients();
         this.computeIngredientsToAddManually();
-        this.feasibilityReport.setFeasible(this.allIngredientGroupsReplaced && this.feasibilityReport.getInsufficientIngredients().isEmpty());
     }
 
     private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
+        boolean allIngredientGroupsReplaced = true;
         List<List<FeasibilityReport.IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
         for (ProductionStep productionStep : recipe.getProductionSteps()) {
@@ -95,13 +93,14 @@ public class FeasibilityFactory {
                         feasibleProductionStepIngredient.setIngredient(autoSelectedReplacement);
                         ingredientGroupReplacement.setReplacementAutoSelected(true);
                     } else {
-                        this.allIngredientGroupsReplaced = false;
+                        allIngredientGroupsReplaced = false;
                         feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
                         ingredientGroupReplacement.setReplacementAutoSelected(false);
                     }
                 }
             }
         }
+        this.feasibilityReport.setAllIngredientGroupsReplaced(allIngredientGroupsReplaced);
         this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
         this.feasibilityReport.setIngredientGroupReplacements(ingredientGroupReplacements);
     }
