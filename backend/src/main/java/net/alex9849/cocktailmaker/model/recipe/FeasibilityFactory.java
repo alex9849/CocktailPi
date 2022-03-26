@@ -34,12 +34,12 @@ public class FeasibilityFactory {
     }
 
     private void compute() {
-        this.computeIngredientGroupReplacements();
+        this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeInsufficientIngredients();
         this.computeIngredientsToAddManually();
     }
 
-    private void computeIngredientGroupReplacements() {
+    private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
         Map<Long, List<IngredientGroup>> missingIngredientGroupReplacements = new HashMap<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
         for (ProductionStep productionStep : recipe.getProductionSteps()) {
@@ -84,9 +84,9 @@ public class FeasibilityFactory {
                     }
                 }
             }
-            this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
-            this.feasibilityReport.setMissingIngredientGroupReplacements(missingIngredientGroupReplacements);
         }
+        this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
+        this.feasibilityReport.setMissingIngredientGroupReplacements(missingIngredientGroupReplacements);
     }
 
     private void computeInsufficientIngredients() {
