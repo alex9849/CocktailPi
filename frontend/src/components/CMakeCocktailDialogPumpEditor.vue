@@ -17,6 +17,7 @@
           clearable
           dense
           filter-manual-ingredients
+          filter-ingredient-groups
           :bg-color="markPump(props.row)? 'green-3':undefined"
           :no-input-options="missingAutomaticIngredients"
           :loading="loadingPumpIdsCurrentIngredient.includes(props.row.id, 0)"
@@ -149,12 +150,6 @@ export default {
       dto.currentIngredientId = newIngredient?.id
       this.loadingPumpIdsCurrentIngredient.push(pump.id)
       PumpService.updatePump(pump.id, dto)
-        .catch(error => {
-          this.$q.notify({
-            type: 'negative',
-            message: error.response.data.message
-          })
-        })
         .finally(() => {
           const array = this.loadingPumpIdsCurrentIngredient
           array.splice(array.indexOf(pump.id), 1)

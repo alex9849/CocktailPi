@@ -37,6 +37,7 @@
             v-model.number="v.amountToProduce.$model"
             label="Amount to produce"
             outlined
+            hide-bottom-space
             input-class="text-center text-weight-medium"
             style="width: 400px"
             rounded
@@ -52,7 +53,7 @@
             </template>
           </q-input>
         </div>
-        <div class="q-gutter-sm">
+        <div class="q-gutter-y-sm">
           <q-card flat
                   bordered
                   class="bg-info"
