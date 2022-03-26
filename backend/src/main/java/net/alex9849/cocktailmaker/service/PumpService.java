@@ -132,20 +132,24 @@ public class PumpService {
             Map<Long, AddableIngredient> stepReplacements = replacements.computeIfAbsent(pStep, k -> new HashMap());
             for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : pStepDto) {
                 Ingredient toReplace = ingredientService.getIngredient(replacementDto.getIngredientGroupId());
-                Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
                 if(toReplace == null) {
                     throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
                 }
                 if(!(toReplace instanceof IngredientGroup)) {
                     throw new IllegalArgumentException("Ingredient to replace with id \"" + toReplace.getName() + "\" is not a IngredientGroup!");
                 }
-                if(replacement == null) {
-                    throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
+                AddableIngredient addableIngredientReplacement = null;
+                if(replacementDto.getReplacementId() != null) {
+                    Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
+                    if(replacement == null) {
+                        throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
+                    }
+                    if(!(replacement instanceof AddableIngredient)) {
+                        throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
+                    }
+                    addableIngredientReplacement = (AddableIngredient) replacement;
                 }
-                if(!(replacement instanceof AddableIngredient)) {
-                    throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
-                }
-                stepReplacements.put(toReplace.getId(), (AddableIngredient) replacement);
+                stepReplacements.put(toReplace.getId(), addableIngredientReplacement);
             }
             pStep++;
         }

@@ -78,14 +78,14 @@ public class FeasibilityReportDto {
         private interface IngredientGroupToReplace { IngredientGroupDto.Response.Reduced getIngredientGroup(); }
         private interface IngredientGroupIdToReplace { long getIngredientGroupId(); }
         private interface SelectedReplacement { AddableIngredientDto.Response.Detailed getSelectedReplacement(); }
-        private interface SelectedReplacementId { long getReplacementId(); }
+        private interface SelectedReplacementId { Long getReplacementId(); }
 
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Request {
             @Getter @Setter @EqualsAndHashCode
             public static class Create implements IngredientGroupIdToReplace, SelectedReplacementId {
                 long ingredientGroupId;
-                long replacementId;
+                Long replacementId;
             }
         }
 

@@ -58,6 +58,22 @@
                     :selected="row.replacement"
                     @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
                   >
+                    <template v-slot:afterIngredientName="{scope}">
+                      <q-item-label>
+                        <q-chip
+                          v-if="scope.opt.inBar"
+                          square dense
+                          color="warning"
+                          label="in bar"
+                        />
+                        <q-chip
+                          v-if="scope.opt.onPump"
+                          square dense
+                          color="positive"
+                          label="on pump"
+                        />
+                      </q-item-label>
+                    </template>
                     <template v-slot:label>
                       <p class="text-grey-10 text-weight-medium">Replacement</p>
                     </template>
