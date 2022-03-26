@@ -96,7 +96,6 @@
 import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
 import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
-import CIngredientSelector from '../components/CIngredientSelector'
 import { maxValue, minValue, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
@@ -106,7 +105,12 @@ import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCock
 
 export default {
   name: 'CMakeCocktailDialog',
-  components: { CMakeCocktailDialogIngredientGroupReplacements, CMakeCocktailDialogIngredientsToAddManually, CMakeCocktailDialogPumpEditor, CMakeCocktailDialogInsufficientIngredients, CIngredientSelector },
+  components: {
+    CMakeCocktailDialogIngredientGroupReplacements,
+    CMakeCocktailDialogIngredientsToAddManually,
+    CMakeCocktailDialogPumpEditor,
+    CMakeCocktailDialogInsufficientIngredients
+  },
   props: {
     show: {
       type: Boolean,
@@ -189,11 +193,16 @@ export default {
         })
     },
     onMakeCocktail () {
-      CocktailService.order(this.recipe.id, orderConfig)
+      CocktailService.order(this.recipe.id, this.currentOrderConfigurationDto)
         .then(() => {
-          this.$refs.mcDialog.hide()
-          this.showProgressDialog = true
-          this.checkFeasibility()
+          this.$router.push({
+            name: 'recipedetails',
+            params: { id: this.$route.params.id }
+          })
+            .then(() => {
+              this.$store.commit('cocktailProgress/setShowProgressDialog', true)
+            })
+          this.checkFeasibility(this.currentOrderConfigurationDto)
         })
     }
   },
@@ -223,14 +232,6 @@ export default {
     },
     unassignedIngredients () {
       return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id))
-    },
-    showProgressDialog: {
-      get () {
-        return this.$store.getters['cocktailProgress/isShowProgressDialog']
-      },
-      set (val) {
-        return this.$store.commit('cocktailProgress/setShowProgressDialog', val)
-      }
     },
     currentOrderConfigurationDto () {
       const config = {

@@ -22,6 +22,6 @@ export default function () {
       currentIngredientsToAddManually: []
     },
     hasCocktailProgress: false,
-    currentProgressDialog: false
+    isShowProgressDialog: false
   }
 }

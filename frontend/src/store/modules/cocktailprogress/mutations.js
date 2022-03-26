@@ -4,5 +4,5 @@ export const setCocktailProgress = (state, payload) => {
 }
 
 export const setShowProgressDialog = (status, payload) => {
-  status.currentProgressDialog = payload
+  status.isShowProgressDialog = payload
 }

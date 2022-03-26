@@ -127,6 +127,7 @@ public class PumpService {
         BeanUtils.copyProperties(orderConfigDto, orderConfig);
         long pStep = 0;
         Map<Long, Map<Long, AddableIngredient>> replacements = new HashMap<>();
+        orderConfig.setProductionStepReplacements(replacements);
         for(List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> pStepDto : orderConfigDto.getProductionStepReplacements()) {
             Map<Long, AddableIngredient> stepReplacements = replacements.computeIfAbsent(pStep, k -> new HashMap());
             for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : pStepDto) {
