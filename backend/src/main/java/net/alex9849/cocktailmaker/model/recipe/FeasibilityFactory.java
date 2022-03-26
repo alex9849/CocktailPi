@@ -62,19 +62,26 @@ public class FeasibilityFactory {
                 feasibleProductionStepIngredient.setScale(psIngredient.isScale());
                 feasibleProductionStepIngredients.add(feasibleProductionStepIngredient);
 
+                //We only replace IngredientGroups
                 if (!(psIngredient.getIngredient() instanceof IngredientGroup)) {
                     feasibleProductionStepIngredient.setIngredient(psIngredient.getIngredient());
                     continue;
                 }
 
-                IngredientGroup currentIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
+                IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
                 AddableIngredient addableIngredient = replacements.getReplacement(i, psIngredient.getIngredient().getId());
                 if (addableIngredient == null) {
                     List<IngredientGroup> missingIngredientGroups = missingIngredientGroupReplacements
                             .computeIfAbsent((long) i, (x) -> new ArrayList<>());
-                    missingIngredientGroups.add(currentIngredientGroup);
+                    missingIngredientGroups.add(toReplaceIngredientGroup);
                 } else {
-                    feasibleProductionStepIngredient.setIngredient(addableIngredient);
+                    if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
+                            .anyMatch(x -> x.getId() == addableIngredient.getId())) {
+                        feasibleProductionStepIngredient.setIngredient(addableIngredient);
+                    } else {
+                        throw new IllegalArgumentException(toReplaceIngredientGroup.getName()
+                                + " can't be replaced with " + addableIngredient.getName());
+                    }
                 }
             }
             this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
