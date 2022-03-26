@@ -23,9 +23,7 @@
             <p class="q-pa-sm">{{ headline }}</p>
           </div>
           <q-separator v-if="$slots.content" />
-          <div class="row">
-            <slot name="content"/>
-          </div>
+          <slot name="content"/>
         </div>
       </div>
     </q-card-section>

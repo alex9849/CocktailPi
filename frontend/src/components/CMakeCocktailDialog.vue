@@ -54,17 +54,9 @@
           </q-input>
         </div>
         <div class="q-gutter-y-sm">
-          <q-card flat
-                  bordered
-                  class="bg-info"
-          >
-            <q-card-section class="q-pa-none">
-              <div class="q-pa-sm">
-                The following ingredient-groups have to get real existing ingredients assigned:
-              </div>
-              <q-separator></q-separator>
-            </q-card-section>
-          </q-card>
+          <c-make-cocktail-dialog-ingredient-group-replacements
+            :missing-ingredient-group-replacements="feasibilityReport.missingIngredientGroupReplacements"
+          />
           <c-make-cocktail-dialog-insufficient-ingredients
             :insufficient-ingredients="feasibilityReport.insufficientIngredients"
           />
@@ -108,10 +100,11 @@ import useVuelidate from '@vuelidate/core'
 import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
 import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEditor'
 import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
+import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 
 export default {
   name: 'CMakeCocktailDialog',
-  components: { CMakeCocktailDialogIngredientsToAddManually, CMakeCocktailDialogPumpEditor, CMakeCocktailDialogInsufficientIngredients, CIngredientSelector },
+  components: { CMakeCocktailDialogIngredientGroupReplacements, CMakeCocktailDialogIngredientsToAddManually, CMakeCocktailDialogPumpEditor, CMakeCocktailDialogInsufficientIngredients, CIngredientSelector },
   props: {
     show: {
       type: Boolean,
