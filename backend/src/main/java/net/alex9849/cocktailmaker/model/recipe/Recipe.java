@@ -22,7 +22,7 @@ public class Recipe {
     private String description;
     private Date lastUpdate;
     private long defaultAmountToFill;
-    private List<ProductionStep<Ingredient>> productionSteps;
+    private List<ProductionStep> productionSteps;
     private List<Category> categories;
 
     public long getId() {
@@ -107,7 +107,7 @@ public class Recipe {
         this.owner = owner;
     }
 
-    public List<ProductionStep<Ingredient>> getProductionSteps() {
+    public List<ProductionStep> getProductionSteps() {
         if(this.productionSteps == null) {
             ProductionStepRepository psRepository = SpringUtility.getBean(ProductionStepRepository.class);
             this.productionSteps = psRepository.loadByRecipeId(this.id);
@@ -115,7 +115,7 @@ public class Recipe {
         return this.productionSteps;
     }
 
-    public void setProductionSteps(List<ProductionStep<Ingredient>> productionSteps) {
+    public void setProductionSteps(List<ProductionStep> productionSteps) {
         this.productionSteps = productionSteps;
     }
 
