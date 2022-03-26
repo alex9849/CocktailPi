@@ -143,7 +143,7 @@ export default {
   },
   created () {
     if (this.recipe) {
-      this.checkFeasibility(this.currentOrderConfigurationDto)
+      this.checkFeasibility(this.getCurrentOrderConfigurationDto())
     }
   },
   watch: {
@@ -154,34 +154,54 @@ export default {
       }
     },
     amountToProduce: {
-      handler () {
-        this.checkFeasibility(this.currentOrderConfigurationDto)
+      handler (value) {
+        const config = this.getCurrentOrderConfigurationDto()
+        config.amountOrderedInMl = value
+        this.checkFeasibility(config)
       }
     },
     getPumpLayout: {
       handler () {
-        this.checkFeasibility(this.currentOrderConfigurationDto)
+        this.checkFeasibility(this.getCurrentOrderConfigurationDto())
       }
     }
   },
   methods: {
     onOrderedAmountUpdate (newAmount) {
-      const config = this.currentOrderConfigurationDto
+      const config = this.getCurrentOrderConfigurationDto()
       config.amountOrderedInMl = newAmount
       this.checkFeasibility(config)
     },
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
-      const config = this.currentOrderConfigurationDto
+      const config = this.getCurrentOrderConfigurationDto()
       let currentProdStepNr = 0
       for (const prodStep of config.productionStepReplacements) {
         for (const ingredientGroupReplacement of prodStep) {
-          if (currentProdStepNr === prodStepNr && ingredientGroupReplacement.ingredientGroup.id === toReplaceId) {
+          if (currentProdStepNr === prodStepNr && ingredientGroupReplacement.ingredientGroupId === toReplaceId) {
             ingredientGroupReplacement.replacementId = replacement?.id
           }
         }
         currentProdStepNr++
       }
       this.checkFeasibility(config)
+    },
+    getCurrentOrderConfigurationDto () {
+      const config = {
+        amountOrderedInMl: this.amountToProduce
+      }
+      const newReplacements = []
+      for (const prodStep of this.feasibilityReport.ingredientGroupReplacements) {
+        const prodStepReplacements = []
+        for (const ingredientGroupReplacement of prodStep) {
+          prodStepReplacements.push({
+            ingredientGroupId: ingredientGroupReplacement.ingredientGroup.id,
+            replacementId: ingredientGroupReplacement?.selectedReplacement?.id
+          })
+        }
+        newReplacements.push(prodStepReplacements)
+      }
+      config.productionStepReplacements = newReplacements
+      return config
     },
     checkFeasibility (orderConfig) {
       this.checkingFeasibility = true
@@ -193,7 +213,7 @@ export default {
         })
     },
     onMakeCocktail () {
-      CocktailService.order(this.recipe.id, this.currentOrderConfigurationDto)
+      CocktailService.order(this.recipe.id, this.getCurrentOrderConfigurationDto())
         .then(() => {
           this.$router.push({
             name: 'recipedetails',
@@ -202,7 +222,6 @@ export default {
             .then(() => {
               this.$store.commit('cocktailProgress/setShowProgressDialog', true)
             })
-          this.checkFeasibility(this.currentOrderConfigurationDto)
         })
     }
   },
@@ -232,24 +251,6 @@ export default {
     },
     unassignedIngredients () {
       return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id))
-    },
-    currentOrderConfigurationDto () {
-      const config = {
-        amountOrderedInMl: this.amountToProduce
-      }
-      const newReplacements = []
-      for (const prodStep of this.feasibilityReport.ingredientGroupReplacements) {
-        const prodStepReplacements = []
-        for (const ingredientGroupReplacement of prodStep) {
-          prodStepReplacements.push({
-            ingredientGroupId: ingredientGroupReplacement.ingredientGroup.id,
-            replacementId: ingredientGroupReplacement?.selectedReplacement?.id
-          })
-        }
-        newReplacements.push(prodStepReplacements)
-      }
-      config.productionStepReplacements = newReplacements
-      return config
     }
   },
   validations () {

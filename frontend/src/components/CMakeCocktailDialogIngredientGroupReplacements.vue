@@ -43,7 +43,7 @@
                     outlined
                     disable
                     label="Ingredient group"
-                    :model-value="row.ingredientGroup"
+                    :model-value="row.ingredientGroup.name"
                     dense
                   >
                     <template v-slot:label>
@@ -53,6 +53,7 @@
                   <c-ingredient-selector
                     dense
                     outlined
+                    :only-group-leafs="row.ingredientGroup.id"
                     label="Replacement"
                     :selected="row.replacement"
                     @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
@@ -95,7 +96,7 @@ export default {
   },
   methods: {
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
-      this.$emit('ReplacementUpdate', { prodStepNr, toReplaceId, replacement })
+      this.$emit('ReplacementUpdate', { prodStepNr: prodStepNr - 1, toReplaceId, replacement })
     }
   },
   computed: {
@@ -107,7 +108,7 @@ export default {
         for (const ingredientGroupReplacement of prodStep) {
           data.push({
             productionStep: prodStepNr,
-            ingredientGroup: ingredientGroupReplacement.ingredientGroup.name,
+            ingredientGroup: ingredientGroupReplacement.ingredientGroup,
             replacement: ingredientGroupReplacement.selectedReplacement
           })
         }

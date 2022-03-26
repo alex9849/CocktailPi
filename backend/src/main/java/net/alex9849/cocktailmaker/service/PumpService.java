@@ -137,13 +137,13 @@ public class PumpService {
                     throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
                 }
                 if(!(toReplace instanceof IngredientGroup)) {
-                    throw new IllegalArgumentException("Ingredient to replace with id \"" + replacementDto.getIngredientGroupId() + "\" is not a IngredientGroup!");
+                    throw new IllegalArgumentException("Ingredient to replace with id \"" + toReplace.getName() + "\" is not a IngredientGroup!");
                 }
                 if(replacement == null) {
                     throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
                 }
                 if(!(replacement instanceof AddableIngredient)) {
-                    throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacementDto.getReplacementId() + "\" is not an AddableIngredient!");
+                    throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
                 }
                 stepReplacements.put(toReplace.getId(), (AddableIngredient) replacement);
             }
