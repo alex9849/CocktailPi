@@ -45,6 +45,9 @@
         </q-item-section>
       </q-item>
     </template>
+    <template v-slot:label>
+      <slot name="label"/>
+    </template>
   </q-select>
 </template>
 

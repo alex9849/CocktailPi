@@ -22,50 +22,45 @@
         >
           <template v-slot:item="{ row }">
             <div
-              class="q-pa-xs col-xs-12 col-sm-10 col-md-6 col-lg-3 grid-style-transition"
+              class="q-pa-xs col-xs-12 col-sm-9 col-md-6 col-lg-3 grid-style-transition"
             >
             <q-card :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }">
               <q-card-section class="q-pa-sm">
-                <table class="full-width">
-                  <tr>
-                    <td class="text-left text-weight-medium" style="width: max-content">Prod. step</td>
-                    <td class="text-left">
-                      <q-input
-                        outlined
-                        disable
-                        label="Production step"
-                        readonly
-                        :model-value="row.productionStep"
-                        dense
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left text-weight-medium" style="width: max-content">Ingred. group</td>
-                    <td class="text-left">
-                      <q-input
-                        outlined
-                        disable
-                        label="Ingredient group"
-                        readonly
-                        :model-value="row.ingredientGroup"
-                        dense
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left text-weight-medium" style="width: max-content">Replacement</td>
-                    <td class="text-left">
-                      <c-ingredient-selector
-                        dense
-                        outlined
-                        :label="getReplacementLabel(row)"
-                        :selected="row.replacement"
-                      >
-                      </c-ingredient-selector>
-                    </td>
-                  </tr>
-                </table>
+                <div class="q-gutter-xs">
+                  <q-input
+                    outlined
+                    disable
+                    label="Production step"
+                    readonly
+                    :model-value="row.productionStep"
+                    dense
+                  >
+                    <template v-slot:label>
+                      <p class="text-grey-10 text-weight-medium">Production step</p>
+                    </template>
+                  </q-input>
+                  <q-input
+                    outlined
+                    disable
+                    label="Ingredient group"
+                    :model-value="row.ingredientGroup"
+                    dense
+                  >
+                    <template v-slot:label>
+                      <p class="text-grey-10 text-weight-medium">Ingredient group</p>
+                    </template>
+                  </q-input>
+                  <c-ingredient-selector
+                    dense
+                    outlined
+                    :label="getReplacementLabel(row)"
+                    :selected="row.replacement"
+                  >
+                    <template v-slot:label>
+                      <p class="text-grey-10 text-weight-medium">{{ getReplacementLabel(row) }}</p>
+                    </template>
+                  </c-ingredient-selector>
+                </div>
               </q-card-section>
             </q-card>
             </div>
