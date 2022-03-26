@@ -63,6 +63,19 @@ public abstract class Ingredient {
 
     public abstract Unit getUnit();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public enum Unit {
         MILLILITER("ml"), GRAM("g"), TEASPOON("teaspoon(s)"),
         TABLESPOON("tablespoon(s)"), PIECE("piece(s)");

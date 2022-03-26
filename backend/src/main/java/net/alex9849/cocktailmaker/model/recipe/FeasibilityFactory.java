@@ -106,7 +106,7 @@ public class FeasibilityFactory {
     }
 
     private void computeInsufficientIngredients() {
-        Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(recipe);
+        Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(this.feasibleRecipe);
         Map<Long, List<Pump>> pumpsByIngredientId = this.pumps.stream().filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));
         List<FeasibilityReport.InsufficientIngredient> insufficientIngredients = new ArrayList<>();

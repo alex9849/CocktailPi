@@ -298,8 +298,8 @@ public class CocktailFactory {
         return Math.round((((float) timeElapsed) / timeNeeded) * 100);
     }
 
-    public static Map<Ingredient, Integer> getNeededAmountNeededPerIngredient(Recipe recipe) {
-        return recipe.getProductionSteps().stream()
+    public static Map<Ingredient, Integer> getNeededAmountNeededPerIngredient(FeasibleRecipe recipe) {
+        return recipe.getFeasibleProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
