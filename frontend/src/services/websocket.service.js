@@ -10,7 +10,7 @@ class WebsocketService {
   stompClient = null
 
   connectWebsocket () {
-    this.stompClient = Stomp.over(() => new SockJS(store().getters['auth/getFormattedServerAddress'] + '/ws'))
+    this.stompClient = Stomp.over(() => new SockJS(store().getters['auth/getFormattedServerAddress'] + '/websocket'))
     this.stompClient.connectHeaders = {
       Authorization: authHeader()
     }
