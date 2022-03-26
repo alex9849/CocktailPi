@@ -45,7 +45,7 @@
         </q-item-section>
       </q-item>
     </template>
-    <template v-slot:label>
+    <template v-slot:label v-if="$slots.label">
       <slot name="label"/>
     </template>
   </q-select>
