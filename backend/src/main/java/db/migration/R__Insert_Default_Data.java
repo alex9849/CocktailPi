@@ -3,15 +3,18 @@ package db.migration;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
+import net.alex9849.cocktailmaker.service.CategoryService;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
@@ -24,9 +27,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class R__Insert_Default_Data extends BaseJavaMigration {
     private final IngredientService ingredientService = SpringUtility.getBean(IngredientService.class);
+    private final CategoryService categoryService = SpringUtility.getBean(CategoryService.class);
     private final RecipeService recipeService = SpringUtility.getBean(RecipeService.class);
     private final UserService userService = SpringUtility.getBean(UserService.class);
 
@@ -38,7 +43,8 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
 
         User defaultUser = createDefaultUser();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
-        this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap);
+        Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
+        this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
     }
 
     private User createDefaultUser() {
@@ -54,10 +60,6 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         return userService.createUser(defaultUser);
     }
 
-    /**
-     *
-     * @return Map that mapps the old ingredientId to the new one
-     */
     private Map<Long, Long> migrateIngredients() throws IOException {
         Map<Long, Long> oldToNewIdMap = new HashMap<>();
         List<IngredientDto.Response.Detailed> ingredientDtos = loadFromFile("/db/defaultdata/ingredients.json");
@@ -73,12 +75,27 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
         return oldToNewIdMap;
     }
 
-    private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap) throws IOException {
+    private Map<Long, Long> migrateCategories() throws IOException {
+        Map<Long, Long> oldToNewIdMap = new HashMap<>();
+        List<CategoryDto.Duplex.Detailed> categoryDtos = loadFromFile("/db/defaultdata/categories.json");
+
+        for(CategoryDto.Duplex.Detailed categoryDto : categoryDtos) {
+            CategoryDto.Request.Create createDto = new CategoryDto.Request.Create(categoryDto);
+            Category createdCategory = categoryService.createCategory(categoryService.fromDto(createDto));
+            oldToNewIdMap.put(categoryDto.getId(), createdCategory.getId());
+        }
+        return oldToNewIdMap;
+    }
+
+    private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap, Map<Long, Long> categoriesOldIdToNewIdMap) throws IOException {
         List<RecipeDto.Response.Detailed> recipeDtos = loadFromFile("/db/defaultdata/recipes.json");
 
         for(RecipeDto.Response.Detailed recipeDto : recipeDtos) {
             RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(recipeDto);
             createDto.setOwnerId(owner.getId());
+            createDto.setCategoryIds(createDto.getCategoryIds()
+                    .stream().map(categoriesOldIdToNewIdMap::get)
+                    .collect(Collectors.toSet()));
 
             //Change IngredientIds
             for(ProductionStepDto.Request.Create pStep : createDto.getProductionSteps()) {
@@ -93,6 +110,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
                     ingredient.setIngredientId(ingredientsOldIdToNewIdMap.get(ingredient.getIngredientId()));
                 }
             }
+            recipeService.createRecipe(recipeService.fromDto(createDto));
         }
     }
 

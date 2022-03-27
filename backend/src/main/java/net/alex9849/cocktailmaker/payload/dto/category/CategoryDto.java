@@ -16,6 +16,12 @@ public class CategoryDto {
         @Getter @Setter @EqualsAndHashCode
         public static class Create implements Name {
             String name;
+
+            public Create() {}
+
+            public Create(Duplex.Detailed detailed) {
+                BeanUtils.copyProperties(detailed, this);
+            }
         }
     }
 
