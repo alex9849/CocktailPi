@@ -68,27 +68,5 @@ public abstract class AddableIngredientDto {
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
             }
         }
-
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public abstract static class Export extends IngredientDto.Response.Export implements AlcoholContent {
-            int alcoholContent;
-
-            protected Export(AddableIngredient ingredient) {
-                super(ingredient);
-            }
-
-            public static Export toDto(AddableIngredient ingredient) {
-                if(ingredient == null) {
-                    return null;
-                }
-                if (ingredient instanceof ManualIngredient) {
-                    return new ManualIngredientDto.Response.Export((ManualIngredient) ingredient);
-                }
-                if (ingredient instanceof AutomatedIngredient) {
-                    return new AutomatedIngredientDto.Response.Export((AutomatedIngredient) ingredient);
-                }
-                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
-            }
-        }
     }
 }

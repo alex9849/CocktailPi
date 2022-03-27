@@ -22,9 +22,7 @@ public class IngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter
-        @Setter
-        @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = ManualIngredientDto.Request.Create.class, name = "manual"),
@@ -40,9 +38,7 @@ public class IngredientDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
-        @Getter
-        @Setter
-        @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump {
             long id;
             String name;
@@ -59,17 +55,24 @@ public class IngredientDto {
             }
 
             public static Detailed toDto(Ingredient ingredient) {
+                return toDto(ingredient, false);
+            }
+
+            public static Detailed toDto(Ingredient ingredient, boolean exportIngredientGroupChildren) {
                 if (ingredient == null) {
                     return null;
                 }
                 if (ingredient instanceof IngredientGroup) {
-                    return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
+                    if(exportIngredientGroupChildren) {
+                        return new IngredientGroupDto.Response.Export((IngredientGroup) ingredient);
+                    } else {
+                        return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
+                    }
                 }
                 if (ingredient instanceof AddableIngredient) {
                     return AddableIngredientDto.Response.Detailed.toDto((AddableIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
-
             }
         }
 
@@ -92,35 +95,6 @@ public class IngredientDto {
                 }
                 if(ingredient instanceof AddableIngredient) {
                     return AddableIngredientDto.Response.Reduced.toDto((AddableIngredient) ingredient);
-                }
-                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
-
-            }
-        }
-
-        @Getter @Setter @EqualsAndHashCode
-        public abstract static class Export implements Id, Name, ParentGroupId, Type, Unit {
-            long id;
-            String name;
-            Long parentGroupId;
-
-            protected Export(Ingredient ingredient) {
-                this.id = ingredient.getId();
-                BeanUtils.copyProperties(ingredient, this);
-                if (ingredient.getParentGroup() != null) {
-                    this.parentGroupId = ingredient.getParentGroupId();
-                }
-            }
-
-            public static Export toDto(Ingredient ingredient) {
-                if (ingredient == null) {
-                    return null;
-                }
-                if (ingredient instanceof IngredientGroup) {
-                    return new IngredientGroupDto.Response.Export((IngredientGroup) ingredient);
-                }
-                if (ingredient instanceof AddableIngredient) {
-                    return AddableIngredientDto.Response.Export.toDto((AddableIngredient) ingredient);
                 }
                 throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
 

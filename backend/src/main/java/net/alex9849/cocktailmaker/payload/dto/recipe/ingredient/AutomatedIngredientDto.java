@@ -62,25 +62,5 @@ public class AutomatedIngredientDto {
                 return "automated";
             }
         }
-
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Export extends AddableIngredientDto.Response.Export implements PumpTimeMultiplier {
-            double pumpTimeMultiplier;
-
-            public Export(AutomatedIngredient ingredient) {
-                super(ingredient);
-            }
-
-            @Override
-            public String getType() {
-                return "automated";
-            }
-
-            @Override
-            public Ingredient.Unit getUnit() {
-                return Ingredient.Unit.MILLILITER;
-            }
-
-        }
     }
 }

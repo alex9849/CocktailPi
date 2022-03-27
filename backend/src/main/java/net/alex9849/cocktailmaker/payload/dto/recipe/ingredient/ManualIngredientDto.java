@@ -67,19 +67,5 @@ public class ManualIngredientDto {
                 return false;
             }
         }
-
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Export extends AddableIngredientDto.Response.Export {
-            Ingredient.Unit unit;
-
-            protected Export(ManualIngredient ingredient) {
-                super(ingredient);
-            }
-
-            @Override
-            public String getType() {
-                return "manual";
-            }
-        }
     }
 }

@@ -73,13 +73,17 @@ public class IngredientGroupDto {
 
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Export extends IngredientDto.Response.Export implements Children<IngredientDto.Response.Export> {
-            Set<IngredientDto.Response.Export> children;
+        public static class Export extends IngredientDto.Response.Detailed implements Children<IngredientDto.Response.Detailed> {
+            Set<IngredientDto.Response.Detailed> children;
+            boolean inBar;
+            boolean onPump;
 
             public Export(IngredientGroup ingredientGroup) {
                 super(ingredientGroup);
+                this.inBar = ingredientGroup.isInBar();
+                this.onPump = ingredientGroup.isOnPump();
                 this.children = ingredientGroup.getChildren()
-                        .stream().map(IngredientDto.Response.Export::toDto)
+                        .stream().map(x -> IngredientDto.Response.Detailed.toDto(x, true))
                         .collect(Collectors.toSet());
             }
 

@@ -87,12 +87,12 @@ public class IngredientEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "export", method = RequestMethod.GET)
+    @RequestMapping(value = "tree", method = RequestMethod.GET)
     ResponseEntity<?> getIngredientTree() {
         List<Ingredient> ingredients = ingredientService.getIngredientByFilter(null, false, false,
                 false, null, false, false,
                 false, true);
-        return ResponseEntity.ok(ingredients.stream().map(IngredientDto.Response.Export::toDto)
+        return ResponseEntity.ok(ingredients.stream().map(x -> IngredientDto.Response.Detailed.toDto(x, true))
                 .collect(Collectors.toList()));
     }
 

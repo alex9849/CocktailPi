@@ -1,0 +1,946 @@
+[
+  {
+    "id": 92,
+    "name": "Acai Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 25,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 112,
+    "name": "Aguardiente",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 104,
+    "name": "Almond Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 113,
+    "name": "Amaretto",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 21,
+    "name": "Amaretto Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 24,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 24,
+    "name": "Angostura Bitter",
+    "parentGroupId": null,
+    "alcoholContent": 45,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 34,
+    "name": "Aperol",
+    "parentGroupId": null,
+    "alcoholContent": 15,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 38,
+    "name": "Apple Cider",
+    "parentGroupId": null,
+    "alcoholContent": 5,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 30,
+    "name": "Applejack",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 41,
+    "name": "Apple Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 43,
+    "name": "Apple Schnapps",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 45,
+    "name": "Apricot Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 42,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 5,
+    "name": "Averna Amaro",
+    "parentGroupId": null,
+    "alcoholContent": 29,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 48,
+    "name": "Baileys Irish Cream",
+    "parentGroupId": null,
+    "alcoholContent": 17,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 57,
+    "name": "Basil Leaves",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "piece(s)",
+    "type": "manual"
+  },
+  {
+    "id": 81,
+    "name": "Benedictine DOM",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 103,
+    "name": "Blackberries",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "piece(s)",
+    "type": "manual"
+  },
+  {
+    "id": 86,
+    "name": "Blackberry Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 14,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 73,
+    "name": "Black Sambuca",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 105,
+    "name": "Blood Orange Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 10,
+    "name": "Blue Cura\u00e7ao",
+    "parentGroupId": null,
+    "alcoholContent": 30,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 114,
+    "name": "Brandy",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 28,
+    "name": "Brown Sugar",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "tablespoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 26,
+    "name": "Campari",
+    "parentGroupId": null,
+    "alcoholContent": 25,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 70,
+    "name": "Chartreuse",
+    "parentGroupId": null,
+    "alcoholContent": 69,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 77,
+    "name": "Cherry Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 24,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 36,
+    "name": "Cinnamon",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "teaspoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 79,
+    "name": "Coconut Cream",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "ml",
+    "type": "manual"
+  },
+  {
+    "id": 71,
+    "name": "Coconut Rum",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 53,
+    "name": "Coffee",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 31,
+    "name": "Cointreau",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 98,
+    "name": "Cola",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 55,
+    "name": "Condensed Milk",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 58,
+    "name": "Cranberry Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 101,
+    "name": "Cream",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "ml",
+    "type": "manual"
+  },
+  {
+    "id": 32,
+    "name": "Cr\u00e9mant de Loire",
+    "parentGroupId": null,
+    "alcoholContent": 13,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 99,
+    "name": "Cr\u00e8me de Cassis",
+    "parentGroupId": null,
+    "alcoholContent": 20,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 44,
+    "name": "Dry Vermouth",
+    "parentGroupId": null,
+    "alcoholContent": 18,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 25,
+    "name": "Egg White",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "piece(s)",
+    "type": "manual"
+  },
+  {
+    "id": 56,
+    "name": "Frothed Milk",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "tablespoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 52,
+    "name": "Galliano",
+    "parentGroupId": null,
+    "alcoholContent": 30,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 120,
+    "name": "Gin",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 89,
+    "name": "Ginger Ale",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 84,
+    "name": "Ginger Beer",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 102,
+    "name": "Grapefruit Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 17,
+    "name": "Grenadine Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 63,
+    "name": "Honey",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "tablespoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 20,
+    "name": "Honey Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 50,
+    "name": "Irish Cream",
+    "parentGroupId": null,
+    "alcoholContent": 15,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 47,
+    "name": "Kahl\u00faa",
+    "parentGroupId": null,
+    "alcoholContent": 28,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 51,
+    "name": "Lemongrass Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 22,
+    "name": "Lemon Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 96,
+    "name": "Lemon-lime Soda",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 54,
+    "name": "Licor 43",
+    "parentGroupId": null,
+    "alcoholContent": 31,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 62,
+    "name": "Light Beer",
+    "parentGroupId": null,
+    "alcoholContent": 2,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 3,
+    "name": "Lime Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 97,
+    "name": "Lime Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 40,
+    "name": "Maple Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 46,
+    "name": "Maraschino Liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 32,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 14,
+    "name": "Orange Bitter",
+    "parentGroupId": null,
+    "alcoholContent": 28,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 16,
+    "name": "Orange Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 87,
+    "name": "Orange Marmalade",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "tablespoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 2,
+    "name": "Orgeat Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 106,
+    "name": "Passion fruit Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 65,
+    "name": "Peach Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 78,
+    "name": "Peach Schnapps",
+    "parentGroupId": null,
+    "alcoholContent": 18,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 15,
+    "name": "Pineapple Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 82,
+    "name": "Punsch",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 93,
+    "name": "Raisins",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "piece(s)",
+    "type": "manual"
+  },
+  {
+    "id": 66,
+    "name": "Raspberry Juice",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 94,
+    "name": "Raspberry Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 27,
+    "name": "Red Vermouth",
+    "parentGroupId": null,
+    "alcoholContent": 16,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 88,
+    "name": "Red Wine",
+    "parentGroupId": null,
+    "alcoholContent": 14,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 116,
+    "name": "Rum",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 119,
+        "name": "Black Rum",
+        "parentGroupId": 116,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      },
+      {
+        "id": 117,
+        "name": "White Rum",
+        "parentGroupId": 116,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      },
+      {
+        "id": 118,
+        "name": "Gold Rum",
+        "parentGroupId": 116,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      },
+      {
+        "id": 127,
+        "name": "Aged Rum",
+        "parentGroupId": 116,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 37,
+    "name": "Salt",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "teaspoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 124,
+    "name": "Sherry",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 125,
+    "name": "Sherry Fino",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 23,
+    "name": "Simple Syrup",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 35,
+    "name": "Soda Water",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 95,
+    "name": "Southern Comfort",
+    "parentGroupId": null,
+    "alcoholContent": 35,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 122,
+    "name": "Sparkling Wine",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 115,
+        "name": "Champagne",
+        "parentGroupId": 122,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      },
+      {
+        "id": 123,
+        "name": "Prosecco",
+        "parentGroupId": 122,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 9,
+    "name": "Sprite",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 19,
+    "name": "Sugar",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "unit": "teaspoon(s)",
+    "type": "manual"
+  },
+  {
+    "id": 6,
+    "name": "Sweet & Sour Mix",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 13,
+    "name": "Sweet Vermouth",
+    "parentGroupId": null,
+    "alcoholContent": 15,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 61,
+    "name": "Tattersall Grapefruit Crema",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 128,
+    "name": "Tequila",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 129,
+        "name": "Silver Tequila",
+        "parentGroupId": 128,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 91,
+    "name": "Tonic Water",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 121,
+    "name": "Triple Sec",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 49,
+        "name": "Grand Marnier",
+        "parentGroupId": 121,
+        "alcoholContent": 40,
+        "pumpTimeMultiplier": 1.0,
+        "type": "automated",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 60,
+    "name": "Vanilla liqueur",
+    "parentGroupId": null,
+    "alcoholContent": 40,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 110,
+    "name": "Vermouth",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 111,
+        "name": "Absinth",
+        "parentGroupId": 110,
+        "children": [],
+        "type": "group",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 126,
+    "name": "Vodka",
+    "parentGroupId": null,
+    "children": [],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 85,
+    "name": "Water",
+    "parentGroupId": null,
+    "alcoholContent": 0,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 107,
+    "name": "Whisky",
+    "parentGroupId": null,
+    "children": [
+      {
+        "id": 108,
+        "name": "Bourbon",
+        "parentGroupId": 107,
+        "children": [
+          {
+            "id": 42,
+            "name": "Jack Daniel's",
+            "parentGroupId": 108,
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "type": "automated",
+            "unit": "ml"
+          }
+        ],
+        "type": "group",
+        "unit": "ml"
+      },
+      {
+        "id": 109,
+        "name": "Scotch",
+        "parentGroupId": 107,
+        "children": [
+          {
+            "id": 59,
+            "name": "Glenfiddich",
+            "parentGroupId": 109,
+            "alcoholContent": 40,
+            "pumpTimeMultiplier": 1.0,
+            "type": "automated",
+            "unit": "ml"
+          }
+        ],
+        "type": "group",
+        "unit": "ml"
+      }
+    ],
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 72,
+    "name": "White Beer",
+    "parentGroupId": null,
+    "alcoholContent": 6,
+    "pumpTimeMultiplier": 1.0,
+    "type": "automated",
+    "unit": "ml"
+  }
+]
