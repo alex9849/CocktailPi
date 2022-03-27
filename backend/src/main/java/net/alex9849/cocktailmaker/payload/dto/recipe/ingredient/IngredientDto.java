@@ -12,19 +12,12 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IngredientDto {
     protected interface Id { long getId(); }
-
     protected interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
-
     protected interface ParentGroupId { Long getParentGroupId(); }
-
     protected interface ParentGroupName { String getParentGroupName(); }
-
     protected interface Type { String getType(); }
-
     protected interface InBar { boolean isInBar(); }
-
     protected interface OnPump { boolean isOnPump(); }
-
     protected interface Unit { Ingredient.Unit getUnit(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
