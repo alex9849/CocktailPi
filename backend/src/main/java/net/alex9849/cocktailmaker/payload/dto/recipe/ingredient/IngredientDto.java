@@ -64,7 +64,7 @@ public class IngredientDto {
                 }
                 if (ingredient instanceof IngredientGroup) {
                     if(exportIngredientGroupChildren) {
-                        return new IngredientGroupDto.Response.Export((IngredientGroup) ingredient);
+                        return new IngredientGroupDto.Response.Tree((IngredientGroup) ingredient);
                     } else {
                         return new IngredientGroupDto.Response.Detailed((IngredientGroup) ingredient);
                     }
