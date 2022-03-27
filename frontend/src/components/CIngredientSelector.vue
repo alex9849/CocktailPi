@@ -159,7 +159,7 @@ export default {
         return
       }
       IngredientService.getIngredientsFilter(val, this.filterManualIngredients, this.filterAutomaticIngredients,
-        this.filterIngredientGroups, this.onlyGroupChildren, false)
+        this.filterIngredientGroups, this.onlyGroupChildren, null, null, null)
         .then(ingredients => {
           update(() => {
             this.fetchedOptions = ingredients

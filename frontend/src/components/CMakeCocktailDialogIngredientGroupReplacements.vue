@@ -55,24 +55,32 @@
                     outlined
                     :only-group-children="row.ingredientGroup.id"
                     filter-ingredient-groups
+                    fetch-instantly
                     label="Replacement"
                     :selected="row.replacement"
                     @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
                   >
                     <template v-slot:afterIngredientName="{scope}">
-                      <q-item-label>
-                        <q-chip
-                          v-if="scope.opt.inBar"
-                          square dense
-                          color="warning"
-                          label="in bar"
-                        />
-                        <q-chip
-                          v-if="scope.opt.onPump"
-                          square dense
-                          color="positive"
-                          label="on pump"
-                        />
+                      <q-item-label
+                        v-if="scope.opt.onPump"
+                        caption
+                        class="text-green"
+                      >
+                        automatically addable
+                      </q-item-label>
+                      <q-item-label
+                        v-else-if="scope.opt.inBar"
+                        caption
+                        class="text-warning"
+                      >
+                        in bar
+                      </q-item-label>
+                      <q-item-label
+                        v-else
+                        caption
+                        class="text-negative"
+                      >
+                        not in bar
                       </q-item-label>
                     </template>
                     <template v-slot:label>

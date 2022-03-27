@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,8 +30,15 @@ public class IngredientEndpoint {
                                      @RequestParam(value = "filterAutomaticIngredients", defaultValue = "false") boolean filterAutomaticIngredients,
                                      @RequestParam(value = "filterIngredientGroups", defaultValue = "false") boolean filterIngredientGroups,
                                      @RequestParam(value = "groupChildrenGroupId", required = false) Long groupChildrenGroupId,
-                                     @RequestParam(value = "inBar", defaultValue = "false") boolean inBar) {
-        if(!inBar) {
+                                     @RequestParam(value = "inBar", defaultValue = "false") boolean inBar,
+                                     @RequestParam(value = "onPump", defaultValue = "false") boolean onPump,
+                                     @RequestParam(value = "inBarOrOnPump", defaultValue = "false") boolean inBarOrOnPump) {
+        boolean skipAutoMinAutocompleteCheck = false;
+        skipAutoMinAutocompleteCheck |= inBarOrOnPump;
+        skipAutoMinAutocompleteCheck |= inBar;
+        skipAutoMinAutocompleteCheck |= onPump;
+
+        if(!skipAutoMinAutocompleteCheck) {
             if(autocomplete == null){
                 if(!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(ERole.ROLE_ADMIN)) {
                     ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -42,7 +50,7 @@ public class IngredientEndpoint {
             }
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
-                filterAutomaticIngredients, filterIngredientGroups, groupChildrenGroupId, inBar)
+                filterAutomaticIngredients, filterIngredientGroups, groupChildrenGroupId, inBar, onPump, inBarOrOnPump)
                 .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 

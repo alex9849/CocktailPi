@@ -8,7 +8,7 @@ class IngredientService {
   }
 
   getIngredientsFilter (autocomplete, filterManualIngredients, filterAutomaticIngredients,
-    filterIngredientGroups, groupChildrenGroupId, inBar) {
+    filterIngredientGroups, groupChildrenGroupId, inBar, onPump, inBarOrOnPump) {
     return axios.get(API_PATH, {
       params: {
         autocomplete: autocomplete,
@@ -16,7 +16,9 @@ class IngredientService {
         filterAutomaticIngredients: filterAutomaticIngredients,
         filterIngredientGroups: filterIngredientGroups,
         groupChildrenGroupId: groupChildrenGroupId,
-        inBar: inBar
+        inBar: inBar,
+        onPump: onPump,
+        inBarOrOnPump: inBarOrOnPump
       }
     })
       .then(response => response.data)

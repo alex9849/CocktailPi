@@ -220,8 +220,8 @@ export default {
     },
     fetchAll () {
       this.loading = true
-      IngredientService.getIngredientsFilter(null, false,
-        false, true, false)
+      IngredientService.getIngredientsFilter(null, null,
+        null, true, null, null, null, null)
         .then(ingredients => {
           this.loading = false
           this.ingredients = ingredients

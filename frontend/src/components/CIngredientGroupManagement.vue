@@ -168,7 +168,7 @@ export default {
     fetchAll () {
       this.loading = true
       IngredientService.getIngredientsFilter(null, true,
-        true, false, false)
+        true, null, null, false)
         .then(groups => {
           this.loading = false
           this.groups = groups

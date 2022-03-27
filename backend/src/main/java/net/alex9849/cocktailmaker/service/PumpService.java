@@ -279,4 +279,8 @@ public class PumpService {
     public boolean isAnyCleaning() {
         return !cleaningPumpIds.isEmpty();
     }
+
+    Set<Long> findAddableIngredientsIdsOnPump() {
+        return pumpRepository.findAddableIngredientsIdsOnPump();
+    }
 }

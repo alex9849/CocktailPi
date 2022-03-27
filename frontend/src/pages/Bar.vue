@@ -134,7 +134,7 @@ export default {
   },
   async beforeRouteEnter (to, from, next) {
     const ownedIngredients = await IngredientService
-      .getIngredientsFilter(null, null, null, null, true)
+      .getIngredientsFilter(null, null, null, null, null, true, null, null)
     next(vm => {
       vm.ownedIngredients = ownedIngredients
     })
@@ -165,7 +165,7 @@ export default {
       this.loading = true
       setTimeout(() => {
         IngredientService
-          .getIngredientsFilter(null, null, null, null, true)
+          .getIngredientsFilter(null, null, null, null, null, true, null, null)
           .then(data => {
             this.ownedIngredients = data
           })

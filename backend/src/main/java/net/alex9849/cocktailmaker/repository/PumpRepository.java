@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class PumpRepository extends JdbcDaoSupport {
@@ -86,6 +87,13 @@ public class PumpRepository extends JdbcDaoSupport {
                 results.add(populateEntity(parseRs(rs)));
             }
             return results;
+        });
+    }
+
+    public Set<Long> findAddableIngredientsIdsOnPump() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT p.current_ingredient_id as id FROM pumps p WHERE p.current_ingredient_id IS NOT NULL");
+            return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
 

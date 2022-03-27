@@ -20,6 +20,9 @@ public class IngredientService {
     @Autowired
     private IngredientRepository ingredientRepository;
 
+    @Autowired
+    private PumpService pumpService;
+
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
     }
@@ -59,7 +62,7 @@ public class IngredientService {
 
     public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients,
                                                   boolean filterAutomaticIngredients, boolean filterIngredientGroups,
-                                                  Long groupChildrenGroupId, boolean inBar) {
+                                                  Long groupChildrenGroupId, boolean inBar, boolean onPump, boolean inBarOrOnPump) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -77,8 +80,16 @@ public class IngredientService {
         if(groupChildrenGroupId != null) {
             idsToFindSetList.add(ingredientRepository.findGroupChildrenIds(groupChildrenGroupId));
         }
+        if(onPump) {
+            idsToFindSetList.add(pumpService.findAddableIngredientsIdsOnPump());
+        }
         if(inBar) {
             idsToFindSetList.add(ingredientRepository.findAddableIngredientsIdsInBar());
+        }
+        if(inBarOrOnPump) {
+            Set<Long> ingIds = ingredientRepository.findAddableIngredientsIdsInBar();
+            ingIds.addAll(pumpService.findAddableIngredientsIdsOnPump());
+            idsToFindSetList.add(ingIds);
         }
 
         if(idsToFindSetList.isEmpty()) {
