@@ -32,7 +32,7 @@
                     disable
                     label="Production step"
                     readonly
-                    :model-value="row.productionStep"
+                    :model-value="row.productionStep + 1"
                     dense
                   >
                     <template v-slot:label>
