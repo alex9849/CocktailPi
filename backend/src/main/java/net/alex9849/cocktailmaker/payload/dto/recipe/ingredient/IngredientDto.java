@@ -39,11 +39,19 @@ public class IngredientDto {
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = ManualIngredientDto.Response.Detailed.class, name = "manual"),
+                @JsonSubTypes.Type(value = AutomatedIngredientDto.Response.Detailed.class, name = "automated"),
+                @JsonSubTypes.Type(value = IngredientGroupDto.Response.Detailed.class, name = "group")
+        })
         public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump {
             long id;
             String name;
             Long parentGroupId;
             String parentGroupName;
+
+            protected Detailed() {}
 
             protected Detailed(Ingredient ingredient) {
                 this.id = ingredient.getId();

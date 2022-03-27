@@ -34,6 +34,8 @@ public class AutomatedIngredientDto {
             double pumpTimeMultiplier;
             boolean onPump;
 
+            public Detailed() {}
+
             public Detailed(AutomatedIngredient ingredient) {
                 super(ingredient);
             }

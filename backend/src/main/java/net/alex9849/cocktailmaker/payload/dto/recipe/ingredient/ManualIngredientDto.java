@@ -35,7 +35,9 @@ public class ManualIngredientDto {
         public static class Detailed extends AddableIngredientDto.Response.Detailed {
             Ingredient.Unit unit;
 
-            protected Detailed(ManualIngredient ingredient) {
+            public Detailed() {}
+
+            public Detailed(ManualIngredient ingredient) {
                 super(ingredient);
             }
 

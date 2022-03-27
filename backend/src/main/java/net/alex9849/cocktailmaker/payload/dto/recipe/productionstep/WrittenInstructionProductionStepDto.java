@@ -9,8 +9,7 @@ public class WrittenInstructionProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter
-        @Setter
+        @Getter @Setter
         @EqualsAndHashCode(callSuper = true)
         public static class Create extends ProductionStepDto.Request.Create implements Message {
             String message;
@@ -24,11 +23,12 @@ public class WrittenInstructionProductionStepDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter
-        @Setter
+        @Getter @Setter
         @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends ProductionStepDto.Response.Detailed implements Message {
             String message;
+
+            public Detailed() {}
 
             public Detailed(WrittenInstructionProductionStep productionStep) {
                 super(productionStep);

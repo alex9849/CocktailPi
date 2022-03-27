@@ -38,6 +38,8 @@ public class IngredientGroupDto {
             boolean inBar;
             boolean onPump;
 
+            public Detailed() {}
+
             public Detailed(IngredientGroup ingredientGroup) {
                 super(ingredientGroup);
                 this.leafIds = ingredientGroup.getAddableIngredientChildren()
@@ -77,6 +79,8 @@ public class IngredientGroupDto {
             Set<IngredientDto.Response.Detailed> children;
             boolean inBar;
             boolean onPump;
+
+            public Tree() {}
 
             public Tree(IngredientGroup ingredientGroup) {
                 super(ingredientGroup);

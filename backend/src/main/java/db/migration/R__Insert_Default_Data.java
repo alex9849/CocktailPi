@@ -45,6 +45,8 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
 
     @Override
     public void migrate(Context context) throws Exception {
+        /*
+
         Connection connection = context.getConnection();
         final JdbcTemplate jdbcTemplate = new JdbcTemplate(new SingleConnectionDataSource(connection, true));
         userRepository.setJdbcTemplate(jdbcTemplate);
@@ -56,13 +58,16 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
             return;
         }
 
+         */
+
         InputStream recipeStream = this.getClass().getResourceAsStream("/db/defaultdata/recipes.json");
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        TypeReference<List<RecipeDto.Request.Create>> typeReference = new TypeReference<List<RecipeDto.Request.Create>>(){};
-        List<RecipeDto.Request.Create> recipeDtos = mapper.readValue(recipeStream, typeReference);
+        TypeReference<List<RecipeDto.Response.Detailed>> typeReference = new TypeReference<>(){};
+        List<RecipeDto.Response.Detailed> recipeDtos = mapper.readValue(recipeStream, typeReference);
         User defaultUser = createDefaultUser();
-        for(RecipeDto.Request.Create recipeDto : recipeDtos) {
+        for(RecipeDto.Response.Detailed recipeDto : recipeDtos) {
+            /*
             recipeDto.setOwnerId(defaultUser.getId());
             Recipe recipe = recipeService.fromDto(recipeDto);
             recipe.setOwner(defaultUser);
@@ -75,6 +80,8 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
                 ImageIO.write(image, "jpg", out);
                 recipeRepository.setImage(recipeId, out.toByteArray());
             }
+
+             */
         }
     }
 

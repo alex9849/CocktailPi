@@ -64,6 +64,8 @@ public class RecipeDto {
             long defaultAmountToFill;
             Date lastUpdate;
 
+            public Detailed() {}
+
             public Detailed(Recipe recipe) {
                 this.id = recipe.getId();
                 BeanUtils.copyProperties(recipe, this);

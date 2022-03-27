@@ -29,7 +29,14 @@ public class ProductionStepDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = WrittenInstructionProductionStepDto.Response.Detailed.class, name = "writtenInstruction"),
+                @JsonSubTypes.Type(value = AddIngredientsProductionStepDto.Response.Detailed.class, name = "addIngredients")
+        })
         public abstract static class Detailed implements Type {
+
+            protected Detailed() {}
 
             protected Detailed(ProductionStep productionStep) {
                 BeanUtils.copyProperties(productionStep, this);

@@ -30,6 +30,8 @@ public class AddIngredientsProductionStepDto {
         public static class Detailed extends ProductionStepDto.Response.Detailed {
             List<ProductionStepIngredientDto.Response.Detailed> stepIngredients;
 
+            public Detailed() {}
+
             public Detailed(AddIngredientsProductionStep productionStep) {
                 super(productionStep);
                 stepIngredients = productionStep.getStepIngredients().stream()

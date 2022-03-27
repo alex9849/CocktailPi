@@ -29,6 +29,8 @@ public abstract class AddableIngredientDto {
             int alcoholContent;
             boolean inBar;
 
+            protected Detailed() {}
+
             protected Detailed(AddableIngredient ingredient) {
                 super(ingredient);
             }

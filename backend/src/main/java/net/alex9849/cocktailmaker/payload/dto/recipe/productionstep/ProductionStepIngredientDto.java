@@ -46,6 +46,8 @@ public class ProductionStepIngredientDto {
             int amount;
             boolean scale;
 
+            public Detailed() {}
+
             public Detailed(ProductionStepIngredient stepIngredient) {
                 BeanUtils.copyProperties(stepIngredient, this);
                 this.ingredient = IngredientDto.Response.Detailed.toDto(stepIngredient.getIngredient());
