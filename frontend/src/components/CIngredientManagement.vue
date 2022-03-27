@@ -126,8 +126,8 @@
 </template>
 
 <script>
-import {mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
-import IngredientService, {ingredientDtoMapper} from '../services/ingredient.service'
+import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import IngredientService, { ingredientDtoMapper } from '../services/ingredient.service'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import IngredientForm from 'components/IngredientForm'
