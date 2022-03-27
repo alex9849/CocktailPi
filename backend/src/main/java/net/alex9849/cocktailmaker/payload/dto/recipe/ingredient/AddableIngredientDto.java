@@ -4,6 +4,7 @@ import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,6 +18,12 @@ public abstract class AddableIngredientDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent {
             int alcoholContent;
+
+            protected Create() {}
+
+            protected Create(Response.Detailed detailed) {
+                super(detailed);
+            }
         }
 
     }

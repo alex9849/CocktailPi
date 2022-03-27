@@ -7,34 +7,29 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductionStepIngredientDto {
-    private interface IngredientId {
-        @NotNull long getIngredientId();
-    }
-
-    private interface Ingredient {
-        @NotNull IngredientDto.Response.Detailed getIngredient();
-    }
-
-    private interface Amount {
-        @Min(1) int getAmount();
-    }
-
-    private interface Scale {
-        boolean isScale();
-    }
+    private interface IngredientId { @NotNull long getIngredientId(); }
+    private interface Ingredient { @NotNull IngredientDto.Response.Detailed getIngredient(); }
+    private interface Amount { @Min(1) int getAmount(); }
+    private interface Scale { boolean isScale(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter
-        @Setter
-        @EqualsAndHashCode
+        @Getter @Setter @EqualsAndHashCode
         public static class Create implements IngredientId, Amount, Scale {
             long ingredientId;
             int amount;
             boolean scale;
+
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                BeanUtils.copyProperties(detailed, this);
+                this.ingredientId = detailed.getIngredient().getId();
+            }
         }
     }
 

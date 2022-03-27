@@ -6,6 +6,7 @@ import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
+import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import org.springframework.beans.BeanUtils;
 
 
@@ -22,6 +23,25 @@ public class ProductionStepDto {
                 @JsonSubTypes.Type(value = AddIngredientsProductionStepDto.Request.Create.class, name = "addIngredients")
         })
         public abstract static class Create implements Type {
+
+            protected Create() {}
+
+            protected Create(Response.Detailed detailed) {
+                BeanUtils.copyProperties(detailed, this);
+            }
+
+            public Create fromDetailedDto(Response.Detailed detailed) {
+                if(detailed == null) {
+                    return null;
+                }
+                if (detailed instanceof WrittenInstructionProductionStepDto.Response.Detailed) {
+                    return new WrittenInstructionProductionStepDto.Request.Create((WrittenInstructionProductionStepDto.Response.Detailed) detailed);
+                }
+                if (detailed instanceof AddIngredientsProductionStepDto.Response.Detailed) {
+                    return new AddIngredientsProductionStepDto.Request.Create((AddIngredientsProductionStepDto.Response.Detailed) detailed);
+                }
+                throw new IllegalStateException("ProductionStepType is not supported: " + detailed.getClass().getName());
+            }
 
         }
     }

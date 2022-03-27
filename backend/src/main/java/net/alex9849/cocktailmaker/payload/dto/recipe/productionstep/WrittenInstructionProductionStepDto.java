@@ -3,6 +3,8 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 
+import java.util.stream.Collectors;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WrittenInstructionProductionStepDto {
     private interface Message { String getMessage(); }
@@ -13,6 +15,12 @@ public class WrittenInstructionProductionStepDto {
         @EqualsAndHashCode(callSuper = true)
         public static class Create extends ProductionStepDto.Request.Create implements Message {
             String message;
+
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                super(detailed);
+            }
 
             @Override
             public String getType() {

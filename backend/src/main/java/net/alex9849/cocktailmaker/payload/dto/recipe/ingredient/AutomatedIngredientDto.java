@@ -17,6 +17,12 @@ public class AutomatedIngredientDto {
         public static class Create extends AddableIngredientDto.Request.Create {
             double pumpTimeMultiplier;
 
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                super(detailed);
+            }
+
             @Override
             public String getType() {
                 return "automated";

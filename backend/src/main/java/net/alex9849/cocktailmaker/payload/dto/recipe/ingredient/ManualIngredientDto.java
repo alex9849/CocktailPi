@@ -13,6 +13,12 @@ public class ManualIngredientDto {
         public static class Create extends AddableIngredientDto.Request.Create implements IngredientDto.Unit {
             Ingredient.Unit unit;
 
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                super(detailed);
+            }
+
             @Override
             public String getType() {
                 return "manual";

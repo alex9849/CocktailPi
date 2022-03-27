@@ -6,7 +6,9 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngr
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Min;
@@ -45,6 +47,15 @@ public class RecipeDto {
             List<ProductionStepDto.Request.Create> productionSteps;
             Set<Long> categoryIds;
             long defaultAmountToFill;
+
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                BeanUtils.copyProperties(detailed, this);
+                this.productionSteps = detailed.getProductionSteps().stream()
+                        .map(ProductionStepIngredientDto.Request.Create::fromDetailed)
+                        .collect(Collectors.toList());
+            }
         }
     }
 

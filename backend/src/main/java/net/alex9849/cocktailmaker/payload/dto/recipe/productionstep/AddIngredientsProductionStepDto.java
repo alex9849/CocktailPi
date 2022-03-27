@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,15 @@ public class AddIngredientsProductionStepDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends ProductionStepDto.Request.Create {
             List<ProductionStepIngredientDto.Request.Create> stepIngredients;
+
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                super(detailed);
+                this.stepIngredients = detailed.getStepIngredients().stream()
+                        .map(ProductionStepIngredientDto.Request.Create::new)
+                        .collect(Collectors.toList());
+            }
 
             @Override
             public String getType() {

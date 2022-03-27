@@ -32,6 +32,12 @@ public class IngredientDto {
         public abstract static class Create implements Name, ParentGroupId, Type {
             String name;
             Long parentGroupId;
+
+            protected Create() {}
+
+            protected Create(Response.Detailed detailed) {
+                BeanUtils.copyProperties(detailed, this);
+            }
         }
     }
 

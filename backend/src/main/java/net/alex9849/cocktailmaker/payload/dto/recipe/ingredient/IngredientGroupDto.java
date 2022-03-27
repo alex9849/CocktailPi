@@ -19,6 +19,12 @@ public class IngredientGroupDto {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends IngredientDto.Request.Create {
 
+            public Create() {}
+
+            public Create(Response.Detailed detailed) {
+                super(detailed);
+            }
+
             @Override
             public String getType() {
                 return "group";
