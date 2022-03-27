@@ -30,9 +30,17 @@
       :loading="loading"
       :pagination="{rowsPerPage: 10, sortBy: 'name'}"
       :rows="groups"
+      :filter="filter"
       hide-no-data
       selection="multiple"
     >
+      <template v-slot:top-right>
+        <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
       <template v-slot:body-selection="props">
         <div class="text-center">
           <q-checkbox
@@ -118,9 +126,9 @@
 </template>
 
 <script>
-import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import {mdiDelete, mdiPencilOutline} from '@quasar/extras/mdi-v5'
 import TopButtonArranger from 'components/TopButtonArranger'
-import IngredientService, { ingredientDtoMapper } from 'src/services/ingredient.service'
+import IngredientService, {ingredientDtoMapper} from 'src/services/ingredient.service'
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import CIngredientGroupForm from 'components/CIngredientGroupForm'
@@ -130,6 +138,7 @@ export default {
   components: { CIngredientGroupForm, TopButtonArranger, CDeleteWarning, CEditDialog },
   data () {
     return {
+      filter: '',
       selected: [],
       groups: [],
       columns: [
