@@ -48,34 +48,34 @@ public class FeasibilityFactory {
                 feasibleProductionSteps.add(productionStep);
                 continue;
             }
+
+            //Used to create the feasibilityReport
             List<FeasibilityReport.IngredientGroupReplacement> stepIngredientGroupReplacements = new ArrayList<>();
             ingredientGroupReplacements.add(stepIngredientGroupReplacements);
-            AddIngredientsProductionStep aipStep = (AddIngredientsProductionStep) productionStep;
-            AddIngredientsProductionStep feasibleAddIngredientsProductionStep = new AddIngredientsProductionStep();
-            feasibleProductionSteps.add(feasibleAddIngredientsProductionStep);
 
-            List<ProductionStepIngredient> feasibleProductionStepIngredients = new ArrayList<>();
-            feasibleAddIngredientsProductionStep.setStepIngredients(feasibleProductionStepIngredients);
+            //The productionStep that should be added to the feasibleRecipe
+            AddIngredientsProductionStep aipStep = (AddIngredientsProductionStep) productionStep;
+            //Stores existing productionSteps by the ingredientId
+            Map<Long, ProductionStepIngredient> existingProductionStepsByIngredientId = new HashMap<>();
 
             for (int i = 0; i < aipStep.getStepIngredients().size(); i++) {
                 ProductionStepIngredient psIngredient = aipStep.getStepIngredients().get(i);
                 ProductionStepIngredient feasibleProductionStepIngredient = new ProductionStepIngredient();
                 feasibleProductionStepIngredient.setAmount(psIngredient.getAmount());
-                feasibleProductionStepIngredient.setScale(psIngredient.isScale());
-                feasibleProductionStepIngredients.add(feasibleProductionStepIngredient);
+                feasibleProductionStepIngredient.setScale(false);
 
                 //We only replace IngredientGroups
                 if (!(psIngredient.getIngredient() instanceof IngredientGroup)) {
                     feasibleProductionStepIngredient.setIngredient(psIngredient.getIngredient());
+                    mergeWithExistingProductionStepIngredients(existingProductionStepsByIngredientId, feasibleProductionStepIngredient);
                     continue;
                 }
-                FeasibilityReport.IngredientGroupReplacement ingredientGroupReplacement = new FeasibilityReport.IngredientGroupReplacement();
-                stepIngredientGroupReplacements.add(ingredientGroupReplacement);
 
+                FeasibilityReport.IngredientGroupReplacement ingredientGroupReplacement = new FeasibilityReport.IngredientGroupReplacement();
                 IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
                 ingredientGroupReplacement.setIngredientGroup(toReplaceIngredientGroup);
-
                 AddableIngredient addableIngredient = replacements.getReplacement(i, psIngredient.getIngredient().getId());
+
                 if (addableIngredient != null) {
                     if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
                             .noneMatch(x -> x.getId() == addableIngredient.getId())) {
@@ -94,7 +94,13 @@ public class FeasibilityFactory {
                         feasibleProductionStepIngredient.setIngredient(toReplaceIngredientGroup);
                     }
                 }
+
+                stepIngredientGroupReplacements.add(ingredientGroupReplacement);
+                mergeWithExistingProductionStepIngredients(existingProductionStepsByIngredientId, feasibleProductionStepIngredient);
             }
+            AddIngredientsProductionStep feasibleAIPSStep = new AddIngredientsProductionStep();
+            feasibleAIPSStep.setStepIngredients(new ArrayList<>(existingProductionStepsByIngredientId.values()));
+            feasibleProductionSteps.add(feasibleAIPSStep);
         }
         this.feasibilityReport.setAllIngredientGroupsReplaced(allIngredientGroupsReplaced);
         this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
@@ -129,6 +135,22 @@ public class FeasibilityFactory {
             }
         }
         this.feasibilityReport.setInsufficientIngredients(insufficientIngredients);
+    }
+
+    /**
+     * Adds or merges a productionStep to an existing HashMap that contains all existing productionSteps.
+     * @param existingProductionSteps a map with all existing productionSteps by the ingredientId
+     * @param toMerge The productionStep to merge
+     * @return true if productionSteps have been merged
+     */
+    private boolean mergeWithExistingProductionStepIngredients(Map<Long, ProductionStepIngredient> existingProductionSteps, ProductionStepIngredient toMerge) {
+        ProductionStepIngredient existingProductionStep = existingProductionSteps.get(toMerge.getIngredient().getId());
+        if(existingProductionStep == null) {
+            existingProductionSteps.put(toMerge.getIngredient().getId(), toMerge);
+            return false;
+        }
+        existingProductionStep.setAmount(existingProductionStep.getAmount() + toMerge.getAmount());
+        return true;
     }
 
     private void computeIngredientsToAddManuallyAndRequiredIngredients() {
