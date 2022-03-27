@@ -39,7 +39,7 @@
 
 <script>
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
-import { mdiAlertOutline, mdiCheck } from '@quasar/extras/mdi-v5'
+import { mdiClose, mdiCheck } from '@quasar/extras/mdi-v5'
 import CMakeCocktailDialogIngredientGroupReplacementsCard
   from 'components/CMakeCocktailDialogIngredientGroupReplacementsCard'
 export default {
@@ -97,13 +97,13 @@ export default {
       }
     },
     iconClass () {
-      return this.isFulfilled ? 'text-white' : 'text-orange-14'
+      return this.isFulfilled ? 'text-white' : 'text-negative'
     },
     iconBackgroundClass () {
       return this.isFulfilled ? 'bg-light-green-14' : 'bg-warning'
     },
     icon () {
-      return this.isFulfilled ? mdiCheck : mdiAlertOutline
+      return this.isFulfilled ? mdiCheck : mdiClose
     }
   }
 }

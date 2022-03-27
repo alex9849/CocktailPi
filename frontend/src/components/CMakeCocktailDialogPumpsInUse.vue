@@ -1,38 +1,35 @@
 <template>
   <c-q-headlined-card
-    :headline="headline"
     :card-class="cardClass"
+    :headline="headline"
     :icon="icon"
     :icon-background-class="iconBackgroundClass"
     :icon-class="iconClass"
   >
-    <template v-slot:content v-if="!isFulfilled">
-      <ul style="text-align: start">
-        <li v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.ingredient.id">
-          {{ insufficientIngredient.ingredient.name }}:
-          <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
-        </li>
-      </ul>
-    </template>
   </c-q-headlined-card>
 </template>
 
 <script>
-import { mdiClose, mdiCheck } from '@quasar/extras/mdi-v5'
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
+import { mdiCheck, mdiClose } from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: 'CMakeCocktailDialogInsufficientIngredients',
+  name: 'CMakeCocktailDialogPumpsInUse',
   components: { CQHeadlinedCard },
-  props: {
-    insufficientIngredients: {
-      type: Object,
-      required: true
+  setup () {
+    return {
+      mdiClose: mdiClose,
+      mdiCheck: mdiCheck
     }
   },
   computed: {
+    ...mapGetters({
+      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+      anyCleaning: 'pumpLayout/anyCleaning'
+    }),
     isFulfilled () {
-      return this.insufficientIngredients.length === 0
+      return !this.hasCocktailProgress && !this.anyCleaning
     },
     cardClass () {
       return {
@@ -41,10 +38,12 @@ export default {
       }
     },
     headline () {
-      if (this.isFulfilled) {
-        return 'Enough liquid left to make cocktail!'
+      if (this.hasCocktailProgress) {
+        return 'Machine occupied! A cocktail ist getting prepared currently!'
+      } else if (this.anyCleaning) {
+        return 'Machine occupied! One or more pumps are getting cleaned currently!'
       } else {
-        return 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+        return 'Machine is not occupied!'
       }
     },
     iconClass () {

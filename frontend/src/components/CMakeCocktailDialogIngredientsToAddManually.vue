@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mdiAlertOutline, mdiCheck, mdiCheckOutline } from '@quasar/extras/mdi-v5'
+import { mdiAlertOutline, mdiCheck } from '@quasar/extras/mdi-v5'
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 
 export default {

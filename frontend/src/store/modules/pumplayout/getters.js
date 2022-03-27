@@ -19,4 +19,6 @@ export const isCleaning = (state) => {
   }
 }
 
+export const anyCleaning = (state) => state.pumpLayout.some(x => x.cleaning)
+
 export const getLayout = (state) => state.pumpLayout

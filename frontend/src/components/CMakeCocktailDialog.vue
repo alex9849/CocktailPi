@@ -65,6 +65,7 @@
           <c-make-cocktail-dialog-ingredients-to-add-manually
             :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
           />
+          <c-make-cocktail-dialog-pumps-in-use />
         </div>
         <c-make-cocktail-dialog-pump-editor
           v-if="isUserPumpIngredientEditor"
@@ -77,7 +78,7 @@
         <q-btn
           color="positive"
           @click="onMakeCocktail()"
-          :disable="hasCocktailProgress || v.amountToProduce.$invalid || !feasibilityOk"
+          :disable="!cocktailOrderable"
         >
           Make cocktail
         </q-btn>
@@ -101,10 +102,12 @@ import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktail
 import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEditor'
 import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
+import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
+    CMakeCocktailDialogPumpsInUse,
     CMakeCocktailDialogIngredientGroupReplacements,
     CMakeCocktailDialogIngredientsToAddManually,
     CMakeCocktailDialogPumpEditor,
@@ -225,10 +228,17 @@ export default {
       isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
-      getPumpIngredients: 'pumpLayout/getPumpIngredients'
+      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      isAnyPumpCleaning: 'pumpLayout/anyCleaning'
     }),
     feasibilityOk () {
       return this.feasibilityReport.feasible && !this.checkingFeasibility
+    },
+    cocktailOrderable () {
+      return this.feasibilityOk &&
+        !this.isAnyPumpCleaning &&
+        !this.hasCocktailProgress &&
+        !this.v.amountToProduce.$invalid
     }
   },
   validations () {
