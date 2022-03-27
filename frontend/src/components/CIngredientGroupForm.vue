@@ -21,6 +21,7 @@
       filter-automatic-ingredients
       filter-manual-ingredients
       label="Parent group"
+      :after-fetch-filter-function="removeSelfFromResults"
       @update:selected="e => setParentGroup(e)"
     />
   </div>
@@ -54,6 +55,12 @@ export default {
       this.v.modelValue.parentGroupId.$model = parentGroup?.id
       this.v.modelValue.parentGroupName.$model = parentGroup?.name
       this.$emit('update:modelValue', this.modelValue)
+    },
+    removeSelfFromResults (ingredients) {
+      if (!this.modelValue.id) {
+        return ingredients
+      }
+      return ingredients.filter(x => x.id !== this.modelValue.id)
     }
   },
   setup () {

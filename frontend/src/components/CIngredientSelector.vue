@@ -127,6 +127,10 @@ export default {
     noInputOptions: {
       type: Array,
       default: () => []
+    },
+    afterFetchFilterFunction: {
+      type: Function,
+      default: x => x
     }
   },
   emits: ['update:selected'],
@@ -162,7 +166,7 @@ export default {
         this.filterIngredientGroups, this.onlyGroupChildren, null, null, null)
         .then(ingredients => {
           update(() => {
-            this.fetchedOptions = ingredients
+            this.fetchedOptions = this.afterFetchFilterFunction(ingredients)
           })
         }, () => abort)
     },
