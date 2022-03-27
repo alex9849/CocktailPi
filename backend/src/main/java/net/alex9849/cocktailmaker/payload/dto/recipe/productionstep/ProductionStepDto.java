@@ -30,7 +30,7 @@ public class ProductionStepDto {
                 BeanUtils.copyProperties(detailed, this);
             }
 
-            public Create fromDetailedDto(Response.Detailed detailed) {
+            public static Create fromDetailedDto(Response.Detailed detailed) {
                 if(detailed == null) {
                     return null;
                 }

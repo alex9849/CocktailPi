@@ -24,6 +24,19 @@ public abstract class AddableIngredientDto {
             protected Create(Response.Detailed detailed) {
                 super(detailed);
             }
+
+            public static Create fromDetailedDto(AddableIngredientDto.Response.Detailed detailed) {
+                if(detailed == null) {
+                    return null;
+                }
+                if (detailed instanceof ManualIngredientDto.Response.Detailed) {
+                    return new ManualIngredientDto.Request.Create((ManualIngredientDto.Response.Detailed) detailed);
+                }
+                if (detailed instanceof AutomatedIngredientDto.Response.Detailed) {
+                    return new AutomatedIngredientDto.Request.Create((AutomatedIngredientDto.Response.Detailed) detailed);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + detailed.getClass().getName());
+            }
         }
 
     }

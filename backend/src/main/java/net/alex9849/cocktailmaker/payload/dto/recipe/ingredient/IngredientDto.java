@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.*;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
+import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;
@@ -37,6 +40,19 @@ public class IngredientDto {
 
             protected Create(Response.Detailed detailed) {
                 BeanUtils.copyProperties(detailed, this);
+            }
+
+            public static Create fromDetailedDto(Response.Detailed detailed) {
+                if(detailed == null) {
+                    return null;
+                }
+                if (detailed instanceof IngredientGroupDto.Response.Detailed) {
+                    return new IngredientGroupDto.Request.Create((IngredientGroupDto.Response.Detailed) detailed);
+                }
+                if (detailed instanceof AddableIngredientDto.Response.Detailed) {
+                    return AddableIngredientDto.Request.Create.fromDetailedDto((AddableIngredientDto.Response.Detailed) detailed);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + detailed.getClass().getName());
             }
         }
     }

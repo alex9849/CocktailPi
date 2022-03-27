@@ -53,8 +53,11 @@ public class RecipeDto {
             public Create(Response.Detailed detailed) {
                 BeanUtils.copyProperties(detailed, this);
                 this.productionSteps = detailed.getProductionSteps().stream()
-                        .map(ProductionStepIngredientDto.Request.Create::fromDetailed)
+                        .map(ProductionStepDto.Request.Create::fromDetailedDto)
                         .collect(Collectors.toList());
+                this.categoryIds = detailed.getCategories()
+                        .stream().map(CategoryDto.Duplex.Detailed::getId)
+                        .collect(Collectors.toSet());
             }
         }
     }
