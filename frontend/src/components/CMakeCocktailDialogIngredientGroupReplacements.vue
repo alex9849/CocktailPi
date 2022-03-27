@@ -24,72 +24,11 @@
             <div
               class="q-pa-xs col-xs-12 col-sm-9 col-md-6 col-lg-3 grid-style-transition"
             >
-            <q-card :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }">
-              <q-card-section class="q-pa-sm">
-                <div class="q-gutter-xs">
-                  <q-input
-                    outlined
-                    disable
-                    label="Production step"
-                    readonly
-                    :model-value="row.productionStep + 1"
-                    dense
-                  >
-                    <template v-slot:label>
-                      <p class="text-grey-10 text-weight-medium">Production step</p>
-                    </template>
-                  </q-input>
-                  <q-input
-                    outlined
-                    disable
-                    label="Ingredient group"
-                    :model-value="row.ingredientGroup.name"
-                    dense
-                  >
-                    <template v-slot:label>
-                      <p class="text-grey-10 text-weight-medium">Ingredient group</p>
-                    </template>
-                  </q-input>
-                  <c-ingredient-selector
-                    dense
-                    outlined
-                    :only-group-children="row.ingredientGroup.id"
-                    filter-ingredient-groups
-                    fetch-instantly
-                    label="Replacement"
-                    :selected="row.replacement"
-                    @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
-                  >
-                    <template v-slot:afterIngredientName="{scope}">
-                      <q-item-label
-                        v-if="scope.opt.onPump"
-                        caption
-                        class="text-green"
-                      >
-                        automatically addable
-                      </q-item-label>
-                      <q-item-label
-                        v-else-if="scope.opt.inBar"
-                        caption
-                        class="text-warning"
-                      >
-                        in bar
-                      </q-item-label>
-                      <q-item-label
-                        v-else
-                        caption
-                        class="text-negative"
-                      >
-                        not in bar
-                      </q-item-label>
-                    </template>
-                    <template v-slot:label>
-                      <p class="text-grey-10 text-weight-medium">Replacement</p>
-                    </template>
-                  </c-ingredient-selector>
-                </div>
-              </q-card-section>
-            </q-card>
+              <c-make-cocktail-dialog-ingredient-group-replacements-card
+                :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }"
+                @ReplacementUpdate="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
+                :replacement-entry="row"
+              />
             </div>
           </template>
         </q-table>
@@ -101,10 +40,11 @@
 <script>
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 import { mdiAlertOutline, mdiCheck } from '@quasar/extras/mdi-v5'
-import CIngredientSelector from 'components/CIngredientSelector'
+import CMakeCocktailDialogIngredientGroupReplacementsCard
+  from 'components/CMakeCocktailDialogIngredientGroupReplacementsCard'
 export default {
   name: 'CMakeCocktailDialogIngredientGroupReplacements',
-  components: { CIngredientSelector, CQHeadlinedCard },
+  components: { CMakeCocktailDialogIngredientGroupReplacementsCard, CQHeadlinedCard },
   props: {
     ingredientGroupReplacements: Array,
     allIngredientGroupsReplaced: Boolean
