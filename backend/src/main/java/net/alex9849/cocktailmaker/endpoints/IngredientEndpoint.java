@@ -28,6 +28,7 @@ public class IngredientEndpoint {
                                      @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients,
                                      @RequestParam(value = "filterAutomaticIngredients", defaultValue = "false") boolean filterAutomaticIngredients,
                                      @RequestParam(value = "filterIngredientGroups", defaultValue = "false") boolean filterIngredientGroups,
+                                     @RequestParam(value = "groupChildrenGroupId", required = false) Long groupChildrenGroupId,
                                      @RequestParam(value = "inBar", defaultValue = "false") boolean inBar) {
         if(!inBar) {
             if(autocomplete == null){
@@ -41,7 +42,7 @@ public class IngredientEndpoint {
             }
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
-                filterAutomaticIngredients, filterIngredientGroups, inBar)
+                filterAutomaticIngredients, filterIngredientGroups, groupChildrenGroupId, inBar)
                 .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 

@@ -128,6 +128,14 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findGroupChildrenIds(long groupChildrenGroupId) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT aid.child as id FROM all_ingredient_dependencies aid WHERE aid.is_a = ?");
+            pstmt.setLong(1, groupChildrenGroupId);
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public Optional<Ingredient> findByNameIgnoringCase(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Ingredient>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");

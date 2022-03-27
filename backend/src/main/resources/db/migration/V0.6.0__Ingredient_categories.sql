@@ -154,15 +154,15 @@ FROM list_dependencies;
 
 
 CREATE VIEW all_ingredient_dependencies AS
-WITH RECURSIVE list_dependencies(leaf, current, parent) AS (
-    SELECT i.id as leaf, i.id as current, i.parent_group_id as parent
+WITH RECURSIVE list_dependencies(child, current, parent) AS (
+    SELECT i.id as child, i.id as current, i.parent_group_id as parent
     FROM ingredients AS i
     UNION ALL
-    SELECT leaf, i.id as current, i.parent_group_id as parent
+    SELECT child, i.id as current, i.parent_group_id as parent
     FROM ingredients AS i
              join list_dependencies lp on i.id = lp.parent
 )
-SELECT leaf, current as is_a
+SELECT child, current as is_a
 FROM list_dependencies;
 
 CREATE OR REPLACE FUNCTION is_ingredient_on_pump(ingredient_id bigint)

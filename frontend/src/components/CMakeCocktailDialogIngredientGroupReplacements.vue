@@ -53,7 +53,8 @@
                   <c-ingredient-selector
                     dense
                     outlined
-                    :only-group-leafs="row.ingredientGroup.id"
+                    :only-group-children="row.ingredientGroup.id"
+                    filter-ingredient-groups
                     label="Replacement"
                     :selected="row.replacement"
                     @update:selected="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"

@@ -116,7 +116,7 @@ export default {
       type: Boolean,
       default: false
     },
-    onlyGroupLeafs: {
+    onlyGroupChildren: {
       type: Number,
       required: false
     },
@@ -159,7 +159,7 @@ export default {
         return
       }
       IngredientService.getIngredientsFilter(val, this.filterManualIngredients, this.filterAutomaticIngredients,
-        this.filterIngredientGroups, this.onlyGroupLeafs, false)
+        this.filterIngredientGroups, this.onlyGroupChildren, false)
         .then(ingredients => {
           update(() => {
             this.fetchedOptions = ingredients

@@ -187,7 +187,7 @@ public class RecipeRepository extends JdbcDaoSupport {
                     "         join production_steps ps on ps.recipe_id = r.id\n" +
                     "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                     "         join ingredients i on i.id = psi.ingredient_id\n" +
-                    "         join all_ingredient_dependencies id on i.id = id.leaf\n" +
+                    "         join all_ingredient_dependencies id on i.id = id.child\n" +
                     "group by r.id\n" +
                     "having ? <@ array_agg(id.is_a)");
             pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
