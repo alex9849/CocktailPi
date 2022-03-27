@@ -88,6 +88,9 @@ public class CocktailFactory {
         List<ProductionStepIngredient> manualProductionSteps = new ArrayList<>();
         List<ProductionStepIngredient> automaticProductionSteps = new ArrayList<>();
         for(ProductionStepIngredient psi : pStep.getStepIngredients()) {
+            if (psi.getAmount() < 1) {
+                continue;
+            }
             if (psi.getIngredient() instanceof ManualIngredient) {
                 manualProductionSteps.add(psi);
 
