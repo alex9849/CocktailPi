@@ -62,7 +62,8 @@ public class IngredientService {
 
     public List<Ingredient> getIngredientByFilter(String nameStartsWith, boolean filterManualIngredients,
                                                   boolean filterAutomaticIngredients, boolean filterIngredientGroups,
-                                                  Long groupChildrenGroupId, boolean inBar, boolean onPump, boolean inBarOrOnPump) {
+                                                  Long groupChildrenGroupId, boolean inBar, boolean onPump,
+                                                  boolean inBarOrOnPump, boolean filterIngredientsWithParents) {
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(nameStartsWith != null) {
@@ -90,6 +91,9 @@ public class IngredientService {
             Set<Long> ingIds = ingredientRepository.findAddableIngredientsIdsInBar();
             ingIds.addAll(pumpService.findAddableIngredientsIdsOnPump());
             idsToFindSetList.add(ingIds);
+        }
+        if(filterIngredientsWithParents) {
+            idsToFindSetList.add(ingredientRepository.findIdsWithoutParents());
         }
 
         if(idsToFindSetList.isEmpty()) {

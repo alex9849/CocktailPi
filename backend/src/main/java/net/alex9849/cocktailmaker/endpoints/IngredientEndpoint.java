@@ -50,7 +50,8 @@ public class IngredientEndpoint {
             }
         }
         return ResponseEntity.ok(ingredientService.getIngredientByFilter(autocomplete, filterManualIngredients,
-                filterAutomaticIngredients, filterIngredientGroups, groupChildrenGroupId, inBar, onPump, inBarOrOnPump)
+                filterAutomaticIngredients, filterIngredientGroups, groupChildrenGroupId, inBar, onPump,
+                        inBarOrOnPump, false)
                 .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
@@ -82,6 +83,14 @@ public class IngredientEndpoint {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "export", method = RequestMethod.GET)
+    ResponseEntity<?> getIngredientTree() {
+        ingredientService.getIngredientByFilter(null, false, false,
+                false, null, false, false,
+                false, true);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
