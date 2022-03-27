@@ -114,6 +114,21 @@ public class IngredientService {
         return ingredientRepository.findByIds(retained.toArray(new Long[1]));
     }
 
+    public List<Ingredient> getIngredientsInExportOrder() {
+        List<Ingredient> list = getIngredientByFilter(null, false,
+                false, false, null, false, false,
+                false, true);
+        for (int i = 0; i < list.size(); i++) {
+            Ingredient current = list.get(i);
+            if(!(current instanceof IngredientGroup)) {
+                continue;
+            }
+            IngredientGroup currentGroup = (IngredientGroup) current;
+            list.addAll(currentGroup.getChildren());
+        }
+        return list;
+    }
+
     public void setInBar(long id, boolean inBar) {
         Ingredient ingredient = ingredientRepository
                 .findById(id)

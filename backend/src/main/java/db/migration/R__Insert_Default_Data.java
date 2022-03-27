@@ -45,7 +45,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
 
     @Override
     public void migrate(Context context) throws Exception {
-        /*
+
 
         Connection connection = context.getConnection();
         final JdbcTemplate jdbcTemplate = new JdbcTemplate(new SingleConnectionDataSource(connection, true));
@@ -58,7 +58,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
             return;
         }
 
-         */
+
 
         InputStream recipeStream = this.getClass().getResourceAsStream("/db/defaultdata/recipes.json");
         ObjectMapper mapper = new ObjectMapper()
