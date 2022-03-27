@@ -97,5 +97,34 @@ public class IngredientDto {
 
             }
         }
+
+        @Getter @Setter @EqualsAndHashCode
+        public abstract static class Export implements Id, Name, ParentGroupId, Type, Unit {
+            long id;
+            String name;
+            Long parentGroupId;
+
+            protected Export(Ingredient ingredient) {
+                this.id = ingredient.getId();
+                BeanUtils.copyProperties(ingredient, this);
+                if (ingredient.getParentGroup() != null) {
+                    this.parentGroupId = ingredient.getParentGroupId();
+                }
+            }
+
+            public static Export toDto(Ingredient ingredient) {
+                if (ingredient == null) {
+                    return null;
+                }
+                if (ingredient instanceof IngredientGroup) {
+                    return new IngredientGroupDto.Response.Export((IngredientGroup) ingredient);
+                }
+                if (ingredient instanceof AddableIngredient) {
+                    return AddableIngredientDto.Response.Export.toDto((AddableIngredient) ingredient);
+                }
+                throw new IllegalStateException("Unknown ingredient type: " + ingredient.getClass().getName());
+
+            }
+        }
     }
 }

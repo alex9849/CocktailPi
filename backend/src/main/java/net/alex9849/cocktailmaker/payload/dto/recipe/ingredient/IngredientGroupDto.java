@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IngredientGroupDto {
     private interface Leaves { Set<Long> getLeafIds(); }
+    private interface Children<T> { Set<T> getChildren(); }
     private interface MinAlcoholContent { int getMinAlcoholContent(); }
     private interface MaxAlcoholContent { int getMaxAlcoholContent(); }
 
@@ -67,6 +68,29 @@ public class IngredientGroupDto {
             @Override
             public String getType() {
                 return "group";
+            }
+        }
+
+
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Export extends IngredientDto.Response.Export implements Children<IngredientDto.Response.Export> {
+            Set<IngredientDto.Response.Export> children;
+
+            public Export(IngredientGroup ingredientGroup) {
+                super(ingredientGroup);
+                this.children = ingredientGroup.getChildren()
+                        .stream().map(IngredientDto.Response.Export::toDto)
+                        .collect(Collectors.toSet());
+            }
+
+            @Override
+            public String getType() {
+                return "group";
+            }
+
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
             }
         }
     }

@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -88,9 +89,11 @@ public class IngredientEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "export", method = RequestMethod.GET)
     ResponseEntity<?> getIngredientTree() {
-        ingredientService.getIngredientByFilter(null, false, false,
+        List<Ingredient> ingredients = ingredientService.getIngredientByFilter(null, false, false,
                 false, null, false, false,
                 false, true);
+        return ResponseEntity.ok(ingredients.stream().map(IngredientDto.Response.Export::toDto)
+                .collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")

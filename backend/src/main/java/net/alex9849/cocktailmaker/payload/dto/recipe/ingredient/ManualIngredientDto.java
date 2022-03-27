@@ -9,9 +9,7 @@ public class ManualIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter
-        @Setter
-        @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Create extends AddableIngredientDto.Request.Create implements IngredientDto.Unit {
             Ingredient.Unit unit;
 
@@ -33,9 +31,7 @@ public class ManualIngredientDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
-        @Getter
-        @Setter
-        @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends AddableIngredientDto.Response.Detailed {
             Ingredient.Unit unit;
 
@@ -69,6 +65,20 @@ public class ManualIngredientDto {
             @Override
             public boolean isOnPump() {
                 return false;
+            }
+        }
+
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Export extends AddableIngredientDto.Response.Export {
+            Ingredient.Unit unit;
+
+            protected Export(ManualIngredient ingredient) {
+                super(ingredient);
+            }
+
+            @Override
+            public String getType() {
+                return "manual";
             }
         }
     }

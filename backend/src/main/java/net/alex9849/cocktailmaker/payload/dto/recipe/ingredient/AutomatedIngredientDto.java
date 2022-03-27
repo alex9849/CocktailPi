@@ -29,9 +29,7 @@ public class AutomatedIngredientDto {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
-        @Getter
-        @Setter
-        @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends AddableIngredientDto.Response.Detailed implements PumpTimeMultiplier {
             double pumpTimeMultiplier;
             boolean onPump;
@@ -49,8 +47,8 @@ public class AutomatedIngredientDto {
             public Ingredient.Unit getUnit() {
                 return Ingredient.Unit.MILLILITER;
             }
-
         }
+
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Reduced extends AddableIngredientDto.Response.Reduced {
             boolean onPump;
@@ -63,6 +61,26 @@ public class AutomatedIngredientDto {
             public String getType() {
                 return "automated";
             }
+        }
+
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class Export extends AddableIngredientDto.Response.Export implements PumpTimeMultiplier {
+            double pumpTimeMultiplier;
+
+            public Export(AutomatedIngredient ingredient) {
+                super(ingredient);
+            }
+
+            @Override
+            public String getType() {
+                return "automated";
+            }
+
+            @Override
+            public Ingredient.Unit getUnit() {
+                return Ingredient.Unit.MILLILITER;
+            }
+
         }
     }
 }
