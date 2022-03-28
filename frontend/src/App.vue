@@ -48,7 +48,7 @@ export default {
       refreshToken: 'auth/refreshToken'
     }),
     ajaxBarFilter (url) {
-      return !/(.+)?\/websocket\/.+\/xhr_send(.+)?/.test(url)
+      return !/(.+)?\/websocket\/.+\/xhr_(streaming|send)(.+)?/.test(url)
     }
   },
   computed: {
