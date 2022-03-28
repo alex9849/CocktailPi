@@ -42,6 +42,9 @@ export default {
   beforeUnmount () {
     clearInterval(this.tokenupdater)
   },
+  ajaxBarFilter (url) {
+    return !/(.+)?\/websocket\/.+\/xhr_send(.+)?/.test(url)
+  },
   methods: {
     ...mapActions({
       refreshToken: 'auth/refreshToken'
