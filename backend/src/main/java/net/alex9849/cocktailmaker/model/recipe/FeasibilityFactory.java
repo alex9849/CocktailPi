@@ -43,7 +43,8 @@ public class FeasibilityFactory {
         boolean allIngredientGroupsReplaced = true;
         List<List<FeasibilityReport.IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
-        for (ProductionStep productionStep : recipe.getProductionSteps()) {
+        for (int i = 0; i < recipe.getProductionSteps().size(); i++) {
+            ProductionStep productionStep = recipe.getProductionSteps().get(i);
             if (!(productionStep instanceof AddIngredientsProductionStep)) {
                 feasibleProductionSteps.add(productionStep);
                 continue;
@@ -58,8 +59,7 @@ public class FeasibilityFactory {
             //Stores existing productionSteps by the ingredientId
             Map<Long, ProductionStepIngredient> existingProductionStepsByIngredientId = new HashMap<>();
 
-            for (int i = 0; i < aipStep.getStepIngredients().size(); i++) {
-                ProductionStepIngredient psIngredient = aipStep.getStepIngredients().get(i);
+            for (ProductionStepIngredient psIngredient : aipStep.getStepIngredients()) {
                 ProductionStepIngredient feasibleProductionStepIngredient = new ProductionStepIngredient();
                 feasibleProductionStepIngredient.setAmount(psIngredient.getAmount());
                 feasibleProductionStepIngredient.setScale(false);
