@@ -3,6 +3,7 @@
     color="red"
     position="top"
     size="3px"
+    :hijack-filter="ajaxBarFilter"
   />
   <router-view/>
 </template>
@@ -42,13 +43,13 @@ export default {
   beforeUnmount () {
     clearInterval(this.tokenupdater)
   },
-  ajaxBarFilter (url) {
-    return !/(.+)?\/websocket\/.+\/xhr_send(.+)?/.test(url)
-  },
   methods: {
     ...mapActions({
       refreshToken: 'auth/refreshToken'
-    })
+    }),
+    ajaxBarFilter (url) {
+      return !/(.+)?\/websocket\/.+\/xhr_send(.+)?/.test(url)
+    }
   },
   computed: {
     ...mapGetters('auth', ['isLoggedIn', 'getAuthToken'])
