@@ -5,6 +5,7 @@
     :icon="icon"
     :icon-background-class="iconBackgroundClass"
     :icon-class="iconClass"
+    :hide-content-slot="isFulfilled"
   >
     <template v-slot:content v-if="!isFulfilled">
       <ul style="text-align: start">
@@ -50,7 +51,7 @@ export default {
     cardClass () {
       return {
         'bg-warning': !this.isFulfilled,
-        'bg-info': this.isFulfilled
+        'bg-light-blue-3': this.isFulfilled
       }
     },
     headline () {

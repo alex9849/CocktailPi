@@ -5,8 +5,9 @@
     :icon="icon"
     :icon-background-class="iconBackgroundClass"
     :icon-class="iconClass"
+    :hide-content-slot="tableRows.length === 0"
   >
-    <template v-slot:content v-if="ingredientGroupReplacements.length !== 0">
+    <template v-slot:content>
       <div class="row justify-center items-center q-pa-sm">
         <q-table
           :columns="columns"
@@ -86,7 +87,7 @@ export default {
     cardClass () {
       return {
         'bg-warning': !this.isFulfilled,
-        'bg-info': this.isFulfilled
+        'bg-light-blue-3': this.isFulfilled
       }
     },
     headline () {

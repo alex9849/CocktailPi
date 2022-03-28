@@ -22,8 +22,8 @@
           <div class="row flex justify-center items-center self-center">
             <p class="q-pa-sm">{{ headline }}</p>
           </div>
-          <q-separator v-if="$slots.content" />
-          <slot name="content"/>
+          <q-separator v-if="!hideContentSlot && $slots.content" />
+          <slot name="content" v-if="!hideContentSlot && $slots.content"/>
         </div>
       </div>
     </q-card-section>
@@ -42,6 +42,10 @@ export default {
     iconSize: {
       type: String,
       default: 'xl'
+    },
+    hideContentSlot: {
+      type: Boolean,
+      default: false
     }
   }
 }
