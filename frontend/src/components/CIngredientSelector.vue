@@ -146,7 +146,15 @@ export default {
       if (this.stringInput.length < 2) {
         return this.noInputOptions
       }
-      return this.fetchedOptions
+      const optionsCopy = this.fetchedOptions.slice()
+      const perfectMatch = optionsCopy.find(x => x.name.toLowerCase() === this.stringInput.toLowerCase())
+      if (perfectMatch) {
+        const perfectMatchIndex = optionsCopy.indexOf(perfectMatch)
+        optionsCopy.splice(perfectMatchIndex, 1)
+        optionsCopy.unshift(perfectMatch)
+      }
+
+      return optionsCopy
     }
   },
   methods: {
