@@ -254,7 +254,7 @@ export default {
         })
     },
     onClickCleanPump (pump) {
-      PumpService.cleanPump(pump)
+      PumpService.cleanPump(pump.id)
         .catch(error => {
           this.$q.notify({
             type: 'negative',
