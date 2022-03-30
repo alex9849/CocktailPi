@@ -618,6 +618,18 @@
     "unit": "ml"
   },
   {
+    "id": 117,
+    "name": "J\u00e4germeister",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 35,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
     "id": 50,
     "name": "Kahl\u00faa",
     "parentGroupId": null,
