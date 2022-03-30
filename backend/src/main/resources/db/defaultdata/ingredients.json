@@ -1,6 +1,6 @@
 [
   {
-    "id": 92,
+    "id": 1,
     "name": "Acai Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -12,7 +12,7 @@
     "unit": "ml"
   },
   {
-    "id": 112,
+    "id": 2,
     "name": "Aguardiente",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -25,7 +25,7 @@
     "unit": "ml"
   },
   {
-    "id": 104,
+    "id": 3,
     "name": "Almond Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -37,7 +37,7 @@
     "unit": "ml"
   },
   {
-    "id": 113,
+    "id": 4,
     "name": "Amaretto",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -50,7 +50,7 @@
     "unit": "ml"
   },
   {
-    "id": 21,
+    "id": 5,
     "name": "Amaretto Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -62,7 +62,7 @@
     "unit": "ml"
   },
   {
-    "id": 24,
+    "id": 6,
     "name": "Angostura Bitter",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -74,7 +74,7 @@
     "unit": "ml"
   },
   {
-    "id": 34,
+    "id": 7,
     "name": "Aperol",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -86,7 +86,7 @@
     "unit": "ml"
   },
   {
-    "id": 38,
+    "id": 8,
     "name": "Apple Cider",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -98,7 +98,7 @@
     "unit": "ml"
   },
   {
-    "id": 30,
+    "id": 9,
     "name": "Applejack",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -110,7 +110,7 @@
     "unit": "ml"
   },
   {
-    "id": 41,
+    "id": 10,
     "name": "Apple Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -122,7 +122,7 @@
     "unit": "ml"
   },
   {
-    "id": 43,
+    "id": 11,
     "name": "Apple Schnapps",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -134,7 +134,19 @@
     "unit": "ml"
   },
   {
-    "id": 45,
+    "id": 113,
+    "name": "Apricot Brandy",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 24,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 12,
     "name": "Apricot Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -146,7 +158,7 @@
     "unit": "ml"
   },
   {
-    "id": 5,
+    "id": 13,
     "name": "Averna Amaro",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -158,7 +170,7 @@
     "unit": "ml"
   },
   {
-    "id": 48,
+    "id": 14,
     "name": "Baileys Irish Cream",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -170,7 +182,19 @@
     "unit": "ml"
   },
   {
-    "id": 57,
+    "id": 114,
+    "name": "Banana Syrup",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 0,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 15,
     "name": "Basil Leaves",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -181,7 +205,7 @@
     "onPump": false
   },
   {
-    "id": 81,
+    "id": 16,
     "name": "Benedictine DOM",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -193,7 +217,7 @@
     "unit": "ml"
   },
   {
-    "id": 103,
+    "id": 17,
     "name": "Blackberries",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -204,7 +228,7 @@
     "onPump": false
   },
   {
-    "id": 86,
+    "id": 18,
     "name": "Blackberry Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -216,7 +240,7 @@
     "unit": "ml"
   },
   {
-    "id": 73,
+    "id": 19,
     "name": "Black Sambuca",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -228,7 +252,7 @@
     "unit": "ml"
   },
   {
-    "id": 105,
+    "id": 20,
     "name": "Blood Orange Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -240,7 +264,7 @@
     "unit": "ml"
   },
   {
-    "id": 10,
+    "id": 21,
     "name": "Blue Cura\u00e7ao",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -252,20 +276,7 @@
     "unit": "ml"
   },
   {
-    "id": 114,
-    "name": "Brandy",
-    "parentGroupId": null,
-    "parentGroupName": null,
-    "leafIds": [],
-    "minAlcoholContent": 0,
-    "maxAlcoholContent": 0,
-    "inBar": false,
-    "onPump": false,
-    "type": "group",
-    "unit": "ml"
-  },
-  {
-    "id": 28,
+    "id": 23,
     "name": "Brown Sugar",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -276,7 +287,7 @@
     "onPump": false
   },
   {
-    "id": 26,
+    "id": 24,
     "name": "Campari",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -288,7 +299,7 @@
     "unit": "ml"
   },
   {
-    "id": 70,
+    "id": 25,
     "name": "Chartreuse",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -300,7 +311,7 @@
     "unit": "ml"
   },
   {
-    "id": 77,
+    "id": 26,
     "name": "Cherry Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -312,7 +323,7 @@
     "unit": "ml"
   },
   {
-    "id": 36,
+    "id": 27,
     "name": "Cinnamon",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -323,7 +334,7 @@
     "onPump": false
   },
   {
-    "id": 79,
+    "id": 28,
     "name": "Coconut Cream",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -334,7 +345,7 @@
     "onPump": false
   },
   {
-    "id": 71,
+    "id": 29,
     "name": "Coconut Rum",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -346,7 +357,19 @@
     "unit": "ml"
   },
   {
-    "id": 53,
+    "id": 116,
+    "name": "Coconut Syrup",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 0,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 30,
     "name": "Coffee",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -370,7 +393,7 @@
     "unit": "ml"
   },
   {
-    "id": 98,
+    "id": 32,
     "name": "Cola",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -382,7 +405,7 @@
     "unit": "ml"
   },
   {
-    "id": 55,
+    "id": 33,
     "name": "Condensed Milk",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -394,7 +417,7 @@
     "unit": "ml"
   },
   {
-    "id": 58,
+    "id": 34,
     "name": "Cranberry Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -406,7 +429,19 @@
     "unit": "ml"
   },
   {
-    "id": 101,
+    "id": 112,
+    "name": "Cranberry Nectar",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 0,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 35,
     "name": "Cream",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -417,7 +452,7 @@
     "onPump": false
   },
   {
-    "id": 32,
+    "id": 36,
     "name": "Cr\u00e9mant de Loire",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -429,7 +464,7 @@
     "unit": "ml"
   },
   {
-    "id": 99,
+    "id": 37,
     "name": "Cr\u00e8me de Cassis",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -441,7 +476,7 @@
     "unit": "ml"
   },
   {
-    "id": 44,
+    "id": 38,
     "name": "Dry Vermouth",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -453,7 +488,7 @@
     "unit": "ml"
   },
   {
-    "id": 25,
+    "id": 39,
     "name": "Egg White",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -464,7 +499,7 @@
     "onPump": false
   },
   {
-    "id": 56,
+    "id": 40,
     "name": "Frothed Milk",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -475,7 +510,7 @@
     "onPump": false
   },
   {
-    "id": 52,
+    "id": 41,
     "name": "Galliano",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -487,7 +522,7 @@
     "unit": "ml"
   },
   {
-    "id": 120,
+    "id": 42,
     "name": "Gin",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -500,7 +535,7 @@
     "unit": "ml"
   },
   {
-    "id": 89,
+    "id": 43,
     "name": "Ginger Ale",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -512,7 +547,7 @@
     "unit": "ml"
   },
   {
-    "id": 84,
+    "id": 44,
     "name": "Ginger Beer",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -524,7 +559,7 @@
     "unit": "ml"
   },
   {
-    "id": 102,
+    "id": 45,
     "name": "Grapefruit Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -536,7 +571,7 @@
     "unit": "ml"
   },
   {
-    "id": 17,
+    "id": 46,
     "name": "Grenadine Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -548,7 +583,7 @@
     "unit": "ml"
   },
   {
-    "id": 63,
+    "id": 47,
     "name": "Honey",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -559,7 +594,7 @@
     "onPump": false
   },
   {
-    "id": 20,
+    "id": 48,
     "name": "Honey Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -571,7 +606,7 @@
     "unit": "ml"
   },
   {
-    "id": 50,
+    "id": 49,
     "name": "Irish Cream",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -583,7 +618,7 @@
     "unit": "ml"
   },
   {
-    "id": 47,
+    "id": 50,
     "name": "Kahl\u00faa",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -607,7 +642,7 @@
     "unit": "ml"
   },
   {
-    "id": 22,
+    "id": 52,
     "name": "Lemon Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -619,7 +654,7 @@
     "unit": "ml"
   },
   {
-    "id": 96,
+    "id": 53,
     "name": "Lemon-lime Soda",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -643,7 +678,7 @@
     "unit": "ml"
   },
   {
-    "id": 62,
+    "id": 55,
     "name": "Light Beer",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -655,7 +690,7 @@
     "unit": "ml"
   },
   {
-    "id": 3,
+    "id": 56,
     "name": "Lime Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -667,7 +702,7 @@
     "unit": "ml"
   },
   {
-    "id": 97,
+    "id": 57,
     "name": "Lime Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -679,7 +714,19 @@
     "unit": "ml"
   },
   {
-    "id": 40,
+    "id": 115,
+    "name": "Malibu",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 21,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 58,
     "name": "Maple Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -691,7 +738,31 @@
     "unit": "ml"
   },
   {
-    "id": 46,
+    "id": 110,
+    "name": "Maracuya Liquer",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 22,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 111,
+    "name": "Maracuya Nectar",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 0,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 59,
     "name": "Maraschino Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -703,7 +774,7 @@
     "unit": "ml"
   },
   {
-    "id": 14,
+    "id": 60,
     "name": "Orange Bitter",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -715,7 +786,7 @@
     "unit": "ml"
   },
   {
-    "id": 16,
+    "id": 61,
     "name": "Orange Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -727,7 +798,7 @@
     "unit": "ml"
   },
   {
-    "id": 87,
+    "id": 62,
     "name": "Orange Marmalade",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -738,7 +809,7 @@
     "onPump": false
   },
   {
-    "id": 2,
+    "id": 63,
     "name": "Orgeat Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -750,7 +821,7 @@
     "unit": "ml"
   },
   {
-    "id": 106,
+    "id": 64,
     "name": "Passion fruit Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -774,7 +845,19 @@
     "unit": "ml"
   },
   {
-    "id": 78,
+    "id": 109,
+    "name": "Peach Liquer",
+    "parentGroupId": null,
+    "parentGroupName": null,
+    "alcoholContent": 15,
+    "inBar": false,
+    "pumpTimeMultiplier": 1.0,
+    "onPump": false,
+    "type": "automated",
+    "unit": "ml"
+  },
+  {
+    "id": 66,
     "name": "Peach Schnapps",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -786,7 +869,7 @@
     "unit": "ml"
   },
   {
-    "id": 15,
+    "id": 67,
     "name": "Pineapple Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -798,7 +881,7 @@
     "unit": "ml"
   },
   {
-    "id": 82,
+    "id": 68,
     "name": "Punsch",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -810,7 +893,7 @@
     "unit": "ml"
   },
   {
-    "id": 93,
+    "id": 69,
     "name": "Raisins",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -821,7 +904,7 @@
     "onPump": false
   },
   {
-    "id": 66,
+    "id": 70,
     "name": "Raspberry Juice",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -833,7 +916,7 @@
     "unit": "ml"
   },
   {
-    "id": 94,
+    "id": 71,
     "name": "Raspberry Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -845,7 +928,7 @@
     "unit": "ml"
   },
   {
-    "id": 27,
+    "id": 72,
     "name": "Red Vermouth",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -857,7 +940,7 @@
     "unit": "ml"
   },
   {
-    "id": 88,
+    "id": 73,
     "name": "Red Wine",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -869,7 +952,7 @@
     "unit": "ml"
   },
   {
-    "id": 116,
+    "id": 74,
     "name": "Rum",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -882,7 +965,7 @@
     "unit": "ml"
   },
   {
-    "id": 37,
+    "id": 75,
     "name": "Salt",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -893,7 +976,7 @@
     "onPump": false
   },
   {
-    "id": 124,
+    "id": 76,
     "name": "Sherry",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -906,7 +989,7 @@
     "unit": "ml"
   },
   {
-    "id": 125,
+    "id": 77,
     "name": "Sherry Fino",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -919,7 +1002,7 @@
     "unit": "ml"
   },
   {
-    "id": 23,
+    "id": 78,
     "name": "Simple Syrup",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -931,7 +1014,7 @@
     "unit": "ml"
   },
   {
-    "id": 35,
+    "id": 79,
     "name": "Soda Water",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -943,7 +1026,7 @@
     "unit": "ml"
   },
   {
-    "id": 95,
+    "id": 80,
     "name": "Southern Comfort",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -955,7 +1038,7 @@
     "unit": "ml"
   },
   {
-    "id": 122,
+    "id": 81,
     "name": "Sparkling Wine",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -968,7 +1051,7 @@
     "unit": "ml"
   },
   {
-    "id": 9,
+    "id": 82,
     "name": "Sprite",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -980,7 +1063,7 @@
     "unit": "ml"
   },
   {
-    "id": 19,
+    "id": 83,
     "name": "Sugar",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -991,7 +1074,7 @@
     "onPump": false
   },
   {
-    "id": 6,
+    "id": 84,
     "name": "Sweet & Sour Mix",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1003,7 +1086,7 @@
     "unit": "ml"
   },
   {
-    "id": 13,
+    "id": 85,
     "name": "Sweet Vermouth",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1015,7 +1098,7 @@
     "unit": "ml"
   },
   {
-    "id": 61,
+    "id": 86,
     "name": "Tattersall Grapefruit Crema",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1027,7 +1110,7 @@
     "unit": "ml"
   },
   {
-    "id": 128,
+    "id": 87,
     "name": "Tequila",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1040,7 +1123,7 @@
     "unit": "ml"
   },
   {
-    "id": 91,
+    "id": 88,
     "name": "Tonic Water",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1052,12 +1135,12 @@
     "unit": "ml"
   },
   {
-    "id": 121,
+    "id": 89,
     "name": "Triple Sec",
     "parentGroupId": null,
     "parentGroupName": null,
     "leafIds": [
-      49
+      103
     ],
     "minAlcoholContent": 40,
     "maxAlcoholContent": 40,
@@ -1067,8 +1150,8 @@
     "unit": "ml"
   },
   {
-    "id": 60,
-    "name": "Vanilla liqueur",
+    "id": 90,
+    "name": "Vanilla Liqueur",
     "parentGroupId": null,
     "parentGroupName": null,
     "alcoholContent": 40,
@@ -1079,7 +1162,7 @@
     "unit": "ml"
   },
   {
-    "id": 110,
+    "id": 91,
     "name": "Vermouth",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1092,7 +1175,7 @@
     "unit": "ml"
   },
   {
-    "id": 126,
+    "id": 92,
     "name": "Vodka",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1105,7 +1188,7 @@
     "unit": "ml"
   },
   {
-    "id": 85,
+    "id": 93,
     "name": "Water",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1117,13 +1200,13 @@
     "unit": "ml"
   },
   {
-    "id": 107,
+    "id": 94,
     "name": "Whisky",
     "parentGroupId": null,
     "parentGroupName": null,
     "leafIds": [
-      42,
-      59
+      107,
+      108
     ],
     "minAlcoholContent": 40,
     "maxAlcoholContent": 40,
@@ -1133,7 +1216,7 @@
     "unit": "ml"
   },
   {
-    "id": 72,
+    "id": 95,
     "name": "White Beer",
     "parentGroupId": null,
     "parentGroupName": null,
@@ -1145,22 +1228,9 @@
     "unit": "ml"
   },
   {
-    "id": 117,
-    "name": "White Rum",
-    "parentGroupId": 116,
-    "parentGroupName": "Rum",
-    "leafIds": [],
-    "minAlcoholContent": 0,
-    "maxAlcoholContent": 0,
-    "inBar": false,
-    "onPump": false,
-    "type": "group",
-    "unit": "ml"
-  },
-  {
-    "id": 118,
+    "id": 97,
     "name": "Gold Rum",
-    "parentGroupId": 116,
+    "parentGroupId": 74,
     "parentGroupName": "Rum",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1171,9 +1241,9 @@
     "unit": "ml"
   },
   {
-    "id": 119,
+    "id": 98,
     "name": "Black Rum",
-    "parentGroupId": 116,
+    "parentGroupId": 74,
     "parentGroupName": "Rum",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1184,9 +1254,9 @@
     "unit": "ml"
   },
   {
-    "id": 127,
+    "id": 99,
     "name": "Aged Rum",
-    "parentGroupId": 116,
+    "parentGroupId": 74,
     "parentGroupName": "Rum",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1197,9 +1267,22 @@
     "unit": "ml"
   },
   {
-    "id": 115,
+    "id": 96,
+    "name": "White Rum",
+    "parentGroupId": 74,
+    "parentGroupName": "Rum",
+    "leafIds": [],
+    "minAlcoholContent": 0,
+    "maxAlcoholContent": 0,
+    "inBar": false,
+    "onPump": false,
+    "type": "group",
+    "unit": "ml"
+  },
+  {
+    "id": 100,
     "name": "Champagne",
-    "parentGroupId": 122,
+    "parentGroupId": 81,
     "parentGroupName": "Sparkling Wine",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1210,9 +1293,9 @@
     "unit": "ml"
   },
   {
-    "id": 123,
+    "id": 101,
     "name": "Prosecco",
-    "parentGroupId": 122,
+    "parentGroupId": 81,
     "parentGroupName": "Sparkling Wine",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1223,9 +1306,9 @@
     "unit": "ml"
   },
   {
-    "id": 129,
+    "id": 102,
     "name": "Silver Tequila",
-    "parentGroupId": 128,
+    "parentGroupId": 87,
     "parentGroupName": "Tequila",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1236,9 +1319,9 @@
     "unit": "ml"
   },
   {
-    "id": 49,
+    "id": 103,
     "name": "Grand Marnier",
-    "parentGroupId": 121,
+    "parentGroupId": 89,
     "parentGroupName": "Triple Sec",
     "alcoholContent": 40,
     "inBar": false,
@@ -1248,9 +1331,9 @@
     "unit": "ml"
   },
   {
-    "id": 111,
+    "id": 104,
     "name": "Absinth",
-    "parentGroupId": 110,
+    "parentGroupId": 91,
     "parentGroupName": "Vermouth",
     "leafIds": [],
     "minAlcoholContent": 0,
@@ -1261,12 +1344,12 @@
     "unit": "ml"
   },
   {
-    "id": 108,
+    "id": 105,
     "name": "Bourbon",
-    "parentGroupId": 107,
+    "parentGroupId": 94,
     "parentGroupName": "Whisky",
     "leafIds": [
-      42
+      107
     ],
     "minAlcoholContent": 40,
     "maxAlcoholContent": 40,
@@ -1276,12 +1359,12 @@
     "unit": "ml"
   },
   {
-    "id": 109,
+    "id": 106,
     "name": "Scotch",
-    "parentGroupId": 107,
+    "parentGroupId": 94,
     "parentGroupName": "Whisky",
     "leafIds": [
-      59
+      108
     ],
     "minAlcoholContent": 40,
     "maxAlcoholContent": 40,
@@ -1291,9 +1374,9 @@
     "unit": "ml"
   },
   {
-    "id": 42,
+    "id": 107,
     "name": "Jack Daniel's",
-    "parentGroupId": 108,
+    "parentGroupId": 105,
     "parentGroupName": "Bourbon",
     "alcoholContent": 40,
     "inBar": false,
@@ -1303,9 +1386,9 @@
     "unit": "ml"
   },
   {
-    "id": 59,
+    "id": 108,
     "name": "Glenfiddich",
-    "parentGroupId": 109,
+    "parentGroupId": 106,
     "parentGroupName": "Scotch",
     "alcoholContent": 40,
     "inBar": false,
