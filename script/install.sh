@@ -12,10 +12,10 @@ echo "The script will install the cocktailmaker application into the current fol
 echo "${WORKING_DIR}"
 echo "Press [ENTER] to continue or ctrl + c to abort!"
 
-read -s -N 1 -t 1 key
+read key
 while [[ $key != $'\x0a' ]]; do
   echo "Press [ENTER] to continue or ctrl + c to abort!"
-  read -s -N 1 -t 1 key
+  read key
 done
 
 # Install dependencies
