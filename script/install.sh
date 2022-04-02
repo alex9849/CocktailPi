@@ -20,10 +20,16 @@ done
 
 # Install dependencies
 echo "Installing dependencies..."
-sudo apt update
+sudo apt update && apt -yq upgrade
 sudo apt -yq install default-jdk python python3-pip pigpio python-pigpio python3-pigpio wget alsa-utils python3-pip
-sudo curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+if ! command -v docker &> /dev/null
+then
+    echo "Docker not be found! Installing..."
+    sudo curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    sudo rm get-docker.sh
+fi
+
 sudo apt install python3-pip -y
 sudo pip3 install docker-compose
 echo "Dependencies installed!"
@@ -45,5 +51,5 @@ sudo service cocktailmaker start
 echo "Script finished! You can now configure the created database (docker-compose.yml) and the application (application.properties)"
 echo "By default the database in accessible on localhost only. The webinterface should be reachable on port 80!"
 echo "Logs can be found in /var/log/cocktailmaker.log"
-echo "You can start and stop the application by using \"service cocktailmaker (start|stop|status)\""
+echo "You can start and stop the application by using \"service cocktailmaker (start|stop|restart|status)\""
 sudo rm -- "$0"
