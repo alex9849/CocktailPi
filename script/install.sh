@@ -10,15 +10,11 @@ fi
 
 echo "The script will install the cocktailmaker application into the current folder:"
 echo "${WORKING_DIR}"
-echo ""
 echo "Press [ENTER] to continue or ctrl + c to abort!"
-echo ""
 
 read -r -n1 key
 while [[ $key != '' ]]; do
-  echo ""
   echo "Press [ENTER] to continue or ctrl + c to abort!"
-  echo ""
   read -r -n1 key
 done
 
