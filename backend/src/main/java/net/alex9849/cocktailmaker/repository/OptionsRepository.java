@@ -43,7 +43,7 @@ public class OptionsRepository extends JdbcDaoSupport {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value)\n" +
                         "VALUES (?, ?)\n" +
-                        "ON CONFLICT (id) DO UPDATE\n" +
+                        "ON CONFLICT (key) DO UPDATE\n" +
                         "    SET value = excluded.value");
                 pstmt.setString(1, key);
                 pstmt.setString(2, value);

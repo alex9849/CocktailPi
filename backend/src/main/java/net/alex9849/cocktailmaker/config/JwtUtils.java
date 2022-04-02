@@ -34,7 +34,7 @@ public class JwtUtils {
             String stringKey = optionsRepository.getOption(secretKeyOptionsKey);
             if(stringKey == null) {
                 secretKey = UUID.randomUUID();
-                optionsRepository.setOption(secretKeyOptionsKey, stringKey);
+                optionsRepository.setOption(secretKeyOptionsKey, secretKey.toString());
             } else {
                 secretKey = UUID.fromString(stringKey);
             }
