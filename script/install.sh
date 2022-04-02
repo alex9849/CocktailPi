@@ -33,9 +33,17 @@ wget https://github.com/alex9849/pi-cocktail-maker/releases/latest/download/serv
 wget https://raw.githubusercontent.com/alex9849/pi-cocktail-maker/${BRANCH}/script/files/application.properties -O application.properties
 wget https://raw.githubusercontent.com/alex9849/pi-cocktail-maker/${BRANCH}/script/files/docker-compose.yml -O docker-compose.yml
 docker-compose up -d
+echo "Creating service"
 sudo ln -s "${WORKING_DIR}"/cocktailmaker.jar /etc/init.d/cocktailmaker
 sudo chmod +x /etc/init.d/cocktailmaker
 sudo systemctl daemon-reload
-sudo service cocktailmaker start
+echo "Adding cocktailmaker to autostart"
 sudo update-rc.d cocktailmaker defaults
+echo "Starting cocktailmaker"
+sudo service cocktailmaker start
+
+echo "Script finished! You can now configure the created database (docker-compose.yml) and the application (application.properties)"
+echo "By default the database in accessible on localhost only. The webinterface should be reachable on port 80!"
+echo "Logs can be found in /var/log/cocktailmaker.log"
+echo "You can start and stop the application by using \"service cocktailmaker (start|stop|status)\""
 sudo rm -- "$0"
