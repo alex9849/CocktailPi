@@ -13,7 +13,7 @@ echo "${WORKING_DIR}"
 echo "Press [ENTER] to continue or ctrl + c to abort!"
 
 read -r -n1 key
-while [[ $key != $'\x0a' ]]; do
+while [[ $key != '' ]]; do
   echo "Press [ENTER] to continue or ctrl + c to abort!"
   read -r -n1 key
 done
