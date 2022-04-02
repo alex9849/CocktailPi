@@ -2,8 +2,10 @@ package net.alex9849.cocktailmaker.config;
 
 import io.jsonwebtoken.*;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
@@ -12,16 +14,33 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${alex9849.app.jwtSecret}")
-    private String jwtSecret;
+    private final String secretKeyOptionsKey = "secretKey";
+    private UUID secretKey;
+
+    @Autowired
+    private OptionsRepository optionsRepository;
 
     @Value("${alex9849.app.jwtExpirationMs}")
     private int jwtExpirationMs;
+
+    private UUID getSecretKey() {
+        if(secretKey == null) {
+            String stringKey = optionsRepository.getOption(secretKeyOptionsKey);
+            if(stringKey == null) {
+                secretKey = UUID.randomUUID();
+                optionsRepository.setOption(secretKeyOptionsKey, stringKey);
+            } else {
+                secretKey = UUID.fromString(stringKey);
+            }
+        }
+        return secretKey;
+    }
 
     public String generateJwtToken(Authentication authentication, boolean remember) {
         User principal = (User) authentication.getPrincipal();
@@ -38,25 +57,25 @@ public class JwtUtils {
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .claim("remember", remember)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, getSecretKey().toString())
                 .compact();
     }
 
     public long getUserIdFromJwtToken(String token) {
-        return Long.parseLong(Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject());
+        return Long.parseLong(Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().getSubject());
     }
 
     public Date getExpirationDateFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getExpiration();
+        return Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().getExpiration();
     }
 
     public boolean isRemember(String token) {
-        return (boolean) Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().get("remember");
+        return (boolean) Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().get("remember");
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
