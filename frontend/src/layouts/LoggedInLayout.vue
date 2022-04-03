@@ -125,7 +125,7 @@ export default {
 
   data () {
     return {
-      desktopModeBreakPoint: 1023,
+      desktopModeBreakPoint: 1024,
       leftDrawerOpen: false,
       windowWidth: 0,
       sidebarItems: [
