@@ -13,6 +13,6 @@ public class VueForwarder implements WebServerFactoryCustomizer<ConfigurableWebS
 
     @Override
     public void customize(ConfigurableWebServerFactory factory) {
-        factory.setErrorPages(Collections.singleton(new ErrorPage(HttpStatus.NOT_FOUND, "/index.html")));
+        factory.setErrorPages(Collections.singleton(new ErrorPage(HttpStatus.PERMANENT_REDIRECT, "/index.html")));
     }
 }
