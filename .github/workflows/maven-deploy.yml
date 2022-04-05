@@ -47,6 +47,7 @@ jobs:
     permissions:
       contents: write
     steps:
+    - uses: actions/checkout@v2
     - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.2.3
