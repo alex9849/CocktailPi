@@ -251,8 +251,6 @@ public class EventService {
         }
         PlayAudioEventAction eventAction = new PlayAudioEventAction();
         BeanUtils.copyProperties(dto, eventAction);
-        eventAction.setFile(file.getBytes());
-        eventAction.setFileName(file.getOriginalFilename());
         eventAction.setExecutionGroups(new HashSet<>(dto.getExecutionGroups()));
         if(file != null) {
             eventAction.setFile(file.getBytes());
