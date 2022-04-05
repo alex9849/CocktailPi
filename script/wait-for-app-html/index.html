@@ -1,0 +1,75 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background-color: #F1F1EF;
+}
+.wrapper {
+  height: 100vh !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.waiting-text {
+  font-size: 30px;
+  font-family: Courier New;
+}
+.loading:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  -webkit-animation: ellipsis steps(4,end) 2000ms infinite;      
+  animation: ellipsis steps(4,end) 2000ms infinite;
+  content: "\2026";
+  width: 0px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 25px;    
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 25px;    
+  }
+}
+</style>
+<script>
+const url="http://localhost"
+const options = {
+  method: 'GET',
+  mode: 'no-cors'
+};
+
+function checkConnection() {
+  fetch(url, options)
+    .then(response => {
+      window.location.replace(url);
+    })
+   setTimeout(() => checkConnection(), 1000)
+}
+</script>
+</head>
+<body onload="checkConnection()">
+
+<div class="wrapper">
+  <div class="content">
+    <div>
+      <img style="width: 100%;" src="./animation.gif"/>
+	</div>
+	<div>
+	  <p id="text" style="width: 450px" class="waiting-text loading">Waiting for application</p>
+	</div>
+  </div>
+</div>
+
+</body>
+</html> 
