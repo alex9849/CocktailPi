@@ -57,11 +57,15 @@ jobs:
       with:
         name: Server
         path: backend/target/
+    - name: Archive application wait html
+      run: tar -C script/ -cf wait-for-app.tar wait-for-app-html
     - name: Github release
       uses: softprops/action-gh-release@v1
       with:
         fail_on_unmatched_files: true
-        files: backend/target/server.jar
+        files: |
+          backend/target/server.jar
+          wait-for-app.tar
   deploy-docker:
     runs-on: ubuntu-latest
     needs: [build]
@@ -91,8 +95,6 @@ jobs:
       run: |
         docker build -t alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }} -f script/docker/Dockerfile .
         docker tag alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }} alex9849/pi-cocktailmaker:latest
-        docker build -t alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }}-pi -f script/docker/DockerfilePi .
-        docker tag alex9849/pi-cocktailmaker:${{ steps.get_version.outputs.VERSION }}-pi alex9849/pi-cocktailmaker:latest-pi
     - name: Push images
       run: docker push alex9849/pi-cocktailmaker --all-tags
 
