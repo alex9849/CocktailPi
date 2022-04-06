@@ -7,7 +7,7 @@
           disable
           label="Production step"
           readonly
-          :model-value="replacementEntry.productionStep + 1"
+          :model-value="replacementEntry.productionStep"
           dense
         >
           <template v-slot:label>
