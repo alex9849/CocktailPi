@@ -84,7 +84,7 @@ export default {
   computed: {
     allIngredientsOwned () {
       for (const ingredient of this.ingredients) {
-        if (!ingredient.inBar) {
+        if (!ingredient.inBar && !ingredient.onPump) {
           return false
         }
       }
