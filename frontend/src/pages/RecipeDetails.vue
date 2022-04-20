@@ -10,7 +10,7 @@
         <q-btn
           color="grey"
           :to="{name: 'recipeedit', params: {id: recipe.id}}"
-          v-if="isAdminRole || (recipe.owner && user?.id === recipe.owner.id && isRecipeCreatorRole)"
+          v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
         >
           Edit
         </q-btn>
@@ -31,7 +31,7 @@
           color="red"
           @click="deleteDialog = true"
           :loading="deleting"
-          v-if="isAdminRole || (user?.id === recipe.owner.id && isRecipeCreatorRole)"
+          v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
         >
           Delete
         </q-btn>

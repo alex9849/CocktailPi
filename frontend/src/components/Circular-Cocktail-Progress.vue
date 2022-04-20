@@ -111,7 +111,7 @@
                     :loading="canceling"
                     :disable="hasCocktailProgress && (cocktailProgress.state === 'CANCELLED' || cocktailProgress.state === 'FINISHED')"
                     @click="onCancelCocktail()"
-                    v-if="isAdmin || currentUser.id === cocktailProgress.userid"
+                    v-if="isAdmin || currentUser.id === cocktailProgress.userId"
                   />
                 </div>
               </template>
