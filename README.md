@@ -37,14 +37,14 @@ is that you need to be able to apply that concept to your setup. This is an exam
  * 1x Relay-Board: https://amzn.to/3yIcjrk
  * 8x Dosing pumps: https://amzn.to/3NWLPry
  * 8x Diodes (reverse current diodes)
- * 1x Power supply: https://bit.ly/2ZJPIcP
+ * 1x 9V Power supply: https://bit.ly/2ZJPIcP
  * Silicone hose: https://amzn.to/3AJXmHA
  * Cables
  
 ### Fancy stuff.
 You can also use this (additional) hardware to improve your setup even more:
  * 1x Touchscreen 7 inch: https://amzn.to/3uJ2wQr
- * 12x 12V Dosing pump: https://amzn.to/3P5PWmi (More expensive, but I was told that the pump is also more quiet)
+ * 16x 12V Dosing pump: https://amzn.to/3P5PWmi (More expensive, but I was told that the pump is also more quiet)
  * 1x 16-Channel Relay-Board: https://amzn.to/3ayIfpX
  * 1x 12V power supply: https://amzn.to/3IxwDA1 (Can be used with 12V pumps)
  * 1x 12V power stabalizer: https://amzn.to/3uFtsAw (Can be used to power the machine by battery)
