@@ -42,7 +42,7 @@ is that you need to be able to apply that concept to your setup. This is an exam
  * Cables
  
 ### Fancy stuff.
-You can also use this hardware to improve your setup even more:
+You can also use this (additional) hardware to improve your setup even more:
  * 1x Touchscreen 7 inch: https://amzn.to/3uJEJQx
  * 12x 12V Dosing pump: https://amzn.to/3P5PWmi (More expensive, but I was told that the pump is also more quiet)
  * 1x 16-Channel Relay-Board: https://amzn.to/3ayIfpX
