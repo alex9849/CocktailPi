@@ -35,7 +35,7 @@ is that you need to be able to apply that concept to your setup. This is an exam
 ### This is the hardware that I've used for my machine:
  * 1x RaspberryPi: https://amzn.to/3NYmSvH (Other platforms like NanoPi or BananaPi are not supported)
  * 1x Relay-Board: https://amzn.to/3yIcjrk
- * 8x Dosing pumps: https://amzn.to/3NWLPry / or with prime: https://amzn.to/3Obbvkm
+ * 8x Dosing pumps: https://amzn.to/3NWLPry or with prime: https://amzn.to/3Obbvkm
  * 8x Diodes (reverse current diodes)
  * 1x 9V Power supply: https://bit.ly/2ZJPIcP
  * Silicone hose: https://amzn.to/3AJXmHA
