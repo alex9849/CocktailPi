@@ -85,4 +85,21 @@ public class Pump {
         }
         this.currentIngredientId = currentIngredientId;
     }
+
+    public int getConvertMlToRuntime(int mlToPump) {
+        if(getCurrentIngredient() == null) {
+            throw new IllegalStateException("Pump got no ingredient assigned!");
+        }
+        return  (int) (getCurrentIngredient().getPumpTimeMultiplier()
+                * mlToPump
+                * this.getTimePerClInMs() / 10d);
+    }
+
+    public int getConvertRuntimeToMl(int runtime) {
+        if(getCurrentIngredient() == null) {
+            return 0;
+        }
+        return  (int) (runtime / (getCurrentIngredient().getPumpTimeMultiplier()
+                * this.getTimePerClInMs() / 10d));
+    }
 }

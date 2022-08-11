@@ -6,10 +6,10 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngr
 import java.util.*;
 
 public class PumpTimingStepCalculator {
-    private final int longestIngredientTime;
+    private final Integer longestPumpRunTime;
     private final Pump longestIngredientPump;
     private final Map<Pump, Integer> otherPumpTimings;
-    private final Set<Pump> usedPumps;
+    private final Set<Pump> updatedPumps;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
 
@@ -25,7 +25,7 @@ public class PumpTimingStepCalculator {
         if(matchingPumpByProductionStepIngredient.size() == 0) {
             throw new IllegalArgumentException("matchingPumpByProductionStepIngredient must be non empty!");
         }
-        this.usedPumps = new HashSet<>();
+        this.updatedPumps = new HashSet<>();
         //Prioritize pumps with a low filling level
         matchingPumpByProductionStepIngredient.values().forEach(x -> x.sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
 
@@ -33,30 +33,28 @@ public class PumpTimingStepCalculator {
         Map<Pump, Integer> timeToRunPerPump = new HashMap<>();
 
         for(Map.Entry<ProductionStepIngredient, List<Pump>> currentPumpsRuntime : matchingPumpByProductionStepIngredient.entrySet()) {
-            int remainingAmountToFill = currentPumpsRuntime.getKey().getAmount();
+            int remainingAmountToFillInMl = currentPumpsRuntime.getKey().getAmount();
             for(Pump pump : currentPumpsRuntime.getValue()) {
                 if(pump.getFillingLevelInMl() == 0) {
                     continue;
                 }
-                if(remainingAmountToFill <= 0) {
+                if(remainingAmountToFillInMl <= 0) {
                     break;
                 }
-                int amountToFillForPump;
-                if(pump.getFillingLevelInMl() > remainingAmountToFill) {
-                    amountToFillForPump = remainingAmountToFill;
-                    pump.setFillingLevelInMl(pump.getFillingLevelInMl() - amountToFillForPump);
+                int amountToFillForPumpInMl;
+                if(pump.getFillingLevelInMl() > remainingAmountToFillInMl) {
+                    amountToFillForPumpInMl = remainingAmountToFillInMl;
+                    pump.setFillingLevelInMl(pump.getFillingLevelInMl() - amountToFillForPumpInMl);
                 } else {
-                    amountToFillForPump = pump.getFillingLevelInMl();
+                    amountToFillForPumpInMl = pump.getFillingLevelInMl();
                     pump.setFillingLevelInMl(0);
                 }
-                int timeToRun = (int) (pump.getCurrentIngredient().getPumpTimeMultiplier()
-                        * amountToFillForPump
-                        * pump.getTimePerClInMs() / 10d);
+                int timeToRun = pump.getConvertMlToRuntime(amountToFillForPumpInMl);
                 timeToRunPerPump.put(pump, timeToRun);
-                this.usedPumps.add(pump);
-                remainingAmountToFill -= amountToFillForPump;
+                this.updatedPumps.add(pump);
+                remainingAmountToFillInMl -= amountToFillForPumpInMl;
             }
-            if(remainingAmountToFill > 0) {
+            if(remainingAmountToFillInMl > 0) {
                 throw new IllegalArgumentException("Not enough liquid left: " + currentPumpsRuntime.getKey().getIngredient().getName());
             }
         }
@@ -69,34 +67,29 @@ public class PumpTimingStepCalculator {
         }
         timeToRunPerPump.remove(longestRuntime.getKey());
         this.longestIngredientPump = longestRuntime.getKey();
-        this.longestIngredientTime = longestRuntime.getValue();
+        this.longestPumpRunTime = longestRuntime.getValue();
         this.otherPumpTimings = timeToRunPerPump;
     }
 
-    public Set<Pump> getUsedPumps() {
-        return usedPumps;
+    public Set<Pump> getUpdatedPumps() {
+        return updatedPumps;
     }
 
     public int getLongestIngredientTime() {
-        return longestIngredientTime;
+        return longestPumpRunTime;
     }
 
     public Pump getLongestIngredientPump() {
         return longestIngredientPump;
     }
 
-    public Map<Pump, Integer> getOtherPumpTimings() {
-        return otherPumpTimings;
-    }
-
-    public Map<Pump, List<PumpPhase>> getPumpPhases() {
-        Map<Pump, List<PumpPhase>> pumpPhases = new HashMap<>();
-        pumpPhases.put(this.longestIngredientPump, Arrays.asList(new PumpPhase(0, this.longestIngredientTime, this.longestIngredientPump)));
+    public Set<PumpPhase> getPumpPhases() {
+        Set<PumpPhase> pumpPhases = new HashSet<>();
+        pumpPhases.add(new PumpPhase(0, this.longestPumpRunTime, this.longestIngredientPump));
 
         for(Map.Entry<Pump, Integer> ingredientPair : this.otherPumpTimings.entrySet()) {
             Pump currentPump = ingredientPair.getKey();
             int fullPumpOperatingTime = ingredientPair.getValue();
-            pumpPhases.put(currentPump, new ArrayList<>());
 
             //How often does the Pump need to be startet
             int pumpStarts = fullPumpOperatingTime / this.minimalPumpTime;
@@ -104,7 +97,7 @@ public class PumpTimingStepCalculator {
                 pumpStarts = 1;
             }
             int pumpIntervalOperatingTime = fullPumpOperatingTime / pumpStarts;
-            int breakTime = (this.longestIngredientTime - fullPumpOperatingTime) / (pumpStarts + 1);
+            int breakTime = (this.longestPumpRunTime - fullPumpOperatingTime) / (pumpStarts + 1);
             int nextPumpStart = breakTime;
             int lastPumpStop = 0;
             PumpPhase lastPumpPhase = null;
@@ -113,7 +106,7 @@ public class PumpTimingStepCalculator {
                     int currentPumpStart = nextPumpStart;
                     int currentPumpStop = currentPumpStart + pumpIntervalOperatingTime;
                     lastPumpPhase = new PumpPhase(currentPumpStart, currentPumpStop, currentPump);
-                    pumpPhases.get(currentPump).add(lastPumpPhase);
+                    pumpPhases.add(lastPumpPhase);
                     nextPumpStart = currentPumpStop + breakTime;
                     lastPumpStop = currentPumpStop;
                 } else {
@@ -125,5 +118,4 @@ public class PumpTimingStepCalculator {
         }
         return pumpPhases;
     }
-
 }

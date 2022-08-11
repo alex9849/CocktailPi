@@ -184,7 +184,7 @@ public class PumpService {
         }
         this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()), gpioController)
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
-        for(Pump pump : this.cocktailFactory.getUsedPumps()) {
+        for(Pump pump : this.cocktailFactory.getUpdatedPumps()) {
             this.pumpRepository.update(pump);
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
@@ -240,6 +240,14 @@ public class PumpService {
             return false;
         }
         this.cocktailFactory.cancelCocktail();
+        Map<Pump, Integer> notUsedLiquidByPump = this.cocktailFactory.getNotUsedLiquid();
+        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
+            Pump pump = entry.getKey();
+            Integer notUsedLiquid = entry.getValue();
+            pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);
+            this.pumpRepository.update(pump);
+        }
+        webSocketService.broadcastPumpLayout(getAllPumps());
         return true;
     }
 

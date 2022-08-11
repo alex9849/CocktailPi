@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpTimingStepCalculator;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 public class AutomaticProductionStepWorker extends AbstractProductionStepWorker {
     private final Map<Long, List<Pump>> pumpsByIngredientId;
     private final List<ProductionStepIngredient> productionStepInstructions;
-    private final Map<Pump, List<PumpPhase>> pumpPumpPhases;
-    private final Set<Pump> usedPumps;
+    private final Set<PumpPhase> pumpPumpPhases;
+    private final Set<Pump> updatedPumps;
     private final long requiredWorkingTime;
     private final ScheduledExecutorService scheduler;
     private IGpioController gpioController;
@@ -56,7 +57,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         }
         PumpTimingStepCalculator pumpTimingStepCalculator = new PumpTimingStepCalculator(matchingPumpByProductionStepIngredient,
                 minimalPumpTime, minimalBreakTime);
-        this.usedPumps = pumpTimingStepCalculator.getUsedPumps();
+        this.updatedPumps = pumpTimingStepCalculator.getUpdatedPumps();
         this.pumpPumpPhases = pumpTimingStepCalculator.getPumpPhases();
         this.requiredWorkingTime = pumpTimingStepCalculator.getLongestIngredientTime();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -71,15 +72,16 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         }
         this.started = true;
         this.startTime = System.currentTimeMillis();
-        for (Map.Entry<Pump, List<PumpPhase>> currPumpWithTimings : this.pumpPumpPhases.entrySet()) {
-            for (PumpPhase pumpPhase : currPumpWithTimings.getValue()) {
-                scheduledPumpFutures.add(scheduler.schedule(() -> {
-                    gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setLow();
-                }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
-                scheduledPumpFutures.add(scheduler.schedule(() -> {
-                    gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setHigh();
-                }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
-            }
+        for (PumpPhase pumpPhase : this.pumpPumpPhases) {
+            scheduledPumpFutures.add(scheduler.schedule(() -> {
+                gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setLow();
+                pumpPhase.setStarted();
+            }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
+
+            scheduledPumpFutures.add(scheduler.schedule(() -> {
+                gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setHigh();
+                pumpPhase.setStopped();
+            }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
         long delayLastInstruction = this.scheduledPumpFutures.stream()
                 .mapToLong(x -> x.getDelay(TimeUnit.MILLISECONDS)).max().getAsLong();
@@ -90,8 +92,8 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.notifySubscribers();
     }
 
-    public Set<Pump> getUsedPumps() {
-        return usedPumps;
+    public Set<Pump> getUpdatedPumps() {
+        return updatedPumps;
     }
 
     private void onFinish() {
@@ -113,10 +115,19 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
             this.finishTask.cancel(true);
         }
         this.stopAllPumps();
-        if (this.scheduler.isShutdown()) {
-            return;
+        if (!this.scheduler.isShutdown()) {
+            this.scheduler.shutdown();
         }
-        this.scheduler.shutdown();
+    }
+
+    public Map<Pump, Integer> getNotUsedLiquid() {
+        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
+        for(PumpPhase pumpPhase : this.pumpPumpPhases) {
+            int notUsedLiquid = notUsedLiquidByPump.computeIfAbsent(pumpPhase.getPump(), p -> 0);
+            notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
+            notUsedLiquidByPump.put(pumpPhase.getPump(), notUsedLiquid);
+        }
+        return notUsedLiquidByPump;
     }
 
     public StepProgress getProgress() {
@@ -131,11 +142,19 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     }
 
     private void stopAllPumps() {
-        for(Pump pump : this.pumpPumpPhases.keySet()) {
-            IGpioPin gpioPin = gpioController.getGpioPin(pump.getBcmPin());
+        Set<Long> seenPumps = new HashSet<>();
+        for(PumpPhase pumpPhase : this.pumpPumpPhases) {
+            if(seenPumps.contains(pumpPhase.getPump().getId())) {
+                continue;
+            }
+            IGpioPin gpioPin = gpioController.getGpioPin(pumpPhase.getPump().getBcmPin());
             if(!gpioPin.isHigh()) {
                 gpioPin.setHigh();
             }
+            if(pumpPhase.getState() == PumpPhase.State.RUNNING) {
+                pumpPhase.setStopped();
+            }
+            seenPumps.add(pumpPhase.getPump().getId());
         }
     }
 

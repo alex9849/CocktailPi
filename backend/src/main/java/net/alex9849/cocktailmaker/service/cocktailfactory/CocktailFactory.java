@@ -116,11 +116,18 @@ public class CocktailFactory {
         return workers;
     }
 
-    public Set<Pump> getUsedPumps() {
+    public Set<Pump> getUpdatedPumps() {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AutomaticProductionStepWorker)
-                .flatMap(x -> ((AutomaticProductionStepWorker) x).getUsedPumps().stream())
+                .flatMap(x -> ((AutomaticProductionStepWorker) x).getUpdatedPumps().stream())
                 .collect(Collectors.toSet());
+    }
+
+    public Map<Pump, Integer> getNotUsedLiquid() {
+        return this.productionStepWorkers.stream()
+                .filter(x -> x instanceof AutomaticProductionStepWorker)
+                .flatMap(x -> ((AutomaticProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
+                .collect(Collectors.toMap(x -> x.getKey(), v -> v.getValue(), (v1, v2) -> v1 + v2));
     }
 
     private void onSubscriptionChange(StepProgress stepProgress) {
