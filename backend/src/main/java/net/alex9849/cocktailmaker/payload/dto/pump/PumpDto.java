@@ -21,16 +21,20 @@ public class PumpDto {
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
     private interface IsCleaning { boolean isCleaning(); }
+    private interface IsPowerStateHigh { boolean isPowerStateHigh(); }
+    private interface IsPumpedUp { boolean isPumpedUp(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientId {
+        public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientId, IsPowerStateHigh, IsPumpedUp {
             int timePerClInMs;
             int tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
             Long currentIngredientId;
+            boolean isPowerStateHigh;
+            boolean isPumpedUp;
         }
     }
 
@@ -38,7 +42,7 @@ public class PumpDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Id, TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl,
-                CurrentIngredient, IsCleaning {
+                CurrentIngredient, IsCleaning, IsPowerStateHigh, IsPumpedUp {
             long id;
             int timePerClInMs;
             int tubeCapacityInMl;
@@ -46,6 +50,8 @@ public class PumpDto {
             int fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             boolean isCleaning;
+            boolean isPowerStateHigh;
+            boolean isPumpedUp;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
