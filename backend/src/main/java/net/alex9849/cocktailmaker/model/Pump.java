@@ -79,7 +79,7 @@ public class Pump {
         return isPowerStateHigh;
     }
 
-    public void setIsPowerStateHigh(boolean isPowerStateHigh) {
+    public void setPowerStateHigh(boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
     }
 

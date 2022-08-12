@@ -89,6 +89,9 @@ public class PumpService {
             beforeUpdate.get().setRunning(false);
             pump.setRunning(false);
         }
+        if(beforeUpdate.get().isPowerStateHigh() != pump.isPowerStateHigh()) {
+            pump.setRunning(false);
+        }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }

@@ -85,6 +85,27 @@
               {{ props.row.fillingLevelInMl }} ml
             </q-td>
             <q-td
+              key="powerStateHigh"
+              :props="props"
+            >
+              {{ props.row.powerStateHigh ? 'High':'Low' }}
+            </q-td>
+            <q-td
+              key="pumpedUp"
+              :props="props"
+            >
+              <q-icon
+                v-if="props.row.pumpedUp"
+                size="sm"
+                :name="mdiCheckCircle"
+              />
+              <q-icon
+                v-else
+                size="sm"
+                :name="mdiCheckboxBlankCircleOutline"
+              />
+            </q-td>
+            <q-td
               key="actions"
               class="q-pa-md q-gutter-x-sm"
               :props="props"
@@ -177,7 +198,7 @@
 
 <script>
 
-import { mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
+import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
 import PumpService, { pumpDtoMapper } from '../services/pump.service'
@@ -202,6 +223,8 @@ export default {
           tubeCapacityInMl: '',
           bcmPin: '',
           fillingLevelInMl: 0,
+          powerStateHigh: false,
+          pumpedUp: false,
           currentIngredient: null
         },
         newPump: {
@@ -210,6 +233,8 @@ export default {
           tubeCapacityInMl: '',
           bcmPin: '',
           fillingLevelInMl: 0,
+          powerStateHigh: false,
+          pumpedUp: false,
           currentIngredient: null
         }
       },
@@ -226,12 +251,16 @@ export default {
         },
         { name: 'bcmPin', label: 'BCM-Pin', field: 'bcmPin', align: 'center' },
         { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
-        { name: 'fillingLevelInMl', label: 'Filling level', field: 'fillingLevelInMl', align: 'center' },
+        { name: 'fillingLevelInMl', label: 'Filling Level', field: 'fillingLevelInMl', align: 'center' },
+        { name: 'powerStateHigh', label: 'Power State', field: 'powerStateHigh', align: 'center' },
+        { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ]
     }
   },
   created () {
+    this.mdiCheckCircle = mdiCheckCircle
+    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay

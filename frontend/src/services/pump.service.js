@@ -32,6 +32,8 @@ export class PumpDtoMapper {
       fillingLevelInMl: detailed.fillingLevelInMl,
       timePerClInMs: detailed.timePerClInMs,
       tubeCapacityInMl: detailed.tubeCapacityInMl,
+      powerStateHigh: detailed.powerStateHigh,
+      pumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id
     }
   }

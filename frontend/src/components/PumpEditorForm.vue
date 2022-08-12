@@ -80,6 +80,23 @@
         />
       </template>
     </q-input>
+    <q-select
+      :model-value="v.modelValue.powerStateHigh.$model"
+      :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
+      map-options
+      emit-value
+      outlined
+      hide-bottom-space
+      label="Power State"
+      @update:model-value="setValue('powerStateHigh', $event)"
+    />
+    <q-checkbox
+      :model-value="v.modelValue.pumpedUp.$model"
+      outlined
+      hide-bottom-space
+      label="Pumped Up"
+      @update:model-value="setValue('pumpedUp', $event)"
+    />
     <q-dialog v-model:model-value="showHelpTubeFillingLevel">
       <q-card>
         <q-card-section>
@@ -174,6 +191,12 @@ export default {
         fillingLevelInMl: {
           required,
           minValue: minValue(0)
+        },
+        powerStateHigh: {
+          required
+        },
+        pumpedUp: {
+          required
         }
       }
     }
