@@ -111,7 +111,20 @@
               :props="props"
             >
               <q-btn
-                :icon="mdiPlay"
+                v-if="false"
+                :icon="mdiReply"
+                color="green"
+                @click="onClickCleanPump(props.row)"
+                dense
+                rounded
+                :loading="isCleaning(props.row.id)"
+              >
+                <q-tooltip>
+                  Pump back
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                :icon="mdiShare"
                 color="green"
                 @click="onClickCleanPump(props.row)"
                 dense
@@ -122,6 +135,25 @@
                   Pump up
                 </q-tooltip>
               </q-btn>
+              <q-btn
+                :icon="isCleaning(props.row.id) ? mdiStop : mdiPlay"
+                :color="isCleaning(props.row.id) ? 'red' : 'green'"
+                @click="onClickCleanPump(props.row)"
+                dense
+                rounded
+              >
+                <template v-slot:default>
+                  <q-tooltip>
+                    Turn on
+                  </q-tooltip>
+                </template>
+              </q-btn>
+            </q-td>
+            <q-td
+              key="options"
+              class="q-pa-md q-gutter-x-sm"
+              :props="props"
+            >
               <q-btn
                 :icon="mdiPencilOutline"
                 color="info"
@@ -198,7 +230,7 @@
 
 <script>
 
-import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline, mdiPlay } from '@quasar/extras/mdi-v5'
+import { mdiShare, mdiReply, mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline, mdiPlay, mdiStop } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
 import PumpService, { pumpDtoMapper } from '../services/pump.service'
@@ -254,16 +286,20 @@ export default {
         { name: 'fillingLevelInMl', label: 'Filling Level', field: 'fillingLevelInMl', align: 'center' },
         { name: 'powerStateHigh', label: 'Power State', field: 'powerStateHigh', align: 'center' },
         { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        { name: 'actions', label: 'Actions', field: '', align: 'center' },
+        { name: 'options', label: 'Options', field: '', align: 'center' }
       ]
     }
   },
   created () {
+    this.mdiShare = mdiShare
+    this.mdiReply = mdiReply
     this.mdiCheckCircle = mdiCheckCircle
     this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay
+    this.mdiStop = mdiStop
     this.fetchAll()
   },
   methods: {
