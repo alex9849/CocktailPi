@@ -42,9 +42,6 @@ public class PumpService {
     private WebSocketService webSocketService;
 
     @Autowired
-    private IGpioController gpioController;
-
-    @Autowired
     private EventService eventService;
 
     @Autowired
@@ -54,11 +51,7 @@ public class PumpService {
     private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
 
     public void turnAllPumpsOff() {
-        List<Pump> pumps = getAllPumps();
-        //Turn off all pumps
-        pumps.forEach(pump -> {
-            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
-        });
+        getAllPumps().forEach(p -> p.setRunning(false));
     }
 
     public List<Pump> getAllPumps() {
@@ -75,7 +68,7 @@ public class PumpService {
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
-        gpioController.getGpioPin(pump.getBcmPin()).setHigh();
+        pump.setRunning(false);
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
@@ -93,8 +86,8 @@ public class PumpService {
         }
         pumpRepository.update(pump);
         if(beforeUpdate.get().getBcmPin() != pump.getBcmPin()) {
-            gpioController.getGpioPin(beforeUpdate.get().getBcmPin()).setHigh();
-            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
+            beforeUpdate.get().setRunning(false);
+            pump.setRunning(false);
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
@@ -163,7 +156,7 @@ public class PumpService {
         }
         pumpRepository.delete(id);
         //Turn off pump
-        gpioController.getGpioPin(pump.getBcmPin()).setHigh();
+        pump.setRunning(false);
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
@@ -182,7 +175,7 @@ public class PumpService {
         if(!report.isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
-        this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()), gpioController)
+        this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         for(Pump pump : this.cocktailFactory.getUpdatedPumps()) {
             this.pumpRepository.update(pump);
@@ -262,19 +255,15 @@ public class PumpService {
         if(isCleaning(pump)) {
             throw new IllegalArgumentException("Pump is already cleaning!");
         }
-        double multiplier = 1.0;
-        if(pump.getCurrentIngredient() != null) {
-            multiplier = ((AutomatedIngredient) pump.getCurrentIngredient()).getPumpTimeMultiplier();
-        }
-        int runTime = (int) (pump.getTimePerClInMs() * multiplier / 10d) * pump.getTubeCapacityInMl();
+        int runTime = pump.getConvertMlToRuntime(pump.getTubeCapacityInMl());
         if (this.isMakingCocktail()) {
             throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
         }
         this.cleaningPumpIds.add(pump.getId());
-        gpioController.getGpioPin(pump.getBcmPin()).setLow();
+        pump.setRunning(true);
         webSocketService.broadcastPumpLayout(getAllPumps());
         scheduler.schedule(() -> {
-            gpioController.getGpioPin(pump.getBcmPin()).setHigh();
+            pump.setRunning(false);
             this.cleaningPumpIds.remove(pump.getId());
             webSocketService.broadcastPumpLayout(getAllPumps());
         }, runTime, TimeUnit.MILLISECONDS);

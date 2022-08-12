@@ -27,7 +27,6 @@ public class CocktailFactory {
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
     private AbstractProductionStepWorker currentProductionStepWorker = null;
     private final Set<Pump> pumps;
-    private final IGpioController gpioController;
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
 
@@ -40,9 +39,8 @@ public class CocktailFactory {
      * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, IGpioController gpioController) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps) {
         this.pumps = pumps;
-        this.gpioController = gpioController;
         this.feasibleRecipe = feasibleRecipe;
         this.user = user;
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
@@ -110,7 +108,7 @@ public class CocktailFactory {
             workers.add(new ManualProductionStepWorker(manualProductionSteps));
         }
         if(!automaticProductionSteps.isEmpty()) {
-            workers.add(new AutomaticProductionStepWorker(pumps, gpioController,
+            workers.add(new AutomaticProductionStepWorker(pumps,
                     automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
         }
         return workers;

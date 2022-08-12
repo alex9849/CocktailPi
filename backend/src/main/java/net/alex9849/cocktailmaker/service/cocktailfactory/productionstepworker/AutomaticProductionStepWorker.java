@@ -23,7 +23,6 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
     private final Set<Pump> updatedPumps;
     private final long requiredWorkingTime;
     private final ScheduledExecutorService scheduler;
-    private IGpioController gpioController;
     private Set<ScheduledFuture> scheduledPumpFutures;
     private ScheduledFuture finishTask;
     private ScheduledFuture notifierTask;
@@ -36,7 +35,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
      *
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
      */
-    public AutomaticProductionStepWorker(Set<Pump> pumps, IGpioController gpioController, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
+    public AutomaticProductionStepWorker(Set<Pump> pumps, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
         this.pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors
@@ -61,7 +60,6 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.pumpPumpPhases = pumpTimingStepCalculator.getPumpPhases();
         this.requiredWorkingTime = pumpTimingStepCalculator.getLongestIngredientTime();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
-        this.gpioController = gpioController;
         this.scheduledPumpFutures = new HashSet<>();
         this.started = false;
     }
@@ -74,12 +72,12 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.startTime = System.currentTimeMillis();
         for (PumpPhase pumpPhase : this.pumpPumpPhases) {
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setLow();
+                pumpPhase.getPump().setRunning(true);
                 pumpPhase.setStarted();
             }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
 
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                gpioController.getGpioPin(pumpPhase.getPump().getBcmPin()).setHigh();
+                pumpPhase.getPump().setRunning(false);
                 pumpPhase.setStopped();
             }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
@@ -147,10 +145,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
             if(seenPumps.contains(pumpPhase.getPump().getId())) {
                 continue;
             }
-            IGpioPin gpioPin = gpioController.getGpioPin(pumpPhase.getPump().getBcmPin());
-            if(!gpioPin.isHigh()) {
-                gpioPin.setHigh();
-            }
+            pumpPhase.getPump().setRunning(false);
             if(pumpPhase.getState() == PumpPhase.State.RUNNING) {
                 pumpPhase.setStopped();
             }
