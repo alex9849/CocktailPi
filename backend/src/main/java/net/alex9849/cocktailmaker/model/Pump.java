@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.model;
 
+import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
@@ -14,7 +16,10 @@ public class Pump {
     private int bcmPin;
     private int fillingLevelInMl;
     private Long currentIngredientId;
+    private boolean isPowerStateHigh;
+    private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
+    private IGpioPin gpioPin;
 
     public long getId() {
         return id;
@@ -45,7 +50,11 @@ public class Pump {
     }
 
     public void setBcmPin(int bcmPin) {
+        if(this.bcmPin == bcmPin) {
+            return;
+        }
         this.bcmPin = bcmPin;
+        this.gpioPin = null;
     }
 
     public AutomatedIngredient getCurrentIngredient() {
@@ -64,6 +73,43 @@ public class Pump {
 
     public Long getCurrentIngredientId() {
         return currentIngredientId;
+    }
+
+    public boolean isPowerStateHigh() {
+        return isPowerStateHigh;
+    }
+
+    public void setIsPowerStateHigh(boolean isPowerStateHigh) {
+        this.isPowerStateHigh = isPowerStateHigh;
+    }
+
+    public boolean isRunning() {
+        IGpioPin gpioPin = getGpioPin();
+        return gpioPin.isHigh() == isPowerStateHigh();
+    }
+
+    public void setRunning(boolean run) {
+        if(run == isPowerStateHigh()) {
+            getGpioPin().setHigh();
+        } else {
+            getGpioPin().setLow();
+        }
+    }
+
+    public IGpioPin getGpioPin() {
+        if(gpioPin == null) {
+            IGpioController controller = SpringUtility.getBean(IGpioController.class);
+            gpioPin = controller.getGpioPin(getBcmPin());
+        }
+        return gpioPin;
+    }
+
+    public boolean isPumpedUp() {
+        return isPumpedUp;
+    }
+
+    public void setPumpedUp(boolean pumpedUp) {
+        isPumpedUp = pumpedUp;
     }
 
     public void setCurrentIngredient(AutomatedIngredient currentIngredient) {
