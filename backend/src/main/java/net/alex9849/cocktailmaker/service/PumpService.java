@@ -72,7 +72,7 @@ public class PumpService {
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        if(getPumpOccupation(pump) != PumpOccupation.NONE) {
+        if(getPumpOccupation(beforeUpdate.get()) != PumpOccupation.NONE) {
             throw new IllegalStateException("Pump currently occupied!");
         }
         Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());
