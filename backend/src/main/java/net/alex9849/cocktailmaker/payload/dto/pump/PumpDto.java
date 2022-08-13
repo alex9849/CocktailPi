@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;
@@ -24,6 +25,10 @@ public class PumpDto {
     private interface IsPowerStateHigh { boolean isPowerStateHigh(); }
     private interface IsPumpedUp { boolean isPumpedUp(); }
 
+    private interface PatchIsPowerStateHigh { Boolean getIsPowerStateHigh(); }
+    private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
+    private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
@@ -35,6 +40,14 @@ public class PumpDto {
             Long currentIngredientId;
             boolean isPowerStateHigh;
             boolean isPumpedUp;
+        }
+
+        @Getter @Setter @EqualsAndHashCode
+        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPowerStateHigh, PatchIsPumpedUp {
+            Integer fillingLevelInMl;
+            Long currentIngredientId;
+            Boolean isPowerStateHigh;
+            Boolean isPumpedUp;
         }
     }
 

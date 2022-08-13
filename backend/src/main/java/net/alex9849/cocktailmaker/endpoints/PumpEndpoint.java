@@ -37,28 +37,24 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new PumpDto.Response.Detailed(createdPump));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pump updatePump = pumpService.fromDto(pumpDto);
         updatePump.setId(id);
-        if(!user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
-            Pump oldPump = pumpService.getPump(id);
-            if(oldPump != null) {
-                oldPump.setCurrentIngredient(updatePump.getCurrentIngredient());
-                oldPump.setFillingLevelInMl(updatePump.getFillingLevelInMl());
-                updatePump = oldPump;
-            }
-        }
         pumpService.updatePump(updatePump);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<?> patchPump(@PathVariable("id") long id) {
-        //Todo implement
+    public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Patch patchPumpDto) {
+        Pump toUpdate = pumpService.getPump(id);
+        if(toUpdate == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Pump updatePump = pumpService.fromDto(patchPumpDto, toUpdate);
+        pumpService.updatePump(updatePump);
         return ResponseEntity.ok().build();
     }
 

@@ -115,6 +115,24 @@ public class PumpService {
         return pump;
     }
 
+    public Pump fromDto(PumpDto.Request.Patch patchPumpDto, Pump toPatch) {
+        if(patchPumpDto == null) {
+            return toPatch;
+        }
+        if(patchPumpDto.getCurrentIngredientId() != null) {
+            Ingredient ingredient = ingredientService.getIngredient(patchPumpDto.getCurrentIngredientId());
+            if(ingredient == null) {
+                throw new IllegalArgumentException("Ingredient with id \"" + toPatch.getCurrentIngredientId() + "\" not found!");
+            }
+            if(!(ingredient instanceof AutomatedIngredient)) {
+                throw new IllegalArgumentException("Ingredient must be an AutomatedIngredient!");
+            }
+            toPatch.setCurrentIngredient((AutomatedIngredient) ingredient);
+        }
+        BeanUtils.copyProperties(patchPumpDto, toPatch);
+        return toPatch;
+    }
+
     public CocktailOrderConfiguration fromDto(CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
         if(orderConfigDto == null) {
             return null;
