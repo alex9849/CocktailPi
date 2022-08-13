@@ -21,7 +21,8 @@ public class PumpDto {
     private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
-    private interface IsCleaning { boolean isCleaning(); }
+    private interface IsReversed { boolean isReversed(); }
+    private interface Occupation { PumpService.PumpOccupation getOccupation(); }
     private interface IsPowerStateHigh { boolean isPowerStateHigh(); }
     private interface IsPumpedUp { boolean isPumpedUp(); }
 
@@ -53,25 +54,29 @@ public class PumpDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Id, TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl,
-                CurrentIngredient, IsCleaning, IsPowerStateHigh, IsPumpedUp {
+                CurrentIngredient, Occupation, IsReversed, IsPowerStateHigh, IsPumpedUp {
             long id;
             int timePerClInMs;
             int tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
-            boolean isCleaning;
+            PumpService.PumpOccupation occupation;
+            boolean isReversed;
             boolean isPowerStateHigh;
             boolean isPumpedUp;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
                 PumpService pService = SpringUtility.getBean(PumpService.class);
-                this.isCleaning = pService.isCleaning(pump);
+                this.occupation = pService.getPumpOccupation(pump);
+                this.isReversed = pService.isPumpDirectionReversed();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }
             }
         }
     }
+
+
 }

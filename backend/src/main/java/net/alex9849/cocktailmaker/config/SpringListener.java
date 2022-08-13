@@ -27,7 +27,7 @@ public class SpringListener {
     @EventListener
     public void handleContextRefreshed(ContextRefreshedEvent event) {
         flyway.migrate();
-        pumpService.turnAllPumpsOff();
+        pumpService.turnOnOffPumps(false);
     }
 
     @EventListener

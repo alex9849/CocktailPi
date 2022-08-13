@@ -94,7 +94,7 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findAddableIngredientsIdsOnPump() {
+    public Set<Long> findIngredientIdsOnPump() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT p.current_ingredient_id as id FROM pumps p WHERE p.current_ingredient_id IS NOT NULL");
             return DbUtils.executeGetIdsPstmt(pstmt);

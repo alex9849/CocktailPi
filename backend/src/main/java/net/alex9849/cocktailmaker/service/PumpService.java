@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
@@ -21,22 +20,15 @@ import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Service
 @Transactional
 public class PumpService {
-
-    private CocktailFactory cocktailFactory;
-
     @Autowired
     private PumpRepository pumpRepository;
 
@@ -44,18 +36,18 @@ public class PumpService {
     private WebSocketService webSocketService;
 
     @Autowired
-    private EventService eventService;
-
-    @Autowired
     private IngredientService ingredientService;
 
+    @Autowired
+    private CocktailOrderService cocktailOrderService;
+
+    private final Map<Long, ScheduledFuture<?>> pumpingUpPumpIdsToStopTask = new HashMap<>();
+
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final Set<Long> cleaningPumpIds = new ConcurrentSkipListSet<>();
 
-    public void turnAllPumpsOff() {
-        getAllPumps().forEach(p -> p.setRunning(false));
-    }
-
+    //
+    // CRUD actions
+    //
     public List<Pump> getAllPumps() {
         return pumpRepository.findAll();
     }
@@ -80,6 +72,9 @@ public class PumpService {
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
+        if(getPumpOccupation(pump) != PumpOccupation.NONE) {
+            throw new IllegalStateException("Pump currently occupied!");
+        }
         Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());
         if(optPumpWithGpio.isPresent()) {
             if(optPumpWithGpio.get().getId() != pump.getId()) {
@@ -96,6 +91,20 @@ public class PumpService {
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
+    }
+
+    public void deletePump(long id) {
+        Pump pump = getPump(id);
+        if(pump == null) {
+            throw new IllegalArgumentException("Pump doesn't exist!");
+        }
+        if(getPumpOccupation(pump) != PumpOccupation.NONE) {
+            throw new IllegalStateException("Pump currently occupied!");
+        }
+        pumpRepository.delete(id);
+        //Turn off pump
+        pump.setRunning(false);
+        webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
     public Pump fromDto(PumpDto.Request.Create pumpDto) {
@@ -138,172 +147,74 @@ public class PumpService {
         return toPatch;
     }
 
-    public CocktailOrderConfiguration fromDto(CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
-        if(orderConfigDto == null) {
-            return null;
+
+    //
+    // Actions
+    //
+
+    public PumpOccupation getPumpOccupation(Pump pump) {
+        if(this.cocktailOrderService.isMakingCocktail()) {
+            return PumpOccupation.COCKTAIL_PRODUCTION;
         }
-        CocktailOrderConfiguration orderConfig = new CocktailOrderConfiguration();
-        BeanUtils.copyProperties(orderConfigDto, orderConfig);
-        long pStep = 0;
-        Map<Long, Map<Long, AddableIngredient>> replacements = new HashMap<>();
-        orderConfig.setProductionStepReplacements(replacements);
-        for(List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> pStepDto : orderConfigDto.getProductionStepReplacements()) {
-            Map<Long, AddableIngredient> stepReplacements = replacements.computeIfAbsent(pStep, k -> new HashMap());
-            for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : pStepDto) {
-                Ingredient toReplace = ingredientService.getIngredient(replacementDto.getIngredientGroupId());
-                if(toReplace == null) {
-                    throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
-                }
-                if(!(toReplace instanceof IngredientGroup)) {
-                    throw new IllegalArgumentException("Ingredient to replace with id \"" + toReplace.getName() + "\" is not a IngredientGroup!");
-                }
-                AddableIngredient addableIngredientReplacement = null;
-                if(replacementDto.getReplacementId() != null) {
-                    Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
-                    if(replacement == null) {
-                        throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
-                    }
-                    if(!(replacement instanceof AddableIngredient)) {
-                        throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
-                    }
-                    addableIngredientReplacement = (AddableIngredient) replacement;
-                }
-                stepReplacements.put(toReplace.getId(), addableIngredientReplacement);
-            }
-            pStep++;
+        if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
+            return PumpOccupation.PUMPING_UP;
         }
-        return orderConfig;
+        if(pump.isRunning()) {
+            return PumpOccupation.RUNNING;
+        }
+        return PumpOccupation.NONE;
     }
 
-    public void deletePump(long id) {
-        Pump pump = getPump(id);
-        if(pump == null) {
-            throw new IllegalArgumentException("Pump doesn't exist!");
-        }
-        pumpRepository.delete(id);
-        //Turn off pump
-        pump.setRunning(false);
+    public boolean isPumpDirectionReversed() {
+        return false;
+    }
+
+    public void turnOnOffPumps(boolean turnOn) {
+        getAllPumps().forEach(p -> turnOnOffPumpInternal(p, turnOn));
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
-    public synchronized void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
-        if(this.isMakingCocktail()) {
-            throw new IllegalArgumentException("A cocktail is already being fabricated!");
-        }
-        if(isAnyCleaning()) {
-            throw new IllegalStateException("There are pumps getting cleaned currently!");
-        }
-        FeasibilityFactory feasibilityFactory = this.checkFeasibility(recipe, orderConfiguration);
-        FeasibilityReport report = feasibilityFactory.getFeasibilityReport();
-        if(!report.getInsufficientIngredients().isEmpty()) {
-            throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
-        }
-        if(!report.isFeasible()) {
-            throw new IllegalArgumentException("Cocktail not feasible!");
-        }
-        this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(getAllPumps()))
-                .subscribeProgress(this::onCocktailProgressSubscriptionChange);
-        for(Pump pump : this.cocktailFactory.getUpdatedPumps()) {
-            this.pumpRepository.update(pump);
-        }
+    public void turnOnOffPump(Pump pump, boolean turnOn) {
+        turnOnOffPumpInternal(pump, turnOn);
         webSocketService.broadcastPumpLayout(getAllPumps());
-        this.cocktailFactory.makeCocktail();
     }
 
-    private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
-        if(progress.getState() == CocktailProgress.State.CANCELLED || progress.getState() == CocktailProgress.State.FINISHED) {
-            this.scheduler.schedule(() -> {
-                this.cocktailFactory = null;
-                this.webSocketService.broadcastCurrentCocktailProgress(null);
-            }, 5000, TimeUnit.MILLISECONDS);
+    private void turnOnOffPumpInternal(Pump pump, boolean turnOn) {
+        PumpOccupation occupation = getPumpOccupation(pump);
+        if (occupation == PumpOccupation.COCKTAIL_PRODUCTION) {
+            throw new IllegalArgumentException("A cocktail is currently being prepared!");
         }
-        this.webSocketService.broadcastCurrentCocktailProgress(progress);
-
-        switch (progress.getState()) {
-            case RUNNING:
-                if (progress.getPreviousState() == CocktailProgress.State.READY_TO_START) {
-                    eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_STARTED);
-                }
-                break;
-            case MANUAL_ACTION_REQUIRED:
-            case MANUAL_INGREDIENT_ADD:
-                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_MANUAL_INTERACTION_REQUESTED);
-                break;
-            case CANCELLED:
-                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_CANCELED);
-                break;
-            case FINISHED:
-                eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_FINISHED);
-                break;
+        ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.get(pump.getId());
+        if(pumpUpFuture != null) {
+            pumpUpFuture.cancel(false);
         }
+        pump.setRunning(turnOn);
     }
 
-    public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
-        CocktailFactory.transformToAmountOfLiquid(recipe, orderConfig.getAmountOrderedInMl());
-        return new FeasibilityFactory(recipe, orderConfig, this.getAllPumps());
-    }
-
-    public synchronized void continueCocktailProduction() {
-        if (this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
-            throw new IllegalStateException("No cocktail is being prepared currently!");
+    public void pumpUp(Pump pump) {
+        if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
+            throw new IllegalArgumentException("Pump is already pumping up!");
         }
-        this.cocktailFactory.continueProduction();
-    }
-
-    public synchronized boolean isMakingCocktail() {
-        return this.cocktailFactory != null;
-    }
-
-    public synchronized boolean cancelCocktailOrder() {
-        if(this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
-            return false;
-        }
-        this.cocktailFactory.cancelCocktail();
-        Map<Pump, Integer> notUsedLiquidByPump = this.cocktailFactory.getNotUsedLiquid();
-        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
-            Pump pump = entry.getKey();
-            Integer notUsedLiquid = entry.getValue();
-            pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);
-            this.pumpRepository.update(pump);
-        }
-        webSocketService.broadcastPumpLayout(getAllPumps());
-        return true;
-    }
-
-    public CocktailProgress getCurrentCocktailProgress() {
-        if(this.cocktailFactory == null) {
-            return null;
-        }
-        return this.cocktailFactory.getCocktailprogress();
-    }
-
-    public synchronized void cleanPump(Pump pump) {
-        if(isCleaning(pump)) {
-            throw new IllegalArgumentException("Pump is already cleaning!");
+        if (this.getPumpOccupation(pump) != PumpOccupation.NONE) {
+            throw new IllegalArgumentException("Pump is currently occupied!");
         }
         int runTime = pump.getConvertMlToRuntime(pump.getTubeCapacityInMl());
-        if (this.isMakingCocktail()) {
-            throw new IllegalStateException("Can't clean pump! A cocktail is currently being made!");
-        }
-        this.cleaningPumpIds.add(pump.getId());
+        ScheduledFuture<?> stopTask = scheduler.schedule(() -> {
+            pump.setRunning(false);
+            pump.setPumpedUp(true);
+            this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
+            updatePump(pump);
+        }, runTime, TimeUnit.MILLISECONDS);
+        this.pumpingUpPumpIdsToStopTask.put(pump.getId(), stopTask);
         pump.setRunning(true);
         webSocketService.broadcastPumpLayout(getAllPumps());
-        scheduler.schedule(() -> {
-            pump.setRunning(false);
-            this.cleaningPumpIds.remove(pump.getId());
-            webSocketService.broadcastPumpLayout(getAllPumps());
-        }, runTime, TimeUnit.MILLISECONDS);
     }
 
-    public boolean isCleaning(Pump pump) {
-        return cleaningPumpIds.contains(pump.getId());
+    Set<Long> findIngredientIdsOnPump() {
+        return pumpRepository.findIngredientIdsOnPump();
     }
 
-    public boolean isAnyCleaning() {
-        return !cleaningPumpIds.isEmpty();
-    }
-
-    Set<Long> findAddableIngredientsIdsOnPump() {
-        return pumpRepository.findAddableIngredientsIdsOnPump();
+    public enum PumpOccupation {
+        RUNNING, PUMPING_UP, COCKTAIL_PRODUCTION, NONE
     }
 }

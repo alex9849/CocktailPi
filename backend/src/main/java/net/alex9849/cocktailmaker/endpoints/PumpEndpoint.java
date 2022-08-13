@@ -61,12 +61,11 @@ public class PumpEndpoint {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpup", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpUp(@PathVariable("id") long id) {
-        //Todo update
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.cleanPump(pump);
+        pumpService.pumpUp(pump);
         return ResponseEntity.ok().build();
     }
 
@@ -80,14 +79,22 @@ public class PumpEndpoint {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "start", method = RequestMethod.PUT)
     public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id) {
-        //Todo implement
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        pumpService.turnOnOffPump(pump, true);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "stop", method = RequestMethod.PUT)
     public ResponseEntity<?> stopPump(@RequestParam(value = "id", required = false) Long id) {
-        //Todo implement
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        pumpService.turnOnOffPump(pump, false);
         return ResponseEntity.ok().build();
     }
 }
