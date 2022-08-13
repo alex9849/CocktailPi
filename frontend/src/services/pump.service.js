@@ -65,11 +65,15 @@ export class PumpDtoMapper {
   }
 
   toPumpPatchDto (detailed) {
-    return {
+    const dto = {
       fillingLevelInMl: detailed.fillingLevelInMl,
       isPumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id
     }
+    if (detailed.currentIngredient === null) {
+      dto.isRemoveIngredient = true
+    }
+    return dto
   }
 }
 

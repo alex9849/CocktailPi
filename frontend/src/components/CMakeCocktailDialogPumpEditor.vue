@@ -13,7 +13,7 @@
       >
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
-          @update:selected="updatePumpIngredient(props.row, $event)"
+          @update:selected="updatePumpIngredient(props.row.id, $event)"
           clearable
           dense
           filter-manual-ingredients
@@ -44,7 +44,7 @@
       >
         <q-input
           :model-value="props.row.fillingLevelInMl"
-          @update:model-value="updatePumpFillingLevel(props.row, $event)"
+          @update:model-value="updatePumpFillingLevel(props.row.id, Number($event))"
           debounce="500"
           :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
           type="number"
@@ -57,24 +57,38 @@
         </q-input>
       </q-td>
     </template>
+    <template v-slot:body-cell-pumpedUp="props">
+      <q-td
+        key="pumpedUp"
+        class="q-pa-md q-gutter-x-sm"
+        :props="props"
+      >
+        <c-pumped-up-icon-button
+          :pump-id="props.row.id"
+          :read-only="false"
+        />
+      </q-td>
+    </template>
     <template v-slot:body-cell-actions="props">
       <q-td
         key="actions"
         class="q-pa-md q-gutter-x-sm"
         :props="props"
       >
-        <q-btn
-          :icon="mdiPlay"
-          color="green"
-          @click="onClickCleanPump(props.row)"
-          dense
-          rounded
-          :loading="isCleaning(props.row.id)"
-        >
-          <q-tooltip>
-            Pump up
-          </q-tooltip>
-        </q-btn>
+        <c-pump-up-button
+          v-if="false"
+          :pump-id="props.row.id"
+          :current-pump-direction-reversed="props.row.reversed"
+          :pump-up-direction-reversed="true"
+        />
+        <c-pump-up-button
+          :pump-id="props.row.id"
+          :current-pump-direction-reversed="props.row.reversed"
+          :pump-up-direction-reversed="false"
+        />
+        <c-pump-turn-on-off-button
+          :pump-id="props.row.id"
+        />
       </q-td>
     </template>
   </q-table>
@@ -83,21 +97,18 @@
 <script>
 import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
-import { mdiPlay } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
+import CPumpUpButton from 'components/CPumpUpButton'
+import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
+import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
 
 export default {
   name: 'CMakeCocktailDialogPumpEditor',
-  components: { CIngredientSelector },
+  components: { CPumpedUpIconButton, CPumpTurnOnOffButton, CPumpUpButton, CIngredientSelector },
   props: {
     neededIngredients: {
       type: Array,
       required: true
-    }
-  },
-  setup () {
-    return {
-      mdiPlay: mdiPlay
     }
   },
   data () {
@@ -106,6 +117,7 @@ export default {
         { name: 'id', label: 'Nr', field: 'id', align: 'left' },
         { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
         { name: 'fillingLevelInMl', label: 'Remaining filling level', field: 'fillingLevelInMl', align: 'center' },
+        { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       loadingPumpIdsCurrentIngredient: [],
@@ -125,36 +137,32 @@ export default {
     isIngredientNeeded (ingredientId) {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
-    onClickCleanPump (pump) {
-      PumpService.cleanPump(pump.id)
-    },
-    updatePumpFillingLevel (pump, newFillingLevel) {
+    updatePumpFillingLevel (pumpId, newFillingLevel) {
       if (!newFillingLevel || newFillingLevel < 0) {
         return
       }
-      const dto = pumpDtoMapper.toPumpCreateDto(pump)
-      dto.fillingLevelInMl = newFillingLevel
-      this.loadingPumpIdsFillingLevel.push(pump.id)
-      PumpService.updatePump(pump.id, dto)
+      this.loadingPumpIdsFillingLevel.push(pumpId)
+      PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
+        fillingLevelInMl: newFillingLevel
+      }))
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
-          array.splice(array.indexOf(pump.id), 1)
+          array.splice(array.indexOf(pumpId), 1)
         })
     },
-    updatePumpIngredient (pump, newIngredient) {
-      const dto = pumpDtoMapper.toPumpCreateDto(pump)
-      dto.currentIngredientId = newIngredient?.id
-      this.loadingPumpIdsCurrentIngredient.push(pump.id)
-      PumpService.updatePump(pump.id, dto)
+    updatePumpIngredient (pumpId, newIngredient) {
+      this.loadingPumpIdsCurrentIngredient.push(pumpId)
+      PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
+        currentIngredient: newIngredient
+      }))
         .finally(() => {
           const array = this.loadingPumpIdsCurrentIngredient
-          array.splice(array.indexOf(pump.id), 1)
+          array.splice(array.indexOf(pumpId), 1)
         })
     }
   },
   computed: {
     ...mapGetters({
-      isCleaning: 'pumpLayout/isCleaning',
       getPumpLayout: 'pumpLayout/getLayout',
       getPumpIngredients: 'pumpLayout/getPumpIngredients'
     }),

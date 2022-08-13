@@ -27,6 +27,7 @@ public class PumpDto {
     private interface IsPumpedUp { boolean isPumpedUp(); }
 
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
+    private interface PatchRemoveIngredient { Boolean getIsRemoveIngredient(); }
     private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -43,10 +44,11 @@ public class PumpDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp {
+        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, PatchRemoveIngredient {
             Integer fillingLevelInMl;
             Long currentIngredientId;
             Boolean isPumpedUp;
+            Boolean isRemoveIngredient;
         }
     }
 

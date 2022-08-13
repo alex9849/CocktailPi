@@ -5,6 +5,7 @@
     @click="onClickPumpUp(pumpId)"
     dense
     rounded
+    :disable="isRunning"
     :loading="loading"
   >
     <q-tooltip>
@@ -47,11 +48,12 @@ export default {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation'
     }),
-    isPumpingUp () {
-      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP'
+    isRunning () {
+      return this.getPumpOccupation(this.pumpId) === 'RUNNING'
     },
     loading () {
-      return this.isPumpingUp && (this.currentPumpDirectionReversed === this.pumpUpDirectionReversed)
+      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP' &&
+        (this.currentPumpDirectionReversed === this.pumpUpDirectionReversed)
     }
   }
 }

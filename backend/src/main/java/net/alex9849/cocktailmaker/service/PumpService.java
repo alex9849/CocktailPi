@@ -140,6 +140,9 @@ public class PumpService {
             }
             toPatch.setCurrentIngredient((AutomatedIngredient) ingredient);
         }
+        if(patchPumpDto.getIsRemoveIngredient() != null && patchPumpDto.getIsRemoveIngredient()) {
+            toPatch.setCurrentIngredient(null);
+        }
         BeanUtils.copyProperties(patchPumpDto, toPatch, SpringUtility.getNullPropertyNames(patchPumpDto));
         if(patchPumpDto.getIsPumpedUp() != null) {
             toPatch.setPumpedUp(patchPumpDto.getIsPumpedUp());
