@@ -19,6 +19,29 @@ export const isCleaning = (state) => {
   }
 }
 
+export const isPumpingUpOrDown = (state) => {
+  //TODO Add correct attribute
+  return (pumpId) => {
+    for (const pump of state.pumpLayout) {
+      if (pump.id === pumpId) {
+        return pump.pumpedUp
+      }
+    }
+    return false
+  }
+}
+
+export const isPumpedUp = (state) => {
+  return (pumpId) => {
+    for (const pump of state.pumpLayout) {
+      if (pump.id === pumpId) {
+        return pump.pumpedUp
+      }
+    }
+    return false
+  }
+}
+
 export const anyCleaning = (state) => state.pumpLayout.some(x => x.cleaning)
 
 export const getLayout = (state) => state.pumpLayout

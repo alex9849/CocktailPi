@@ -94,15 +94,9 @@
               key="pumpedUp"
               :props="props"
             >
-              <q-icon
-                v-if="props.row.pumpedUp"
-                size="sm"
-                :name="mdiCheckCircle"
-              />
-              <q-icon
-                v-else
-                size="sm"
-                :name="mdiCheckboxBlankCircleOutline"
+              <c-pump-pumped-up-button
+                :pump-id="props.row.id"
+                :read-only="false"
               />
             </q-td>
             <q-td
@@ -237,10 +231,11 @@ import PumpService, { pumpDtoMapper } from '../services/pump.service'
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
+import CPumpPumpedUpButton from 'components/CPumpPumpedUpButton'
 
 export default {
   name: 'PumpManagement',
-  components: { TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
+  components: { CPumpPumpedUpButton, TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
   data () {
     return {
       isLoading: false,
