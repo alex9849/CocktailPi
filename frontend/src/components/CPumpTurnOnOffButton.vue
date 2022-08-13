@@ -2,6 +2,7 @@
   <q-btn
     :icon="isPumpTurnedOn ? mdiStop : mdiPlay"
     :color="isPumpTurnedOn ? 'red' : 'green'"
+    :disable="disable"
     @click="onClickTurnOnOrOffPump()"
     dense
     rounded
@@ -55,6 +56,9 @@ export default {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation'
     }),
+    disable () {
+      return this.getPumpOccupation(this.pumpId) === 'COCKTAIL_PRODUCTION'
+    },
     isPumpingUp () {
       return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP'
     },

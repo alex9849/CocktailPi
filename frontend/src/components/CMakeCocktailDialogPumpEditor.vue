@@ -14,6 +14,7 @@
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
           @update:selected="updatePumpIngredient(props.row.id, $event)"
+          :disable="props.row.occupation !== 'NONE'"
           clearable
           dense
           filter-manual-ingredients
@@ -24,7 +25,6 @@
         >
           <template
             v-slot:afterIngredientName="{scope}"
-
           >
             <q-item-label
               v-if="!!missingAutomaticIngredients.some(x => x.id === scope.opt.id)"
@@ -47,6 +47,7 @@
           @update:model-value="updatePumpFillingLevel(props.row.id, Number($event))"
           debounce="500"
           :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
+          :disable="props.row.occupation !== 'NONE'"
           type="number"
           dense
           outlined

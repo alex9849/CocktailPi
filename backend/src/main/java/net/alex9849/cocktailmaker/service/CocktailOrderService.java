@@ -63,11 +63,12 @@ public class CocktailOrderService {
         if(!report.isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
-        this.cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(pumpService.getAllPumps()))
+        CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(pumpService.getAllPumps()))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
-        for(Pump pump : this.cocktailFactory.getUpdatedPumps()) {
+        for(Pump pump : cocktailFactory.getUpdatedPumps()) {
             pumpService.updatePump(pump);
         }
+        this.cocktailFactory = cocktailFactory;
         webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         this.cocktailFactory.makeCocktail();
     }
