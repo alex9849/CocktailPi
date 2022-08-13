@@ -282,10 +282,22 @@ export default {
   },
   methods: {
     onClickTurnOnAllPumps () {
-      PumpService.startPump(null)
+      const vm = this
+      PumpService.startPump(null).then(() => {
+        vm.$q.notify({
+          type: 'positive',
+          message: 'All pumps started!'
+        })
+      })
     },
     onClickTurnOffAllPumps () {
-      PumpService.stopPump(null)
+      const vm = this
+      PumpService.stopPump(null).then(() => {
+        vm.$q.notify({
+          type: 'positive',
+          message: 'All pumps stopped!'
+        })
+      })
     },
     deletePump (id) {
       return PumpService.deletePump(id)

@@ -33,10 +33,21 @@ export default {
   },
   methods: {
     onClickTurnOnOrOffPump () {
+      const vm = this
       if (this.isPumpTurnedOn) {
-        PumpService.stopPump(this.pumpId)
+        PumpService.stopPump(this.pumpId).then(() => {
+          vm.$q.notify({
+            type: 'positive',
+            message: 'Pump #' + String(this.pumpId) + ' stopped!'
+          })
+        })
       } else {
-        PumpService.startPump(this.pumpId)
+        PumpService.startPump(this.pumpId).then(() => {
+          vm.$q.notify({
+            type: 'positive',
+            message: 'Pump #' + String(this.pumpId) + ' started!'
+          })
+        })
       }
     }
   },
