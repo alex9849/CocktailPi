@@ -3,7 +3,7 @@
     :model-value="isPumpedUp(pumpId)"
     @update:model-value="toggle($event)"
     :disable="readOnly || isPumpingUpOrDown(pumpId)"
-    :checked-icon="isPumpingUpOrDown(pumpId) ? mdiTimerSandEmpty : mdiCheckCircle"
+    :checked-icon="isPumpingUpOrDown(pumpId) ? mdiTimerSandEmpty : mdiCheckCircleOutline"
     :unchecked-icon="isPumpingUpOrDown(pumpId) ? mdiTimerSandEmpty : mdiCloseCircleOutline"
     :color="color"
     keep-color
@@ -12,7 +12,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { mdiCheckCircle, mdiCloseCircleOutline, mdiTimerSandEmpty } from '@quasar/extras/mdi-v5'
+import { mdiCheckCircleOutline, mdiCloseCircleOutline, mdiTimerSandEmpty } from '@quasar/extras/mdi-v5'
 import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 
 export default {
@@ -28,7 +28,7 @@ export default {
     }
   },
   created () {
-    this.mdiCheckCircle = mdiCheckCircle
+    this.mdiCheckCircleOutline = mdiCheckCircleOutline
     this.mdiCloseCircleOutline = mdiCloseCircleOutline
     this.mdiTimerSandEmpty = mdiTimerSandEmpty
   },

@@ -20,11 +20,11 @@ export const isCleaning = (state) => {
 }
 
 export const isPumpingUpOrDown = (state) => {
-  //TODO Add correct attribute
+  // TODO Add correct attribute
   return (pumpId) => {
     for (const pump of state.pumpLayout) {
       if (pump.id === pumpId) {
-        return pump.pumpedUp
+        return false // pump.pumpedUp
       }
     }
     return false
