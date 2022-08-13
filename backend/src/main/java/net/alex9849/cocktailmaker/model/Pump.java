@@ -133,12 +133,11 @@ public class Pump {
     }
 
     public int getConvertMlToRuntime(int mlToPump) {
-        if(getCurrentIngredient() == null) {
-            throw new IllegalStateException("Pump got no ingredient assigned!");
+        double multiplier = 1;
+        if(getCurrentIngredient() != null) {
+            multiplier = getCurrentIngredient().getPumpTimeMultiplier();
         }
-        return  (int) (getCurrentIngredient().getPumpTimeMultiplier()
-                * mlToPump
-                * this.getTimePerClInMs() / 10d);
+        return  (int) (multiplier * mlToPump * this.getTimePerClInMs() / 10d);
     }
 
     public int getConvertRuntimeToMl(int runtime) {

@@ -12,8 +12,30 @@ class PumpService {
     return axios.post(API_PATH, createPump)
   }
 
-  cleanPump (id) {
-    return axios.put(API_PATH + String(id) + '/clean')
+  pumpUp (id) {
+    return axios.put(API_PATH + String(id) + '/pumpup')
+  }
+
+  pumpDown (id) {
+    return axios.put(API_PATH + String(id) + '/pumpback')
+  }
+
+  startPump (id) {
+    const config = {
+      params: {
+        id
+      }
+    }
+    return axios.put(API_PATH + String(id) + '/start', null, config)
+  }
+
+  stopPump (id) {
+    const config = {
+      params: {
+        id
+      }
+    }
+    return axios.put(API_PATH + String(id) + '/stop', null, config)
   }
 
   updatePump (id, createPump) {

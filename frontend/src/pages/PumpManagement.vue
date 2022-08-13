@@ -1,22 +1,42 @@
 <template>
   <q-page class="page-content" padding>
     <h5>Pumps</h5>
-    <TopButtonArranger>
-      <q-btn
-        color="negative"
-        label="Delete selected pumps"
-        no-caps
-        :disable="isLoading"
-        @click="$refs.deleteDialog.openForItems(selected)"
-      />
-      <q-btn
-        color="positive"
-        label="Add pump"
-        @click="showEditDialog()"
-        no-caps
-        :disable="isLoading"
-      />
-    </TopButtonArranger>
+    <div class="q-gutter-sm">
+      <TopButtonArranger>
+        <q-btn
+          color="negative"
+          label="Delete selected pumps"
+          no-caps
+          :disable="isLoading"
+          @click="$refs.deleteDialog.openForItems(selected)"
+        />
+        <q-btn
+          color="positive"
+          label="Add pump"
+          @click="showEditDialog()"
+          no-caps
+          :disable="isLoading"
+        />
+      </TopButtonArranger>
+      <TopButtonArranger>
+        <q-btn
+          color="positive"
+          label="Start all pumps"
+          @click="onClickTurnOnAllPumps()"
+          :icon="mdiPlay"
+          no-caps
+          :disable="isLoading"
+        />
+        <q-btn
+          color="negative"
+          label="Stop all pumps"
+          @click="onClickTurnOffAllPumps()"
+          :icon="mdiStop"
+          no-caps
+          :disable="isLoading"
+        />
+      </TopButtonArranger>
+    </div>
     <div class="q-py-md">
       <q-table
         :columns="columns"
@@ -112,7 +132,7 @@
               <q-btn
                 :icon="mdiShare"
                 color="green"
-                @click="onClickCleanPump(props.row)"
+                @click="onClickPumpUp(props.row.id)"
                 dense
                 rounded
                 :loading="isCleaning(props.row.id)"
@@ -124,7 +144,7 @@
               <q-btn
                 :icon="isCleaning(props.row.id) ? mdiStop : mdiPlay"
                 :color="isCleaning(props.row.id) ? 'red' : 'green'"
-                @click="onClickCleanPump(props.row)"
+                @click="onClickTurnOnOrOffPump(props.row.id)"
                 dense
                 rounded
               >
@@ -287,8 +307,21 @@ export default {
     this.mdiStop = mdiStop
   },
   methods: {
-    onClickCleanPump (pump) {
-      PumpService.cleanPump(pump.id)
+    onClickPumpUp (id) {
+      PumpService.pumpUp(id)
+    },
+    onClickTurnOnOrOffPump (id) {
+      if (this.isCleaning(id)) {
+        PumpService.stopPump(id)
+      } else {
+        PumpService.startPump(id)
+      }
+    },
+    onClickTurnOnAllPumps () {
+      PumpService.startPump(null)
+    },
+    onClickTurnOffAllPumps () {
+      PumpService.stopPump(null)
     },
     deletePump (id) {
       return PumpService.deletePump(id)

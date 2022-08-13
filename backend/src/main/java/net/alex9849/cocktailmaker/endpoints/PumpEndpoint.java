@@ -79,14 +79,14 @@ public class PumpEndpoint {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "start", method = RequestMethod.PUT)
-    public ResponseEntity<?> start(@RequestParam(value = "id", required = false) Long id) {
+    public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id) {
         //Todo implement
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "stop", method = RequestMethod.PUT)
-    public ResponseEntity<?> stop(@RequestParam(value = "id", required = false) Long id) {
+    public ResponseEntity<?> stopPump(@RequestParam(value = "id", required = false) Long id) {
         //Todo implement
         return ResponseEntity.ok().build();
     }
