@@ -106,7 +106,7 @@
               key="pumpedUp"
               :props="props"
             >
-              <c-pump-pumped-up-button
+              <c-pumped-up-icon-button
                 :pump-id="props.row.id"
                 :read-only="false"
               />
@@ -116,44 +116,20 @@
               class="q-pa-md q-gutter-x-sm"
               :props="props"
             >
-              <q-btn
+              <c-pump-up-button
                 v-if="false"
-                :icon="mdiReply"
-                color="green"
-                @click="onClickCleanPump(props.row)"
-                dense
-                rounded
-                :loading="isPumpingUp(props.row.id) && props.row.reversed"
-              >
-                <q-tooltip>
-                  Pump back
-                </q-tooltip>
-              </q-btn>
-              <q-btn
-                :icon="mdiShare"
-                color="green"
-                @click="onClickPumpUp(props.row.id)"
-                dense
-                rounded
-                :loading="isPumpingUp(props.row.id) && !props.row.reversed"
-              >
-                <q-tooltip>
-                  Pump up
-                </q-tooltip>
-              </q-btn>
-              <q-btn
-                :icon="isPumpTurnedOn(props.row.id) ? mdiStop : mdiPlay"
-                :color="isPumpTurnedOn(props.row.id) ? 'red' : 'green'"
-                @click="onClickTurnOnOrOffPump(props.row.id)"
-                dense
-                rounded
-              >
-                <template v-slot:default>
-                  <q-tooltip>
-                    Turn on
-                  </q-tooltip>
-                </template>
-              </q-btn>
+                :pump-id="props.row.id"
+                :current-pump-direction-reversed="props.row.reversed"
+                :pump-up-direction-reversed="true"
+              />
+              <c-pump-up-button
+                :pump-id="props.row.id"
+                :current-pump-direction-reversed="props.row.reversed"
+                :pump-up-direction-reversed="false"
+              />
+              <c-pump-turn-on-off-button
+                :pump-id="props.row.id"
+              />
             </q-td>
             <q-td
               key="options"
@@ -235,18 +211,20 @@
 
 <script>
 
-import { mdiShare, mdiReply, mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline, mdiPlay, mdiStop } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiPlay, mdiStop } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpEditorForm from '../components/PumpEditorForm'
 import PumpService, { pumpDtoMapper } from '../services/pump.service'
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
-import CPumpPumpedUpButton from 'components/CPumpPumpedUpButton'
+import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
+import CPumpUpButton from 'components/CPumpUpButton'
+import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 
 export default {
   name: 'PumpManagement',
-  components: { CPumpPumpedUpButton, TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
+  components: { CPumpTurnOnOffButton, CPumpUpButton, CPumpedUpIconButton, TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
   data () {
     return {
       isLoading: false,
@@ -297,26 +275,12 @@ export default {
     }
   },
   created () {
-    this.mdiShare = mdiShare
-    this.mdiReply = mdiReply
-    this.mdiCheckCircle = mdiCheckCircle
-    this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
   },
   methods: {
-    onClickPumpUp (id) {
-      PumpService.pumpUp(id)
-    },
-    onClickTurnOnOrOffPump (id) {
-      if (this.isPumpTurnedOn(id)) {
-        PumpService.stopPump(id)
-      } else {
-        PumpService.startPump(id)
-      }
-    },
     onClickTurnOnAllPumps () {
       PumpService.startPump(null)
     },
@@ -369,12 +333,6 @@ export default {
         PumpService.updatePump(this.editOptions.editPump.id, dto)
           .then(onSuccess, error => onError(error))
       }
-    },
-    isPumpingUp (id) {
-      return this.getPumpOccupation(id) === 'PUMPING_UP'
-    },
-    isPumpTurnedOn (id) {
-      return this.isPumpingUp(id) || this.getPumpOccupation(id) === 'RUNNING'
     }
   },
   computed: {

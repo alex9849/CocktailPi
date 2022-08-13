@@ -16,7 +16,7 @@ import { mdiCheckCircleOutline, mdiCloseCircleOutline, mdiTimerSandEmpty } from 
 import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 
 export default {
-  name: 'CPumpPumpedUpButton',
+  name: 'CPumpedUpIconButton',
   props: {
     pumpId: {
       type: Number,
