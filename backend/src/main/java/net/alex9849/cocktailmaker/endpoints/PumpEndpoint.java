@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,20 +56,42 @@ public class PumpEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
-        pumpService.deletePump(id);
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> patchPump(@PathVariable("id") long id) {
+        //Todo implement
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
-    @RequestMapping(value = "{id}/clean", method = RequestMethod.PUT)
-    public ResponseEntity<?> cleanPump(@PathVariable("id") long id) {
+    @RequestMapping(value = "{id}/pumpup", method = RequestMethod.PUT)
+    public ResponseEntity<?> pumpUp(@PathVariable("id") long id) {
+        //Todo update
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
         pumpService.cleanPump(pump);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "{id}/pumpback", method = RequestMethod.PUT)
+    public ResponseEntity<?> pumpBack(@PathVariable("id") long id) {
+        //Todo implement
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "start", method = RequestMethod.PUT)
+    public ResponseEntity<?> start(@RequestParam(value = "id", required = false) Long id) {
+        //Todo implement
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "stop", method = RequestMethod.PUT)
+    public ResponseEntity<?> stop(@RequestParam(value = "id", required = false) Long id) {
+        //Todo implement
         return ResponseEntity.ok().build();
     }
 }
