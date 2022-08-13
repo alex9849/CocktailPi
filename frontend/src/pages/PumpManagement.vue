@@ -16,14 +16,6 @@
         no-caps
         :disable="isLoading"
       />
-      <q-btn
-        color="info"
-        label="Refresh"
-        :disable="isLoading"
-        :loading="isLoading"
-        @click="onRefreshButton"
-        no-caps
-      />
     </TopButtonArranger>
     <div class="q-py-md">
       <q-table
@@ -216,7 +208,6 @@
       :list-point-method="x => 'Pump #' + x.id"
       item-name-plural="pumps"
       item-name-singular="pump"
-      @deleteFailure="fetchAll"
       @deleteSuccess="onDeleteSuccess"
     />
   </q-page>
@@ -265,7 +256,6 @@ export default {
           currentIngredient: null
         }
       },
-      pumps: [],
       selected: [],
       columns: [
         { name: 'id', label: 'Nr', field: 'id', align: 'left' },
@@ -295,24 +285,8 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
-    this.fetchAll()
   },
   methods: {
-    onRefreshButton () {
-      this.isLoading = true
-      const vm = this
-      setTimeout(() => {
-        vm.fetchAll()
-      }, 500)
-    },
-    fetchAll () {
-      this.isLoading = true
-      PumpService.getAllPumps()
-        .then(pumps => {
-          this.pumps = pumps
-          this.isLoading = false
-        })
-    },
     onClickCleanPump (pump) {
       PumpService.cleanPump(pump.id)
     },
@@ -321,7 +295,6 @@ export default {
     },
     onDeleteSuccess () {
       this.selected.splice(0, this.selected.length)
-      this.fetchAll()
     },
     closeEditDialog () {
       this.editOptions.editPump = Object.assign({}, this.editOptions.newPump)
@@ -345,7 +318,6 @@ export default {
           message: 'Pump ' + (vm.isEditIngredientNew ? 'created' : 'updated') + ' successfully'
         })
         vm.closeEditDialog()
-        vm.fetchAll()
       }
 
       const onError = function (error) {
@@ -368,7 +340,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isCleaning: 'pumpLayout/isCleaning'
+      isCleaning: 'pumpLayout/isCleaning',
+      pumps: 'pumpLayout/getLayout'
     }),
     isEditPumpNew () {
       return this.editOptions.editPump.id === -1
