@@ -2,9 +2,9 @@
   <q-checkbox
     :model-value="isPumpedUp(pumpId)"
     @update:model-value="toggle($event)"
-    :disable="readOnly || isPumpingUpOrDown(pumpId)"
-    :checked-icon="isPumpingUpOrDown(pumpId) ? mdiTimerSandEmpty : mdiCheckCircleOutline"
-    :unchecked-icon="isPumpingUpOrDown(pumpId) ? mdiTimerSandEmpty : mdiCloseCircleOutline"
+    :disable="readOnly || isPumpingUp(pumpId)"
+    :checked-icon="isPumpingUp(pumpId) ? mdiTimerSandEmpty : mdiCheckCircleOutline"
+    :unchecked-icon="isPumpingUp(pumpId) ? mdiTimerSandEmpty : mdiCloseCircleOutline"
     :color="color"
     keep-color
   />
@@ -37,15 +37,18 @@ export default {
       PumpService.patchPump(this.pumpId, pumpDtoMapper.toPumpPatchDto({
         pumpedUp: state
       }))
+    },
+    isPumpingUp (id) {
+      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP'
     }
   },
   computed: {
     ...mapGetters({
-      isPumpingUpOrDown: 'pumpLayout/isPumpingUpOrDown',
+      getPumpOccupation: 'pumpLayout/getPumpOccupation',
       isPumpedUp: 'pumpLayout/isPumpedUp'
     }),
     color () {
-      if (this.isPumpingUpOrDown(this.pumpId)) {
+      if (this.isPumpingUp(this.pumpId)) {
         return 'orange'
       }
       if (this.isPumpedUp(this.pumpId)) {

@@ -123,7 +123,7 @@
                 @click="onClickCleanPump(props.row)"
                 dense
                 rounded
-                :loading="isCleaning(props.row.id)"
+                :loading="isPumpingUp(props.row.id) && props.row.reversed"
               >
                 <q-tooltip>
                   Pump back
@@ -135,15 +135,15 @@
                 @click="onClickPumpUp(props.row.id)"
                 dense
                 rounded
-                :loading="isCleaning(props.row.id)"
+                :loading="isPumpingUp(props.row.id) && !props.row.reversed"
               >
                 <q-tooltip>
                   Pump up
                 </q-tooltip>
               </q-btn>
               <q-btn
-                :icon="isCleaning(props.row.id) ? mdiStop : mdiPlay"
-                :color="isCleaning(props.row.id) ? 'red' : 'green'"
+                :icon="isPumpTurnedOn(props.row.id) ? mdiStop : mdiPlay"
+                :color="isPumpTurnedOn(props.row.id) ? 'red' : 'green'"
                 @click="onClickTurnOnOrOffPump(props.row.id)"
                 dense
                 rounded
@@ -311,7 +311,7 @@ export default {
       PumpService.pumpUp(id)
     },
     onClickTurnOnOrOffPump (id) {
-      if (this.isCleaning(id)) {
+      if (this.isPumpTurnedOn(id)) {
         PumpService.stopPump(id)
       } else {
         PumpService.startPump(id)
@@ -369,11 +369,17 @@ export default {
         PumpService.updatePump(this.editOptions.editPump.id, dto)
           .then(onSuccess, error => onError(error))
       }
+    },
+    isPumpingUp (id) {
+      return this.getPumpOccupation(id) === 'PUMPING_UP'
+    },
+    isPumpTurnedOn (id) {
+      return this.isPumpingUp(id) || this.getPumpOccupation(id) === 'RUNNING'
     }
   },
   computed: {
     ...mapGetters({
-      isCleaning: 'pumpLayout/isCleaning',
+      getPumpOccupation: 'pumpLayout/getPumpOccupation',
       pumps: 'pumpLayout/getLayout'
     }),
     isEditPumpNew () {

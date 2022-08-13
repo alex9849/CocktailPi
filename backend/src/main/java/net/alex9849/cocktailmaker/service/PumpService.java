@@ -184,7 +184,7 @@ public class PumpService {
         if (occupation == PumpOccupation.COCKTAIL_PRODUCTION) {
             throw new IllegalArgumentException("A cocktail is currently being prepared!");
         }
-        ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.get(pump.getId());
+        ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
         if(pumpUpFuture != null) {
             pumpUpFuture.cancel(false);
         }

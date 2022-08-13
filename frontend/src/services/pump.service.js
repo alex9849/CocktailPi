@@ -26,7 +26,7 @@ class PumpService {
         id
       }
     }
-    return axios.put(API_PATH + String(id) + '/start', null, config)
+    return axios.put(API_PATH + 'start', null, config)
   }
 
   stopPump (id) {
@@ -35,7 +35,7 @@ class PumpService {
         id
       }
     }
-    return axios.put(API_PATH + String(id) + '/stop', null, config)
+    return axios.put(API_PATH + 'stop', null, config)
   }
 
   updatePump (id, createPump) {
