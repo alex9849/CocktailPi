@@ -18,8 +18,10 @@ import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,7 +131,10 @@ public class PumpService {
             }
             toPatch.setCurrentIngredient((AutomatedIngredient) ingredient);
         }
-        BeanUtils.copyProperties(patchPumpDto, toPatch);
+        BeanUtils.copyProperties(patchPumpDto, toPatch, SpringUtility.getNullPropertyNames(patchPumpDto));
+        if(patchPumpDto.getIsPumpedUp() != null) {
+            toPatch.setPumpedUp(patchPumpDto.getIsPumpedUp());
+        }
         return toPatch;
     }
 

@@ -13,6 +13,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { mdiCheckCircle, mdiCloseCircleOutline, mdiTimerSandEmpty } from '@quasar/extras/mdi-v5'
+import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 
 export default {
   name: 'CPumpPumpedUpButton',
@@ -33,7 +34,9 @@ export default {
   },
   methods: {
     toggle (state) {
-      // Todo: Implement
+      PumpService.patchPump(this.pumpId, pumpDtoMapper.toPumpPatchDto({
+        pumpedUp: state
+      }))
     }
   },
   computed: {

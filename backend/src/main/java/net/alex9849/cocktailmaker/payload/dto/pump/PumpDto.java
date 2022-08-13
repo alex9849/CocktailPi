@@ -25,7 +25,6 @@ public class PumpDto {
     private interface IsPowerStateHigh { boolean isPowerStateHigh(); }
     private interface IsPumpedUp { boolean isPumpedUp(); }
 
-    private interface PatchIsPowerStateHigh { Boolean getIsPowerStateHigh(); }
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
     private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
 
@@ -43,10 +42,9 @@ public class PumpDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPowerStateHigh, PatchIsPumpedUp {
+        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp {
             Integer fillingLevelInMl;
             Long currentIngredientId;
-            Boolean isPowerStateHigh;
             Boolean isPumpedUp;
         }
     }

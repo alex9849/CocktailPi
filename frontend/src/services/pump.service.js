@@ -20,6 +20,10 @@ class PumpService {
     return axios.put(API_PATH + String(id), createPump)
   }
 
+  patchPump (id, patchPump) {
+    return axios.patch(API_PATH + String(id), patchPump)
+  }
+
   deletePump (id) {
     return axios.delete(API_PATH + String(id))
   }
@@ -34,6 +38,14 @@ export class PumpDtoMapper {
       tubeCapacityInMl: detailed.tubeCapacityInMl,
       powerStateHigh: detailed.powerStateHigh,
       pumpedUp: detailed.pumpedUp,
+      currentIngredientId: detailed.currentIngredient?.id
+    }
+  }
+
+  toPumpPatchDto (detailed) {
+    return {
+      fillingLevelInMl: detailed.fillingLevelInMl,
+      isPumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id
     }
   }

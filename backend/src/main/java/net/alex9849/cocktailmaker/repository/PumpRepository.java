@@ -149,7 +149,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setBcmPin(rs.getInt("bcm_pin"));
         pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
         pump.setTubeCapacityInMl(rs.getInt("tube_capacity_in_ml"));
-        pump.setCurrentIngredientId(rs.getLong("current_ingredient_id"));
+        pump.setCurrentIngredientId(rs.getObject("current_ingredient_id", Long.class));
         pump.setFillingLevelInMl(rs.getInt("filling_level_in_ml"));
         pump.setPowerStateHigh(rs.getBoolean("is_power_state_high"));
         pump.setPumpedUp(rs.getBoolean("is_pumped_up"));
