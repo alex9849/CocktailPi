@@ -79,6 +79,7 @@ public class CocktailOrderService {
                 this.cocktailFactory = null;
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
             }, 5000, TimeUnit.MILLISECONDS);
+            this.webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }
         this.webSocketService.broadcastCurrentCocktailProgress(progress);
 
