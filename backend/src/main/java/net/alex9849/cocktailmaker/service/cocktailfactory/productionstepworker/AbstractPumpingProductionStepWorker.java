@@ -104,7 +104,9 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             if(seenPumps.contains(pumpPhase.getPump().getId())) {
                 continue;
             }
-            pumpPhase.getPump().setRunning(false);
+            if(pumpPhase.getPump().isRunning()) {
+                pumpPhase.getPump().setRunning(false);
+            }
             if(pumpPhase.getState() == PumpPhase.State.RUNNING) {
                 pumpPhase.setStopped();
             }

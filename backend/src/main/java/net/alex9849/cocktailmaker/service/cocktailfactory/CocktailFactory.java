@@ -232,10 +232,7 @@ public class CocktailFactory {
 
     private void shutDown() {
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
-            if(worker instanceof AutomaticProductionStepWorker) {
-                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
-                automaticWorker.cancel();
-            }
+            worker.cancel();
         }
     }
 
