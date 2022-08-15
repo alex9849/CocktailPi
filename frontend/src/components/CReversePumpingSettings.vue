@@ -9,8 +9,9 @@
           <q-toggle
             label="Enable reverse pumping"
             color="green"
+            :disable="disableForm"
             :model-value="v.form.enable.$model"
-            @update:model-value="(e) => {v.form.enable.$model = e; v.form.$validate()}"
+            @update:model-value="onToggleEnable($event)"
           />
         </q-card>
       </div>
@@ -34,6 +35,7 @@
                 :error="v.form.directorPins.$each.$response.$errors[index].bcmPin.length > 0"
                 type="number"
                 outlined
+                :disable="disableForm"
                 hide-bottom-space
                 label="BCM-Pin"
               />
@@ -45,6 +47,7 @@
                 map-options
                 emit-value
                 outlined
+                :disable="disableForm"
                 hide-bottom-space
                 label="Forward state"
               />
@@ -62,9 +65,11 @@
           <q-card-section class="q-gutter-md">
             <q-input label="Overshoot"
                      outlined
+                     type="number"
                      v-model:model-value="v.form.overshoot.$model"
                      :error-message="v.form.overshoot.$errors[0]?.$message"
                      :error="v.form.overshoot.$errors.length > 0"
+                     :disable="disableForm"
                      hint="How strongly should number of ml be overshoot on pump back?">
               <template v-slot:append>
                 %
@@ -76,6 +81,7 @@
               map-options
               emit-value
               outlined
+              :disable="disableForm"
               hide-bottom-space
               label="Inactive time till automatic pump back"
             />
@@ -85,11 +91,17 @@
       <div class="row justify-end">
         <q-btn
           label="Save"
+          :loading="saving"
           :disable="v.form.$error"
           color="green"
+          @click="onClickSave"
         />
       </div>
     </q-form>
+    <q-inner-loading
+      :showing="loading"
+      color="info"
+    />
   </q-card>
 </template>
 
@@ -101,14 +113,16 @@ export default {
   name: 'CReversePumpingSettings',
   data: () => {
     return {
+      saving: false,
+      loading: true,
       form: {
         enable: false,
         overshoot: 0,
         directorPins: [{
-          bcmPin: null,
+          bcmPin: 0,
           forwardState: false
         }, {
-          bcmPin: null,
+          bcmPin: 0,
           forwardState: false
         }],
         autoPumpBackTimer: 0
@@ -125,6 +139,25 @@ export default {
   setup () {
     return {
       v: useVuelidate()
+    }
+  },
+  created () {
+    this.fetchSettings()
+  },
+  methods: {
+    onToggleEnable (newValue) {
+      this.v.form.enable.$model = newValue
+    },
+    onClickSave () {
+      this.saving = true
+    },
+    fetchSettings () {
+      this.loading = false
+    }
+  },
+  computed: {
+    disableForm () {
+      return this.saving
     }
   },
   validations () {
