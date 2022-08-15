@@ -26,6 +26,7 @@ public class CocktailFactory {
     private final List<Consumer<CocktailProgress>> subscribers = new ArrayList<>();
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
     private AbstractProductionStepWorker currentProductionStepWorker = null;
+    private Consumer<Set<Pump>> onRequestPumpPersist;
     private final Set<Pump> pumps;
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
@@ -34,6 +35,11 @@ public class CocktailFactory {
     private CocktailProgress cocktailprogress;
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
+
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Consumer<Set<Pump>> onRequestPumpPersist) {
+        this(feasibleRecipe, user, pumps);
+        this.onRequestPumpPersist = onRequestPumpPersist;
+    }
 
     /**
      * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
@@ -119,6 +125,13 @@ public class CocktailFactory {
         return workers;
     }
 
+    private void requestPumpPersist(Set<Pump> pumps) {
+        if(this.onRequestPumpPersist == null) {
+            return;
+        }
+        this.onRequestPumpPersist.accept(pumps);
+    }
+
     public Set<Pump> getUpdatedPumps() {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
@@ -126,7 +139,7 @@ public class CocktailFactory {
                 .collect(Collectors.toSet());
     }
 
-    public Map<Pump, Integer> getNotUsedLiquid() {
+    private Map<Pump, Integer> getNotUsedLiquid() {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
                 .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
@@ -159,17 +172,6 @@ public class CocktailFactory {
                 .values());
     }
 
-    public Set<Ingredient> getNonAutomaticIngredients() {
-        Set<Ingredient> neededIngredientIds = getNeededIngredientIds();
-        Set<Ingredient> availableIngredientIds = getAvailableIngredientIds();
-        if(neededIngredientIds.size() > availableIngredientIds.size()) {
-            return new HashSet<>();
-        }
-        return neededIngredientIds.stream()
-                .filter(x -> availableIngredientIds.stream().noneMatch(y -> x.getId() == y.getId()))
-                .collect(Collectors.toSet());
-    }
-
     public int getRecipeAmountOfLiquid() {
         return this.feasibleRecipe.getFeasibleProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
@@ -198,6 +200,7 @@ public class CocktailFactory {
         }
         setState(CocktailProgress.State.FINISHED);
         this.shutDown();
+        this.requestPumpPersist(this.getUpdatedPumps());
         this.notifySubscribers();
     }
 
@@ -207,6 +210,16 @@ public class CocktailFactory {
         }
         this.shutDown();
         setState(CocktailProgress.State.CANCELLED);
+
+        Set<Pump> updatedPumps = this.getUpdatedPumps();
+        Map<Pump, Integer> notUsedLiquidByPump = this.getNotUsedLiquid();
+        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
+            Pump pump = entry.getKey();
+            Integer notUsedLiquid = entry.getValue();
+            pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);
+        }
+        updatedPumps.addAll(notUsedLiquidByPump.keySet());
+        this.requestPumpPersist(updatedPumps);
         this.notifySubscribers();
     }
 

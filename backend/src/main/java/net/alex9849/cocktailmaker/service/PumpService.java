@@ -67,7 +67,22 @@ public class PumpService {
         return pump;
     }
 
+    public Set<Pump> updatePumps(Set<Pump> pumps) {
+        Set<Pump> updated = new HashSet<>();
+        for(Pump pump : pumps) {
+            updated.add(this.internalUpdatePump(pump));
+        }
+        webSocketService.broadcastPumpLayout(getAllPumps());
+        return updated;
+    }
+
     public Pump updatePump(Pump pump) {
+        Pump updated = this.internalUpdatePump(pump);
+        webSocketService.broadcastPumpLayout(getAllPumps());
+        return updated;
+    }
+
+    private Pump internalUpdatePump(Pump pump) {
         Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
@@ -89,7 +104,6 @@ public class PumpService {
         if(beforeUpdate.get().isPowerStateHigh() != pump.isPowerStateHigh()) {
             pump.setRunning(false);
         }
-        webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
 

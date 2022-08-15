@@ -20,7 +20,10 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
         this.setPumpPhases(pumpPhases);
     }
 
-
+    protected void onFinish() {
+        getUsedPumps().forEach(p -> p.setPumpedUp(true));
+        super.onFinish();
+    }
 
     @Override
     public Map<Pump, Integer> getNotUsedLiquid() {

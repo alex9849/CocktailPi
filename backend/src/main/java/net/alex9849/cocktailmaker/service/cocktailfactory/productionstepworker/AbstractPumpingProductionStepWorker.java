@@ -112,7 +112,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         }
     }
 
-    private void onFinish() {
+    protected void onFinish() {
         this.scheduledPumpFutures.forEach(x -> x.cancel(true));
         this.notifierTask.cancel(false);
         this.stopAllPumps();

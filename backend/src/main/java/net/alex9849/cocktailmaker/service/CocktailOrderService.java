@@ -63,11 +63,10 @@ public class CocktailOrderService {
         if(!report.isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
-        CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user, new HashSet<>(pumpService.getAllPumps()))
+        CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
+                new HashSet<>(pumpService.getAllPumps()), p -> pumpService.updatePumps(p))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
-        for(Pump pump : cocktailFactory.getUpdatedPumps()) {
-            pumpService.updatePump(pump);
-        }
+        pumpService.updatePumps(cocktailFactory.getUpdatedPumps());
         this.cocktailFactory = cocktailFactory;
         webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         this.cocktailFactory.makeCocktail();
@@ -125,14 +124,6 @@ public class CocktailOrderService {
             return false;
         }
         this.cocktailFactory.cancelCocktail();
-        Map<Pump, Integer> notUsedLiquidByPump = this.cocktailFactory.getNotUsedLiquid();
-        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
-            Pump pump = entry.getKey();
-            Integer notUsedLiquid = entry.getValue();
-            pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);
-            this.pumpService.updatePump(pump);
-        }
-        webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         return true;
     }
 
