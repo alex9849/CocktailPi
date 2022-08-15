@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ManualProductionStepWorker extends AbstractProductionStepWorker
         implements ManualFinishable {
-    protected boolean started = false;
     private final List<ProductionStepIngredient> productionStepInstructions;
 
     public ManualProductionStepWorker(List<ProductionStepIngredient> productionStepInstructions) {
@@ -18,7 +17,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
 
     @Override
     public void start() {
-        this.started = true;
+        super.start();
         this.notifySubscribers();
     }
 
@@ -27,7 +26,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
     }
 
     public void continueProduction() {
-        if(!this.started) {
+        if(!this.isStarted()) {
             return;
         }
         this.setFinished();

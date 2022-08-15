@@ -29,7 +29,6 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
 
     private long startTime;
     private long endTime;
-    private boolean started;
 
     /**
      *
@@ -61,14 +60,10 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.requiredWorkingTime = pumpTimingStepCalculator.getLongestIngredientTime();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.scheduledPumpFutures = new HashSet<>();
-        this.started = false;
     }
 
     public void start() {
-        if (started) {
-            throw new IllegalStateException("ProductionStepWorker has already been started!");
-        }
-        this.started = true;
+        super.start();
         this.startTime = System.currentTimeMillis();
         for (PumpPhase pumpPhase : this.pumpPumpPhases) {
             scheduledPumpFutures.add(scheduler.schedule(() -> {
@@ -101,10 +96,6 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
         this.setFinished();
     }
 
-    public boolean isStarted() {
-        return started;
-    }
-
     public void cancel() {
         for (ScheduledFuture future : this.scheduledPumpFutures) {
             future.cancel(true);
@@ -130,7 +121,7 @@ public class AutomaticProductionStepWorker extends AbstractProductionStepWorker 
 
     public StepProgress getProgress() {
         StepProgress stepProgress = new StepProgress();
-        if(this.started) {
+        if(this.isStarted()) {
             stepProgress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) (this.endTime - this.startTime))) * 100)));
         } else {
             stepProgress.setPercentCompleted(0);
