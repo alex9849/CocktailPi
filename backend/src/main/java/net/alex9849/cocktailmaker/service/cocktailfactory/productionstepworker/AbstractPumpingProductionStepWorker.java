@@ -29,7 +29,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.scheduledPumpFutures = new HashSet<>();
     }
 
-    protected void setPumpPhases(Set<PumpPhase> pumpPhases) {
+    protected synchronized void setPumpPhases(Set<PumpPhase> pumpPhases) {
         Objects.requireNonNull(pumpPhases);
         if(this.isStarted()) {
             throw new IllegalStateException("Worker already started!");
@@ -47,7 +47,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
         super.start();
         this.startTime = System.currentTimeMillis();
         this.endTime = this.startTime + this.getRequiredPumpingTime();
@@ -70,7 +70,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     @Override
-    public void cancel() {
+    public synchronized void cancel() {
         for (ScheduledFuture<?> future : this.scheduledPumpFutures) {
             future.cancel(true);
         }
@@ -98,7 +98,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         return progress;
     }
 
-    private void stopAllPumps() {
+    private synchronized void stopAllPumps() {
         Set<Long> seenPumps = new HashSet<>();
         for(PumpPhase pumpPhase : this.pumpPhases) {
             if(seenPumps.contains(pumpPhase.getPump().getId())) {

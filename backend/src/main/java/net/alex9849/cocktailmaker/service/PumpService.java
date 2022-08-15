@@ -173,8 +173,10 @@ public class PumpService {
         if(this.cocktailOrderService.isMakingCocktail()) {
             return PumpOccupation.COCKTAIL_PRODUCTION;
         }
-        if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
-            return PumpOccupation.PUMPING_UP;
+        synchronized (pumpingUpPumpIdsToStopTask) {
+            if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
+                return PumpOccupation.PUMPING_UP;
+            }
         }
         if(pump.isRunning()) {
             return PumpOccupation.RUNNING;
@@ -184,6 +186,18 @@ public class PumpService {
 
     public boolean isPumpDirectionReversed() {
         return false;
+    }
+
+    private void setReversePumpingDirection(boolean reverse) {
+        synchronized (pumpingUpPumpIdsToStopTask) {
+            if(this.isPumpDirectionReversed() == reverse) {
+                return;
+            }
+            if(cocktailOrderService.isMakingCocktail()) {
+                throw new IllegalStateException("Can't change pump direction! A cocktail is currently being prepared!");
+            }
+
+        }
     }
 
     public void turnOnOffPumps(boolean turnOn) {
@@ -201,30 +215,50 @@ public class PumpService {
         if (occupation == PumpOccupation.COCKTAIL_PRODUCTION) {
             throw new IllegalArgumentException("A cocktail is currently being prepared!");
         }
-        ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
-        if(pumpUpFuture != null) {
-            pumpUpFuture.cancel(false);
+        synchronized (pumpingUpPumpIdsToStopTask) {
+            ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
+            if(pumpUpFuture != null) {
+                pumpUpFuture.cancel(false);
+            }
         }
         pump.setRunning(turnOn);
     }
 
-    public void pumpUp(Pump pump) {
-        if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
-            throw new IllegalArgumentException("Pump is already pumping up!");
+    public void pumpBackOrUp(Pump pump, boolean pumpUp) {
+        synchronized (pumpingUpPumpIdsToStopTask) {
+            if((pumpUp != this.isPumpDirectionReversed()) && !this.pumpingUpPumpIdsToStopTask.isEmpty()) {
+                throw new IllegalArgumentException("A pump is currently pumping into the other direction!");
+            }
+            if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
+                throw new IllegalArgumentException("Pump is already pumping up/back!");
+            }
+            if (this.getPumpOccupation(pump) != PumpOccupation.NONE) {
+                throw new IllegalArgumentException("Pump is currently occupied!");
+            }
+            this.setReversePumpingDirection(!pumpUp);
+            int runTime = pump.getConvertMlToRuntime(pump.getTubeCapacityInMl());
+            pump.setRunning(true);
+            CountDownLatch cdl = new CountDownLatch(1);
+            ScheduledFuture<?> stopTask = scheduler.schedule(() -> {
+                pump.setRunning(false);
+                pump.setPumpedUp(pumpUp);
+                try {
+                    cdl.await();
+                    synchronized (pumpingUpPumpIdsToStopTask) {
+                        this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
+                        if(this.pumpingUpPumpIdsToStopTask.isEmpty()) {
+                            this.setReversePumpingDirection(false);
+                        }
+                    }
+                    updatePump(pump);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, runTime, TimeUnit.MILLISECONDS);
+            this.pumpingUpPumpIdsToStopTask.put(pump.getId(), stopTask);
+            cdl.countDown();
+            webSocketService.broadcastPumpLayout(getAllPumps());
         }
-        if (this.getPumpOccupation(pump) != PumpOccupation.NONE) {
-            throw new IllegalArgumentException("Pump is currently occupied!");
-        }
-        int runTime = pump.getConvertMlToRuntime(pump.getTubeCapacityInMl());
-        ScheduledFuture<?> stopTask = scheduler.schedule(() -> {
-            pump.setRunning(false);
-            pump.setPumpedUp(true);
-            this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
-            updatePump(pump);
-        }, runTime, TimeUnit.MILLISECONDS);
-        this.pumpingUpPumpIdsToStopTask.put(pump.getId(), stopTask);
-        pump.setRunning(true);
-        webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
     Set<Long> findIngredientIdsOnPump() {

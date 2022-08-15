@@ -65,14 +65,18 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.pumpUp(pump);
+        pumpService.pumpBackOrUp(pump, true);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpback", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpBack(@PathVariable("id") long id) {
-        //Todo implement
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        pumpService.pumpBackOrUp(pump, false);
         return ResponseEntity.ok().build();
     }
 
