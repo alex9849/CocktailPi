@@ -20,7 +20,7 @@
       >
         <div class="col-12 col-sm-6"
              :key="index"
-             v-for="(dPin, index) in v.form.directorPins.$model"
+             v-for="(dPin, index) in v.form.settings.directorPins.$model"
         >
           <q-card flat
                   bordered>
@@ -31,8 +31,8 @@
             <q-card-section class="q-gutter-sm">
               <q-input
                 v-model:model-value="dPin.bcmPin"
-                :error-message="v.form.directorPins.$each.$response.$errors[index].bcmPin[0]?.$message"
-                :error="v.form.directorPins.$each.$response.$errors[index].bcmPin.length > 0"
+                :error-message="v.form.settings.directorPins.$each.$response.$errors[index].bcmPin[0]?.$message"
+                :error="v.form.settings.directorPins.$each.$response.$errors[index].bcmPin.length > 0"
                 type="number"
                 outlined
                 :disable="disableForm"
@@ -40,10 +40,10 @@
                 label="BCM-Pin"
               />
               <q-select
-                v-model:model-value="dPin.forwardState"
+                v-model:model-value="dPin.forwardStateHigh"
                 :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
-                :error-message="v.form.directorPins.$each.$response.$errors[index].forwardState[0]?.$message"
-                :error="v.form.directorPins.$each.$response.$errors[index].forwardState.length > 0"
+                :error-message="v.form.settings.directorPins.$each.$response.$errors[index].forwardStateHigh[0]?.$message"
+                :error="v.form.settings.directorPins.$each.$response.$errors[index].forwardStateHigh.length > 0"
                 map-options
                 emit-value
                 outlined
@@ -66,9 +66,9 @@
             <q-input label="Overshoot"
                      outlined
                      type="number"
-                     v-model:model-value="v.form.overshoot.$model"
-                     :error-message="v.form.overshoot.$errors[0]?.$message"
-                     :error="v.form.overshoot.$errors.length > 0"
+                     v-model:model-value="v.form.settings.overshoot.$model"
+                     :error-message="v.form.settings.overshoot.$errors[0]?.$message"
+                     :error="v.form.settings.overshoot.$errors.length > 0"
                      :disable="disableForm"
                      hint="How strongly should number of ml be overshoot on pump back?">
               <template v-slot:append>
@@ -76,7 +76,7 @@
               </template>
             </q-input>
             <q-select
-              v-model:model-value="v.form.autoPumpBackTimer.$model"
+              v-model:model-value="v.form.settings.autoPumpBackTimer.$model"
               :options="autoPumpBackTimerOptions"
               map-options
               emit-value
@@ -117,22 +117,24 @@ export default {
       loading: true,
       form: {
         enable: false,
-        overshoot: 0,
-        directorPins: [{
-          bcmPin: 0,
-          forwardState: false
-        }, {
-          bcmPin: 0,
-          forwardState: false
-        }],
-        autoPumpBackTimer: 0
+        settings: {
+          overshoot: 0,
+          directorPins: [{
+            bcmPin: 0,
+            forwardStateHigh: false
+          }, {
+            bcmPin: 0,
+            forwardStateHigh: false
+          }],
+          autoPumpBackTimer: 0
+        }
       },
       autoPumpBackTimerOptions: [
         { label: 'Never', value: 0 },
-        { label: '10 Minutes', value: 600 },
-        { label: '20 Minutes', value: 1200 },
-        { label: '30 Minutes', value: 1800 },
-        { label: '60 Minutes', value: 3600 }
+        { label: '10 Minutes', value: 10 },
+        { label: '20 Minutes', value: 20 },
+        { label: '30 Minutes', value: 30 },
+        { label: '60 Minutes', value: 60 }
       ]
     }
   },
@@ -147,6 +149,7 @@ export default {
   methods: {
     onToggleEnable (newValue) {
       this.v.form.enable.$model = newValue
+      this.v.$touch()
     },
     onClickSave () {
       this.saving = true
@@ -166,36 +169,39 @@ export default {
         enable: {
           required
         },
-        overshoot: {
-          required: requiredIf(() => this.form.enable)
-        },
-        directorPins: {
-          required: requiredIf(() => this.form.enable),
-          minLength: minLength(2),
-          maxLength: maxLength(2),
-          $each: helpers.forEach({
-            bcmPin: {
-              required: requiredIf(() => this.form.enable)
-            },
-            forwardState: {
-              required: requiredIf(() => this.form.enable)
-            }
-          })
-        },
-        autoPumpBackTimer: {
-          required: requiredIf(() => this.form.enable)
+        settings: {
+          overshoot: {
+            required: requiredIf(() => this.form.enable)
+          },
+          directorPins: {
+            required: requiredIf(() => this.form.enable),
+            minLength: minLength(2),
+            maxLength: maxLength(2),
+            $each: helpers.forEach({
+              bcmPin: {
+                required: requiredIf(() => this.form.enable)
+              },
+              forwardStateHigh: {
+                required: requiredIf(() => this.form.enable)
+              }
+            })
+          },
+          autoPumpBackTimer: {
+            required: requiredIf(() => this.form.enable)
+          }
         }
       }
     }
     if (this.form.enable) {
-      val.form.overshoot.minValue = minValue(0)
-      val.form.directorPins.$each = helpers.forEach({
+      val.form.settings.overshoot.minValue = minValue(0)
+      val.form.settings.overshoot.maxValue = maxValue(200)
+      val.form.settings.directorPins.$each = helpers.forEach({
         bcmPin: {
           required: requiredIf(() => this.form.enable),
           minValue: minValue(0),
           maxValue: maxValue(30)
         },
-        forwardState: {
+        forwardStateHigh: {
           required: requiredIf(() => this.form.enable)
         }
       })
