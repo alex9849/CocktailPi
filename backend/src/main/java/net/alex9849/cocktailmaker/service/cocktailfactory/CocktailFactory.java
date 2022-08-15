@@ -50,6 +50,11 @@ public class CocktailFactory {
         for(ProductionStep pStep : feasibleRecipe.getFeasibleProductionSteps()) {
             this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
         }
+        Set<Pump> usedPumps = this.getUpdatedPumps();
+        if(!usedPumps.isEmpty()) {
+            this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(usedPumps));
+        }
+
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
         if(!workerIterator.hasNext()) {
             throw new IllegalArgumentException("Cound't create ProductionStepWorkers from recipe!");
@@ -116,15 +121,15 @@ public class CocktailFactory {
 
     public Set<Pump> getUpdatedPumps() {
         return this.productionStepWorkers.stream()
-                .filter(x -> x instanceof AutomaticProductionStepWorker)
-                .flatMap(x -> ((AutomaticProductionStepWorker) x).getUpdatedPumps().stream())
+                .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
+                .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getUsedPumps().stream())
                 .collect(Collectors.toSet());
     }
 
     public Map<Pump, Integer> getNotUsedLiquid() {
         return this.productionStepWorkers.stream()
-                .filter(x -> x instanceof AutomaticProductionStepWorker)
-                .flatMap(x -> ((AutomaticProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
+                .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
+                .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
                 .collect(Collectors.toMap(x -> x.getKey(), v -> v.getValue(), (v1, v2) -> v1 + v2));
     }
 
@@ -280,26 +285,23 @@ public class CocktailFactory {
         long timeNeeded = 0;
         long timeElapsed = 0;
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
-            if(worker instanceof ManualProductionStepWorker) {
+            if(worker instanceof ManualProductionStepWorker || worker instanceof WrittenInstructionProductionStepWorker) {
                 timeNeeded += TIME_FOR_MANUAL_PROGRESS;
                 if(worker.isFinished()) {
                     timeElapsed += TIME_FOR_MANUAL_PROGRESS;
                 }
-            } else if (worker instanceof AutomaticProductionStepWorker) {
-                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
-                timeNeeded += automaticWorker.getRequiredPumpingTime();
+
+            } else if (worker instanceof AbstractPumpingProductionStepWorker) {
+                AbstractPumpingProductionStepWorker pumpingWorker = (AbstractPumpingProductionStepWorker) worker;
+                timeNeeded += pumpingWorker.getRequiredPumpingTime();
                 if(worker.isFinished()) {
-                    timeElapsed += automaticWorker.getRequiredPumpingTime();
-                } else if (automaticWorker.isStarted()) {
-                    timeElapsed += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
-                            * automaticWorker.getRequiredPumpingTime());
+                    timeElapsed += pumpingWorker.getRequiredPumpingTime();
+                } else if (pumpingWorker.isStarted()) {
+                    timeElapsed += Math.round((pumpingWorker.getProgress().getPercentCompleted() / 100d)
+                            * pumpingWorker.getRequiredPumpingTime());
                 }
-            } else if (worker instanceof WrittenInstructionProductionStepWorker) {
-                timeNeeded += TIME_FOR_MANUAL_PROGRESS;
-                if(worker.isFinished()) {
-                    timeElapsed += TIME_FOR_MANUAL_PROGRESS;
-                }
-            } else {
+
+            }  else {
                 throw new IllegalStateException("Unknown worker type!");
             }
         }
