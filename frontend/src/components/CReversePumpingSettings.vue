@@ -9,34 +9,39 @@
           <q-toggle
             label="Enable reverse pumping"
             color="green"
-            v-model:model-value="form.enable"
+            :model-value="v.form.enable.$model"
+            @update:model-value="(e) => {v.form.enable.$model = e; v.form.$validate()}"
           />
         </q-card>
       </div>
-      <div class="row q-col-gutter-md">
+      <div class="row q-col-gutter-md"
+           v-if="v.form.enable.$model"
+      >
         <div class="col-12 col-sm-6"
-             :key="i"
-             v-for="i in form.directorPins.length"
+             :key="index"
+             v-for="(dPin, index) in v.form.directorPins.$model"
         >
           <q-card flat
                   bordered>
             <q-card-section>
-              <div class="text-subtitle2">Voltage director pin {{ i }}</div>
+              <div class="text-subtitle2">Voltage director pin {{ index + 1 }}</div>
             </q-card-section>
             <q-separator/>
             <q-card-section class="q-gutter-sm">
               <q-input
-                v-model:model-value="form.directorPins[i - 1].bcmPin"
-                :disable="!form.enable"
+                v-model:model-value="dPin.bcmPin"
+                :error-message="v.form.directorPins.$each.$response.$errors[index].bcmPin[0]?.$message"
+                :error="v.form.directorPins.$each.$response.$errors[index].bcmPin.length > 0"
                 type="number"
                 outlined
                 hide-bottom-space
                 label="BCM-Pin"
               />
               <q-select
-                v-model:model-value="form.directorPins[i - 1].forwardState"
+                v-model:model-value="dPin.forwardState"
                 :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
-                :disable="!form.enable"
+                :error-message="v.form.directorPins.$each.$response.$errors[index].forwardState[0]?.$message"
+                :error="v.form.directorPins.$each.$response.$errors[index].forwardState.length > 0"
                 map-options
                 emit-value
                 outlined
@@ -47,51 +52,32 @@
           </q-card>
         </div>
       </div>
-      <div class="row">
+      <div class="row"
+           v-if="v.form.enable.$model"
+      >
         <q-card class="col"
                 flat
                 bordered
         >
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <q-input label="Overshoot"
                      outlined
-                     v-model:model-value="form.overshoot"
+                     v-model:model-value="v.form.overshoot.$model"
+                     :error-message="v.form.overshoot.$errors[0]?.$message"
+                     :error="v.form.overshoot.$errors.length > 0"
                      hint="How strongly should number of ml be overshoot on pump back?">
               <template v-slot:append>
                 %
               </template>
             </q-input>
-
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="row">
-        <q-card flat
-                class="col"
-                bordered>
-          <q-card-section class="">
-            <q-toggle color="green"
-                      dense
-                      left-label
-                      :disable="!form.enable"
-                      v-model:model-value="form.automaticPumpBack"
-            >
-              <div class="text-subtitle2">
-                Automatic pump back
-              </div>
-            </q-toggle>
-          </q-card-section>
-          <q-separator/>
-          <q-card-section class="q-gutter-sm">
             <q-select
-              v-model:model-value="form.autoPumpBackTimer"
+              v-model:model-value="v.form.autoPumpBackTimer.$model"
               :options="autoPumpBackTimerOptions"
-              :disable="!form.automaticPumpBack || !form.enable"
               map-options
               emit-value
               outlined
               hide-bottom-space
-              label="Inactive time till pump back"
+              label="Inactive time till automatic pump back"
             />
           </q-card-section>
         </q-card>
@@ -99,6 +85,7 @@
       <div class="row justify-end">
         <q-btn
           label="Save"
+          :disable="v.form.$error"
           color="green"
         />
       </div>
@@ -107,6 +94,9 @@
 </template>
 
 <script>
+import { maxValue, minValue, required, maxLength, minLength, requiredIf, helpers } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
+
 export default {
   name: 'CReversePumpingSettings',
   data: () => {
@@ -114,23 +104,70 @@ export default {
       form: {
         enable: false,
         overshoot: 0,
-        automaticPumpBack: false,
         directorPins: [{
-          bcmPin: 0,
+          bcmPin: null,
           forwardState: false
         }, {
-          bcmPin: 0,
+          bcmPin: null,
           forwardState: false
         }],
-        autoPumpBackTimer: 600
+        autoPumpBackTimer: 0
       },
       autoPumpBackTimerOptions: [
+        { label: 'Never', value: 0 },
         { label: '10 Minutes', value: 600 },
         { label: '20 Minutes', value: 1200 },
         { label: '30 Minutes', value: 1800 },
         { label: '60 Minutes', value: 3600 }
       ]
     }
+  },
+  setup () {
+    return {
+      v: useVuelidate()
+    }
+  },
+  validations () {
+    const val = {
+      form: {
+        enable: {
+          required
+        },
+        overshoot: {
+          required: requiredIf(() => this.form.enable)
+        },
+        directorPins: {
+          required: requiredIf(() => this.form.enable),
+          minLength: minLength(2),
+          maxLength: maxLength(2),
+          $each: helpers.forEach({
+            bcmPin: {
+              required: requiredIf(() => this.form.enable)
+            },
+            forwardState: {
+              required: requiredIf(() => this.form.enable)
+            }
+          })
+        },
+        autoPumpBackTimer: {
+          required: requiredIf(() => this.form.enable)
+        }
+      }
+    }
+    if (this.form.enable) {
+      val.form.overshoot.minValue = minValue(0)
+      val.form.directorPins.$each = helpers.forEach({
+        bcmPin: {
+          required: requiredIf(() => this.form.enable),
+          minValue: minValue(0),
+          maxValue: maxValue(30)
+        },
+        forwardState: {
+          required: requiredIf(() => this.form.enable)
+        }
+      })
+    }
+    return val
   }
 }
 </script>
