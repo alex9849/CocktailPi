@@ -226,7 +226,7 @@ public class PumpService {
 
     public void pumpBackOrUp(Pump pump, boolean pumpUp) {
         synchronized (pumpingUpPumpIdsToStopTask) {
-            if((pumpUp != this.isPumpDirectionReversed()) && !this.pumpingUpPumpIdsToStopTask.isEmpty()) {
+            if((pumpUp == this.isPumpDirectionReversed()) && !this.pumpingUpPumpIdsToStopTask.isEmpty()) {
                 throw new IllegalArgumentException("A pump is currently pumping into the other direction!");
             }
             if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
