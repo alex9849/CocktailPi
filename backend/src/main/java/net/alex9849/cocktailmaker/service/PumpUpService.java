@@ -8,7 +8,6 @@ import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.*;
@@ -36,7 +35,7 @@ public class PumpUpService {
     public void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
         this.setReversePumpingDirection(false);
-        this.applyReversePumpSettingsAndResetCountdown();
+        this.updateReversePumpSettingsCountdown();
     }
 
     public synchronized boolean isPumpPumpingUp(Pump pump) {
@@ -56,10 +55,6 @@ public class PumpUpService {
     }
 
     public synchronized void pumpBackOrUp(Pump pump, boolean pumpUp) {
-        pumpBackOrUpInternal(pump, pumpUp, 0);
-    }
-
-    private synchronized void pumpBackOrUpInternal(Pump pump, boolean pumpUp, int overShoot) {
         if ((pumpUp == this.isPumpDirectionReversed()) && !this.pumpingUpPumpIdsToStopTask.isEmpty()) {
             throw new IllegalArgumentException("A pump is currently pumping into the other direction!");
         }
@@ -69,9 +64,13 @@ public class PumpUpService {
         if (this.pumpService.getPumpOccupation(pump) != PumpService.PumpOccupation.NONE) {
             throw new IllegalArgumentException("Pump is currently occupied!");
         }
+        //throws exception is pumpUp is false and reversePumpSettings not configured!
         this.setReversePumpingDirection(!pumpUp);
+        int overShoot = 1;
         if (pumpUp) {
-            this.applyReversePumpSettingsAndResetCountdown();
+            this.updateReversePumpSettingsCountdown();
+        } else {
+            overShoot = reversePumpSettings.getSettings().getOvershoot();
         }
         double overShootMultiplier = 1 + (((double) overShoot) / 100);
         int runTime = (int) (pump.getConvertMlToRuntime(pump.getTubeCapacityInMl()) * overShootMultiplier);
@@ -124,7 +123,7 @@ public class PumpUpService {
         }
     }
 
-    public synchronized void applyReversePumpSettingsAndResetCountdown() {
+    public synchronized void updateReversePumpSettingsCountdown() {
         if (automaticPumpBackTask != null) {
             automaticPumpBackTask.cancel(false);
             automaticPumpBackTask = null;
@@ -135,7 +134,6 @@ public class PumpUpService {
         if (reversePumpSettings.getSettings().getAutoPumpBackTimer() == 0) {
             return;
         }
-        this.setReversePumpingDirection(false);
         long delay = reversePumpSettings.getSettings().getAutoPumpBackTimer();
         automaticPumpBackTask = scheduler.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpService.getAllPumps();
@@ -144,7 +142,7 @@ public class PumpUpService {
             }
             for (Pump pump : allPumps) {
                 if (pump.isPumpedUp()) {
-                    this.pumpBackOrUpInternal(pump, false, reversePumpSettings.getSettings().getOvershoot());
+                    this.pumpBackOrUp(pump, false);
                 }
             }
         }, delay, delay, TimeUnit.MINUTES);
@@ -183,7 +181,7 @@ public class PumpUpService {
         }
         this.reversePumpSettings = settings;
         this.setReversePumpingDirection(false);
-        applyReversePumpSettingsAndResetCountdown();
+        updateReversePumpSettingsCountdown();
     }
 
     public synchronized ReversePumpingSettings.Full getReversePumpingSettings() {

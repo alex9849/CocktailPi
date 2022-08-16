@@ -1,35 +1,17 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
-import net.alex9849.cocktailmaker.iface.IGpioPin;
-import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
-import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
-import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
-import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
-import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
-import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
-import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
-import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
-import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
-import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.*;
 
 @Service
 @Transactional
@@ -211,6 +193,7 @@ public class PumpService {
         }
         pumpUpService.cancelPumpUp(pump);
         pump.setRunning(turnOn);
+        pumpUpService.updateReversePumpSettingsCountdown();
     }
 
     Set<Long> findIngredientIdsOnPump() {
