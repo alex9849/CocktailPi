@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.cocktailmaker.service.PumpUpService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 
@@ -71,8 +72,9 @@ public class PumpDto {
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
                 PumpService pService = SpringUtility.getBean(PumpService.class);
+                PumpUpService puService = SpringUtility.getBean(PumpUpService.class);
                 this.occupation = pService.getPumpOccupation(pump);
-                this.isReversed = pService.isPumpDirectionReversed();
+                this.isReversed = puService.isPumpDirectionReversed();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }

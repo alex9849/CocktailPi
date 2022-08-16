@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.endpoints;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.cocktailmaker.service.PumpUpService;
 import net.alex9849.cocktailmaker.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class SystemEndpoint {
     private SystemService systemService;
 
     @Autowired
-    private PumpService pumpService;
+    private PumpUpService pumpUpService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)
@@ -40,13 +41,13 @@ public class SystemEndpoint {
         if(settings.isEnable() && settings.getSettings() == null) {
             throw new IllegalStateException("Settings-Details are null!");
         }
-        pumpService.setReversepumpingSettings(settings);
+        pumpUpService.setReversePumpingSettings(settings);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "settings/reversepumping", method = RequestMethod.GET)
     public ResponseEntity<?> getReversePumpSettings() {;
-        return ResponseEntity.ok(pumpService.getReversepumpingSettings());
+        return ResponseEntity.ok(pumpUpService.getReversePumpingSettings());
     }
 }

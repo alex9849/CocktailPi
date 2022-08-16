@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.config;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.cocktailmaker.service.PumpUpService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
@@ -22,12 +23,16 @@ public class SpringListener {
     private PumpService pumpService;
 
     @Autowired
+    private PumpUpService pumpUpService;
+
+    @Autowired
     private Flyway flyway;
 
     @EventListener
     public void handleContextRefreshed(ContextRefreshedEvent event) {
         flyway.migrate();
-        pumpService.turnOnOffPumps(false);
+        pumpService.postConstruct();
+        pumpUpService.postConstruct();
     }
 
     @EventListener

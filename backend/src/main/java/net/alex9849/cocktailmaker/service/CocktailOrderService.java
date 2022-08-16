@@ -38,6 +38,9 @@ public class CocktailOrderService {
     private PumpService pumpService;
 
     @Autowired
+    private PumpUpService pumpUpService;
+
+    @Autowired
     private WebSocketService webSocketService;
 
     @Autowired
@@ -70,6 +73,7 @@ public class CocktailOrderService {
         this.cocktailFactory = cocktailFactory;
         webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         this.cocktailFactory.makeCocktail();
+        this.pumpUpService.applyReversePumpSettingsAndResetCountdown();
     }
 
     private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
@@ -77,6 +81,7 @@ public class CocktailOrderService {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
+                this.pumpUpService.applyReversePumpSettingsAndResetCountdown();
             }, 5000, TimeUnit.MILLISECONDS);
             this.webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }

@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
+import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -35,20 +38,20 @@ public class PumpService {
     private PumpRepository pumpRepository;
 
     @Autowired
+    private CocktailOrderService cocktailOrderService;
+
+    @Autowired
+    private PumpUpService pumpUpService;
+
+    @Autowired
     private WebSocketService webSocketService;
 
     @Autowired
     private IngredientService ingredientService;
 
-    @Autowired
-    private CocktailOrderService cocktailOrderService;
-
-    @Autowired
-    private OptionsRepository optionsRepository;
-
-    private final Map<Long, ScheduledFuture<?>> pumpingUpPumpIdsToStopTask = new HashMap<>();
-
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    public void postConstruct() {
+        this.turnOnOffPumps(false);
+    }
 
     //
     // CRUD actions
@@ -110,6 +113,10 @@ public class PumpService {
             pump.setRunning(false);
         }
         return pump;
+    }
+
+    public Optional<Pump> findByBcmPin(int bcmPin) {
+        return pumpRepository.findByBcmPin(bcmPin);
     }
 
     public void deletePump(long id) {
@@ -178,31 +185,13 @@ public class PumpService {
         if(this.cocktailOrderService.isMakingCocktail()) {
             return PumpOccupation.COCKTAIL_PRODUCTION;
         }
-        synchronized (pumpingUpPumpIdsToStopTask) {
-            if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
-                return PumpOccupation.PUMPING_UP;
-            }
+        if(this.pumpUpService.isPumpPumpingUp(pump)) {
+            return PumpOccupation.PUMPING_UP;
         }
         if(pump.isRunning()) {
             return PumpOccupation.RUNNING;
         }
         return PumpOccupation.NONE;
-    }
-
-    public boolean isPumpDirectionReversed() {
-        return false;
-    }
-
-    private void setReversePumpingDirection(boolean reverse) {
-        synchronized (pumpingUpPumpIdsToStopTask) {
-            if(this.isPumpDirectionReversed() == reverse) {
-                return;
-            }
-            if(cocktailOrderService.isMakingCocktail()) {
-                throw new IllegalStateException("Can't change pump direction! A cocktail is currently being prepared!");
-            }
-
-        }
     }
 
     public void turnOnOffPumps(boolean turnOn) {
@@ -220,94 +209,12 @@ public class PumpService {
         if (occupation == PumpOccupation.COCKTAIL_PRODUCTION) {
             throw new IllegalArgumentException("A cocktail is currently being prepared!");
         }
-        synchronized (pumpingUpPumpIdsToStopTask) {
-            ScheduledFuture<?> pumpUpFuture = this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
-            if(pumpUpFuture != null) {
-                pumpUpFuture.cancel(false);
-            }
-        }
+        pumpUpService.cancelPumpUp(pump);
         pump.setRunning(turnOn);
-    }
-
-    public void pumpBackOrUp(Pump pump, boolean pumpUp) {
-        synchronized (pumpingUpPumpIdsToStopTask) {
-            if((pumpUp == this.isPumpDirectionReversed()) && !this.pumpingUpPumpIdsToStopTask.isEmpty()) {
-                throw new IllegalArgumentException("A pump is currently pumping into the other direction!");
-            }
-            if(this.pumpingUpPumpIdsToStopTask.keySet().contains(pump.getId())) {
-                throw new IllegalArgumentException("Pump is already pumping up/back!");
-            }
-            if (this.getPumpOccupation(pump) != PumpOccupation.NONE) {
-                throw new IllegalArgumentException("Pump is currently occupied!");
-            }
-            this.setReversePumpingDirection(!pumpUp);
-            int runTime = pump.getConvertMlToRuntime(pump.getTubeCapacityInMl());
-            pump.setRunning(true);
-            CountDownLatch cdl = new CountDownLatch(1);
-            ScheduledFuture<?> stopTask = scheduler.schedule(() -> {
-                pump.setRunning(false);
-                pump.setPumpedUp(pumpUp);
-                try {
-                    cdl.await();
-                    synchronized (pumpingUpPumpIdsToStopTask) {
-                        this.pumpingUpPumpIdsToStopTask.remove(pump.getId());
-                        if(this.pumpingUpPumpIdsToStopTask.isEmpty()) {
-                            this.setReversePumpingDirection(false);
-                        }
-                    }
-                    updatePump(pump);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, runTime, TimeUnit.MILLISECONDS);
-            this.pumpingUpPumpIdsToStopTask.put(pump.getId(), stopTask);
-            cdl.countDown();
-            webSocketService.broadcastPumpLayout(getAllPumps());
-        }
     }
 
     Set<Long> findIngredientIdsOnPump() {
         return pumpRepository.findIngredientIdsOnPump();
-    }
-
-    public void setReversepumpingSettings(ReversePumpingSettings.Full settings) {
-        optionsRepository.setOption("RPSEnable", new Boolean(settings.isEnable()).toString());
-        if(settings.isEnable()) {
-            ReversePumpingSettings.Details details = settings.getSettings();
-            List<ReversePumpingSettings.VoltageDirectorPin> vdPins = details.getDirectorPins();
-            optionsRepository.setOption("RPSOvershoot", new Integer(details.getOvershoot()).toString());
-            optionsRepository.setOption("RPSAutoPumpBackTimer", new Integer(details.getAutoPumpBackTimer()).toString());
-            for(int i = 0; i < vdPins.size(); i++) {
-                ReversePumpingSettings.VoltageDirectorPin vdPin = vdPins.get(i);
-                optionsRepository.setOption("RPSVDPinFwStateHigh" + (i + 1), new Boolean(vdPin.isForwardStateHigh()).toString());
-                optionsRepository.setOption("RPSVDPinBcm" + (i + 1), new Integer(vdPin.getBcmPin()).toString());
-            }
-        } else {
-            optionsRepository.delOption("RPSOvershoot", false);
-            optionsRepository.delOption("RPSAutoPumpBackTimer", false);
-            optionsRepository.delOption("RPSVDPinFwStateHigh%", true);
-            optionsRepository.delOption("RPSVDPinBcm%", true);
-        }
-    }
-
-    public ReversePumpingSettings.Full getReversepumpingSettings() {
-        ReversePumpingSettings.Full settings = new ReversePumpingSettings.Full();
-        settings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPSEnable")));
-        if(settings.isEnable()) {
-            ReversePumpingSettings.VoltageDirectorPin vdPin1 = new ReversePumpingSettings.VoltageDirectorPin();
-            ReversePumpingSettings.VoltageDirectorPin vdPin2 = new ReversePumpingSettings.VoltageDirectorPin();
-            vdPin1.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm1")));
-            vdPin1.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh1")));
-            vdPin2.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm2")));
-            vdPin2.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh2")));
-
-            ReversePumpingSettings.Details details = new ReversePumpingSettings.Details();
-            details.setDirectorPins(Arrays.asList(vdPin1, vdPin2));
-            details.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPSOvershoot")));
-            details.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPSAutoPumpBackTimer")));
-            settings.setSettings(details);
-        }
-        return settings;
     }
 
     public enum PumpOccupation {
