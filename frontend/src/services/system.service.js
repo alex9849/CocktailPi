@@ -26,6 +26,11 @@ class SystemService {
         return response.data
       })
   }
+
+  getGlobalSettings () {
+    return axios.get(API_PATH + 'settings/global')
+      .then(response => response.data)
+  }
 }
 
 export default new SystemService()

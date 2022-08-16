@@ -108,7 +108,6 @@ import {
   mdiAccount,
   mdiChevronRight,
   mdiCogs,
-  mdiDocker,
   mdiEarth,
   mdiGithub,
   mdiLinkedin,
@@ -218,7 +217,8 @@ export default {
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),
-      store.dispatch('auth/fetchCurrentUser')
+      store.dispatch('auth/fetchCurrentUser'),
+      store.dispatch('globalSettings/fetchGlobalSettings')
     ]).then(() => next())
   },
   created () {

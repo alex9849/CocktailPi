@@ -109,6 +109,7 @@
 import { maxValue, minValue, required, maxLength, minLength, requiredIf, helpers } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import SystemService from 'src/services/system.service'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'CReversePumpingSettings',
@@ -148,6 +149,9 @@ export default {
     this.fetchSettings()
   },
   methods: {
+    ...mapActions({
+      fetchGlobalSettings: 'globalSettings/fetchGlobalSettings'
+    }),
     onToggleEnable (newValue) {
       this.v.form.enable.$model = newValue
       this.v.$touch()
@@ -164,6 +168,7 @@ export default {
         })
         .finally(() => {
           this.saving = false
+          this.fetchGlobalSettings()
         })
     },
     fetchSettings () {

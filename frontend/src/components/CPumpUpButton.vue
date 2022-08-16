@@ -41,7 +41,11 @@ export default {
   },
   methods: {
     onClickPumpUp () {
-      PumpService.pumpUp(this.pumpId)
+      if (this.pumpUpDirectionReversed) {
+        PumpService.pumpDown(this.pumpId)
+      } else {
+        PumpService.pumpUp(this.pumpId)
+      }
     }
   },
   computed: {

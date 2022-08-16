@@ -77,7 +77,7 @@
         :props="props"
       >
         <c-pump-up-button
-          v-if="false"
+          v-if="isAllowReversePumping"
           :pump-id="props.row.id"
           :current-pump-direction-reversed="props.row.reversed"
           :pump-up-direction-reversed="true"
@@ -165,7 +165,8 @@ export default {
   computed: {
     ...mapGetters({
       getPumpLayout: 'pumpLayout/getLayout',
-      getPumpIngredients: 'pumpLayout/getPumpIngredients'
+      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      isAllowReversePumping: 'globalSettings/isAllowReversePumping'
     }),
     sortedPumpLayout () {
       const sorted = []

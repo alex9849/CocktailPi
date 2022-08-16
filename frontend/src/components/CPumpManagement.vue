@@ -116,7 +116,7 @@
             :props="props"
           >
             <c-pump-up-button
-              v-if="false"
+              v-if="isAllowReversePumping"
               :pump-id="props.row.id"
               :current-pump-direction-reversed="props.row.reversed"
               :pump-up-direction-reversed="true"
@@ -347,7 +347,8 @@ export default {
   computed: {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation',
-      pumps: 'pumpLayout/getLayout'
+      pumps: 'pumpLayout/getLayout',
+      isAllowReversePumping: 'globalSettings/isAllowReversePumping'
     }),
     isEditPumpNew () {
       return this.editOptions.editPump.id === -1

@@ -50,4 +50,9 @@ public class SystemEndpoint {
     public ResponseEntity<?> getReversePumpSettings() {;
         return ResponseEntity.ok(pumpUpService.getReversePumpingSettings());
     }
+
+    @RequestMapping(value = "settings/global", method = RequestMethod.GET)
+    public ResponseEntity<?> getGlobalSettings() {;
+        return ResponseEntity.ok(systemService.getGlobalSettings());
+    }
 }
