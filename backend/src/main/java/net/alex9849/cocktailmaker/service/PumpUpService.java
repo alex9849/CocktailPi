@@ -116,9 +116,13 @@ public class PumpUpService {
         for (ReversePumpingSettings.VoltageDirectorPin pinConfig : reversePumpSettings.getSettings().getDirectorPins()) {
             IGpioPin gpioPin = gpioController.getGpioPin(pinConfig.getBcmPin());
             if (reverse != pinConfig.isForwardStateHigh()) {
-                gpioPin.setHigh();
+                if (!gpioPin.isHigh()) {
+                    gpioPin.setHigh();
+                }
             } else {
-                gpioPin.setLow();
+                if(gpioPin.isHigh()) {
+                    gpioPin.setLow();
+                }
             }
         }
     }
