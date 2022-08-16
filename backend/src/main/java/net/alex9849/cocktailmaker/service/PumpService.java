@@ -83,8 +83,11 @@ public class PumpService {
         Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());
         if(optPumpWithGpio.isPresent()) {
             if(optPumpWithGpio.get().getId() != pump.getId()) {
-                throw new IllegalArgumentException("GPOI-Pin already in use!");
+                throw new IllegalArgumentException("BCM-Pin already in use!");
             }
+        }
+        if(pumpUpService.isGpioInUse(pump.getBcmPin())) {
+            throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
         }
         pumpRepository.update(pump);
         if(beforeUpdate.get().getBcmPin() != pump.getBcmPin()) {

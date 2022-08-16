@@ -204,4 +204,11 @@ public class PumpUpService {
         return settings;
     }
 
+    public boolean isGpioInUse(int bcmPin) {
+        if(this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
+            return false;
+        }
+        return this.reversePumpSettings.getSettings().getDirectorPins().stream()
+                .anyMatch(x -> x.getBcmPin() == bcmPin);
+    }
 }
