@@ -15,6 +15,8 @@ import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
+import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
+import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
@@ -40,6 +42,9 @@ public class PumpService {
 
     @Autowired
     private CocktailOrderService cocktailOrderService;
+
+    @Autowired
+    private OptionsRepository optionsRepository;
 
     private final Map<Long, ScheduledFuture<?>> pumpingUpPumpIdsToStopTask = new HashMap<>();
 
@@ -263,6 +268,46 @@ public class PumpService {
 
     Set<Long> findIngredientIdsOnPump() {
         return pumpRepository.findIngredientIdsOnPump();
+    }
+
+    public void setReversepumpingSettings(ReversePumpingSettings.Full settings) {
+        optionsRepository.setOption("RPSEnable", new Boolean(settings.isEnable()).toString());
+        if(settings.isEnable()) {
+            ReversePumpingSettings.Details details = settings.getSettings();
+            List<ReversePumpingSettings.VoltageDirectorPin> vdPins = details.getDirectorPins();
+            optionsRepository.setOption("RPSOvershoot", new Integer(details.getOvershoot()).toString());
+            optionsRepository.setOption("RPSAutoPumpBackTimer", new Integer(details.getAutoPumpBackTimer()).toString());
+            for(int i = 0; i < vdPins.size(); i++) {
+                ReversePumpingSettings.VoltageDirectorPin vdPin = vdPins.get(i);
+                optionsRepository.setOption("RPSVDPinFwStateHigh" + (i + 1), new Boolean(vdPin.isForwardStateHigh()).toString());
+                optionsRepository.setOption("RPSVDPinBcm" + (i + 1), new Integer(vdPin.getBcmPin()).toString());
+            }
+        } else {
+            optionsRepository.delOption("RPSOvershoot", false);
+            optionsRepository.delOption("RPSAutoPumpBackTimer", false);
+            optionsRepository.delOption("RPSVDPinFwStateHigh%", true);
+            optionsRepository.delOption("RPSVDPinBcm%", true);
+        }
+    }
+
+    public ReversePumpingSettings.Full getReversepumpingSettings() {
+        ReversePumpingSettings.Full settings = new ReversePumpingSettings.Full();
+        settings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPSEnable")));
+        if(settings.isEnable()) {
+            ReversePumpingSettings.VoltageDirectorPin vdPin1 = new ReversePumpingSettings.VoltageDirectorPin();
+            ReversePumpingSettings.VoltageDirectorPin vdPin2 = new ReversePumpingSettings.VoltageDirectorPin();
+            vdPin1.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm1")));
+            vdPin1.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh1")));
+            vdPin2.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm2")));
+            vdPin2.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh2")));
+
+            ReversePumpingSettings.Details details = new ReversePumpingSettings.Details();
+            details.setDirectorPins(Arrays.asList(vdPin1, vdPin2));
+            details.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPSOvershoot")));
+            details.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPSAutoPumpBackTimer")));
+            settings.setSettings(details);
+        }
+        return settings;
     }
 
     public enum PumpOccupation {

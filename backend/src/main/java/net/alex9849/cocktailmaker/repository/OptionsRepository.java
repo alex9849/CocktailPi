@@ -48,17 +48,25 @@ public class OptionsRepository extends JdbcDaoSupport {
                 pstmt.setString(1, key);
                 pstmt.setString(2, value);
 
-                ResultSet rs = pstmt.executeQuery();
+                pstmt.executeUpdate();
                 return null;
             });
         } else {
-            getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-                PreparedStatement pstmt = con.prepareStatement("DELETE FROM options o WHERE o.key = ?");
-                pstmt.setString(1, key);
-
-                ResultSet rs = pstmt.executeQuery();
-                return null;
-            });
+            delOption(key, false);
         }
+    }
+
+    public void delOption(String key, boolean like) {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+            PreparedStatement pstmt;
+            if(like) {
+                pstmt = con.prepareStatement("DELETE FROM options o WHERE o.key LIKE ?");
+            } else {
+                pstmt = con.prepareStatement("DELETE FROM options o WHERE o.key = ?");
+            }
+            pstmt.setString(1, key);
+            pstmt.executeUpdate();
+            return null;
+        });
     }
 }

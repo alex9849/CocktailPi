@@ -108,6 +108,7 @@
 <script>
 import { maxValue, minValue, required, maxLength, minLength, requiredIf, helpers } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import SystemService from 'src/services/system.service'
 
 export default {
   name: 'CReversePumpingSettings',
@@ -153,9 +154,27 @@ export default {
     },
     onClickSave () {
       this.saving = true
+      SystemService.setReversePumpSettings(this.form)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Settings updated!'
+          })
+          this.fetchSettings()
+        })
+        .finally(() => {
+          this.saving = false
+        })
     },
     fetchSettings () {
       this.loading = false
+      SystemService.getReversePumpSettings()
+        .then(settings => {
+          this.v.form.$model = Object.assign(this.form, settings)
+        })
+        .finally(() => {
+          this.saving = false
+        })
     }
   },
   computed: {
