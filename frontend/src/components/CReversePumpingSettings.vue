@@ -15,45 +15,41 @@
           />
         </q-card>
       </div>
-      <div class="row q-col-gutter-md"
+      <div class="row"
            v-if="v.form.enable.$model"
       >
-        <div class="col-12 col-sm-6"
-             :key="index"
-             v-for="(dPin, index) in v.form.settings.directorPins.$model"
-        >
-          <q-card flat
-                  bordered>
-            <q-card-section>
-              <div class="text-subtitle2">Voltage director pin {{ index + 1 }}</div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section class="q-gutter-sm">
-              <q-input
-                v-model:model-value="dPin.bcmPin"
-                :error-message="v.form.settings.directorPins.$each.$response.$errors[index].bcmPin[0]?.$message"
-                :error="v.form.settings.directorPins.$each.$response.$errors[index].bcmPin.length > 0"
-                type="number"
-                outlined
-                :disable="disableForm"
-                hide-bottom-space
-                label="BCM-Pin"
-              />
-              <q-select
-                v-model:model-value="dPin.forwardStateHigh"
-                :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
-                :error-message="v.form.settings.directorPins.$each.$response.$errors[index].forwardStateHigh[0]?.$message"
-                :error="v.form.settings.directorPins.$each.$response.$errors[index].forwardStateHigh.length > 0"
-                map-options
-                emit-value
-                outlined
-                :disable="disableForm"
-                hide-bottom-space
-                label="Forward state"
-              />
-            </q-card-section>
-          </q-card>
-        </div>
+        <q-card class="col"
+                flat
+                bordered>
+          <q-card-section>
+            <div class="text-subtitle2">Voltage director pin</div>
+          </q-card-section>
+          <q-separator/>
+          <q-card-section class="q-gutter-sm">
+            <q-input
+              v-model:model-value="v.form.settings.directorPin.bcmPin.$model"
+              :error-message="v.form.settings.directorPin.bcmPin.$errors[0]?.$message"
+              :error="v.form.settings.directorPin.bcmPin.$errors.length > 0"
+              type="number"
+              outlined
+              :disable="disableForm"
+              hide-bottom-space
+              label="BCM-Pin"
+            />
+            <q-select
+              v-model:model-value="v.form.settings.directorPin.forwardStateHigh.$model"
+              :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
+              :error-message="v.form.settings.directorPin.forwardStateHigh.$errors[0]?.$message"
+              :error="v.form.settings.directorPin.forwardStateHigh.$errors.length > 0"
+              map-options
+              emit-value
+              outlined
+              :disable="disableForm"
+              hide-bottom-space
+              label="Forward state"
+            />
+          </q-card-section>
+        </q-card>
       </div>
       <div class="row"
            v-if="v.form.enable.$model"
@@ -121,13 +117,10 @@ export default {
         enable: false,
         settings: {
           overshoot: 0,
-          directorPins: [{
+          directorPin: {
             bcmPin: 0,
             forwardStateHigh: false
-          }, {
-            bcmPin: 0,
-            forwardStateHigh: false
-          }],
+          },
           autoPumpBackTimer: 0
         }
       },
@@ -197,18 +190,14 @@ export default {
           overshoot: {
             required: requiredIf(() => this.form.enable)
           },
-          directorPins: {
+          directorPin: {
             required: requiredIf(() => this.form.enable),
-            minLength: minLength(2),
-            maxLength: maxLength(2),
-            $each: helpers.forEach({
-              bcmPin: {
-                required: requiredIf(() => this.form.enable)
-              },
-              forwardStateHigh: {
-                required: requiredIf(() => this.form.enable)
-              }
-            })
+            bcmPin: {
+              required: requiredIf(() => this.form.enable)
+            },
+            forwardStateHigh: {
+              required: requiredIf(() => this.form.enable)
+            }
           },
           autoPumpBackTimer: {
             required: requiredIf(() => this.form.enable)
@@ -219,7 +208,7 @@ export default {
     if (this.form.enable) {
       val.form.settings.overshoot.minValue = minValue(0)
       val.form.settings.overshoot.maxValue = maxValue(200)
-      val.form.settings.directorPins.$each = helpers.forEach({
+      val.form.settings.directorPin = {
         bcmPin: {
           required: requiredIf(() => this.form.enable),
           minValue: minValue(0),
@@ -228,7 +217,7 @@ export default {
         forwardStateHigh: {
           required: requiredIf(() => this.form.enable)
         }
-      })
+      }
     }
     return val
   }

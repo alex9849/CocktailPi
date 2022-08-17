@@ -95,14 +95,9 @@ public class PumpUpService {
         if (this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
             return false;
         }
-        for (ReversePumpingSettings.VoltageDirectorPin pin : this.reversePumpSettings.getSettings().getDirectorPins()) {
-            IGpioPin gpioPin = gpioController.getGpioPin(pin.getBcmPin());
-            boolean reversed = gpioPin.isHigh() != pin.isForwardStateHigh();
-            if (reversed) {
-                return true;
-            }
-        }
-        return false;
+        ReversePumpingSettings.VoltageDirectorPin pin = this.reversePumpSettings.getSettings().getDirectorPin();
+        IGpioPin gpioPin = gpioController.getGpioPin(pin.getBcmPin());
+        return gpioPin.isHigh() != pin.isForwardStateHigh();
     }
 
     private synchronized void setReversePumpingDirection(boolean reverse) {
@@ -113,16 +108,15 @@ public class PumpUpService {
                 return;
             }
         }
-        for (ReversePumpingSettings.VoltageDirectorPin pinConfig : reversePumpSettings.getSettings().getDirectorPins()) {
-            IGpioPin gpioPin = gpioController.getGpioPin(pinConfig.getBcmPin());
-            if (reverse != pinConfig.isForwardStateHigh()) {
-                if (!gpioPin.isHigh()) {
-                    gpioPin.setHigh();
-                }
-            } else {
-                if(gpioPin.isHigh()) {
-                    gpioPin.setLow();
-                }
+        ReversePumpingSettings.VoltageDirectorPin pinConfig = reversePumpSettings.getSettings().getDirectorPin();
+        IGpioPin gpioPin = gpioController.getGpioPin(pinConfig.getBcmPin());
+        if (reverse != pinConfig.isForwardStateHigh()) {
+            if (!gpioPin.isHigh()) {
+                gpioPin.setHigh();
+            }
+        } else {
+            if(gpioPin.isHigh()) {
+                gpioPin.setLow();
             }
         }
     }
@@ -160,28 +154,19 @@ public class PumpUpService {
         optionsRepository.setOption("RPSEnable", Boolean.valueOf(settings.isEnable()).toString());
         if (settings.isEnable()) {
             ReversePumpingSettings.Details details = settings.getSettings();
-            List<ReversePumpingSettings.VoltageDirectorPin> vdPins = details.getDirectorPins();
             optionsRepository.setOption("RPSOvershoot", Integer.valueOf(details.getOvershoot()).toString());
             optionsRepository.setOption("RPSAutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
-
-            Set<Integer> seenPins = new HashSet<>();
-            for (int i = 0; i < vdPins.size(); i++) {
-                ReversePumpingSettings.VoltageDirectorPin vdPin = vdPins.get(i);
-                if(pumpService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
-                    throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
-                }
-                if(!seenPins.add(vdPin.getBcmPin())) {
-                    throw new IllegalArgumentException("BCM-Pins must be different!");
-                }
-
-                optionsRepository.setOption("RPSVDPinFwStateHigh" + (i + 1), Boolean.valueOf(vdPin.isForwardStateHigh()).toString());
-                optionsRepository.setOption("RPSVDPinBcm" + (i + 1), Integer.valueOf(vdPin.getBcmPin()).toString());
+            ReversePumpingSettings.VoltageDirectorPin vdPin = details.getDirectorPin();
+            if(pumpService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
+                throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
             }
+            optionsRepository.setOption("RPSVDPinFwStateHigh", Boolean.valueOf(vdPin.isForwardStateHigh()).toString());
+            optionsRepository.setOption("RPSVDPinBcm", Integer.valueOf(vdPin.getBcmPin()).toString());
         } else {
             optionsRepository.delOption("RPSOvershoot", false);
             optionsRepository.delOption("RPSAutoPumpBackTimer", false);
-            optionsRepository.delOption("RPSVDPinFwStateHigh%", true);
-            optionsRepository.delOption("RPSVDPinBcm%", true);
+            optionsRepository.delOption("RPSVDPinFwStateHigh", false);
+            optionsRepository.delOption("RPSVDPinBcm", false);
         }
         this.reversePumpSettings = settings;
         this.setReversePumpingDirection(false);
@@ -192,15 +177,12 @@ public class PumpUpService {
         ReversePumpingSettings.Full settings = new ReversePumpingSettings.Full();
         settings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPSEnable")));
         if (settings.isEnable()) {
-            ReversePumpingSettings.VoltageDirectorPin vdPin1 = new ReversePumpingSettings.VoltageDirectorPin();
-            ReversePumpingSettings.VoltageDirectorPin vdPin2 = new ReversePumpingSettings.VoltageDirectorPin();
-            vdPin1.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm1")));
-            vdPin1.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh1")));
-            vdPin2.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm2")));
-            vdPin2.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh2")));
+            ReversePumpingSettings.VoltageDirectorPin vdPin = new ReversePumpingSettings.VoltageDirectorPin();
+            vdPin.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm")));
+            vdPin.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh")));
 
             ReversePumpingSettings.Details details = new ReversePumpingSettings.Details();
-            details.setDirectorPins(Arrays.asList(vdPin1, vdPin2));
+            details.setDirectorPin(vdPin);
             details.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPSOvershoot")));
             details.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPSAutoPumpBackTimer")));
             settings.setSettings(details);
@@ -208,11 +190,10 @@ public class PumpUpService {
         return settings;
     }
 
-    public boolean isGpioInUse(int bcmPin) {
+    public boolean isGpioInUseAdVdPin(int bcmPin) {
         if(this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
             return false;
         }
-        return this.reversePumpSettings.getSettings().getDirectorPins().stream()
-                .anyMatch(x -> x.getBcmPin() == bcmPin);
+        return this.reversePumpSettings.getSettings().getDirectorPin().getBcmPin() == bcmPin;
     }
 }

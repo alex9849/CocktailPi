@@ -86,7 +86,7 @@ public class PumpService {
                 throw new IllegalArgumentException("BCM-Pin already in use!");
             }
         }
-        if(pumpUpService.isGpioInUse(pump.getBcmPin())) {
+        if(pumpUpService.isGpioInUseAdVdPin(pump.getBcmPin())) {
             throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
         }
         pumpRepository.update(pump);
