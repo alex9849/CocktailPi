@@ -77,7 +77,6 @@ public class PumpUpService {
         pump.setRunning(true);
         CountDownLatch cdl = new CountDownLatch(1);
         ScheduledFuture<?> stopTask = scheduler.schedule(() -> {
-            pump.setRunning(false);
             pump.setPumpedUp(pumpUp);
             try {
                 cdl.await();
