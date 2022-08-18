@@ -220,6 +220,15 @@ export default {
       store.dispatch('auth/fetchCurrentUser'),
       store.dispatch('globalSettings/fetchGlobalSettings')
     ]).then(() => next())
+      .catch(() => {
+        store.dispatch('auth/logout')
+          .finally(() => next({
+            name: 'login',
+            query: {
+              redirectTo: to.fullPath
+            }
+          }))
+      })
   },
   created () {
     window.addEventListener('resize', this.handleResize)
