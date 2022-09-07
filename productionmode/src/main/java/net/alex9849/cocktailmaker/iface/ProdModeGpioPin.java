@@ -17,12 +17,12 @@ public class ProdModeGpioPin implements IGpioPin {
     @Override
     public synchronized void setHigh() {
         pin.high();
-        System.out.println("Pin " + pin.getAddress() + " stopped!");
+        System.out.println("Pin " + pin.getAddress() + " set to high!");
     }
 
     @Override
     public synchronized void setLow() {
         pin.low();
-        System.out.println("Pin " + pin.getAddress() + " started!");
+        System.out.println("Pin " + pin.getAddress() + " set to low!");
     }
 }

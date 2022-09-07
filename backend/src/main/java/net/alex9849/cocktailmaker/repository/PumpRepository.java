@@ -35,12 +35,14 @@ public class PumpRepository extends JdbcDaoSupport {
     public Pump create(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (bcm_pin, time_per_cl_in_ms, " +
-                    "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml, is_power_state_high, is_pumped_up) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setInt(3, pump.getTubeCapacityInMl());
+            pstmt.setDouble(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.setInt(5, pump.getFillingLevelInMl());
+            pstmt.setBoolean(6, pump.isPowerStateHigh());
+            pstmt.setBoolean(7, pump.isPumpedUp());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -54,13 +56,15 @@ public class PumpRepository extends JdbcDaoSupport {
     public boolean update(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET bcm_pin = ?, time_per_cl_in_ms = ?, " +
-                    "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ? WHERE id = ?");
+                    "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ?, is_power_state_high = ?, is_pumped_up = ? WHERE id = ?");
             pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setInt(3, pump.getTubeCapacityInMl());
+            pstmt.setDouble(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.setInt(5, pump.getFillingLevelInMl());
-            pstmt.setLong(6, pump.getId());
+            pstmt.setBoolean(6, pump.isPowerStateHigh());
+            pstmt.setBoolean(7, pump.isPumpedUp());
+            pstmt.setLong(8, pump.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -90,7 +94,7 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findAddableIngredientsIdsOnPump() {
+    public Set<Long> findIngredientIdsOnPump() {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT p.current_ingredient_id as id FROM pumps p WHERE p.current_ingredient_id IS NOT NULL");
             return DbUtils.executeGetIdsPstmt(pstmt);
@@ -144,9 +148,11 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setId(rs.getLong("id"));
         pump.setBcmPin(rs.getInt("bcm_pin"));
         pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
-        pump.setTubeCapacityInMl(rs.getInt("tube_capacity_in_ml"));
-        pump.setCurrentIngredientId(rs.getLong("current_ingredient_id"));
+        pump.setTubeCapacityInMl(rs.getDouble("tube_capacity_in_ml"));
+        pump.setCurrentIngredientId(rs.getObject("current_ingredient_id", Long.class));
         pump.setFillingLevelInMl(rs.getInt("filling_level_in_ml"));
+        pump.setPowerStateHigh(rs.getBoolean("is_power_state_high"));
+        pump.setPumpedUp(rs.getBoolean("is_pumped_up"));
         return pump;
     }
 }

@@ -26,8 +26,8 @@ public class CocktailFactory {
     private final List<Consumer<CocktailProgress>> subscribers = new ArrayList<>();
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
     private AbstractProductionStepWorker currentProductionStepWorker = null;
+    private Consumer<Set<Pump>> onRequestPumpPersist;
     private final Set<Pump> pumps;
-    private final IGpioController gpioController;
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
 
@@ -36,13 +36,17 @@ public class CocktailFactory {
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
 
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Consumer<Set<Pump>> onRequestPumpPersist) {
+        this(feasibleRecipe, user, pumps);
+        this.onRequestPumpPersist = onRequestPumpPersist;
+    }
+
     /**
      * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, IGpioController gpioController) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps) {
         this.pumps = pumps;
-        this.gpioController = gpioController;
         this.feasibleRecipe = feasibleRecipe;
         this.user = user;
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
@@ -52,6 +56,11 @@ public class CocktailFactory {
         for(ProductionStep pStep : feasibleRecipe.getFeasibleProductionSteps()) {
             this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
         }
+        Set<Pump> usedPumps = this.getUpdatedPumps();
+        if(!usedPumps.isEmpty()) {
+            this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(usedPumps));
+        }
+
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
         if(!workerIterator.hasNext()) {
             throw new IllegalArgumentException("Cound't create ProductionStepWorkers from recipe!");
@@ -110,17 +119,31 @@ public class CocktailFactory {
             workers.add(new ManualProductionStepWorker(manualProductionSteps));
         }
         if(!automaticProductionSteps.isEmpty()) {
-            workers.add(new AutomaticProductionStepWorker(pumps, gpioController,
+            workers.add(new AutomaticProductionStepWorker(pumps,
                     automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
         }
         return workers;
     }
 
-    public Set<Pump> getUsedPumps() {
+    private void requestPumpPersist(Set<Pump> pumps) {
+        if(this.onRequestPumpPersist == null) {
+            return;
+        }
+        this.onRequestPumpPersist.accept(pumps);
+    }
+
+    public Set<Pump> getUpdatedPumps() {
         return this.productionStepWorkers.stream()
-                .filter(x -> x instanceof AutomaticProductionStepWorker)
-                .flatMap(x -> ((AutomaticProductionStepWorker) x).getUsedPumps().stream())
+                .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
+                .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getUsedPumps().stream())
                 .collect(Collectors.toSet());
+    }
+
+    private Map<Pump, Integer> getNotUsedLiquid() {
+        return this.productionStepWorkers.stream()
+                .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
+                .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
+                .collect(Collectors.toMap(x -> x.getKey(), v -> v.getValue(), (v1, v2) -> v1 + v2));
     }
 
     private void onSubscriptionChange(StepProgress stepProgress) {
@@ -147,17 +170,6 @@ public class CocktailFactory {
         return new HashSet<Ingredient>(this.pumps.stream()
                 .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x -> x.getCurrentIngredient(), (a, b) -> a))
                 .values());
-    }
-
-    public Set<Ingredient> getNonAutomaticIngredients() {
-        Set<Ingredient> neededIngredientIds = getNeededIngredientIds();
-        Set<Ingredient> availableIngredientIds = getAvailableIngredientIds();
-        if(neededIngredientIds.size() > availableIngredientIds.size()) {
-            return new HashSet<>();
-        }
-        return neededIngredientIds.stream()
-                .filter(x -> availableIngredientIds.stream().noneMatch(y -> x.getId() == y.getId()))
-                .collect(Collectors.toSet());
     }
 
     public int getRecipeAmountOfLiquid() {
@@ -188,6 +200,7 @@ public class CocktailFactory {
         }
         setState(CocktailProgress.State.FINISHED);
         this.shutDown();
+        this.requestPumpPersist(this.getUpdatedPumps());
         this.notifySubscribers();
     }
 
@@ -197,6 +210,16 @@ public class CocktailFactory {
         }
         this.shutDown();
         setState(CocktailProgress.State.CANCELLED);
+
+        Set<Pump> updatedPumps = this.getUpdatedPumps();
+        Map<Pump, Integer> notUsedLiquidByPump = this.getNotUsedLiquid();
+        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
+            Pump pump = entry.getKey();
+            Integer notUsedLiquid = entry.getValue();
+            pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);
+        }
+        updatedPumps.addAll(notUsedLiquidByPump.keySet());
+        this.requestPumpPersist(updatedPumps);
         this.notifySubscribers();
     }
 
@@ -209,10 +232,7 @@ public class CocktailFactory {
 
     private void shutDown() {
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
-            if(worker instanceof AutomaticProductionStepWorker) {
-                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
-                automaticWorker.cancel();
-            }
+            worker.cancel();
         }
     }
 
@@ -275,26 +295,23 @@ public class CocktailFactory {
         long timeNeeded = 0;
         long timeElapsed = 0;
         for(AbstractProductionStepWorker worker : this.productionStepWorkers) {
-            if(worker instanceof ManualProductionStepWorker) {
+            if(worker instanceof ManualProductionStepWorker || worker instanceof WrittenInstructionProductionStepWorker) {
                 timeNeeded += TIME_FOR_MANUAL_PROGRESS;
                 if(worker.isFinished()) {
                     timeElapsed += TIME_FOR_MANUAL_PROGRESS;
                 }
-            } else if (worker instanceof AutomaticProductionStepWorker) {
-                AutomaticProductionStepWorker automaticWorker = (AutomaticProductionStepWorker) worker;
-                timeNeeded += automaticWorker.getRequiredPumpingTime();
+
+            } else if (worker instanceof AbstractPumpingProductionStepWorker) {
+                AbstractPumpingProductionStepWorker pumpingWorker = (AbstractPumpingProductionStepWorker) worker;
+                timeNeeded += pumpingWorker.getRequiredPumpingTime();
                 if(worker.isFinished()) {
-                    timeElapsed += automaticWorker.getRequiredPumpingTime();
-                } else if (automaticWorker.isStarted()) {
-                    timeElapsed += Math.round((automaticWorker.getProgress().getPercentCompleted() / 100d)
-                            * automaticWorker.getRequiredPumpingTime());
+                    timeElapsed += pumpingWorker.getRequiredPumpingTime();
+                } else if (pumpingWorker.isStarted()) {
+                    timeElapsed += Math.round((pumpingWorker.getProgress().getPercentCompleted() / 100d)
+                            * pumpingWorker.getRequiredPumpingTime());
                 }
-            } else if (worker instanceof WrittenInstructionProductionStepWorker) {
-                timeNeeded += TIME_FOR_MANUAL_PROGRESS;
-                if(worker.isFinished()) {
-                    timeElapsed += TIME_FOR_MANUAL_PROGRESS;
-                }
-            } else {
+
+            }  else {
                 throw new IllegalStateException("Unknown worker type!");
             }
         }

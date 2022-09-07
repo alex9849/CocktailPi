@@ -4,6 +4,7 @@ import cocktailProgress from './modules/cocktailprogress/index'
 import pumpLayout from './modules/pumplayout/index'
 import category from './modules/category/index'
 import websocket from './modules/websocket/index'
+import globalSettings from 'src/store/modules/globalsettings'
 
 const store = createStore({
   modules: {
@@ -11,7 +12,8 @@ const store = createStore({
     cocktailProgress: cocktailProgress,
     pumpLayout: pumpLayout,
     category: category,
-    websocket: websocket
+    websocket: websocket,
+    globalSettings: globalSettings
   },
 
   // enable strict mode (adds overhead!)

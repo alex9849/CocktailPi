@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 public abstract class AbstractProductionStepWorker {
     private final List<Consumer<StepProgress>> subscribers = new ArrayList<>();
     private boolean finished = false;
+    private boolean started = false;
     private Runnable onFinish = null;
 
     public AbstractProductionStepWorker subscribeToProgress(Consumer<StepProgress> progressInPercentConsumer) {
@@ -20,7 +21,12 @@ public abstract class AbstractProductionStepWorker {
         }
     }
 
-    public abstract void start();
+    public void start() {
+        if(this.started) {
+            throw new IllegalStateException("ProductionStepWorker has already been started!");
+        }
+        this.started = true;
+    }
 
     public abstract void cancel();
 
@@ -34,6 +40,10 @@ public abstract class AbstractProductionStepWorker {
         if(this.onFinish != null) {
             this.onFinish.run();
         }
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 
     public boolean isFinished() {

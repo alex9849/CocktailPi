@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.PythonLibraryInfo;
+import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,9 @@ import java.util.Objects;
 @Service
 @Transactional
 public class SystemService {
+
+    @Autowired
+    private PumpUpService pumpUpService;
 
     public List<PythonLibraryInfo> getInstalledPythonLibraries() throws IOException {
         List<PythonLibraryInfo> pythonLibraries = new ArrayList<>();
@@ -52,5 +57,11 @@ public class SystemService {
             devices.add(mixer.getMixerInfo().getName());
         }
         return devices;
+    }
+
+    public GlobalSettings getGlobalSettings() {
+        GlobalSettings globalSettings = new GlobalSettings();
+        globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
+        return globalSettings;
     }
 }

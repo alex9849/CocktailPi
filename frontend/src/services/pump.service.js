@@ -12,12 +12,38 @@ class PumpService {
     return axios.post(API_PATH, createPump)
   }
 
-  cleanPump (id) {
-    return axios.put(API_PATH + String(id) + '/clean')
+  pumpUp (id) {
+    return axios.put(API_PATH + String(id) + '/pumpup')
+  }
+
+  pumpDown (id) {
+    return axios.put(API_PATH + String(id) + '/pumpback')
+  }
+
+  startPump (id) {
+    const config = {
+      params: {
+        id
+      }
+    }
+    return axios.put(API_PATH + 'start', null, config)
+  }
+
+  stopPump (id) {
+    const config = {
+      params: {
+        id
+      }
+    }
+    return axios.put(API_PATH + 'stop', null, config)
   }
 
   updatePump (id, createPump) {
     return axios.put(API_PATH + String(id), createPump)
+  }
+
+  patchPump (id, patchPump) {
+    return axios.patch(API_PATH + String(id), patchPump)
   }
 
   deletePump (id) {
@@ -32,8 +58,22 @@ export class PumpDtoMapper {
       fillingLevelInMl: detailed.fillingLevelInMl,
       timePerClInMs: detailed.timePerClInMs,
       tubeCapacityInMl: detailed.tubeCapacityInMl,
+      powerStateHigh: detailed.powerStateHigh,
+      pumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id
     }
+  }
+
+  toPumpPatchDto (detailed) {
+    const dto = {
+      fillingLevelInMl: detailed.fillingLevelInMl,
+      isPumpedUp: detailed.pumpedUp,
+      currentIngredientId: detailed.currentIngredient?.id
+    }
+    if (detailed.currentIngredient === null) {
+      dto.isRemoveIngredient = true
+    }
+    return dto
   }
 }
 

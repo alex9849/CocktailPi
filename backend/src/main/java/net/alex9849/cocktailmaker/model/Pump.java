@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.model;
 
+import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
@@ -10,11 +12,14 @@ import java.util.Objects;
 public class Pump {
     private long id;
     private int timePerClInMs;
-    private int tubeCapacityInMl;
+    private double tubeCapacityInMl;
     private int bcmPin;
     private int fillingLevelInMl;
     private Long currentIngredientId;
+    private boolean isPowerStateHigh;
+    private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
+    private IGpioPin gpioPin;
 
     public long getId() {
         return id;
@@ -32,11 +37,11 @@ public class Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public int getTubeCapacityInMl() {
+    public double getTubeCapacityInMl() {
         return tubeCapacityInMl;
     }
 
-    public void setTubeCapacityInMl(int tubeCapacityInMl) {
+    public void setTubeCapacityInMl(double tubeCapacityInMl) {
         this.tubeCapacityInMl = tubeCapacityInMl;
     }
 
@@ -45,7 +50,11 @@ public class Pump {
     }
 
     public void setBcmPin(int bcmPin) {
+        if(this.bcmPin == bcmPin) {
+            return;
+        }
         this.bcmPin = bcmPin;
+        this.gpioPin = null;
     }
 
     public AutomatedIngredient getCurrentIngredient() {
@@ -66,6 +75,43 @@ public class Pump {
         return currentIngredientId;
     }
 
+    public boolean isPowerStateHigh() {
+        return isPowerStateHigh;
+    }
+
+    public void setPowerStateHigh(boolean isPowerStateHigh) {
+        this.isPowerStateHigh = isPowerStateHigh;
+    }
+
+    public boolean isRunning() {
+        IGpioPin gpioPin = getGpioPin();
+        return gpioPin.isHigh() == isPowerStateHigh();
+    }
+
+    public void setRunning(boolean run) {
+        if(run == isPowerStateHigh()) {
+            getGpioPin().setHigh();
+        } else {
+            getGpioPin().setLow();
+        }
+    }
+
+    public IGpioPin getGpioPin() {
+        if(gpioPin == null) {
+            IGpioController controller = SpringUtility.getBean(IGpioController.class);
+            gpioPin = controller.getGpioPin(getBcmPin());
+        }
+        return gpioPin;
+    }
+
+    public boolean isPumpedUp() {
+        return isPumpedUp;
+    }
+
+    public void setPumpedUp(boolean pumpedUp) {
+        isPumpedUp = pumpedUp;
+    }
+
     public void setCurrentIngredient(AutomatedIngredient currentIngredient) {
         this.currentIngredient = currentIngredient;
         this.currentIngredientId = (currentIngredient != null)? currentIngredient.getId() : null;
@@ -84,5 +130,21 @@ public class Pump {
             this.currentIngredient = null;
         }
         this.currentIngredientId = currentIngredientId;
+    }
+
+    public int getConvertMlToRuntime(double mlToPump) {
+        double multiplier = 1;
+        if(getCurrentIngredient() != null) {
+            multiplier = getCurrentIngredient().getPumpTimeMultiplier();
+        }
+        return  (int) (multiplier * mlToPump * this.getTimePerClInMs() / 10d);
+    }
+
+    public int getConvertRuntimeToMl(int runtime) {
+        if(getCurrentIngredient() == null) {
+            return 0;
+        }
+        return  (int) (runtime / (getCurrentIngredient().getPumpTimeMultiplier()
+                * this.getTimePerClInMs() / 10d));
     }
 }

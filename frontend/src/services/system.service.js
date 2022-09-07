@@ -12,6 +12,25 @@ class SystemService {
     return axios.get(API_PATH + 'audiodevices')
       .then(response => response.data)
   }
+
+  setReversePumpSettings (settings) {
+    return axios.put(API_PATH + 'settings/reversepumping', settings)
+  }
+
+  getReversePumpSettings () {
+    return axios.get(API_PATH + 'settings/reversepumping')
+      .then(response => {
+        if (!response.data.settings) {
+          delete response.data.settings
+        }
+        return response.data
+      })
+  }
+
+  getGlobalSettings () {
+    return axios.get(API_PATH + 'settings/global')
+      .then(response => response.data)
+  }
 }
 
 export default new SystemService()

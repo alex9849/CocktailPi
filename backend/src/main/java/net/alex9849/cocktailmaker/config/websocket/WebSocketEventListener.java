@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.config.websocket;
 
+import net.alex9849.cocktailmaker.service.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
@@ -22,6 +23,9 @@ public class WebSocketEventListener {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private CocktailOrderService cocktailOrderService;
+
     @EventListener
     public void handleWebSocketConnectListener(SessionSubscribeEvent event) {
         final String simpDestination = (String) event.getMessage().getHeaders().get("simpDestination");
@@ -29,7 +33,7 @@ public class WebSocketEventListener {
             return;
         }
         if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_COCKTAIL_DESTINATION)) {
-            webSocketService.sendCurrentCocktailProgessToUser(pumpService.getCurrentCocktailProgress(), event.getUser().getName());
+            webSocketService.sendCurrentCocktailProgessToUser(cocktailOrderService.getCurrentCocktailProgress(), event.getUser().getName());
         }
         if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_PUMP_LAYOUT_DESTINATION)) {
             webSocketService.sendPumpLayoutToUser(pumpService.getAllPumps(), event.getUser().getName());

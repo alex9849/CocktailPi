@@ -82,14 +82,14 @@ public class IngredientService {
             idsToFindSetList.add(ingredientRepository.findGroupChildrenIds(groupChildrenGroupId));
         }
         if(onPump) {
-            idsToFindSetList.add(pumpService.findAddableIngredientsIdsOnPump());
+            idsToFindSetList.add(pumpService.findIngredientIdsOnPump());
         }
         if(inBar) {
             idsToFindSetList.add(ingredientRepository.findAddableIngredientsIdsInBar());
         }
         if(inBarOrOnPump) {
             Set<Long> ingIds = ingredientRepository.findAddableIngredientsIdsInBar();
-            ingIds.addAll(pumpService.findAddableIngredientsIdsOnPump());
+            ingIds.addAll(pumpService.findIngredientIdsOnPump());
             idsToFindSetList.add(ingIds);
         }
         if(filterIngredientsWithParents) {

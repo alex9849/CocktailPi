@@ -2,7 +2,6 @@ package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
 public class WrittenInstructionProductionStepWorker extends AbstractProductionStepWorker
         implements ManualFinishable {
-    protected boolean started = false;
     private final String message;
 
     public WrittenInstructionProductionStepWorker(String message) {
@@ -11,7 +10,7 @@ public class WrittenInstructionProductionStepWorker extends AbstractProductionSt
 
     @Override
     public void start() {
-        this.started = true;
+        super.start();
         this.notifySubscribers();
     }
 
@@ -19,7 +18,7 @@ public class WrittenInstructionProductionStepWorker extends AbstractProductionSt
     public void cancel() {}
 
     public void continueProduction() {
-        if(!this.started) {
+        if(!this.isStarted()) {
             return;
         }
         this.setFinished();

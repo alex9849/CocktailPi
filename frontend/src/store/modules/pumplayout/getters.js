@@ -8,11 +8,34 @@ export const getPumpIngredients = (state) => {
   return pumpIngredients
 }
 
-export const isCleaning = (state) => {
+export const getPumpOccupation = (state) => {
   return (pumpId) => {
     for (const pump of state.pumpLayout) {
       if (pump.id === pumpId) {
-        return pump.cleaning
+        return pump.occupation
+      }
+    }
+    return false
+  }
+}
+
+export const isPumpingReversed = (state) => {
+  // TODO Add correct attribute
+  return (pumpId) => {
+    for (const pump of state.pumpLayout) {
+      if (pump.id === pumpId) {
+        return pump.reversed
+      }
+    }
+    return false
+  }
+}
+
+export const isPumpedUp = (state) => {
+  return (pumpId) => {
+    for (const pump of state.pumpLayout) {
+      if (pump.id === pumpId) {
+        return pump.pumpedUp
       }
     }
     return false
