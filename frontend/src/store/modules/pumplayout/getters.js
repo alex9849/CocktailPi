@@ -42,6 +42,6 @@ export const isPumpedUp = (state) => {
   }
 }
 
-export const anyCleaning = (state) => state.pumpLayout.some(x => x.cleaning)
+export const anyOccupied = (state) => state.pumpLayout.some(x => x.occupation !== 'NONE')
 
 export const getLayout = (state) => state.pumpLayout

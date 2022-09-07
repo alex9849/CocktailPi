@@ -14,6 +14,7 @@
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 import { mdiCheck, mdiClose } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
+import { anyOccupied } from 'src/store/modules/pumplayout/getters'
 
 export default {
   name: 'CMakeCocktailDialogPumpsInUse',
@@ -27,10 +28,10 @@ export default {
   computed: {
     ...mapGetters({
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-      anyCleaning: 'pumpLayout/anyCleaning'
+      anyOccupied: 'pumpLayout/anyOccupied'
     }),
     isFulfilled () {
-      return !this.hasCocktailProgress && !this.anyCleaning
+      return !this.hasCocktailProgress && !this.anyOccupied
     },
     cardClass () {
       return {
@@ -41,8 +42,8 @@ export default {
     headline () {
       if (this.hasCocktailProgress) {
         return 'Machine occupied! A cocktail ist getting prepared currently!'
-      } else if (this.anyCleaning) {
-        return 'Machine occupied! One or more pumps are getting cleaned currently!'
+      } else if (this.anyOccupied) {
+        return 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
       } else {
         return 'Machine is not occupied!'
       }
