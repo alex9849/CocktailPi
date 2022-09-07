@@ -126,11 +126,15 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     public Map<Pump, Integer> getNotUsedLiquid() {
-        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
+        Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
         for(PumpPhase pumpPhase : this.getPumpPhases()) {
-            int notUsedLiquid = notUsedLiquidByPump.computeIfAbsent(pumpPhase.getPump(), p -> 0);
+            double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
             notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
-            notUsedLiquidByPump.put(pumpPhase.getPump(), notUsedLiquid);
+            notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
+        }
+        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
+        for(Map.Entry<Pump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
+            notUsedLiquidByPump.put(entry.getKey(), (int) Math.round(entry.getValue().doubleValue()));
         }
         return notUsedLiquidByPump;
     }

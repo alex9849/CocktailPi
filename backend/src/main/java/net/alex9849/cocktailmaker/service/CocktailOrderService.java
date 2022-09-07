@@ -67,11 +67,9 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpService.getAllPumps()), p -> pumpService.updatePumps(p))
+                new HashSet<>(pumpService.getAllPumps()), p -> pumpService.updatePumps(p, true))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
-        pumpService.updatePumps(cocktailFactory.getUpdatedPumps());
         this.cocktailFactory = cocktailFactory;
-        webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         this.cocktailFactory.makeCocktail();
         this.pumpUpService.updateReversePumpSettingsCountdown();
     }

@@ -229,14 +229,14 @@ export default {
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
       getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      isAnyPumpCleaning: 'pumpLayout/anyCleaning'
+      isAnyPumpOccupied: 'pumpLayout/anyOccupied'
     }),
     feasibilityOk () {
       return this.feasibilityReport.feasible && !this.checkingFeasibility
     },
     cocktailOrderable () {
       return this.feasibilityOk &&
-        !this.isAnyPumpCleaning &&
+        !this.isAnyPumpOccupied &&
         !this.hasCocktailProgress &&
         !this.v.amountToProduce.$invalid
     }

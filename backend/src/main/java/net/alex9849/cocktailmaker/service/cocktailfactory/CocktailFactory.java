@@ -189,6 +189,7 @@ public class CocktailFactory {
             throw new IllegalStateException("Factory not ready to start!");
         }
         setState(CocktailProgress.State.RUNNING);
+        this.requestPumpPersist(this.getUpdatedPumps());
         this.cocktailprogress = new CocktailProgress();
         this.notifySubscribers();
         this.currentProductionStepWorker.start();
