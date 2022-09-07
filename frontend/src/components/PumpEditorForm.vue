@@ -47,6 +47,7 @@
     <q-input
       label="Tube capacity"
       type="number"
+      step="0.1"
       outlined
       hide-bottom-space
       :model-value="v.modelValue.tubeCapacityInMl.$model"

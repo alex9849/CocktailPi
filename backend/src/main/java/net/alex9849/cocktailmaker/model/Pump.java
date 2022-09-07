@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Pump {
     private long id;
     private int timePerClInMs;
-    private int tubeCapacityInMl;
+    private double tubeCapacityInMl;
     private int bcmPin;
     private int fillingLevelInMl;
     private Long currentIngredientId;
@@ -37,11 +37,11 @@ public class Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public int getTubeCapacityInMl() {
+    public double getTubeCapacityInMl() {
         return tubeCapacityInMl;
     }
 
-    public void setTubeCapacityInMl(int tubeCapacityInMl) {
+    public void setTubeCapacityInMl(double tubeCapacityInMl) {
         this.tubeCapacityInMl = tubeCapacityInMl;
     }
 
@@ -132,7 +132,7 @@ public class Pump {
         this.currentIngredientId = currentIngredientId;
     }
 
-    public int getConvertMlToRuntime(int mlToPump) {
+    public int getConvertMlToRuntime(double mlToPump) {
         double multiplier = 1;
         if(getCurrentIngredient() != null) {
             multiplier = getCurrentIngredient().getPumpTimeMultiplier();

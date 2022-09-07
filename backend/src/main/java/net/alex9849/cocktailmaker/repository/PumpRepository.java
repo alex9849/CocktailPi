@@ -38,7 +38,7 @@ public class PumpRepository extends JdbcDaoSupport {
                     "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml, is_power_state_high, is_pumped_up) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setInt(3, pump.getTubeCapacityInMl());
+            pstmt.setDouble(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.setInt(5, pump.getFillingLevelInMl());
             pstmt.setBoolean(6, pump.isPowerStateHigh());
@@ -59,7 +59,7 @@ public class PumpRepository extends JdbcDaoSupport {
                     "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ?, is_power_state_high = ?, is_pumped_up = ? WHERE id = ?");
             pstmt.setInt(1, pump.getBcmPin());
             pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setInt(3, pump.getTubeCapacityInMl());
+            pstmt.setDouble(3, pump.getTubeCapacityInMl());
             pstmt.setObject(4, pump.getCurrentIngredientId());
             pstmt.setInt(5, pump.getFillingLevelInMl());
             pstmt.setBoolean(6, pump.isPowerStateHigh());
@@ -148,7 +148,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setId(rs.getLong("id"));
         pump.setBcmPin(rs.getInt("bcm_pin"));
         pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
-        pump.setTubeCapacityInMl(rs.getInt("tube_capacity_in_ml"));
+        pump.setTubeCapacityInMl(rs.getDouble("tube_capacity_in_ml"));
         pump.setCurrentIngredientId(rs.getObject("current_ingredient_id", Long.class));
         pump.setFillingLevelInMl(rs.getInt("filling_level_in_ml"));
         pump.setPowerStateHigh(rs.getBoolean("is_power_state_high"));

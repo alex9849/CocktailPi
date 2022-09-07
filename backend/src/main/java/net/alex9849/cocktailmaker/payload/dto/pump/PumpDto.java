@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class PumpDto {
     private interface Id { long getId(); }
     private interface TimePerClInMs { @NotNull @Min(1) int getTimePerClInMs(); }
-    private interface TubeCapacityInMl { @NotNull @Min(1) int getTubeCapacityInMl(); }
+    private interface TubeCapacityInMl { @NotNull @Min(1) double getTubeCapacityInMl(); }
     private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
     private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
@@ -36,7 +36,7 @@ public class PumpDto {
         @Getter @Setter @EqualsAndHashCode
         public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientId, IsPowerStateHigh, IsPumpedUp {
             int timePerClInMs;
-            int tubeCapacityInMl;
+            double tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
             Long currentIngredientId;
@@ -60,7 +60,7 @@ public class PumpDto {
                 CurrentIngredient, Occupation, IsReversed, IsPowerStateHigh, IsPumpedUp {
             long id;
             int timePerClInMs;
-            int tubeCapacityInMl;
+            double tubeCapacityInMl;
             int bcmPin;
             int fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
