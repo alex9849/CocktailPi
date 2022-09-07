@@ -109,6 +109,10 @@ const routes = [
         name: 'eventmanagement'
       }
       ]
+    }, {
+      path: '/simplecollection',
+      component: () => import('layouts/SimpleTouchCollectionLayout.vue'),
+      children: []
     }]
   }, {
     path: '/login',

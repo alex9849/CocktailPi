@@ -1,4 +1,7 @@
 <template>
+  <app-socket
+    ref="appSocket"
+  />
   <router-view/>
 </template>
 
@@ -8,9 +11,11 @@
 <script>
 
 import { store } from '../store'
+import AppSocket from 'components/AppSocket'
 
 export default {
   name: 'LoggedInLayout',
+  components: { AppSocket },
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),
