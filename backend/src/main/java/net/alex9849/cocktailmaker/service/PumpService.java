@@ -57,27 +57,27 @@ public class PumpService {
         return pump;
     }
 
-    public Set<Pump> updatePumps(Set<Pump> pumps) {
+    public Set<Pump> updatePumps(Set<Pump> pumps, boolean isSourceCocktailfactory) {
         Set<Pump> updated = new HashSet<>();
         for(Pump pump : pumps) {
-            updated.add(this.internalUpdatePump(pump));
+            updated.add(this.internalUpdatePump(pump, isSourceCocktailfactory));
         }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return updated;
     }
 
     public Pump updatePump(Pump pump) {
-        Pump updated = this.internalUpdatePump(pump);
+        Pump updated = this.internalUpdatePump(pump, false);
         webSocketService.broadcastPumpLayout(getAllPumps());
         return updated;
     }
 
-    private Pump internalUpdatePump(Pump pump) {
+    private Pump internalUpdatePump(Pump pump, boolean isSourceCocktailfactory) {
         Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        if(getPumpOccupation(beforeUpdate.get()) != PumpOccupation.NONE) {
+        if(getPumpOccupation(beforeUpdate.get()) != PumpOccupation.NONE && !isSourceCocktailfactory) {
             throw new IllegalStateException("Pump currently occupied!");
         }
         Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());

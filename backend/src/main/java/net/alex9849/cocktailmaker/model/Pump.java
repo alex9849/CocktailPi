@@ -140,11 +140,11 @@ public class Pump {
         return  (int) (multiplier * mlToPump * this.getTimePerClInMs() / 10d);
     }
 
-    public int getConvertRuntimeToMl(int runtime) {
+    public double getConvertRuntimeToMl(int runtime) {
         if(getCurrentIngredient() == null) {
             return 0;
         }
-        return  (int) (runtime / (getCurrentIngredient().getPumpTimeMultiplier()
-                * this.getTimePerClInMs() / 10d));
+        return runtime / (getCurrentIngredient().getPumpTimeMultiplier()
+                * this.getTimePerClInMs() / 10d);
     }
 }

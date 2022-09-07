@@ -58,7 +58,7 @@ public class PumpPhase {
         }
     }
 
-    public int getLiquidPumped() {
+    public double getLiquidPumped() {
         if(getStartedTime() == null) {
             return 0;
         }
@@ -73,16 +73,16 @@ public class PumpPhase {
             return getLiquidToPump();
         }
 
-        int liquidPumped = pump.getConvertRuntimeToMl(runTimeElapsed);
+        double liquidPumped = pump.getConvertRuntimeToMl(runTimeElapsed);
         liquidPumped = Math.min(liquidPumped, getLiquidToPump());
         return liquidPumped;
     }
 
-    public int getRemainingLiquidToPump() {
+    public double getRemainingLiquidToPump() {
         return Math.max(0, getLiquidToPump() - getLiquidPumped());
     }
 
-    public int getLiquidToPump() {
+    public double getLiquidToPump() {
         return pump.getConvertRuntimeToMl(this.stopTime - this.startTime);
     }
 
