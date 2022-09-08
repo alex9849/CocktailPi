@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchGlobalSettings: 'globalSettings/fetchGlobalSettings'
+      fetchGlobalSettings: 'common/fetchGlobalSettings'
     }),
     onToggleEnable (newValue) {
       this.v.form.enable.$model = newValue

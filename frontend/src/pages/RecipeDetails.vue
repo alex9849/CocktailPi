@@ -6,6 +6,10 @@
       </div>
     </div>
     <div class="q-col-gutter-md">
+      <q-breadcrumbs separator="/" class="text-orange" active-color="secondary">
+        <q-breadcrumbs-el label="Recipes" :to="lastRecipeListRoute" :disable="!lastRecipeListRoute"/>
+        <q-breadcrumbs-el :label="recipe.name" />
+      </q-breadcrumbs>
       <TopButtonArranger>
         <q-btn
           color="grey"
@@ -159,7 +163,8 @@ export default {
       user: 'auth/getUser',
       isAdminRole: 'auth/isAdmin',
       isRecipeCreatorRole: 'auth/isRecipeCreator',
-      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor'
+      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
+      lastRecipeListRoute: 'common/getLastRecipeListRoute'
     }),
     showMakeCocktailDialog: {
       get () {
@@ -170,11 +175,11 @@ export default {
           id: this.$route.params.id
         }
         if (value) {
-          this.$router.push({
+          this.$router.replace({
             name: 'recipeorder', params
           })
         } else {
-          this.$router.push({
+          this.$router.replace({
             name: 'recipedetails', params
           })
         }
