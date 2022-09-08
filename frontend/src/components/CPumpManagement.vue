@@ -348,7 +348,7 @@ export default {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation',
       pumps: 'pumpLayout/getLayout',
-      isAllowReversePumping: 'globalSettings/isAllowReversePumping'
+      isAllowReversePumping: 'common/isAllowReversePumping'
     }),
     isEditPumpNew () {
       return this.editOptions.editPump.id === -1

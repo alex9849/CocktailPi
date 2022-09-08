@@ -166,7 +166,7 @@ export default {
     ...mapGetters({
       getPumpLayout: 'pumpLayout/getLayout',
       getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      isAllowReversePumping: 'globalSettings/isAllowReversePumping'
+      isAllowReversePumping: 'common/isAllowReversePumping'
     }),
     sortedPumpLayout () {
       const sorted = []

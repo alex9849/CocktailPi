@@ -20,7 +20,7 @@ export default {
     Promise.all([
       store.dispatch('category/fetchCategories'),
       store.dispatch('auth/fetchCurrentUser'),
-      store.dispatch('globalSettings/fetchGlobalSettings')
+      store.dispatch('common/fetchGlobalSettings')
     ]).then(() => next())
       .catch(() => {
         store.dispatch('auth/logout')
