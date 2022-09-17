@@ -26,24 +26,45 @@
         </div>
       </q-page>
     </q-page-container>
-    <q-footer class="bg-indigo-10" bordered>
-      <div class="row justify-evenly items-center q-ma-xs">
-        <div class="col-1"/>
-        <div class="col-10">
-          <div class="row justify-evenly">
-            <q-btn no-caps dense flat unelevated class="bg-purple-4 col-2">Collections</q-btn>
-            <q-btn no-caps dense class="bg-grey-8 col-2">Recipes</q-btn>
-            <q-btn no-caps dense class="bg-grey-8 col-2">Bar</q-btn>
+    <transition
+      enter-active-class="animated fadeInUp"
+      leave-active-class="animated fadeOutDown"
+    >
+      <q-footer v-if="showFooter" class="bg-indigo-10" bordered>
+        <div class="row justify-evenly items-center q-ma-xs">
+          <p
+            class="col-1 text-center text-weight-thin"
+            style="font-size: 10px"
+          >
+            ©2022 Alexander Liggesmeyer
+          </p>
+          <div class="col-10">
+            <div class="row justify-evenly">
+              <q-btn no-caps dense flat unelevated class="bg-purple-4 col-2">Collections</q-btn>
+              <q-btn no-caps dense class="bg-grey-8 col-2">Recipes</q-btn>
+              <q-btn no-caps dense class="bg-grey-8 col-2">Bar</q-btn>
+            </div>
+          </div>
+          <div class="col-1 row justify-end">
+            <q-btn round flat class="bg-indigo-5"
+                   dense icon="keyboard_arrow_down"
+                   @click="showFooter = false"
+            />
           </div>
         </div>
-        <p
-          class="col-1 text-center text-weight-thin"
-          style="font-size: 10px"
-        >
-          ©2022 Alexander Liggesmeyer
-        </p>
-      </div>
-    </q-footer>
+      </q-footer>
+    </transition>
+    <transition
+      enter-active-class="animated fadeInUp"
+      leave-active-class="animated fadeOutDown"
+    >
+      <q-page-sticky v-if="!showFooter" position="bottom-right" :offset="[3, 3]">
+        <q-btn round flat class="bg-indigo-5 text-white"
+               dense icon="keyboard_arrow_up"
+               @click="showFooter = true"
+        />
+      </q-page-sticky>
+    </transition>
   </q-layout>
 </template>
 
@@ -54,6 +75,11 @@
 
 export default {
   name: 'SimpleTouchCollectionLayout',
+  data: () => {
+    return {
+      showFooter: true
+    }
+  },
   methods: {
     recipeState () {
       const random = Math.random()
