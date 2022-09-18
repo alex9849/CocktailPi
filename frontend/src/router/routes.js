@@ -114,8 +114,12 @@ const routes = [
       component: () => import('layouts/SimpleTouchLayout.vue'),
       children: [{
         path: 'collection',
-        component: () => import('pages/SimpleCollections'),
+        component: () => import('pages/SimpleCollections.vue'),
         name: 'simplecollections'
+      }, {
+        path: 'recipe',
+        component: () => import('pages/SimpleRecipes.vue'),
+        name: 'simplerecipes'
       }]
     }]
   }, {
