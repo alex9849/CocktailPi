@@ -1,13 +1,18 @@
 <template>
-  <q-page class="page-content" padding>
+  <q-page class="page-content">
     <q-page padding>
-      <div class="row justify-evenly">
-        <div class="col-3 col-md-2 q-ma-lg q-pa-md rounded-borders text-center"
-             v-for="i in 20"
-             :class="[recipeState()]"
-             style="cursor: grabbing"
+      <h6 class="text-white text-center">Collections</h6>
+      <div class="row q-col-gutter-md justify-evenly">
+        <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
+        <div class="col-4 col-md-3"
+             v-for="collection in collections"
+             :key="collection.id"
         >
-          Recipe {{ i }}
+          <div class="bg-yellow q-pa-sm rounded-borders text-center text-weight-medium"
+               style="cursor: pointer; font-size: large"
+          >
+            {{ collection.name }}
+          </div>
         </div>
       </div>
     </q-page>
@@ -15,18 +20,36 @@
 </template>
 
 <script>
+import CollectionService from 'src/services/collection.service'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'SimpleCollections',
+  data: () => {
+    return {
+      collections: [],
+      isLoading: true
+    }
+  },
+  computed: {
+    ...mapGetters({
+      currentUser: 'auth/getUser'
+    })
+  },
+  created () {
+    this.fetchCollections()
+  },
   methods: {
-    recipeState () {
-      const random = Math.random()
-      if (random < 0.3) {
-        return 'bg-green'
-      } else if (random < 0.6) {
-        return 'bg-warning'
-      } else {
-        return 'bg-grey'
-      }
+    fetchCollections () {
+      const vm = this
+      vm.isLoading = true
+      CollectionService.getCollectionsByUser(this.currentUser.id)
+        .then(collections => {
+          vm.collections = collections
+        })
+        .finally(() => {
+          vm.isLoading = false
+        })
     }
   }
 }
