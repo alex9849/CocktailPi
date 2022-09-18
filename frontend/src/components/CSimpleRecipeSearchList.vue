@@ -1,15 +1,13 @@
 <template>
   <div>
-    <div class="row q-col-gutter-md justify-evenly">
-      <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
+    <div class="row flex q-col-gutter-lg justify-evenly">
+      <!--q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/-->
       <div class="col-4 col-md-3"
-           v-for="collection in collections"
-           :key="collection.id"
+           v-for="recipe in recipes"
+           :key="recipe.id"
       >
-        <div class="bg-yellow q-pa-sm rounded-borders text-center text-weight-medium"
-             style="cursor: pointer; font-size: large"
-        >
-          {{ collection.name }}
+        <div class="row q-pa-md bg-positive rounded-borders text-center text-weight-medium card justify-center items-center">
+          <p>{{ recipe.name }}</p>
         </div>
       </div>
     </div>
@@ -19,15 +17,23 @@
 <script>
 export default {
   name: 'CSimpleRecipeSearchList',
-  data: () => {
-    return {
-      collections: [],
-      isLoading: false
+  props: {
+    recipes: {
+      type: Array,
+      required: true
+    },
+    noDataMessage: {
+      type: String,
+      required: false
     }
   }
 }
 </script>
 
 <style scoped>
-
+.card {
+  cursor: pointer;
+  font-size: large;
+  height: 100%;
+}
 </style>

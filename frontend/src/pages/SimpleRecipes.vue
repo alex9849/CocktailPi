@@ -1,7 +1,7 @@
 <template>
   <q-page padding class="page-content">
-    <h6 class="text-white text-center">Recipes</h6>
-    <simple-recipes-search-list />
+    <h4 class="text-white text-center q-pb-lg">Recipes</h4>
+    <simple-recipes-search-list style=""/>
   </q-page>
 </template>
 

@@ -3,7 +3,27 @@
     v-model:filter="filter"
     @clickSearch="updateRecipes"
   />
-  <c-simple-recipe-search-list/>
+  <div class="row q-col-gutter-lg">
+    <q-pagination
+      class="col-12 flex justify-center"
+      :model-value="pagination.page + 1"
+      @update:model-value="onPageClick($event - 1)"
+      :max="pagination.totalPages"
+      :max-pages="9"
+      color="white"
+      active-color="yellow"
+      text-color="yellow"
+      :boundary-numbers="true"
+      size="md"
+      outline
+      direction-links
+    />
+    <c-simple-recipe-search-list
+      class="col-12"
+      :recipes="recipes"
+      :no-data-message="noDataMessage"
+    />
+  </div>
 </template>
 
 <script>

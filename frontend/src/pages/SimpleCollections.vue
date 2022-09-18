@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content">
-    <h6 class="text-white text-center">Collections</h6>
+    <h4 class="text-white text-center">Collections</h4>
     <div class="row q-col-gutter-md justify-evenly">
       <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
       <div class="col-4 col-md-3"
