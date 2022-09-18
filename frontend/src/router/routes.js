@@ -110,9 +110,13 @@ const routes = [
       }
       ]
     }, {
-      path: '/simplecollection',
-      component: () => import('layouts/SimpleTouchCollectionLayout.vue'),
-      children: []
+      path: '/simple',
+      component: () => import('layouts/SimpleTouchLayout.vue'),
+      children: [{
+        path: 'collection',
+        component: () => import('pages/SimpleCollections'),
+        name: 'simplecollections'
+      }]
     }]
   }, {
     path: '/login',

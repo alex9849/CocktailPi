@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf" class="bg-black">
-    <q-header class="bg-indigo-10" bordered>
+    <q-header class="bg-indigo-10">
       <q-toolbar>
         <q-toolbar-title class="q-ma-xs">
           CocktailMaker
@@ -13,18 +13,7 @@
       </q-toolbar>
     </q-header>
     <q-page-container>
-      <q-page padding>
-        <router-view />
-        <div class="row justify-evenly">
-          <div class="col-3 q-ma-lg q-pa-md rounded-borders text-center"
-               v-for="i in 20"
-               :class="[recipeState()]"
-               style="cursor: grabbing"
-          >
-            Recipe {{ i }}
-          </div>
-        </div>
-      </q-page>
+      <router-view />
     </q-page-container>
     <transition
       enter-active-class="animated fadeInUp"
@@ -39,10 +28,18 @@
             ©2022 Alexander Liggesmeyer
           </p>
           <div class="col-10">
-            <div class="row justify-evenly">
-              <q-btn no-caps dense flat unelevated class="bg-purple-4 col-2">Collections</q-btn>
-              <q-btn no-caps dense class="bg-grey-8 col-2">Recipes</q-btn>
-              <q-btn no-caps dense class="bg-grey-8 col-2">Bar</q-btn>
+            <div class="row q-gutter-sm justify-evenly">
+              <q-btn v-for="link in footerLinks"
+                     :key="link.label"
+                     :label="link.label"
+                     :to="link.to"
+                     no-caps dense
+                     class="col-2"
+                     :class="{
+                       'bg-purple-4': $route.name === link.to.name,
+                       'bg-grey-8': $route.name !== link.to.name
+                     }"
+              />
             </div>
           </div>
           <div class="col-1 row justify-end">
@@ -74,22 +71,26 @@
 <script>
 
 export default {
-  name: 'SimpleTouchCollectionLayout',
+  name: 'SimpleTouchLayout',
   data: () => {
     return {
-      showFooter: true
-    }
-  },
-  methods: {
-    recipeState () {
-      const random = Math.random()
-      if (random < 0.3) {
-        return 'bg-green'
-      } else if (random < 0.6) {
-        return 'bg-warning'
-      } else {
-        return 'bg-grey'
-      }
+      showFooter: true,
+      footerLinks: [{
+        label: 'Collections',
+        to: {
+          name: 'simplecollections'
+        }
+      }, {
+        label: 'Recipes',
+        to: {
+          name: 'publicrecipes'
+        }
+      }, {
+        label: 'Bar',
+        to: {
+          name: 'bar'
+        }
+      }]
     }
   }
 }
