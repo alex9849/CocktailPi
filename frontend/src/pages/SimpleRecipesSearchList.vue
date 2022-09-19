@@ -18,6 +18,11 @@
       outline
       direction-links
     />
+    <q-inner-loading
+      dark class="text-white"
+      :showing="loading"
+      size="80px"
+    />
     <c-simple-recipe-search-list
       class="col-12"
       :recipes="recipes"

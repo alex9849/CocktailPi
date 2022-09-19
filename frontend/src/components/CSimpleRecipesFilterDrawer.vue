@@ -117,16 +117,23 @@
       </q-item>
     </q-list>
   </q-drawer>
-  <div class="fixed" style="top: 75px; left: 0px">
-    <q-btn
-      dense
-      no-caps
-      unelevated
-      @click="leftDrawerOpen = true"
-      color="accent"
-      label="Filter"
-      icon="chevron_right"
-    />
+  <div class="fixed" style="top: 75px; left: 0; z-index: 1000">
+    <transition
+      appear
+      enter-active-class="animated fadeInLeft"
+      leave-active-class="animated fadeOutRight"
+    >
+      <q-btn
+        dense
+        no-caps
+        unelevated
+        v-if="!leftDrawerOpen"
+        @click="leftDrawerOpen = true"
+        color="accent"
+        label="Filter"
+        icon="chevron_right"
+      />
+    </transition>
   </div>
 </template>
 
@@ -168,6 +175,7 @@ export default {
     },
     onSearch () {
       this.$emit('clickSearch')
+      this.leftDrawerOpen = false
     },
     resetFilter () {
       this.$emit('update:filter', this.defaultFilter())
