@@ -23,7 +23,7 @@
       :showing="loading"
       size="80px"
     />
-    <c-simple-recipe-search-list
+    <c-simple-recipe-list
       class="col-12"
       :recipes="recipes"
       :no-data-message="noDataMessage"
@@ -32,13 +32,13 @@
 </template>
 
 <script>
-import CSimpleRecipeSearchList from 'components/CSimpleRecipeSearchList'
+import CSimpleRecipeList from 'components/CSimpleRecipeList'
 import CSimpleRecipesFilterDrawer from 'components/CSimpleRecipesFilterDrawer'
 import { recipeSearchListLogic } from 'src/mixins/recipeSearchListLogic'
 
 export default {
   name: 'SimpleRecipesSearchList',
-  components: { CSimpleRecipesFilterDrawer, CSimpleRecipeSearchList },
+  components: { CSimpleRecipesFilterDrawer, CSimpleRecipeList },
   mixins: [recipeSearchListLogic]
 }
 </script>

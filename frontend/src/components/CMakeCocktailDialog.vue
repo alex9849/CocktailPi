@@ -145,31 +145,35 @@ export default {
     }
   },
   created () {
-    if (this.recipe) {
-      this.checkFeasibility(this.getCurrentOrderConfigurationDto())
-    }
+    this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
   },
   watch: {
     recipe: {
-      immediate: true,
       handler (newValue) {
         this.amountToProduce = newValue.defaultAmountToFill
+        this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
       }
     },
     amountToProduce: {
       handler (value) {
         const config = this.getCurrentOrderConfigurationDto()
         config.amountOrderedInMl = value
-        this.checkFeasibility(config)
+        this.tryCheckFeasibility(config)
       }
     },
     getPumpLayout: {
       handler () {
-        this.checkFeasibility(this.getCurrentOrderConfigurationDto())
+        this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
       }
     }
   },
   methods: {
+    tryCheckFeasibility (orderConfig) {
+      if (!this.recipe || !this.getPumpLayout || !this.amountToProduce) {
+        return
+      }
+      this.checkFeasibility(orderConfig)
+    },
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
       const config = this.getCurrentOrderConfigurationDto()
       let currentProdStepNr = 0
