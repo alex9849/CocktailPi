@@ -64,11 +64,6 @@ export default {
         to: {
           name: 'simplerecipes'
         }
-      }, {
-        label: 'Bar',
-        to: {
-          name: 'bar'
-        }
       }]
     }
   }

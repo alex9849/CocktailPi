@@ -132,6 +132,11 @@ export default {
               exact: false
             }, {
               reqLevel: 0,
+              label: 'Local view',
+              to: { name: 'simplecollections' },
+              exact: false
+            }, {
+              reqLevel: 0,
               label: 'Bar',
               to: { name: 'bar' },
               exact: false

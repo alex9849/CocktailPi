@@ -41,12 +41,20 @@
           </div>
         </transition>
         <div class="col-shrink bg-indigo-10 flex items-center">
-          <q-btn no-caps dense class="bg-red q-ma-sm" :to="{name: 'dashboard'}">
+          <q-btn no-caps dense class="bg-red q-ma-sm" @click="showLeaveDialog = true">
             Leave local-view
           </q-btn>
         </div>
       </div>
     </q-header>
+    <c-question
+      ok-button-text="Yes"
+      ok-color="green"
+      abort-button-text="No"
+      @clickOk="$router.push({name: 'dashboard'})"
+      v-model:show="showLeaveDialog"
+      question="Leave local view?"
+    />
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -66,9 +74,15 @@ import SimpleFooter from 'pages/SimpleFooter'
 import CSimpleHeaderProgressStatus from 'components/CSimpleHeaderProgressStatus'
 import { mapGetters } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
+import CQuestion from 'components/CQuestion'
 export default {
   name: 'SimpleTouchLayout',
-  components: { CCocktailProgressBar, CSimpleHeaderProgressStatus, SimpleFooter },
+  components: { CQuestion, CCocktailProgressBar, CSimpleHeaderProgressStatus, SimpleFooter },
+  data: () => {
+    return {
+      showLeaveDialog: false
+    }
+  },
   computed: {
     ...mapGetters({
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress'
