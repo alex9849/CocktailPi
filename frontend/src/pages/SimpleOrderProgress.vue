@@ -3,7 +3,7 @@
     padding
     class="page-content row justify-center items-center text-white"
   >
-    <div class="col-12">
+    <div class="col-12 q-col-gutter-md">
       <div
         v-if="hasCocktailProgress"
         class="row q-col-gutter-md"
@@ -33,8 +33,11 @@
       <div class="row justify-center q-col-gutter-md">
         <div class="col-auto">
           <q-btn
+            size="lg"
+            dense
             class="bg-grey-8"
             label="<< Go back"
+            no-caps
             @click="$router.go(-1)"
           />
         </div>
@@ -42,7 +45,10 @@
           <q-btn
             v-if="hasCocktailProgress"
             class="bg-negative"
-            label="Cancel"
+            label="Cancel order"
+            no-caps
+            size="lg"
+            dense
             :loading="canceling"
             :disable="cocktailProgress.state === 'CANCELLED' || cocktailProgress.state === 'FINISHED'"
             @click="onCancelCocktail"
