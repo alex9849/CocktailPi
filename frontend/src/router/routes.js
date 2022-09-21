@@ -120,6 +120,10 @@ const routes = [
         path: 'recipe',
         component: () => import('pages/SimpleRecipes.vue'),
         name: 'simplerecipes'
+      }, {
+        path: 'orderprogress',
+        component: () => import('pages/SimpleOrderProgress.vue'),
+        name: 'simpleorderprogress'
       }]
     }]
   }, {

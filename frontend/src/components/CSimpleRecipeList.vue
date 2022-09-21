@@ -4,6 +4,7 @@
       :recipe="orderDialog.recipe"
       v-if="!!orderDialog.recipe"
       v-model:show="orderDialog.show"
+      @postOrder="onPostOrder"
     />
     <div
       class="row justify-center q-col-gutter-lg"
@@ -14,6 +15,7 @@
         :key="recipe.id"
       >
         <c-simple-recipe-card
+          style="height: 100%"
           :recipe="recipe"
           :dense="dense"
           class="clickable"
@@ -54,6 +56,9 @@ export default {
     }
   },
   methods: {
+    onPostOrder () {
+      this.$router.push({ name: 'simpleorderprogress' })
+    },
     openOrderDialog (recipeId) {
       RecipeService.getRecipe(recipeId)
         .then(recipe => {

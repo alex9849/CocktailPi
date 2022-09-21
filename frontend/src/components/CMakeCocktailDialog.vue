@@ -123,7 +123,7 @@ export default {
       required: true
     }
   },
-  emits: ['update:show'],
+  emits: ['update:show', 'postOrder'],
   data () {
     return {
       amountToProduce: 250,
@@ -217,13 +217,7 @@ export default {
     onMakeCocktail () {
       CocktailService.order(this.recipe.id, this.getCurrentOrderConfigurationDto())
         .then(() => {
-          this.$router.push({
-            name: 'recipedetails',
-            params: { id: this.$route.params.id }
-          })
-            .then(() => {
-              this.$store.commit('cocktailProgress/setShowProgressDialog', true)
-            })
+          this.$emit('postOrder')
         })
     }
   },
