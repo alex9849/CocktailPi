@@ -10,7 +10,7 @@
       class="row justify-center q-col-gutter-lg"
     >
       <div
-        class="col-4 col-md-3"
+        class="col-3 col-lg-2"
         v-for="recipe in recipes"
         :key="recipe.id"
       >

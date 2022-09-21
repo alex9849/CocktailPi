@@ -7,11 +7,15 @@
            v-for="collection in collections"
            :key="collection.id"
       >
-        <div class="bg-yellow q-pa-sm rounded-borders text-center text-weight-medium"
-             style="cursor: pointer; font-size: large"
+        <router-link
+          :to="{name: 'simplecollection', params: {collectionId: collection.id}}"
         >
-          {{ collection.name }}
-        </div>
+          <c-collection-card
+            :model-value="collection"
+            class="full-height"
+            style="max-height: 300px"
+          />
+        </router-link>
       </div>
     </div>
   </q-page>
@@ -20,9 +24,11 @@
 <script>
 import CollectionService from 'src/services/collection.service'
 import { mapGetters } from 'vuex'
+import CCollectionCard from 'components/CCollectionCard'
 
 export default {
   name: 'SimpleCollections',
+  components: { CCollectionCard },
   data: () => {
     return {
       collections: [],
@@ -54,5 +60,8 @@ export default {
 </script>
 
 <style scoped>
-
+a {
+  text-decoration: none;
+  color: inherit;
+}
 </style>

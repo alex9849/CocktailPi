@@ -117,6 +117,10 @@ const routes = [
         component: () => import('pages/SimpleCollections.vue'),
         name: 'simplecollections'
       }, {
+        path: 'collection/:collectionId',
+        component: () => import('pages/SimpleCollection.vue'),
+        name: 'simplecollection'
+      }, {
         path: 'recipe',
         component: () => import('pages/SimpleRecipes.vue'),
         name: 'simplerecipes'
