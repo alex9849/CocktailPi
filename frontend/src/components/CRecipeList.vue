@@ -53,6 +53,7 @@
 
 <script>
 import CRecipeCard from 'components/CRecipeCard'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'CRecipeList',
@@ -65,6 +66,25 @@ export default {
     noDataMessage: {
       type: String,
       required: false
+    }
+  },
+  created () {
+    this.setLastRecipeListRoute(this.$route)
+  },
+  methods: {
+    ...mapMutations({
+      setLastRecipeListRoute: 'common/setLastRecipeListRoute'
+    })
+  },
+  watch: {
+    $route: {
+      deep: true,
+      handler (newValue, oldValue) {
+        if (oldValue.name !== newValue.name) {
+          return
+        }
+        this.setLastRecipeListRoute(newValue)
+      }
     }
   }
 }

@@ -6,6 +6,10 @@
       </div>
     </div>
     <div class="q-col-gutter-md">
+      <q-breadcrumbs separator="/" class="text-orange" active-color="secondary">
+        <q-breadcrumbs-el label="Recipes" :to="lastRecipeListRoute" :disable="!lastRecipeListRoute"/>
+        <q-breadcrumbs-el :label="recipe.name" />
+      </q-breadcrumbs>
       <TopButtonArranger>
         <q-btn
           color="grey"
@@ -93,6 +97,7 @@
       :show="showMakeCocktailDialog"
       v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
+      @postOrder="onPostOrder"
     />
   </q-page>
 </template>
@@ -141,6 +146,15 @@ export default {
     // this.recipe = this.$route.meta.recipe;
   },
   methods: {
+    onPostOrder () {
+      this.$router.push({
+        name: 'recipedetails',
+        params: { id: this.$route.params.id }
+      })
+        .then(() => {
+          this.$store.commit('cocktailProgress/setShowProgressDialog', true)
+        })
+    },
     deleteRecipe () {
       this.deleting = true
       RecipeService.deleteRecipe(this.recipe.id)
@@ -159,7 +173,8 @@ export default {
       user: 'auth/getUser',
       isAdminRole: 'auth/isAdmin',
       isRecipeCreatorRole: 'auth/isRecipeCreator',
-      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor'
+      isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
+      lastRecipeListRoute: 'common/getLastRecipeListRoute'
     }),
     showMakeCocktailDialog: {
       get () {
@@ -170,11 +185,11 @@ export default {
           id: this.$route.params.id
         }
         if (value) {
-          this.$router.push({
+          this.$router.replace({
             name: 'recipeorder', params
           })
         } else {
-          this.$router.push({
+          this.$router.replace({
             name: 'recipedetails', params
           })
         }

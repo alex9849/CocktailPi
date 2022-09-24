@@ -1,11 +1,7 @@
 <template>
   <q-header reveal bordered>
-    <app-socket
-      ref="appSocket"
-    />
     <q-toolbar>
       <slot name="left" />
-
       <q-toolbar-title>
         CocktailMaker
       </q-toolbar-title>
@@ -47,11 +43,10 @@
 import { mapActions, mapGetters } from 'vuex'
 import { mdiAccountBox, mdiAlert, mdiPower } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
-import AppSocket from 'components/AppSocket'
 
 export default {
   name: 'AppHeader',
-  components: { AppSocket, CircularCocktailProgress },
+  components: { CircularCocktailProgress },
   methods: {
     ...mapActions({
       storeLogout: 'auth/logout'

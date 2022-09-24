@@ -53,7 +53,7 @@
                     round
                     outlined
                     dense
-                    :options="orderByOptions"
+                    :options="recipeOrderByOptions"
                   />
                   <div
                     class="col-12 flex justify-center"
@@ -98,10 +98,12 @@
 <script>
 import { mdiMagnify } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
+import { recipeOrderOptions } from '../mixins/constants'
 
 export default {
   name: 'CRecipeSearchFilterCard',
   components: { CIngredientSelector },
+  mixins: [recipeOrderOptions],
   props: {
     filter: {
       type: Object,
@@ -110,20 +112,7 @@ export default {
   },
   data () {
     return {
-      isFilterExpanded: false,
-      orderByOptions: [{
-        label: 'Name asc',
-        value: 'nameAsc'
-      }, {
-        label: 'Name desc',
-        value: 'nameDesc'
-      }, {
-        label: 'Last update',
-        value: 'lastUpdateAsc'
-      }, {
-        label: 'Least update',
-        value: 'lastUpdateDesc'
-      }]
+      isFilterExpanded: false
     }
   },
   emits: ['clickSearch', 'update:filter'],

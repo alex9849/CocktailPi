@@ -31,3 +31,23 @@ export const eventActionTriggerDisplayNames = {
     }
   }
 }
+
+export const recipeOrderOptions = {
+  data: () => {
+    return {
+      recipeOrderByOptions: [{
+        label: 'Name asc',
+        value: 'nameAsc'
+      }, {
+        label: 'Name desc',
+        value: 'nameDesc'
+      }, {
+        label: 'Last update',
+        value: 'lastUpdateAsc'
+      }, {
+        label: 'Least update',
+        value: 'lastUpdateDesc'
+      }]
+    }
+  }
+}

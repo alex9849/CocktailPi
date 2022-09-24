@@ -18,17 +18,20 @@
       />
     </top-button-arranger>
     <div class="q-py-md row q-col-gutter-sm">
-      <router-link v-for="collection of collections"
-                   :key="collection.id"
-                   class="col-12 col-md-6 col-lg-4 d-flex items-stretch"
-                   :to="{name: 'collection', params: {id: collection.id}}"
+      <div v-for="collection of collections"
+           :key="collection.id"
+           class="col-12 col-md-6 col-lg-4 d-flex items-stretch"
       >
-        <c-collection-card
-          :model-value="collection"
-          class="full-height"
-          style="max-height: 300px"
-        />
-      </router-link>
+        <router-link
+          :to="{name: 'collection', params: {id: collection.id}}"
+        >
+          <c-collection-card
+            :model-value="collection"
+            class="full-height"
+            style="max-height: 300px"
+          />
+        </router-link>
+      </div>
     </div>
     <c-edit-dialog
       v-model:show="createCollection.menuOpen"
