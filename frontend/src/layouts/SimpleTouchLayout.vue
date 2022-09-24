@@ -42,7 +42,7 @@
         </transition>
         <div class="col-shrink bg-indigo-10 flex items-center">
           <q-btn no-caps dense class="bg-red q-ma-sm" @click="showLeaveDialog = true">
-            Leave local-view
+            Leave simple-view
           </q-btn>
         </div>
       </div>
@@ -53,7 +53,7 @@
       abort-button-text="No"
       @clickOk="$router.push({name: 'dashboard'})"
       v-model:show="showLeaveDialog"
-      question="Leave local view?"
+      question="Leave simple view?"
     />
     <q-page-container>
       <router-view />
