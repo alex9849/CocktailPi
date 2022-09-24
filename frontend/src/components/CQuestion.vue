@@ -4,7 +4,7 @@
     @update:model-value="$emit('update:show', $event)"
     @hide="$emit('clickAbort')"
   >
-    <q-card class="full-width">
+    <q-card class="full-width" :class="cardClass">
       <q-card-section class="text-center">
         <h5>{{ question }}</h5>
         <q-splitter
@@ -16,11 +16,11 @@
         <div class="q-pa-md q-gutter-sm">
           <slot name="buttons">
             <q-btn
-              color="grey"
+              :color="abortColor"
               @click="() => {$emit('clickAbort');}"
               style="width: 100px"
             >
-              Abort
+              {{ abortButtonText }}
             </q-btn>
             <q-btn
               :loading="loading"
@@ -60,6 +60,18 @@ export default {
     okColor: {
       type: String,
       default: 'green'
+    },
+    abortButtonText: {
+      type: String,
+      default: 'Abort'
+    },
+    abortColor: {
+      type: String,
+      default: 'grey'
+    },
+    cardClass: {
+      type: String,
+      default: 'white'
     }
   },
   emits: ['update:show', 'clickAbort', 'clickOk']

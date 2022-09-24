@@ -97,6 +97,7 @@
       :show="showMakeCocktailDialog"
       v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
+      @postOrder="onPostOrder"
     />
   </q-page>
 </template>
@@ -145,6 +146,15 @@ export default {
     // this.recipe = this.$route.meta.recipe;
   },
   methods: {
+    onPostOrder () {
+      this.$router.push({
+        name: 'recipedetails',
+        params: { id: this.$route.params.id }
+      })
+        .then(() => {
+          this.$store.commit('cocktailProgress/setShowProgressDialog', true)
+        })
+    },
     deleteRecipe () {
       this.deleting = true
       RecipeService.deleteRecipe(this.recipe.id)

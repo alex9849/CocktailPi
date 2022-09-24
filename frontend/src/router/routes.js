@@ -110,9 +110,25 @@ const routes = [
       }
       ]
     }, {
-      path: '/simplecollection',
-      component: () => import('layouts/SimpleTouchCollectionLayout.vue'),
-      children: []
+      path: '/simple',
+      component: () => import('layouts/SimpleTouchLayout.vue'),
+      children: [{
+        path: 'collection',
+        component: () => import('pages/SimpleCollections.vue'),
+        name: 'simplecollections'
+      }, {
+        path: 'collection/:collectionId',
+        component: () => import('pages/SimpleCollection.vue'),
+        name: 'simplecollection'
+      }, {
+        path: 'recipe',
+        component: () => import('pages/SimpleRecipes.vue'),
+        name: 'simplerecipes'
+      }, {
+        path: 'orderprogress',
+        component: () => import('pages/SimpleOrderProgress.vue'),
+        name: 'simpleorderprogress'
+      }]
     }]
   }, {
     path: '/login',
