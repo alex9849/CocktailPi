@@ -20,7 +20,7 @@
     <div class="q-py-md row q-col-gutter-sm">
       <div v-for="collection of collections"
            :key="collection.id"
-           class="col-12 col-md-6 col-lg-4 d-flex items-stretch"
+           class="col-12 col-sm-6 col-lg-4 d-flex items-stretch"
       >
         <router-link
           :to="{name: 'collection', params: {id: collection.id}}"

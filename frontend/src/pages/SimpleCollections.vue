@@ -3,7 +3,7 @@
     <h4 class="text-white text-center">Collections</h4>
     <div class="row q-col-gutter-md justify-evenly">
       <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
-      <div class="col-4 col-md-3"
+      <div class="col-12 col-sm-6 col-lg-4"
            v-for="collection in collections"
            :key="collection.id"
       >

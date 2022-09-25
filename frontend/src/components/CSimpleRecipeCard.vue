@@ -12,6 +12,7 @@
     flat
     bordered
   >
+    <q-inner-loading :showing="loading" style="z-index: 1" />
     <q-card-section class="q-pa-none col-12">
       <div class="text-h6 text-center text-black">{{ recipe.name }}</div>
     </q-card-section>
@@ -43,6 +44,10 @@ export default {
       required: true
     },
     dense: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
       type: Boolean,
       default: false
     }

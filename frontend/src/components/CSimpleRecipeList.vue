@@ -18,6 +18,8 @@
           style="height: 100%"
           :recipe="recipe"
           :dense="dense"
+          :loading="orderDialog.loadingId === recipe.id"
+          :class="{'disabled': orderDialog.loadingId !== null}"
           class="clickable"
           @click="openOrderDialog(recipe.id)"
         />
@@ -51,7 +53,8 @@ export default {
     return {
       orderDialog: {
         recipe: '',
-        show: false
+        show: false,
+        loadingId: null
       }
     }
   },
@@ -60,10 +63,16 @@ export default {
       this.$router.push({ name: 'simpleorderprogress' })
     },
     openOrderDialog (recipeId) {
+      if (this.orderDialog.loadingId !== null) {
+        return
+      }
+      this.orderDialog.loadingId = recipeId
       RecipeService.getRecipe(recipeId)
         .then(recipe => {
           this.orderDialog.recipe = Object.assign({}, recipe)
           this.orderDialog.show = true
+        }).finally(() => {
+          this.orderDialog.loadingId = null
         })
     }
   }
