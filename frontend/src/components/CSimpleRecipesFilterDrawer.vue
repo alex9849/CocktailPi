@@ -33,6 +33,22 @@
           />
         </q-item-section>
       </q-item>
+      <q-item>
+        <q-item-section>
+          <c-ingredient-selector
+            outlined
+            dense
+            dark
+            multiple
+            emit-value
+            map-options
+            use-chips
+            label="Contains ingredients"
+            :model-value="filter.containsIngredients"
+            @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
+          />
+        </q-item-section>
+      </q-item>
       <q-item tag="label" dark v-ripple>
         <q-item-section side top>
           <q-checkbox
@@ -63,22 +79,6 @@
           <q-item-label caption>
             Only shows recipes that can be produced with owned ingredients
           </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item>
-        <q-item-section>
-          <c-ingredient-selector
-            outlined
-            dense
-            dark
-            multiple
-            emit-value
-            map-options
-            use-chips
-            label="Contains ingredients"
-            :model-value="filter.containsIngredients"
-            @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
-          />
         </q-item-section>
       </q-item>
       <q-item>
