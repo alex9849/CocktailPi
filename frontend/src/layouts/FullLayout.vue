@@ -194,6 +194,11 @@ export default {
               reqLevel: 3,
               to: { name: 'eventmanagement' },
               exact: false
+            }, {
+              label: 'System',
+              reqLevel: 3,
+              to: { name: 'systemmanagement' },
+              exact: false
             }
           ]
         }

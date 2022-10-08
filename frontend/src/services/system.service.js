@@ -8,6 +8,10 @@ class SystemService {
       .then(response => response.data)
   }
 
+  doShutdown () {
+    return axios.put(API_PATH + 'shutdown')
+  }
+
   getAudioDevices () {
     return axios.get(API_PATH + 'audiodevices')
       .then(response => response.data)

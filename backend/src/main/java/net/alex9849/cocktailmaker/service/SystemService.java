@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service;
 import net.alex9849.cocktailmaker.model.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,18 @@ import java.util.Objects;
 @Transactional
 public class SystemService {
 
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
+
     @Autowired
     private PumpUpService pumpUpService;
+
+    public void shutdown() throws IOException {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("System can't be shutdown in demomode!");
+        }
+        Process process = Runtime.getRuntime().exec("sudo shutdown -h now");
+    }
 
     public List<PythonLibraryInfo> getInstalledPythonLibraries() throws IOException {
         List<PythonLibraryInfo> pythonLibraries = new ArrayList<>();

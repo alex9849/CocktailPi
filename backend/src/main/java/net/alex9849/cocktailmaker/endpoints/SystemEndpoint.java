@@ -51,6 +51,13 @@ public class SystemEndpoint {
         return ResponseEntity.ok(pumpUpService.getReversePumpingSettings());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/shutdown", method = RequestMethod.PUT)
+    public ResponseEntity<?> shutdown() throws IOException {
+        systemService.shutdown();
+        return ResponseEntity.ok().build();
+    }
+
     @RequestMapping(value = "settings/global", method = RequestMethod.GET)
     public ResponseEntity<?> getGlobalSettings() {;
         return ResponseEntity.ok(systemService.getGlobalSettings());

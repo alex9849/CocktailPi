@@ -110,6 +110,10 @@ const routes = [
         path: 'admin/eventmanagement',
         component: () => import('pages/EventManagement'),
         name: 'eventmanagement'
+      }, {
+        path: 'admin/system',
+        component: () => import('pages/SystemManagement'),
+        name: 'systemmanagement'
       }
       ]
     }, {
