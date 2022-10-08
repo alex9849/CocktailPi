@@ -149,7 +149,11 @@ export default {
   },
   watch: {
     recipe: {
+      immediate: true,
       handler (newValue) {
+        if (!newValue) {
+          return
+        }
         this.amountToProduce = newValue.defaultAmountToFill
         this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
       }

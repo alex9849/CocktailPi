@@ -32,6 +32,9 @@ const routes = [
       path: '/',
       component: () => import('layouts/FullLayout.vue'),
       children: [{
+        path: '',
+        beforeEnter: (to, from, next) => next({ name: 'dashboard' })
+      }, {
         path: 'dashboard',
         component: () => import('pages/Dashboard'),
         name: 'dashboard'
