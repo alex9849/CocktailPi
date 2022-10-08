@@ -144,9 +144,6 @@ export default {
       mdiAlertOutline: mdiAlertOutline
     }
   },
-  created () {
-    this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
-  },
   watch: {
     recipe: {
       immediate: true,

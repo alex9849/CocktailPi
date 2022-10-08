@@ -58,6 +58,15 @@ export default {
       }
     }
   },
+  watch: {
+    'orderDialog.show': {
+      handler (newValue) {
+        if (!newValue) {
+          this.orderDialog.recipe = ''
+        }
+      }
+    }
+  },
   methods: {
     onPostOrder () {
       this.$router.push({ name: 'simpleorderprogress' })
