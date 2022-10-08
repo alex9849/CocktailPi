@@ -52,6 +52,7 @@
       ok-color="green"
       abort-button-text="No"
       @clickOk="$router.push({name: 'dashboard'})"
+      @clickAbort="showLeaveDialog = false"
       v-model:show="showLeaveDialog"
       question="Leave simple view?"
     />
