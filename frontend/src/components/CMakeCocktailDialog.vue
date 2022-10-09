@@ -10,7 +10,7 @@
     @update:model-value="$emit('update:show', $event)"
   >
     <q-card
-      class="text-center"
+      class="text-center q-pb-lg"
     >
       <q-card-section class="q-gutter-md">
         <q-toolbar>
@@ -77,6 +77,7 @@
       >
         <q-btn
           color="positive"
+          size="lg"
           @click="onMakeCocktail()"
           :disable="!cocktailOrderable"
         >
