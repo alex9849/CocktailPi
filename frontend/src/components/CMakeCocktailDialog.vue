@@ -66,7 +66,9 @@
             :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
           />
           <c-make-cocktail-dialog-pumps-in-use/>
-          <c-make-cocktail-dialog-recipe-customizer/>
+          <c-make-cocktail-dialog-recipe-customizer
+            :automatic-recipe-ingredients="feasibilityReport.requiredIngredients"
+          />
           <q-card flat bordered>
             <q-card-section class="q-pa-none">
               <q-expansion-item

@@ -34,10 +34,13 @@
             <p class="text-bold">Additional ingredients:</p>
             <p class="text-italic">Ingredients will be added as last production-step. The dispensed amount of liquid will be increased by the amount of ordered additional ingredients.</p>
             <div class="row q-col-gutter-md">
-              <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2"
+                   v-for="ingredient in allAutomaticIngredients"
+                   :key="ingredient.id"
+              >
                 <q-card class="bg-grey-2 text-center full-height" flat bordered>
                   <q-card-section class="q-gutter-sm">
-                    <p class="text-subtitle2">Ingredient</p>
+                    <p class="text-subtitle2">{{ ingredient.name }}</p>
                     <q-input v-model:model-value.number="config.ingredientValue"
                              readonly
                              rounded
@@ -99,6 +102,12 @@ import CIngredientSelector from 'components/CIngredientSelector'
 export default {
   name: 'CMakeCocktailDialogRecipeCustomizer',
   components: { CIngredientSelector },
+  props: {
+    automaticRecipeIngredients: {
+      type: Array,
+      required: true
+    }
+  },
   created () {
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
     this.mdiPlus = mdiPlus
@@ -124,6 +133,11 @@ export default {
     onSelectAddIngredient (ingredient) {
       this.addIngredient.clicked = false
       this.addIngredient.selected = ''
+    }
+  },
+  computed: {
+    allAutomaticIngredients () {
+      return this.automaticRecipeIngredients
     }
   }
 }
