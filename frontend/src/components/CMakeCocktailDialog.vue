@@ -66,6 +66,7 @@
             :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
           />
           <c-make-cocktail-dialog-pumps-in-use />
+          <c-make-cocktail-dialog-recipe-customizer />
         </div>
         <c-make-cocktail-dialog-pump-editor
           v-if="isUserPumpIngredientEditor"
@@ -104,10 +105,12 @@ import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEdi
 import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
+import CMakeCocktailDialogRecipeCustomizer from 'components/CMakeCocktailDialogRecipeCustomizer'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
+    CMakeCocktailDialogRecipeCustomizer,
     CMakeCocktailDialogPumpsInUse,
     CMakeCocktailDialogIngredientGroupReplacements,
     CMakeCocktailDialogIngredientsToAddManually,
