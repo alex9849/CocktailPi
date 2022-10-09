@@ -65,13 +65,27 @@
           <c-make-cocktail-dialog-ingredients-to-add-manually
             :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
           />
-          <c-make-cocktail-dialog-pumps-in-use />
-          <c-make-cocktail-dialog-recipe-customizer />
+          <c-make-cocktail-dialog-pumps-in-use/>
+          <c-make-cocktail-dialog-recipe-customizer/>
+          <q-card flat bordered>
+            <q-card-section class="q-pa-none">
+              <q-expansion-item
+                v-model:model-value="pumpEditorExpanded"
+                class="bg-grey-2"
+              >
+                <template v-slot:header>
+                  <q-item-section class="text-left">
+                    <q-item-label class="text-subtitle2">Pump-Layout</q-item-label>
+                  </q-item-section>
+                </template>
+                <c-make-cocktail-dialog-pump-editor
+                  v-if="isUserPumpIngredientEditor"
+                  :needed-ingredients="feasibilityReport.requiredIngredients"
+                />
+              </q-expansion-item>
+            </q-card-section>
+          </q-card>
         </div>
-        <c-make-cocktail-dialog-pump-editor
-          v-if="isUserPumpIngredientEditor"
-          :needed-ingredients="feasibilityReport.requiredIngredients"
-        />
       </q-card-section>
       <q-card-actions
         align="center"
@@ -138,7 +152,8 @@ export default {
         requiredIngredients: [],
         feasible: false
       },
-      checkingFeasibility: true
+      checkingFeasibility: true,
+      pumpEditorExpanded: false
     }
   },
   setup () {

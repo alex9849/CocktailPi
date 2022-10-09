@@ -8,6 +8,7 @@
     @update:model-value="$emit('update:selected', $event)"
     :bg-color="bgColor"
     use-input
+    :rounded="rounded"
     :clearable="clearable"
     :disable="disable"
     hide-dropdown-icon
@@ -65,6 +66,10 @@ export default {
       default: 'Ingredient'
     },
     dense: {
+      type: Boolean,
+      default: false
+    },
+    rounded: {
       type: Boolean,
       default: false
     },
