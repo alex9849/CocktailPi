@@ -14,10 +14,11 @@
           <q-card-section>
             <p class="text-bold">Boosting:</p>
             <p class="text-italic">Increases (or decreases) the ml of reported boostable ingredients in the base recipe. (Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid dispensed remains the same!</p>
-            <q-slider v-model:model-value="config.slider"
+            <q-slider :model-value="customisations.boost"
+                      @update:model-value="onUpdateBoost($event)"
                       color="orange"
                       label
-                      :label-value="(config.slider - 100) + '%'"
+                      :label-value="(customisations.boost - 100) + '%'"
                       label-always
                       switch-label-side
                       :min="0"
@@ -35,27 +36,14 @@
             <p class="text-italic">Ingredients will be added as last production-step. The dispensed amount of liquid will be increased by the amount of ordered additional ingredients.</p>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-3 col-lg-2"
-                   v-for="ingredient in allAutomaticIngredients"
-                   :key="ingredient.id"
+                   v-for="additionalIngredient in customisations.additionalIngredients"
+                   :key="additionalIngredient.ingredient.id"
               >
-                <q-card class="bg-grey-2 text-center full-height" flat bordered>
-                  <q-card-section class="q-gutter-sm">
-                    <p class="text-subtitle2">{{ ingredient.name }}</p>
-                    <q-input v-model:model-value.number="config.ingredientValue"
-                             readonly
-                             rounded
-                             outlined
-                             suffix="ml"
-                    >
-                      <template v-slot:prepend >
-                        <q-btn :icon="mdiMinus" round />
-                      </template>
-                      <template v-slot:append >
-                        <q-btn :icon="mdiPlus" round />
-                      </template>
-                    </q-input>
-                  </q-card-section>
-                </q-card>
+                <c-ingredient-additional-ml-card
+                  :ingredient-name="additionalIngredient.ingredient.name"
+                  :amount="additionalIngredient.amount"
+                  @update:amount="onChangeAdditionalIngredientAmount(additionalIngredient.ingredient.id, $event)"
+                />
               </div>
               <div class="col-12 col-sm-6 col-md-3 col-lg-2">
                 <q-card class="bg-grey-2 text-center full-height row items-center content-center" flat bordered>
@@ -96,29 +84,29 @@
 
 <script>
 
-import { mdiPlusCircleOutline, mdiPlus, mdiMinus } from '@quasar/extras/mdi-v5'
+import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
+import CIngredientAdditionalMlCard from 'components/CIngredientAdditionalMlCard'
 
 export default {
   name: 'CMakeCocktailDialogRecipeCustomizer',
-  components: { CIngredientSelector },
+  components: { CIngredientAdditionalMlCard, CIngredientSelector },
   props: {
-    automaticRecipeIngredients: {
-      type: Array,
+    customisations: {
+      type: Object,
       required: true
     }
   },
+  emits: ['update:customisations'],
   created () {
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
-    this.mdiPlus = mdiPlus
-    this.mdiMinus = mdiMinus
   },
   data: () => {
     return {
       expanded: false,
       addIngredient: {
         clicked: false,
-        selected: ''
+        selected: null
       },
       config: {
         slider: 100,
@@ -132,12 +120,28 @@ export default {
     },
     onSelectAddIngredient (ingredient) {
       this.addIngredient.clicked = false
-      this.addIngredient.selected = ''
-    }
-  },
-  computed: {
-    allAutomaticIngredients () {
-      return this.automaticRecipeIngredients
+      this.addIngredient.selected = null
+      const customisationsCopy = Object.assign({}, this.customisations)
+      customisationsCopy.additionalIngredients.push({
+        ingredient: ingredient,
+        amount: 0,
+        manualAdd: true
+      })
+      this.$emit('update:customisations', customisationsCopy)
+    },
+    onUpdateBoost (value) {
+      const customisationsCopy = Object.assign({}, this.customisations)
+      customisationsCopy.boost = value
+      this.$emit('update:customisations', customisationsCopy)
+    },
+    onChangeAdditionalIngredientAmount (ingredientId, amount) {
+      const customisationsCopy = Object.assign({}, this.customisations)
+      for (const additionalIngredient of customisationsCopy.additionalIngredients) {
+        if (additionalIngredient.ingredient.id === ingredientId) {
+          additionalIngredient.amount = amount
+        }
+      }
+      this.$emit('update:customisations', customisationsCopy)
     }
   }
 }

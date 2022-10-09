@@ -67,7 +67,7 @@
           />
           <c-make-cocktail-dialog-pumps-in-use/>
           <c-make-cocktail-dialog-recipe-customizer
-            :automatic-recipe-ingredients="feasibilityReport.requiredIngredients"
+            v-model:customisations="customisations"
           />
           <q-card flat bordered>
             <q-card-section class="q-pa-none">
@@ -155,7 +155,11 @@ export default {
         feasible: false
       },
       checkingFeasibility: true,
-      pumpEditorExpanded: false
+      pumpEditorExpanded: false,
+      customisations: {
+        boost: 100,
+        additionalIngredients: []
+      }
     }
   },
   setup () {
@@ -173,6 +177,8 @@ export default {
           return
         }
         this.amountToProduce = newValue.defaultAmountToFill
+        this.customisations.boost = 100
+        this.customisations.additionalIngredients.slice(0, this.customisations.additionalIngredients.length)
         this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
       }
     },
@@ -232,6 +238,21 @@ export default {
       CocktailService.checkFeasibility(this.recipe.id, orderConfig)
         .then(report => {
           this.feasibilityReport = report
+
+          const additionalIngredientIds = new Set()
+          this.customisations.additionalIngredients.forEach(x => additionalIngredientIds.add(x.ingredient.id))
+          for (const requiredIngredient of report.requiredIngredients) {
+            if (additionalIngredientIds.has(requiredIngredient.id)) {
+              additionalIngredientIds.delete(requiredIngredient.id)
+              continue
+            }
+            this.customisations.additionalIngredients.push({
+              ingredient: requiredIngredient,
+              amount: 0,
+              manualAdd: false
+            })
+          }
+          this.customisations.additionalIngredients = this.customisations.additionalIngredients.filter(x => !additionalIngredientIds.has(x.ingredient.id) || x.manualAdd)
         }).finally(() => {
           this.checkingFeasibility = false
         })
