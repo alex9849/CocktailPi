@@ -7,7 +7,7 @@
       >
         <template v-slot:header>
           <q-item-section>
-            <q-item-label class="text-subtitle2">Order customizer</q-item-label>
+            <q-item-label class="text-subtitle2">Order customiser</q-item-label>
           </q-item-section>
         </template>
         <q-card class="">
@@ -35,7 +35,7 @@
             <p class="text-bold">Additional ingredients:</p>
             <p class="text-italic">Ingredients will be added as last production-step. The dispensed amount of liquid will be increased by the amount of ordered additional ingredients.</p>
             <div class="row q-col-gutter-md">
-              <div class="col-12 col-sm-6 col-md-3 col-lg-2"
+              <div class="col-12 col-sm-6 col-md-3"
                    v-for="additionalIngredient in customisations.additionalIngredients"
                    :key="additionalIngredient.ingredient.id"
               >
@@ -45,7 +45,7 @@
                   @update:amount="onChangeAdditionalIngredientAmount(additionalIngredient.ingredient.id, $event)"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+              <div class="col-12 col-sm-6 col-md-3">
                 <q-card class="bg-grey-2 text-center full-height row items-center content-center" flat bordered>
                   <q-card-section
                     v-if="addIngredient.clicked"
@@ -89,7 +89,7 @@ import CIngredientSelector from 'components/CIngredientSelector'
 import CIngredientAdditionalMlCard from 'components/CIngredientAdditionalMlCard'
 
 export default {
-  name: 'CMakeCocktailDialogRecipeCustomizer',
+  name: 'CMakeCocktailDialogRecipeCustomiser',
   components: { CIngredientAdditionalMlCard, CIngredientSelector },
   props: {
     customisations: {
@@ -107,10 +107,6 @@ export default {
       addIngredient: {
         clicked: false,
         selected: null
-      },
-      config: {
-        slider: 100,
-        ingredientValue: 0
       }
     }
   },

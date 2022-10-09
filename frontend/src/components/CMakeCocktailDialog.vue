@@ -66,8 +66,9 @@
             :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
           />
           <c-make-cocktail-dialog-pumps-in-use/>
-          <c-make-cocktail-dialog-recipe-customizer
-            v-model:customisations="customisations"
+          <c-make-cocktail-dialog-recipe-customiser
+            :customisations="customisations"
+            @update:customisations="onCustomisationsUpdate($event)"
           />
           <q-card flat bordered>
             <q-card-section class="q-pa-none">
@@ -121,12 +122,12 @@ import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEdi
 import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
-import CMakeCocktailDialogRecipeCustomizer from 'components/CMakeCocktailDialogRecipeCustomizer'
+import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
-    CMakeCocktailDialogRecipeCustomizer,
+    CMakeCocktailDialogRecipeCustomiser,
     CMakeCocktailDialogPumpsInUse,
     CMakeCocktailDialogIngredientGroupReplacements,
     CMakeCocktailDialogIngredientsToAddManually,
@@ -179,7 +180,7 @@ export default {
         this.amountToProduce = newValue.defaultAmountToFill
         this.customisations.boost = 100
         this.customisations.additionalIngredients.slice(0, this.customisations.additionalIngredients.length)
-        this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
+        this.tryCheckFeasibility()
       }
     },
     amountToProduce: {
@@ -191,16 +192,20 @@ export default {
     },
     getPumpLayout: {
       handler () {
-        this.tryCheckFeasibility(this.getCurrentOrderConfigurationDto())
+        this.tryCheckFeasibility()
       }
     }
   },
   methods: {
-    tryCheckFeasibility (orderConfig) {
+    tryCheckFeasibility (orderConfig = this.getCurrentOrderConfigurationDto()) {
       if (!this.recipe || !this.getPumpLayout || !this.amountToProduce) {
         return
       }
       this.checkFeasibility(orderConfig)
+    },
+    onCustomisationsUpdate (customisations) {
+      this.customisations = customisations
+      this.tryCheckFeasibility()
     },
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
       const config = this.getCurrentOrderConfigurationDto()
@@ -217,7 +222,11 @@ export default {
     },
     getCurrentOrderConfigurationDto () {
       const config = {
-        amountOrderedInMl: this.amountToProduce
+        amountOrderedInMl: this.amountToProduce,
+        customisations: {
+          boost: this.customisations.boost,
+          additionalIngredients: []
+        }
       }
       const newReplacements = []
       for (const prodStep of this.feasibilityReport.ingredientGroupReplacements) {
@@ -229,6 +238,14 @@ export default {
           })
         }
         newReplacements.push(prodStepReplacements)
+      }
+      for (const additionalIngredient of this.customisations.additionalIngredients) {
+        if (additionalIngredient.amount > 0) {
+          config.customisations.additionalIngredients.push({
+            ingredientId: additionalIngredient.ingredient.id,
+            amount: additionalIngredient.amount
+          })
+        }
       }
       config.productionStepReplacements = newReplacements
       return config
