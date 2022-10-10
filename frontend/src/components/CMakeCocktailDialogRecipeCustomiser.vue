@@ -42,6 +42,7 @@
                 <c-ingredient-additional-ml-card
                   :ingredient-name="additionalIngredient.ingredient.name"
                   :amount="additionalIngredient.amount"
+                  :debounce="400"
                   @update:amount="onChangeAdditionalIngredientAmount(additionalIngredient.ingredient.id, $event)"
                 />
               </div>
