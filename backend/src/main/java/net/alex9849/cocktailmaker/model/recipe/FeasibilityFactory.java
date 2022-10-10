@@ -47,6 +47,7 @@ public class FeasibilityFactory {
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
+                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .mapToInt(ProductionStepIngredient::getAmount).sum();
         feasibilityReport.setTotalAmountInMl(amountInMl);
     }

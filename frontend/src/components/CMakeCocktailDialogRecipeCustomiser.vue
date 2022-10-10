@@ -118,7 +118,12 @@ export default {
     },
     onSelectAddIngredient (ingredient) {
       this.addIngredient.clicked = false
-      this.addIngredient.selected = null
+      if (!ingredient) {
+        return
+      }
+      if (this.customisations.additionalIngredients.some(x => x.ingredient.id === ingredient.id)) {
+        return
+      }
       const customisationsCopy = Object.assign({}, this.customisations)
       customisationsCopy.additionalIngredients.push({
         ingredient: ingredient,

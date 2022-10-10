@@ -265,6 +265,9 @@ export default {
               additionalIngredientIds.delete(requiredIngredient.id)
               continue
             }
+            if (requiredIngredient.unit !== 'ml') {
+              continue
+            }
             this.customisations.additionalIngredients.push({
               ingredient: requiredIngredient,
               amount: 0,
