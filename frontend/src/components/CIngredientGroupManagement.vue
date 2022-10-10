@@ -212,6 +212,9 @@ export default {
       }
     },
     getAlcoholContentString (min, max) {
+      if (min == null) {
+        return '-'
+      }
       if (min === max) {
         return min + '%'
       }

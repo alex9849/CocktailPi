@@ -222,7 +222,7 @@ export default {
     getAlcoholContentString (ingredient) {
       if (ingredient.type === 'group') {
         if (ingredient.minAlcoholContent === ingredient.maxAlcoholContent) {
-          if (ingredient.minAlcoholContent === 0) {
+          if (!ingredient.minAlcoholContent) {
             return null
           }
           return ingredient.minAlcoholContent + '% alcohol content'

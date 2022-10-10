@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 public class IngredientGroupDto {
     private interface Leaves { Set<Long> getLeafIds(); }
     private interface Children<T> { Set<T> getChildren(); }
-    private interface MinAlcoholContent { int getMinAlcoholContent(); }
-    private interface MaxAlcoholContent { int getMaxAlcoholContent(); }
+    private interface MinAlcoholContent { Integer getMinAlcoholContent(); }
+    private interface MaxAlcoholContent { Integer getMaxAlcoholContent(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
@@ -39,8 +39,8 @@ public class IngredientGroupDto {
         @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends IngredientDto.Response.Detailed implements Leaves, MinAlcoholContent, MaxAlcoholContent {
             Set<Long> leafIds;
-            int minAlcoholContent;
-            int maxAlcoholContent;
+            Integer minAlcoholContent;
+            Integer maxAlcoholContent;
             boolean inBar;
             boolean onPump;
 
