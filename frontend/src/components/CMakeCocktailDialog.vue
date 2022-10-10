@@ -51,12 +51,36 @@
           ]"
           >
             <template v-slot:prepend >
-              <q-btn class="q-mx-xs" :icon="mdiMinusThick" dense round @click="v.amountToProduce.$model -= 50" />
-              <q-btn class="q-mx-xs" :icon="mdiMinus" round @click="v.amountToProduce.$model -= 10" />
+              <q-btn
+                :disable="v.amountToProduce.$model < 100"
+                class="q-mx-xs"
+                :icon="mdiMinusThick"
+                dense round
+                @click="v.amountToProduce.$model -= 50"
+              />
+              <q-btn
+                :disable="v.amountToProduce.$model < 60"
+                class="q-mx-xs"
+                :icon="mdiMinus"
+                round
+                @click="v.amountToProduce.$model -= 10"
+              />
             </template>
             <template v-slot:append >
-              <q-btn :icon="mdiPlus" class="q-mx-xs" round @click="v.amountToProduce.$model += 10" />
-              <q-btn :icon="mdiPlusThick" class="q-mx-xs" dense round @click="v.amountToProduce.$model += 50" />
+              <q-btn
+                :disable="v.amountToProduce.$model > 990"
+                :icon="mdiPlus"
+                class="q-mx-xs"
+                round
+                @click="v.amountToProduce.$model += 10"
+              />
+              <q-btn
+                :disable="v.amountToProduce.$model > 950"
+                :icon="mdiPlusThick"
+                class="q-mx-xs"
+                dense round
+                @click="v.amountToProduce.$model += 50"
+              />
             </template>
           </q-input>
         </div>
