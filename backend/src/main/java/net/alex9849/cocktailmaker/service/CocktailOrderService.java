@@ -102,7 +102,7 @@ public class CocktailOrderService {
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
-        CocktailFactory.transformToAmountOfLiquid(recipe, orderConfig.getAmountOrderedInMl());
+        CocktailFactory.transformToAmountOfLiquid(recipe, orderConfig.getAmountOrderedInMl(), orderConfig.getCustomisations().getBoost());
         return new FeasibilityFactory(recipe, orderConfig, pumpService.getAllPumps());
     }
 

@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
@@ -335,18 +336,23 @@ public class CocktailFactory {
      * @return the same instance of the recipe object that got passed in, but with recalculated
      * amount of liquids for all ingredients
      */
-    public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
-        int liquidAmountScaled = recipe.getProductionSteps().stream()
+    public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid, int boost) {
+        List<ProductionStepIngredient> productionStepIngredients = recipe.getProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream())
+                .flatMap(x -> x.getStepIngredients().stream()).collect(Collectors.toList());
+
+        //apply boost
+        final float boostMultiplier = boost / 100f;
+        productionStepIngredients.stream().filter(x -> x.isBoostable())
+                .forEach(x -> x.setAmount(Math.round(x.getAmount() * boostMultiplier)));
+
+        //scale
+        int liquidAmountScaled = productionStepIngredients.stream()
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
-        int liquidAmountUnscaled = recipe.getProductionSteps().stream()
-                .filter(x -> x instanceof AddIngredientsProductionStep)
-                .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream())
+        int liquidAmountUnscaled = productionStepIngredients.stream()
                 .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
                 .filter(x -> !x.isScale())
                 .mapToInt(x -> x.getAmount()).sum();
