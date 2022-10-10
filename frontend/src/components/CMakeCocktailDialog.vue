@@ -96,10 +96,11 @@
         <q-btn
           color="positive"
           size="lg"
+          no-caps
           @click="onMakeCocktail()"
           :disable="!cocktailOrderable"
         >
-          Make cocktail
+          MAKE COCKTAIL ({{feasibilityReport.totalAmountInMl}} ml)
         </q-btn>
         <q-tooltip
           v-if="hasCocktailProgress"
@@ -153,7 +154,8 @@ export default {
         ingredientGroupReplacements: [],
         ingredientsToAddManually: [],
         requiredIngredients: [],
-        feasible: false
+        feasible: false,
+        totalAmountInMl: 0
       },
       checkingFeasibility: true,
       pumpEditorExpanded: false,

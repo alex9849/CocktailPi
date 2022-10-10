@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class FeasibilityFactory {
     private final Recipe recipe;
-    private final CocktailOrderConfiguration replacements;
+    private final CocktailOrderConfiguration orderConfiguration;
     private final List<Pump> pumps;
     private final FeasibilityReport feasibilityReport;
     private final FeasibleRecipe feasibleRecipe;
@@ -23,9 +23,9 @@ public class FeasibilityFactory {
     /**
      * @param recipe The recipe that should be checked. Note: IngredientGroups within this instance will be replaced. Don't continue to use this object
      */
-    public FeasibilityFactory(Recipe recipe, CocktailOrderConfiguration replacements, List<Pump> pumps) {
+    public FeasibilityFactory(Recipe recipe, CocktailOrderConfiguration orderConfiguration, List<Pump> pumps) {
         this.recipe = recipe;
-        this.replacements = replacements;
+        this.orderConfiguration = orderConfiguration;
         this.pumps = pumps;
         this.feasibilityReport = new FeasibilityReport();
         this.feasibleRecipe = new FeasibleRecipe();
@@ -34,9 +34,43 @@ public class FeasibilityFactory {
     }
 
     private void compute() {
+        this.transformToAmountOfLiquid();
+        this.addAdditionalIngredients();
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeInsufficientIngredients();
         this.computeIngredientsToAddManuallyAndRequiredIngredients();
+        this.computeTotalAmountOfMl();
+    }
+
+    private void computeTotalAmountOfMl() {
+        final int amountInMl = this.feasibleRecipe.getFeasibleProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
+                .mapToInt(ProductionStepIngredient::getAmount).sum();
+        feasibilityReport.setTotalAmountInMl(amountInMl);
+    }
+
+    private void addAdditionalIngredients() {
+        List<CocktailOrderConfiguration.Customisations.AdditionalIngredient> additionalIngredients = orderConfiguration
+                .getCustomisations().getAdditionalIngredients();
+        if(additionalIngredients.isEmpty()) {
+            return;
+        }
+
+        AddIngredientsProductionStep aiProductionStep = new AddIngredientsProductionStep();
+        List<ProductionStepIngredient> productionStepIngredients = new ArrayList<>();
+        for(CocktailOrderConfiguration.Customisations.AdditionalIngredient additionalIngredient : additionalIngredients) {
+            ProductionStepIngredient psIngredient = new ProductionStepIngredient();
+            psIngredient.setAmount(additionalIngredient.getAmount());
+            psIngredient.setIngredient(additionalIngredient.getIngredient());
+            psIngredient.setScale(false);
+            psIngredient.setBoostable(false);
+            productionStepIngredients.add(psIngredient);
+        }
+
+        aiProductionStep.setStepIngredients(productionStepIngredients);
+        recipe.getProductionSteps().add(aiProductionStep);
     }
 
     private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
@@ -74,7 +108,7 @@ public class FeasibilityFactory {
                 FeasibilityReport.IngredientGroupReplacement ingredientGroupReplacement = new FeasibilityReport.IngredientGroupReplacement();
                 IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
                 ingredientGroupReplacement.setIngredientGroup(toReplaceIngredientGroup);
-                AddableIngredient addableIngredient = replacements.getReplacement(i, psIngredient.getIngredient().getId());
+                AddableIngredient addableIngredient = orderConfiguration.getReplacement(i, psIngredient.getIngredient().getId());
 
                 if (addableIngredient != null) {
                     if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
@@ -135,6 +169,53 @@ public class FeasibilityFactory {
             }
         }
         this.feasibilityReport.setInsufficientIngredients(insufficientIngredients);
+    }
+
+    /**
+     * Recalculates the amount of liquid for all ingredients in order to sum up to the total wanted amount of liquid.
+     * Also applies boosting.
+     */
+    private void transformToAmountOfLiquid() {
+        List<ProductionStepIngredient> productionStepIngredients = recipe.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream()).collect(Collectors.toList());
+
+        //apply boost
+        final float boostMultiplier = orderConfiguration.getCustomisations().getBoost() / 100f;
+        productionStepIngredients.stream().filter(ProductionStepIngredient::isBoostable)
+                .forEach(x -> x.setAmount(Math.round(x.getAmount() * boostMultiplier)));
+
+        //scale
+        int liquidAmountScaled = productionStepIngredients.stream()
+                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
+                .filter(ProductionStepIngredient::isScale)
+                .mapToInt(ProductionStepIngredient::getAmount).sum();
+        int liquidAmountUnscaled = productionStepIngredients.stream()
+                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
+                .filter(x -> !x.isScale())
+                .mapToInt(ProductionStepIngredient::getAmount).sum();
+        int liquidAmountToBeScaledTo = orderConfiguration.getAmountOrderedInMl() - liquidAmountUnscaled;
+        if(liquidAmountScaled <= 0) {
+            return;
+        }
+        double multiplier;
+        if(liquidAmountToBeScaledTo < 0) {
+            multiplier = 0;
+        } else {
+            multiplier = orderConfiguration.getAmountOrderedInMl() / ((double) liquidAmountScaled);
+        }
+
+        for(ProductionStep pStep : recipe.getProductionSteps()) {
+            if(pStep instanceof AddIngredientsProductionStep) {
+                AddIngredientsProductionStep addIPStep = (AddIngredientsProductionStep) pStep;
+                for(ProductionStepIngredient psi : addIPStep.getStepIngredients()) {
+                    if(psi.isScale()) {
+                        psi.setAmount((int) (psi.getAmount() * multiplier));
+                    }
+                }
+            }
+        }
     }
 
     /**
