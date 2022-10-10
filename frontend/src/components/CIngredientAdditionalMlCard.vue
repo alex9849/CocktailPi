@@ -2,10 +2,11 @@
   <q-card class="bg-grey-2 text-center full-height" flat bordered>
     <q-card-section class="q-gutter-sm">
       <p class="text-subtitle2">{{ ingredientName }}</p>
-      <q-input :model-value="amount"
+      <q-input :model-value="amountCopy"
                readonly
                rounded
                outlined
+               input-class="text-center text-weight-medium"
                suffix="ml"
       >
         <template v-slot:prepend >
@@ -31,6 +32,10 @@ import { mdiPlus, mdiMinus } from '@quasar/extras/mdi-v5'
 export default {
   name: 'CIngredientAdditionalMlCard',
   props: {
+    debounce: {
+      type: Number,
+      default: 0
+    },
     ingredientName: {
       type: String,
       required: true
@@ -41,17 +46,36 @@ export default {
     }
   },
   emits: ['update:amount'],
+  data: () => {
+    return {
+      amountCopy: 0,
+      debounceTask: ''
+    }
+  },
+  watch: {
+    amount: {
+      immediate: true,
+      handler (newValue) {
+        clearTimeout(this.debounceTask)
+        this.amountCopy = newValue
+      }
+    }
+  },
   created () {
     this.mdiPlus = mdiPlus
     this.mdiMinus = mdiMinus
   },
   methods: {
     updateAmount (toAdd) {
-      const changed = this.amount + toAdd
+      const changed = this.amountCopy + toAdd
       if (changed < 0) {
         return
       }
-      this.$emit('update:amount', changed)
+      this.amountCopy = changed
+      clearTimeout(this.debounceTask)
+      this.debounceTask = setTimeout(() => {
+        this.$emit('update:amount', changed)
+      }, this.debounce)
     }
   }
 }

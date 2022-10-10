@@ -1,8 +1,9 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.Category;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
@@ -86,6 +87,14 @@ public class Recipe {
             this.owner = null;
         }
         this.ownerId = ownerId;
+    }
+
+    public boolean isBoostable() {
+        return this.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
+                .anyMatch(ProductionStepIngredient::isBoostable);
     }
 
     public User getOwner() {

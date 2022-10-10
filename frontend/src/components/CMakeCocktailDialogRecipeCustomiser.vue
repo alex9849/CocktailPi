@@ -14,11 +14,12 @@
           <q-card-section>
             <p class="text-bold">Boosting:</p>
             <p class="text-italic">Increases (or decreases) the ml of reported boostable ingredients in the base recipe. (Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid dispensed remains the same!</p>
-            <q-slider :model-value="customisations.boost"
-                      @update:model-value="onUpdateBoost($event)"
+            <q-slider v-model:model-value="customisationsCopy.boost"
+                      @change="onUpdateBoost($event)"
                       color="orange"
                       label
-                      :label-value="(customisations.boost - 100) + '%'"
+                      :disable="disableBoosting"
+                      :label-value="boostingSliderLabel"
                       label-always
                       switch-label-side
                       :min="0"
@@ -36,7 +37,7 @@
             <p class="text-italic">Ingredients will be added as last production-step. The dispensed amount of liquid will be increased by the amount of ordered additional ingredients.</p>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-3"
-                   v-for="additionalIngredient in customisations.additionalIngredients"
+                   v-for="additionalIngredient in customisationsCopy.additionalIngredients"
                    :key="additionalIngredient.ingredient.id"
               >
                 <c-ingredient-additional-ml-card
@@ -94,6 +95,10 @@ export default {
   name: 'CMakeCocktailDialogRecipeCustomiser',
   components: { CIngredientAdditionalMlCard, CIngredientSelector },
   props: {
+    disableBoosting: {
+      type: Boolean,
+      default: false
+    },
     customisations: {
       type: Object,
       required: true
@@ -106,10 +111,30 @@ export default {
   data: () => {
     return {
       expanded: false,
+      customisationsCopy: {
+        boost: 100,
+        additionalIngredients: []
+      },
       addIngredient: {
         clicked: false,
         selected: null
       }
+    }
+  },
+  watch: {
+    customisations: {
+      immediate: true,
+      handler (newValue) {
+        this.customisationsCopy = newValue
+      }
+    }
+  },
+  computed: {
+    boostingSliderLabel () {
+      if (this.disableBoosting) {
+        return 'No boostable ingredients!'
+      }
+      return (this.customisationsCopy.boost - 100) + '%'
     }
   },
   methods: {
@@ -121,30 +146,26 @@ export default {
       if (!ingredient) {
         return
       }
-      if (this.customisations.additionalIngredients.some(x => x.ingredient.id === ingredient.id)) {
+      if (this.customisationsCopy.additionalIngredients.some(x => x.ingredient.id === ingredient.id)) {
         return
       }
-      const customisationsCopy = Object.assign({}, this.customisations)
-      customisationsCopy.additionalIngredients.push({
+      this.customisationsCopy.additionalIngredients.push({
         ingredient: ingredient,
         amount: 0,
         manualAdd: true
       })
-      this.$emit('update:customisations', customisationsCopy)
+      this.$emit('update:customisations', this.customisationsCopy)
     },
-    onUpdateBoost (value) {
-      const customisationsCopy = Object.assign({}, this.customisations)
-      customisationsCopy.boost = value
-      this.$emit('update:customisations', customisationsCopy)
+    onUpdateBoost () {
+      this.$emit('update:customisations', this.customisationsCopy)
     },
     onChangeAdditionalIngredientAmount (ingredientId, amount) {
-      const customisationsCopy = Object.assign({}, this.customisations)
-      for (const additionalIngredient of customisationsCopy.additionalIngredients) {
+      for (const additionalIngredient of this.customisationsCopy.additionalIngredients) {
         if (additionalIngredient.ingredient.id === ingredientId) {
           additionalIngredient.amount = amount
         }
       }
-      this.$emit('update:customisations', customisationsCopy)
+      this.$emit('update:customisations', this.customisationsCopy)
     }
   }
 }

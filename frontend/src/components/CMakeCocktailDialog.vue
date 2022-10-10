@@ -34,22 +34,29 @@
       <q-card-section class="page-content q-gutter-md">
         <div class="flex justify-center">
           <q-input
-            v-model.number="v.amountToProduce.$model"
+            :model-value="v.amountToProduce.$model"
             label="Amount to produce"
             outlined
+            readonly
             hide-bottom-space
+            bg-color="grey-2"
             input-class="text-center text-weight-medium"
             style="width: 400px"
             rounded
-            type="number"
+            suffix="ml"
             :rules="[
             val => !v.amountToProduce.required.$invalid || 'Required',
             val => !v.amountToProduce.minValue.$invalid || 'Min 50ml',
             val => !v.amountToProduce.maxValue.$invalid || 'Max 1000ml'
           ]"
           >
-            <template v-slot:append>
-              ml
+            <template v-slot:prepend >
+              <q-btn class="q-mx-xs" :icon="mdiMinusThick" dense round @click="v.amountToProduce.$model -= 50" />
+              <q-btn class="q-mx-xs" :icon="mdiMinus" round @click="v.amountToProduce.$model -= 10" />
+            </template>
+            <template v-slot:append >
+              <q-btn :icon="mdiPlus" class="q-mx-xs" round @click="v.amountToProduce.$model += 10" />
+              <q-btn :icon="mdiPlusThick" class="q-mx-xs" dense round @click="v.amountToProduce.$model += 50" />
             </template>
           </q-input>
         </div>
@@ -68,6 +75,7 @@
           <c-make-cocktail-dialog-pumps-in-use/>
           <c-make-cocktail-dialog-recipe-customiser
             :customisations="customisations"
+            :disable-boosting="!recipe.boostable"
             @update:customisations="onCustomisationsUpdate($event)"
           />
           <q-card flat bordered>
@@ -115,7 +123,7 @@
 <script>
 import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
-import { mdiAlertOutline, mdiPlay } from '@quasar/extras/mdi-v5'
+import { mdiAlertOutline, mdiPlay, mdiPlusThick, mdiPlus, mdiMinusThick, mdiMinus } from '@quasar/extras/mdi-v5'
 import { maxValue, minValue, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
@@ -169,6 +177,10 @@ export default {
     return {
       v: useVuelidate(),
       mdiPlay: mdiPlay,
+      mdiPlusThick: mdiPlusThick,
+      mdiPlus: mdiPlus,
+      mdiMinusThick: mdiMinusThick,
+      mdiMinus: mdiMinus,
       mdiAlertOutline: mdiAlertOutline
     }
   },

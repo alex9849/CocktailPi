@@ -32,6 +32,7 @@ public class RecipeDto {
     private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
 
     private interface OwnerName { String getOwnerName(); }
+    private interface Boostable { boolean isBoostable(); }
     private interface HasImage { boolean isHasImage(); }
     private interface UniqueIngredients { Set<IngredientDto.Response.Reduced> getIngredients(); };
     private interface LastUpdate { Date getLastUpdate(); }
@@ -67,10 +68,11 @@ public class RecipeDto {
 
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
-                HasImage, DefaultAmountToFill, LastUpdate {
+                HasImage, DefaultAmountToFill, LastUpdate, Boostable {
             long id;
             String name;
             long ownerId;
+            boolean boostable;
             String description;
             List<ProductionStepDto.Response.Detailed> productionSteps;
             Set<CategoryDto.Duplex.Detailed> categories;
@@ -82,6 +84,7 @@ public class RecipeDto {
 
             public Detailed(Recipe recipe) {
                 this.id = recipe.getId();
+                this.boostable = recipe.isBoostable();
                 BeanUtils.copyProperties(recipe, this);
                 this.productionSteps = recipe.getProductionSteps().stream()
                         .map(ProductionStepDto.Response.Detailed::toDto).collect(Collectors.toList());
