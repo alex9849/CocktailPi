@@ -54,6 +54,7 @@
                     <p class="text-subtitle2">Add ingredient</p>
                     <c-ingredient-selector
                       rounded
+                      autofocus
                       filter-manual-ingredients
                       filter-ingredient-groups
                       :selected="addIngredient.selected"
