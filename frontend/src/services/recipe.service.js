@@ -117,6 +117,7 @@ export class RecipeDtoMapper {
     return {
       amount: pStepIngredient.amount,
       scale: pStepIngredient.scale,
+      boostable: pStepIngredient.boostable,
       ingredientId: pStepIngredient.ingredient.id
     }
   }

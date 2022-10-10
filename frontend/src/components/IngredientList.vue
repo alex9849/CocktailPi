@@ -71,8 +71,8 @@
                 <q-item-section>
                   <div style="display: ruby">
                     {{ sublist.element.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
-                    <q-item-label v-if="!sublist.element.scale" caption>
-                      (Unscaled)
+                    <q-item-label v-if="getStepIngredientAnnotationString(sublist.element)" caption>
+                      {{ getStepIngredientAnnotationString(sublist.element) }}
                     </q-item-label>
                   </div>
                   <q-item-label v-if="getAlcoholContentString(sublist.element.ingredient)" caption>
@@ -233,6 +233,19 @@ export default {
         return null
       }
       return ingredient.alcoholContent + '% alcohol content'
+    },
+    getStepIngredientAnnotationString (stepIngredient) {
+      const annotations = []
+      if (!stepIngredient.scale) {
+        annotations.push('Unscaled')
+      }
+      if (stepIngredient.boostable) {
+        annotations.push('Boostable')
+      }
+      if (annotations.length === 0) {
+        return ''
+      }
+      return '(' + annotations.join(', ') + ')'
     },
     emitChange () {
       this.$emit('update:modelValue', this.productionSteps)

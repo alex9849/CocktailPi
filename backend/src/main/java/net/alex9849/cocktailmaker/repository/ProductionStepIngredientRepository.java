@@ -50,13 +50,13 @@ public class ProductionStepIngredientRepository extends JdbcDaoSupport {
             return stepIngredients;
         }
         return getJdbcTemplate().execute((ConnectionCallback<List<ProductionStepIngredient>>) con -> {
-            String sqlQuery = "INSERT INTO production_step_ingredients (recipe_id, \"order\", ingredient_id, amount, scale) VALUES";
+            String sqlQuery = "INSERT INTO production_step_ingredients (recipe_id, \"order\", ingredient_id, amount, scale, boostable) VALUES";
             List<String> valuesSqlString = new LinkedList<>();
-            stepIngredients.forEach(x -> valuesSqlString.add(" (?, ?, ?, ?, ?)"));
+            stepIngredients.forEach(x -> valuesSqlString.add(" (?, ?, ?, ?, ?, ?)"));
             sqlQuery += String.join(",", valuesSqlString);
 
             PreparedStatement pstmt = con.prepareStatement(sqlQuery);
-            final int paramSize = 5;
+            final int paramSize = 6;
             for(int i = 0; i < stepIngredients.size(); i++) {
                 ProductionStepIngredient currentPsi = stepIngredients.get(i);
                 pstmt.setLong(paramSize * i + 1, recipeId);
@@ -64,6 +64,7 @@ public class ProductionStepIngredientRepository extends JdbcDaoSupport {
                 pstmt.setLong(paramSize * i + 3, currentPsi.getIngredient().getId());
                 pstmt.setInt(paramSize * i + 4, currentPsi.getAmount());
                 pstmt.setBoolean(paramSize * i + 5, currentPsi.isScale());
+                pstmt.setBoolean(paramSize * i + 6, currentPsi.isBoostable());
             }
 
             pstmt.execute();
@@ -80,6 +81,7 @@ public class ProductionStepIngredientRepository extends JdbcDaoSupport {
         ProductionStepIngredient psi = new ProductionStepIngredient();
         psi.setAmount(rs.getInt("amount"));
         psi.setScale(rs.getBoolean("scale"));
+        psi.setBoostable(rs.getBoolean("boostable"));
         return psi;
     }
 }
