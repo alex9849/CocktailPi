@@ -13,6 +13,7 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Recipe {
     private long id;
@@ -90,11 +91,14 @@ public class Recipe {
     }
 
     public boolean isBoostable() {
-        return this.getProductionSteps().stream()
+        List<ProductionStepIngredient> productionStepIngredients = this.getProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
-                .anyMatch(ProductionStepIngredient::isBoostable);
+                .collect(Collectors.toList());
+
+        return productionStepIngredients.stream().anyMatch(ProductionStepIngredient::isBoostable)
+                && ! productionStepIngredients.stream().allMatch(ProductionStepIngredient::isBoostable);
     }
 
     public User getOwner() {

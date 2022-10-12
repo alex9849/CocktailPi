@@ -183,6 +183,10 @@ public class FeasibilityFactory {
                 .flatMap(x -> x.getStepIngredients().stream()).collect(Collectors.toList());
 
         //apply boost
+        if(!recipe.isBoostable() && orderConfiguration.getCustomisations().getBoost() != 100) {
+            throw new IllegalArgumentException("Recipe not boostable!");
+        }
+
         final float boostMultiplier = orderConfiguration.getCustomisations().getBoost() / 100f;
         productionStepIngredients.stream().filter(ProductionStepIngredient::isBoostable)
                 .forEach(x -> x.setAmount(Math.round(x.getAmount() * boostMultiplier)));
