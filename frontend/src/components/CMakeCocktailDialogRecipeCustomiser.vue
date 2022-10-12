@@ -132,7 +132,7 @@ export default {
   computed: {
     boostingSliderLabel () {
       if (this.disableBoosting) {
-        return 'No boostable ingredients!'
+        return 'Recipe not boostable!'
       }
       return (this.customisationsCopy.boost - 100) + '%'
     }
