@@ -29,8 +29,11 @@ for multiple pumps, which pump the different liquids into the glass.
 The user can add new pumps in the webinterface, where he has to specify a GPIO-Pin
 for every pump and how long that pumps needs to pump exactly one centiliter in 
 milliseconds. You can build your machine as you like. The only important thing
-is that you need to be able to apply that concept to your setup. This is an example setup:
+is that you need to be able to apply that concept to your setup.
+### This is an example setup:
 ![Blueprint](./documentation/img/blueprint.png "Blueprint")
+### ...or with voltage director relays, that allow reverse pumping:
+![Blueprint with voltage direcor](./documentation/img/blueprint-vd.png "Blueprint with voltage direcor")
 
 ### This is the hardware that I've used for my machine:
  * 1x RaspberryPi: https://amzn.to/3NYmSvH (Other platforms like NanoPi or BananaPi are not supported)
