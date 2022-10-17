@@ -94,7 +94,8 @@ export default {
         this.editStep = {
           ingredient: null,
           amount: '',
-          scale: true
+          scale: true,
+          boostable: false
         }
       }
     }
@@ -112,7 +113,8 @@ export default {
         this.editStep = Object.assign({}, {
           ingredient: null,
           amount: '',
-          scale: true
+          scale: true,
+          boostable: false
         })
       } else {
         this.editStep = Object.assign({}, {

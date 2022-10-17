@@ -3,7 +3,7 @@
     <c-ingredient-selector
       :rules="[val => !v.modelValue.ingredient.required.$invalid || 'Required']"
       :selected="modelValue.ingredient"
-      @update:selected="v.modelValue.ingredient.$model = $event; $emit('update:modelValue', modelValue)"
+      @update:selected="onIngredientSelect($event)"
     />
     <q-input
       :label="amountLabel"
@@ -16,11 +16,23 @@
       ]"
       @update:model-value="v.modelValue.amount.$model = Number.parseInt($event); $emit('update:modelValue', modelValue)"
     />
-    <q-checkbox
-      label="Scale with volume"
-      :model-value="modelValue.scale"
-      @update:model-value="v.modelValue.scale.$model = $event; $emit('update:modelValue', modelValue)"
-    />
+    <div class="row">
+      <div class="col-6">
+        <q-checkbox
+          label="Scale with volume"
+          :model-value="modelValue.scale"
+          @update:model-value="v.modelValue.scale.$model = $event; $emit('update:modelValue', modelValue)"
+        />
+      </div>
+      <div class="col-6">
+        <q-checkbox
+          class="col-6"
+          label="Boostable"
+          :model-value="modelValue.boostable"
+          @update:model-value="v.modelValue.boostable.$model = $event; $emit('update:modelValue', modelValue)"
+        />
+      </div>
+    </div>
     <slot name="below"/>
   </div>
 </template>
@@ -58,8 +70,22 @@ export default {
           required,
           minValue: minValue(1)
         },
-        scale: {}
+        scale: {},
+        boostable: {}
       }
+    }
+  },
+  methods: {
+    onIngredientSelect (ingredient) {
+      this.v.modelValue.ingredient.$model = ingredient
+      if (ingredient) {
+        if (ingredient.type === 'group') {
+          this.v.modelValue.boostable.$model = ingredient.maxAlcoholContent > 0
+        } else {
+          this.v.modelValue.boostable.$model = ingredient.alcoholContent > 0
+        }
+      }
+      this.$emit('update:modelValue', this.modelValue)
     }
   },
   computed: {

@@ -93,8 +93,8 @@
       @clickAbort="deleteDialog = false"
     />
     <c-make-cocktail-dialog
-      v-if="loaded"
-      :show="showMakeCocktailDialog"
+      v-if="loaded && showMakeCocktailDialog"
+      show
       v-model:show="showMakeCocktailDialog"
       :recipe="recipe"
       @postOrder="onPostOrder"

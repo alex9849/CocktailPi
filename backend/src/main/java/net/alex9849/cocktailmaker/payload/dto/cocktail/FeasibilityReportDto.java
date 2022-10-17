@@ -17,6 +17,7 @@ public class FeasibilityReportDto {
     private interface RequiredIngredients { Set<AddableIngredientDto.Response.Detailed> getRequiredIngredients(); }
     private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
+    private interface TotalAmountInMl { int getTotalAmountInMl(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
     private interface IngredientsToAddManually { Set<IngredientDto.Response.Reduced> getIngredientsToAddManually(); }
 
@@ -24,7 +25,7 @@ public class FeasibilityReportDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements InsufficientIngredients, IngredientGroupReplacements,
-                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced, RequiredIngredients {
+                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
 
             List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
             List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
@@ -32,6 +33,7 @@ public class FeasibilityReportDto {
             Set<AddableIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
+            int totalAmountInMl;
 
             public Detailed(FeasibilityReport report) {
                 this.insufficientIngredients = report.getInsufficientIngredients().stream()
@@ -50,6 +52,7 @@ public class FeasibilityReportDto {
                         .collect(Collectors.toSet());
                 this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
                 this.isFeasible = report.isFeasible();
+                this.totalAmountInMl = report.getTotalAmountInMl();
             }
         }
     }

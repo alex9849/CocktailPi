@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -105,7 +102,6 @@ public class CocktailOrderService {
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
-        CocktailFactory.transformToAmountOfLiquid(recipe, orderConfig.getAmountOrderedInMl());
         return new FeasibilityFactory(recipe, orderConfig, pumpService.getAllPumps());
     }
 
@@ -171,6 +167,32 @@ public class CocktailOrderService {
             }
             pStep++;
         }
+
+        CocktailOrderConfigurationDto.CustomisationsDto.Request.Create customisationsDto = orderConfigDto.getCustomisations();
+        CocktailOrderConfiguration.Customisations customisations = new CocktailOrderConfiguration.Customisations();
+        customisations.setBoost(customisationsDto.getBoost());
+
+        List<CocktailOrderConfiguration.Customisations.AdditionalIngredient> additionalIngredients = new ArrayList<>();
+        for(CocktailOrderConfigurationDto.CustomisationsDto.AdditionalIngredientDto.Request.Create additionalIngredientDto : customisationsDto.getAdditionalIngredients()) {
+            CocktailOrderConfiguration.Customisations.AdditionalIngredient additionalIngredient = new CocktailOrderConfiguration.Customisations.AdditionalIngredient();
+            additionalIngredient.setAmount(additionalIngredientDto.getAmount());
+            Ingredient ingredient = ingredientService.getIngredient(additionalIngredientDto.getIngredientId());
+
+            if(ingredient == null) {
+                throw new IllegalArgumentException("AddableIngredient with id \"" + additionalIngredientDto.getIngredientId() + "\" not found!");
+            }
+            if(!(ingredient instanceof AddableIngredient)) {
+                throw new IllegalArgumentException("Ingredient with id \"" + ingredient.getName() + "\" is not an AddableIngredient!");
+            }
+            AddableIngredient addableIngredient = (AddableIngredient) ingredient;
+
+            additionalIngredient.setIngredient(addableIngredient);
+            additionalIngredients.add(additionalIngredient);
+        }
+        customisations.setAdditionalIngredients(additionalIngredients);
+
+        orderConfig.setCustomisations(customisations);
+
         return orderConfig;
     }
 

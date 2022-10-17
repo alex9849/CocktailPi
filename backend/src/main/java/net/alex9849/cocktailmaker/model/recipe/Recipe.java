@@ -1,8 +1,9 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.Category;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
+import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
@@ -12,6 +13,7 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Recipe {
     private long id;
@@ -86,6 +88,17 @@ public class Recipe {
             this.owner = null;
         }
         this.ownerId = ownerId;
+    }
+
+    public boolean isBoostable() {
+        List<ProductionStepIngredient> productionStepIngredients = this.getProductionSteps().stream()
+                .filter(x -> x instanceof AddIngredientsProductionStep)
+                .map(x -> (AddIngredientsProductionStep) x)
+                .flatMap(x -> x.getStepIngredients().stream())
+                .collect(Collectors.toList());
+
+        return productionStepIngredients.stream().anyMatch(ProductionStepIngredient::isBoostable)
+                && ! productionStepIngredients.stream().allMatch(ProductionStepIngredient::isBoostable);
     }
 
     public User getOwner() {

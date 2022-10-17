@@ -8,6 +8,7 @@
     @update:model-value="$emit('update:selected', $event)"
     :bg-color="bgColor"
     use-input
+    :rounded="rounded"
     :clearable="clearable"
     :disable="disable"
     hide-dropdown-icon
@@ -17,6 +18,7 @@
     :emit-value="emitValue"
     option-label="name"
     option-value="id"
+    :autofocus="autofocus"
     input-debounce="0"
     :map-options="mapOptions"
     :use-chips="useChips"
@@ -33,13 +35,8 @@
         <q-item-section>
           {{ scope.opt.name }}
           <slot name="afterIngredientName" :scope="scope">
-            <div v-if="scope.opt.type !== 'group'">
-              <q-item-label v-if="scope.opt.alcoholContent !== 0" caption>
-                {{ scope.opt.alcoholContent }}% alcohol content
-              </q-item-label>
-            </div>
-            <q-item-label v-else caption>
-              {{ ingredientGroupAlcoholContentString(scope.opt.minAlcoholContent, scope.opt.maxAlcoholContent) }} alcohol content
+            <q-item-label v-if="getAlcoholContentString(scope.opt)" caption>
+              {{ getAlcoholContentString(scope.opt) }}
             </q-item-label>
           </slot>
         </q-item-section>
@@ -65,6 +62,14 @@ export default {
       default: 'Ingredient'
     },
     dense: {
+      type: Boolean,
+      default: false
+    },
+    rounded: {
+      type: Boolean,
+      default: false
+    },
+    autofocus: {
       type: Boolean,
       default: false
     },
@@ -158,11 +163,20 @@ export default {
     }
   },
   methods: {
-    ingredientGroupAlcoholContentString (min, max) {
-      if (min === max) {
-        return min + '%'
+    getAlcoholContentString (ingredient) {
+      if (ingredient.type === 'group') {
+        if (ingredient.minAlcoholContent === ingredient.maxAlcoholContent) {
+          if (!ingredient.minAlcoholContent) {
+            return null
+          }
+          return ingredient.minAlcoholContent + '% alcohol content'
+        }
+        return ingredient.minAlcoholContent + ' - ' + ingredient.maxAlcoholContent + '% alcohol content'
       }
-      return min + '-' + max + '%'
+      if (ingredient.alcoholContent === 0) {
+        return null
+      }
+      return ingredient.alcoholContent + '% alcohol content'
     },
     filterIngredients (val, update, abort) {
       this.stringInput = val

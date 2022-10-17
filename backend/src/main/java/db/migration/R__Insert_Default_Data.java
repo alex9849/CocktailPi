@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
@@ -15,13 +16,11 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredien
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
-import net.alex9849.cocktailmaker.service.CategoryService;
-import net.alex9849.cocktailmaker.service.IngredientService;
-import net.alex9849.cocktailmaker.service.RecipeService;
-import net.alex9849.cocktailmaker.service.UserService;
+import net.alex9849.cocktailmaker.service.*;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,6 +37,7 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
     private final CategoryService categoryService = SpringUtility.getBean(CategoryService.class);
     private final RecipeService recipeService = SpringUtility.getBean(RecipeService.class);
     private final UserService userService = SpringUtility.getBean(UserService.class);
+    private final PumpService pumpService = SpringUtility.getBean(PumpService.class);
 
     @Override
     public void migrate(Context context) throws Exception {
@@ -45,10 +45,15 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
             return;
         }
 
+
+        boolean isDemoMode = SpringUtility.getContext().getEnvironment().getProperty("alex9849.app.demoMode", Boolean.class);
         User defaultUser = createDefaultUser();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
         this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
+        if(isDemoMode) {
+            this.createDemoPumps();
+        }
     }
 
     private User createDefaultUser() {
@@ -88,6 +93,21 @@ public class R__Insert_Default_Data extends BaseJavaMigration {
             oldToNewIdMap.put(categoryDto.getId(), createdCategory.getId());
         }
         return oldToNewIdMap;
+    }
+
+    private void createDemoPumps() {
+        Pump pump = new Pump();
+        pump.setPumpedUp(false);
+        pump.setFillingLevelInMl(3000);
+        pump.setPowerStateHigh(false);
+        pump.setTimePerClInMs(3000);
+        pump.setTubeCapacityInMl(5);
+
+        final int nrPumps = 8;
+        for(int i = 0; i < nrPumps; i++) {
+            pump.setBcmPin(i);
+            this.pumpService.createPump(pump);
+        }
     }
 
     private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap, Map<Long, Long> categoriesOldIdToNewIdMap) throws IOException {

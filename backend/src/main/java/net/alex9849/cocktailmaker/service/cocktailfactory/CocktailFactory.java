@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.*;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
@@ -325,52 +326,5 @@ public class CocktailFactory {
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
                 .collect(Collectors.toMap(x -> x.getIngredient(), x -> x.getAmount(), (a, b) -> a + b));
-    }
-
-
-    /**
-     * Recalculates the amount of liquid for all ingredients in order to sum up to the total wanted amount of liquid
-     * @param recipe the recipe
-     * @param wantedAmountOfLiquid the wanted amount of liquid
-     * @return the same instance of the recipe object that got passed in, but with recalculated
-     * amount of liquids for all ingredients
-     */
-    public static Recipe transformToAmountOfLiquid(Recipe recipe, int wantedAmountOfLiquid) {
-        int liquidAmountScaled = recipe.getProductionSteps().stream()
-                .filter(x -> x instanceof AddIngredientsProductionStep)
-                .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream())
-                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
-                .filter(x -> x.isScale())
-                .mapToInt(x -> x.getAmount()).sum();
-        int liquidAmountUnscaled = recipe.getProductionSteps().stream()
-                .filter(x -> x instanceof AddIngredientsProductionStep)
-                .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream())
-                .filter(x -> x.getIngredient().getUnit() == Ingredient.Unit.MILLILITER)
-                .filter(x -> !x.isScale())
-                .mapToInt(x -> x.getAmount()).sum();
-        int liquidAmountToBeScaledTo = wantedAmountOfLiquid - liquidAmountUnscaled;
-        if(liquidAmountScaled <= 0) {
-            return recipe;
-        }
-        double multiplier;
-        if(liquidAmountToBeScaledTo < 0) {
-            multiplier = 0;
-        } else {
-            multiplier = wantedAmountOfLiquid / ((double) liquidAmountScaled);
-        }
-
-        for(ProductionStep pStep : recipe.getProductionSteps()) {
-            if(pStep instanceof AddIngredientsProductionStep) {
-                AddIngredientsProductionStep addIPStep = (AddIngredientsProductionStep) pStep;
-                for(ProductionStepIngredient psi : addIPStep.getStepIngredients()) {
-                    if(psi.isScale()) {
-                        psi.setAmount((int) (psi.getAmount() * multiplier));
-                    }
-                }
-            }
-        }
-        return recipe;
     }
 }

@@ -139,7 +139,7 @@ export default {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
     updatePumpFillingLevel (pumpId, newFillingLevel) {
-      if (!newFillingLevel || newFillingLevel < 0) {
+      if ((!newFillingLevel && newFillingLevel !== 0) || newFillingLevel < 0) {
         return
       }
       this.loadingPumpIdsFillingLevel.push(pumpId)

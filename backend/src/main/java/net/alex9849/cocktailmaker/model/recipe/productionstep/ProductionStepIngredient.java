@@ -7,6 +7,7 @@ public class ProductionStepIngredient {
     private Ingredient ingredient;
     private int amount;
     private boolean scale;
+    private boolean boostable;
 
     public Ingredient getIngredient() {
         return ingredient;
@@ -30,5 +31,13 @@ public class ProductionStepIngredient {
 
     public void setScale(boolean scale) {
         this.scale = scale;
+    }
+
+    public boolean isBoostable() {
+        return boostable;
+    }
+
+    public void setBoostable(boolean boostable) {
+        this.boostable = boostable;
     }
 }

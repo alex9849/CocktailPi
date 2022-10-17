@@ -14,6 +14,7 @@ public class FeasibilityReport {
     private Set<Ingredient> ingredientsToAddManually = new HashSet<>();
     private Set<AddableIngredient> requiredIngredients = new HashSet<>();
     private boolean allIngredientGroupsReplaced;
+    private int totalAmountInMl;
 
     public List<List<IngredientGroupReplacement>> getIngredientGroupReplacements() {
         return ingredientGroupReplacements;
@@ -53,6 +54,14 @@ public class FeasibilityReport {
 
     public void setAllIngredientGroupsReplaced(boolean allIngredientGroupsReplaced) {
         this.allIngredientGroupsReplaced = allIngredientGroupsReplaced;
+    }
+
+    public int getTotalAmountInMl() {
+        return totalAmountInMl;
+    }
+
+    public void setTotalAmountInMl(int totalAmountInMl) {
+        this.totalAmountInMl = totalAmountInMl;
     }
 
     public boolean isFeasible() {

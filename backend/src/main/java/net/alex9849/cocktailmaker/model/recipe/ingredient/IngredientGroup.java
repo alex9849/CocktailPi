@@ -24,36 +24,52 @@ public class IngredientGroup extends Ingredient {
         return children;
     }
 
-    public int getMinAlcoholContent() {
-        if(this.getChildren().isEmpty()) {
-            return 0;
-        }
+    public Integer getMinAlcoholContent() {
         int alcoholContent = Integer.MAX_VALUE;
+        boolean resultValid = false;
         for(Ingredient ingredient : this.getChildren()) {
             if(ingredient instanceof IngredientGroup) {
-                alcoholContent = Math.min(alcoholContent, ((IngredientGroup) ingredient).getMinAlcoholContent());
+                IngredientGroup childGroup = (IngredientGroup) ingredient;
+                Integer childAlcoholContent = childGroup.getMinAlcoholContent();
+                if(childAlcoholContent == null) {
+                    continue;
+                }
+                alcoholContent = Math.min(alcoholContent, childAlcoholContent);
+                resultValid = true;
             } else if (ingredient instanceof AddableIngredient) {
                 alcoholContent = Math.min(alcoholContent, ((AddableIngredient) ingredient).getAlcoholContent());
+                resultValid = true;
             } else {
                 throw new IllegalStateException("Unknown Ingredient type: " + ingredient.getClass().getName());
             }
+        }
+        if(!resultValid) {
+            return null;
         }
         return Math.max(0, alcoholContent);
     }
 
-    public int getMaxAlcoholContent() {
-        if(this.getChildren().isEmpty()) {
-            return 0;
-        }
+    public Integer getMaxAlcoholContent() {
         int alcoholContent = 0;
+        boolean resultValid = false;
         for(Ingredient ingredient : this.getChildren()) {
             if(ingredient instanceof IngredientGroup) {
-                alcoholContent = Math.max(alcoholContent, ((IngredientGroup) ingredient).getMinAlcoholContent());
+                IngredientGroup childGroup = (IngredientGroup) ingredient;
+                Integer childAlcoholContent = childGroup.getMaxAlcoholContent();
+                if(childAlcoholContent == null) {
+                    continue;
+                }
+                alcoholContent = Math.max(alcoholContent, childAlcoholContent);
+                resultValid = true;
             } else if (ingredient instanceof AddableIngredient) {
                 alcoholContent = Math.max(alcoholContent, ((AddableIngredient) ingredient).getAlcoholContent());
+                resultValid = true;
             } else {
                 throw new IllegalStateException("Unknown Ingredient type: " + ingredient.getClass().getName());
             }
+        }
+        if(!resultValid) {
+            return null;
         }
         return alcoholContent;
     }
