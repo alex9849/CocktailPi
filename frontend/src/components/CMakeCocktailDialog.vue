@@ -102,7 +102,9 @@
             :disable-boosting="!recipe.boostable"
             @update:customisations="onCustomisationsUpdate($event)"
           />
-          <q-card flat bordered>
+          <q-card flat bordered
+                  v-if="isUserPumpIngredientEditor"
+          >
             <q-card-section class="q-pa-none">
               <q-expansion-item
                 v-model:model-value="pumpEditorExpanded"
@@ -114,7 +116,6 @@
                   </q-item-section>
                 </template>
                 <c-make-cocktail-dialog-pump-editor
-                  v-if="isUserPumpIngredientEditor"
                   :needed-ingredients="feasibilityReport.requiredIngredients"
                 />
               </q-expansion-item>
