@@ -13,7 +13,7 @@
       >
         <li v-for="requiredIngredient in requiredIngredients" :key="requiredIngredient.ingredient.id">
           {{ requiredIngredient.ingredient.name }}:
-          <strong>{{ requiredIngredient.amountRequired }} ml</strong>
+          <strong>{{ requiredIngredient.amountRequired }} {{ requiredIngredient.ingredient.unit }}</strong>
         </li>
       </ul>
       <ul
@@ -22,7 +22,7 @@
       >
         <li v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.ingredient.id">
           {{ insufficientIngredient.ingredient.name }}:
-          <strong>{{ insufficientIngredient.amountRequired }} ml</strong> required
+          <strong>{{ insufficientIngredient.amountRequired }} {{ insufficientIngredient.ingredient.unit }}</strong> required
         </li>
       </ul>
     </template>
