@@ -297,6 +297,9 @@ export default {
           this.customisations.additionalIngredients.forEach(x => additionalIngredientIds.add(x.ingredient.id))
           for (const requiredIngredient of report.requiredIngredients) {
             const ingredient = requiredIngredient.ingredient
+            if (ingredient.type !== 'automated') {
+              continue
+            }
             if (additionalIngredientIds.has(ingredient.id)) {
               additionalIngredientIds.delete(ingredient.id)
               continue

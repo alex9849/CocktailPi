@@ -151,6 +151,10 @@ public class FeasibilityFactory {
             Ingredient ingredient = ingredientAmountPair.getKey();
             int remainingNeededAmount = ingredientAmountPair.getValue();
 
+            if(remainingNeededAmount == 0) {
+                continue;
+            }
+
             FeasibilityReport.RequiredIngredient requiredIngredient = new FeasibilityReport.RequiredIngredient();
             requiredIngredient.setIngredient(ingredient);
             requiredIngredient.setAmountRequired(remainingNeededAmount);
