@@ -37,8 +37,7 @@ public class FeasibilityFactory {
         this.transformToAmountOfLiquid();
         this.addAdditionalIngredients();
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
-        this.computeInsufficientIngredients();
-        this.computeIngredientsToAddManuallyAndRequiredIngredients();
+        this.computeRequiredIngredients();
         this.computeTotalAmountOfMl();
     }
 
@@ -142,14 +141,22 @@ public class FeasibilityFactory {
         this.feasibilityReport.setIngredientGroupReplacements(ingredientGroupReplacements);
     }
 
-    private void computeInsufficientIngredients() {
+    private void computeRequiredIngredients() {
         Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(this.feasibleRecipe);
         Map<Long, List<Pump>> pumpsByIngredientId = this.pumps.stream().filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(Pump::getCurrentIngredientId));
-        List<FeasibilityReport.InsufficientIngredient> insufficientIngredients = new ArrayList<>();
+        Map<Long, FeasibilityReport.RequiredIngredient> requiredIngredients = new HashMap<>();
 
-        for (Ingredient ingredient : neededAmountPerIngredientId.keySet()) {
-            int remainingNeededAmount = neededAmountPerIngredientId.get(ingredient);
+        for (Map.Entry<Ingredient, Integer> ingredientAmountPair : neededAmountPerIngredientId.entrySet()) {
+            Ingredient ingredient = ingredientAmountPair.getKey();
+            int remainingNeededAmount = ingredientAmountPair.getValue();
+
+            FeasibilityReport.RequiredIngredient requiredIngredient = new FeasibilityReport.RequiredIngredient();
+            requiredIngredient.setIngredient(ingredient);
+            requiredIngredient.setAmountRequired(remainingNeededAmount);
+            requiredIngredient.setAmountMissing(0);
+            requiredIngredients.put(ingredient.getId(), requiredIngredient);
+
             if (!pumpsByIngredientId.containsKey(ingredient.getId())) {
                 //We only check for automated ingredients
                 continue;
@@ -162,14 +169,10 @@ public class FeasibilityFactory {
                 }
             }
             if (remainingNeededAmount > 0) {
-                FeasibilityReport.InsufficientIngredient insufficientIngredient = new FeasibilityReport.InsufficientIngredient();
-                insufficientIngredient.setIngredient(ingredient);
-                insufficientIngredient.setAmountRemaining(remainingNeededAmount);
-                insufficientIngredient.setAmountNeeded(neededAmountPerIngredientId.get(ingredient));
-                insufficientIngredients.add(insufficientIngredient);
+                requiredIngredient.setAmountMissing(remainingNeededAmount);
             }
         }
-        this.feasibilityReport.setInsufficientIngredients(insufficientIngredients);
+        this.feasibilityReport.setRequiredIngredients(new HashSet<>(requiredIngredients.values()));
     }
 
     /**
@@ -237,27 +240,6 @@ public class FeasibilityFactory {
         }
         existingProductionStep.setAmount(existingProductionStep.getAmount() + toMerge.getAmount());
         return true;
-    }
-
-    private void computeIngredientsToAddManuallyAndRequiredIngredients() {
-        Set<Ingredient> ingredientsToAddManually = new HashSet<>();
-        Set<AddableIngredient> requiredIngredients = new HashSet<>();
-        for(ProductionStep pStep : this.feasibleRecipe.getFeasibleProductionSteps()) {
-            if(!(pStep instanceof AddIngredientsProductionStep)) {
-                continue;
-            }
-            AddIngredientsProductionStep aiPStep = (AddIngredientsProductionStep) pStep;
-            for(ProductionStepIngredient pStepIngredient : aiPStep.getStepIngredients()) {
-                if(!pStepIngredient.getIngredient().isOnPump()) {
-                    ingredientsToAddManually.add(pStepIngredient.getIngredient());
-                }
-                if(pStepIngredient.getIngredient() instanceof AddableIngredient) {
-                    requiredIngredients.add((AddableIngredient) pStepIngredient.getIngredient());
-                }
-            }
-        }
-        this.feasibilityReport.setIngredientsToAddManually(ingredientsToAddManually);
-        this.feasibilityReport.setRequiredIngredients(requiredIngredients);
     }
 
     private AddableIngredient findIngredientGroupReplacement(IngredientGroup ingredientGroup, List<Pump> pumps) {

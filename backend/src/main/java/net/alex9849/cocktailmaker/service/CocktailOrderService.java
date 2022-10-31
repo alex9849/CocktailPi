@@ -57,7 +57,7 @@ public class CocktailOrderService {
         }
         FeasibilityFactory feasibilityFactory = this.checkFeasibility(recipe, orderConfiguration);
         FeasibilityReport report = feasibilityFactory.getFeasibilityReport();
-        if(!report.getInsufficientIngredients().isEmpty()) {
+        if(report.getRequiredIngredients().stream().anyMatch(x -> x.getAmountMissing() > 0)) {
             throw new IllegalArgumentException("Some pumps don't have enough liquids left!");
         }
         if(!report.isFeasible()) {

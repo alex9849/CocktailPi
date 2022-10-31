@@ -9,10 +9,8 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import java.util.*;
 
 public class FeasibilityReport {
-    private List<InsufficientIngredient> insufficientIngredients = new ArrayList<>();
     private List<List<IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
-    private Set<Ingredient> ingredientsToAddManually = new HashSet<>();
-    private Set<AddableIngredient> requiredIngredients = new HashSet<>();
+    private Set<RequiredIngredient> requiredIngredients = new HashSet<>();
     private boolean allIngredientGroupsReplaced;
     private int totalAmountInMl;
 
@@ -24,28 +22,12 @@ public class FeasibilityReport {
         this.ingredientGroupReplacements = ingredientGroupReplacements;
     }
 
-    public Set<Ingredient> getIngredientsToAddManually() {
-        return ingredientsToAddManually;
-    }
-
-    public Set<AddableIngredient> getRequiredIngredients() {
+    public Set<RequiredIngredient> getRequiredIngredients() {
         return requiredIngredients;
     }
 
-    public void setRequiredIngredients(Set<AddableIngredient> requiredIngredients) {
+    public void setRequiredIngredients(Set<RequiredIngredient> requiredIngredients) {
         this.requiredIngredients = requiredIngredients;
-    }
-
-    public void setIngredientsToAddManually(Set<Ingredient> ingredientsToAddManually) {
-        this.ingredientsToAddManually = ingredientsToAddManually;
-    }
-
-    public List<InsufficientIngredient> getInsufficientIngredients() {
-        return insufficientIngredients;
-    }
-
-    public void setInsufficientIngredients(List<InsufficientIngredient> insufficientIngredients) {
-        this.insufficientIngredients = insufficientIngredients;
     }
 
     public boolean isAllIngredientGroupsReplaced() {
@@ -65,14 +47,14 @@ public class FeasibilityReport {
     }
 
     public boolean isFeasible() {
-        return allIngredientGroupsReplaced && insufficientIngredients.isEmpty();
+        return allIngredientGroupsReplaced && requiredIngredients.stream().allMatch(x -> x.amountMissing == 0);
     }
 
     @Getter @Setter
-    public static class InsufficientIngredient {
+    public static class RequiredIngredient {
         private Ingredient ingredient;
-        private int amountNeeded;
-        private int amountRemaining;
+        private int amountRequired;
+        private int amountMissing;
     }
 
     @Getter @Setter

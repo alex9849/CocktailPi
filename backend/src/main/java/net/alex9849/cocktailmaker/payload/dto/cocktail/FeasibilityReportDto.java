@@ -13,42 +13,32 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeasibilityReportDto {
-    private interface InsufficientIngredients { List<InsufficientIngredientDto.Response.Detailed> getInsufficientIngredients(); }
-    private interface RequiredIngredients { Set<AddableIngredientDto.Response.Detailed> getRequiredIngredients(); }
+    private interface RequiredIngredients { Set<RequiredIngredientDto.Response.Detailed> getRequiredIngredients(); }
     private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface TotalAmountInMl { int getTotalAmountInMl(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
-    private interface IngredientsToAddManually { Set<IngredientDto.Response.Reduced> getIngredientsToAddManually(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements InsufficientIngredients, IngredientGroupReplacements,
-                IngredientsToAddManually, IsFeasible, IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
+        public static class Detailed implements IngredientGroupReplacements, IsFeasible,
+                IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
 
-            List<InsufficientIngredientDto.Response.Detailed> insufficientIngredients;
             List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
-            Set<IngredientDto.Response.Reduced> ingredientsToAddManually;
-            Set<AddableIngredientDto.Response.Detailed> requiredIngredients;
+            Set<RequiredIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
             int totalAmountInMl;
 
             public Detailed(FeasibilityReport report) {
-                this.insufficientIngredients = report.getInsufficientIngredients().stream()
-                        .map(InsufficientIngredientDto.Response.Detailed::new)
-                        .collect(Collectors.toList());
                 this.ingredientGroupReplacements = new ArrayList<>();
                 for (List<FeasibilityReport.IngredientGroupReplacement> pStepReplacements : report.getIngredientGroupReplacements()) {
                     List<IngredientGroupReplacementDto.Response.Detailed> pStepReplacementsDtos = pStepReplacements.stream().map(IngredientGroupReplacementDto.Response.Detailed::new).collect(Collectors.toList());
                     this.ingredientGroupReplacements.add(pStepReplacementsDtos);
                 }
-                this.ingredientsToAddManually = report.getIngredientsToAddManually()
-                        .stream().map(IngredientDto.Response.Reduced::toDto)
-                        .collect(Collectors.toSet());
                 this.requiredIngredients = report.getRequiredIngredients().stream()
-                        .map(AddableIngredientDto.Response.Detailed::toDto)
+                        .map(RequiredIngredientDto.Response.Detailed::new)
                         .collect(Collectors.toSet());
                 this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
                 this.isFeasible = report.isFeasible();
@@ -58,24 +48,23 @@ public class FeasibilityReportDto {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class InsufficientIngredientDto {
-        private interface Ingredient { IngredientDto.Response.Reduced getIngredient(); }
-        private interface AmountNeeded { int getAmountNeeded(); }
-        private interface AmountRemaining { int getAmountRemaining(); }
-
+    public static class RequiredIngredientDto {
+        private interface Ingredient { IngredientDto.Response.Detailed getIngredient(); }
+        private interface AmountRequired { int getAmountRequired(); }
+        private interface AmountMissing { int getAmountMissing(); }
 
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Response {
             @Getter @Setter @EqualsAndHashCode
-            public static class Detailed implements Ingredient, AmountNeeded, AmountRemaining {
-                IngredientDto.Response.Reduced ingredient;
-                int amountNeeded;
-                int amountRemaining;
+            public static class Detailed implements Ingredient, AmountRequired, AmountMissing {
+                IngredientDto.Response.Detailed ingredient;
+                int amountRequired;
+                int amountMissing;
 
-                public Detailed(FeasibilityReport.InsufficientIngredient value) {
-                    this.ingredient = IngredientDto.Response.Reduced.toDto(value.getIngredient());
-                    this.amountNeeded = value.getAmountNeeded();
-                    this.amountRemaining = value.getAmountRemaining();
+                public Detailed(FeasibilityReport.RequiredIngredient value) {
+                    this.ingredient = IngredientDto.Response.Detailed.toDto(value.getIngredient());
+                    this.amountMissing = value.getAmountMissing();
+                    this.amountRequired = value.getAmountRequired();
                 }
             }
         }

@@ -116,7 +116,7 @@
                   </q-item-section>
                 </template>
                 <c-make-cocktail-dialog-pump-editor
-                  :needed-ingredients="feasibilityReport.requiredIngredients"
+                  :needed-ingredients="feasibilityReport.requiredIngredients.map(x => x.ingredient)"
                 />
               </q-expansion-item>
             </q-card-section>
@@ -298,15 +298,16 @@ export default {
           const additionalIngredientIds = new Set()
           this.customisations.additionalIngredients.forEach(x => additionalIngredientIds.add(x.ingredient.id))
           for (const requiredIngredient of report.requiredIngredients) {
-            if (additionalIngredientIds.has(requiredIngredient.id)) {
-              additionalIngredientIds.delete(requiredIngredient.id)
+            const ingredient = requiredIngredient.ingredient
+            if (additionalIngredientIds.has(ingredient.id)) {
+              additionalIngredientIds.delete(ingredient.id)
               continue
             }
-            if (requiredIngredient.unit !== 'ml') {
+            if (ingredient.unit !== 'ml') {
               continue
             }
             this.customisations.additionalIngredients.push({
-              ingredient: requiredIngredient,
+              ingredient: ingredient,
               amount: 0,
               manualAdd: false
             })
