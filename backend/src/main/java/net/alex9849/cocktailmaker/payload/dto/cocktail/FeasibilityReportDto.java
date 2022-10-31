@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeasibilityReportDto {
-    private interface RequiredIngredients { Set<RequiredIngredientDto.Response.Detailed> getRequiredIngredients(); }
+    private interface RequiredIngredients { List<RequiredIngredientDto.Response.Detailed> getRequiredIngredients(); }
     private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface TotalAmountInMl { int getTotalAmountInMl(); }
@@ -26,7 +26,7 @@ public class FeasibilityReportDto {
                 IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
 
             List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
-            Set<RequiredIngredientDto.Response.Detailed> requiredIngredients;
+            List<RequiredIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
             int totalAmountInMl;
@@ -39,7 +39,8 @@ public class FeasibilityReportDto {
                 }
                 this.requiredIngredients = report.getRequiredIngredients().stream()
                         .map(RequiredIngredientDto.Response.Detailed::new)
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toList());
+                this.requiredIngredients.sort(Comparator.comparing(x -> x.getIngredient().getName()));
                 this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
                 this.isFeasible = report.isFeasible();
                 this.totalAmountInMl = report.getTotalAmountInMl();

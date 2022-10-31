@@ -1,7 +1,6 @@
 <template>
   <q-select
     outlined
-    behavior="menu"
     :loading="loading"
     :dense="dense"
     :model-value="selected"

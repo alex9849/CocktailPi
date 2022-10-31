@@ -5,13 +5,24 @@
     :icon="icon"
     :icon-background-class="iconBackgroundClass"
     :icon-class="iconClass"
-    :hide-content-slot="isFulfilled"
   >
-    <template v-slot:content v-if="!isFulfilled">
-      <ul style="text-align: start">
+    <template v-slot:content>
+      <ul
+        style="text-align: start"
+        v-if="isFulfilled"
+      >
+        <li v-for="requiredIngredient in requiredIngredients" :key="requiredIngredient.ingredient.id">
+          {{ requiredIngredient.ingredient.name }}:
+          <strong>{{ requiredIngredient.amountRequired }} ml</strong>
+        </li>
+      </ul>
+      <ul
+        style="text-align: start"
+        v-else
+      >
         <li v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.ingredient.id">
           {{ insufficientIngredient.ingredient.name }}:
-          <strong>{{ insufficientIngredient.amountNeeded }} ml</strong> required
+          <strong>{{ insufficientIngredient.amountRequired }} ml</strong> required
         </li>
       </ul>
     </template>
@@ -26,14 +37,18 @@ export default {
   name: 'CMakeCocktailDialogInsufficientIngredients',
   components: { CQHeadlinedCard },
   props: {
-    insufficientIngredients: {
-      type: Object,
+    requiredIngredients: {
+      type: Array,
       required: true
     }
   },
   computed: {
     isFulfilled () {
       return this.insufficientIngredients.length === 0
+    },
+    insufficientIngredients () {
+      return this.requiredIngredients
+        .filter(x => x.amountMissing > 0)
     },
     cardClass () {
       return {
@@ -43,7 +58,7 @@ export default {
     },
     headline () {
       if (this.isFulfilled) {
-        return 'Enough liquid left to make cocktail!'
+        return 'The following ingredients will be consumed:'
       } else {
         return 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
       }

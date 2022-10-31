@@ -90,13 +90,13 @@
             :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
             @ReplacementUpdate="onReplacementUpdate($event.prodStepNr, $event.toReplaceId, $event.replacement)"
           />
-          <c-make-cocktail-dialog-insufficient-ingredients
-            :insufficient-ingredients="feasibilityReport.insufficientIngredients"
-          />
           <c-make-cocktail-dialog-ingredients-to-add-manually
-            :unassigned-ingredients="feasibilityReport.ingredientsToAddManually"
+            :unassigned-ingredients="ingredientsToAddManually"
           />
           <c-make-cocktail-dialog-pumps-in-use/>
+          <c-make-cocktail-dialog-insufficient-ingredients
+            :required-ingredients="feasibilityReport.requiredIngredients"
+          />
           <c-make-cocktail-dialog-recipe-customiser
             :customisations="customisations"
             :disable-boosting="!recipe.boostable"
@@ -183,9 +183,7 @@ export default {
     return {
       amountToProduce: 250,
       feasibilityReport: {
-        insufficientIngredients: [],
         ingredientGroupReplacements: [],
-        ingredientsToAddManually: [],
         requiredIngredients: [],
         feasible: false,
         totalAmountInMl: 0
@@ -340,6 +338,10 @@ export default {
         !this.isAnyPumpOccupied &&
         !this.hasCocktailProgress &&
         !this.v.amountToProduce.$invalid
+    },
+    ingredientsToAddManually () {
+      return this.feasibilityReport.requiredIngredients
+        .filter(x => !x.ingredient.onPump).map(x => x.ingredient)
     }
   },
   validations () {
