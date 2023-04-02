@@ -112,9 +112,9 @@ public class PumpService {
         if(getPumpOccupation(pump) != PumpOccupation.NONE) {
             throw new IllegalStateException("Pump currently occupied!");
         }
-        pumpRepository.delete(id);
         //Turn off pump
         pump.setRunning(false);
+        pumpRepository.delete(id);
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
