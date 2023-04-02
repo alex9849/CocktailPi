@@ -52,10 +52,8 @@ public class PumpEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deletePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
-        Pump updatePump = pumpService.fromDto(pumpDto);
-        updatePump.setId(id);
-        pumpService.deletePump(updatePump.getId());
+    public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
+        pumpService.deletePump(id);
         return ResponseEntity.ok().build();
     }
 
