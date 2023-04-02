@@ -36,24 +36,7 @@ is that you need to be able to apply that concept to your setup.
 ![Blueprint with voltage direcor](./documentation/img/blueprint-vd.png "Blueprint with voltage direcor")
 
 ### This is the hardware that I've used for my machine:
- * 1x RaspberryPi: https://amzn.to/3NYmSvH (Other platforms like NanoPi or BananaPi are not supported)
- * 1x Relay-Board: https://amzn.to/3yIcjrk
- * 8x Dosing pumps: https://amzn.to/3NWLPry or with prime: https://amzn.to/3Obbvkm
- * 8x Diodes (reverse current diodes)
- * 1x 9V Power supply: https://bit.ly/2ZJPIcP
- * Silicone hose: https://amzn.to/3AJXmHA
- * Cables
- 
-### Fancy stuff.
-You can also use this (additional) hardware to improve your setup even more:
- * 1x Touchscreen 7 inch: https://amzn.to/3uJ2wQr
- * 16x 12V Dosing pump: https://amzn.to/3P5PWmi (More expensive, but I was told that the pump is also more quiet. It is also faster.)
- * 1x 16-Channel Relay-Board: https://amzn.to/3ayIfpX
- * 1x 12V power supply: https://amzn.to/3IxwDA1 (Can be used with 12V pumps)
- * 1x 12V power stabalizer: https://amzn.to/3uFtsAw (Can be used to power the machine by battery)
- * 1x 5V step down power supply: https://amzn.to/3Rsmb0J (for the raspberry)
- * 4x Rectifier diode: https://amzn.to/3yyz3tK (If you use the power supply and the power stabalizer)
- * 1x LAN-Cable box: https://amzn.to/3P66ril (For the case)
+You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/
 
 # Installation
 
