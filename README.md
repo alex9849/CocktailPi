@@ -22,6 +22,8 @@ Password: 123456
 
 # Build the hardware
 
+You can find a more detailed instruction with an example list of building parts on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/
+
 In order to use this machine in a useful way, you need to build your own hardware.
 In simple words produces the Cocktail-Maker-Software different recipes by 
 controlling a relay board, that opens or closes the electronic circuit 
