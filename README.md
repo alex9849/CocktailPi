@@ -1,8 +1,8 @@
 # CocktailMaker
 
-Main Project Website: [<click>](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)
-Parts list for reproduction: [<click>](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)
-Software setup Instructions: [<click>](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install)
+**Main Project Website:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)  
+**Parts list for reproduction:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)  
+**Software setup Instructions:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install)  
 
 The “Cocktail-Maker” is not only a piece of software. 
 It’s a cocktail-mixing-machine, that works with a Raspberry-Pi, 
