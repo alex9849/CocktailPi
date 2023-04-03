@@ -15,6 +15,21 @@ production step get bottled at the same time.
 The order in which ingredients get bottled can be changed via drag & 
 drop.
 
+# Main Features:
+
+The controlling software is designed to enhance your cocktail-making experience like never before. With its advanced features, you can easily create and customize your favorite cocktails with just a few clicks.
+- Add and edit recipes within the user interface.
+- Extra user interface for enhanced local touchscreen usage.
+- Virtual stirring functionality.
+- Ingredient substitution for greater flexibility.
+- Custom recipe adjustments can be made while ordering.
+- Create recipe collections for easy organization.
+- Multiple users with different roles can be added for greater security.
+- Event system allows for triggering custom actions at specific events.
+- Manual production steps can be added and prompted during production for greater precision.
+- Automatically detect which recipes can be ordered and which cannot, for smoother operation.
+- _And much more …._
+
 # Demo
 A demo can be found here: https://cocktailmaker-demo.liggesmeyer.net/
 User: Admin  
