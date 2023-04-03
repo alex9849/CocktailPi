@@ -41,7 +41,7 @@ Password: 123456
 
 # Build the hardware
 
-You can find a more detailed instruction with an example list of building parts on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/
+You can find a more detailed instruction with an example list of building parts on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
 
 In order to use this machine in a useful way, you need to build your own hardware.
 In simple words produces the Cocktail-Maker-Software different recipes by 
@@ -57,7 +57,7 @@ is that you need to be able to apply that concept to your setup.
 ![Blueprint with voltage direcor](./documentation/img/blueprint-vd.png "Blueprint with voltage direcor")
 
 ### This is the hardware that I've used for my machine:
-You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/
+You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
 
 # Installation
 
