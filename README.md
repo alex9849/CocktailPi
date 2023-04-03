@@ -42,4 +42,4 @@ You can find the list and an installation tutorial on my website: https://alexan
 
 # Installation
 
-An installation tutorial can be found here: https://github.com/alex9849/pi-cocktail-maker/wiki/Installation
+An installation tutorial can be found here: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install
