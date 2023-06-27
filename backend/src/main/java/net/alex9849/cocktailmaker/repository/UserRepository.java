@@ -66,8 +66,7 @@ public class UserRepository extends JdbcDaoSupport {
     public List<User> findAll() {
         return getJdbcTemplate().execute((ConnectionCallback<List<User>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM users ORDER BY username ASC ");
-            pstmt.executeQuery();
-            ResultSet rs = pstmt.getResultSet();
+            ResultSet rs = pstmt.executeQuery();
             List<User> results = new ArrayList<>();
             while (rs.next()) {
                 results.add(parseRs(rs));

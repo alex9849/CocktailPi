@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.eventaction.*;
-import org.postgresql.PGConnection;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -36,9 +33,10 @@ public class EventActionRepository extends JdbcDaoSupport {
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
             pstmt.setString(3, eventAction.getComment());
-            Long fileOid = null;
+            Blob fileBlob = null;
             if(eventAction instanceof FileEventAction) {
-                fileOid = setFile(Optional.empty(), ((FileEventAction) eventAction).getFile());
+                fileBlob = con.createBlob();
+                fileBlob.setBytes(1, ((FileEventAction) eventAction).getFile());
             }
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
@@ -55,7 +53,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setBoolean(4, playAudioEventAction.isOnRepeat());
                 pstmt.setInt(5, playAudioEventAction.getVolume());
                 pstmt.setString(6, playAudioEventAction.getFileName());
-                pstmt.setLong(7, fileOid);
+                pstmt.setBlob(7, fileBlob);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setString(10, playAudioEventAction.getSoundDevice());
@@ -65,7 +63,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setString(6, executePythonEventAction.getFileName());
-                pstmt.setLong(7, fileOid);
+                pstmt.setBlob(7, fileBlob);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setNull(10, Types.VARCHAR);
@@ -90,67 +88,12 @@ public class EventActionRepository extends JdbcDaoSupport {
                 eventAction.setExecutionGroups(executionGroupRepository
                         .setEventActionExecutionGroups(eventAction.getId(),
                                 eventAction.getExecutionGroups()));
+                if(fileBlob != null) {
+                    fileBlob.free();
+                }
                 return eventAction;
             }
             throw new IllegalStateException("Error saving eventAction");
-        });
-    }
-
-    private long setFile(Optional<Long> oEventActionId, byte[] file) {
-        return getJdbcTemplate().execute((ConnectionCallback<Long>) con -> {
-            Long fileOid = null;
-            if(oEventActionId.isPresent()) {
-                PreparedStatement pstmt = con.prepareStatement("SELECT file FROM event_actions where id = ? AND file IS NOT NULL");
-                pstmt.setLong(1, oEventActionId.get());
-                ResultSet resultSet = pstmt.executeQuery();
-                if(resultSet.next()) {
-                    fileOid = resultSet.getObject("file", Long.class);
-                }
-            }
-            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-            if(fileOid == null) {
-                fileOid = lobApi.createLO(LargeObjectManager.READWRITE);
-            }
-            LargeObject lobObject = lobApi.open(fileOid, LargeObjectManager.READWRITE);
-            lobObject.write(file);
-            lobObject.truncate(file.length);
-            return fileOid;
-        });
-    }
-
-    private void deleteFile(long eventActionId) {
-        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT file FROM event_actions where id = ? AND file IS NOT NULL");
-            pstmt.setLong(1, eventActionId);
-            ResultSet resultSet = pstmt.executeQuery();
-            if (!resultSet.next()) {
-                return null;
-
-            }
-            Long fileOid = resultSet.getObject("file", Long.class);
-            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-            lobApi.delete(fileOid);
-            return null;
-        });
-    }
-
-    private Optional<byte[]> getFile(long eventActionId) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<byte[]>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT file FROM event_actions where id = ?");
-            pstmt.setLong(1, eventActionId);
-            ResultSet resultSet = pstmt.executeQuery();
-            if (resultSet.next()) {
-                Long imageOid = resultSet.getObject("file", Long.class);
-                if (imageOid == null) {
-                    return Optional.empty();
-                }
-                LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-                LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
-                byte buf[] = new byte[imageLob.size()];
-                imageLob.read(buf, 0, buf.length);
-                return Optional.of(buf);
-            }
-            return Optional.empty();
         });
     }
 
@@ -162,13 +105,18 @@ public class EventActionRepository extends JdbcDaoSupport {
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
             pstmt.setString(3, eventAction.getComment());
+
+            Blob fileBlob = null;
+            if(eventAction instanceof FileEventAction) {
+                fileBlob = con.createBlob();
+                fileBlob.setBytes(1, ((FileEventAction) eventAction).getFile());
+            }
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setNull(6, Types.VARCHAR);
                 pstmt.setNull(7, Types.BLOB);
-                deleteFile(eventAction.getId());
                 pstmt.setString(8, callUrlEventAction.getRequestMethod().name());
                 pstmt.setString(9, callUrlEventAction.getUrl());
                 pstmt.setNull(10, Types.VARCHAR);
@@ -178,8 +126,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setBoolean(4, playAudioEventAction.isOnRepeat());
                 pstmt.setInt(5, playAudioEventAction.getVolume());
                 pstmt.setString(6, playAudioEventAction.getFileName());
-                long fileOid = setFile(Optional.ofNullable(eventAction.getId()), ((FileEventAction) eventAction).getFile());
-                pstmt.setLong(7, fileOid);
+                pstmt.setBlob(7, fileBlob);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setString(10, playAudioEventAction.getSoundDevice());
@@ -189,8 +136,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setString(6, executePythonEventAction.getFileName());
-                long fileOid = setFile(Optional.ofNullable(eventAction.getId()), ((FileEventAction) eventAction).getFile());
-                pstmt.setLong(7, fileOid);
+                pstmt.setBlob(7, fileBlob);
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setNull(10, Types.VARCHAR);
@@ -200,7 +146,6 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setNull(6, Types.VARCHAR);
                 pstmt.setNull(7, Types.BLOB);
-                deleteFile(eventAction.getId());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setNull(10, Types.VARCHAR);
@@ -214,6 +159,9 @@ public class EventActionRepository extends JdbcDaoSupport {
             eventAction.setExecutionGroups(executionGroupRepository
                     .setEventActionExecutionGroups(eventAction.getId(),
                             eventAction.getExecutionGroups()));
+            if(fileBlob != null) {
+                fileBlob.free();
+            }
             return eventAction;
         });
     }
@@ -289,14 +237,20 @@ public class EventActionRepository extends JdbcDaoSupport {
             PlayAudioEventAction playAudioEventAction = new PlayAudioEventAction();
             playAudioEventAction.setOnRepeat(rs.getBoolean("on_repeat"));
             playAudioEventAction.setVolume(rs.getInt("volume"));
-            playAudioEventAction.setFile(getFile(id).orElseThrow());
+            Blob blob = rs.getBlob("file");
+            byte[] buf = blob.getBytes(1, (int) blob.length());
+            playAudioEventAction.setFile(buf);
+            blob.free();
             playAudioEventAction.setFileName(rs.getString("filename"));
             playAudioEventAction.setSoundDevice(rs.getString("audio_device"));
             eventAction = playAudioEventAction;
 
         } else if (Objects.equals(dType, ExecutePythonEventAction.class.getAnnotation(DiscriminatorValue.class).value())) {
             ExecutePythonEventAction executePythonEventAction = new ExecutePythonEventAction();
-            executePythonEventAction.setFile(getFile(id).orElseThrow());
+            Blob blob = rs.getBlob("file");
+            byte[] buf = blob.getBytes(1, (int) blob.length());
+            executePythonEventAction.setFile(buf);
+            blob.free();
             executePythonEventAction.setFileName(rs.getString("filename"));
             eventAction = executePythonEventAction;
 
