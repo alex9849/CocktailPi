@@ -11,6 +11,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class IngredientRepository extends JdbcDaoSupport {
@@ -26,11 +27,16 @@ public class IngredientRepository extends JdbcDaoSupport {
         if(ids.length == 0) {
             return new ArrayList<>();
         }
-        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i " +
-                    "WHERE i.id = ANY(?) order by i.name");
 
-            pstmt.setArray(1, con.createArrayOf("int8", ids));
+        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
+            String stmt = "SELECT * FROM ingredients i WHERE i.id IN (";
+            stmt += String.join(",", Arrays.stream(ids).map(x -> "?").collect(Collectors.toList()));
+            stmt += ") order by i.name";
+
+            PreparedStatement pstmt = con.prepareStatement(stmt);
+            for (int i = 0; i < ids.length; i++) {
+                pstmt.setLong(i + 1, ids[i]);
+            }
             ResultSet rs = pstmt.executeQuery();
             List<Ingredient> results = new ArrayList<>();
             while (rs.next()) {

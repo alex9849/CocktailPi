@@ -23,7 +23,7 @@ create table ingredients
     unit                 TEXT,
     in_bar               BOOLEAN,
     name                 TEXT    not null unique,
-    pump_time_multiplier REAL check (dType = 'ManualIngredient' OR pump_time_multiplier IS NOT NULL),
+    pump_time_multiplier REAL check (dType != 'AutomatedIngredient' OR pump_time_multiplier IS NOT NULL),
     primary key (id)
 );
 
@@ -205,7 +205,7 @@ CREATE TRIGGER check_illegal_ingredient_parent_insert
 BEGIN
     SELECT CASE
                WHEN EXISTS(
-                       SELECT i.dType != 'IngredientGroup' FROM ingredients i WHERE i.id = NEW.parent_group_id
+                       SELECT i.id FROM ingredients i WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup'
                    ) THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
