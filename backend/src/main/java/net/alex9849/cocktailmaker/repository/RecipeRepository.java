@@ -2,9 +2,6 @@ package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
-import org.postgresql.PGConnection;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -13,11 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,10 +83,10 @@ public class RecipeRepository extends JdbcDaoSupport {
             List<Object> params = new ArrayList<>();
             final String query;
             if (ids != null) {
-                query = "SELECT * FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
+                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
                 params.add(con.createArrayOf("int8", ids));
             } else {
-                query = "SELECT * FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
+                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
             }
             params.add(limit);
             params.add(offset);
@@ -217,14 +212,9 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(1, recipeId);
             ResultSet resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
-                Long imageOid = resultSet.getObject("image", Long.class);
-                if (imageOid == null) {
-                    return Optional.empty();
-                }
-                LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-                LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
-                byte buf[] = new byte[imageLob.size()];
-                imageLob.read(buf, 0, buf.length);
+                Blob blob = resultSet.getBlob("image");
+                byte[] buf = blob.getBytes(1, (int) blob.length());
+                blob.free();
                 return Optional.of(buf);
             }
             return Optional.empty();
@@ -233,34 +223,19 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public void setImage(long recipeId, byte[] image) {
         getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ? AND image IS NOT NULL");
-            pstmt.setLong(1, recipeId);
-            ResultSet resultSet = pstmt.executeQuery();
-            boolean autoCommit = con.getAutoCommit();
-            con.setAutoCommit(false);
-            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-            Long imageOid;
-            if (resultSet.next()) {
-                imageOid = resultSet.getObject("image", Long.class);
-            } else {
-                imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
-            }
             if (image == null) {
-                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE recipes SET image = NULL where id = ?");
+                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE recipes SET image = NULL, last_update = CURRENT_TIMESTAMP where id = ?");
                 deleteImagePstmt.setLong(1, recipeId);
                 deleteImagePstmt.executeUpdate();
-                lobApi.delete(imageOid);
                 return null;
             }
-            LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
-            lobObject.write(image);
-            lobObject.truncate(image.length);
-            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE recipes SET image = ? where id = ?");
-            updateLobOidPstmt.setLong(1, imageOid);
+            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE recipes SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
+            Blob blob = con.createBlob();
+            blob.setBytes(1, image);
+            updateLobOidPstmt.setBlob(1, blob);
             updateLobOidPstmt.setLong(2, recipeId);
             updateLobOidPstmt.executeUpdate();
-            con.commit();
-            con.setAutoCommit(autoCommit);
+            blob.free();
             return null;
         });
     }
@@ -269,11 +244,19 @@ public class RecipeRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id\n" +
                     "FROM recipes r\n" +
-                    "         join production_steps ps on ps.recipe_id = r.id\n" +
-                    "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
-                    "         join ingredients i on i.id = psi.ingredient_id\n" +
+                    "         left join production_steps ps on ps.recipe_id = r.id\n" +
+                    "         left join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
+                    "         left join ingredients i on i.id = psi.ingredient_id\n" +
                     "group by r.id\n" +
-                    "having every(is_ingredient_on_pump(i.id))");
+                    "having count(i.id) == sum(\n" +
+                    "        EXISTS(\n" +
+                    "                SELECT ide.leaf\n" +
+                    "                FROM concrete_ingredient_dependencies ide\n" +
+                    "                         JOIN ingredients i_sub ON i_sub.id = ide.leaf\n" +
+                    "                         JOIN pumps p ON i_sub.id = p.current_ingredient_id AND i_sub.dtype = 'AutomatedIngredient'\n" +
+                    "                WHERE ide.is_a = i.id\n" +
+                    "            )\n" +
+                    "    )\n");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -283,11 +266,19 @@ public class RecipeRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement(
                     "SELECT r.id\n" +
                             "FROM recipes r\n" +
-                            "         join production_steps ps on ps.recipe_id = r.id\n" +
-                            "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
-                            "         join ingredients i on i.id = psi.ingredient_id\n" +
+                            "         left join production_steps ps on ps.recipe_id = r.id\n" +
+                            "         left join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
+                            "         left join ingredients i on i.id = psi.ingredient_id\n" +
                             "group by r.id\n" +
-                            "having every(is_ingredient_in_bar(i.id))");
+                            "having count(i.id) == sum(\n" +
+                            "            i.in_bar OR EXISTS(\n" +
+                            "                SELECT ide.leaf\n" +
+                            "                FROM concrete_ingredient_dependencies ide\n" +
+                            "                         JOIN ingredients i_sub ON i_sub.id = ide.leaf\n" +
+                            "                         JOIN pumps p ON i_sub.id = p.current_ingredient_id AND i_sub.dtype = 'AutomatedIngredient'\n" +
+                            "                WHERE ide.is_a = i.id\n" +
+                            "            )\n" +
+                            "    )\n");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -298,8 +289,10 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setId(rs.getLong("id"));
         recipe.setDescription(rs.getString("description"));
         recipe.setName(rs.getString("name"));
-        recipe.setLastUpdate(rs.getTimestamp("last_update"));
-        recipe.setHasImage(rs.getObject("image") != null);
+        Date lastUpdate = new Date();
+        lastUpdate.setTime(rs.getLong("last_update"));
+        recipe.setLastUpdate(lastUpdate);
+        recipe.setHasImage(rs.getBoolean("has_image"));
         recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
         return recipe;
     }

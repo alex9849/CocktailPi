@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.repository;
 
 import net.alex9849.cocktailmaker.model.Collection;
-import org.postgresql.PGConnection;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -11,10 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -124,30 +118,19 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public void setImage(long collectionId, byte[] image) {
         getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM collections where id = ? AND image IS NOT NULL");
-            pstmt.setLong(1, collectionId);
-            ResultSet resultSet = pstmt.executeQuery();
-            LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-            Long imageOid;
-            if(resultSet.next()) {
-                imageOid = resultSet.getObject("image", Long.class);
-            } else {
-                imageOid = lobApi.createLO(LargeObjectManager.READWRITE);
-            }
-            if(image == null) {
+            if (image == null) {
                 PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE collections SET image = NULL, last_update = CURRENT_TIMESTAMP where id = ?");
                 deleteImagePstmt.setLong(1, collectionId);
                 deleteImagePstmt.executeUpdate();
-                lobApi.delete(imageOid);
                 return null;
             }
-            LargeObject lobObject = lobApi.open(imageOid, LargeObjectManager.READWRITE);
-            lobObject.write(image);
-            lobObject.truncate(image.length);
             PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE collections SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
-            updateLobOidPstmt.setLong(1, imageOid);
+            Blob blob = con.createBlob();
+            blob.setBytes(1, image);
+            updateLobOidPstmt.setBlob(1, blob);
             updateLobOidPstmt.setLong(2, collectionId);
             updateLobOidPstmt.executeUpdate();
+            blob.free();
             return null;
         });
     }
@@ -157,15 +140,10 @@ public class CollectionRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("SELECT image FROM collections where id = ?");
             pstmt.setLong(1, collectionId);
             ResultSet resultSet = pstmt.executeQuery();
-            if(resultSet.next()) {
-                Long imageOid = resultSet.getObject("image", Long.class);
-                if(imageOid == null) {
-                    return Optional.empty();
-                }
-                LargeObjectManager lobApi = con.unwrap(PGConnection.class).getLargeObjectAPI();
-                LargeObject imageLob = lobApi.open(imageOid, LargeObjectManager.READ);
-                byte buf[] = new byte[imageLob.size()];
-                imageLob.read(buf, 0 , buf.length);
+            if (resultSet.next()) {
+                Blob blob = resultSet.getBlob("image");
+                byte[] buf = blob.getBytes(1, (int) blob.length());
+                blob.free();
                 return Optional.of(buf);
             }
             return Optional.empty();
