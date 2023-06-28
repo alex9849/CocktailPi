@@ -125,12 +125,9 @@ public class CollectionRepository extends JdbcDaoSupport {
                 return null;
             }
             PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE collections SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
-            Blob blob = con.createBlob();
-            blob.setBytes(1, image);
-            updateLobOidPstmt.setBlob(1, blob);
+            updateLobOidPstmt.setBytes(1, image);
             updateLobOidPstmt.setLong(2, collectionId);
             updateLobOidPstmt.executeUpdate();
-            blob.free();
             return null;
         });
     }
@@ -141,10 +138,7 @@ public class CollectionRepository extends JdbcDaoSupport {
             pstmt.setLong(1, collectionId);
             ResultSet resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
-                Blob blob = resultSet.getBlob("image");
-                byte[] buf = blob.getBytes(1, (int) blob.length());
-                blob.free();
-                return Optional.of(buf);
+                return Optional.of(resultSet.getBytes("image"));
             }
             return Optional.empty();
         });

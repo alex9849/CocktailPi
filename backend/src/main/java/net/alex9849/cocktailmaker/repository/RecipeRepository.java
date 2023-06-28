@@ -212,10 +212,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setLong(1, recipeId);
             ResultSet resultSet = pstmt.executeQuery();
             if (resultSet.next()) {
-                Blob blob = resultSet.getBlob("image");
-                byte[] buf = blob.getBytes(1, (int) blob.length());
-                blob.free();
-                return Optional.of(buf);
+                return Optional.of(resultSet.getBytes("image"));
             }
             return Optional.empty();
         });
@@ -230,12 +227,9 @@ public class RecipeRepository extends JdbcDaoSupport {
                 return null;
             }
             PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE recipes SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
-            Blob blob = con.createBlob();
-            blob.setBytes(1, image);
-            updateLobOidPstmt.setBlob(1, blob);
+            updateLobOidPstmt.setBytes(1, image);
             updateLobOidPstmt.setLong(2, recipeId);
             updateLobOidPstmt.executeUpdate();
-            blob.free();
             return null;
         });
     }

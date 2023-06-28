@@ -33,11 +33,6 @@ public class EventActionRepository extends JdbcDaoSupport {
             pstmt.setString(1, eventAction.getClass().getAnnotation(DiscriminatorValue.class).value());
             pstmt.setString(2, eventAction.getTrigger().name());
             pstmt.setString(3, eventAction.getComment());
-            Blob fileBlob = null;
-            if(eventAction instanceof FileEventAction) {
-                fileBlob = con.createBlob();
-                fileBlob.setBytes(1, ((FileEventAction) eventAction).getFile());
-            }
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -53,7 +48,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setBoolean(4, playAudioEventAction.isOnRepeat());
                 pstmt.setInt(5, playAudioEventAction.getVolume());
                 pstmt.setString(6, playAudioEventAction.getFileName());
-                pstmt.setBlob(7, fileBlob);
+                pstmt.setBytes(7, playAudioEventAction.getFile());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setString(10, playAudioEventAction.getSoundDevice());
@@ -63,7 +58,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setString(6, executePythonEventAction.getFileName());
-                pstmt.setBlob(7, fileBlob);
+                pstmt.setBytes(7, executePythonEventAction.getFile());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setNull(10, Types.VARCHAR);
@@ -88,9 +83,6 @@ public class EventActionRepository extends JdbcDaoSupport {
                 eventAction.setExecutionGroups(executionGroupRepository
                         .setEventActionExecutionGroups(eventAction.getId(),
                                 eventAction.getExecutionGroups()));
-                if(fileBlob != null) {
-                    fileBlob.free();
-                }
                 return eventAction;
             }
             throw new IllegalStateException("Error saving eventAction");
@@ -106,11 +98,6 @@ public class EventActionRepository extends JdbcDaoSupport {
             pstmt.setString(2, eventAction.getTrigger().name());
             pstmt.setString(3, eventAction.getComment());
 
-            Blob fileBlob = null;
-            if(eventAction instanceof FileEventAction) {
-                fileBlob = con.createBlob();
-                fileBlob.setBytes(1, ((FileEventAction) eventAction).getFile());
-            }
             if (eventAction instanceof CallUrlEventAction) {
                 CallUrlEventAction callUrlEventAction = (CallUrlEventAction) eventAction;
                 pstmt.setNull(4, Types.BOOLEAN);
@@ -126,7 +113,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setBoolean(4, playAudioEventAction.isOnRepeat());
                 pstmt.setInt(5, playAudioEventAction.getVolume());
                 pstmt.setString(6, playAudioEventAction.getFileName());
-                pstmt.setBlob(7, fileBlob);
+                pstmt.setBytes(7, playAudioEventAction.getFile());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setString(10, playAudioEventAction.getSoundDevice());
@@ -136,7 +123,7 @@ public class EventActionRepository extends JdbcDaoSupport {
                 pstmt.setNull(4, Types.BOOLEAN);
                 pstmt.setNull(5, Types.NUMERIC);
                 pstmt.setString(6, executePythonEventAction.getFileName());
-                pstmt.setBlob(7, fileBlob);
+                pstmt.setBytes(7, executePythonEventAction.getFile());
                 pstmt.setNull(8, Types.VARCHAR);
                 pstmt.setNull(9, Types.VARCHAR);
                 pstmt.setNull(10, Types.VARCHAR);
@@ -159,9 +146,6 @@ public class EventActionRepository extends JdbcDaoSupport {
             eventAction.setExecutionGroups(executionGroupRepository
                     .setEventActionExecutionGroups(eventAction.getId(),
                             eventAction.getExecutionGroups()));
-            if(fileBlob != null) {
-                fileBlob.free();
-            }
             return eventAction;
         });
     }
@@ -237,20 +221,14 @@ public class EventActionRepository extends JdbcDaoSupport {
             PlayAudioEventAction playAudioEventAction = new PlayAudioEventAction();
             playAudioEventAction.setOnRepeat(rs.getBoolean("on_repeat"));
             playAudioEventAction.setVolume(rs.getInt("volume"));
-            Blob blob = rs.getBlob("file");
-            byte[] buf = blob.getBytes(1, (int) blob.length());
-            playAudioEventAction.setFile(buf);
-            blob.free();
+            playAudioEventAction.setFile(rs.getBytes("file"));
             playAudioEventAction.setFileName(rs.getString("filename"));
             playAudioEventAction.setSoundDevice(rs.getString("audio_device"));
             eventAction = playAudioEventAction;
 
         } else if (Objects.equals(dType, ExecutePythonEventAction.class.getAnnotation(DiscriminatorValue.class).value())) {
             ExecutePythonEventAction executePythonEventAction = new ExecutePythonEventAction();
-            Blob blob = rs.getBlob("file");
-            byte[] buf = blob.getBytes(1, (int) blob.length());
-            executePythonEventAction.setFile(buf);
-            blob.free();
+            executePythonEventAction.setFile(rs.getBytes("file"));
             executePythonEventAction.setFileName(rs.getString("filename"));
             eventAction = executePythonEventAction;
 
