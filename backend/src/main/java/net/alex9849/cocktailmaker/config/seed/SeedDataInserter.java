@@ -1,4 +1,4 @@
-package db.migration;
+package net.alex9849.cocktailmaker.config.seed;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,9 @@ import net.alex9849.cocktailmaker.service.*;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -32,21 +34,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class R__Insert_Default_Data extends BaseJavaMigration {
-    private final IngredientService ingredientService = SpringUtility.getBean(IngredientService.class);
-    private final CategoryService categoryService = SpringUtility.getBean(CategoryService.class);
-    private final RecipeService recipeService = SpringUtility.getBean(RecipeService.class);
-    private final UserService userService = SpringUtility.getBean(UserService.class);
-    private final PumpService pumpService = SpringUtility.getBean(PumpService.class);
+@Component
+public class SeedDataInserter {
+    @Autowired
+    private IngredientService ingredientService;
 
-    @Override
-    public void migrate(Context context) throws Exception {
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private RecipeService recipeService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PumpService pumpService;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
+
+    public void migrate() throws Exception {
         if(!userService.getUsers().isEmpty()) {
             return;
         }
 
-
-        boolean isDemoMode = SpringUtility.getContext().getEnvironment().getProperty("alex9849.app.demoMode", Boolean.class);
         User defaultUser = createDefaultUser();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();

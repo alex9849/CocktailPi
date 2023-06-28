@@ -40,14 +40,5 @@ public class Config {
         return gpioController;
     }
 
-    @Bean
-    public DataSource getDataSource() {
-        SingleConnectionDataSource dataSource = new SingleConnectionDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl("jdbc:sqlite:cocktailmaker-data.db?foreign_keys=on");
-        dataSource.setAutoCommit(false);
-        dataSource.setSuppressClose(true);
-        return dataSource;
-    }
 
 }
