@@ -9,8 +9,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import java.util.Objects;
-
 public class WebSocketTopicSubscriptionInterceptor implements ChannelInterceptor {
     private final String destination;
     private final ERole minRole;

@@ -7,7 +7,6 @@ import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.PumpUpService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextRefreshedEvent;

@@ -2,13 +2,13 @@ package net.alex9849.cocktailmaker.payload.dto.cocktail;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

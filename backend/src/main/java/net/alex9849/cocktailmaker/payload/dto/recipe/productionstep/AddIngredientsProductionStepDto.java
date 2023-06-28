@@ -2,7 +2,6 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
-import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;

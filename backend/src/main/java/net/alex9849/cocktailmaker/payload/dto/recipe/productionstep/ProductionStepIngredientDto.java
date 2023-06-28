@@ -7,7 +7,6 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductionStepIngredientDto {

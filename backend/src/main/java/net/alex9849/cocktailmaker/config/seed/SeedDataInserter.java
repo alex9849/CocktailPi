@@ -17,9 +17,6 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionSt
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
 import net.alex9849.cocktailmaker.service.*;
-import net.alex9849.cocktailmaker.utils.SpringUtility;
-import org.flywaydb.core.api.migration.BaseJavaMigration;
-import org.flywaydb.core.api.migration.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

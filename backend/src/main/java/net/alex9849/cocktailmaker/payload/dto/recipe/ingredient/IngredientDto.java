@@ -3,10 +3,9 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.*;
-import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.NotNull;

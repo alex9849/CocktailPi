@@ -3,8 +3,6 @@ package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 
-import java.util.stream.Collectors;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WrittenInstructionProductionStepDto {
     private interface Message { String getMessage(); }

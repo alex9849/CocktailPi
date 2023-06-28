@@ -1,10 +1,8 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
-import net.alex9849.cocktailmaker.model.recipe.*;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
+import net.alex9849.cocktailmaker.model.recipe.FeasibleRecipe;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;

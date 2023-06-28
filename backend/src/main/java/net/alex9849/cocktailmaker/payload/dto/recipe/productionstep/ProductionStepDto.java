@@ -6,7 +6,6 @@ import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import org.springframework.beans.BeanUtils;
 
 

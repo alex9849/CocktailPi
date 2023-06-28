@@ -4,7 +4,6 @@ import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
-import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

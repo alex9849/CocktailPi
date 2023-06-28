@@ -1,20 +1,10 @@
 package net.alex9849.cocktailmaker.config;
 
 import net.alex9849.cocktailmaker.iface.IGpioController;
-import net.alex9849.cocktailmaker.utils.SpringUtility;
-import org.flywaydb.core.Flyway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.jdbc.support.DatabaseStartupValidator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.stream.Stream;
 
 @Configuration
 @EnableTransactionManagement

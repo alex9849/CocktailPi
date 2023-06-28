@@ -6,7 +6,10 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FeasibilityReport {
     private List<List<IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();

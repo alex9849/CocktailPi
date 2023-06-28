@@ -1,19 +1,14 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
-import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
-import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpTimingStepCalculator;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AutomaticProductionStepWorker extends AbstractPumpingProductionStepWorker {

@@ -1,7 +1,6 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;

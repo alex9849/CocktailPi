@@ -3,12 +3,8 @@ package net.alex9849.cocktailmaker.model.eventaction;
 import javax.persistence.DiscriminatorValue;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
 
 @DiscriminatorValue("PlayAudio")
 public class PlayAudioEventAction extends FileEventAction {
