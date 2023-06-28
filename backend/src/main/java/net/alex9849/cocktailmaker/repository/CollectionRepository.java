@@ -9,10 +9,8 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class CollectionRepository extends JdbcDaoSupport {
@@ -103,10 +101,12 @@ public class CollectionRepository extends JdbcDaoSupport {
             return new ArrayList<>();
         }
         return getJdbcTemplate().execute((ConnectionCallback<List<Collection>>) con -> {
+            String idQuestionmarks = Arrays.stream(ids).map(x -> "?").collect(Collectors.joining(","));
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM collections c " +
-                    "WHERE c.id = ANY(?) order by c.name");
-
-            pstmt.setArray(1, con.createArrayOf("int8", ids));
+                    "WHERE c.id IN (" + idQuestionmarks + ") order by c.name");
+            for(int i = 0; i < ids.length; i++) {
+                pstmt.setLong(i + 1, ids[i]);
+            }
             ResultSet rs = pstmt.executeQuery();
             List<Collection> results = new ArrayList<>();
             while (rs.next()) {

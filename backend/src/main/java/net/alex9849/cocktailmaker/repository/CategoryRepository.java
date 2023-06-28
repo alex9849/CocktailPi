@@ -13,8 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class CategoryRepository extends JdbcDaoSupport {
@@ -90,10 +92,13 @@ public class CategoryRepository extends JdbcDaoSupport {
         if(ids == null) {
             return new ArrayList<>();
         }
+        String idQuestionmarks = Arrays.stream(ids).map(x -> "?").collect(Collectors.joining(","));
         return getJdbcTemplate().execute((ConnectionCallback<List<Category>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories where id = ANY(?) " +
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM categories where id IN (" + idQuestionmarks + ") " +
                     "ORDER BY name ASC");
-            pstmt.setObject(1, con.createArrayOf("int8", ids));
+            for(int i = 0; i < ids.length; i++) {
+                pstmt.setLong(i + 1, ids[i]);
+            }
             ResultSet rs = pstmt.executeQuery();
             List<Category> categories = new ArrayList<>();
             if (rs.next()) {

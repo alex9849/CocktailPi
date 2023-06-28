@@ -11,11 +11,9 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class RecipeRepository extends JdbcDaoSupport {
@@ -80,11 +78,13 @@ public class RecipeRepository extends JdbcDaoSupport {
                             .append(order.getDirection().name());
                 }
             }
+
             List<Object> params = new ArrayList<>();
             final String query;
             if (ids != null) {
-                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes where id = ANY(?) " + sortSql + " LIMIT ? OFFSET ?";
-                params.add(con.createArrayOf("int8", ids));
+                String idQuestionmarks = Arrays.stream(ids).map(x -> "?").collect(Collectors.joining(","));
+                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes where id IN (" + idQuestionmarks + ") " + sortSql + " LIMIT ? OFFSET ?";
+                params.addAll(List.of(ids));
             } else {
                 query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
             }
