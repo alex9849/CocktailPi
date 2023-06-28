@@ -30,16 +30,21 @@ create table ingredients
 create table pumps
 (
     id                    INTEGER not null,
-    bcm_pin               INTEGER not null unique check (
-                bcm_pin >= 0
-            AND bcm_pin <= 31
-        ),
-    time_per_cl_in_ms     INTEGER not null check (time_per_cl_in_ms >= 1),
-    tube_capacity_in_ml   REAL    not null check (tube_capacity_in_ml >= 1),
+    name                  TEXT unique default id,
+    dType                 TEXT,
+    ready                 BOOLEAN not null,
+    tube_capacity         REAL check (tube_capacity >= 1),
     current_ingredient_id INTEGER references ingredients on delete set null,
-    filling_level_in_ml   INTEGER default 0 not null,
-    is_power_state_high   BOOLEAN default false not null,
-    is_pumped_up          BOOLEAN default false not null,
+    filling_level_in_ml   INTEGER     default 0,
+    is_pumped_up          BOOLEAN     default false,
+    pin                   INTEGER unique check (pin >= 0),
+    time_per_cl_in_ms     INTEGER check (time_per_cl_in_ms >= 1),
+    is_power_state_high   BOOLEAN     default false,
+    acceleration          INTEGER check (acceleration > 0),
+    step_pin              INTEGER check (step_pin >= 1),
+    enable_pin            INTEGER check (enable_pin >= 1),
+    steps_per_cl          INTEGER check (steps_per_cl >= 1),
+    min_step_delta        INTEGER check (min_step_delta >= 1),
     primary key (id)
 );
 

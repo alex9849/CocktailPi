@@ -12,7 +12,7 @@
       <q-btn
         color="positive"
         label="Add pump"
-        @click="showEditDialog()"
+        @click="$router.push({name: 'setuppump'})"
         no-caps
         :disable="isLoading"
       />

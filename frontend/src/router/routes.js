@@ -103,9 +103,13 @@ const routes = [
         component: () => import('pages/UserEditor'),
         name: 'usereditor'
       }, {
-        path: 'admin/pumpmanagement',
+        path: 'admin/pump',
         component: () => import('pages/PumpManagement'),
         name: 'pumpmanagement'
+      }, {
+        path: 'admin/pump/add',
+        component: () => import('pages/SetupPump'),
+        name: 'setuppump'
       }, {
         path: 'admin/categorymanagement',
         component: () => import('pages/CategoryManagement'),
