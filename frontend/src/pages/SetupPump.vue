@@ -69,7 +69,7 @@
           </div>
           <div class="row justify-start">
             <q-stepper-navigation>
-              <q-btn @click="stepper++" color="primary" label="Continue"/>
+              <q-btn @click="stepper++" :disable="!handleComplete" color="primary" label="Continue"/>
               <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
             </q-stepper-navigation>
           </div>
@@ -79,6 +79,8 @@
         title="Hardware pins"
         :name="2"
         :icon="mdiFlashOutline"
+        :header-nav="handleComplete"
+        :done="hardwarePinsComplete"
       >
         <div class="col-12 q-ma-lg">
           <div class="row justify-center q-col-gutter-lg">
@@ -117,14 +119,14 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.name"
+                    v-model:model-value="pump.stepPin"
                     outlined
                     type="number"
                     filled
                     label="Step BCM-Pin"
                   />
                   <q-input
-                    v-model:model-value="pump.name"
+                    v-model:model-value="pump.enablePin"
                     outlined
                     type="number"
                     filled
@@ -136,7 +138,7 @@
           </div>
           <div class="row justify-start">
             <q-stepper-navigation>
-              <q-btn @click="stepper++" color="primary" label="Continue"/>
+              <q-btn @click="stepper++" :disable="!hardwarePinsComplete" color="primary" label="Continue"/>
               <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
             </q-stepper-navigation>
           </div>
@@ -158,6 +160,7 @@
                   <p>
                     The acceleration field determines how fast your motor should speed up or break down.
                     If the acceleration is too high, the motor might skip steps on speed up or do too many on break down.
+                    The acceleration is given in steps per second per second.
                   </p>
                 </template>
                 <template v-slot:fields>
@@ -176,7 +179,8 @@
                   <p>
                     The "minimal step delta"-field determines how long the controller should wait between steps.
                     If it is too low, the motor will skip steps or not run at all.
-                    If it is too high, the motor will run slower than necessary.
+                    If it is too high, the motor will run slower than necessary.<br>
+                    The delay is given in milliseconds. (1 second = 1000 millisecond)
                   </p>
                   <p>
                     The rule is:
@@ -192,8 +196,13 @@
                     outlined
                     type="number"
                     filled
-                    label="Minimal step delta"
-                  />
+                    suffix="ms"
+                    label="Minimal step delta (in ms)"
+                  >
+                    <template v-slot:append>
+                      ms
+                    </template>
+                  </q-input>
                 </template>
               </c-assistant-container>
               <q-splitter horizontal class="q-pb-md"/>
@@ -209,6 +218,34 @@
                     filled
                     label="Steps per cl"
                   />
+                </template>
+              </c-assistant-container>
+              <q-splitter horizontal class="q-pb-md"/>
+              <c-assistant-container>
+                <template v-slot:explanations>
+                  Here you can test your motor.
+                </template>
+                <template v-slot:fields>
+                  <q-card>
+                    <q-tabs
+                      class="bg-teal-2 rounded-borders"
+                      no-caps
+                      align="justify"
+                      v-model:model-value="pumpTester.mode"
+                    >
+                      <q-tab name="runSteps" label="Steps"/>
+                      <q-tab name="runSeconds" label="Seconds"></q-tab>
+                      <q-tab name="runLiquid" label="Liquid (in ml)"></q-tab>
+                    </q-tabs>
+                    <q-tab-panels
+                      v-model:model-value="pumpTester.mode"
+                    >
+                      <q-tab-panel name="runSteps">
+                      </q-tab-panel>
+                      <q-tab-panel name="runLiquid">
+                      </q-tab-panel>
+                    </q-tab-panels>
+                  </q-card>
                 </template>
               </c-assistant-container>
             </div>
@@ -246,7 +283,12 @@ export default {
       stepper: 0,
       pump: {
         dtype: '',
-        name: ''
+        name: '',
+        stepPin: '',
+        enablePin: ''
+      },
+      pumpTester: {
+        mode: 'runSteps'
       }
     }
   },
@@ -276,6 +318,9 @@ export default {
     },
     handleComplete () {
       return !!this.pump.name
+    },
+    hardwarePinsComplete () {
+      return (!!this.pump.stepPin && !!this.pump.enablePin)
     }
   }
 }
