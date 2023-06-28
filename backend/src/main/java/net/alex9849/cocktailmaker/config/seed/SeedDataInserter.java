@@ -58,6 +58,7 @@ public class SeedDataInserter {
         if(!userService.getUsers().isEmpty()) {
             return;
         }
+        System.out.println("Inserting seed data into database.");
 
         User defaultUser = createDefaultUser();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
@@ -82,15 +83,25 @@ public class SeedDataInserter {
 
     private Map<Long, Long> migrateIngredients() throws IOException {
         Map<Long, Long> oldToNewIdMap = new HashMap<>();
+        Map<Long, Long> childParentRelation = new HashMap<>();
         List<IngredientDto.Response.Detailed> ingredientDtos = loadFromFile("/db/defaultdata/ingredients.json", IngredientDto.Response.Detailed.class);
 
         for(IngredientDto.Response.Detailed ingredientDto : ingredientDtos) {
             IngredientDto.Request.Create createDto = IngredientDto.Request.Create.fromDetailedDto(ingredientDto);
             if(createDto.getParentGroupId() != null) {
-                createDto.setParentGroupId(oldToNewIdMap.get(createDto.getParentGroupId()));
+                Long parentGroupId = createDto.getParentGroupId();
+                childParentRelation.put(ingredientDto.getId(), parentGroupId);
+                createDto.setParentGroupId(null);
             }
             Ingredient createdIngredient = ingredientService.createIngredient(ingredientService.fromDto(createDto));
             oldToNewIdMap.put(ingredientDto.getId(), createdIngredient.getId());
+        }
+        for(Map.Entry<Long, Long> entry : childParentRelation.entrySet()) {
+            Long child = oldToNewIdMap.get(entry.getKey());
+            Long parent = oldToNewIdMap.get(entry.getValue());
+            Ingredient ingredient = ingredientService.getIngredient(child);
+            ingredient.setParentGroupId(parent);
+            ingredientService.updateIngredient(ingredient);
         }
         return oldToNewIdMap;
     }
