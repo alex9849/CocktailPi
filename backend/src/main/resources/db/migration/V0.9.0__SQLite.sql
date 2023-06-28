@@ -219,7 +219,7 @@ CREATE TRIGGER check_illegal_ingredient_parent_update
 BEGIN
     SELECT CASE
                WHEN EXISTS(
-                       SELECT i.dType != 'IngredientGroup' FROM ingredients i WHERE i.id = NEW.parent_group_id
+                       SELECT i.id FROM ingredients i WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup'
                    ) THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
