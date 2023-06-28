@@ -8,9 +8,11 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.ManualIngredient
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -155,7 +157,14 @@ public class IngredientService {
                 ((AddableIngredient) ingredient).setInBar(optionalIngredient.get().isInBar());
             }
         }
-        ingredientRepository.update(ingredient);
+        try {
+            ingredientRepository.update(ingredient);
+        } catch (UncategorizedSQLException e) {
+            if(e.getMessage().contains("Illegal cycle detected")) {
+                throw new IllegalArgumentException("Illegal cycle detected");
+            }
+            throw e;
+        }
         return ingredient;
     }
 

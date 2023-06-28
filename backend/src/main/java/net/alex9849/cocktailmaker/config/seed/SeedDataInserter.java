@@ -17,6 +17,8 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionSt
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
 import net.alex9849.cocktailmaker.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,6 +50,8 @@ public class SeedDataInserter {
     @Autowired
     private PumpService pumpService;
 
+    Logger logger = LoggerFactory.getLogger(SeedDataInserter.class);
+
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
 
@@ -55,7 +59,7 @@ public class SeedDataInserter {
         if(!userService.getUsers().isEmpty()) {
             return;
         }
-        System.out.println("Inserting seed data into database.");
+        logger.info("Inserting seed data into database...");
 
         User defaultUser = createDefaultUser();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
@@ -64,6 +68,7 @@ public class SeedDataInserter {
         if(isDemoMode) {
             this.createDemoPumps();
         }
+        logger.info("Finished inserting seed data into database.");
     }
 
     private User createDefaultUser() {
