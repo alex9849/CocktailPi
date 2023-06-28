@@ -23,12 +23,16 @@ export default {
       store.dispatch('common/fetchGlobalSettings')
     ]).then(() => next())
       .catch(() => {
+        const query = {
+          redirectTo: to.fullPath
+        }
+        if (!query.redirectTo || query.redirectTo === '/') {
+          delete query.redirectTo
+        }
         store.dispatch('auth/logout')
           .finally(() => next({
             name: 'login',
-            query: {
-              redirectTo: to.fullPath
-            }
+            query
           }))
       })
   }

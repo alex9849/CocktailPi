@@ -3,11 +3,15 @@ import Error404 from 'pages/Error404.vue'
 
 function redirectIfNotAuthenticated (to, from, next) {
   if (!store().getters['auth/isLoggedIn']) {
+    const query = {
+      redirectTo: to.fullPath
+    }
+    if (!query.redirectTo || query.redirectTo === '/') {
+      delete query.redirectTo
+    }
     next({
       name: 'login',
-      query: {
-        redirectTo: to.fullPath
-      }
+      query
     })
     return
   }
