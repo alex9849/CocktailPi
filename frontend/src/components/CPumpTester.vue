@@ -39,7 +39,11 @@
           borderless
           :label="runValFieldLabel"
           :disable="pumpTester.running"
-        />
+        >
+          <template v-slot:append>
+            {{runValSuffix}}
+          </template>
+        </q-input>
       </div>
       <div class="col-shrink q-pr-sm q-py-sm">
         <q-btn
@@ -92,7 +96,11 @@
                 :disable="pumpTester.running"
                 label="ml pumped"
                 v-model:model-value="pumpTester.liquidPumpedField"
-              />
+              >
+                <template v-slot:append>
+                  ml
+                </template>
+              </q-input>
             </div>
             <div class="col-shrink">
               <q-icon
@@ -111,10 +119,14 @@
                 label="steps/cl"
                 v-model:model-value="pumpTester.liquidPumpedField"
               >
+                <template v-slot:append>
+                  st/cl
+                </template>
                 <template v-slot:after>
                   <q-btn
                     @click="clickApplyMlPumpMetric"
                     no-caps
+                    :dense="$q.screen.xs"
                     :disable="!pumpTester.liquidPumpedField || pumpTester.running"
                     class="bg-green text-white"
                     label="Apply"
@@ -142,7 +154,7 @@ export default {
         runVal: '',
         percentage: 0,
         running: false,
-        result: true,
+        result: false,
         applyMlPumpMetricIcon: mdiSync,
         intervalTask: 0,
         liquidPumpedField: ''
@@ -197,6 +209,12 @@ export default {
         return 'Steps to run'
       }
       return 'Ml to pump'
+    },
+    runValSuffix () {
+      if (this.pumpTester.mode === 'runSteps') {
+        return 'st'
+      }
+      return 'ml'
     }
   }
 }

@@ -170,7 +170,11 @@
                     type="number"
                     filled
                     label="Acceleration"
-                  />
+                  >
+                    <template v-slot:append>
+                      st/s²
+                    </template>
+                  </q-input>
                 </template>
               </c-assistant-container>
               <q-splitter
@@ -200,7 +204,6 @@
                     outlined
                     type="number"
                     filled
-                    suffix="ms"
                     label="Minimal step delta (in ms)"
                   >
                     <template v-slot:append>
@@ -225,7 +228,11 @@
                     type="number"
                     filled
                     label="Steps per cl"
-                  />
+                  >
+                    <template v-slot:append>
+                      st/cl
+                    </template>
+                  </q-input>
                 </template>
               </c-assistant-container>
               <q-splitter
@@ -249,7 +256,35 @@
                   doesn't take that into account!
                 </template>
                 <template v-slot:fields>
+                  <p class="text-subtitle1 text-center">Motor tester</p>
                   <c-pump-tester />
+                </template>
+              </c-assistant-container>
+              <q-splitter
+                :model-value="10"
+                horizontal
+                class="q-pb-md"
+              />
+              <c-assistant-container>
+                <template v-slot:explanations>
+                  <p>
+                    The tube capacity determines how much liquid is needed to fill the hose that connects
+                    the liquid container with the dispensing part of your cocktail machine. This metric is
+                    used to accurately fill your hoses with liquid before the actual production of a new drink.
+                    It is also used to empty your hoses (pump the liquid back into the container) if the machine hasn't been used for a while.                  </p>
+                </template>
+                <template v-slot:fields>
+                  <q-input
+                    v-model:model-value="pump.name"
+                    outlined
+                    type="number"
+                    filled
+                    label="Tube capacity (in ml)"
+                  >
+                    <template v-slot:append>
+                      ml
+                    </template>
+                  </q-input>
                 </template>
               </c-assistant-container>
             </div>
@@ -263,6 +298,22 @@
             </q-stepper-navigation>
           </div>
         </div>
+      </q-step>
+      <q-step
+        title="State"
+        :name="4"
+        :icon="mdiPencilOutline"
+        :header-nav="pumpTypeComplete"
+        :done="handleComplete"
+      >
+        <c-assistant-container>
+          <template v-slot:fields>
+
+          </template>
+          <template v-slot:explanations>
+
+          </template>
+        </c-assistant-container>
       </q-step>
     </q-stepper>
   </q-page>
