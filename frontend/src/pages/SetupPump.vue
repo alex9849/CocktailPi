@@ -235,7 +235,18 @@
               />
               <c-assistant-container>
                 <template v-slot:explanations>
-                  Here you can test your motor.
+                  Here you can test your motor and calculate the number of steps that the motor needs to pump one cl.
+                  You can run the tester with two metrics:
+                  <ul>
+                    <li><b>Steps:</b> Tell the motor how many steps it should take.</li>
+                    <li><b>Liquid:</b> Tell the motor how much liquid it should pump. For this, the "Steps per cl" field must contain information!</li>
+                  </ul>
+                  The system will always track how many steps the motor has made. Depending on how you have configured
+                  the motor above, it might happen that the motor skips steps. The tester exists to verify your configuration.<br>
+                  You can also let the tester calculate the number of steps that the motor took to pump one cl.
+                  For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
+                  You can use a scale for that. Also, make sure that your hoses are filled with liquid since the tester
+                  doesn't take that into account!
                 </template>
                 <template v-slot:fields>
                   <c-pump-tester />

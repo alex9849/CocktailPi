@@ -40,7 +40,7 @@ create table pumps
     pin                   INTEGER unique check (pin >= 0),
     time_per_cl_in_ms     INTEGER check (time_per_cl_in_ms >= 1),
     is_power_state_high   BOOLEAN     default false,
-    acceleration          INTEGER check (acceleration > 0),
+    acceleration          INTEGER check (acceleration >= 1),
     step_pin              INTEGER check (step_pin >= 1),
     enable_pin            INTEGER check (enable_pin >= 1),
     steps_per_cl          INTEGER check (steps_per_cl >= 1),
