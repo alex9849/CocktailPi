@@ -3,7 +3,7 @@
     <h5>Pump Setup Assistant</h5>
     <q-stepper
       v-model:model-value="stepper"
-      vertical
+
       animated
       flat
       bordered
@@ -173,7 +173,11 @@
                   />
                 </template>
               </c-assistant-container>
-              <q-splitter horizontal class="q-pb-md" />
+              <q-splitter
+                :model-value="10"
+                horizontal
+                class="q-pb-md"
+              />
               <c-assistant-container>
                 <template v-slot:explanations>
                   <p>
@@ -205,7 +209,11 @@
                   </q-input>
                 </template>
               </c-assistant-container>
-              <q-splitter horizontal class="q-pb-md"/>
+              <q-splitter
+                :model-value="10"
+                horizontal
+                class="q-pb-md"
+              />
               <c-assistant-container>
                 <template v-slot:explanations>
                   This field determines how many steps the motor must make to produce one cl.
@@ -220,32 +228,17 @@
                   />
                 </template>
               </c-assistant-container>
-              <q-splitter horizontal class="q-pb-md"/>
+              <q-splitter
+                :model-value="10"
+                horizontal
+                class="q-pb-md"
+              />
               <c-assistant-container>
                 <template v-slot:explanations>
                   Here you can test your motor.
                 </template>
                 <template v-slot:fields>
-                  <q-card>
-                    <q-tabs
-                      class="bg-teal-2 rounded-borders"
-                      no-caps
-                      align="justify"
-                      v-model:model-value="pumpTester.mode"
-                    >
-                      <q-tab name="runSteps" label="Steps"/>
-                      <q-tab name="runSeconds" label="Seconds"></q-tab>
-                      <q-tab name="runLiquid" label="Liquid (in ml)"></q-tab>
-                    </q-tabs>
-                    <q-tab-panels
-                      v-model:model-value="pumpTester.mode"
-                    >
-                      <q-tab-panel name="runSteps">
-                      </q-tab-panel>
-                      <q-tab-panel name="runLiquid">
-                      </q-tab-panel>
-                    </q-tab-panels>
-                  </q-card>
+                  <c-pump-tester />
                 </template>
               </c-assistant-container>
             </div>
@@ -271,13 +264,14 @@ import {
   mdiFlashOutline,
   mdiPencilOutline,
   mdiProgressClock,
-  mdiPump
+  mdiPump, mdiPlay, mdiStop, mdiEqual
 } from '@quasar/extras/mdi-v5'
 import CAssistantContainer from 'components/CAssistantContainer'
+import CPumpTester from 'components/CPumpTester'
 
 export default {
   name: 'SetupPump',
-  components: { CAssistantContainer },
+  components: { CPumpTester, CAssistantContainer },
   data () {
     return {
       stepper: 0,
@@ -286,9 +280,6 @@ export default {
         name: '',
         stepPin: '',
         enablePin: ''
-      },
-      pumpTester: {
-        mode: 'runSteps'
       }
     }
   },
@@ -299,6 +290,9 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiFlashOutline = mdiFlashOutline
     this.mdiAbTesting = mdiAbTesting
+    this.mdiPlay = mdiPlay
+    this.mdiStop = mdiStop
+    this.mdiEqual = mdiEqual
   },
   methods: {
     selectPump (name) {
