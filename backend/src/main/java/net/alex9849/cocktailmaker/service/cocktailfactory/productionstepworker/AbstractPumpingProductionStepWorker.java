@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractPumpingProductionStepWorker extends AbstractProductionStepWorker {
     private final ScheduledExecutorService scheduler;
     private Set<PumpPhase> pumpPhases;
-    private Set<Pump> usedPumps;
+    private Set<DcPump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
     private ScheduledFuture<?> finishTask;
     private ScheduledFuture<?> notifierTask;
@@ -125,21 +126,21 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         return this.requiredWorkTime;
     }
 
-    public Map<Pump, Integer> getNotUsedLiquid() {
-        Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
+    public Map<DcPump, Integer> getNotUsedLiquid() {
+        Map<DcPump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
         for(PumpPhase pumpPhase : this.getPumpPhases()) {
             double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
             notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
             notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
         }
-        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
-        for(Map.Entry<Pump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
+        Map<DcPump, Integer> notUsedLiquidByPump = new HashMap<>();
+        for(Map.Entry<DcPump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
             notUsedLiquidByPump.put(entry.getKey(), (int) Math.round(entry.getValue().doubleValue()));
         }
         return notUsedLiquidByPump;
     }
 
-    public Set<Pump> getUsedPumps() {
+    public Set<DcPump> getUsedPumps() {
         return usedPumps;
     }
 }

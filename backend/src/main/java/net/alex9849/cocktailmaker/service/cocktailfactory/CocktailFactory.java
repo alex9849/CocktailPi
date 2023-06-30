@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.FeasibleRecipe;
@@ -25,8 +26,8 @@ public class CocktailFactory {
     private final List<Consumer<CocktailProgress>> subscribers = new ArrayList<>();
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
     private AbstractProductionStepWorker currentProductionStepWorker = null;
-    private Consumer<Set<Pump>> onRequestPumpPersist;
-    private final Set<Pump> pumps;
+    private Consumer<Set<DcPump>> onRequestPumpPersist;
+    private final Set<DcPump> pumps;
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
 
@@ -35,7 +36,7 @@ public class CocktailFactory {
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
 
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Consumer<Set<Pump>> onRequestPumpPersist) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<DcPump> pumps, Consumer<Set<DcPump>> onRequestPumpPersist) {
         this(feasibleRecipe, user, pumps);
         this.onRequestPumpPersist = onRequestPumpPersist;
     }
@@ -44,18 +45,18 @@ public class CocktailFactory {
      * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<DcPump> pumps) {
         this.pumps = pumps;
         this.feasibleRecipe = feasibleRecipe;
         this.user = user;
-        Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
+        Map<Long, List<DcPump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(x -> x.getCurrentIngredient().getId()));
 
         for(ProductionStep pStep : feasibleRecipe.getFeasibleProductionSteps()) {
             this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
         }
-        Set<Pump> usedPumps = this.getUpdatedPumps();
+        Set<DcPump> usedPumps = this.getUpdatedPumps();
         if(!usedPumps.isEmpty()) {
             this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(usedPumps));
         }
@@ -80,7 +81,7 @@ public class CocktailFactory {
         setState(CocktailProgress.State.READY_TO_START);
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
+    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<DcPump>> pumpsByIngredientId) {
         if(pStep instanceof AddIngredientsProductionStep) {
             return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
         }
@@ -91,7 +92,7 @@ public class CocktailFactory {
         throw new IllegalStateException("ProductionStepType unknown!");
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
+    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, List<DcPump>> pumpsByIngredientId) {
         List<AbstractProductionStepWorker> workers = new ArrayList<>();
         List<ProductionStepIngredient> manualProductionSteps = new ArrayList<>();
         List<ProductionStepIngredient> automaticProductionSteps = new ArrayList<>();
@@ -124,21 +125,21 @@ public class CocktailFactory {
         return workers;
     }
 
-    private void requestPumpPersist(Set<Pump> pumps) {
+    private void requestPumpPersist(Set<DcPump> pumps) {
         if(this.onRequestPumpPersist == null) {
             return;
         }
         this.onRequestPumpPersist.accept(pumps);
     }
 
-    public Set<Pump> getUpdatedPumps() {
+    public Set<DcPump> getUpdatedPumps() {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
                 .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getUsedPumps().stream())
                 .collect(Collectors.toSet());
     }
 
-    private Map<Pump, Integer> getNotUsedLiquid() {
+    private Map<DcPump, Integer> getNotUsedLiquid() {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
                 .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
@@ -211,9 +212,9 @@ public class CocktailFactory {
         this.shutDown();
         setState(CocktailProgress.State.CANCELLED);
 
-        Set<Pump> updatedPumps = this.getUpdatedPumps();
-        Map<Pump, Integer> notUsedLiquidByPump = this.getNotUsedLiquid();
-        for(Map.Entry<Pump, Integer> entry : notUsedLiquidByPump.entrySet()) {
+        Set<DcPump> updatedPumps = this.getUpdatedPumps();
+        Map<DcPump, Integer> notUsedLiquidByPump = this.getNotUsedLiquid();
+        for(Map.Entry<DcPump, Integer> entry : notUsedLiquidByPump.entrySet()) {
             Pump pump = entry.getKey();
             Integer notUsedLiquid = entry.getValue();
             pump.setFillingLevelInMl(pump.getFillingLevelInMl() + notUsedLiquid);

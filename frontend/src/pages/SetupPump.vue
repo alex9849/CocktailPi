@@ -378,7 +378,7 @@
                         v-model:model-value="pump.pumpedUp"
                         outlined
                         size="xl"
-                        class="text-bold"
+                        class="text-subtitle1"
                         hide-bottom-space
                         label="Pumped Up"
                       />

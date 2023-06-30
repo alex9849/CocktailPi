@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 
 import java.util.Objects;
@@ -7,11 +8,11 @@ import java.util.Objects;
 public class PumpPhase {
     private final int startTime;
     private int stopTime;
-    private final Pump pump;
+    private final DcPump pump;
     private Long startedTime;
     private Long stoppedTime;
 
-    public PumpPhase(int startTime, int stopTime, Pump pump) {
+    public PumpPhase(int startTime, int stopTime, DcPump pump) {
         Objects.requireNonNull(pump);
         if(startTime >= stopTime) {
             throw new IllegalArgumentException("stoptime needs to be larger than starttime!");
@@ -94,7 +95,7 @@ public class PumpPhase {
         return stopTime;
     }
 
-    public Pump getPump() {
+    public DcPump getPump() {
         return pump;
     }
 

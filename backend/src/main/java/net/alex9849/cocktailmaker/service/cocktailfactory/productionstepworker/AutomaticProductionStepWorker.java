@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
@@ -16,7 +17,7 @@ public class AutomaticProductionStepWorker extends AbstractPumpingProductionStep
      *
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe
      */
-    public AutomaticProductionStepWorker(Set<Pump> pumps, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
+    public AutomaticProductionStepWorker(Set<DcPump> pumps, List<ProductionStepIngredient> productionStepInstructions, int minimalPumpTime, int minimalBreakTime) {
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors
