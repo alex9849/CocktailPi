@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.repository;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,23 +11,15 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 
 @Repository
 public class PumpRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
-
-    @Autowired
-    private IngredientRepository ingredientRepository;
 
     @PostConstruct
     private void initialize() {
@@ -34,20 +28,17 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public Pump create(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (bcm_pin, time_per_cl_in_ms, " +
-                    "tube_capacity_in_ml, current_ingredient_id, filling_level_in_ml, is_power_state_high, is_pumped_up) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, pump.getBcmPin());
-            pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setDouble(3, pump.getTubeCapacityInMl());
-            pstmt.setObject(4, pump.getCurrentIngredientId());
-            pstmt.setInt(5, pump.getFillingLevelInMl());
-            pstmt.setBoolean(6, pump.isPowerStateHigh());
-            pstmt.setBoolean(7, pump.isPumpedUp());
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (dtype, name, " +
+                    "completed, enabled, tube_capacity, current_ingredient_id, filling_level_in_ml, " +
+                    "is_pumped_up, pin, time_per_cl_in_ms, is_power_state_high, acceleration, " +
+                    "step_pin, enable_pin, steps_per_cl, min_step_delta) VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            setParameters(pump, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 pump.setId(rs.getLong(1));
-                return populateEntity(pump);
+                return pump;
             }
             throw new IllegalStateException("Error saving pump");
         });
@@ -55,16 +46,13 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public boolean update(Pump pump) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET bcm_pin = ?, time_per_cl_in_ms = ?, " +
-                    "tube_capacity_in_ml = ?, current_ingredient_id = ?, filling_level_in_ml = ?, is_power_state_high = ?, is_pumped_up = ? WHERE id = ?");
-            pstmt.setInt(1, pump.getBcmPin());
-            pstmt.setInt(2, pump.getTimePerClInMs());
-            pstmt.setDouble(3, pump.getTubeCapacityInMl());
-            pstmt.setObject(4, pump.getCurrentIngredientId());
-            pstmt.setInt(5, pump.getFillingLevelInMl());
-            pstmt.setBoolean(6, pump.isPowerStateHigh());
-            pstmt.setBoolean(7, pump.isPumpedUp());
-            pstmt.setLong(8, pump.getId());
+            PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET dtype = ?, name = ?, " +
+                    "completed = ?, enabled = ?, tube_capacity = ?, current_ingredient_id = ?, " +
+                    "filling_level_in_ml = ?, is_pumped_up = ?, pin = ?, time_per_cl_in_ms = ?, " +
+                    "is_power_state_high = ?, acceleration = ?, step_pin = ?, enable_pin = ?, " +
+                    "steps_per_cl = ?, min_step_delta = ? WHERE id = ?");
+            setParameters(pump, pstmt);
+            pstmt.setLong(17, pump.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -75,7 +63,7 @@ public class PumpRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.executeQuery();
             List<Pump> results = new ArrayList<>();
             while (rs.next()) {
-                results.add(populateEntity(parseRs(rs)));
+                results.add(parseRs(rs));
             }
             return results;
         });
@@ -88,7 +76,7 @@ public class PumpRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.executeQuery();
             List<Pump> results = new ArrayList<>();
             while (rs.next()) {
-                results.add(populateEntity(parseRs(rs)));
+                results.add(parseRs(rs));
             }
             return results;
         });
@@ -107,7 +95,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setInt(1, bcmPin);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(populateEntity(parseRs(rs)));
+                return Optional.of(parseRs(rs));
             }
             return Optional.empty();
         });
@@ -119,7 +107,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(populateEntity(parseRs(rs)));
+                return Optional.of(parseRs(rs));
             }
             return Optional.empty();
         });
@@ -133,25 +121,68 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
-    public Pump populateEntity(Pump pump) {
-        if(pump.getCurrentIngredientId() != null) {
-            Ingredient ingredient = ingredientRepository.findById(pump.getCurrentIngredientId()).orElse(null);
-            if(ingredient instanceof AutomatedIngredient) {
-                pump.setCurrentIngredient((AutomatedIngredient) ingredient);
-            }
+    private static void setParameters(Pump pump, PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, pump.getClass().getAnnotation(DiscriminatorValue.class).value());
+        pstmt.setObject(2, pump.getName());
+        pstmt.setBoolean(3, pump.isCompleted());
+        pstmt.setBoolean(4, pump.isEnabled());
+        pstmt.setObject(5, pump.getTubeCapacityInMl());
+        pstmt.setObject(6, pump.getCurrentIngredientId());
+        pstmt.setInt(7, pump.getFillingLevelInMl());
+        pstmt.setBoolean(8, pump.isPumpedUp());
+        if(pump instanceof DcPump) {
+            DcPump dcPump = (DcPump) pump;
+            pstmt.setObject(9, dcPump.getBcmPin());
+            pstmt.setObject(10, dcPump.getTimePerClInMs());
+            pstmt.setObject(11, dcPump.isPowerStateHigh());
+            pstmt.setNull(12, Types.INTEGER);
+            pstmt.setNull(13, Types.INTEGER);
+            pstmt.setNull(14, Types.INTEGER);
+            pstmt.setNull(15, Types.INTEGER);
+            pstmt.setNull(16, Types.INTEGER);
         }
-        return pump;
+        else if (pump instanceof StepperPump) {
+            StepperPump stepperPump = (StepperPump) pump;
+            pstmt.setNull(9, Types.INTEGER);
+            pstmt.setNull(10, Types.INTEGER);
+            pstmt.setNull(11, Types.BOOLEAN);
+            pstmt.setObject(12, stepperPump.getAcceleration());
+            pstmt.setObject(13, stepperPump.getStepPin());
+            pstmt.setObject(14, stepperPump.getEnablePin());
+            pstmt.setObject(15, stepperPump.getStepsPerCl());
+            pstmt.setObject(16, stepperPump.getMinStepDeltaInMs());
+        } else {
+            throw new IllegalArgumentException("Unknown Pump type: " + pump.getClass().getName());
+        }
     }
 
     private Pump parseRs(ResultSet rs) throws SQLException {
-        Pump pump = new Pump();
+        Pump pump;
+        String dType = rs.getString("dType");
+
+        if(Objects.equals(dType, DcPump.class.getAnnotation(DiscriminatorValue.class).value())) {
+            DcPump dcPump = new DcPump();
+            dcPump.setBcmPin(rs.getObject("pin", Integer.class));
+            dcPump.setTimePerClInMs(rs.getObject("time_per_cl_in_ms", Integer.class));
+            dcPump.setPowerStateHigh(rs.getObject("is_power_state_high", Boolean.class));
+            pump = dcPump;
+        } else if(Objects.equals(dType, StepperPump.class.getAnnotation(DiscriminatorValue.class).value())) {
+            StepperPump stepperPump = new StepperPump();
+            stepperPump.setAcceleration(rs.getObject("acceleration", Integer.class));
+            stepperPump.setStepPin(rs.getObject("step_pin", Integer.class));
+            stepperPump.setEnablePin(rs.getObject("enable_pin", Integer.class));
+            stepperPump.setStepsPerCl(rs.getObject("steps_per_cl", Integer.class));
+            stepperPump.setMinStepDeltaInMs(rs.getObject("min_step_delta", Integer.class));
+            pump = stepperPump;
+        } else {
+            throw new IllegalStateException("Unknown pump-dType: " + dType);
+        }
         pump.setId(rs.getLong("id"));
-        pump.setBcmPin(rs.getInt("bcm_pin"));
-        pump.setTimePerClInMs(rs.getInt("time_per_cl_in_ms"));
-        pump.setTubeCapacityInMl(rs.getDouble("tube_capacity_in_ml"));
+        pump.setName(rs.getObject("name", String.class));
+        pump.setEnabled(rs.getBoolean("enabled"));
+        pump.setTubeCapacityInMl(rs.getObject("tube_capacity", Double.class));
         pump.setCurrentIngredientId(rs.getObject("current_ingredient_id", Long.class));
         pump.setFillingLevelInMl(rs.getInt("filling_level_in_ml"));
-        pump.setPowerStateHigh(rs.getBoolean("is_power_state_high"));
         pump.setPumpedUp(rs.getBoolean("is_pumped_up"));
         return pump;
     }

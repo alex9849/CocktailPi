@@ -17,6 +17,7 @@ public abstract class Pump {
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
     private boolean isEnabled;
+    private String name;
 
     public long getId() {
         return id;
@@ -92,9 +93,17 @@ public abstract class Pump {
         isEnabled = enabled;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public abstract boolean isCanPump();
 
     public boolean isCompleted() {
-        return this.isCanPump() && this.tubeCapacityInMl != null;
+        return this.isCanPump() && this.tubeCapacityInMl != null && this.name != null;
     }
 }

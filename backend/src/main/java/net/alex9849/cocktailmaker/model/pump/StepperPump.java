@@ -1,5 +1,8 @@
 package net.alex9849.cocktailmaker.model.pump;
 
+import javax.persistence.DiscriminatorValue;
+
+@DiscriminatorValue("StepperPump")
 public class StepperPump extends Pump {
     Integer enablePin;
     Integer stepPin;

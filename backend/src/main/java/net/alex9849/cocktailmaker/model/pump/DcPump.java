@@ -4,8 +4,10 @@ import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
+import javax.persistence.DiscriminatorValue;
 import java.util.Objects;
 
+@DiscriminatorValue("DcPump")
 public class DcPump extends Pump {
     private Integer timePerClInMs;
     private Integer bcmPin;
