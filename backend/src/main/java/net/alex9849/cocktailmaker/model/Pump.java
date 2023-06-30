@@ -147,4 +147,8 @@ public class Pump {
         return runtime / (getCurrentIngredient().getPumpTimeMultiplier()
                 * this.getTimePerClInMs() / 10d);
     }
+
+    public enum State {
+        INCOMPLETE, DISABLED, READY, RUNNING
+    }
 }

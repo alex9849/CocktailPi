@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.Pump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
@@ -8,65 +10,66 @@ import net.alex9849.cocktailmaker.service.PumpUpService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PumpDto {
+    //Common
     private interface Id { long getId(); }
-    private interface TimePerClInMs { @NotNull @Min(1) int getTimePerClInMs(); }
-    private interface TubeCapacityInMl { @NotNull @Min(1) double getTubeCapacityInMl(); }
-    private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
-    private interface FillingLevelInMl { @NotNull @Min(0) int getFillingLevelInMl(); }
+    private interface FillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
+    private interface TubeCapacityInMl { @Min(1) Double getTubeCapacityInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
+    private interface RemoveIngredient { Boolean getIsRemoveIngredient(); }
+    private interface IsPumpedUp { Boolean getIsPumpedUp(); }
+
+    //Read only
     private interface IsReversed { boolean isReversed(); }
     private interface Occupation { PumpService.PumpOccupation getOccupation(); }
-    private interface IsPowerStateHigh { boolean isPowerStateHigh(); }
-    private interface IsPumpedUp { boolean isPumpedUp(); }
+    private interface State {Pump.State}
 
-    private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
-    private interface PatchRemoveIngredient { Boolean getIsRemoveIngredient(); }
-    private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        @Getter @Setter @EqualsAndHashCode
-        public static class Create implements TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl, CurrentIngredientId, IsPowerStateHigh, IsPumpedUp {
-            int timePerClInMs;
-            double tubeCapacityInMl;
-            int bcmPin;
-            int fillingLevelInMl;
-            Long currentIngredientId;
-            boolean isPowerStateHigh;
-            boolean isPumpedUp;
-        }
 
-        @Getter @Setter @EqualsAndHashCode
-        public static class Patch implements PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, PatchRemoveIngredient {
+        @Getter
+        @Setter
+        @EqualsAndHashCode
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
+        })
+        public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, IsPumpedUp, RemoveIngredient {
             Integer fillingLevelInMl;
             Long currentIngredientId;
             Boolean isPumpedUp;
             Boolean isRemoveIngredient;
+            Double tubeCapacityInMl;
         }
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
+
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Id, TimePerClInMs, TubeCapacityInMl, BcmPin, FillingLevelInMl,
-                CurrentIngredient, Occupation, IsReversed, IsPowerStateHigh, IsPumpedUp {
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
+        })
+        public static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
+                CurrentIngredient, Occupation, IsReversed, IsPumpedUp {
             long id;
-            int timePerClInMs;
-            double tubeCapacityInMl;
-            int bcmPin;
-            int fillingLevelInMl;
+            Integer timePerClInMs;
+            Double tubeCapacityInMl;
+            Integer pin;
+            Integer fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             PumpService.PumpOccupation occupation;
+            Boolean isPumpedUp;
             boolean isReversed;
             boolean isPowerStateHigh;
-            boolean isPumpedUp;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
@@ -77,6 +80,19 @@ public class PumpDto {
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }
+            }
+
+            public static Detailed toDto(Pump pump) {
+                if(pump == null) {
+                    return null;
+                }
+                if(pump instanceof StepperPump) {
+                    return new StepperPumpDto.Response.Detailed((StepperPump) pump);
+                }
+                if(pump instanceof DcPump) {
+                    return new DcPumpDto.Response.Detailed((DcPump) pump);
+                }
+                throw new IllegalStateException("Unknown pump type: " + pump.getClass().getName());
             }
         }
     }
