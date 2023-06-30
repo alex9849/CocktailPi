@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import lombok.*;
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -28,7 +29,7 @@ public class DcPumpDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
-        public abstract static class Detailed extends PumpDto.Response.Detailed implements Pin, TimePerClInMs, IsPowerStateHigh {
+        public static class Detailed extends PumpDto.Response.Detailed implements Pin, TimePerClInMs, IsPowerStateHigh {
             Integer pin;
             Integer timePerClInMs;
             Boolean isPowerStateHigh;
@@ -38,5 +39,4 @@ public class DcPumpDto {
             }
         }
     }
-}
 }

@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import lombok.*;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
@@ -36,7 +37,7 @@ public class StepperPumpDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
-        public abstract static class Detailed extends PumpDto.Response.Detailed implements EnablePin, StepPin, StepsPerCl,
+        public static class Detailed extends PumpDto.Response.Detailed implements EnablePin, StepPin, StepsPerCl,
                 MinStepDeltaInMs, Acceleration {
             Integer enablePin;
             Integer stepPin;

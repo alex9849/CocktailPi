@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;

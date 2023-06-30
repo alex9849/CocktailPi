@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;

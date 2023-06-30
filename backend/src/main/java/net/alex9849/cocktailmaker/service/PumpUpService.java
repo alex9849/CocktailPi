@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.iface.IGpioPin;
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;

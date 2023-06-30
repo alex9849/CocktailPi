@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.pump;
 
 import net.alex9849.cocktailmaker.iface.IGpioController;
 import net.alex9849.cocktailmaker.iface.IGpioPin;
@@ -9,17 +9,13 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 
 import java.util.Objects;
 
-public class Pump {
+public abstract class Pump {
     private long id;
-    private int timePerClInMs;
-    private double tubeCapacityInMl;
-    private int bcmPin;
+    private Double tubeCapacityInMl;
     private int fillingLevelInMl;
     private Long currentIngredientId;
-    private boolean isPowerStateHigh;
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
-    private IGpioPin gpioPin;
 
     public long getId() {
         return id;
@@ -29,32 +25,12 @@ public class Pump {
         this.id = id;
     }
 
-    public int getTimePerClInMs() {
-        return timePerClInMs;
-    }
-
-    public void setTimePerClInMs(int timePerClInMs) {
-        this.timePerClInMs = timePerClInMs;
-    }
-
     public double getTubeCapacityInMl() {
         return tubeCapacityInMl;
     }
 
     public void setTubeCapacityInMl(double tubeCapacityInMl) {
         this.tubeCapacityInMl = tubeCapacityInMl;
-    }
-
-    public int getBcmPin() {
-        return bcmPin;
-    }
-
-    public void setBcmPin(int bcmPin) {
-        if(this.bcmPin == bcmPin) {
-            return;
-        }
-        this.bcmPin = bcmPin;
-        this.gpioPin = null;
     }
 
     public AutomatedIngredient getCurrentIngredient() {
@@ -75,34 +51,9 @@ public class Pump {
         return currentIngredientId;
     }
 
-    public boolean isPowerStateHigh() {
-        return isPowerStateHigh;
-    }
+    public abstract boolean isRunning();
 
-    public void setPowerStateHigh(boolean isPowerStateHigh) {
-        this.isPowerStateHigh = isPowerStateHigh;
-    }
-
-    public boolean isRunning() {
-        IGpioPin gpioPin = getGpioPin();
-        return gpioPin.isHigh() == isPowerStateHigh();
-    }
-
-    public void setRunning(boolean run) {
-        if(run == isPowerStateHigh()) {
-            getGpioPin().setHigh();
-        } else {
-            getGpioPin().setLow();
-        }
-    }
-
-    public IGpioPin getGpioPin() {
-        if(gpioPin == null) {
-            IGpioController controller = SpringUtility.getBean(IGpioController.class);
-            gpioPin = controller.getGpioPin(getBcmPin());
-        }
-        return gpioPin;
-    }
+    public abstract void setRunning(boolean run);
 
     public boolean isPumpedUp() {
         return isPumpedUp;
@@ -132,23 +83,9 @@ public class Pump {
         this.currentIngredientId = currentIngredientId;
     }
 
-    public int getConvertMlToRuntime(double mlToPump) {
-        double multiplier = 1;
-        if(getCurrentIngredient() != null) {
-            multiplier = getCurrentIngredient().getPumpTimeMultiplier();
-        }
-        return  (int) (multiplier * mlToPump * this.getTimePerClInMs() / 10d);
-    }
+    public abstract boolean isCanPump();
 
-    public double getConvertRuntimeToMl(int runtime) {
-        if(getCurrentIngredient() == null) {
-            return 0;
-        }
-        return runtime / (getCurrentIngredient().getPumpTimeMultiplier()
-                * this.getTimePerClInMs() / 10d);
-    }
-
-    public enum State {
-        INCOMPLETE, DISABLED, READY, RUNNING
+    public boolean isCompleted() {
+        return this.isCanPump() && this.tubeCapacityInMl != null;
     }
 }

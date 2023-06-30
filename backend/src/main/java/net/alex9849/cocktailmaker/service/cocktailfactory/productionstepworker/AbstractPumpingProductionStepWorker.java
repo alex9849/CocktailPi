@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
 
 import java.util.*;

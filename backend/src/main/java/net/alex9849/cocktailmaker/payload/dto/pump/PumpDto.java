@@ -3,7 +3,9 @@ package net.alex9849.cocktailmaker.payload.dto.pump;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.DcPump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.PumpUpService;
@@ -26,7 +28,7 @@ public class PumpDto {
     //Read only
     private interface IsReversed { boolean isReversed(); }
     private interface Occupation { PumpService.PumpOccupation getOccupation(); }
-    private interface State {Pump.State}
+    private interface IState {PumpDto.State getState(); }
 
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -59,7 +61,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
         })
         public static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
-                CurrentIngredient, Occupation, IsReversed, IsPumpedUp {
+                CurrentIngredient, Occupation, IsReversed, IsPumpedUp, IState {
             long id;
             Integer timePerClInMs;
             Double tubeCapacityInMl;
@@ -70,6 +72,7 @@ public class PumpDto {
             Boolean isPumpedUp;
             boolean isReversed;
             boolean isPowerStateHigh;
+            PumpDto.State state;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
@@ -97,5 +100,8 @@ public class PumpDto {
         }
     }
 
+    public enum State {
+        INCOMPLETE, DISABLED, READY, RUNNING
+    }
 
 }

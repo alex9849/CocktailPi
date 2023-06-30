@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
-import net.alex9849.cocktailmaker.model.Pump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.PumpUpService;
