@@ -16,6 +16,7 @@ public abstract class Pump {
     private Long currentIngredientId;
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
+    private boolean isEnabled;
 
     public long getId() {
         return id;
@@ -25,11 +26,11 @@ public abstract class Pump {
         this.id = id;
     }
 
-    public double getTubeCapacityInMl() {
+    public Double getTubeCapacityInMl() {
         return tubeCapacityInMl;
     }
 
-    public void setTubeCapacityInMl(double tubeCapacityInMl) {
+    public void setTubeCapacityInMl(Double tubeCapacityInMl) {
         this.tubeCapacityInMl = tubeCapacityInMl;
     }
 
@@ -81,6 +82,14 @@ public abstract class Pump {
             this.currentIngredient = null;
         }
         this.currentIngredientId = currentIngredientId;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     public abstract boolean isCanPump();
