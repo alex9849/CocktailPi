@@ -41,7 +41,7 @@
           :disable="pumpTester.running"
         >
           <template v-slot:append>
-            {{runValSuffix}}
+            {{ runValSuffix }}
           </template>
         </q-input>
       </div>
