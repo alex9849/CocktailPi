@@ -32,7 +32,7 @@ create table pumps
     id                    INTEGER not null,
     name                  TEXT unique default id,
     dType                 TEXT,
-    ready                 BOOLEAN not null,
+    state                 TEXT    not null,
     tube_capacity         REAL check (tube_capacity >= 1),
     current_ingredient_id INTEGER references ingredients on delete set null,
     filling_level_in_ml   INTEGER     default 0,

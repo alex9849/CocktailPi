@@ -3,14 +3,13 @@
     <h5>Pump Setup Assistant</h5>
     <q-stepper
       v-model:model-value="stepper"
-      vertical
       animated
       flat
       bordered
       header-nav
     >
       <q-step
-        title="Pump type"
+        :title="pumpTypeStepLabel"
         :name="0"
         :icon="mdiAbTesting"
         :done="pumpTypeComplete"
@@ -50,7 +49,8 @@
         title="Handle"
         :name="1"
         :icon="mdiPencilOutline"
-        :header-nav="pumpTypeComplete"
+        header-nav
+        :disable="!pumpTypeComplete"
         :done="handleComplete"
       >
         <div class="col-12">
@@ -69,19 +69,18 @@
           </div>
         </div>
         <div class="col-12 q-ma-lg">
-          <div class="row justify-start">
-            <q-stepper-navigation>
-              <q-btn @click="stepper++" :disable="!handleComplete" color="primary" label="Continue"/>
-              <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
-            </q-stepper-navigation>
-          </div>
+          <q-stepper-navigation>
+            <q-btn @click="stepper++" :disable="!handleComplete" color="primary" label="Continue"/>
+            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+          </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
         title="Hardware pins"
         :name="2"
         :icon="mdiFlashOutline"
-        :header-nav="handleComplete"
+        header-nav
+        :disable="!handleComplete"
         :done="hardwarePinsComplete"
       >
         <div class="col-12">
@@ -144,18 +143,19 @@
           </div>
         </div>
         <div class="col-12 q-ma-lg">
-          <div class="row justify-start">
-            <q-stepper-navigation>
-              <q-btn @click="stepper++" :disable="!hardwarePinsComplete" color="primary" label="Continue"/>
-              <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
-            </q-stepper-navigation>
-          </div>
+          <q-stepper-navigation>
+            <q-btn @click="stepper++" :disable="!hardwarePinsComplete" color="primary" label="Continue"/>
+            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+          </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
         title="Calibrate"
         :name="3"
         :icon="mdiCogs"
+        header-nav
+        :disable="!hardwarePinsComplete"
+        :done="calibrationComplete"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
@@ -304,12 +304,10 @@
           </div>
         </div>
         <div class="col-12 q-ma-lg">
-          <div class="row justify-start">
-            <q-stepper-navigation>
-              <q-btn @click="stepper++" color="primary" label="Continue"/>
-              <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
-            </q-stepper-navigation>
-          </div>
+          <q-stepper-navigation>
+            <q-btn @click="stepper++" :disable="!calibrationComplete" color="primary" label="Continue"/>
+            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+          </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
@@ -317,7 +315,8 @@
         :name="4"
         :icon="mdiPencilOutline"
         header-nav
-        :done="handleComplete"
+        :disable="!calibrationComplete"
+        caption="Optional"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
@@ -394,15 +393,13 @@
                 </template>
               </c-assistant-container>
             </div>
-            <div class="col-12 q-ma-lg">
-              <div class="row justify-start">
-                <q-stepper-navigation>
-                  <q-btn @click="stepper++" color="primary" label="Finish"/>
-                  <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
-                </q-stepper-navigation>
-              </div>
-            </div>
           </div>
+        </div>
+        <div class="col-12 q-ma-lg">
+          <q-stepper-navigation>
+            <q-btn @click="stepper++" color="primary" label="Finish"/>
+            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+          </q-stepper-navigation>
         </div>
       </q-step>
     </q-stepper>
@@ -477,6 +474,20 @@ export default {
     },
     hardwarePinsComplete () {
       return (!!this.pump.stepPin && !!this.pump.enablePin)
+    },
+    calibrationComplete () {
+      return !!this.pump.acceleration && !!this.pump.min_step_delta &&
+        !!this.pump.steps_per_cl && !!this.pump.tube_capacity
+    },
+    pumpTypeStepLabel () {
+      if (this.pumpTypeComplete) {
+        if (this.pump.dtype === 'dc') {
+          return 'Pump type: DC'
+        } else {
+          return 'Pump type: Stepper'
+        }
+      }
+      return 'Pump type'
     }
   }
 }
