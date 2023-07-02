@@ -2,9 +2,6 @@ package net.alex9849.cocktailmaker.payload.dto.pump;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AddableIngredientDto;
-import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -14,7 +11,7 @@ public class StepperPumpDto {
     private interface EnablePin { @Min(0) @Max(31) Integer getEnablePin(); }
     private interface StepPin { @Min(0) @Max(31) Integer getStepPin(); }
     private interface StepsPerCl { @Min(1) Integer getStepsPerCl(); }
-    private interface MinStepDeltaInMs { @Min(1) Integer getMinStepDeltaInMs(); }
+    private interface MaxStepsPerSecond { @Min(1) Integer getMaxStepsPerSecond(); }
     private interface Acceleration { @Min(1) Integer getAcceleration(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,11 +19,11 @@ public class StepperPumpDto {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public static class Patch extends PumpDto.Request.Patch implements EnablePin, StepPin, StepsPerCl,
-                MinStepDeltaInMs, Acceleration {
+                MaxStepsPerSecond, Acceleration {
             Integer enablePin;
             Integer stepPin;
             Integer stepsPerCl;
-            Integer minStepDeltaInMs;
+            Integer maxStepsPerSecond;
             Integer acceleration;
         }
     }
@@ -38,11 +35,11 @@ public class StepperPumpDto {
         @Setter
         @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends PumpDto.Response.Detailed implements EnablePin, StepPin, StepsPerCl,
-                MinStepDeltaInMs, Acceleration {
+                MaxStepsPerSecond, Acceleration {
             Integer enablePin;
             Integer stepPin;
             Integer stepsPerCl;
-            Integer minStepDeltaInMs;
+            Integer maxStepsPerSecond;
             Integer acceleration;
 
             protected Detailed(StepperPump stepperPump) {

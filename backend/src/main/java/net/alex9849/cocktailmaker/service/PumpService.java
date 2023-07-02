@@ -1,9 +1,13 @@
 package net.alex9849.cocktailmaker.service;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
+import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
@@ -11,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -50,8 +51,23 @@ public class PumpService {
     }
 
     public Pump createPump(Pump pump) {
-        if(pumpRepository.findByBcmPin(pump.getBcmPin()).isPresent()) {
-            throw new IllegalArgumentException("GPOI-Pin already in use!");
+        List<Integer> pinList = new ArrayList<>();
+        if(pump instanceof DcPump) {
+            pinList.add(((DcPump) pump).getBcmPin());
+        } else if (pump instanceof StepperPump) {
+            pinList.add(((StepperPump) pump).getEnablePin());
+            pinList.add(((StepperPump) pump).getStepPin());
+        }
+        for(Integer pin : pinList) {
+            Optional<Pump> oPump = pumpRepository.findByBcmPin(pin);
+            if(oPump.isPresent()) {
+                if(oPump.get().getId() != pump.getId()) {
+                    throw new IllegalArgumentException("BCM-Pin already in use!");
+                }
+            }
+            if(pumpUpService.isGpioInUseAdVdPin(pin)) {
+                throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
+            }
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
@@ -80,26 +96,33 @@ public class PumpService {
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
+        if(!beforeUpdate.get().getClass().equals(pump.getClass())) {
+            throw new IllegalArgumentException("Can't change pump type!");
+        }
         if(getPumpOccupation(beforeUpdate.get()) != PumpOccupation.NONE && !isSourceCocktailfactory) {
             throw new IllegalStateException("Pump currently occupied!");
         }
-        Optional<Pump> optPumpWithGpio = pumpRepository.findByBcmPin(pump.getBcmPin());
-        if(optPumpWithGpio.isPresent()) {
-            if(optPumpWithGpio.get().getId() != pump.getId()) {
-                throw new IllegalArgumentException("BCM-Pin already in use!");
+
+        List<Integer> pinList = new ArrayList<>();
+        if(pump instanceof DcPump) {
+            pinList.add(((DcPump) pump).getBcmPin());
+        } else if (pump instanceof StepperPump) {
+            pinList.add(((StepperPump) pump).getEnablePin());
+            pinList.add(((StepperPump) pump).getStepPin());
+        }
+        for(Integer pin : pinList) {
+            Optional<Pump> oPump = pumpRepository.findByBcmPin(pin);
+            if(oPump.isPresent()) {
+                if(oPump.get().getId() != pump.getId()) {
+                    throw new IllegalArgumentException("BCM-Pin already in use!");
+                }
+            }
+            if(pumpUpService.isGpioInUseAdVdPin(pin)) {
+                throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
             }
         }
-        if(pumpUpService.isGpioInUseAdVdPin(pump.getBcmPin())) {
-            throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
-        }
         pumpRepository.update(pump);
-        if(beforeUpdate.get().getBcmPin() != pump.getBcmPin()) {
-            beforeUpdate.get().setRunning(false);
-            pump.setRunning(false);
-        }
-        if(beforeUpdate.get().isPowerStateHigh() != pump.isPowerStateHigh()) {
-            pump.setRunning(false);
-        }
+        beforeUpdate.get().setRunning(false);
         return pump;
     }
 
@@ -121,23 +144,17 @@ public class PumpService {
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
-    public Pump fromDto(PumpDto.Request.Create pumpDto) {
+    public Pump fromDto(PumpDto.Request.Patch pumpDto) {
         if(pumpDto == null) {
             return null;
         }
-        Pump pump = new Pump();
-        BeanUtils.copyProperties(pumpDto, pump);
-        if(pumpDto.getCurrentIngredientId() != null) {
-            Ingredient ingredient = ingredientService.getIngredient(pumpDto.getCurrentIngredientId());
-            if(ingredient == null) {
-                throw new IllegalArgumentException("Ingredient with id \"" + pump.getCurrentIngredientId() + "\" not found!");
-            }
-            if(!(ingredient instanceof AutomatedIngredient)) {
-                throw new IllegalArgumentException("Ingredient must be an AutomatedIngredient!");
-            }
-            pump.setCurrentIngredient((AutomatedIngredient) ingredient);
+        if(pumpDto instanceof DcPumpDto.Request.Patch) {
+            return fromDto(pumpDto, new DcPump());
+        } else if (pumpDto instanceof StepperPumpDto.Request.Patch) {
+            return fromDto(pumpDto, new StepperPump());
+        } else {
+            throw new IllegalStateException("Unknown pumpDto-type: " + pumpDto.getClass().getName());
         }
-        return pump;
     }
 
     public Pump fromDto(PumpDto.Request.Patch patchPumpDto, Pump toPatch) {

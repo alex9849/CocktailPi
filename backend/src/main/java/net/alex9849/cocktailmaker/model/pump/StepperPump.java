@@ -34,11 +34,11 @@ public class StepperPump extends Pump {
         this.stepsPerCl = stepsPerCl;
     }
 
-    public Integer getMinStepDeltaInMs() {
+    public Integer getMaxStepsPerSecond() {
         return minStepDeltaInMs;
     }
 
-    public void setMinStepDeltaInMs(Integer minStepDeltaInMs) {
+    public void setMaxStepsPerSecond(Integer minStepDeltaInMs) {
         this.minStepDeltaInMs = minStepDeltaInMs;
     }
 

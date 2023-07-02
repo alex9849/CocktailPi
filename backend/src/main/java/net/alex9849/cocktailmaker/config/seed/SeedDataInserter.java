@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
-import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
@@ -143,7 +142,7 @@ public class SeedDataInserter {
         stepperPump.setFillingLevelInMl(3000);
         stepperPump.setStepsPerCl(20);
         stepperPump.setAcceleration(10);
-        stepperPump.setMinStepDeltaInMs(20);
+        stepperPump.setMaxStepsPerSecond(20);
         stepperPump.setTubeCapacityInMl(5.0);
         stepperPump.setEnabled(true);
         for(int i = nrPumps / 2; i < nrPumps; i++) {

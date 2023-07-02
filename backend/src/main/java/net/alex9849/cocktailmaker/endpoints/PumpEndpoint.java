@@ -31,19 +31,10 @@ public class PumpEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Patch pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(new PumpDto.Response.Detailed(createdPump));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
-        Pump updatePump = pumpService.fromDto(pumpDto);
-        updatePump.setId(id);
-        pumpService.updatePump(updatePump);
-        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")

@@ -30,7 +30,7 @@ create table ingredients
 create table pumps
 (
     id                    INTEGER not null,
-    dType                 TEXT not null,
+    dType                 TEXT    not null,
     name                  TEXT unique      default id,
     completed             BOOLEAN not null,
     enabled               BOOLEAN not null,
@@ -45,7 +45,7 @@ create table pumps
     step_pin              INTEGER check (step_pin >= 1),
     enable_pin            INTEGER check (enable_pin >= 1),
     steps_per_cl          INTEGER check (steps_per_cl >= 1),
-    min_step_delta        INTEGER check (min_step_delta >= 1),
+    max_steps_per_second  INTEGER check (max_steps_per_second >= 1),
     primary key (id)
 );
 
@@ -152,28 +152,26 @@ CREATE TABLE options
 
 
 CREATE VIEW all_ingredient_dependencies AS
-WITH RECURSIVE list_dependencies(child, current, parent) AS (
-    SELECT i.id as child, i.id as current, i.parent_group_id as parent
-    FROM ingredients AS i
-    UNION ALL
-    SELECT child, i.id as current, i.parent_group_id as parent
-    FROM ingredients AS i
-             join list_dependencies lp on i.id = lp.parent
-)
+WITH RECURSIVE list_dependencies(child, current, parent)
+                   AS (SELECT i.id as child, i.id as current, i.parent_group_id as parent
+                       FROM ingredients AS i
+                       UNION ALL
+                       SELECT child, i.id as current, i.parent_group_id as parent
+                       FROM ingredients AS i
+                                join list_dependencies lp on i.id = lp.parent)
 SELECT child, current as is_a
 FROM list_dependencies;
 
 
 CREATE VIEW concrete_ingredient_dependencies AS
-WITH RECURSIVE list_dependencies(leaf, current, parent) AS (
-    SELECT i.id as leaf, i.id as current, i.parent_group_id as parent
-    FROM ingredients AS i
-    WHERE i.dtype != 'IngredientGroup'
-    UNION ALL
-    SELECT leaf, i.id as current, i.parent_group_id as parent
-    FROM ingredients AS i
-             join list_dependencies lp on i.id = lp.parent
-)
+WITH RECURSIVE list_dependencies(leaf, current, parent)
+                   AS (SELECT i.id as leaf, i.id as current, i.parent_group_id as parent
+                       FROM ingredients AS i
+                       WHERE i.dtype != 'IngredientGroup'
+                       UNION ALL
+                       SELECT leaf, i.id as current, i.parent_group_id as parent
+                       FROM ingredients AS i
+                                join list_dependencies lp on i.id = lp.parent)
 SELECT leaf, current as is_a
 FROM list_dependencies;
 
@@ -184,21 +182,18 @@ CREATE TRIGGER check_illegal_ingredient_cycle
     WHEN new.parent_group_id IS NOT NULL
 BEGIN
     SELECT CASE
-               WHEN EXISTS(
-                       WITH RECURSIVE list_parents(id, parent_id) AS (
-                           SELECT i.id AS id, i.parent_group_id AS parent_id
-                           FROM ingredients AS i
-                           WHERE i.parent_group_id = NEW.id --My id to insert
-                           UNION ALL
-                           SELECT i.id AS id, i.parent_group_id AS parent_id
-                           FROM ingredients AS i
-                                    join list_parents lp on i.parent_group_id = lp.id
-                       )
-                       SELECT *
-                       from list_parents
-                       WHERE list_parents.id = NEW.parent_group_id --My own (new) parent;
-                       LIMIT 1
-                   ) THEN
+               WHEN EXISTS(WITH RECURSIVE list_parents(id, parent_id)
+                                              AS (SELECT i.id AS id, i.parent_group_id AS parent_id
+                                                  FROM ingredients AS i
+                                                  WHERE i.parent_group_id = NEW.id --My id to insert
+                                                  UNION ALL
+                                                  SELECT i.id AS id, i.parent_group_id AS parent_id
+                                                  FROM ingredients AS i
+                                                           join list_parents lp on i.parent_group_id = lp.id)
+                           SELECT *
+                           from list_parents
+                           WHERE list_parents.id = NEW.parent_group_id --My own (new) parent;
+                           LIMIT 1) THEN
                    RAISE(ABORT, 'Illegal cycle detected')
                END;
 END;
@@ -210,9 +205,9 @@ CREATE TRIGGER check_illegal_ingredient_parent_insert
     WHEN NEW.parent_group_id IS NOT NULL
 BEGIN
     SELECT CASE
-               WHEN EXISTS(
-                       SELECT i.id FROM ingredients i WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup'
-                   ) THEN
+               WHEN EXISTS(SELECT i.id
+                           FROM ingredients i
+                           WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup') THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
 END;
@@ -224,9 +219,9 @@ CREATE TRIGGER check_illegal_ingredient_parent_update
     WHEN NEW.parent_group_id IS NOT NULL
 BEGIN
     SELECT CASE
-               WHEN EXISTS(
-                       SELECT i.id FROM ingredients i WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup'
-                   ) THEN
+               WHEN EXISTS(SELECT i.id
+                           FROM ingredients i
+                           WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup') THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
 END;

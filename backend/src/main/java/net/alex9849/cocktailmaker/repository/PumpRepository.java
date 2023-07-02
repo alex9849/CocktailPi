@@ -3,8 +3,6 @@ package net.alex9849.cocktailmaker.repository;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
-import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -31,7 +29,7 @@ public class PumpRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (dtype, name, " +
                     "completed, enabled, tube_capacity, current_ingredient_id, filling_level_in_ml, " +
                     "is_pumped_up, pin, time_per_cl_in_ms, is_power_state_high, acceleration, " +
-                    "step_pin, enable_pin, steps_per_cl, min_step_delta) VALUES " +
+                    "step_pin, enable_pin, steps_per_cl, max_steps_per_second) VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             setParameters(pump, pstmt);
             pstmt.execute();
@@ -50,7 +48,7 @@ public class PumpRepository extends JdbcDaoSupport {
                     "completed = ?, enabled = ?, tube_capacity = ?, current_ingredient_id = ?, " +
                     "filling_level_in_ml = ?, is_pumped_up = ?, pin = ?, time_per_cl_in_ms = ?, " +
                     "is_power_state_high = ?, acceleration = ?, step_pin = ?, enable_pin = ?, " +
-                    "steps_per_cl = ?, min_step_delta = ? WHERE id = ?");
+                    "steps_per_cl = ?, max_steps_per_second = ? WHERE id = ?");
             setParameters(pump, pstmt);
             pstmt.setLong(17, pump.getId());
             return pstmt.executeUpdate() != 0;
@@ -91,8 +89,10 @@ public class PumpRepository extends JdbcDaoSupport {
 
     public Optional<Pump> findByBcmPin(int bcmPin) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where bcm_pin = ?");
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where bcm_pin = ? or enable_pin = ? or step_pin = ?");
             pstmt.setInt(1, bcmPin);
+            pstmt.setInt(2, bcmPin);
+            pstmt.setInt(3, bcmPin);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return Optional.of(parseRs(rs));
@@ -150,7 +150,7 @@ public class PumpRepository extends JdbcDaoSupport {
             pstmt.setObject(13, stepperPump.getStepPin());
             pstmt.setObject(14, stepperPump.getEnablePin());
             pstmt.setObject(15, stepperPump.getStepsPerCl());
-            pstmt.setObject(16, stepperPump.getMinStepDeltaInMs());
+            pstmt.setObject(16, stepperPump.getMaxStepsPerSecond());
         } else {
             throw new IllegalArgumentException("Unknown Pump type: " + pump.getClass().getName());
         }
@@ -172,7 +172,7 @@ public class PumpRepository extends JdbcDaoSupport {
             stepperPump.setStepPin(rs.getObject("step_pin", Integer.class));
             stepperPump.setEnablePin(rs.getObject("enable_pin", Integer.class));
             stepperPump.setStepsPerCl(rs.getObject("steps_per_cl", Integer.class));
-            stepperPump.setMinStepDeltaInMs(rs.getObject("min_step_delta", Integer.class));
+            stepperPump.setMaxStepsPerSecond(rs.getObject("max_steps_per_second", Integer.class));
             pump = stepperPump;
         } else {
             throw new IllegalStateException("Unknown pump-dType: " + dType);
