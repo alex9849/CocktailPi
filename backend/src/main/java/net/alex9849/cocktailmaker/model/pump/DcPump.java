@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.model.pump;
 
 import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
+import net.alex9849.motorlib.DCMotor;
 import net.alex9849.motorlib.IMotorPin;
 
 import javax.persistence.DiscriminatorValue;
@@ -12,7 +13,7 @@ public class DcPump extends Pump {
     private Integer timePerClInMs;
     private Integer bcmPin;
     private Boolean isPowerStateHigh;
-    private IMotorPin gpioPin;
+    private DCMotor motorDriver;
 
     public Integer getTimePerClInMs() {
         return timePerClInMs;
@@ -31,7 +32,7 @@ public class DcPump extends Pump {
             return;
         }
         this.bcmPin = bcmPin;
-        this.gpioPin = null;
+        this.resetDriver();
     }
 
     public Boolean isPowerStateHigh() {
@@ -40,20 +41,28 @@ public class DcPump extends Pump {
 
     public void setPowerStateHigh(Boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
+        this.resetDriver();
     }
 
-    private IMotorPin getGpioPin() {
-        if(gpioPin == null) {
+    public DCMotor getMotorDriver() {
+        if(motorDriver == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
-            gpioPin = controller.getGpioPin(getBcmPin());
+            IMotorPin runPin = controller.getGpioPin(getBcmPin());
+            IMotorPin dirPin = new IMotorPin() {
+                @Override
+                public void digitalWrite(PinState value) {
+                    //TODO implement direction functionality
+                }
+
+                @Override
+                public boolean isHigh() {
+                    return false;
+                }
+            };
+            motorDriver = new DCMotor(runPin, dirPin, isPowerStateHigh()? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
         }
-        return gpioPin;
+        return motorDriver;
     }
-
-    public boolean isRunning() {
-        return getGpioPin().isHigh() == isPowerStateHigh();
-    }
-
     public int getConvertMlToRuntime(double mlToPump) {
         double multiplier = 1;
         if(getCurrentIngredient() != null) {
@@ -70,11 +79,10 @@ public class DcPump extends Pump {
                 * this.getTimePerClInMs() / 10d);
     }
 
-    public void setRunning(boolean run) {
-        if(run == isPowerStateHigh()) {
-            getGpioPin().digitalWrite(IMotorPin.PinState.HIGH);
-        } else {
-            getGpioPin().digitalWrite(IMotorPin.PinState.LOW);
+    private void resetDriver() {
+        if(this.motorDriver != null) {
+            this.motorDriver.shutdown();
+            this.motorDriver = null;
         }
     }
 

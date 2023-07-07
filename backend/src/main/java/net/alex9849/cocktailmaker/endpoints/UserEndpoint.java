@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,7 @@ public class UserEndpoint {
     }
 
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest, HttpServletRequest request) {
+    public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User updateUser = userService.fromDto(updateUserRequest.getUserDto());
         if(userId == null) {
@@ -93,7 +92,7 @@ public class UserEndpoint {
     }
 
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable(value = "id", required = false) Long userId, HttpServletRequest request) {
+    public ResponseEntity<?> getUser(@PathVariable(value = "id", required = false) Long userId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(userId == null) {
             userId = principal.getId();

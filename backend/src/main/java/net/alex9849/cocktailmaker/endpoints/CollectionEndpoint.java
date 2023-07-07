@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
@@ -16,8 +17,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -74,7 +73,7 @@ public class CollectionEndpoint {
     public ResponseEntity<?> updateCollection(@Valid @RequestPart("collection") CollectionDto.Request.Create collectionDto,
                                               @RequestPart(value = "image", required = false) MultipartFile file,
                                               @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
-                                              @PathVariable("id") long id, HttpServletRequest request) throws IOException {
+                                              @PathVariable("id") long id) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection existingCollection = collectionService.getCollectionById(id);
         if(existingCollection == null) {

@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.Collection;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.ERole;
@@ -24,8 +25,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -92,7 +91,7 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipe(@PathVariable("id") long id, HttpServletRequest request) {
+    ResponseEntity<?> getRecipe(@PathVariable("id") long id) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if (recipe == null) {
@@ -130,7 +129,7 @@ public class RecipeEndpoint {
     ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file,
                                    @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
-                                   @PathVariable("id") long id, HttpServletRequest request) throws IOException {
+                                   @PathVariable("id") long id) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
         recipe.setId(id);
@@ -172,7 +171,7 @@ public class RecipeEndpoint {
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    ResponseEntity<?> deleteRecipe(@PathVariable("id") long id, HttpServletRequest request) {
+    ResponseEntity<?> deleteRecipe(@PathVariable("id") long id) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if (recipe == null) {

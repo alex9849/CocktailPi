@@ -70,7 +70,7 @@ public class StepperPump extends Pump {
         }
     }
 
-    public AcceleratingStepper getStepperDriver() {
+    public AcceleratingStepper getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");
         }

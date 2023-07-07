@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.endpoints;
 
+import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.Category;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailmaker.service.CategoryService;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
