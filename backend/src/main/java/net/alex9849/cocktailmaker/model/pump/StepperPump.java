@@ -1,14 +1,22 @@
 package net.alex9849.cocktailmaker.model.pump;
 
+import net.alex9849.cocktailmaker.hardware.IGpioController;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
+import net.alex9849.motorlib.AcceleratingStepper;
+import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.IStepperMotor;
+import net.alex9849.motorlib.StepperDriver;
+
 import javax.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("StepperPump")
 public class StepperPump extends Pump {
-    Integer enablePin;
-    Integer stepPin;
-    Integer stepsPerCl;
-    Integer minStepDeltaInMs;
-    Integer acceleration;
+    private AcceleratingStepper stepperDriver;
+    private Integer enablePin;
+    private Integer stepPin;
+    private Integer stepsPerCl;
+    private Integer minStepDeltaInMs;
+    private Integer acceleration;
 
     public Integer getEnablePin() {
         return enablePin;
@@ -16,6 +24,7 @@ public class StepperPump extends Pump {
 
     public void setEnablePin(Integer enablePin) {
         this.enablePin = enablePin;
+        resetDriver();
     }
 
     public Integer getStepPin() {
@@ -24,6 +33,7 @@ public class StepperPump extends Pump {
 
     public void setStepPin(Integer stepPin) {
         this.stepPin = stepPin;
+        resetDriver();
     }
 
     public Integer getStepsPerCl() {
@@ -32,6 +42,7 @@ public class StepperPump extends Pump {
 
     public void setStepsPerCl(Integer stepsPerCl) {
         this.stepsPerCl = stepsPerCl;
+        resetDriver();
     }
 
     public Integer getMaxStepsPerSecond() {
@@ -40,6 +51,7 @@ public class StepperPump extends Pump {
 
     public void setMaxStepsPerSecond(Integer minStepDeltaInMs) {
         this.minStepDeltaInMs = minStepDeltaInMs;
+        resetDriver();
     }
 
     public Integer getAcceleration() {
@@ -48,18 +60,42 @@ public class StepperPump extends Pump {
 
     public void setAcceleration(Integer acceleration) {
         this.acceleration = acceleration;
+        resetDriver();
     }
 
-    @Override
-    public boolean isRunning() {
-        //TODO
-        throw new IllegalStateException("Not implemented yet!");
+    private void resetDriver() {
+        if(this.stepperDriver != null) {
+            this.stepperDriver.shutdown();
+            this.stepperDriver = null;
+        }
     }
 
-    @Override
-    public void setRunning(boolean run) {
-        //TODO
-        throw new IllegalStateException("Not implemented yet!");
+    public AcceleratingStepper getStepperDriver() {
+        if(!isCanPump()) {
+            throw new IllegalStateException("Motor not ready for pumping!");
+        }
+        if(this.stepperDriver == null) {
+            IGpioController controller = SpringUtility.getBean(IGpioController.class);
+            IMotorPin enablePin = controller.getGpioPin(getEnablePin());
+            IMotorPin stepPin = controller.getGpioPin(getStepPin());
+            IMotorPin dirPin = new IMotorPin() {
+                @Override
+                public void digitalWrite(PinState value) {
+                    //TODO implement direction functionality
+                }
+
+                @Override
+                public boolean isHigh() {
+                    return false;
+                }
+            };
+
+            IStepperMotor motor = new StepperDriver(enablePin, stepPin, dirPin);
+            this.stepperDriver = new AcceleratingStepper(motor);
+            this.stepperDriver.setMaxSpeed(getMaxStepsPerSecond());
+            this.stepperDriver.setAcceleration(getAcceleration());
+        }
+        return this.stepperDriver;
     }
 
     @Override

@@ -1,4 +1,6 @@
-package net.alex9849.cocktailmaker.iface;
+package net.alex9849.cocktailmaker.hardware;
+
+import net.alex9849.motorlib.IMotorPin;
 
 import java.util.HashMap;
 
@@ -6,7 +8,7 @@ public class DemoModeGpioController implements IGpioController {
     private HashMap<Integer, DemoModeGpioPin> pinMap = new HashMap<>();
 
     @Override
-    public synchronized IGpioPin getGpioPin(int bcmPinNr) {
+    public synchronized IMotorPin getGpioPin(int bcmPinNr) {
         return pinMap.computeIfAbsent(bcmPinNr, p -> new DemoModeGpioPin(bcmPinNr));
     }
 

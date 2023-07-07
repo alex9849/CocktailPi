@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.model.pump;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
-import net.alex9849.cocktailmaker.iface.IGpioPin;
+import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
+import net.alex9849.motorlib.IMotorPin;
 
 import javax.persistence.DiscriminatorValue;
 import java.util.Objects;
@@ -12,7 +12,7 @@ public class DcPump extends Pump {
     private Integer timePerClInMs;
     private Integer bcmPin;
     private Boolean isPowerStateHigh;
-    private IGpioPin gpioPin;
+    private IMotorPin gpioPin;
 
     public Integer getTimePerClInMs() {
         return timePerClInMs;
@@ -42,7 +42,7 @@ public class DcPump extends Pump {
         this.isPowerStateHigh = isPowerStateHigh;
     }
 
-    public IGpioPin getGpioPin() {
+    private IMotorPin getGpioPin() {
         if(gpioPin == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
             gpioPin = controller.getGpioPin(getBcmPin());
@@ -51,8 +51,7 @@ public class DcPump extends Pump {
     }
 
     public boolean isRunning() {
-        IGpioPin gpioPin = getGpioPin();
-        return gpioPin.isHigh() == isPowerStateHigh();
+        return getGpioPin().isHigh() == isPowerStateHigh();
     }
 
     public int getConvertMlToRuntime(double mlToPump) {
@@ -73,9 +72,9 @@ public class DcPump extends Pump {
 
     public void setRunning(boolean run) {
         if(run == isPowerStateHigh()) {
-            getGpioPin().setHigh();
+            getGpioPin().digitalWrite(IMotorPin.PinState.HIGH);
         } else {
-            getGpioPin().setLow();
+            getGpioPin().digitalWrite(IMotorPin.PinState.LOW);
         }
     }
 

@@ -33,6 +33,9 @@ public class PumpService {
     private PumpUpService pumpUpService;
 
     @Autowired
+    private PumpLockService pumpLockService;
+
+    @Autowired
     private WebSocketService webSocketService;
 
     @Autowired

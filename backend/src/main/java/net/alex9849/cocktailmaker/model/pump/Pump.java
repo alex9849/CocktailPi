@@ -1,7 +1,5 @@
 package net.alex9849.cocktailmaker.model.pump;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
-import net.alex9849.cocktailmaker.iface.IGpioPin;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
@@ -52,10 +50,6 @@ public abstract class Pump {
     public Long getCurrentIngredientId() {
         return currentIngredientId;
     }
-
-    public abstract boolean isRunning();
-
-    public abstract void setRunning(boolean run);
 
     public boolean isPumpedUp() {
         return isPumpedUp;

@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.config;
 
-import net.alex9849.cocktailmaker.iface.IGpioController;
+import net.alex9849.cocktailmaker.hardware.DemoModeGpioController;
+import net.alex9849.cocktailmaker.hardware.IGpioController;
+import net.alex9849.cocktailmaker.hardware.ProdModeGpioController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,14 +19,10 @@ public class Config {
     @Bean(destroyMethod = "shutdown")
     public IGpioController getGpioController() {
         if(gpioController == null) {
-            try {
-                if(isRaspberryPi) {
-                    gpioController = (IGpioController) Class.forName("net.alex9849.cocktailmaker.iface.ProdModeGpioController").newInstance();
-                } else {
-                    gpioController = (IGpioController) Class.forName("net.alex9849.cocktailmaker.iface.DemoModeGpioController").newInstance();
-                }
-            } catch (IllegalAccessException | ClassNotFoundException | InstantiationException e) {
-                e.printStackTrace();
+            if(isRaspberryPi) {
+                gpioController = new ProdModeGpioController();
+            } else {
+                gpioController = new DemoModeGpioController();
             }
         }
         return gpioController;

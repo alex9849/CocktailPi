@@ -1,10 +1,11 @@
-package net.alex9849.cocktailmaker.iface;
+package net.alex9849.cocktailmaker.hardware;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfigBuilder;
 import com.pi4j.io.gpio.digital.DigitalState;
+import net.alex9849.motorlib.IMotorPin;
 
 import java.util.HashMap;
 
@@ -14,7 +15,7 @@ public class ProdModeGpioController implements IGpioController {
     public Context context = Pi4J.newAutoContext();
 
     @Override
-    public synchronized IGpioPin getGpioPin(int bcmPinNr) {
+    public synchronized IMotorPin getGpioPin(int bcmPinNr) {
         if(!pinMap.containsKey(bcmPinNr)) {
             DigitalOutputConfigBuilder config = DigitalOutput
                     .newConfigBuilder(context)

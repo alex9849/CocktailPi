@@ -3,11 +3,13 @@ package net.alex9849.cocktailmaker.service.pumps;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Service
 public class PumpLockService {
-    private Map<Long, Object> pumpByLockOwner;
+    private final Map<Long, Object> pumpByLockOwner = new HashMap<>();
     private Object globalOwner;
 
     public synchronized boolean isPumpLocked(long pumpId) {
