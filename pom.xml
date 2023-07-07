@@ -25,4 +25,19 @@
         <java.version>11</java.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>alex9849</id>
+            <url>https://nexus.liggesmeyer.net/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>alex9849-snapshot</id>
+            <url>https://nexus.liggesmeyer.net/repository/maven-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>
