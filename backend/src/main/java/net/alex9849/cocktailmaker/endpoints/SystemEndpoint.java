@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
-import net.alex9849.cocktailmaker.service.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import net.alex9849.cocktailmaker.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

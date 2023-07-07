@@ -6,13 +6,13 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
+import net.alex9849.cocktailmaker.service.pumps.PumpService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.*;
 
 @Service

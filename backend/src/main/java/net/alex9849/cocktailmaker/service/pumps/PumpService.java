@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.service;
+package net.alex9849.cocktailmaker.service.pumps;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
@@ -9,6 +9,9 @@ import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
+import net.alex9849.cocktailmaker.service.CocktailOrderService;
+import net.alex9849.cocktailmaker.service.IngredientService;
+import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +222,7 @@ public class PumpService {
         pumpUpService.updateReversePumpSettingsCountdown();
     }
 
-    Set<Long> findIngredientIdsOnPump() {
+    public Set<Long> findIngredientIdsOnPump() {
         return pumpRepository.findIngredientIdsOnPump();
     }
 
