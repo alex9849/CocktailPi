@@ -1,9 +1,8 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.FileEventAction;
-
-import javax.validation.constraints.Size;
 
 public abstract class FileEventActionDto {
     private interface FileName { @Size(max = 255) String getFileName(); }

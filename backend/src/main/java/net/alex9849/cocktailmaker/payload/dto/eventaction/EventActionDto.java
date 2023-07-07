@@ -2,12 +2,12 @@ package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.*;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

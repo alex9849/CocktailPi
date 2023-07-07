@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
@@ -8,8 +10,6 @@ import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;

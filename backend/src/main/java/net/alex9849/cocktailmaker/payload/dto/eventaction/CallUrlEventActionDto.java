@@ -1,11 +1,10 @@
 package net.alex9849.cocktailmaker.payload.dto.eventaction;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.eventaction.CallUrlEventAction;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CallUrlEventActionDto {

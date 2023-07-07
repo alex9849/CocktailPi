@@ -1,10 +1,9 @@
 package net.alex9849.cocktailmaker.payload.dto.category;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryDto {

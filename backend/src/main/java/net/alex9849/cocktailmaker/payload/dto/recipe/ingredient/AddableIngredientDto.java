@@ -1,12 +1,12 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe.ingredient;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.ManualIngredient;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class AddableIngredientDto {

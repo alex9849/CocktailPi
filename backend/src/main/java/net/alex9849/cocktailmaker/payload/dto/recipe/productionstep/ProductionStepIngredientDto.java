@@ -1,12 +1,11 @@
 package net.alex9849.cocktailmaker.payload.dto.recipe.productionstep;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import org.springframework.beans.BeanUtils;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductionStepIngredientDto {

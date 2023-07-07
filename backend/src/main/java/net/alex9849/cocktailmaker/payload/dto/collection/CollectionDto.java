@@ -1,17 +1,17 @@
 package net.alex9849.cocktailmaker.payload.dto.collection;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.Collection;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CollectionDto {
     private interface Id { long getId(); }
-    private interface Name { @NotNull @javax.validation.constraints.Size(min = 3, max = 20) String getName(); }
-    private interface Description { @NotNull @javax.validation.constraints.Size(max = 2000) String getDescription(); }
+    private interface Name { @NotNull @jakarta.validation.constraints.Size(min = 3, max = 20) String getName(); }
+    private interface Description { @NotNull @jakarta.validation.constraints.Size(max = 2000) String getDescription(); }
     private interface Completed { boolean isCompleted(); }
     private interface HasImage { boolean isHasImage(); }
     private interface Size { int getSize(); }

@@ -1,9 +1,8 @@
 package net.alex9849.cocktailmaker.payload.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 public class UpdateUserRequest {
 

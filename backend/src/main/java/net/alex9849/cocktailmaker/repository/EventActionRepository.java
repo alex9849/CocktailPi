@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.eventaction.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -7,8 +9,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.DiscriminatorValue;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
