@@ -1,8 +1,8 @@
 package net.alex9849.cocktailmaker.model.eventaction;
 
+import jakarta.persistence.DiscriminatorValue;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.DiscriminatorValue;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;

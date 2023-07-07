@@ -1,11 +1,11 @@
 package net.alex9849.cocktailmaker.model.pump;
 
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.DCMotor;
 import net.alex9849.motorlib.IMotorPin;
 
-import javax.persistence.DiscriminatorValue;
 import java.util.Objects;
 
 @DiscriminatorValue("DcPump")

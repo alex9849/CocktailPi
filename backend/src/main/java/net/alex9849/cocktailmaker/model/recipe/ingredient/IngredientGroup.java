@@ -1,9 +1,9 @@
 package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
-import javax.persistence.DiscriminatorValue;
 import java.util.HashSet;
 import java.util.Set;
 

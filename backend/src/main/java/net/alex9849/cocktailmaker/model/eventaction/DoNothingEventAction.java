@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.eventaction;
 
-import javax.persistence.DiscriminatorValue;
+
+import jakarta.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("DoNothing")
 public class DoNothingEventAction extends EventAction {

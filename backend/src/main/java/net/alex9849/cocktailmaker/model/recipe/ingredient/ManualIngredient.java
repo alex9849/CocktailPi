@@ -1,6 +1,6 @@
 package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
-import javax.persistence.DiscriminatorValue;
+import jakarta.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("ManualIngredient")
 public class ManualIngredient extends AddableIngredient {

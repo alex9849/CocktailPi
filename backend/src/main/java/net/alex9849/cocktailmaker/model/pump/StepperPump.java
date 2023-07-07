@@ -1,13 +1,12 @@
 package net.alex9849.cocktailmaker.model.pump;
 
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.AcceleratingStepper;
 import net.alex9849.motorlib.IMotorPin;
 import net.alex9849.motorlib.IStepperMotor;
 import net.alex9849.motorlib.StepperDriver;
-
-import javax.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("StepperPump")
 public class StepperPump extends Pump {

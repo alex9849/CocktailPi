@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.recipe.productionstep;
 
-import javax.persistence.DiscriminatorValue;
+
+import jakarta.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("WrittenInstruction")
 public class WrittenInstructionProductionStep implements ProductionStep {

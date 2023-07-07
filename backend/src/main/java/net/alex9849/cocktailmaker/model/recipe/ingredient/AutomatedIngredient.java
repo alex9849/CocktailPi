@@ -1,9 +1,8 @@
 package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
+import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
-
-import javax.persistence.DiscriminatorValue;
 
 @DiscriminatorValue("AutomatedIngredient")
 public class AutomatedIngredient extends AddableIngredient {

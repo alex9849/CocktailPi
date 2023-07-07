@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.eventaction;
 
-import javax.persistence.DiscriminatorValue;
+import jakarta.persistence.DiscriminatorValue;
+
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.util.Objects;
