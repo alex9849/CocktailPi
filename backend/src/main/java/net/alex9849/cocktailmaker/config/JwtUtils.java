@@ -61,20 +61,20 @@ public class JwtUtils {
     }
 
     public long getUserIdFromJwtToken(String token) {
-        return Long.parseLong(Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().getSubject());
+        return Long.parseLong(Jwts.parserBuilder().setSigningKey(getSecretKey().toString().getBytes()).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     public Date getExpirationDateFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().getExpiration();
+        return Jwts.parserBuilder().setSigningKey(getSecretKey().toString().getBytes()).build().parseClaimsJws(token).getBody().getExpiration();
     }
 
     public boolean isRemember(String token) {
-        return (boolean) Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(token).getBody().get("remember");
+        return (boolean) Jwts.parserBuilder().setSigningKey(getSecretKey().toString().getBytes()).build().parseClaimsJws(token).getBody().get("remember");
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(getSecretKey().toString()).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(getSecretKey().toString().getBytes()).build().parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
@@ -84,7 +84,7 @@ public class JwtUtils {
             logger.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
-        } catch (SignatureException e) {
+        } catch (JwtException e) {
             logger.error("Untrusted JWT token: {}", e.getMessage());
         }
 
@@ -93,7 +93,7 @@ public class JwtUtils {
 
     public String parseJwt(@Nullable String authHeaderContent) {
         if (StringUtils.hasText(authHeaderContent) && authHeaderContent.startsWith("Bearer ")) {
-            return authHeaderContent.substring(7, authHeaderContent.length());
+            return authHeaderContent.substring(7);
         }
         return null;
     }
