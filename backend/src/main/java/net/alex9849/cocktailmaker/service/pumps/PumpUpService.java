@@ -50,7 +50,6 @@ public class PumpUpService {
 
     public void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
-        this.setReversePumpingDirection(false);
         this.reschedulePumpBack();
     }
 
@@ -86,7 +85,7 @@ public class PumpUpService {
         this.direction = direction;
 
         double overshootMultiplier = 1;
-        if(this.direction == Direction.BACKWARD) {
+        if (this.direction == Direction.BACKWARD) {
             overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
         }
 
@@ -147,7 +146,7 @@ public class PumpUpService {
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
-        if(pumpService.getAllPumps().stream().anyMatch(p -> pumpService.getPumpOccupation(p) != PumpService.PumpOccupation.NONE)) {
+        if (pumpService.getAllPumps().stream().anyMatch(p -> pumpService.getPumpOccupation(p) != PumpService.PumpOccupation.NONE)) {
             throw new IllegalStateException("Pumps occupied!");
         }
 
@@ -157,7 +156,7 @@ public class PumpUpService {
             optionsRepository.setOption("RPSOvershoot", Integer.valueOf(details.getOvershoot()).toString());
             optionsRepository.setOption("RPSAutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
             ReversePumpingSettings.VoltageDirectorPin vdPin = details.getDirectorPin();
-            if(pumpService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
+            if (pumpService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
                 throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
             }
             optionsRepository.setOption("RPSVDPinFwStateHigh", Boolean.valueOf(vdPin.isForwardStateHigh()).toString());
@@ -169,7 +168,6 @@ public class PumpUpService {
             optionsRepository.delOption("RPSVDPinBcm", false);
         }
         this.reversePumpSettings = settings;
-        this.setReversePumpingDirection(false);
         reschedulePumpBack();
     }
 
@@ -191,7 +189,7 @@ public class PumpUpService {
     }
 
     public boolean isGpioInUseAdVdPin(int bcmPin) {
-        if(this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
+        if (this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
             return false;
         }
         return this.reversePumpSettings.getSettings().getDirectorPin().getBcmPin() == bcmPin;
@@ -237,7 +235,7 @@ public class PumpUpService {
         public void run() {
             AcceleratingStepper driver = stepperPump.getMotorDriver();
             long nrSteps = (long) (multiplier * stepperPump.getStepsPerCl() * stepperPump.getTubeCapacityInMl());
-            if(direction == Direction.BACKWARD) {
+            if (direction == Direction.BACKWARD) {
                 nrSteps = -nrSteps;
             }
             driver.move(nrSteps);
