@@ -1,6 +1,5 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
-import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
@@ -39,13 +38,10 @@ public class PumpUpService {
     @Autowired
     private WebSocketService webSocketService;
 
-    @Autowired
-    private IGpioController gpioController;
-
     private final ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
     private ReversePumpingSettings.Full reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
-    private final Map<Long, Map.Entry<IMotor, ScheduledFuture<?>>> pumpingUpTasks = new HashMap<>();
+    private final Map<Long, PumpTask> pumpingTasks = new HashMap<>();
     private Direction direction = Direction.FORWARD;
 
     public void postConstruct() {
@@ -54,26 +50,29 @@ public class PumpUpService {
     }
 
     public synchronized boolean isPumpPumpingUp(Pump pump) {
-        return this.pumpingUpTasks.containsKey(pump.getId());
+        return pumpingTasks.containsKey(pump.getId()) && pumpingTasks.get(pump.getId()).isPumpUp();
+    }
+
+    public synchronized boolean isPumpRunning(long id) {
+        return this.pumpingTasks.containsKey(id);
     }
 
     public synchronized void cancelPumpUp(Pump pump) {
-        Map.Entry<IMotor, ScheduledFuture<?>> pumpUpTask = this.pumpingUpTasks.remove(pump.getId());
-        if (pumpUpTask != null) {
-            pumpUpTask.getValue().cancel(true);
-            pumpUpTask.getKey().shutdown();
+        PumpTask pumpTask = this.pumpingTasks.remove(pump.getId());
+        if (pumpTask != null) {
+            pumpTask.cancel();
 
             pumpLockService.releasePumpLock(pump.getId(), this);
             pumpService.updatePump(pump);
         }
     }
 
-    public synchronized void pumpBackOrUp(Pump pump, Direction direction) {
+    public synchronized void runPumpOrPumpUp(Pump pump, Direction direction, boolean isPumpUp) {
         if (!pumpLockService.testAndAcquirePumpLock(pump.getId(), this)) {
             throw new IllegalArgumentException("Pump is currently occupied!");
         }
 
-        if (direction != this.direction && !this.pumpingUpTasks.isEmpty()) {
+        if (direction != this.direction && !this.pumpingTasks.isEmpty()) {
             pumpLockService.releasePumpLock(pump.getId(), this);
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
@@ -95,17 +94,27 @@ public class PumpUpService {
             DCMotor dcMotor = dcPump.getMotorDriver();
             dcMotor.setDirection(this.direction);
             DcMotorTask task = new DcMotorTask(dcPump, this.direction);
-            long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
             dcMotor.setRunning(true);
-            ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
-            this.pumpingUpTasks.put(pump.getId(), Map.entry(dcMotor, stopTask));
+            ScheduledFuture<?> stopTask;
+            if(isPumpUp) {
+                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
+                stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
+            } else {
+                stopTask = executor.schedule(() -> {}, Instant.now());
+            }
+
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcMotor, isPumpUp));
             task.cdl.countDown();
 
         } else if (pump instanceof StepperPump) {
             StepperPump stepperPump = (StepperPump) pump;
-            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, overshootMultiplier);
+            long mlToPump = (long) (overshootMultiplier * stepperPump.getTubeCapacityInMl());
+            if(!isPumpUp) {
+                mlToPump = Long.MAX_VALUE;
+            }
+            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
             ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
-            this.pumpingUpTasks.put(pump.getId(), Map.entry(stepperPump.getMotorDriver(), stopTask));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump.getMotorDriver(), isPumpUp));
             task.cdl.countDown();
 
         } else {
@@ -114,10 +123,6 @@ public class PumpUpService {
         }
 
         webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
-    }
-
-    public synchronized boolean isPumpRunning(long id) {
-        return this.pumpingUpTasks.containsKey(id);
     }
 
     public synchronized void reschedulePumpBack() {
@@ -139,7 +144,7 @@ public class PumpUpService {
             }
             for (Pump pump : allPumps) {
                 if (pump.isPumpedUp()) {
-                    this.pumpBackOrUp(pump, Direction.BACKWARD);
+                    this.runPumpOrPumpUp(pump, Direction.BACKWARD, true);
                 }
             }
         }, Instant.now().plusSeconds(60 * delay), Duration.ofMinutes(delay));
@@ -195,6 +200,27 @@ public class PumpUpService {
         return this.reversePumpSettings.getSettings().getDirectorPin().getBcmPin() == bcmPin;
     }
 
+    private static class PumpTask {
+        private final ScheduledFuture<?> future;
+        private final IMotor motor;
+        private final boolean isPumpUp;
+
+        public PumpTask(ScheduledFuture<?> future, IMotor motor, boolean isPumpUp) {
+            this.future = future;
+            this.motor = motor;
+            this.isPumpUp = isPumpUp;
+        }
+
+        public void cancel() {
+            future.cancel(true);
+            motor.shutdown();
+        }
+
+        public boolean isPumpUp() {
+            return isPumpUp;
+        }
+    }
+
     private class DcMotorTask implements Runnable {
         DcPump dcPump;
         CountDownLatch cdl;
@@ -222,19 +248,29 @@ public class PumpUpService {
         StepperPump stepperPump;
         CountDownLatch cdl;
         Direction direction;
-        double multiplier;
+        long mlToPump;
 
-        StepperMotorTask(StepperPump stepperPump, Direction direction, double multiplier) {
+        /**
+         *
+         * @param mlToPump Long.MAX_VALUE == unlimited
+         */
+        StepperMotorTask(StepperPump stepperPump, Direction direction, long mlToPump) {
             this.stepperPump = stepperPump;
             this.direction = direction;
             this.cdl = new CountDownLatch(1);
-            this.multiplier = multiplier;
+            this.mlToPump = mlToPump;
         }
 
         @Override
         public void run() {
             AcceleratingStepper driver = stepperPump.getMotorDriver();
-            long nrSteps = (long) (multiplier * stepperPump.getStepsPerCl() * stepperPump.getTubeCapacityInMl());
+            long nrSteps = mlToPump * stepperPump.getStepsPerCl();
+            if(mlToPump == Long.MAX_VALUE) {
+                //Pick a very large number
+                nrSteps = 10000000000L;
+            } else {
+                nrSteps = mlToPump * stepperPump.getStepsPerCl();
+            }
             if (direction == Direction.BACKWARD) {
                 nrSteps = -nrSteps;
             }
