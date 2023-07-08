@@ -222,7 +222,7 @@ public class PumpService {
         }
         pumpUpService.cancelPumpUp(pump);
         pump.setRunning(turnOn);
-        pumpUpService.updateReversePumpSettingsCountdown();
+        pumpUpService.reschedulePumpBack();
     }
 
     public Set<Long> findIngredientIdsOnPump() {

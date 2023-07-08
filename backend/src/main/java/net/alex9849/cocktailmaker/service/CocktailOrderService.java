@@ -1,9 +1,9 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
-import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -70,7 +70,7 @@ public class CocktailOrderService {
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         this.cocktailFactory = cocktailFactory;
         this.cocktailFactory.makeCocktail();
-        this.pumpUpService.updateReversePumpSettingsCountdown();
+        this.pumpUpService.reschedulePumpBack();
     }
 
     private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
@@ -78,7 +78,7 @@ public class CocktailOrderService {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
-                this.pumpUpService.updateReversePumpSettingsCountdown();
+                this.pumpUpService.reschedulePumpBack();
             }, 5000, TimeUnit.MILLISECONDS);
             this.webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
         }
