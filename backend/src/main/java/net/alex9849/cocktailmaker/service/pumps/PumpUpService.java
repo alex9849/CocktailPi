@@ -67,7 +67,7 @@ public class PumpUpService {
         }
     }
 
-    public synchronized void runPumpOrPumpUp(Pump pump, Direction direction, boolean isPumpUp) {
+    public synchronized void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean isPumpUp) {
         if (!pumpLockService.testAndAcquirePumpLock(pump.getId(), this)) {
             throw new IllegalArgumentException("Pump is currently occupied!");
         }
@@ -144,7 +144,7 @@ public class PumpUpService {
             }
             for (Pump pump : allPumps) {
                 if (pump.isPumpedUp()) {
-                    this.runPumpOrPumpUp(pump, Direction.BACKWARD, true);
+                    this.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, true);
                 }
             }
         }, Instant.now().plusSeconds(60 * delay), Duration.ofMinutes(delay));
