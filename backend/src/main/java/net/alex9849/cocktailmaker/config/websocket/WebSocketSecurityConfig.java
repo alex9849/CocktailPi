@@ -21,6 +21,8 @@ public class WebSocketSecurityConfig {
     @Bean
     AuthorizationManager<Message<?>> authorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         return messages.simpTypeMatchers(SimpMessageType.CONNECT).authenticated()
+               // .simpDestMatchers(WebSocketService.WS_ACTIONS_STATUS_DESTINATION).hasAuthority(ERole.ROLE_ADMIN.name())
+               // .simpDestMatchers(WebSocketService.WS_ACTIONS_LOG_DESTINATION).hasAuthority(ERole.ROLE_ADMIN.name())
                 .simpMessageDestMatchers("/topic/**", "/queue/**").denyAll().build();
     }
 }

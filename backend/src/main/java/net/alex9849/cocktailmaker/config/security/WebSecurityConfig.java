@@ -53,6 +53,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                .requestMatchers("/websocket/**").permitAll()
+                                .requestMatchers("/api/csrf").permitAll()
                                 .requestMatchers("/api/auth/refreshToken").authenticated()
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/recipe/*/image").permitAll()

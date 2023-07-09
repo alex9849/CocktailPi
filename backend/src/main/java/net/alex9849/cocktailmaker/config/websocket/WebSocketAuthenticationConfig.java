@@ -2,7 +2,9 @@ package net.alex9849.cocktailmaker.config.websocket;
 
 import net.alex9849.cocktailmaker.config.JwtUtils;
 import net.alex9849.cocktailmaker.config.security.UserDetailsServiceImpl;
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -10,13 +12,15 @@ import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.List;
@@ -33,12 +37,26 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
     private UserDetailsServiceImpl userDetailsService;
 
     @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic", "/queue");
+        config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/websocket/").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/websocket/").setAllowedOriginPatterns("*").withSockJS()
+                .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js");
+    }
+
+    @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new WebSocketTopicSubscriptionInterceptor(WebSocketService.WS_ACTIONS_STATUS_DESTINATION, ERole.ROLE_ADMIN));
+        registration.interceptors(new WebSocketTopicSubscriptionInterceptor(WebSocketService.WS_ACTIONS_LOG_DESTINATION, ERole.ROLE_ADMIN));
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     List<String> authorization = accessor.getNativeHeader("Authorization");
                     if(authorization.isEmpty()) {
@@ -51,6 +69,8 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
                     User user = userDetailsService.loadUserById(jwtUtils.getUserIdFromJwtToken(token));
                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     accessor.setUser(authentication);
+                    accessor.setLeaveMutable(true);
+                    return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
                 }
                 return message;
             }
