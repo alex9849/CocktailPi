@@ -6,7 +6,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientGroupDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.ManualIngredientDto;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
-import net.alex9849.cocktailmaker.service.pumps.PumpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.UncategorizedSQLException;
@@ -23,7 +23,7 @@ public class IngredientService {
     private IngredientRepository ingredientRepository;
 
     @Autowired
-    private PumpService pumpService;
+    private PumpDataService pumpService;
 
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);

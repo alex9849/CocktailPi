@@ -5,11 +5,11 @@ import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
-import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.motorlib.AcceleratingStepper;
 import net.alex9849.motorlib.DCMotor;
 import net.alex9849.motorlib.Direction;
-import net.alex9849.motorlib.IMotor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledFuture;
 @Transactional
 public class PumpUpService {
     @Autowired
-    private PumpService pumpService;
+    private PumpDataService pumpService;
 
     @Autowired
     private PumpLockService pumpLockService;
@@ -35,8 +35,7 @@ public class PumpUpService {
     @Autowired
     private OptionsRepository optionsRepository;
 
-    @Autowired
-    private WebSocketService webSocketService;
+    private final Logger logger = LoggerFactory.getLogger(PumpUpService.class);
 
     private final ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
     private ReversePumpingSettings.Full reversePumpSettings;
@@ -49,21 +48,45 @@ public class PumpUpService {
         this.reschedulePumpBack();
     }
 
-    public synchronized boolean isPumpPumpingUp(Pump pump) {
-        return pumpingTasks.containsKey(pump.getId()) && pumpingTasks.get(pump.getId()).isPumpUp();
+    public synchronized void runAllPumps() {
+        if(!pumpLockService.testAndAcquireGlobal(this)) {
+            throw new IllegalArgumentException("Pumps are currently occupied!");
+        }
+        try {
+            List<Pump> pumps = pumpService.getAllPumps();
+            for(Pump pump : pumps) {
+                if(!pump.isCanPump()) {
+                    continue;
+                }
+                runPumpOrPerformPumpUp(pump, Direction.FORWARD, false);
+            }
+        } finally {
+            pumpLockService.releaseGlobal(this);
+        }
     }
 
-    public synchronized boolean isPumpRunning(long id) {
-        return this.pumpingTasks.containsKey(id);
+    public synchronized void stopAllPumps() {
+        List<Pump> pumps = pumpService.getAllPumps();
+        for(Pump pump : pumps) {
+            cancelPumpUp(pump.getId());
+        }
     }
 
-    public synchronized void cancelPumpUp(Pump pump) {
-        PumpTask pumpTask = this.pumpingTasks.remove(pump.getId());
+    public synchronized boolean isPumpPumpingUp(long pumpId) {
+        return pumpingTasks.containsKey(pumpId) && pumpingTasks.get(pumpId).isPumpUp();
+    }
+
+    public synchronized boolean isPumpRunning(long pumpId) {
+        return this.pumpingTasks.containsKey(pumpId);
+    }
+
+    public synchronized void cancelPumpUp(long pumpId) {
+        PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
         if (pumpTask != null) {
             pumpTask.cancel();
 
-            pumpLockService.releasePumpLock(pump.getId(), this);
-            pumpService.updatePump(pump);
+            pumpLockService.releasePumpLock(pumpId, this);
+            pumpService.updatePump(pumpTask.pump);
         }
     }
 
@@ -77,10 +100,15 @@ public class PumpUpService {
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
 
-        if (isPumpRunning(pump.getId())) {
+        if(!pump.isCanPump()) {
             pumpLockService.releasePumpLock(pump.getId(), this);
-            throw new IllegalArgumentException("Pump is already running!");
+            throw new IllegalArgumentException("Pump setup isn't completed yet!");
         }
+
+        if (isPumpRunning(pump.getId())) {
+            cancelPumpUp(pump.getId());
+        }
+
         this.direction = direction;
 
         double overshootMultiplier = 1;
@@ -103,7 +131,7 @@ public class PumpUpService {
                 stopTask = executor.schedule(() -> {}, Instant.now());
             }
 
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcMotor, isPumpUp));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, isPumpUp));
             task.cdl.countDown();
 
         } else if (pump instanceof StepperPump) {
@@ -114,7 +142,7 @@ public class PumpUpService {
             }
             StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
             ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump.getMotorDriver(), isPumpUp));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, isPumpUp));
             task.cdl.countDown();
 
         } else {
@@ -122,7 +150,6 @@ public class PumpUpService {
             throw new IllegalStateException("PumpType not known: " + pump.getClass().getName());
         }
 
-        webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
     }
 
     public synchronized void reschedulePumpBack() {
@@ -139,19 +166,20 @@ public class PumpUpService {
         long delay = reversePumpSettings.getSettings().getAutoPumpBackTimer();
         automaticPumpBackTask = executor.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpService.getAllPumps();
-            if (allPumps.stream().anyMatch(p -> pumpService.getPumpOccupation(p) != PumpService.PumpOccupation.NONE)) {
-                return;
-            }
             for (Pump pump : allPumps) {
-                if (pump.isPumpedUp()) {
-                    this.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, true);
+                if (pump.isPumpedUp() && pump.isCanPump()) {
+                    try {
+                        this.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, true);
+                    } catch (IllegalArgumentException e) {
+                        logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": " + e.getMessage());
+                    }
                 }
             }
         }, Instant.now().plusSeconds(60 * delay), Duration.ofMinutes(delay));
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
-        if (pumpService.getAllPumps().stream().anyMatch(p -> pumpService.getPumpOccupation(p) != PumpService.PumpOccupation.NONE)) {
+        if (pumpService.getAllPumps().stream().anyMatch(p -> pumpService.getPumpOccupation(p) != PumpDataService.PumpOccupation.NONE)) {
             throw new IllegalStateException("Pumps occupied!");
         }
 
@@ -193,27 +221,20 @@ public class PumpUpService {
         return settings;
     }
 
-    public boolean isGpioInUseAdVdPin(int bcmPin) {
-        if (this.reversePumpSettings == null || !this.reversePumpSettings.isEnable()) {
-            return false;
-        }
-        return this.reversePumpSettings.getSettings().getDirectorPin().getBcmPin() == bcmPin;
-    }
-
     private static class PumpTask {
         private final ScheduledFuture<?> future;
-        private final IMotor motor;
+        private final Pump pump;
         private final boolean isPumpUp;
 
-        public PumpTask(ScheduledFuture<?> future, IMotor motor, boolean isPumpUp) {
+        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean isPumpUp) {
             this.future = future;
-            this.motor = motor;
+            this.pump = pump;
             this.isPumpUp = isPumpUp;
         }
 
         public void cancel() {
             future.cancel(true);
-            motor.shutdown();
+            pump.getMotorDriver().shutdown();
         }
 
         public boolean isPumpUp() {
@@ -237,7 +258,7 @@ public class PumpUpService {
             dcPump.setPumpedUp(direction == Direction.FORWARD);
             try {
                 cdl.await();
-                PumpUpService.this.cancelPumpUp(dcPump);
+                PumpUpService.this.cancelPumpUp(dcPump.getId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -280,7 +301,7 @@ public class PumpUpService {
             stepperPump.setPumpedUp(direction == Direction.FORWARD);
             try {
                 cdl.await();
-                PumpUpService.this.cancelPumpUp(stepperPump);
+                PumpUpService.this.cancelPumpUp(stepperPump.getId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

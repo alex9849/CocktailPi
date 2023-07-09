@@ -45,6 +45,9 @@ public class DcPump extends Pump {
     }
 
     public DCMotor getMotorDriver() {
+        if(!isCanPump()) {
+            throw new IllegalStateException("Motor not ready for pumping!");
+        }
         if(motorDriver == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
             IMotorPin runPin = controller.getGpioPin(getBcmPin());

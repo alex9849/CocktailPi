@@ -17,8 +17,11 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredien
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
-import net.alex9849.cocktailmaker.service.*;
-import net.alex9849.cocktailmaker.service.pumps.PumpService;
+import net.alex9849.cocktailmaker.service.CategoryService;
+import net.alex9849.cocktailmaker.service.IngredientService;
+import net.alex9849.cocktailmaker.service.RecipeService;
+import net.alex9849.cocktailmaker.service.UserService;
+import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,7 @@ public class SeedDataInserter {
     private UserService userService;
 
     @Autowired
-    private PumpService pumpService;
+    private PumpDataService pumpService;
 
     Logger logger = LoggerFactory.getLogger(SeedDataInserter.class);
 

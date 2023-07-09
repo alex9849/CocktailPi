@@ -90,7 +90,6 @@ public class PumpLockService {
         if(globalLock.times_acquired <= 0) {
             globalLock = null;
         }
-        lockByPumpId.clear();
     }
 
 }

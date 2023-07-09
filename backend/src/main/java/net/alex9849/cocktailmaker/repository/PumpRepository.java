@@ -18,6 +18,8 @@ import java.util.*;
 public class PumpRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
+    private Map<Long, Pump> cachedPumps;
+
 
     @PostConstruct
     private void initialize() {

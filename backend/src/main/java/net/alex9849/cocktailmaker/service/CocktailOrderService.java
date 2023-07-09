@@ -14,7 +14,7 @@ import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
 import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
-import net.alex9849.cocktailmaker.service.pumps.PumpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class CocktailOrderService {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Autowired
-    private PumpService pumpService;
+    private PumpDataService pumpService;
 
     @Autowired
     private PumpUpService pumpUpService;
@@ -54,7 +54,7 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
         List<Pump> pumps = pumpService.getAllPumps();
-        if(pumps.stream().anyMatch(p -> this.pumpService.getPumpOccupation(p) != PumpService.PumpOccupation.NONE)) {
+        if(pumps.stream().anyMatch(p -> this.pumpService.getPumpOccupation(p) != PumpDataService.PumpOccupation.NONE)) {
             throw new IllegalStateException("Some pumps are occupied currently!");
         }
         FeasibilityFactory feasibilityFactory = this.checkFeasibility(recipe, orderConfiguration);

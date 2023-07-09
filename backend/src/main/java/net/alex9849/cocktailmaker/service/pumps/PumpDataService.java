@@ -9,7 +9,6 @@ import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
-import net.alex9849.cocktailmaker.service.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
@@ -22,15 +21,9 @@ import java.util.*;
 
 @Service
 @Transactional
-public class PumpService {
+public class PumpDataService {
     @Autowired
     private PumpRepository pumpRepository;
-
-    @Autowired
-    private CocktailOrderService cocktailOrderService;
-
-    @Autowired
-    private PumpUpService pumpUpService;
 
     @Autowired
     private PumpLockService pumpLockService;
@@ -42,6 +35,7 @@ public class PumpService {
     private IngredientService ingredientService;
 
     public void postConstruct() {
+        //Turn off all pumps?
         this.turnOnOffPumps(false);
     }
 
@@ -71,13 +65,13 @@ public class PumpService {
                     throw new IllegalArgumentException("BCM-Pin already in use!");
                 }
             }
-            if(pumpUpService.isGpioInUseAdVdPin(pin)) {
-                throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
-            }
+            //TODO check if pin already in use by other services
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
-        pump.setRunning(false);
+        if(pump.isCanPump()) {
+            pump.getMotorDriver().shutdown();
+        }
         webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
@@ -105,8 +99,8 @@ public class PumpService {
         if(!beforeUpdate.get().getClass().equals(pump.getClass())) {
             throw new IllegalArgumentException("Can't change pump type!");
         }
-        if(getPumpOccupation(beforeUpdate.get()) != PumpOccupation.NONE && !isSourceCocktailfactory) {
-            throw new IllegalStateException("Pump currently occupied!");
+        if(!pumpLockService.testAndAcquirePumpLock(pump.getId(), this) && !isSourceCocktailfactory) {
+            throw new IllegalStateException("Pump currently locked!");
         }
 
         List<Integer> pinList = new ArrayList<>();
@@ -123,12 +117,12 @@ public class PumpService {
                     throw new IllegalArgumentException("BCM-Pin already in use!");
                 }
             }
-            if(pumpUpService.isGpioInUseAdVdPin(pin)) {
-                throw new IllegalArgumentException("BCM-Pin is already used as a voltage director!");
-            }
+            //TODO check if pin already in use by other services
+        }
+        if(beforeUpdate.get().isCanPump()) {
+            beforeUpdate.get().getMotorDriver().shutdown();
         }
         pumpRepository.update(pump);
-        beforeUpdate.get().setRunning(false);
         return pump;
     }
 
@@ -145,8 +139,9 @@ public class PumpService {
             throw new IllegalStateException("Pump currently occupied!");
         }
         pumpRepository.delete(id);
-        //Turn off pump
-        pump.setRunning(false);
+        if(pump.isCanPump()) {
+            pump.getMotorDriver().shutdown();
+        }
         webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
@@ -203,26 +198,6 @@ public class PumpService {
             return PumpOccupation.RUNNING;
         }
         return PumpOccupation.NONE;
-    }
-
-    public void turnOnOffPumps(boolean turnOn) {
-        getAllPumps().forEach(p -> turnOnOffPumpInternal(p, turnOn));
-        webSocketService.broadcastPumpLayout(getAllPumps());
-    }
-
-    public void turnOnOffPump(Pump pump, boolean turnOn) {
-        turnOnOffPumpInternal(pump, turnOn);
-        webSocketService.broadcastPumpLayout(getAllPumps());
-    }
-
-    private void turnOnOffPumpInternal(Pump pump, boolean turnOn) {
-        PumpOccupation occupation = getPumpOccupation(pump);
-        if (occupation == PumpOccupation.COCKTAIL_PRODUCTION) {
-            throw new IllegalArgumentException("A cocktail is currently being prepared!");
-        }
-        pumpUpService.cancelPumpUp(pump);
-        pump.setRunning(turnOn);
-        pumpUpService.reschedulePumpBack();
     }
 
     public Set<Long> findIngredientIdsOnPump() {

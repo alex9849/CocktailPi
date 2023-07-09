@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailmaker.service.pumps.PumpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class PumpEndpoint {
 
     @Autowired
-    private PumpService pumpService;
+    private PumpDataService pumpService;
 
     @Autowired
     private PumpUpService pumpUpService;
