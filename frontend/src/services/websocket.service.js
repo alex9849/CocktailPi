@@ -16,16 +16,12 @@ class WebsocketService {
     this.stompClient.connectHeaders = {
       Authorization: authHeader()
     }
-    this.csrf = await this.getCsrfToken()
-    this.stompClient.connectHeaders[this.csrf.headerName] = this.csrf.token
     const vm = this
     this.stompClient.onConnect = async function () {
       store().commit('websocket/setReconnectThrottleInSeconds', 5)
       store().commit('websocket/setShowReconnectDialog', false)
 
       for (const subscription of vm.subscriptions) {
-        const headers = {}
-        headers[vm.csrf.headerName] = vm.csrf.token
         const activeSub = vm.stompClient.subscribe(subscription.path, subscription.callback)
         vm.activeSubscriptions.set(subscription.path, activeSub)
       }
@@ -55,7 +51,13 @@ class WebsocketService {
         vm.connectWebsocket()
       }, reconnectThrottle * 1000))
     }
-    this.stompClient.activate()
+    try {
+      this.csrf = await this.getCsrfToken()
+      this.stompClient.connectHeaders[this.csrf.headerName] = this.csrf.token
+      this.stompClient.activate()
+    } catch (e) {
+      this.stompClient.onWebSocketClose()
+    }
   }
 
   async getCsrfToken () {
@@ -79,8 +81,6 @@ class WebsocketService {
     }
     this.subscriptions.push({ path, callback })
     if (store().getters['websocket/isConnected']) {
-      const headers = {}
-      headers[this.csrf.headerName] = this.csrf.token
       const activeSub = this.stompClient.subscribe(path, callback)
       this.activeSubscriptions.set(path, activeSub)
     }
