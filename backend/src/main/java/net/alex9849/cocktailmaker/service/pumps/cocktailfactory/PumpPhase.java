@@ -1,7 +1,6 @@
-package net.alex9849.cocktailmaker.service.cocktailfactory;
+package net.alex9849.cocktailmaker.service.pumps.cocktailfactory;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
-import net.alex9849.cocktailmaker.model.pump.Pump;
 
 import java.util.Objects;
 

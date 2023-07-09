@@ -1,10 +1,10 @@
-package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
+package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
-import net.alex9849.cocktailmaker.service.cocktailfactory.PumpTimingStepCalculator;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpTimingStepCalculator;
 
 import java.util.HashMap;
 import java.util.List;

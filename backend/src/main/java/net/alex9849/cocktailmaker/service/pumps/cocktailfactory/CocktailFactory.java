@@ -1,8 +1,8 @@
-package net.alex9849.cocktailmaker.service.cocktailfactory;
+package net.alex9849.cocktailmaker.service.pumps.cocktailfactory;
 
+import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.recipe.FeasibleRecipe;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
@@ -12,7 +12,7 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstructionProductionStep;
 import net.alex9849.cocktailmaker.model.user.User;
-import net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker.*;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

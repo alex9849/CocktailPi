@@ -128,7 +128,7 @@ public class PumpUpService {
             if (!isPumpUp) {
                 mlToPump = Long.MAX_VALUE;
             }
-            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump, callback);
+            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
             ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
             this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, isPumpUp, callback));
             task.cdl.countDown();
@@ -142,7 +142,7 @@ public class PumpUpService {
     private synchronized void onPumpRunTaskComplete(long pumpId) {
         PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
         if (pumpTask != null) {
-            pumpTask.cancel();
+            pumpTask.doFinalize();
         }
     }
 
@@ -168,6 +168,7 @@ public class PumpUpService {
                     }
                     this.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, true, () -> {
                         try {
+                            pumpDataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
                         } finally {
                             pumpLockService.releasePumpLock(pump.getId(), this);
@@ -236,12 +237,11 @@ public class PumpUpService {
 
         public void cancel() {
             future.cancel(true);
-            finalize();
+            doFinalize();
         }
 
-        public void finalize() {
+        public void doFinalize() {
             pump.getMotorDriver().shutdown();
-            pumpDataService.updatePump(pump);
             callback.run();
         }
 
@@ -278,17 +278,15 @@ public class PumpUpService {
         CountDownLatch cdl;
         Direction direction;
         long mlToPump;
-        Runnable callback;
 
         /**
          * @param mlToPump Long.MAX_VALUE == unlimited
          */
-        StepperMotorTask(StepperPump stepperPump, Direction direction, long mlToPump, Runnable callback) {
+        StepperMotorTask(StepperPump stepperPump, Direction direction, long mlToPump) {
             this.stepperPump = stepperPump;
             this.direction = direction;
             this.cdl = new CountDownLatch(1);
             this.mlToPump = mlToPump;
-            this.callback = callback;
         }
 
         @Override

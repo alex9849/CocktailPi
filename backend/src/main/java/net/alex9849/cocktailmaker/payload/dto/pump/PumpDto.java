@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
+import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
@@ -68,7 +69,7 @@ public class PumpDto {
             Integer pin;
             Integer fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
-            PumpDataService.PumpOccupation occupation;
+            PumpService.PumpOccupation occupation;
             Boolean isPumpedUp;
             boolean isReversed;
             boolean isPowerStateHigh;
@@ -76,9 +77,9 @@ public class PumpDto {
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
-                PumpDataService pService = SpringUtility.getBean(PumpDataService.class);
+                PumpService pService = SpringUtility.getBean(PumpService.class);
                 PumpUpService puService = SpringUtility.getBean(PumpUpService.class);
-                this.occupation = pService.getPumpOccupation(pump);
+                this.occupation = pService.getPumpOccupation(id);
                 this.isReversed = puService.isPumpDirectionReversed();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());

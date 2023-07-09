@@ -8,7 +8,7 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
-import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;

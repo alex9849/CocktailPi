@@ -1,8 +1,7 @@
-package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
+package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
-import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.service.cocktailfactory.PumpPhase;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 
 import java.util.*;
 import java.util.concurrent.Executors;

@@ -1,9 +1,8 @@
-package net.alex9849.cocktailmaker.service;
+package net.alex9849.cocktailmaker.service.pumps;
 
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
-import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -13,9 +12,10 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
-import net.alex9849.cocktailmaker.service.cocktailfactory.CocktailFactory;
-import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.EventService;
+import net.alex9849.cocktailmaker.service.IngredientService;
+import net.alex9849.cocktailmaker.service.WebSocketService;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,10 +53,6 @@ public class CocktailOrderService {
         if(this.cocktailFactory != null) {
             throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
-        List<Pump> pumps = pumpService.getAllPumps();
-        if(pumps.stream().anyMatch(p -> this.pumpService.getPumpOccupation(p) != PumpDataService.PumpOccupation.NONE)) {
-            throw new IllegalStateException("Some pumps are occupied currently!");
-        }
         FeasibilityFactory feasibilityFactory = this.checkFeasibility(recipe, orderConfiguration);
         FeasibilityReport report = feasibilityFactory.getFeasibilityReport();
         if(report.getRequiredIngredients().stream().anyMatch(x -> x.getAmountMissing() > 0)) {
@@ -66,7 +62,7 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpService.getAllPumps()), p -> pumpService.updatePumps(p, true))
+                new HashSet<>(pumpService.getAllPumps()), p -> p.forEach(x -> pumpService.updatePump(x)))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         this.cocktailFactory = cocktailFactory;
         this.cocktailFactory.makeCocktail();

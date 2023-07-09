@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.service.cocktailfactory.productionstepworker;
+package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
 public class WrittenInstructionStepProgress extends StepProgress {
     private String message;
