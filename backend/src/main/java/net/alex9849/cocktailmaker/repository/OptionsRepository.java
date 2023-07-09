@@ -60,9 +60,9 @@ public class OptionsRepository extends JdbcDaoSupport {
         getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
             PreparedStatement pstmt;
             if(like) {
-                pstmt = con.prepareStatement("DELETE FROM options o WHERE o.key LIKE ?");
+                pstmt = con.prepareStatement("DELETE FROM options AS o WHERE o.key LIKE ?");
             } else {
-                pstmt = con.prepareStatement("DELETE FROM options o WHERE o.key = ?");
+                pstmt = con.prepareStatement("DELETE FROM options AS o WHERE o.key = ?");
             }
             pstmt.setString(1, key);
             pstmt.executeUpdate();
