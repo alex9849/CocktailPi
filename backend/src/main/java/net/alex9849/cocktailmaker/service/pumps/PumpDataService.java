@@ -10,14 +10,16 @@ import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.IngredientService;
-import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -26,18 +28,7 @@ public class PumpDataService {
     private PumpRepository pumpRepository;
 
     @Autowired
-    private PumpLockService pumpLockService;
-
-    @Autowired
-    private WebSocketService webSocketService;
-
-    @Autowired
     private IngredientService ingredientService;
-
-    public void postConstruct() {
-        //Turn off all pumps?
-        this.turnOnOffPumps(false);
-    }
 
     //
     // CRUD actions
@@ -72,35 +63,15 @@ public class PumpDataService {
         if(pump.isCanPump()) {
             pump.getMotorDriver().shutdown();
         }
-        webSocketService.broadcastPumpLayout(getAllPumps());
         return pump;
     }
-
-    public Set<Pump> updatePumps(Set<Pump> pumps, boolean isSourceCocktailfactory) {
-        Set<Pump> updated = new HashSet<>();
-        for(Pump pump : pumps) {
-            updated.add(this.internalUpdatePump(pump, isSourceCocktailfactory));
-        }
-        webSocketService.broadcastPumpLayout(getAllPumps());
-        return updated;
-    }
-
     public Pump updatePump(Pump pump) {
-        Pump updated = this.internalUpdatePump(pump, false);
-        webSocketService.broadcastPumpLayout(getAllPumps());
-        return updated;
-    }
-
-    private Pump internalUpdatePump(Pump pump, boolean isSourceCocktailfactory) {
         Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
         if(!beforeUpdate.isPresent()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
         if(!beforeUpdate.get().getClass().equals(pump.getClass())) {
             throw new IllegalArgumentException("Can't change pump type!");
-        }
-        if(!pumpLockService.testAndAcquirePumpLock(pump.getId(), this) && !isSourceCocktailfactory) {
-            throw new IllegalStateException("Pump currently locked!");
         }
 
         List<Integer> pinList = new ArrayList<>();
@@ -135,14 +106,10 @@ public class PumpDataService {
         if(pump == null) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        if(getPumpOccupation(pump) != PumpOccupation.NONE) {
-            throw new IllegalStateException("Pump currently occupied!");
-        }
         pumpRepository.delete(id);
         if(pump.isCanPump()) {
             pump.getMotorDriver().shutdown();
         }
-        webSocketService.broadcastPumpLayout(getAllPumps());
     }
 
     public Pump fromDto(PumpDto.Request.Patch pumpDto) {
@@ -182,29 +149,7 @@ public class PumpDataService {
         return toPatch;
     }
 
-
-    //
-    // Actions
-    //
-
-    public PumpOccupation getPumpOccupation(Pump pump) {
-        if(this.cocktailOrderService.isMakingCocktail()) {
-            return PumpOccupation.COCKTAIL_PRODUCTION;
-        }
-        if(this.pumpUpService.isPumpPumpingUp(pump)) {
-            return PumpOccupation.PUMPING_UP;
-        }
-        if(pump.isRunning()) {
-            return PumpOccupation.RUNNING;
-        }
-        return PumpOccupation.NONE;
-    }
-
     public Set<Long> findIngredientIdsOnPump() {
         return pumpRepository.findIngredientIdsOnPump();
-    }
-
-    public enum PumpOccupation {
-        RUNNING, PUMPING_UP, COCKTAIL_PRODUCTION, NONE
     }
 }
