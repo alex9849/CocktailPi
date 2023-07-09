@@ -3,8 +3,8 @@ package net.alex9849.cocktailmaker.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.motorlib.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +19,7 @@ import java.util.stream.Collectors;
 public class PumpEndpoint {
 
     @Autowired
-    private PumpDataService pumpService;
-
-    @Autowired
-    private PumpUpService pumpUpService;
+    private PumpService pumpService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllPumps() {
@@ -56,7 +53,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpUpService.pumpBackOrUp(pump, true);
+        pumpService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, false);
         return ResponseEntity.ok().build();
     }
 
@@ -67,7 +64,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpUpService.pumpBackOrUp(pump, false);
+        pumpService.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, false);
         return ResponseEntity.ok().build();
     }
 
@@ -75,14 +72,14 @@ public class PumpEndpoint {
     @RequestMapping(value = "start", method = RequestMethod.PUT)
     public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id) {
         if(id == null) {
-            pumpService.turnOnOffPumps(true);
+            pumpService.runAllPumps();
             return ResponseEntity.ok().build();
         }
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.turnOnOffPump(pump, true);
+        pumpService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, true);
         return ResponseEntity.ok().build();
     }
 
@@ -90,14 +87,14 @@ public class PumpEndpoint {
     @RequestMapping(value = "stop", method = RequestMethod.PUT)
     public ResponseEntity<?> stopPump(@RequestParam(value = "id", required = false) Long id) {
         if(id == null) {
-            pumpService.turnOnOffPumps(false);
+            pumpService.stopAllPumps();
             return ResponseEntity.ok().build();
         }
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.turnOnOffPump(pump, false);
+        pumpService.cancelPumpUp(id);
         return ResponseEntity.ok().build();
     }
 }

@@ -54,12 +54,12 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
         for (PumpPhase pumpPhase : this.pumpPhases) {
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                pumpPhase.getPump().setRunning(true);
+                pumpPhase.getPump().getMotorDriver().setRunning(true);
                 pumpPhase.setStarted();
             }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
 
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                pumpPhase.getPump().setRunning(false);
+                pumpPhase.getPump().getMotorDriver().setRunning(false);
                 pumpPhase.setStopped();
             }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
@@ -104,8 +104,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             if(seenPumps.contains(pumpPhase.getPump().getId())) {
                 continue;
             }
-            if(pumpPhase.getPump().isRunning()) {
-                pumpPhase.getPump().setRunning(false);
+            if(pumpPhase.getPump().getMotorDriver().isRunning()) {
+                pumpPhase.getPump().getMotorDriver().setRunning(false);
             }
             if(pumpPhase.getState() == PumpPhase.State.RUNNING) {
                 pumpPhase.setStopped();

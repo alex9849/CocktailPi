@@ -9,9 +9,9 @@ import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
+import net.alex9849.motorlib.Direction;
 import org.springframework.beans.BeanUtils;
 
 
@@ -28,7 +28,7 @@ public class PumpDto {
 
     //Read only
     private interface IsReversed { boolean isReversed(); }
-    private interface Occupation { PumpDataService.PumpOccupation getOccupation(); }
+    private interface Occupation { PumpService.PumpOccupation getOccupation(); }
     private interface IState {PumpDto.State getState(); }
 
 
@@ -80,7 +80,7 @@ public class PumpDto {
                 PumpService pService = SpringUtility.getBean(PumpService.class);
                 PumpUpService puService = SpringUtility.getBean(PumpUpService.class);
                 this.occupation = pService.getPumpOccupation(id);
-                this.isReversed = puService.isPumpDirectionReversed();
+                this.isReversed = puService.getDirection() == Direction.BACKWARD;
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }

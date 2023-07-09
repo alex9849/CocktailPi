@@ -100,7 +100,11 @@ public abstract class Pump {
 
     public abstract boolean isCanPump();
 
+    public boolean isCanPumpUp() {
+        return this.isCanPump() && this.tubeCapacityInMl != null;
+    }
+
     public boolean isCompleted() {
-        return this.isCanPump() && this.tubeCapacityInMl != null && this.name != null;
+        return this.isCanPumpUp() && this.name != null;
     }
 }

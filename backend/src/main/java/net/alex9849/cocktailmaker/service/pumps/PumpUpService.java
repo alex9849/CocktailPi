@@ -63,7 +63,7 @@ public class PumpUpService {
     }
 
     public synchronized boolean isPumpPumpingUp(long pumpId) {
-        return pumpingTasks.containsKey(pumpId) && pumpingTasks.get(pumpId).isPumpUp();
+        return pumpingTasks.containsKey(pumpId) && !pumpingTasks.get(pumpId).isRunInfinity();
     }
 
     public synchronized boolean isPumpRunning(long pumpId) {
@@ -77,7 +77,7 @@ public class PumpUpService {
         }
     }
 
-    public synchronized void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean isPumpUp, Runnable callback) {
+    public synchronized void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean runInfinity, Runnable callback) {
         if (callback == null) {
             callback = () -> {
             };
@@ -87,7 +87,7 @@ public class PumpUpService {
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
 
-        if (!pump.isCanPump()) {
+        if ((!pump.isCanPumpUp() && !runInfinity) || !pump.isCanPump()) {
             callback.run();
             throw new IllegalArgumentException("Pump setup isn't completed yet!");
         }
@@ -111,26 +111,26 @@ public class PumpUpService {
             DcMotorTask task = new DcMotorTask(dcPump, this.direction);
             dcMotor.setRunning(true);
             ScheduledFuture<?> stopTask;
-            if (isPumpUp) {
-                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
-                stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
-            } else {
+            if (runInfinity) {
                 stopTask = executor.schedule(() -> {
                 }, Instant.now());
+            } else {
+                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
+                stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
             }
 
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, isPumpUp, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, runInfinity, callback));
             task.cdl.countDown();
 
         } else if (pump instanceof StepperPump) {
             StepperPump stepperPump = (StepperPump) pump;
             long mlToPump = (long) (overshootMultiplier * stepperPump.getTubeCapacityInMl());
-            if (!isPumpUp) {
+            if (runInfinity) {
                 mlToPump = Long.MAX_VALUE;
             }
             StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
             ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, isPumpUp, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, runInfinity, callback));
             task.cdl.countDown();
 
         } else {
@@ -144,6 +144,10 @@ public class PumpUpService {
         if (pumpTask != null) {
             pumpTask.doFinalize();
         }
+    }
+
+    public synchronized Direction getDirection() {
+        return direction;
     }
 
     public synchronized void reschedulePumpBack() {
@@ -161,7 +165,7 @@ public class PumpUpService {
         automaticPumpBackTask = executor.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpDataService.getAllPumps();
             for (Pump pump : allPumps) {
-                if (pump.isPumpedUp() && pump.isCanPump()) {
+                if (pump.isPumpedUp() && pump.isCanPumpUp()) {
                     if (!pumpLockService.testAndAcquirePumpLock(pump.getId(), this)) {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;
@@ -225,13 +229,13 @@ public class PumpUpService {
     private class PumpTask {
         private final ScheduledFuture<?> future;
         private final Pump pump;
-        private final boolean isPumpUp;
+        private final boolean runInfinity;
         private final Runnable callback;
 
-        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean isPumpUp, Runnable callback) {
+        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean runInfinity, Runnable callback) {
             this.future = future;
             this.pump = pump;
-            this.isPumpUp = isPumpUp;
+            this.runInfinity = runInfinity;
             this.callback = callback;
         }
 
@@ -245,8 +249,8 @@ public class PumpUpService {
             callback.run();
         }
 
-        public boolean isPumpUp() {
-            return isPumpUp;
+        public boolean isRunInfinity() {
+            return runInfinity;
         }
     }
 

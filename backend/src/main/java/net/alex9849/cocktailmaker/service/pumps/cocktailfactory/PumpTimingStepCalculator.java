@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory;
 
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 
@@ -7,13 +8,13 @@ import java.util.*;
 
 public class PumpTimingStepCalculator {
     private final Integer longestPumpRunTime;
-    private final Pump longestIngredientPump;
-    private final Map<Pump, Integer> otherPumpTimings;
-    private final Set<Pump> updatedPumps;
+    private final DcPump longestIngredientPump;
+    private final Map<DcPump, Integer> otherPumpTimings;
+    private final Set<DcPump> updatedPumps;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
 
-    public PumpTimingStepCalculator(Map<ProductionStepIngredient, List<Pump>> matchingPumpByProductionStepIngredient, int minimalPumpTime, int minimalBreakTime) {
+    public PumpTimingStepCalculator(Map<ProductionStepIngredient, List<DcPump>> matchingPumpByProductionStepIngredient, int minimalPumpTime, int minimalBreakTime) {
         if(minimalPumpTime <= 0) {
             throw new IllegalArgumentException("minimalPumpTime needs to be at least 1!");
         }
@@ -29,12 +30,12 @@ public class PumpTimingStepCalculator {
         //Prioritize pumps with a low filling level
         matchingPumpByProductionStepIngredient.values().forEach(x -> x.sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
 
-        Map.Entry<Pump, Integer> longestRuntime = null;
-        Map<Pump, Integer> timeToRunPerPump = new HashMap<>();
+        Map.Entry<DcPump, Integer> longestRuntime = null;
+        Map<DcPump, Integer> timeToRunPerPump = new HashMap<>();
 
-        for(Map.Entry<ProductionStepIngredient, List<Pump>> currentPumpsRuntime : matchingPumpByProductionStepIngredient.entrySet()) {
+        for(Map.Entry<ProductionStepIngredient, List<DcPump>> currentPumpsRuntime : matchingPumpByProductionStepIngredient.entrySet()) {
             int remainingAmountToFillInMl = currentPumpsRuntime.getKey().getAmount();
-            for(Pump pump : currentPumpsRuntime.getValue()) {
+            for(DcPump pump : currentPumpsRuntime.getValue()) {
                 if(pump.getFillingLevelInMl() == 0) {
                     continue;
                 }
@@ -60,7 +61,7 @@ public class PumpTimingStepCalculator {
         }
 
 
-        for(Map.Entry<Pump, Integer> currentPumpRuntime : timeToRunPerPump.entrySet()) {
+        for(Map.Entry<DcPump, Integer> currentPumpRuntime : timeToRunPerPump.entrySet()) {
             if(longestRuntime == null || longestRuntime.getValue() < currentPumpRuntime.getValue()) {
                 longestRuntime = currentPumpRuntime;
             }
@@ -71,7 +72,7 @@ public class PumpTimingStepCalculator {
         this.otherPumpTimings = timeToRunPerPump;
     }
 
-    public Set<Pump> getUpdatedPumps() {
+    public Set<DcPump> getUpdatedPumps() {
         return updatedPumps;
     }
 
@@ -87,8 +88,8 @@ public class PumpTimingStepCalculator {
         Set<PumpPhase> pumpPhases = new HashSet<>();
         pumpPhases.add(new PumpPhase(0, this.longestPumpRunTime, this.longestIngredientPump));
 
-        for(Map.Entry<Pump, Integer> ingredientPair : this.otherPumpTimings.entrySet()) {
-            Pump currentPump = ingredientPair.getKey();
+        for(Map.Entry<DcPump, Integer> ingredientPair : this.otherPumpTimings.entrySet()) {
+            DcPump currentPump = ingredientPair.getKey();
             int fullPumpOperatingTime = ingredientPair.getValue();
 
             //How often does the Pump need to be startet

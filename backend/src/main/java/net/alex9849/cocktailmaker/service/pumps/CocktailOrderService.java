@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service.pumps;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
+import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,7 +36,7 @@ public class CocktailOrderService {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Autowired
-    private PumpDataService pumpService;
+    private PumpDataService pumpDataService;
 
     @Autowired
     private PumpUpService pumpUpService;
@@ -62,7 +64,7 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpService.getAllPumps()), p -> p.forEach(x -> pumpService.updatePump(x)))
+                new HashSet<>(pumpDataService.getAllPumps().stream().filter(x -> x instanceof DcPump).map(x -> (DcPump) x).collect(Collectors.toList())), p -> p.forEach(x -> pumpDataService.updatePump(x)))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         this.cocktailFactory = cocktailFactory;
         this.cocktailFactory.makeCocktail();
@@ -76,7 +78,7 @@ public class CocktailOrderService {
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
                 this.pumpUpService.reschedulePumpBack();
             }, 5000, TimeUnit.MILLISECONDS);
-            this.webSocketService.broadcastPumpLayout(pumpService.getAllPumps());
+            this.webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
         }
         this.webSocketService.broadcastCurrentCocktailProgress(progress);
 
@@ -100,7 +102,7 @@ public class CocktailOrderService {
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
-        return new FeasibilityFactory(recipe, orderConfig, pumpService.getAllPumps());
+        return new FeasibilityFactory(recipe, orderConfig, pumpDataService.getAllPumps());
     }
 
     public synchronized void continueCocktailProduction() {

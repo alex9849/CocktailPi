@@ -84,9 +84,10 @@ public class PumpService {
         if (!lockService.testAndAcquireGlobal(maintenanceService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
+        maintenanceService.stopAllPumps();
         try {
             for (Pump pump : dataService.getAllPumps()) {
-                if (!pump.isCanPump()) {
+                if (!pump.isCanPumpUp()) {
                     continue;
                 }
                 runPumpOrPerformPumpUp(pump, Direction.FORWARD, false);
@@ -119,11 +120,11 @@ public class PumpService {
         webSocketService.broadcastPumpLayout(dataService.getAllPumps());
     }
 
-    public void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean isPumpUp) {
+    public void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean runInfinity) {
         if (!lockService.testAndAcquirePumpLock(pump.getId(), maintenanceService)) {
             throw new IllegalArgumentException("Pumps are currently occupied!");
         }
-        maintenanceService.runPumpOrPerformPumpUp(pump, direction, isPumpUp,
+        maintenanceService.runPumpOrPerformPumpUp(pump, direction, runInfinity,
                 () -> {
                     try {
                         dataService.updatePump(pump);
