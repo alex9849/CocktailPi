@@ -1,25 +1,31 @@
-import { Stomp } from '@stomp/stompjs'
+import {Stomp} from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import authHeader from './auth-header'
 import store from '../store'
+import axios from 'axios'
 
 class WebsocketService {
   reconnectTasks = []
   subscriptions = []
   activeSubscriptions = new Map()
   stompClient = null
+  csrf = null
 
-  connectWebsocket () {
+  async connectWebsocket () {
     this.stompClient = Stomp.over(() => new SockJS(store().getters['auth/getFormattedServerAddress'] + '/websocket'))
     this.stompClient.connectHeaders = {
       Authorization: authHeader()
     }
+    this.csrf = await this.getCsrfToken()
+    this.stompClient.connectHeaders[this.csrf.headerName] = this.csrf.token
     const vm = this
-    this.stompClient.onConnect = function () {
+    this.stompClient.onConnect = async function () {
       store().commit('websocket/setReconnectThrottleInSeconds', 5)
       store().commit('websocket/setShowReconnectDialog', false)
 
       for (const subscription of vm.subscriptions) {
+        const headers = {}
+        headers[vm.csrf.headerName] = vm.csrf.token
         const activeSub = vm.stompClient.subscribe(subscription.path, subscription.callback)
         vm.activeSubscriptions.set(subscription.path, activeSub)
       }
@@ -52,6 +58,11 @@ class WebsocketService {
     this.stompClient.activate()
   }
 
+  async getCsrfToken () {
+    const token = await axios.get('/api/csrf')
+    return token.data
+  }
+
   disconnectWebsocket () {
     if (this.stompClient != null) {
       store().commit('websocket/setConnected', false)
@@ -62,12 +73,14 @@ class WebsocketService {
     this.activeSubscriptions.clear()
   }
 
-  subscribe (path, callback) {
+  async subscribe (path, callback) {
     if (this.activeSubscriptions.has(path)) {
       this.unsubscribe(path)
     }
     this.subscriptions.push({ path, callback })
     if (store().getters['websocket/isConnected']) {
+      const headers = {}
+      headers[this.csrf.headerName] = this.csrf.token
       const activeSub = this.stompClient.subscribe(path, callback)
       this.activeSubscriptions.set(path, activeSub)
     }

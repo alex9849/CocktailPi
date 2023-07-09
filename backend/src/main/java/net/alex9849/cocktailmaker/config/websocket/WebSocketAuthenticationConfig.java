@@ -16,7 +16,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -56,7 +56,7 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     List<String> authorization = accessor.getNativeHeader("Authorization");
                     if(authorization.isEmpty()) {
@@ -69,8 +69,6 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
                     User user = userDetailsService.loadUserById(jwtUtils.getUserIdFromJwtToken(token));
                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     accessor.setUser(authentication);
-                    accessor.setLeaveMutable(true);
-                    return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
                 }
                 return message;
             }
