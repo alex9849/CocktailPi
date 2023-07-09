@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/pump")
+@RequestMapping("/api/pump/")
 public class PumpEndpoint {
 
     @Autowired

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/cocktail")
+@RequestMapping("/api/cocktail/")
 public class CocktailEndpoint {
 
     @Autowired

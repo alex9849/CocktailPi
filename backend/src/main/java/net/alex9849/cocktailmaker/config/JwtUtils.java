@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.config;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     private final String secretKeyOptionsKey = "secretKey";
-    private UUID secretKey;
+    private String secretKey;
 
     @Autowired
     private OptionsRepository optionsRepository;
@@ -28,14 +29,13 @@ public class JwtUtils {
     @Value("${alex9849.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    private UUID getSecretKey() {
+    private String getSecretKey() {
         if(secretKey == null) {
-            String stringKey = optionsRepository.getOption(secretKeyOptionsKey);
-            if(stringKey == null) {
-                secretKey = UUID.randomUUID();
-                optionsRepository.setOption(secretKeyOptionsKey, secretKey.toString());
-            } else {
-                secretKey = UUID.fromString(stringKey);
+            secretKey = optionsRepository.getOption(secretKeyOptionsKey);
+            if(secretKey == null) {
+                secretKey = UUID.randomUUID().toString();
+                secretKey += "-" + UUID.randomUUID().toString();
+                optionsRepository.setOption(secretKeyOptionsKey, secretKey);
             }
         }
         return secretKey;
@@ -56,7 +56,7 @@ public class JwtUtils {
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .claim("remember", remember)
-                .signWith(SignatureAlgorithm.HS512, getSecretKey().toString())
+                .signWith(Keys.hmacShaKeyFor(getSecretKey().toString().getBytes()), SignatureAlgorithm.HS512)
                 .compact();
     }
 

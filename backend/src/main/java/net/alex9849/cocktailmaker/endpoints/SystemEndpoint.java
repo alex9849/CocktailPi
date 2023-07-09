@@ -2,8 +2,8 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import net.alex9849.cocktailmaker.service.SystemService;
+import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/system")
+@RequestMapping("/api/system/")
 public class SystemEndpoint {
 
     @Autowired

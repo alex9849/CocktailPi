@@ -33,7 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/recipe")
+@RequestMapping("/api/recipe/")
 public class RecipeEndpoint {
 
     @Autowired

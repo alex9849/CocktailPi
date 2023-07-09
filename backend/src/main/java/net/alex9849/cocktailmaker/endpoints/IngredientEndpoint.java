@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/ingredient")
+@RequestMapping("/api/ingredient/")
 public class IngredientEndpoint {
 
     @Autowired

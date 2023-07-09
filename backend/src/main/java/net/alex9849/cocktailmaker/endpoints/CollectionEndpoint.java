@@ -21,7 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/collection")
+@RequestMapping("/api/collection/")
 public class CollectionEndpoint {
 
     @Autowired
