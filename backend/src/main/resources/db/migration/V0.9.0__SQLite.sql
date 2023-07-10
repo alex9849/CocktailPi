@@ -38,7 +38,7 @@ create table pumps
     current_ingredient_id INTEGER references ingredients on delete set null,
     filling_level_in_ml   INTEGER not null default 0,
     is_pumped_up          BOOLEAN not null default false,
-    pin                   INTEGER unique check (pin >= 0),
+    dc_pin                INTEGER unique check (dc_pin >= 0),
     time_per_cl_in_ms     INTEGER check (time_per_cl_in_ms >= 1),
     is_power_state_high   BOOLEAN          default false,
     acceleration          INTEGER check (acceleration >= 1),
@@ -207,7 +207,8 @@ BEGIN
     SELECT CASE
                WHEN EXISTS(SELECT i.id
                            FROM ingredients i
-                           WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup') THEN
+                           WHERE i.id = NEW.parent_group_id
+                             and i.dType != 'IngredientGroup') THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
 END;
@@ -221,7 +222,8 @@ BEGIN
     SELECT CASE
                WHEN EXISTS(SELECT i.id
                            FROM ingredients i
-                           WHERE i.id = NEW.parent_group_id and i.dType != 'IngredientGroup') THEN
+                           WHERE i.id = NEW.parent_group_id
+                             and i.dType != 'IngredientGroup') THEN
                    RAISE(ABORT, 'Parent must be an IngredientGroup!')
                END;
 END;
