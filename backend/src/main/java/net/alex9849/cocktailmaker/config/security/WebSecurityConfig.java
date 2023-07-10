@@ -71,6 +71,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/recipe/*/image").permitAll()
                                 .requestMatchers("/api/collection/*/image").permitAll()
                                 .requestMatchers("/api/**").authenticated()
+                                .requestMatchers("/**").permitAll()
                 )
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
