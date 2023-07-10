@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.WrittenInstruction
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -19,9 +20,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-@Repository
-public
-class ProductionStepRepository extends JdbcDaoSupport {
+@Component
+public class ProductionStepRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
 

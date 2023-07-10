@@ -8,13 +8,14 @@ import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
-@Repository
+@Component
 public class PumpRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;

@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -15,7 +16,7 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class CollectionRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
