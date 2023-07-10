@@ -138,10 +138,4 @@ export default {
 </script>
 
 <style scoped>
-.dotted-overflow {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 </style>
