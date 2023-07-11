@@ -23,7 +23,7 @@ public class PumpEndpoint {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllPumps() {
-        return ResponseEntity.ok(pumpService.getAllPumps().stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList()));
+        return ResponseEntity.ok(pumpService.getAllPumps().stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -31,7 +31,7 @@ public class PumpEndpoint {
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Patch pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
-        return ResponseEntity.created(uriComponents.toUri()).body(new PumpDto.Response.Detailed(createdPump));
+        return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")

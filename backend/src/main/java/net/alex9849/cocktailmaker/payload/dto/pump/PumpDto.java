@@ -58,10 +58,10 @@ public class PumpDto {
         @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
-                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
+                @JsonSubTypes.Type(value = DcPumpDto.Response.Detailed.class, name = "dc"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
-        public static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
+        public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
                 CurrentIngredient, Occupation, IsReversed, IsPumpedUp, IState {
             long id;
             Double tubeCapacityInMl;
@@ -95,6 +95,8 @@ public class PumpDto {
                 }
                 throw new IllegalStateException("Unknown pump type: " + pump.getClass().getName());
             }
+
+            public abstract String getType();
         }
     }
 

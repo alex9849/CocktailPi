@@ -45,6 +45,11 @@ public class StepperPumpDto {
             protected Detailed(StepperPump stepperPump) {
                 super(stepperPump);
             }
+
+            @Override
+            public String getType() {
+                return "stepper";
+            }
         }
     }
 }

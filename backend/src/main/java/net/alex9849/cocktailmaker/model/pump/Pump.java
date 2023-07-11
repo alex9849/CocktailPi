@@ -11,7 +11,7 @@ import java.util.Objects;
 public abstract class Pump {
     private long id;
     private Double tubeCapacityInMl;
-    private int fillingLevelInMl;
+    private Integer fillingLevelInMl;
     private Long currentIngredientId;
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
@@ -65,11 +65,11 @@ public abstract class Pump {
         this.currentIngredientId = (currentIngredient != null)? currentIngredient.getId() : null;
     }
 
-    public int getFillingLevelInMl() {
+    public Integer getFillingLevelInMl() {
         return fillingLevelInMl;
     }
 
-    public void setFillingLevelInMl(int fillingLevelInMl) {
+    public void setFillingLevelInMl(Integer fillingLevelInMl) {
         this.fillingLevelInMl = fillingLevelInMl;
     }
 

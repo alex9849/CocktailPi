@@ -2,19 +2,6 @@
   <q-page class="page-content" padding>
     <c-pump-management/>
     <c-reverse-pumping-settings/>
-    <div class="row q-col-gutter-md">
-      <div
-        class="col-12 col-sm-6 col-lg-4"
-        v-bind:key="i"
-        v-for="i in 10"
-      >
-        <c-pump-card
-          style="height: 100%"
-          :pump="i % 2 === 0 ? examplePump : otherPump"
-          show-detailed
-        />
-      </div>
-    </div>
   </q-page>
 </template>
 
@@ -34,7 +21,7 @@ export default {
         name: 'The name is cool',
         fillingLevelInMl: '',
         tubeCapacityInMl: '',
-        currentIngredient: '',
+        currentIngredient: { name: 'Test' },
         pumpedUp: true,
         state: 'ready',
         pin: '',

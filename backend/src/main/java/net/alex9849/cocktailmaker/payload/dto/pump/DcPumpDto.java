@@ -37,6 +37,11 @@ public class DcPumpDto {
             protected Detailed(DcPump dcPump) {
                 super(dcPump);
             }
+
+            @Override
+            public String getType() {
+                return "dc";
+            }
         }
     }
 }

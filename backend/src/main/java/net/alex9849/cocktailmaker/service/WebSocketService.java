@@ -54,7 +54,7 @@ public class WebSocketService {
     }
 
     public void broadcastPumpLayout(List<Pump> pumps) {
-        List<PumpDto.Response.Detailed> pumpDtos = pumps.stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList());
+        List<PumpDto.Response.Detailed> pumpDtos = pumps.stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList());
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).collect(Collectors.toList());
         for(String username : subscribers) {
@@ -64,7 +64,7 @@ public class WebSocketService {
 
     public void sendPumpLayoutToUser(List<Pump> pumps, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION,
-                pumps.stream().map(PumpDto.Response.Detailed::new).collect(Collectors.toList()));
+                pumps.stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
     public void broadcastRunningEventActionsStatus(List<EventActionInformation> eai) {

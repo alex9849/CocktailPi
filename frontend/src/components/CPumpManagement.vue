@@ -36,7 +36,31 @@
       />
     </TopButtonArranger>
   </div>
-  <div class="q-py-md">
+  <div class="row q-col-gutter-md q-mt-md">
+    <div
+      class="col-12 col-sm-6 col-lg-4"
+      v-bind:key="pump.id"
+      v-for="pump in pumps"
+    >
+      <c-pump-card
+        style="height: 100%"
+        :pump="pump"
+        show-detailed
+      />
+    </div>
+    <div
+      class="col-12"
+      v-if="pumps.length === 0"
+    >
+      <q-card flat bordered class="bg-card-container">
+        <div class="row q-pa-md items-center q-gutter-sm">
+          <q-icon size="sm" :name="mdiAlert" />
+          <p class="">No pumps found!</p>
+        </div>
+      </q-card>
+    </div>
+  </div>
+  <!--div class="q-py-md">
     <q-table
       :columns="columns"
       :rows="pumps"
@@ -179,7 +203,7 @@
         />
       </template>
     </q-table>
-  </div>
+  </div-->
   <c-edit-dialog
     v-model:show="editOptions.editDialog"
     :error-message="editOptions.editErrorMessage"
@@ -215,13 +239,14 @@ import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
 import PumpEditorForm from 'components/PumpEditorForm'
 import CDeleteWarning from 'components/CDeleteWarning'
-import { mdiDelete, mdiPencilOutline, mdiPlay, mdiStop } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiPlay, mdiStop, mdiAlert } from '@quasar/extras/mdi-v5'
 import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
+import CPumpCard from 'components/CPumpCard.vue'
 
 export default {
   name: 'CPumpManagement',
-  components: { CPumpTurnOnOffButton, CPumpUpButton, CPumpedUpIconButton, TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
+  components: { CPumpCard, CPumpTurnOnOffButton, CPumpUpButton, CPumpedUpIconButton, TopButtonArranger, CEditDialog, PumpEditorForm, CDeleteWarning },
   data () {
     return {
       isLoading: false,
@@ -276,6 +301,7 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
+    this.mdiAlert = mdiAlert
   },
   methods: {
     onClickTurnOnAllPumps () {

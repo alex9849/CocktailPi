@@ -34,20 +34,17 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p>None</p>
+          <p
+          >
+            {{!!pump.currentIngredient? pump.currentIngredient.name : 'None' }}
+          </p>
         </div>
         <div class="col-6">
-          <p>None</p>
-        </div>
-      </div>
-      <div v-if="showDetailed" class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">Tube capacity</p>
-        </div>
-      </div>
-      <div v-if="showDetailed" class="row">
-        <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.fillingLevelInMl).class"
+          >
+            {{getDisplayAttribute(pump.fillingLevelInMl, 'ml').label}}
+          </p>
         </div>
       </div>
     </q-card-section>
@@ -56,7 +53,7 @@
       class="text-grey-2 q-ma-none"
     >
     <q-card-section
-      v-if="showDetailed && pump.dtype === 'StepperPump'"
+      v-if="showDetailed && pump.type === 'stepper'"
       class="q-py-sm"
     >
       <div class="row">
@@ -69,10 +66,18 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.stepsPerCl).class"
+          >
+            {{getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label}}
+          </p>
         </div>
         <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
+          >
+            {{getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label}}
+          </p>
         </div>
       </div>
       <div class="row">
@@ -85,10 +90,18 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.acceleration).class"
+          >
+            {{getDisplayAttribute(pump.acceleration, 'steps/s²').label}}
+          </p>
         </div>
         <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.stepPin).class"
+          >
+            {{getDisplayAttribute(pump.stepPin).label}}
+          </p>
         </div>
       </div>
       <div class="row">
@@ -98,42 +111,72 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p>None</p>
+          <p
+            :class="getDisplayAttribute(pump.enablePin).class"
+          >
+            {{getDisplayAttribute(pump.enablePin).label}}
+          </p>
         </div>
       </div>
     </q-card-section>
     <q-card-section
-      v-if="showDetailed && pump.dtype === 'DcPump'"
-      class="q-py-sm"
+      v-if="showDetailed && pump.type === 'dc'"
+      class="q-py-sm row items-center"
+      style="flex-grow: 1"
     >
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">Time per Cl</p>
+      <div class="col">
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">Time per Cl</p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">Enable pin</p>
+          </div>
         </div>
-        <div class="col-6">
-          <p class="text-weight-medium">Enable pin</p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.timePerClInMs).class"
+            >
+              {{getDisplayAttribute(pump.timePerClInMs, 'ms/cl').label}}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.pin).class"
+            >
+              {{getDisplayAttribute(pump.pin).label}}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p>None</p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">Running state</p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">Tube capacity</p>
+          </div>
         </div>
-        <div class="col-6">
-          <p>None</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">Running state</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p>None</p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.powerStateHigh).class"
+            >
+              {{getDisplayAttribute(pump.powerStateHigh).label}}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
+            >
+              {{getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label}}
+            </p>
+          </div>
         </div>
       </div>
     </q-card-section>
-    <div style="flex-grow: 1"></div>
+    <!--div style="flex-grow: 1"></div-->
+    <hr class="text-grey-2 q-ma-none">
     <q-card-section class="q-pa-sm">
       <div class="row q-gutter-sm justify-end">
         <q-btn no-caps class="bg-grey-6 text-white col-shrink">Edit</q-btn>
@@ -163,13 +206,31 @@ export default {
   data () {
     return {}
   },
+  methods: {
+    getDisplayAttribute (attr, suffix = '') {
+      if (suffix) {
+        suffix = ' ' + String(suffix)
+      }
+      if (!attr && attr !== 0) {
+        return {
+          class: 'text-red',
+          label: '-- missing --'
+        }
+      } else {
+        return {
+          class: 'text-black',
+          label: String(attr) + suffix
+        }
+      }
+    }
+  },
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
   },
   computed: {
     typeNameData () {
-      if (this.pump.dtype === 'StepperPump') {
+      if (this.pump.type === 'stepper') {
         return {
           icon: this.mdiProgressClock,
           label: 'Stepper Pump'

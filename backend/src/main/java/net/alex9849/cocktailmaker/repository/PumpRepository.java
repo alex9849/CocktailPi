@@ -174,11 +174,11 @@ public class PumpRepository extends JdbcDaoSupport {
             pump = dcPump;
         } else if(Objects.equals(dType, StepperPump.class.getAnnotation(DiscriminatorValue.class).value())) {
             StepperPump stepperPump = new StepperPump();
-            stepperPump.setAcceleration(rs.getObject("acceleration", Integer.class));
-            stepperPump.setStepPin(rs.getObject("step_pin", Integer.class));
-            stepperPump.setEnablePin(rs.getObject("enable_pin", Integer.class));
-            stepperPump.setStepsPerCl(rs.getObject("steps_per_cl", Integer.class));
-            stepperPump.setMaxStepsPerSecond(rs.getObject("max_steps_per_second", Integer.class));
+            stepperPump.setAcceleration((Integer) rs.getObject("acceleration"));
+            stepperPump.setStepPin((Integer) rs.getObject("step_pin"));
+            stepperPump.setEnablePin((Integer) rs.getObject("enable_pin"));
+            stepperPump.setStepsPerCl((Integer) rs.getObject("steps_per_cl"));
+            stepperPump.setMaxStepsPerSecond((Integer) rs.getObject("max_steps_per_second"));
             pump = stepperPump;
         } else {
             throw new IllegalStateException("Unknown pump-dType: " + dType);
@@ -191,7 +191,7 @@ public class PumpRepository extends JdbcDaoSupport {
         if(!rs.wasNull()) {
             pump.setCurrentIngredientId(ingredientId);
         }
-        pump.setFillingLevelInMl((Integer) rs.getInt("filling_level_in_ml"));
+        pump.setFillingLevelInMl((Integer) rs.getObject("filling_level_in_ml"));
         pump.setPumpedUp(rs.getBoolean("is_pumped_up"));
         return pump;
     }
