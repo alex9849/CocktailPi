@@ -1,5 +1,5 @@
 <template>
-  <q-card class="bg-white">
+  <q-card class="bg-white" style="display: flex; flex-direction: column">
     <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
       <div class="col-7 q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">{{ pump.name }}</p>
@@ -7,17 +7,17 @@
           class="q-ma-none"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
         >
-          <q-icon :name="mdiPump"/>
-          Stepper Pump
+          <q-icon :name="typeNameData.icon"/>
+          {{ typeNameData.label }}
         </p>
       </div>
       <div class="col-5">
         <div class="row justify-end items-center q-gutter-sm">
           <div class="col-shrink">
-            <q-badge color="negative" class="text-subtitle2">Pumped Down</q-badge>
+            <q-badge :color="pumpedUpState.color" class="text-subtitle2">{{ pumpedUpState.label }}</q-badge>
           </div>
           <div class="col-shrink">
-            <q-badge color="green" class="text-subtitle2">Enabled</q-badge>
+            <q-badge :color="pumpState.color" class="text-subtitle2">{{ pumpState.label }}</q-badge>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
       class="text-grey-2 q-ma-none"
     >
     <q-card-section
-      v-if="showDetailed"
+      v-if="showDetailed && pump.dtype === 'StepperPump'"
       class="q-py-sm"
     >
       <div class="row">
@@ -102,12 +102,46 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-actions align="right">
-      <q-btn no-caps class="bg-grey-6 text-white">Edit</q-btn>
-      <q-btn no-caps class="bg-green text-white">Pump Back</q-btn>
-      <q-btn no-caps class="bg-green text-white">Pump Up</q-btn>
-      <q-btn no-caps class="bg-green text-white">Run</q-btn>
-    </q-card-actions>
+    <q-card-section
+      v-if="showDetailed && pump.dtype === 'DcPump'"
+      class="q-py-sm"
+    >
+      <div class="row">
+        <div class="col-6">
+          <p class="text-weight-medium">Time per Cl</p>
+        </div>
+        <div class="col-6">
+          <p class="text-weight-medium">Enable pin</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <p>None</p>
+        </div>
+        <div class="col-6">
+          <p>None</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <p class="text-weight-medium">Running state</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <p>None</p>
+        </div>
+      </div>
+    </q-card-section>
+    <div style="flex-grow: 1"></div>
+    <q-card-section class="q-pa-sm">
+      <div class="row q-gutter-sm justify-end">
+        <q-btn no-caps class="bg-grey-6 text-white col-shrink">Edit</q-btn>
+        <q-btn no-caps class="bg-green text-white col-shrink">Pump Back</q-btn>
+        <q-btn no-caps class="bg-green text-white col-shrink">Pump Up</q-btn>
+        <q-btn no-caps class="bg-green text-white col-shrink">Run</q-btn>
+      </div>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -132,6 +166,60 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+  },
+  computed: {
+    typeNameData () {
+      if (this.pump.dtype === 'StepperPump') {
+        return {
+          icon: this.mdiProgressClock,
+          label: 'Stepper Pump'
+        }
+      } else {
+        return {
+          icon: this.mdiPump,
+          label: 'DC Pump'
+        }
+      }
+    },
+    pumpedUpState () {
+      const state = {
+        color: '',
+        label: ''
+      }
+      if (this.pump.pumpedUp) {
+        state.color = 'positive'
+        state.label = 'Pumped Up'
+      } else {
+        state.color = 'negative'
+        state.label = 'Pumped Down'
+      }
+      return state
+    },
+    pumpState () {
+      const state = {
+        color: '',
+        label: ''
+      }
+      switch (this.pump.state) {
+        case 'running':
+          state.color = 'positive'
+          state.label = 'Running'
+          break
+        case 'ready':
+          state.color = 'positive'
+          state.label = 'Ready'
+          break
+        case 'incomplete':
+          state.color = 'negative'
+          state.label = 'Incomplete Configuration'
+          break
+        case 'disabled':
+        default:
+          state.color = 'negative'
+          state.label = 'Disabled'
+      }
+      return state
+    }
   }
 }
 </script>

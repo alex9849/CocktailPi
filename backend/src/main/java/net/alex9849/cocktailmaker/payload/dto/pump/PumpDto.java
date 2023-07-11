@@ -40,8 +40,8 @@ public class PumpDto {
         @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
-                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
+                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "DcPump"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "StepperPump")
         })
         public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, IsPumpedUp, RemoveIngredient {
             Integer fillingLevelInMl;
@@ -64,15 +64,12 @@ public class PumpDto {
         public static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
                 CurrentIngredient, Occupation, IsReversed, IsPumpedUp, IState {
             long id;
-            Integer timePerClInMs;
             Double tubeCapacityInMl;
-            Integer pin;
             Integer fillingLevelInMl;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             PumpService.PumpOccupation occupation;
             Boolean isPumpedUp;
             boolean isReversed;
-            boolean isPowerStateHigh;
             PumpDto.State state;
 
             public Detailed(Pump pump) {

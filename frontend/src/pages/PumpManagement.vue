@@ -10,7 +10,8 @@
       >
         <c-pump-card
           style="height: 100%"
-          :pump="examplePump"
+          :pump="i % 2 === 0 ? examplePump : otherPump"
+          show-detailed
         />
       </div>
     </div>
@@ -28,17 +29,31 @@ export default {
   components: { CPumpCard, CReversePumpingSettings, CPumpManagement },
   data () {
     return {
-      examplePump: {
-        dtype: 'stepper',
+      otherPump: {
+        dtype: 'DcPump',
         name: 'The name is cool',
+        fillingLevelInMl: '',
+        tubeCapacityInMl: '',
+        currentIngredient: '',
+        pumpedUp: true,
+        state: 'ready',
+        pin: '',
+        timePerClInMs: '',
+        powerStateHigh: ''
+      },
+      examplePump: {
+        dtype: 'StepperPump',
+        name: 'The name is cool',
+        fillingLevelInMl: '',
+        tubeCapacityInMl: '',
+        currentIngredient: '',
+        pumpedUp: true,
+        state: 'ready',
         stepPin: '',
         enablePin: '',
-        fillingLevelInMl: '',
-        tube_capacity: '',
-        steps_per_cl: '',
-        min_step_delta: '',
-        acceleration: '',
-        pumpedUp: false
+        stepsPerCl: '',
+        maxStepsPerSecond: '',
+        acceleration: ''
       }
     }
   }
