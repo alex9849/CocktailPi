@@ -25,6 +25,7 @@
     <q-linear-progress
       :query="progressBar.query"
       :value="progressBar.value"
+      animation-speed="1000"
       color="cyan-4"
     />
     <q-card-section class="q-py-sm">
@@ -213,7 +214,7 @@ export default {
       runningState: {
         running: false,
         inPumpUp: false,
-        isForward: true,
+        forward: true,
         percentage: 0
       }
     }
@@ -227,11 +228,11 @@ export default {
           this.runningState = Object.assign({}, {
             running: false,
             inPumpUp: false,
-            isForward: true,
+            forward: true,
             percentage: 0
           })
           WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
-            this.runningState = data
+            this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
           })
         }
       }
@@ -259,7 +260,7 @@ export default {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
-      this.runningState = data
+      this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
     })
   },
   unmounted () {
@@ -267,7 +268,7 @@ export default {
   },
   computed: {
     progressBar () {
-      let value = this.runningState.isForward ? this.runningState.percentage : (1 - this.runningState.percentage)
+      let value = this.runningState.forward ? this.runningState.percentage : (1 - this.runningState.percentage)
       if (!this.runningState.running && !this.runningState.inPumpUp) {
         value = 0
       }

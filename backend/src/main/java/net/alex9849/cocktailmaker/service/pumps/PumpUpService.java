@@ -13,6 +13,8 @@ import net.alex9849.motorlib.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.*;
 
 @Service
 @Transactional
+@EnableScheduling
 public class PumpUpService {
     @Autowired
     private PumpDataService pumpDataService;
@@ -43,7 +45,8 @@ public class PumpUpService {
 
     private final Logger logger = LoggerFactory.getLogger(PumpUpService.class);
 
-    private final ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
+    private final ExecutorService liveTasksExecutor = Executors.newCachedThreadPool();
+    private final ScheduledExecutorService scheduledTasksExecutor = Executors.newSingleThreadScheduledExecutor();
     private ReversePumpingSettings.Full reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
     private final Map<Long, PumpTask> pumpingTasks = new HashMap<>();
@@ -52,10 +55,15 @@ public class PumpUpService {
 
     public void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
-        executor.initialize();
-        executor.scheduleAtFixedRate(new WebSocketNotifier(), Duration.ofMillis(500));
         this.reschedulePumpBack();
 
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    void performPumpStateUpdate() {
+        for(Map.Entry<Long, RunningState> entry : PumpUpService.this.getRunningState(true).entrySet()) {
+            webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
+        }
     }
 
     public synchronized void stopAllPumps() {
@@ -119,12 +127,11 @@ public class PumpUpService {
             DcMotorTask task;
             if (runInfinity) {
                 task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE);
-                stopTask = executor.schedule(() -> {
-                }, Instant.now());
+                stopTask = scheduledTasksExecutor.schedule(() -> {}, 0, TimeUnit.MICROSECONDS);
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
                 task = new DcMotorTask(dcPump, this.direction, duration);
-                stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
+                stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
             }
 
             this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, runInfinity, task, callback));
@@ -137,7 +144,7 @@ public class PumpUpService {
                 mlToPump = Long.MAX_VALUE;
             }
             StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
-            ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
+            Future<?> stopTask = liveTasksExecutor.submit(task);
             this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, runInfinity, task, callback));
             task.cdl.countDown();
 
@@ -170,7 +177,7 @@ public class PumpUpService {
             return;
         }
         long delay = reversePumpSettings.getSettings().getAutoPumpBackTimer();
-        automaticPumpBackTask = executor.scheduleAtFixedRate(() -> {
+        automaticPumpBackTask = scheduledTasksExecutor.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpDataService.getAllPumps();
             for (Pump pump : allPumps) {
                 if (pump.isPumpedUp() && pump.isCanPumpUp()) {
@@ -188,7 +195,7 @@ public class PumpUpService {
                     });
                 }
             }
-        }, Instant.now().plusSeconds(60 * delay), Duration.ofMinutes(delay));
+        }, delay, delay, TimeUnit.SECONDS);
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
@@ -248,7 +255,6 @@ public class PumpUpService {
         }
         return runningState;
     }
-
     private Map<Long, RunningState> getRunningState(boolean onlyDelta) {
         List<PumpTask> currentTasks;
         synchronized (this) {
@@ -257,13 +263,13 @@ public class PumpUpService {
         Map<Long, RunningState> stateMap = new HashMap<>();
         for(PumpTask task : currentTasks) {
             RunningState runningState = new RunningState();
-            runningState.setPercentage((int) (task.motorTaskRunnable.getPercentageCompleted() * 100));
+            runningState.setPercentage(task.motorTaskRunnable.getPercentageCompleted());
             runningState.setInPumpUp(!task.runInfinity);
             runningState.setRunning(true);
             runningState.setForward(this.direction == Direction.FORWARD);
             stateMap.put(task.pump.getId(), runningState);
         }
-        if(onlyDelta) {
+        if(!onlyDelta) {
             //Todo send
             return stateMap;
         }
@@ -289,26 +295,14 @@ public class PumpUpService {
 
     }
 
-    private class WebSocketNotifier implements Runnable {
-        @Override
-        public void run() {
-            synchronized (PumpUpService.this) {
-                for(Map.Entry<Long, RunningState> entry : PumpUpService.this.getRunningState(true).entrySet()) {
-                    webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
-                }
-            }
-
-        }
-    }
-
     private static class PumpTask {
-        private final ScheduledFuture<?> future;
+        private final Future<?> future;
         private final Pump pump;
         private final boolean runInfinity;
         private final MotorTaskRunnable motorTaskRunnable;
         private final Runnable callback;
 
-        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Runnable callback) {
+        public PumpTask(Future<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Runnable callback) {
             this.future = future;
             this.pump = pump;
             this.runInfinity = runInfinity;
@@ -336,7 +330,7 @@ public class PumpUpService {
     }
 
     private interface MotorTaskRunnable extends Runnable {
-        double getPercentageCompleted();
+        int getPercentageCompleted();
     }
 
     private class DcMotorTask implements MotorTaskRunnable {
@@ -371,11 +365,11 @@ public class PumpUpService {
         }
 
         @Override
-        public double getPercentageCompleted() {
+        public int getPercentageCompleted() {
             if(runInfinity) {
                 return 0;
             }
-            return ((double) this.startTime - System.currentTimeMillis()) / duration;
+            return (int) (((this.startTime - System.currentTimeMillis()) * 100)/ duration);
         }
     }
 
@@ -385,7 +379,7 @@ public class PumpUpService {
         Direction direction;
         long mlToPump;
         boolean isRunInfinity;
-        double percentageDone = 0;
+        int percentageDone = 0;
 
         /**
          * @param mlToPump Long.MAX_VALUE == unlimited
@@ -399,7 +393,7 @@ public class PumpUpService {
         }
 
         @Override
-        public double getPercentageCompleted() {
+        public int getPercentageCompleted() {
             return percentageDone;
         }
 
@@ -417,8 +411,9 @@ public class PumpUpService {
                 nrSteps = -nrSteps;
             }
             driver.move(nrSteps);
-            while (driver.run()) {
-                percentageDone = 1 - (((double) driver.distanceToGo()) / nrSteps);
+            while (driver.distanceToGo() != 0) {
+                driver.run();
+                percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / nrSteps));
                 Thread.yield();
             }
             driver.setEnable(false);

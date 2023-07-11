@@ -115,7 +115,7 @@ public class WebSocketService {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {
-            simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + pumpId, runningState);
+            simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_RUNNING_STATE_DESTINATION + "/" + pumpId, runningState);
         }
     }
 }

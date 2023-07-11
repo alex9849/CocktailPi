@@ -105,6 +105,6 @@ public abstract class Pump {
     }
 
     public boolean isCompleted() {
-        return this.isCanPumpUp() && this.name != null;
+        return this.isCanPumpUp();
     }
 }
