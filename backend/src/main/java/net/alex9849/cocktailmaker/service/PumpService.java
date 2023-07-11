@@ -95,14 +95,12 @@ public class PumpService {
                 maintenanceService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, false, () -> {
                     try {
                         dataService.updatePump(pump);
-                        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
                     } finally {
                         lockService.releasePumpLock(pump.getId(), maintenanceService);
                     }
                 });
             }
             maintenanceService.reschedulePumpBack();
-            webSocketService.broadcastPumpLayout(dataService.getAllPumps());
         } finally {
             lockService.releaseGlobal(maintenanceService);
         }
@@ -111,13 +109,11 @@ public class PumpService {
     public void stopAllPumps() {
         maintenanceService.stopAllPumps();
         maintenanceService.reschedulePumpBack();
-        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
     }
 
     public void cancelPumpUp(long pumpId) {
         maintenanceService.cancelPumpUp(pumpId);
         maintenanceService.reschedulePumpBack();
-        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
     }
 
     public void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean runInfinity) {
@@ -127,8 +123,10 @@ public class PumpService {
         maintenanceService.runPumpOrPerformPumpUp(pump, direction, runInfinity,
                 () -> {
                     try {
-                        dataService.updatePump(pump);
-                        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
+                        if(!runInfinity) {
+                            dataService.updatePump(pump);
+                            webSocketService.broadcastPumpLayout(dataService.getAllPumps());
+                        }
                     } finally {
                         lockService.releasePumpLock(pump.getId(), maintenanceService);
                     }

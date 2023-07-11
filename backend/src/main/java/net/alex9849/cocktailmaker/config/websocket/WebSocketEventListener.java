@@ -55,8 +55,7 @@ public class WebSocketEventListener {
             } catch (NumberFormatException e) {
                 pumpId = -1L;
             }
-
-            webSocketService.sendPumpRunningStateToUser(pumpId, maintenanceService.getState(), event.getUser().getName());
+            webSocketService.sendPumpRunningStateToUser(pumpId, maintenanceService.getRunningState(pumpId), event.getUser().getName());
         }
 
         final String userDestinationActionsLogDestination = "/user" + WebSocketService.WS_ACTIONS_LOG_DESTINATION + "/";

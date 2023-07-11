@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service.pumps;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.RunningState;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +47,15 @@ public class PumpUpService {
     private ReversePumpingSettings.Full reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
     private final Map<Long, PumpTask> pumpingTasks = new HashMap<>();
+    private Map<Long, RunningState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
 
     public void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
+        executor.initialize();
+        executor.scheduleAtFixedRate(new WebSocketNotifier(), Duration.ofMillis(500));
         this.reschedulePumpBack();
+
     }
 
     public synchronized void stopAllPumps() {
@@ -226,6 +232,73 @@ public class PumpUpService {
             settings.setSettings(details);
         }
         return settings;
+    }
+
+    public synchronized RunningState getRunningState(long pumpId) {
+        RunningState runningState = new RunningState();
+        runningState.setPercentage(0);
+        runningState.setInPumpUp(false);
+        runningState.setRunning(false);
+        runningState.setForward(this.direction == Direction.FORWARD);
+        PumpTask pumpTask = this.pumpingTasks.get(pumpId);
+        if(pumpTask != null) {
+            runningState.setPercentage((int) (pumpTask.motorTaskRunnable.getPercentageCompleted() * 100));
+            runningState.setInPumpUp(!pumpTask.runInfinity);
+            runningState.setRunning(true);
+        }
+        return runningState;
+    }
+
+    private Map<Long, RunningState> getRunningState(boolean onlyDelta) {
+        List<PumpTask> currentTasks;
+        synchronized (this) {
+            currentTasks = new ArrayList<>(this.pumpingTasks.values());
+        }
+        Map<Long, RunningState> stateMap = new HashMap<>();
+        for(PumpTask task : currentTasks) {
+            RunningState runningState = new RunningState();
+            runningState.setPercentage((int) (task.motorTaskRunnable.getPercentageCompleted() * 100));
+            runningState.setInPumpUp(!task.runInfinity);
+            runningState.setRunning(true);
+            runningState.setForward(this.direction == Direction.FORWARD);
+            stateMap.put(task.pump.getId(), runningState);
+        }
+        if(onlyDelta) {
+            //Todo send
+            return stateMap;
+        }
+        Map<Long, RunningState> delta = new HashMap<>();
+
+        synchronized (this) {
+            for(Map.Entry<Long, RunningState> oldentry : this.lastState.entrySet()) {
+                if(!stateMap.containsKey(oldentry.getKey())) {
+                    RunningState runningState = new RunningState();
+                    runningState.setPercentage(0);
+                    runningState.setInPumpUp(false);
+                    runningState.setRunning(false);
+                    runningState.setForward(this.direction == Direction.FORWARD);
+                    delta.put(oldentry.getKey(), runningState);
+
+                } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))){
+                    delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
+                }
+            }
+            this.lastState = stateMap;
+        }
+        return delta;
+
+    }
+
+    private class WebSocketNotifier implements Runnable {
+        @Override
+        public void run() {
+            synchronized (PumpUpService.this) {
+                for(Map.Entry<Long, RunningState> entry : PumpUpService.this.getRunningState(true).entrySet()) {
+                    webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
+                }
+            }
+
+        }
     }
 
     private static class PumpTask {
