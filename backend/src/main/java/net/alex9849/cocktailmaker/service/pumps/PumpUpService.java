@@ -131,6 +131,7 @@ public class PumpUpService {
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
                 task = new DcMotorTask(dcPump, this.direction, duration);
+                task.setStart();
                 stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
             }
 
@@ -369,7 +370,7 @@ public class PumpUpService {
             if(runInfinity) {
                 return 0;
             }
-            return (int) (((this.startTime - System.currentTimeMillis()) * 100)/ duration);
+            return (int) (((System.currentTimeMillis() - this.startTime) * 100)/ duration);
         }
     }
 
