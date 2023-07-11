@@ -2,7 +2,7 @@
   <q-card class="bg-white" style="display: flex; flex-direction: column">
     <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
       <div class="col-7 q-px-sm">
-        <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">{{ pump.name }}</p>
+        <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">{{ pump.name? pump.name : 'Pump #' + String(pump.id) }}</p>
         <p
           class="q-ma-none"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
