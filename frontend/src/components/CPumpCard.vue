@@ -22,7 +22,11 @@
         </div>
       </div>
     </q-card-section>
-    <q-linear-progress reverse color="cyan-4" />
+    <q-linear-progress
+      :query="progressBar.query"
+      :value="progressBar.value"
+      color="cyan-4"
+    />
     <q-card-section class="q-py-sm">
       <div class="row">
         <div class="col-6">
@@ -190,6 +194,7 @@
 
 <script>
 import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
+import WebSocketService from '../services/websocket.service'
 
 export default {
   name: 'CPumpCard',
@@ -204,7 +209,33 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      runningState: {
+        running: false,
+        inPumpUp: false,
+        isForward: true,
+        percentage: 0
+      }
+    }
+  },
+  watch: {
+    pump: {
+      immediate: false,
+      handler (newValue, oldValue) {
+        if (newValue.id === oldValue.id) {
+          WebSocketService.unsubscribe('/user/topic/pumpstate/' + String(oldValue.id))
+          this.runningState = Object.assign({}, {
+            running: false,
+            inPumpUp: false,
+            isForward: true,
+            percentage: 0
+          })
+          WebSocketService.subscribe('/user/topic/pumpstate/' + String(newValue.id), (data) => {
+            this.runningState = data
+          })
+        }
+      }
+    }
   },
   methods: {
     getDisplayAttribute (attr, suffix = '') {
@@ -227,8 +258,25 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+    WebSocketService.subscribe('/user/topic/pumpstate/' + String(this.pump.id), (data) => {
+      this.runningState = data
+    })
+  },
+  unmounted () {
+    WebSocketService.unsubscribe('/user/topic/pumpstate/' + String(this.pump.id))
   },
   computed: {
+    progressBar () {
+      let value = this.runningState.isForward ? this.runningState.percentage : (1 - this.runningState.percentage)
+      if (!this.runningState.running && !this.runningState.inPumpUp) {
+        value = 0
+      }
+      value = value / 100
+      return {
+        value: value,
+        query: this.runningState.running && !this.runningState.inPumpUp
+      }
+    },
     typeNameData () {
       if (this.pump.type === 'stepper') {
         return {
@@ -271,9 +319,12 @@ export default {
           state.label = 'Incomplete Configuration'
           break
         case 'DISABLED':
-        default:
           state.color = 'negative'
           state.label = 'Disabled'
+      }
+      if (this.runningState.running) {
+        state.color = 'positive'
+        state.label = 'Running'
       }
       return state
     }
