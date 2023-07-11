@@ -223,7 +223,7 @@ export default {
       immediate: false,
       handler (newValue, oldValue) {
         if (newValue.id === oldValue.id) {
-          WebSocketService.unsubscribe('/user/topic/pumpstate/' + String(oldValue.id))
+          WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
           this.runningState = Object.assign({}, {
             running: false,
             inPumpUp: false,
@@ -258,12 +258,12 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
-    WebSocketService.subscribe('/user/topic/pumpstate/' + String(this.pump.id), (data) => {
+    WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
       this.runningState = data
     })
   },
   unmounted () {
-    WebSocketService.unsubscribe('/user/topic/pumpstate/' + String(this.pump.id))
+    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
     progressBar () {
