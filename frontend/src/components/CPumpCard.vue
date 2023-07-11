@@ -262,19 +262,15 @@ export default {
         label: ''
       }
       switch (this.pump.state) {
-        case 'running':
-          state.color = 'positive'
-          state.label = 'Running'
-          break
-        case 'ready':
+        case 'READY':
           state.color = 'positive'
           state.label = 'Ready'
           break
-        case 'incomplete':
-          state.color = 'negative'
+        case 'INCOMPLETE':
+          state.color = 'warning'
           state.label = 'Incomplete Configuration'
           break
-        case 'disabled':
+        case 'DISABLED':
         default:
           state.color = 'negative'
           state.label = 'Disabled'

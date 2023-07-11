@@ -34,6 +34,7 @@ public class DcPumpDto {
             Integer timePerClInMs;
             Boolean isPowerStateHigh;
 
+
             protected Detailed(DcPump dcPump) {
                 super(dcPump);
             }

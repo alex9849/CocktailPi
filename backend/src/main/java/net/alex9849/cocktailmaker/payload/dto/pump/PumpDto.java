@@ -24,11 +24,13 @@ public class PumpDto {
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
     private interface RemoveIngredient { Boolean getIsRemoveIngredient(); }
-    private interface IsPumpedUp { Boolean getIsPumpedUp(); }
+    private interface IsPumpedUp { boolean isPumpedUp(); }
+    private interface IsEnabled { boolean isEnabled(); }
+    private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
+    private interface PatchIsEnabled { Boolean getIsEnabled(); }
+    private interface Name { String getName(); }
 
     //Read only
-    private interface IsReversed { boolean isReversed(); }
-    private interface Occupation { PumpService.PumpOccupation getOccupation(); }
     private interface IState {PumpDto.State getState(); }
 
 
@@ -43,12 +45,14 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "DcPump"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "StepperPump")
         })
-        public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, IsPumpedUp, RemoveIngredient {
-            Integer fillingLevelInMl;
-            Long currentIngredientId;
-            Boolean isPumpedUp;
-            Boolean isRemoveIngredient;
+        public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, PatchIsEnabled, RemoveIngredient, Name {
             Double tubeCapacityInMl;
+            Integer fillingLevelInMl;
+            Boolean isPumpedUp;
+            Long currentIngredientId;
+            Boolean isRemoveIngredient;
+            Boolean isEnabled;
+            String name;
         }
     }
 
@@ -62,22 +66,25 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
         public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
-                CurrentIngredient, Occupation, IsReversed, IsPumpedUp, IState {
+                CurrentIngredient, IsPumpedUp, IState, IsEnabled, Name {
             long id;
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
+            boolean pumpedUp;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
-            PumpService.PumpOccupation occupation;
-            Boolean isPumpedUp;
-            boolean isReversed;
+            boolean enabled;
+            String name;
             PumpDto.State state;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
-                PumpService pService = SpringUtility.getBean(PumpService.class);
-                PumpUpService puService = SpringUtility.getBean(PumpUpService.class);
-                this.occupation = pService.getPumpOccupation(id);
-                this.isReversed = puService.getDirection() == Direction.BACKWARD;
+                if(!pump.isCompleted()) {
+                    this.state = State.INCOMPLETE;
+                } else if (pump.isEnabled()) {
+                    this.state = State.READY;
+                } else {
+                    this.state = State.DISABLED;
+                }
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }
@@ -101,7 +108,7 @@ public class PumpDto {
     }
 
     public enum State {
-        INCOMPLETE, DISABLED, READY, RUNNING
+        INCOMPLETE, DISABLED, READY
     }
 
 }
