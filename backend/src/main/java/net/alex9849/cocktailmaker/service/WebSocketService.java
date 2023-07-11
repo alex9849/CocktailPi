@@ -29,9 +29,10 @@ public class WebSocketService {
     private SimpUserRegistry simpUserRegistry;
 
     public static final String WS_COCKTAIL_DESTINATION = "/topic/cocktailprogress";
-    public static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pumplayout";
+    public static final String WS_PUMP_LAYOUT_DESTINATION = "/topic/pump/layout";
     public static final String WS_ACTIONS_STATUS_DESTINATION = "/topic/eventactionstatus";
     public static final String WS_ACTIONS_LOG_DESTINATION = "/topic/eventactionlog";
+    public static final String WS_PUMP_RUNNING_STATE_DESTINATION = "/topic/pump/runningstate";
 
     public void broadcastCurrentCocktailProgress(@Nullable CocktailProgress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
@@ -99,6 +100,11 @@ public class WebSocketService {
 
     public void sendEventActionLogToUser(long runningActionId, List<RunningAction.LogEntry> logEntries, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId,
+                logEntries);
+    }
+
+    public void sendPumpRunningStateToUser(long pumpId, List<RunningAction.LogEntry> logEntries, String username) {
+        simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_RUNNING_STATE_DESTINATION + "/" + pumpId,
                 logEntries);
     }
 

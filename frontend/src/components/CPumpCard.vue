@@ -230,7 +230,7 @@ export default {
             isForward: true,
             percentage: 0
           })
-          WebSocketService.subscribe('/user/topic/pumpstate/' + String(newValue.id), (data) => {
+          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
             this.runningState = data
           })
         }

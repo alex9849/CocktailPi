@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
+import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ public class WebSocketEventListener {
 
     @Autowired
     private PumpDataService pumpService;
+
+    @Autowired
+    private PumpUpService maintenanceService;
 
     @Autowired
     private EventService eventService;
@@ -40,6 +44,19 @@ public class WebSocketEventListener {
         }
         if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_ACTIONS_STATUS_DESTINATION)) {
             webSocketService.sendRunningEventActionsStatusToUser(eventService.getRunningActionsInformation(), event.getUser().getName());
+        }
+
+        final String userPumpRunningStateDestination = "/user" + WebSocketService.WS_PUMP_RUNNING_STATE_DESTINATION + "/";
+        if(simpDestination.startsWith(userPumpRunningStateDestination)) {
+            long pumpId;
+            try {
+                String stringActionId = simpDestination.substring(userPumpRunningStateDestination.length());
+                pumpId = Long.parseLong(stringActionId);
+            } catch (NumberFormatException e) {
+                pumpId = -1L;
+            }
+
+            webSocketService.sendPumpRunningStateToUser(pumpId, maintenanceService.getState(), event.getUser().getName());
         }
 
         final String userDestinationActionsLogDestination = "/user" + WebSocketService.WS_ACTIONS_LOG_DESTINATION + "/";

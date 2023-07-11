@@ -40,7 +40,7 @@ export default {
         vm.setCocktailProgress(progress)
       }
     })
-    WebsocketService.subscribe('/user/topic/pumplayout', layoutMessage => {
+    WebsocketService.subscribe('/user/topic/pump/layout', layoutMessage => {
       vm.setPumpLayout(JSON.parse(layoutMessage.body))
     })
   },
@@ -54,7 +54,7 @@ export default {
     },
     disconnectWebsocket () {
       WebsocketService.unsubscribe('/user/topic/cocktailprogress')
-      WebsocketService.unsubscribe('/user/topic/pumplayout')
+      WebsocketService.unsubscribe('/user/topic/pump/layout')
       WebsocketService.disconnectWebsocket()
     }
   },

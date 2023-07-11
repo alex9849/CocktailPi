@@ -108,18 +108,20 @@ public class PumpUpService {
             DcPump dcPump = (DcPump) pump;
             DCMotor dcMotor = dcPump.getMotorDriver();
             dcMotor.setDirection(this.direction);
-            DcMotorTask task = new DcMotorTask(dcPump, this.direction);
             dcMotor.setRunning(true);
             ScheduledFuture<?> stopTask;
+            DcMotorTask task;
             if (runInfinity) {
+                task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE);
                 stopTask = executor.schedule(() -> {
                 }, Instant.now());
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
+                task = new DcMotorTask(dcPump, this.direction, duration);
                 stopTask = executor.scheduleWithFixedDelay(task, Duration.ofMillis(duration));
             }
 
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, runInfinity, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, runInfinity, task, callback));
             task.cdl.countDown();
 
         } else if (pump instanceof StepperPump) {
@@ -130,7 +132,7 @@ public class PumpUpService {
             }
             StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
             ScheduledFuture<?> stopTask = executor.scheduleWithFixedDelay(task, Duration.ZERO);
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, runInfinity, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, runInfinity, task, callback));
             task.cdl.countDown();
 
         } else {
@@ -226,17 +228,23 @@ public class PumpUpService {
         return settings;
     }
 
-    private class PumpTask {
+    private static class PumpTask {
         private final ScheduledFuture<?> future;
         private final Pump pump;
         private final boolean runInfinity;
+        private final MotorTaskRunnable motorTaskRunnable;
         private final Runnable callback;
 
-        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean runInfinity, Runnable callback) {
+        public PumpTask(ScheduledFuture<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Runnable callback) {
             this.future = future;
             this.pump = pump;
             this.runInfinity = runInfinity;
+            this.motorTaskRunnable = motorTaskRunnable;
             this.callback = callback;
+        }
+
+        public double getPercentageCompleted() {
+            return motorTaskRunnable.getPercentageCompleted();
         }
 
         public void cancel() {
@@ -254,15 +262,28 @@ public class PumpUpService {
         }
     }
 
-    private class DcMotorTask implements Runnable {
+    private interface MotorTaskRunnable extends Runnable {
+        double getPercentageCompleted();
+    }
+
+    private class DcMotorTask implements MotorTaskRunnable {
         DcPump dcPump;
         CountDownLatch cdl;
         Direction direction;
+        long startTime;
+        boolean runInfinity;
+        long duration;
 
-        DcMotorTask(DcPump dcPump, Direction direction) {
+        DcMotorTask(DcPump dcPump, Direction direction, long duration) {
             this.dcPump = dcPump;
             this.direction = direction;
             this.cdl = new CountDownLatch(1);
+            this.runInfinity = duration == Long.MAX_VALUE;
+            this.duration = duration;
+        }
+
+        public void setStart() {
+            this.startTime = System.currentTimeMillis();
         }
 
         @Override
@@ -275,13 +296,23 @@ public class PumpUpService {
                 e.printStackTrace();
             }
         }
+
+        @Override
+        public double getPercentageCompleted() {
+            if(runInfinity) {
+                return 0;
+            }
+            return ((double) this.startTime - System.currentTimeMillis()) / duration;
+        }
     }
 
-    private class StepperMotorTask implements Runnable {
+    private class StepperMotorTask implements MotorTaskRunnable {
         StepperPump stepperPump;
         CountDownLatch cdl;
         Direction direction;
         long mlToPump;
+        boolean isRunInfinity;
+        double percentageDone = 0;
 
         /**
          * @param mlToPump Long.MAX_VALUE == unlimited
@@ -291,21 +322,32 @@ public class PumpUpService {
             this.direction = direction;
             this.cdl = new CountDownLatch(1);
             this.mlToPump = mlToPump;
+            this.isRunInfinity = mlToPump == Long.MAX_VALUE;
+        }
+
+        @Override
+        public double getPercentageCompleted() {
+            return percentageDone;
         }
 
         @Override
         public void run() {
             AcceleratingStepper driver = stepperPump.getMotorDriver();
             long nrSteps = mlToPump * stepperPump.getStepsPerCl();
-            if (mlToPump == Long.MAX_VALUE) {
+            if (isRunInfinity) {
                 //Pick a very large number
                 nrSteps = 10000000000L;
+            } else if (nrSteps == 0) {
+                nrSteps = 1;
             }
             if (direction == Direction.BACKWARD) {
                 nrSteps = -nrSteps;
             }
             driver.move(nrSteps);
-            driver.runToPosition();
+            while (driver.run()) {
+                percentageDone = 1 - (((double) driver.distanceToGo()) / nrSteps);
+                Thread.yield();
+            }
             driver.setEnable(false);
             stepperPump.setPumpedUp(direction == Direction.FORWARD);
             try {
