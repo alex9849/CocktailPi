@@ -401,29 +401,33 @@ public class PumpUpService {
 
         @Override
         public void run() {
-            AcceleratingStepper driver = stepperPump.getMotorDriver();
-            long nrSteps = (mlToPump * stepperPump.getStepsPerCl()) / 10;
-            if (isRunInfinity) {
-                //Pick a very large number
-                nrSteps = 10000000000L;
-            } else if (nrSteps == 0) {
-                nrSteps = 1;
-            }
-            if (direction == Direction.BACKWARD) {
-                nrSteps = -nrSteps;
-            }
-            driver.move(nrSteps);
-            while (driver.distanceToGo() != 0) {
-                driver.run();
-                percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / nrSteps));
-                Thread.yield();
-            }
-            driver.setEnable(false);
-            stepperPump.setPumpedUp(direction == Direction.FORWARD);
             try {
+                AcceleratingStepper driver = stepperPump.getMotorDriver();
+                long nrSteps = (mlToPump * stepperPump.getStepsPerCl()) / 10;
+                if (isRunInfinity) {
+                    //Pick a very large number
+                    nrSteps = 10000000000L;
+                } else if (nrSteps == 0) {
+                    nrSteps = 1;
+                }
+                if (direction == Direction.BACKWARD) {
+                    nrSteps = -nrSteps;
+                }
+                driver.move(nrSteps);
+                while (driver.distanceToGo() != 0) {
+                    driver.run();
+                    percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / nrSteps));
+                    if(Thread.interrupted()) {
+                        return;
+                    }
+                    Thread.yield();
+                }
+                driver.setEnable(false);
+                stepperPump.setPumpedUp(direction == Direction.FORWARD);
                 cdl.await();
                 PumpUpService.this.onPumpRunTaskComplete(stepperPump.getId());
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
