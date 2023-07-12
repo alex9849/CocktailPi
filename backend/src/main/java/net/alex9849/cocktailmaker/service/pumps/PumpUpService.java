@@ -58,7 +58,7 @@ public class PumpUpService {
 
     @Scheduled(fixedDelay = 500)
     void performPumpStateUpdate() {
-        for(Map.Entry<Long, RunningState> entry : PumpUpService.this.getRunningState(true).entrySet()) {
+        for (Map.Entry<Long, RunningState> entry : getRunningState(true).entrySet()) {
             webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
         }
     }
@@ -124,7 +124,8 @@ public class PumpUpService {
             DcMotorTask task;
             if (runInfinity) {
                 task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE);
-                stopTask = scheduledTasksExecutor.schedule(() -> {}, 0, TimeUnit.MICROSECONDS);
+                stopTask = scheduledTasksExecutor.schedule(() -> {
+                }, 0, TimeUnit.MICROSECONDS);
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier / 10);
                 task = new DcMotorTask(dcPump, this.direction, duration);
@@ -246,20 +247,17 @@ public class PumpUpService {
         runningState.setRunning(false);
         runningState.setForward(this.direction == Direction.FORWARD);
         PumpTask pumpTask = this.pumpingTasks.get(pumpId);
-        if(pumpTask != null) {
+        if (pumpTask != null) {
             runningState.setPercentage((int) (pumpTask.motorTaskRunnable.getPercentageCompleted() * 100));
             runningState.setInPumpUp(!pumpTask.runInfinity);
             runningState.setRunning(true);
         }
         return runningState;
     }
+
     private Map<Long, RunningState> getRunningState(boolean onlyDelta) {
-        List<PumpTask> currentTasks;
-        synchronized (this) {
-            currentTasks = new ArrayList<>(this.pumpingTasks.values());
-        }
         Map<Long, RunningState> stateMap = new HashMap<>();
-        for(PumpTask task : currentTasks) {
+        for (PumpTask task : this.pumpingTasks.values()) {
             RunningState runningState = new RunningState();
             runningState.setPercentage(task.motorTaskRunnable.getPercentageCompleted());
             runningState.setInPumpUp(!task.runInfinity);
@@ -267,32 +265,31 @@ public class PumpUpService {
             runningState.setForward(this.direction == Direction.FORWARD);
             stateMap.put(task.pump.getId(), runningState);
         }
-        if(!onlyDelta) {
+        if (!onlyDelta) {
             return stateMap;
         }
         Map<Long, RunningState> delta = new HashMap<>();
 
-        synchronized (this) {
-            for(Map.Entry<Long, RunningState> oldentry : this.lastState.entrySet()) {
-                if(!stateMap.containsKey(oldentry.getKey())) {
-                    RunningState runningState = new RunningState();
-                    runningState.setPercentage(0);
-                    runningState.setInPumpUp(false);
-                    runningState.setRunning(false);
-                    runningState.setForward(this.direction == Direction.FORWARD);
-                    delta.put(oldentry.getKey(), runningState);
+        for (Map.Entry<Long, RunningState> oldentry : this.lastState.entrySet()) {
+            if (!stateMap.containsKey(oldentry.getKey())) {
+                RunningState runningState = new RunningState();
+                runningState.setPercentage(0);
+                runningState.setInPumpUp(false);
+                runningState.setRunning(false);
+                runningState.setForward(this.direction == Direction.FORWARD);
+                delta.put(oldentry.getKey(), runningState);
 
-                } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))){
-                    delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
-                }
+            } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))) {
+                delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
             }
-            Set<Long> newKeysInSet = new HashSet<>(stateMap.keySet());
-            newKeysInSet.removeAll(lastState.keySet());
-            for(Long key : newKeysInSet) {
-                delta.put(key, stateMap.get(key));
-            }
-            this.lastState = stateMap;
         }
+        Set<Long> newKeysInSet = new HashSet<>(stateMap.keySet());
+        newKeysInSet.removeAll(lastState.keySet());
+        for (Long key : newKeysInSet) {
+            delta.put(key, stateMap.get(key));
+        }
+
+        this.lastState = stateMap;
         return delta;
 
     }
@@ -368,10 +365,10 @@ public class PumpUpService {
 
         @Override
         public int getPercentageCompleted() {
-            if(runInfinity) {
+            if (runInfinity) {
                 return 0;
             }
-            return (int) (((System.currentTimeMillis() - this.startTime) * 100)/ duration);
+            return (int) (((System.currentTimeMillis() - this.startTime) * 100) / duration);
         }
     }
 
@@ -417,7 +414,7 @@ public class PumpUpService {
                 while (driver.distanceToGo() != 0) {
                     driver.run();
                     percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / nrSteps));
-                    if(Thread.interrupted()) {
+                    if (Thread.interrupted()) {
                         return;
                     }
                     Thread.yield();
