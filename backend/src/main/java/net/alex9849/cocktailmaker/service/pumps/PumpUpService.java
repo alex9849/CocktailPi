@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Service
@@ -59,7 +56,7 @@ public class PumpUpService {
 
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 500)
     void performPumpStateUpdate() {
         for(Map.Entry<Long, RunningState> entry : PumpUpService.this.getRunningState(true).entrySet()) {
             webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
@@ -129,7 +126,7 @@ public class PumpUpService {
                 task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE);
                 stopTask = scheduledTasksExecutor.schedule(() -> {}, 0, TimeUnit.MICROSECONDS);
             } else {
-                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier);
+                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier / 10);
                 task = new DcMotorTask(dcPump, this.direction, duration);
                 task.setStart();
                 stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
@@ -271,7 +268,6 @@ public class PumpUpService {
             stateMap.put(task.pump.getId(), runningState);
         }
         if(!onlyDelta) {
-            //Todo send
             return stateMap;
         }
         Map<Long, RunningState> delta = new HashMap<>();
@@ -289,6 +285,11 @@ public class PumpUpService {
                 } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))){
                     delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
                 }
+            }
+            Set<Long> newKeysInSet = new HashSet<>(stateMap.keySet());
+            newKeysInSet.removeAll(lastState.keySet());
+            for(Long key : newKeysInSet) {
+                delta.put(key, stateMap.get(key));
             }
             this.lastState = stateMap;
         }
@@ -401,7 +402,7 @@ public class PumpUpService {
         @Override
         public void run() {
             AcceleratingStepper driver = stepperPump.getMotorDriver();
-            long nrSteps = mlToPump * stepperPump.getStepsPerCl();
+            long nrSteps = (mlToPump * stepperPump.getStepsPerCl()) / 10;
             if (isRunInfinity) {
                 //Pick a very large number
                 nrSteps = 10000000000L;

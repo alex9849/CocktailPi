@@ -90,14 +90,9 @@ public class PumpService {
                 if (!pump.isCanPumpUp()) {
                     continue;
                 }
-                runPumpOrPerformPumpUp(pump, Direction.FORWARD, false);
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);
-                maintenanceService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, false, () -> {
-                    try {
-                        dataService.updatePump(pump);
-                    } finally {
-                        lockService.releasePumpLock(pump.getId(), maintenanceService);
-                    }
+                maintenanceService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, true, () -> {
+                    lockService.releasePumpLock(pump.getId(), maintenanceService);
                 });
             }
             maintenanceService.reschedulePumpBack();
@@ -132,7 +127,6 @@ public class PumpService {
                     }
                 });
         maintenanceService.reschedulePumpBack();
-        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
     }
 
     public void setReversePumpingSettings(ReversePumpingSettings.Full settings) {

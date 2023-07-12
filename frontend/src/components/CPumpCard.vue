@@ -2,7 +2,8 @@
   <q-card class="bg-white" style="display: flex; flex-direction: column">
     <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
       <div class="col-7 q-px-sm">
-        <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">{{ pump.name? pump.name : 'Pump #' + String(pump.id) }}</p>
+        <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
+          {{ pump.name ? pump.name : 'Pump #' + String(pump.id) }}</p>
         <p
           class="q-ma-none"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
@@ -25,6 +26,7 @@
     <q-linear-progress
       :query="progressBar.query"
       :value="progressBar.value"
+      :reverse="progressBar.reverse"
       animation-speed="1000"
       color="cyan-4"
     />
@@ -41,14 +43,14 @@
         <div class="col-6">
           <p
           >
-            {{!!pump.currentIngredient? pump.currentIngredient.name : 'None' }}
+            {{ !!pump.currentIngredient ? pump.currentIngredient.name : 'None' }}
           </p>
         </div>
         <div class="col-6">
           <p
             :class="getDisplayAttribute(pump.fillingLevelInMl).class"
           >
-            {{getDisplayAttribute(pump.fillingLevelInMl, 'ml').label}}
+            {{ getDisplayAttribute(pump.fillingLevelInMl, 'ml').label }}
           </p>
         </div>
       </div>
@@ -74,14 +76,14 @@
           <p
             :class="getDisplayAttribute(pump.stepsPerCl).class"
           >
-            {{getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label}}
+            {{ getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label }}
           </p>
         </div>
         <div class="col-6">
           <p
             :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
           >
-            {{getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label}}
+            {{ getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label }}
           </p>
         </div>
       </div>
@@ -98,14 +100,14 @@
           <p
             :class="getDisplayAttribute(pump.acceleration).class"
           >
-            {{getDisplayAttribute(pump.acceleration, 'steps/s²').label}}
+            {{ getDisplayAttribute(pump.acceleration, 'steps/s²').label }}
           </p>
         </div>
         <div class="col-6">
           <p
             :class="getDisplayAttribute(pump.stepPin).class"
           >
-            {{getDisplayAttribute(pump.stepPin).label}}
+            {{ getDisplayAttribute(pump.stepPin).label }}
           </p>
         </div>
       </div>
@@ -113,13 +115,23 @@
         <div class="col-6">
           <p class="text-weight-medium">Enable pin</p>
         </div>
+        <div class="col-6">
+          <p class="text-weight-medium">Tube capacity</p>
+        </div>
       </div>
       <div class="row">
         <div class="col-6">
           <p
             :class="getDisplayAttribute(pump.enablePin).class"
           >
-            {{getDisplayAttribute(pump.enablePin).label}}
+            {{ getDisplayAttribute(pump.enablePin).label }}
+          </p>
+        </div>
+        <div class="col-6">
+          <p
+            :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
+          >
+            {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
           </p>
         </div>
       </div>
@@ -143,14 +155,14 @@
             <p
               :class="getDisplayAttribute(pump.timePerClInMs).class"
             >
-              {{getDisplayAttribute(pump.timePerClInMs, 'ms/cl').label}}
+              {{ getDisplayAttribute(pump.timePerClInMs, 'ms/cl').label }}
             </p>
           </div>
           <div class="col-6">
             <p
               :class="getDisplayAttribute(pump.pin).class"
             >
-              {{getDisplayAttribute(pump.pin).label}}
+              {{ getDisplayAttribute(pump.pin).label }}
             </p>
           </div>
         </div>
@@ -165,16 +177,16 @@
         <div class="row">
           <div class="col-6">
             <p
-              :class="getDisplayAttribute(pump.powerStateHigh).class"
+              :class="getDisplayAttribute(pump.isPowerStateHigh).class"
             >
-              {{getDisplayAttribute(pump.powerStateHigh).label}}
+              {{ getDisplayAttribute(pump.isPowerStateHigh).label }}
             </p>
           </div>
           <div class="col-6">
             <p
               :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
             >
-              {{getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label}}
+              {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
             </p>
           </div>
         </div>
@@ -184,10 +196,36 @@
     <hr class="text-grey-2 q-ma-none">
     <q-card-section class="q-pa-sm">
       <div class="row q-gutter-sm justify-end">
-        <q-btn no-caps class="bg-grey-6 text-white col-shrink">Edit</q-btn>
-        <q-btn no-caps class="bg-green text-white col-shrink">Pump Back</q-btn>
-        <q-btn no-caps class="bg-green text-white col-shrink">Pump Up</q-btn>
-        <q-btn no-caps class="bg-green text-white col-shrink">Run</q-btn>
+        <q-btn
+          no-caps
+          class="bg-grey-6 text-white col-shrink"
+        >
+          Edit
+        </q-btn>
+        <q-btn
+          no-caps
+          class="bg-green text-white col-shrink"
+          @click="onClickPumpUp(true)"
+          :disable="runningState.running"
+        >
+          Pump Back
+        </q-btn>
+        <q-btn
+          no-caps
+          class="bg-green text-white col-shrink"
+          @click="onClickPumpUp(false)"
+          :disable="runningState.running"
+        >
+          Pump Up
+        </q-btn>
+        <q-btn
+          no-caps
+          :color="runningState.running ? 'negative' : 'positive'"
+          class="text-white col-shrink"
+          @click="onClickTurnOnOrOffPump()"
+        >
+          {{ runningState.running ? 'Stop' : 'Run' }}
+        </q-btn>
       </div>
     </q-card-section>
   </q-card>
@@ -196,6 +234,7 @@
 <script>
 import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
+import PumpService from 'src/services/pump.service'
 
 export default {
   name: 'CPumpCard',
@@ -223,7 +262,7 @@ export default {
     pump: {
       immediate: false,
       handler (newValue, oldValue) {
-        if (newValue.id === oldValue.id) {
+        if (newValue.id !== oldValue.id) {
           WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
           this.runningState = Object.assign({}, {
             running: false,
@@ -239,6 +278,31 @@ export default {
     }
   },
   methods: {
+    onClickTurnOnOrOffPump () {
+      const vm = this
+      if (this.runningState.running) {
+        PumpService.stopPump(this.pump.id).then(() => {
+          vm.$q.notify({
+            type: 'positive',
+            message: 'Pump #' + String(this.pump.id) + ' stopped!'
+          })
+        })
+      } else {
+        PumpService.startPump(this.pump.id).then(() => {
+          vm.$q.notify({
+            type: 'positive',
+            message: 'Pump #' + String(this.pump.id) + ' started!'
+          })
+        })
+      }
+    },
+    onClickPumpUp (reverse) {
+      if (reverse) {
+        PumpService.pumpDown(this.pump.id)
+      } else {
+        PumpService.pumpUp(this.pump.id)
+      }
+    },
     getDisplayAttribute (attr, suffix = '') {
       if (suffix) {
         suffix = ' ' + String(suffix)
@@ -259,6 +323,8 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+  },
+  mounted () {
     WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
       this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
     })
@@ -275,7 +341,8 @@ export default {
       value = value / 100
       return {
         value: value,
-        query: this.runningState.running && !this.runningState.inPumpUp
+        query: this.runningState.running && !this.runningState.inPumpUp,
+        reverse: this.runningState.running && !this.runningState.inPumpUp
       }
     },
     typeNameData () {
