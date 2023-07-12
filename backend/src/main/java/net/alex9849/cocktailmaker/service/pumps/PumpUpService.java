@@ -423,8 +423,7 @@ public class PumpUpService {
             try {
                 cdl.await();
                 PumpUpService.this.onPumpRunTaskComplete(stepperPump.getId());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
     }
