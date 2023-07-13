@@ -202,11 +202,12 @@
       <div class="row q-gutter-lg justify-end">
         <div class="col-auto">
           <q-btn
-          no-caps
-          round
-          :icon="mdiPencilOutline"
-          class="bg-info text-white"
-        />
+            no-caps
+            round
+            @click="$router.push({ name: 'editpump', params: { pumpId: pump.id }})"
+            :icon="mdiPencilOutline"
+            class="bg-info text-white"
+          />
         </div>
         <div class="col">
           <div class="row q-gutter-sm justify-end">
@@ -248,7 +249,16 @@
 </template>
 
 <script>
-import { mdiProgressClock, mdiPump, mdiPencilOutline, mdiPlay, mdiStop, mdiReply, mdiShare, mdiSync } from '@quasar/extras/mdi-v5'
+import {
+  mdiProgressClock,
+  mdiPump,
+  mdiPencilOutline,
+  mdiPlay,
+  mdiStop,
+  mdiReply,
+  mdiShare,
+  mdiSync
+} from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
 import PumpService from 'src/services/pump.service'
 

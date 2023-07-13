@@ -488,13 +488,13 @@ export default {
       }
     }
   },
-  async beforeRouteEnter (to, from, next) {
+  /* async beforeRouteEnter (to, from, next) {
     const pump = await PumpService.getPump(to.params.pumpId)
     next(vm => {
       vm.pump = pump
     })
-  },
-  created () {
+  }, */
+  async created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiCogs = mdiCogs
@@ -504,7 +504,7 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
-
+    this.pump = await PumpService.getPump(this.$route.params.pumpId)
     if (this.handleComplete) {
       this.stepper = 1
     }
