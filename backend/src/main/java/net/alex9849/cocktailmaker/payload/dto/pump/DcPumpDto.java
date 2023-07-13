@@ -16,7 +16,7 @@ public class DcPumpDto {
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Patch extends PumpDto.Request.Patch implements Pin, TimePerClInMs, IsPowerStateHigh {
+        public static class Create extends PumpDto.Request.Create implements Pin, TimePerClInMs, IsPowerStateHigh {
             Integer pin;
             Integer timePerClInMs;
             Boolean isPowerStateHigh;

@@ -8,8 +8,14 @@ import net.alex9849.cocktailmaker.model.pump.StepperPump;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StepperPumpDto {
-    private interface EnablePin { @Min(0) @Max(31) Integer getEnablePin(); }
-    private interface StepPin { @Min(0) @Max(31) Integer getStepPin(); }
+    private interface EnablePin {
+        @Min(value = 0, message = "EnablePin needs to be between 0 and 31")
+        @Max(value = 31, message = "EnablePin needs to be between 0 and 31") Integer getEnablePin();
+    }
+    private interface StepPin {
+        @Min(value = 0, message = "StepPin needs to be between 0 and 31")
+        @Max(value = 31, message = "StepPin needs to be between 0 and 31") Integer getStepPin();
+    }
     private interface StepsPerCl { @Min(1) Integer getStepsPerCl(); }
     private interface MaxStepsPerSecond { @Min(1) Integer getMaxStepsPerSecond(); }
     private interface Acceleration { @Min(1) Integer getAcceleration(); }
@@ -18,7 +24,7 @@ public class StepperPumpDto {
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Patch extends PumpDto.Request.Patch implements EnablePin, StepPin, StepsPerCl,
+        public static class Create extends PumpDto.Request.Create implements EnablePin, StepPin, StepsPerCl,
                 MaxStepsPerSecond, Acceleration {
             Integer enablePin;
             Integer stepPin;

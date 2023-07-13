@@ -9,6 +9,7 @@
       header-nav
     >
       <q-step
+        caption="Optional"
         title="Handle"
         :name="0"
         :icon="mdiPencilOutline"
@@ -22,7 +23,11 @@
             </div>
             <div class="col-6">
               <q-input
-                v-model:model-value="pump.name"
+                :model-value="pump.name"
+                @update:model-value="setPumpAttr('name', $event)"
+                :debounce="300"
+                :loading="attrLoading.name"
+                :shadow-text="!!pump.name ? null : ('Pump #' + String(pump.id))"
                 outlined
                 filled
                 label="Pump identifier"
@@ -32,8 +37,7 @@
         </div>
         <div class="col-12 q-ma-lg">
           <q-stepper-navigation>
-            <q-btn @click="stepper++" :disable="!handleComplete" color="primary" label="Continue"/>
-            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+            <q-btn @click="stepper++" color="primary" label="Continue"/>
           </q-stepper-navigation>
         </div>
       </q-step>
@@ -42,7 +46,6 @@
         :name="1"
         :icon="mdiFlashOutline"
         header-nav
-        :disable="!handleComplete"
         :done="hardwarePinsComplete"
       >
         <div class="col-12">
@@ -86,17 +89,26 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.stepPin"
+                    :model-value="pump.stepPin"
+                    @update:model-value="setPumpAttr('stepPin', pump.stepPin, $event)"
+                    :error-message="errorMessage.stepPin"
+                    :error="!!errorMessage.stepPin"
                     outlined
+                    debounce="300"
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Step BCM-Pin"
                   />
                   <q-input
                     v-model:model-value="pump.enablePin"
+                    @update:model-value="setPumpAttr('enablePin', pump.enablePin, $event)"
+                    :error-message="errorMessage.enablePin"
+                    :error="!!errorMessage.enablePin"
                     outlined
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Enable BCM-Pin"
                   />
                 </template>
@@ -140,6 +152,7 @@
                     outlined
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Acceleration"
                   >
                     <template v-slot:append>
@@ -175,6 +188,7 @@
                     outlined
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Minimal step delta (in ms)"
                   >
                     <template v-slot:append>
@@ -198,6 +212,7 @@
                     outlined
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Steps per cl"
                   >
                     <template v-slot:append>
@@ -254,6 +269,7 @@
                     outlined
                     type="number"
                     filled
+                    :disable="anyAttrLoading"
                     label="Tube capacity (in ml)"
                   >
                     <template v-slot:append>
@@ -293,6 +309,7 @@
                     v-model:selected="pump.currentIngredient"
                     clearable
                     filled
+                    :disable="anyAttrLoading"
                     filter-manual-ingredients
                     filter-ingredient-groups
                   />
@@ -314,6 +331,7 @@
                     outlined
                     filled
                     hide-bottom-space
+                    :disable="anyAttrLoading"
                     v-model:model-value="pump.fillingLevelInMl"
                   >
                     <template v-slot:append>
@@ -338,6 +356,7 @@
                     <div class="col-auto">
                       <q-checkbox
                         v-model:model-value="pump.pumpedUp"
+                        :disable="anyAttrLoading"
                         outlined
                         size="xl"
                         class="text-subtitle1"
@@ -383,6 +402,8 @@ import {
 import CAssistantContainer from 'components/CAssistantContainer'
 import CPumpTester from 'components/CPumpTester'
 import CIngredientSelector from 'components/CIngredientSelector'
+import PumpService from 'src/services/pump.service'
+import UserService from 'src/services/user.service'
 
 export default {
   name: 'SetupPump',
@@ -391,6 +412,7 @@ export default {
     return {
       stepper: 0,
       pump: {
+        id: '',
         type: '',
         name: '',
         stepPin: '',
@@ -401,8 +423,36 @@ export default {
         min_step_delta: '',
         acceleration: '',
         pumpedUp: false
+      },
+      attrLoading: {
+        name: false,
+        stepPin: false,
+        enablePin: false,
+        fillingLevelInMl: false,
+        tube_capacity: false,
+        steps_per_cl: false,
+        min_step_delta: false,
+        acceleration: false,
+        pumpedUp: false
+      },
+      errorMessage: {
+        name: '',
+        stepPin: '',
+        enablePin: '',
+        fillingLevelInMl: '',
+        tube_capacity: '',
+        steps_per_cl: '',
+        min_step_delta: '',
+        acceleration: '',
+        pumpedUp: ''
       }
     }
+  },
+  async beforeRouteEnter (to, from, next) {
+    const pump = await PumpService.getPump(to.params.pumpId)
+    next(vm => {
+      vm.pump = pump
+    })
   },
   created () {
     this.mdiPump = mdiPump
@@ -414,22 +464,42 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
+
+    if (this.handleComplete) {
+      this.stepper = 1
+    }
+    if (this.hardwarePinsComplete) {
+      this.stepper = 2
+    }
+    if (this.hardwarePinsComplete && this.calibrationComplete) {
+      this.stepper = 3
+    }
   },
   methods: {
-    selectPump (name) {
-      if (name === 'stepper') {
-        this.pump.dtype = 'stepper'
-      } else if (name === 'dc') {
-        this.pump.dtype = 'dc'
-      } else {
-        return
-      }
-      this.stepper++
+    setPumpAttr (attr, currValue, newValue) {
+      this.pump[attr] = newValue
+      this.attrLoading[attr] = true
+      PumpService.updatePump(this.pump.id, this.pump)
+        .then(pump => {
+          this.pump = Object.assign(this.pump, pump)
+          this.errorMessage[attr] = ''
+        }, (err) => {
+          this.pump[attr] = currValue
+          this.errorMessage[attr] = err?.response?.data?.message
+        })
+        .finally(() => {
+          this.attrLoading[attr] = false
+        })
     }
   },
   computed: {
-    pumpTypeComplete () {
-      return !!this.pump.dtype
+    anyAttrLoading () {
+      for (const key in Object.keys(this.attrLoading)) {
+        if (this.attrLoading[key] === true) {
+          return true
+        }
+      }
+      return false
     },
     handleComplete () {
       return !!this.pump.name

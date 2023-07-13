@@ -120,20 +120,20 @@ public class PumpDataService {
         }
     }
 
-    public Pump fromDto(PumpDto.Request.Patch pumpDto) {
+    public Pump fromDto(PumpDto.Request.Create pumpDto) {
         if(pumpDto == null) {
             return null;
         }
-        if(pumpDto instanceof DcPumpDto.Request.Patch) {
+        if(pumpDto instanceof DcPumpDto.Request.Create) {
             return fromDto(pumpDto, new DcPump());
-        } else if (pumpDto instanceof StepperPumpDto.Request.Patch) {
+        } else if (pumpDto instanceof StepperPumpDto.Request.Create) {
             return fromDto(pumpDto, new StepperPump());
         } else {
             throw new IllegalStateException("Unknown pumpDto-type: " + pumpDto.getClass().getName());
         }
     }
 
-    public Pump fromDto(PumpDto.Request.Patch patchPumpDto, Pump toPatch) {
+    public Pump fromDto(PumpDto.Request.Create patchPumpDto, Pump toPatch) {
         if(patchPumpDto == null) {
             return toPatch;
         }

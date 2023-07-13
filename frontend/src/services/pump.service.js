@@ -38,16 +38,23 @@ class PumpService {
     return axios.put(API_PATH + 'stop', null, config)
   }
 
-  updatePump (id, createPump) {
-    return axios.put(API_PATH + String(id), createPump)
-  }
-
   patchPump (id, patchPump) {
     return axios.patch(API_PATH + String(id), patchPump)
+      .then(response => response.data)
+  }
+
+  updatePump (id, updatePump) {
+    return axios.put(API_PATH + String(id), updatePump)
+      .then(response => response.data)
   }
 
   deletePump (id) {
     return axios.delete(API_PATH + String(id))
+  }
+
+  getPump (id) {
+    return axios.get(API_PATH + String(id))
+      .then(response => response.data)
   }
 }
 

@@ -8,10 +8,6 @@ import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
-import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
-import net.alex9849.cocktailmaker.utils.SpringUtility;
-import net.alex9849.motorlib.Direction;
 import org.springframework.beans.BeanUtils;
 
 
@@ -42,10 +38,10 @@ public class PumpDto {
         @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
-                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
+                @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "dc"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
-        public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, PatchIsEnabled, RemoveIngredient, Name {
+        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, PatchIsEnabled, RemoveIngredient, Name {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             Boolean isPumpedUp;

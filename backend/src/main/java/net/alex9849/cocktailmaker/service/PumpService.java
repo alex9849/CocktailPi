@@ -166,11 +166,11 @@ public class PumpService {
     public CocktailProgress getCurrentCocktailProgress() {
         return cocktailOrderService.getCurrentCocktailProgress();
     }
-    public Pump fromDto(PumpDto.Request.Patch pumpDto) {
+    public Pump fromDto(PumpDto.Request.Create pumpDto) {
         return dataService.fromDto(pumpDto);
     }
 
-    public Pump fromDto(PumpDto.Request.Patch patchPumpDto, Pump toPatch) {
+    public Pump fromDto(PumpDto.Request.Create patchPumpDto, Pump toPatch) {
         return dataService.fromDto(patchPumpDto, toPatch);
     }
 

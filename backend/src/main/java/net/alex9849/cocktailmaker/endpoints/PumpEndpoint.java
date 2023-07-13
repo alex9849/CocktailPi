@@ -26,24 +26,39 @@ public class PumpEndpoint {
         return ResponseEntity.ok(pumpService.getAllPumps().stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getPump(@PathVariable("id") long id) {
+        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pumpService.getPump(id)));
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Patch pumpDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
         UriComponents uriComponents = uriBuilder.path("/api/pump/{id}").buildAndExpand(createdPump.getId());
         return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
+        Pump updatePump = pumpService.fromDto(pumpDto);
+        updatePump.setId(id);
+        pumpService.updatePump(updatePump);
+        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(updatePump));
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Patch patchPumpDto) {
+    public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create patchPumpDto) {
         Pump toUpdate = pumpService.getPump(id);
         if(toUpdate == null) {
             return ResponseEntity.notFound().build();
         }
         Pump updatePump = pumpService.fromDto(patchPumpDto, toUpdate);
         pumpService.updatePump(updatePump);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pumpService.updatePump(updatePump)));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
