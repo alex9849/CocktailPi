@@ -180,17 +180,17 @@
               <c-assistant-container>
                 <template v-slot:explanations>
                   <p>
-                    The "minimal step delta"-field determines how long the controller should wait between steps.
-                    If it is too low, the motor will skip steps or not run at all.
-                    If it is too high, the motor will run slower than necessary.<br>
-                    The delay is given in milliseconds. (1 second = 1000 millisecond)
+                    The "max steps per second"-field determines fast the motor should spin at max.
+                    One revolution is normally divided into 200 steps. This can vary depending on the motor and motor driver settings.
+                    If it is too high, the motor might not be able to keep up and skips steps or even doesn't run at all.
+                    If it is too low, the motor will run slower than necessary.<br>
                   </p>
                   <p>
                     The rule is:
                   </p>
                   <ul>
-                    <li>lower = faster motor</li>
-                    <li>higher = slower motor</li>
+                    <li>higher = faster motor</li>
+                    <li>lower = slower motor</li>
                   </ul>
                 </template>
                 <template v-slot:fields>
@@ -205,7 +205,7 @@
                     outlined
                     type="number"
                     filled
-                    label="Minimal step delta (in ms)"
+                    label="Max steps per second"
                   >
                     <template v-slot:append>
                       ms
