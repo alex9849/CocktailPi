@@ -43,11 +43,9 @@ class PumpService {
       .then(response => response.data)
   }
 
-  updatePump (id, updatePump) {
+  updatePump (id, updatePump, onErrorNotify = true) {
     return axios.put(API_PATH + String(id), updatePump, {
-      params: {
-        onErrorNotify: false
-      }
+      onErrorNotify
     })
       .then(response => response.data)
   }

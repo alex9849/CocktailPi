@@ -479,7 +479,7 @@ export default {
     setPumpAttr (attr, currValue, newValue) {
       this.pump[attr] = newValue
       this.attrLoading[attr] = true
-      PumpService.updatePump(this.pump.id, this.pump)
+      PumpService.updatePump(this.pump.id, this.pump, false)
         .then(pump => {
           this.pump = Object.assign(this.pump, pump)
           this.errorMessage[attr] = ''

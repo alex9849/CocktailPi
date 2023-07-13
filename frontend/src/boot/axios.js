@@ -5,16 +5,14 @@ import store from '../store'
 
 export default boot(({ app }) => {
   axios.defaults.baseURL = window.location.origin
-  axios.defaults.params = {
-    onErrorNotify: true
-  }
+  axios.defaults.onErrorNotify = true
   axios.interceptors.request.use(cfg => {
     cfg.headers.Authorization = authHeader()
     cfg.baseURL = store().getters['auth/getFormattedServerAddress']
     return cfg
   })
   axios.interceptors.response.use(cfg => cfg, error => {
-    if (error?.config?.params?.onErrorNotify && error?.response?.data?.message) {
+    if (error?.config?.onErrorNotify && error?.response?.data?.message) {
       app.config.globalProperties.$q.notify({
         type: 'negative',
         message: error.response.data.message
