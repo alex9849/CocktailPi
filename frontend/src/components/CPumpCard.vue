@@ -1,7 +1,7 @@
 <template>
   <q-card class="bg-white" style="display: flex; flex-direction: column">
     <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
-      <div class="col-7 q-px-sm">
+      <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
           {{ pump.name ? pump.name : 'Pump #' + String(pump.id) }}</p>
         <p
@@ -12,14 +12,18 @@
           {{ typeNameData.label }}
         </p>
       </div>
-      <div class="col-5">
-        <div class="row justify-end items-center q-gutter-sm">
-          <div class="col-shrink">
-            <q-badge :color="pumpedUpState.color" class="text-subtitle2">{{ pumpedUpState.label }}</q-badge>
-          </div>
-          <div class="col-shrink">
-            <q-badge :color="pumpState.color" class="text-subtitle2">{{ pumpState.label }}</q-badge>
-          </div>
+      <div class="col-shrink">
+        <div class="row q-gutter-sm">
+          <q-badge :color="pumpedUpState.color" class="text-subtitle2">
+            <div class="row q-col-gutter-sm">
+              <p>
+                {{ pumpedUpState.label }}
+              </p>
+            </div>
+          </q-badge>
+          <q-badge :color="pumpState.color" class="text-subtitle2">
+            {{ pumpState.label }}
+          </q-badge>
         </div>
       </div>
     </q-card-section>
@@ -195,44 +199,53 @@
     <!--div style="flex-grow: 1"></div-->
     <hr class="text-grey-2 q-ma-none">
     <q-card-section class="q-pa-sm">
-      <div class="row q-gutter-sm justify-end">
-        <q-btn
+      <div class="row q-gutter-lg justify-end">
+        <div class="col-auto">
+          <q-btn
           no-caps
-          class="bg-grey-6 text-white col-shrink"
-        >
-          Edit
-        </q-btn>
-        <q-btn
-          no-caps
-          class="bg-green text-white col-shrink"
-          @click="onClickPumpUp(true)"
-          :disable="runningState.running"
-        >
-          Pump Back
-        </q-btn>
-        <q-btn
-          no-caps
-          class="bg-green text-white col-shrink"
-          @click="onClickPumpUp(false)"
-          :disable="runningState.running"
-        >
-          Pump Up
-        </q-btn>
-        <q-btn
-          no-caps
-          :color="runningState.running ? 'negative' : 'positive'"
-          class="text-white col-shrink"
-          @click="onClickTurnOnOrOffPump()"
-        >
-          {{ runningState.running ? 'Stop' : 'Run' }}
-        </q-btn>
+          round
+          :icon="mdiPencilOutline"
+          class="bg-info text-white"
+        />
+        </div>
+        <div class="col">
+          <div class="row q-gutter-lg justify-end">
+            <q-btn
+              no-caps
+              round
+              :icon="mdiReply"
+              class="bg-green text-white"
+              @click="onClickPumpUp(true)"
+              :disable="runningState.running"
+            >
+            </q-btn>
+            <q-btn
+              no-caps
+              round
+              :icon="mdiShare"
+              class="bg-green text-white"
+              @click="onClickPumpUp(false)"
+              :disable="runningState.running"
+            >
+            </q-btn>
+            <q-btn
+              no-caps
+              round
+              :color="runningState.running ? 'negative' : 'positive'"
+              :icon="runningState.running? mdiStop : mdiPlay"
+              class="text-white"
+              @click="onClickTurnOnOrOffPump()"
+            >
+            </q-btn>
+          </div>
+        </div>
       </div>
     </q-card-section>
   </q-card>
 </template>
 
 <script>
-import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
+import { mdiProgressClock, mdiPump, mdiPencilOutline, mdiPlay, mdiStop, mdiReply, mdiShare, mdiSync } from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
 import PumpService from 'src/services/pump.service'
 
@@ -323,6 +336,12 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+    this.mdiPencilOutline = mdiPencilOutline
+    this.mdiPlay = mdiPlay
+    this.mdiStop = mdiStop
+    this.mdiReply = mdiReply
+    this.mdiShare = mdiShare
+    this.mdiSync = mdiSync
   },
   mounted () {
     WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
@@ -369,6 +388,14 @@ export default {
       } else {
         state.color = 'negative'
         state.label = 'Pumped Down'
+      }
+      if (this.runningState.inPumpUp) {
+        state.color = 'warning'
+        if (this.runningState.forward) {
+          state.label = 'Pumping Up'
+        } else {
+          state.label = 'Pumping Down'
+        }
       }
       return state
     },
