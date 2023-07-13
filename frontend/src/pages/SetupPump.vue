@@ -9,54 +9,16 @@
       header-nav
     >
       <q-step
-        :title="pumpTypeStepLabel"
-        :name="0"
-        :icon="mdiAbTesting"
-        :done="pumpTypeComplete"
-        header-nav
-      >
-        <div class="col-12  q-col-gutter-md">
-          <div class="row justify-center q-col-gutter-lg">
-            <p class="col text-center text-bold text-h5">What type of pump do you want to add?</p>
-          </div>
-          <div class="row justify-center q-col-gutter-lg">
-            <div class="col-4">
-              <q-card class="clickable"
-                      :class="{'bg-grey-4': pump.dtype === 'dc'}"
-                      @click="selectPump('dc')"
-              >
-                <q-card-section class="text-center">
-                  <q-icon size="lg" :name="mdiPump"/>
-                  <p class="text-bold">DC-Pump</p>
-                </q-card-section>
-              </q-card>
-            </div>
-            <div class="col-4">
-              <q-card class="clickable"
-                      :class="{'bg-grey-4': pump.dtype === 'stepper'}"
-                      @click="selectPump('stepper')"
-              >
-                <q-card-section class="text-center">
-                  <q-icon size="lg" :name="mdiProgressClock"/>
-                  <p class="text-bold">Stepper-Pump</p>
-                </q-card-section>
-              </q-card>
-            </div>
-          </div>
-        </div>
-      </q-step>
-      <q-step
         title="Handle"
-        :name="1"
+        :name="0"
         :icon="mdiPencilOutline"
         header-nav
-        :disable="!pumpTypeComplete"
         :done="handleComplete"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
             <div class="col-12 text-center text-bold text-h5">
-              <p>How should we call your pump?</p>
+              <p>How should your pump be called?</p>
             </div>
             <div class="col-6">
               <q-input
@@ -77,7 +39,7 @@
       </q-step>
       <q-step
         title="Hardware pins"
-        :name="2"
+        :name="1"
         :icon="mdiFlashOutline"
         header-nav
         :disable="!handleComplete"
@@ -151,7 +113,7 @@
       </q-step>
       <q-step
         title="Calibrate"
-        :name="3"
+        :name="2"
         :icon="mdiCogs"
         header-nav
         :disable="!hardwarePinsComplete"
@@ -312,7 +274,7 @@
       </q-step>
       <q-step
         title="State"
-        :name="4"
+        :name="3"
         :icon="mdiPencilOutline"
         header-nav
         :disable="!calibrationComplete"
@@ -429,7 +391,7 @@ export default {
     return {
       stepper: 0,
       pump: {
-        dtype: '',
+        type: '',
         name: '',
         stepPin: '',
         enablePin: '',

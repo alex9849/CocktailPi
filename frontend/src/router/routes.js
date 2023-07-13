@@ -107,9 +107,9 @@ const routes = [
         component: () => import('pages/PumpManagement'),
         name: 'pumpmanagement'
       }, {
-        path: 'admin/pump/add',
+        path: 'admin/pump/:pumpId/edit',
         component: () => import('pages/SetupPump'),
-        name: 'setuppump'
+        name: 'editpump'
       }, {
         path: 'admin/categorymanagement',
         component: () => import('pages/CategoryManagement'),

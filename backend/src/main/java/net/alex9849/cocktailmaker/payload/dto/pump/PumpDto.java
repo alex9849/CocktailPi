@@ -42,8 +42,8 @@ public class PumpDto {
         @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "DcPump"),
-                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "StepperPump")
+                @JsonSubTypes.Type(value = DcPumpDto.Request.Patch.class, name = "dc"),
+                @JsonSubTypes.Type(value = StepperPumpDto.Request.Patch.class, name = "stepper")
         })
         public static class Patch implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, PatchIsEnabled, RemoveIngredient, Name {
             Double tubeCapacityInMl;
