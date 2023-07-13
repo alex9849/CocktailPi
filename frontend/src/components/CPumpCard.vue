@@ -209,12 +209,13 @@
         />
         </div>
         <div class="col">
-          <div class="row q-gutter-lg justify-end">
+          <div class="row q-gutter-sm justify-end">
             <q-btn
               no-caps
               round
               :icon="mdiReply"
               class="bg-green text-white"
+              :loading="pumpDownBtnLoading"
               @click="onClickPumpUp(true)"
               :disable="runningState.running"
             >
@@ -223,6 +224,7 @@
               no-caps
               round
               :icon="mdiShare"
+              :loading="pumpUpBtnLoading"
               class="bg-green text-white"
               @click="onClickPumpUp(false)"
               :disable="runningState.running"
@@ -233,6 +235,7 @@
               round
               :color="runningState.running ? 'negative' : 'positive'"
               :icon="runningState.running? mdiStop : mdiPlay"
+              :loading="runningBtnLoading"
               class="text-white"
               @click="onClickTurnOnOrOffPump()"
             >
@@ -263,6 +266,9 @@ export default {
   },
   data () {
     return {
+      pumpDownBtnLoading: false,
+      pumpUpBtnLoading: false,
+      runningBtnLoading: false,
       runningState: {
         running: false,
         inPumpUp: false,
@@ -293,27 +299,30 @@ export default {
   methods: {
     onClickTurnOnOrOffPump () {
       const vm = this
+      this.runningBtnLoading = true
       if (this.runningState.running) {
         PumpService.stopPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
             message: 'Pump #' + String(this.pump.id) + ' stopped!'
           })
-        })
+        }).finally(this.runningBtnLoading = false)
       } else {
         PumpService.startPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
             message: 'Pump #' + String(this.pump.id) + ' started!'
           })
-        })
+        }).finally(this.runningBtnLoading = false)
       }
     },
     onClickPumpUp (reverse) {
       if (reverse) {
-        PumpService.pumpDown(this.pump.id)
+        this.pumpDownBtnLoading = true
+        PumpService.pumpDown(this.pump.id).finally(this.pumpDownBtnLoading = false)
       } else {
-        PumpService.pumpUp(this.pump.id)
+        this.pumpUpBtnLoading = true
+        PumpService.pumpUp(this.pump.id).finally(this.pumpUpBtnLoading = false)
       }
     },
     getDisplayAttribute (attr, suffix = '') {
