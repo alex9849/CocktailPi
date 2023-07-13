@@ -488,12 +488,6 @@ export default {
       }
     }
   },
-  /* async beforeRouteEnter (to, from, next) {
-    const pump = await PumpService.getPump(to.params.pumpId)
-    next(vm => {
-      vm.pump = pump
-    })
-  }, */
   async created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
