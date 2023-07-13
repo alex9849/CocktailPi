@@ -20,6 +20,8 @@
     option-value="id"
     :autofocus="autofocus"
     input-debounce="0"
+    :error-message="errorMessage"
+    :error="error"
     :map-options="mapOptions"
     :use-chips="useChips"
     :multiple="multiple"
@@ -136,6 +138,14 @@ export default {
     afterFetchFilterFunction: {
       type: Function,
       default: x => x
+    },
+    error: {
+      type: Boolean,
+      default: false
+    },
+    errorMessage: {
+      type: String,
+      required: false
     }
   },
   emits: ['update:selected'],

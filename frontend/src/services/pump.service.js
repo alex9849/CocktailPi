@@ -63,13 +63,20 @@ class PumpService {
 export class PumpDtoMapper {
   toPumpCreateDto (detailed) {
     return {
-      bcmPin: detailed.bcmPin,
-      fillingLevelInMl: detailed.fillingLevelInMl,
-      timePerClInMs: detailed.timePerClInMs,
+      type: detailed.type,
+      name: detailed.name,
+      enablePin: detailed.enablePin,
+      stepPin: detailed.stepPin,
+      acceleration: detailed.acceleration,
+      maxStepsPerSecond: detailed.maxStepsPerSecond,
+      stepsPerCl: detailed.stepsPerCl,
       tubeCapacityInMl: detailed.tubeCapacityInMl,
-      powerStateHigh: detailed.powerStateHigh,
-      pumpedUp: detailed.pumpedUp,
-      currentIngredientId: detailed.currentIngredient?.id
+      fillingLevelInMl: detailed.fillingLevelInMl,
+      isPumpedUp: detailed.pumpedUp,
+      currentIngredientId: detailed.currentIngredient?.id,
+
+      timePerClInMs: detailed.timePerClInMs,
+      powerStateHigh: detailed.powerStateHigh
     }
   }
 

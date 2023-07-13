@@ -24,9 +24,12 @@
             <div class="col-6">
               <q-input
                 :model-value="pump.name"
-                @update:model-value="setPumpAttr('name', $event)"
-                :debounce="300"
+                @update:model-value="setPumpAttr('name', pump.name, $event)"
+                :error-message="errorMessage.name"
+                :error="!!errorMessage.name"
                 :loading="attrLoading.name"
+                :disable="anyAttrLoading"
+                debounce="600"
                 :shadow-text="!!pump.name ? null : ('Pump #' + String(pump.id))"
                 outlined
                 filled
@@ -93,22 +96,25 @@
                     @update:model-value="setPumpAttr('stepPin', pump.stepPin, $event)"
                     :error-message="errorMessage.stepPin"
                     :error="!!errorMessage.stepPin"
+                    :loading="attrLoading.stepPin"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
-                    debounce="300"
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Step BCM-Pin"
                   />
                   <q-input
-                    v-model:model-value="pump.enablePin"
+                    :model-value="pump.enablePin"
                     @update:model-value="setPumpAttr('enablePin', pump.enablePin, $event)"
                     :error-message="errorMessage.enablePin"
                     :error="!!errorMessage.enablePin"
+                    :loading="attrLoading.enablePin"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Enable BCM-Pin"
                   />
                 </template>
@@ -148,11 +154,16 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.acceleration"
+                    :model-value="pump.acceleration"
+                    @update:model-value="setPumpAttr('acceleration', pump.acceleration, $event)"
+                    :error-message="errorMessage.acceleration"
+                    :error="!!errorMessage.acceleration"
+                    :loading="attrLoading.acceleration"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Acceleration"
                   >
                     <template v-slot:append>
@@ -184,11 +195,16 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.min_step_delta"
+                    :model-value="pump.maxStepsPerSecond"
+                    @update:model-value="setPumpAttr('maxStepsPerSecond', pump.maxStepsPerSecond, $event)"
+                    :error-message="errorMessage.maxStepsPerSecond"
+                    :error="!!errorMessage.maxStepsPerSecond"
+                    :loading="attrLoading.maxStepsPerSecond"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Minimal step delta (in ms)"
                   >
                     <template v-slot:append>
@@ -208,11 +224,16 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.steps_per_cl"
+                    :model-value="pump.stepsPerCl"
+                    @update:model-value="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event)"
+                    :error-message="errorMessage.stepsPerCl"
+                    :error="!!errorMessage.stepsPerCl"
+                    :loading="attrLoading.stepsPerCl"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Steps per cl"
                   >
                     <template v-slot:append>
@@ -265,11 +286,16 @@
                 </template>
                 <template v-slot:fields>
                   <q-input
-                    v-model:model-value="pump.tube_capacity"
+                    :model-value="pump.tubeCapacityInMl"
+                    @update:model-value="setPumpAttr('tubeCapacityInMl', pump.tubeCapacityInMl, $event)"
+                    :error-message="errorMessage.tubeCapacityInMl"
+                    :error="!!errorMessage.tubeCapacityInMl"
+                    :loading="attrLoading.tubeCapacityInMl"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     outlined
                     type="number"
                     filled
-                    :disable="anyAttrLoading"
                     label="Tube capacity (in ml)"
                   >
                     <template v-slot:append>
@@ -305,11 +331,15 @@
               <c-assistant-container>
                 <template v-slot:fields>
                   <c-ingredient-selector
+                    :model-value="pump.currentIngredient"
+                    @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event)"
+                    :error-message="errorMessage.currentIngredient"
+                    :error="!!errorMessage.currentIngredient"
+                    :loading="attrLoading.currentIngredient"
+                    :disable="anyAttrLoading"
                     label="Current ingredient"
-                    v-model:selected="pump.currentIngredient"
                     clearable
                     filled
-                    :disable="anyAttrLoading"
                     filter-manual-ingredients
                     filter-ingredient-groups
                   />
@@ -326,13 +356,18 @@
               <c-assistant-container>
                 <template v-slot:fields>
                   <q-input
+                    :model-value="pump.fillingLevelInMl"
+                    @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event)"
+                    :error-message="errorMessage.fillingLevelInMl"
+                    :error="!!errorMessage.fillingLevelInMl"
+                    :loading="attrLoading.fillingLevelInMl"
+                    :disable="anyAttrLoading"
+                    debounce="600"
                     label="Current filling level"
                     type="number"
                     outlined
                     filled
                     hide-bottom-space
-                    :disable="anyAttrLoading"
-                    v-model:model-value="pump.fillingLevelInMl"
                   >
                     <template v-slot:append>
                       ml
@@ -355,8 +390,13 @@
                   <div class="row justify-center">
                     <div class="col-auto">
                       <q-checkbox
-                        v-model:model-value="pump.pumpedUp"
+                        :model-value="pump.pumpedUp"
+                        @update:model-value="setPumpAttr('pumpedUp', pump.pumpedUp, $event)"
+                        :error-message="errorMessage.pumpedUp"
+                        :error="!!errorMessage.pumpedUp"
+                        :loading="attrLoading.pumpedUp"
                         :disable="anyAttrLoading"
+                        debounce="600"
                         outlined
                         size="xl"
                         class="text-subtitle1"
@@ -402,7 +442,7 @@ import {
 import CAssistantContainer from 'components/CAssistantContainer'
 import CPumpTester from 'components/CPumpTester'
 import CIngredientSelector from 'components/CIngredientSelector'
-import PumpService from 'src/services/pump.service'
+import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 import UserService from 'src/services/user.service'
 
 export default {
@@ -418,9 +458,9 @@ export default {
         stepPin: '',
         enablePin: '',
         fillingLevelInMl: '',
-        tube_capacity: '',
-        steps_per_cl: '',
-        min_step_delta: '',
+        tubeCapacityInMl: '',
+        stepsPerCl: '',
+        maxStepsPerSecond: '',
         acceleration: '',
         pumpedUp: false
       },
@@ -429,9 +469,9 @@ export default {
         stepPin: false,
         enablePin: false,
         fillingLevelInMl: false,
-        tube_capacity: false,
-        steps_per_cl: false,
-        min_step_delta: false,
+        tubeCapacityInMl: false,
+        stepsPerCl: false,
+        maxStepsPerSecond: false,
         acceleration: false,
         pumpedUp: false
       },
@@ -440,9 +480,9 @@ export default {
         stepPin: '',
         enablePin: '',
         fillingLevelInMl: '',
-        tube_capacity: '',
-        steps_per_cl: '',
-        min_step_delta: '',
+        tubeCapacityInMl: '',
+        stepsPerCl: '',
+        maxStepsPerSecond: '',
         acceleration: '',
         pumpedUp: ''
       }
@@ -479,7 +519,7 @@ export default {
     setPumpAttr (attr, currValue, newValue) {
       this.pump[attr] = newValue
       this.attrLoading[attr] = true
-      PumpService.updatePump(this.pump.id, this.pump, false)
+      PumpService.updatePump(this.pump.id, pumpDtoMapper.toPumpCreateDto(this.pump), false)
         .then(pump => {
           this.pump = Object.assign(this.pump, pump)
           this.errorMessage[attr] = ''
@@ -494,7 +534,7 @@ export default {
   },
   computed: {
     anyAttrLoading () {
-      for (const key in Object.keys(this.attrLoading)) {
+      for (const key of Object.keys(this.attrLoading)) {
         if (this.attrLoading[key] === true) {
           return true
         }
@@ -508,8 +548,8 @@ export default {
       return (!!this.pump.stepPin && !!this.pump.enablePin)
     },
     calibrationComplete () {
-      return !!this.pump.acceleration && !!this.pump.min_step_delta &&
-        !!this.pump.steps_per_cl && !!this.pump.tube_capacity
+      return !!this.pump.acceleration && !!this.pump.maxStepsPerSecond &&
+        !!this.pump.stepsPerCl && !!this.pump.tubeCapacityInMl
     },
     pumpTypeStepLabel () {
       if (this.pumpTypeComplete) {
