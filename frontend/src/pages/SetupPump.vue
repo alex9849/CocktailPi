@@ -26,10 +26,9 @@
               <q-input
                 :model-value="pump.name"
                 @update:model-value="setPumpAttr('name', pump.name, $event)"
-                :error-message="errorMessage.name"
-                :error="!!errorMessage.name"
-                :loading="attrLoading.name"
-                :disable="anyAttrLoading"
+                :error-message="attrState.name.errorMsg"
+                :error="!!attrState.name.errorMsg"
+                :loading="attrState.name.loading"
                 debounce="600"
                 :shadow-text="!!pump.name ? null : ('Pump #' + String(pump.id))"
                 outlined
@@ -97,10 +96,9 @@
                   <q-input
                     :model-value="pump.stepPin"
                     @update:model-value="setPumpAttr('stepPin', pump.stepPin, $event)"
-                    :error-message="errorMessage.stepPin"
-                    :error="!!errorMessage.stepPin"
-                    :loading="attrLoading.stepPin"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.stepPin.errorMsg"
+                    :error="!!attrState.stepPin.errorMsg"
+                    :loading="attrState.stepPin.loading"
                     debounce="600"
                     outlined
                     type="number"
@@ -110,16 +108,16 @@
                   <q-input
                     :model-value="pump.enablePin"
                     @update:model-value="setPumpAttr('enablePin', pump.enablePin, $event)"
-                    :error-message="errorMessage.enablePin"
-                    :error="!!errorMessage.enablePin"
-                    :loading="attrLoading.enablePin"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.enablePin.errorMsg"
+                    :error="!!attrState.enablePin.errorMsg"
+                    :loading="attrState.enablePin.loading"
                     debounce="600"
                     outlined
                     type="number"
                     filled
                     label="Enable BCM-Pin"
-                  />
+                  >
+                  </q-input>
                 </template>
               </c-assistant-container>
             </div>
@@ -161,10 +159,9 @@
                   <q-input
                     :model-value="pump.acceleration"
                     @update:model-value="setPumpAttr('acceleration', pump.acceleration, $event)"
-                    :error-message="errorMessage.acceleration"
-                    :error="!!errorMessage.acceleration"
-                    :loading="attrLoading.acceleration"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.acceleration.errorMsg"
+                    :error="!!attrState.acceleration.errorMsg"
+                    :loading="attrState.acceleration.loading"
                     debounce="600"
                     outlined
                     type="number"
@@ -202,10 +199,9 @@
                   <q-input
                     :model-value="pump.maxStepsPerSecond"
                     @update:model-value="setPumpAttr('maxStepsPerSecond', pump.maxStepsPerSecond, $event)"
-                    :error-message="errorMessage.maxStepsPerSecond"
-                    :error="!!errorMessage.maxStepsPerSecond"
-                    :loading="attrLoading.maxStepsPerSecond"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.maxStepsPerSecond.errorMsg"
+                    :error="!!attrState.maxStepsPerSecond.errorMsg"
+                    :loading="attrState.maxStepsPerSecond.loading"
                     debounce="600"
                     outlined
                     type="number"
@@ -231,10 +227,9 @@
                   <q-input
                     :model-value="pump.stepsPerCl"
                     @update:model-value="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event)"
-                    :error-message="errorMessage.stepsPerCl"
-                    :error="!!errorMessage.stepsPerCl"
-                    :loading="attrLoading.stepsPerCl"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.stepsPerCl.errorMsg"
+                    :error="!!attrState.stepsPerCl.errorMsg"
+                    :loading="attrState.stepsPerCl.loading"
                     debounce="600"
                     outlined
                     type="number"
@@ -293,10 +288,9 @@
                   <q-input
                     :model-value="pump.tubeCapacityInMl"
                     @update:model-value="setPumpAttr('tubeCapacityInMl', pump.tubeCapacityInMl, $event)"
-                    :error-message="errorMessage.tubeCapacityInMl"
-                    :error="!!errorMessage.tubeCapacityInMl"
-                    :loading="attrLoading.tubeCapacityInMl"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.tubeCapacityInMl.errorMsg"
+                    :error="!!attrState.tubeCapacityInMl.errorMsg"
+                    :loading="attrState.tubeCapacityInMl.loading"
                     debounce="600"
                     outlined
                     type="number"
@@ -340,10 +334,9 @@
                   <c-ingredient-selector
                     :model-value="pump.currentIngredient"
                     @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event)"
-                    :error-message="errorMessage.currentIngredient"
-                    :error="!!errorMessage.currentIngredient"
-                    :loading="attrLoading.currentIngredient"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.currentIngredient.errorMsg"
+                    :error="!!attrState.currentIngredient.errorMsg"
+                    :loading="attrState.currentIngredient.loading"
                     label="Current ingredient"
                     clearable
                     filled
@@ -365,10 +358,9 @@
                   <q-input
                     :model-value="pump.fillingLevelInMl"
                     @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event)"
-                    :error-message="errorMessage.fillingLevelInMl"
-                    :error="!!errorMessage.fillingLevelInMl"
-                    :loading="attrLoading.fillingLevelInMl"
-                    :disable="anyAttrLoading"
+                    :error-message="attrState.fillingLevelInMl.errorMsg"
+                    :error="!!attrState.fillingLevelInMl.errorMsg"
+                    :loading="attrState.fillingLevelInMl.loading"
                     debounce="600"
                     label="Current filling level"
                     type="number"
@@ -399,10 +391,9 @@
                       <q-checkbox
                         :model-value="pump.pumpedUp"
                         @update:model-value="setPumpAttr('pumpedUp', pump.pumpedUp, $event)"
-                        :error-message="errorMessage.pumpedUp"
-                        :error="!!errorMessage.pumpedUp"
-                        :loading="attrLoading.pumpedUp"
-                        :disable="anyAttrLoading"
+                        :error-message="attrState.pumpedUp.errorMsg"
+                        :error="!!attrState.pumpedUp.errorMsg"
+                        :loading="attrState.pumpedUp.loading"
                         debounce="600"
                         outlined
                         size="xl"
@@ -444,7 +435,8 @@ import {
   mdiPlay,
   mdiProgressClock,
   mdiPump,
-  mdiStop
+  mdiStop,
+  mdiCheckCircle
 } from '@quasar/extras/mdi-v5'
 import CAssistantContainer from 'components/CAssistantContainer'
 import CPumpTester from 'components/CPumpTester'
@@ -463,6 +455,7 @@ export default {
         type: '',
         name: '',
         stepPin: '',
+        currentIngredient: '',
         enablePin: '',
         fillingLevelInMl: '',
         tubeCapacityInMl: '',
@@ -471,27 +464,57 @@ export default {
         acceleration: '',
         pumpedUp: false
       },
-      attrLoading: {
-        name: false,
-        stepPin: false,
-        enablePin: false,
-        fillingLevelInMl: false,
-        tubeCapacityInMl: false,
-        stepsPerCl: false,
-        maxStepsPerSecond: false,
-        acceleration: false,
-        pumpedUp: false
-      },
-      errorMessage: {
-        name: '',
-        stepPin: '',
-        enablePin: '',
-        fillingLevelInMl: '',
-        tubeCapacityInMl: '',
-        stepsPerCl: '',
-        maxStepsPerSecond: '',
-        acceleration: '',
-        pumpedUp: ''
+      attrState: {
+        name: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        currentIngredient: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        stepPin: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        enablePin: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        fillingLevelInMl: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        tubeCapacityInMl: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        stepsPerCl: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        maxStepsPerSecond: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        acceleration: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        pumpedUp: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        }
       }
     }
   },
@@ -502,6 +525,7 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiFlashOutline = mdiFlashOutline
     this.mdiAbTesting = mdiAbTesting
+    this.mdiCheckCircle = mdiCheckCircle
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
@@ -519,24 +543,27 @@ export default {
   methods: {
     setPumpAttr (attr, currValue, newValue) {
       this.pump[attr] = newValue
-      this.attrLoading[attr] = true
+      this.attrState[attr].loading = true
+      this.attrState[attr].saved = false
       PumpService.updatePump(this.pump.id, pumpDtoMapper.toPumpCreateDto(this.pump), false)
         .then(pump => {
           this.pump = Object.assign(this.pump, pump)
-          this.errorMessage[attr] = ''
+          this.attrState[attr].errorMsg = ''
+          this.attrState[attr].saved = true
         }, (err) => {
           this.pump[attr] = currValue
-          this.errorMessage[attr] = err?.response?.data?.message
+          this.attrState[attr].errorMsg = err?.response?.data?.message
+          this.attrState[attr].saved = false
         })
         .finally(() => {
-          this.attrLoading[attr] = false
+          this.attrState[attr].loading = false
         })
     }
   },
   computed: {
     anyAttrLoading () {
-      for (const key of Object.keys(this.attrLoading)) {
-        if (this.attrLoading[key] === true) {
+      for (const key of Object.keys(this.attrState)) {
+        if (this.attrLoading[key].loading === true) {
           return true
         }
       }
