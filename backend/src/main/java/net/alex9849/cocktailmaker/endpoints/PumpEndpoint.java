@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.motorlib.Direction;
@@ -68,7 +69,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, false);
+        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_UP, 0));
         return ResponseEntity.ok().build();
     }
 
@@ -79,7 +80,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, false);
+        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0));
         return ResponseEntity.ok().build();
     }
 
@@ -94,7 +95,7 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, true);
+        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0));
         return ResponseEntity.ok().build();
     }
 

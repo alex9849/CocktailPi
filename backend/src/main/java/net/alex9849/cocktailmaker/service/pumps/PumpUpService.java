@@ -1,9 +1,6 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
-import net.alex9849.cocktailmaker.model.pump.DcPump;
-import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.model.pump.RunningState;
-import net.alex9849.cocktailmaker.model.pump.StepperPump;
+import net.alex9849.cocktailmaker.model.pump.*;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.WebSocketService;
@@ -15,12 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -88,17 +82,20 @@ public class PumpUpService {
         }
     }
 
-    public synchronized void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean runInfinity, Runnable callback) {
+    public synchronized void runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Runnable callback) {
         if (callback == null) {
             callback = () -> {
             };
         }
+        Direction direction = advice.getType() == PumpAdvice.Type.PUMP_DOWN ? Direction.BACKWARD : Direction.FORWARD;
         if (direction != this.direction && !this.pumpingTasks.isEmpty()) {
             callback.run();
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
 
-        if ((!pump.isCanPumpUp() && !runInfinity) || !pump.isCanPump()) {
+        if ((!pump.isCanPumpUp() && (advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN))
+                || !pump.isCanPump()
+        ) {
             callback.run();
             throw new IllegalArgumentException("Pump setup isn't completed yet!");
         }
@@ -110,19 +107,39 @@ public class PumpUpService {
         this.direction = direction;
 
         double overshootMultiplier = 1;
-        if (this.direction == Direction.BACKWARD) {
+        if (advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
             overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
         }
 
 
-        if (pump instanceof DcPump) {
-            DcPump dcPump = (DcPump) pump;
+        if (pump instanceof DcPump dcPump) {
             DCMotor dcMotor = dcPump.getMotorDriver();
             dcMotor.setDirection(this.direction);
             dcMotor.setRunning(true);
             ScheduledFuture<?> stopTask;
             DcMotorTask task;
-            if (runInfinity) {
+            long timeToRun = 0;
+
+            switch (advice.getType()) {
+                case PUMP_ML:
+                    timeToRun = (dcPump.getTimePerClInMs() * advice.getAmount()) / 10;
+                    break;
+                case PUMP_UP:
+                    timeToRun = (long) (dcPump.getTimePerClInMs() * dcPump.getTubeCapacityInMl()) / 10;
+                case PUMP_DOWN:
+                    timeToRun = (long) (timeToRun * overshootMultiplier);
+                    break;
+                case PUMP_TIME:
+                    timeToRun = advice.getAmount() * 1000;
+                    break;
+                case RUN:
+                    timeToRun = Long.MAX_VALUE;
+                    break;
+                case PUMP_STEPS:
+                    throw new IllegalArgumentException("DcPump can't run certain number of steps!");
+            }
+
+            if (timeToRun == Long.MAX_VALUE) {
                 task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE);
                 stopTask = scheduledTasksExecutor.schedule(() -> {
                 }, 0, TimeUnit.MICROSECONDS);
@@ -133,18 +150,34 @@ public class PumpUpService {
                 stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
             }
 
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, runInfinity, task, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, timeToRun == Long.MAX_VALUE, task, callback));
             task.cdl.countDown();
 
-        } else if (pump instanceof StepperPump) {
-            StepperPump stepperPump = (StepperPump) pump;
-            long mlToPump = (long) (overshootMultiplier * stepperPump.getTubeCapacityInMl());
-            if (runInfinity) {
-                mlToPump = Long.MAX_VALUE;
+        } else if (pump instanceof StepperPump stepperPump) {
+
+            long stepsToRun = 0;
+            switch (advice.getType()) {
+                case PUMP_ML:
+                    stepsToRun = (stepperPump.getStepsPerCl() * advice.getAmount()) / 10;
+                    break;
+                case PUMP_UP:
+                    stepsToRun = (long) (stepperPump.getStepsPerCl() * stepperPump.getTubeCapacityInMl()) / 10;
+                case PUMP_DOWN:
+                    stepsToRun = (long) (stepsToRun * overshootMultiplier);
+                    break;
+                case PUMP_STEPS:
+                    stepsToRun = advice.getAmount();
+                    break;
+                case RUN:
+                    stepsToRun = Long.MAX_VALUE;
+                    break;
+                case PUMP_TIME:
+                    throw new IllegalArgumentException("DcPump can't run certain amount of time!");
             }
-            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, mlToPump);
+
+            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, stepsToRun);
             Future<?> stopTask = liveTasksExecutor.submit(task);
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, runInfinity, task, callback));
+            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, stepsToRun == Long.MAX_VALUE, task, callback));
             task.cdl.countDown();
 
         } else {
@@ -184,7 +217,7 @@ public class PumpUpService {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;
                     }
-                    this.runPumpOrPerformPumpUp(pump, Direction.BACKWARD, true, () -> {
+                    this.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), () -> {
                         try {
                             pumpDataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
@@ -376,19 +409,19 @@ public class PumpUpService {
         StepperPump stepperPump;
         CountDownLatch cdl;
         Direction direction;
-        long mlToPump;
+        long stepsToRun;
         boolean isRunInfinity;
         int percentageDone = 0;
 
         /**
-         * @param mlToPump Long.MAX_VALUE == unlimited
+         * @param stepsToRun Long.MAX_VALUE == unlimited
          */
-        StepperMotorTask(StepperPump stepperPump, Direction direction, long mlToPump) {
+        StepperMotorTask(StepperPump stepperPump, Direction direction, long stepsToRun) {
             this.stepperPump = stepperPump;
             this.direction = direction;
             this.cdl = new CountDownLatch(1);
-            this.mlToPump = mlToPump;
-            this.isRunInfinity = mlToPump == Long.MAX_VALUE;
+            this.stepsToRun = stepsToRun;
+            this.isRunInfinity = stepsToRun == Long.MAX_VALUE;
         }
 
         @Override
@@ -400,20 +433,19 @@ public class PumpUpService {
         public void run() {
             try {
                 AcceleratingStepper driver = stepperPump.getMotorDriver();
-                long nrSteps = (mlToPump * stepperPump.getStepsPerCl()) / 10;
                 if (isRunInfinity) {
                     //Pick a very large number
-                    nrSteps = 10000000000L;
-                } else if (nrSteps == 0) {
-                    nrSteps = 1;
+                    stepsToRun = 10000000000L;
+                } else if (stepsToRun == 0) {
+                    stepsToRun = 1;
                 }
                 if (direction == Direction.BACKWARD) {
-                    nrSteps = -nrSteps;
+                    stepsToRun = -stepsToRun;
                 }
-                driver.move(nrSteps);
+                driver.move(stepsToRun);
                 while (driver.distanceToGo() != 0) {
                     driver.run();
-                    percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / nrSteps));
+                    percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / stepsToRun));
                     if (Thread.interrupted()) {
                         return;
                     }

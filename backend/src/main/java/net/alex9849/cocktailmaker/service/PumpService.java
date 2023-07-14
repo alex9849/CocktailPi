@@ -12,6 +12,7 @@ import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpLockService;
+import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
 import net.alex9849.motorlib.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class PumpService {
                     continue;
                 }
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);
-                maintenanceService.runPumpOrPerformPumpUp(pump, Direction.FORWARD, true, () -> {
+                maintenanceService.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), () -> {
                     lockService.releasePumpLock(pump.getId(), maintenanceService);
                 });
             }
@@ -111,14 +112,14 @@ public class PumpService {
         maintenanceService.reschedulePumpBack();
     }
 
-    public void runPumpOrPerformPumpUp(Pump pump, Direction direction, boolean runInfinity) {
+    public void performPumpAdvice(Pump pump, PumpAdvice advice) {
         if (!lockService.testAndAcquirePumpLock(pump.getId(), maintenanceService)) {
             throw new IllegalArgumentException("Pumps are currently occupied!");
         }
-        maintenanceService.runPumpOrPerformPumpUp(pump, direction, runInfinity,
+        maintenanceService.runPumpOrPerformPumpUp(pump, advice,
                 () -> {
                     try {
-                        if(!runInfinity) {
+                        if(advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                             dataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(dataService.getAllPumps());
                         }
