@@ -9,12 +9,13 @@
       header-nav
     >
       <q-step
-        caption="Optional"
+        :caption="handleComplete ? 'Complete' : 'Optional'"
         title="Handle"
         :name="0"
         :icon="mdiPencilOutline"
         header-nav
-        :done="handleComplete"
+        done
+        :done-icon="mdiPencilOutline"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
@@ -45,11 +46,13 @@
         </div>
       </q-step>
       <q-step
+        :caption="hardwarePinsComplete ? 'Complete' : null"
         title="Hardware pins"
         :name="1"
         :icon="mdiFlashOutline"
         header-nav
-        :done="hardwarePinsComplete"
+        done
+        :done-icon="mdiFlashOutline"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
@@ -130,12 +133,14 @@
         </div>
       </q-step>
       <q-step
+        :caption="calibrationComplete ? 'Complete' : null"
         title="Calibrate"
         :name="2"
         :icon="mdiCogs"
         header-nav
         :disable="!hardwarePinsComplete"
-        :done="calibrationComplete"
+        :done="hardwarePinsComplete"
+        :done-icon="mdiCogs"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
@@ -315,12 +320,14 @@
         </div>
       </q-step>
       <q-step
+        caption="Optional"
         title="State"
         :name="3"
         :icon="mdiPencilOutline"
         header-nav
         :disable="!calibrationComplete"
-        caption="Optional"
+        :done="calibrationComplete"
+        :done-icon="mdiPencilOutline"
       >
         <div class="col-12">
           <div class="row justify-center q-col-gutter-lg">
