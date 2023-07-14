@@ -1,5 +1,9 @@
 <template>
-  <q-card class="bg-white" style="display: flex; flex-direction: column">
+  <q-card
+    bordered
+    class="bg-grey-2"
+    style="display: flex; flex-direction: column"
+  >
     <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
       <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
