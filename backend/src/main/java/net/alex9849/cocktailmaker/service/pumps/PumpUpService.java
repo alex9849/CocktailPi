@@ -279,6 +279,7 @@ public class PumpUpService {
         runningState.setInPumpUp(false);
         runningState.setRunning(false);
         runningState.setForward(this.direction == Direction.FORWARD);
+        runningState.setFinished(false);
         PumpTask pumpTask = this.pumpingTasks.get(pumpId);
         if (pumpTask != null) {
             runningState.setPercentage((int) (pumpTask.motorTaskRunnable.getPercentageCompleted() * 100));
@@ -310,6 +311,7 @@ public class PumpUpService {
                 runningState.setInPumpUp(false);
                 runningState.setRunning(false);
                 runningState.setForward(this.direction == Direction.FORWARD);
+                runningState.setFinished(true);
                 delta.put(oldentry.getKey(), runningState);
 
             } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))) {

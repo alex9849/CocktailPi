@@ -7,6 +7,7 @@ import java.util.Objects;
 
 @Getter @Setter
 public class RunningState {
+    boolean finished;
     boolean running;
     boolean inPumpUp;
     boolean isForward;
