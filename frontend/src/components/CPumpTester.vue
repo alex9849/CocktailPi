@@ -66,7 +66,7 @@
       </div>
     </div>
     <q-linear-progress
-      :value="pumpTester.percentage / 100"
+      :value="runningState.percentage / 100"
       :animation-speed="300"
       color="green"
     />
@@ -78,11 +78,11 @@
           <table>
             <tr>
               <td><b>Steps transmitted:</b></td>
-              <td>{{ pumpTester.running ? '...' : resultData.stepsTransmitted }}</td>
+              <td>{{ pumpTester.running ? '...' : resultState.stepsMade }}</td>
             </tr>
             <tr>
               <td><b>Seconds taken:</b></td>
-              <td>{{ pumpTester.running ? '...' : resultData.timeTaken }}</td>
+              <td>{{ pumpTester.running ? '...' : resultState.timeTaken }}</td>
             </tr>
           </table>
         </div>
@@ -144,24 +144,37 @@
 
 <script>
 import { mdiCheck, mdiEqual, mdiPlay, mdiStop, mdiSync } from '@quasar/extras/mdi-v5'
+import WebSocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CPumpTester',
+  props: {
+    pumpId: {
+      type: Number,
+      required: true
+    },
+    pumpType: {
+      type: String
+    }
+  },
   data: () => {
     return {
       pumpTester: {
         mode: 'runSteps',
         runVal: '',
-        percentage: 0,
-        running: false,
-        result: false,
         applyMlPumpMetricIcon: mdiSync,
-        intervalTask: 0,
-        liquidPumpedField: ''
+        liquidPumpedField: '',
+        result: false
       },
-      resultData: {
-        stepsTransmitted: 100,
-        timeTaken: 20
+      runningState: {
+        running: false,
+        inPumpUp: false,
+        forward: true,
+        percentage: 0
+      },
+      resultState: {
+        stepsMade: 0,
+        timeTaken: 0
       }
     }
   },
@@ -174,26 +187,10 @@ export default {
   },
   methods: {
     reset () {
-      this.pumpTester.runVal = ''
       this.pumpTester.result = false
-      this.pumpTester.liquidPumpedField = ''
-    },
-    runTester () {
-      this.pumpTester.running = true
-      this.pumpTester.percentage = 0
-      this.pumpTester.intervalTask = setInterval(() => {
-        this.pumpTester.percentage += 10
-        if (this.pumpTester.percentage >= 100) {
-          this.cancelTester()
-        }
-      }, 250)
-    },
-    cancelTester () {
-      if (this.pumpTester.intervalTask) {
-        clearInterval(this.pumpTester.intervalTask)
-        this.pumpTester.result = true
-        this.pumpTester.running = false
-        this.pumpTester.percentage = 0
+      this.resultState = {
+        stepsMade: 0,
+        timeTaken: 0
       }
     },
     clickApplyMlPumpMetric () {
@@ -202,6 +199,33 @@ export default {
         this.pumpTester.applyMlPumpMetricIcon = mdiSync
       }, 2000)
     }
+  },
+  watch: {
+    pumpId: {
+      immediate: false,
+      handler (newValue, oldValue) {
+        if (newValue.id !== oldValue.id) {
+          WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue))
+          this.runningState = Object.assign({}, {
+            running: false,
+            inPumpUp: false,
+            forward: true,
+            percentage: 0
+          })
+          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue), (data) => {
+            this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
+          })
+        }
+      }
+    }
+  },
+  mounted () {
+    WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pumpId), (data) => {
+      this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
+    })
+  },
+  unmounted () {
+    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pumpId))
   },
   computed: {
     runValFieldLabel () {

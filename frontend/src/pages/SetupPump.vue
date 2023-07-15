@@ -3,6 +3,7 @@
     <h5>Pump Setup Assistant</h5>
     <q-stepper
       v-model:model-value="stepper"
+      active-color="cyan"
       animated
       flat
       bordered
@@ -267,7 +268,9 @@
                 </template>
                 <template v-slot:fields>
                   <p class="text-subtitle1 text-center">Motor tester</p>
-                  <c-pump-tester/>
+                  <c-pump-tester
+                    :pump-id="pump.id"
+                  />
                 </template>
               </c-assistant-container>
               <q-splitter
