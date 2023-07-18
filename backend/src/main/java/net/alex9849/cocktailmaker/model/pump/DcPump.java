@@ -8,7 +8,7 @@ import net.alex9849.motorlib.IMotorPin;
 
 import java.util.Objects;
 
-@DiscriminatorValue("DcPump")
+@DiscriminatorValue("dc")
 public class DcPump extends Pump {
     private Integer timePerClInMs;
     private Integer bcmPin;

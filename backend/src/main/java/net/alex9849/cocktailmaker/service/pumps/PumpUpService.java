@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 @Service
 @Transactional
@@ -82,21 +83,21 @@ public class PumpUpService {
         }
     }
 
-    public synchronized void runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Runnable callback) {
+    public synchronized void runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<RunningState>> callback) {
         if (callback == null) {
-            callback = () -> {
+            callback = (x) -> {
             };
         }
         Direction direction = advice.getType() == PumpAdvice.Type.PUMP_DOWN ? Direction.BACKWARD : Direction.FORWARD;
         if (direction != this.direction && !this.pumpingTasks.isEmpty()) {
-            callback.run();
+            callback.accept(Optional.empty());
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
 
         if ((!pump.isCanPumpUp() && (advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN))
                 || !pump.isCanPump()
         ) {
-            callback.run();
+            callback.accept(Optional.empty());
             throw new IllegalArgumentException("Pump setup isn't completed yet!");
         }
 
@@ -110,7 +111,6 @@ public class PumpUpService {
         if (advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
             overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
         }
-
 
         if (pump instanceof DcPump dcPump) {
             DCMotor dcMotor = dcPump.getMotorDriver();
@@ -146,7 +146,6 @@ public class PumpUpService {
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier / 10);
                 task = new DcMotorTask(dcPump, this.direction, duration);
-                task.setStart();
                 stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
             }
 
@@ -181,7 +180,7 @@ public class PumpUpService {
             task.cdl.countDown();
 
         } else {
-            callback.run();
+            callback.accept(Optional.empty());
             throw new IllegalStateException("PumpType not known: " + pump.getClass().getName());
         }
     }
@@ -217,7 +216,7 @@ public class PumpUpService {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;
                     }
-                    this.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), () -> {
+                    this.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), (x) -> {
                         try {
                             pumpDataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
@@ -273,30 +272,25 @@ public class PumpUpService {
         return settings;
     }
 
-    public synchronized RunningState getRunningState(long pumpId) {
+    public synchronized RunningState getRunningStateByPumpId(long pumpId) {
+        PumpTask pumpTask = this.pumpingTasks.get(pumpId);
+        if(pumpTask != null) {
+            return pumpTask.getRunningState();
+        }
+
         RunningState runningState = new RunningState();
         runningState.setPercentage(0);
         runningState.setInPumpUp(false);
         runningState.setRunning(false);
         runningState.setForward(this.direction == Direction.FORWARD);
         runningState.setFinished(false);
-        PumpTask pumpTask = this.pumpingTasks.get(pumpId);
-        if (pumpTask != null) {
-            runningState.setPercentage((int) (pumpTask.motorTaskRunnable.getPercentageCompleted() * 100));
-            runningState.setInPumpUp(!pumpTask.runInfinity);
-            runningState.setRunning(true);
-        }
         return runningState;
     }
 
     private Map<Long, RunningState> getRunningState(boolean onlyDelta) {
         Map<Long, RunningState> stateMap = new HashMap<>();
         for (PumpTask task : this.pumpingTasks.values()) {
-            RunningState runningState = new RunningState();
-            runningState.setPercentage(task.motorTaskRunnable.getPercentageCompleted());
-            runningState.setInPumpUp(!task.runInfinity);
-            runningState.setRunning(true);
-            runningState.setForward(this.direction == Direction.FORWARD);
+            RunningState runningState = task.motorTaskRunnable.getRunningState();
             stateMap.put(task.pump.getId(), runningState);
         }
         if (!onlyDelta) {
@@ -329,14 +323,14 @@ public class PumpUpService {
 
     }
 
-    private static class PumpTask {
+    private class PumpTask {
         private final Future<?> future;
         private final Pump pump;
         private final boolean runInfinity;
         private final MotorTaskRunnable motorTaskRunnable;
-        private final Runnable callback;
+        private final Consumer<Optional<RunningState>> callback;
 
-        public PumpTask(Future<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Runnable callback) {
+        public PumpTask(Future<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Consumer<Optional<RunningState>> callback) {
             this.future = future;
             this.pump = pump;
             this.runInfinity = runInfinity;
@@ -344,8 +338,8 @@ public class PumpUpService {
             this.callback = callback;
         }
 
-        public double getPercentageCompleted() {
-            return motorTaskRunnable.getPercentageCompleted();
+        public RunningState getRunningState() {
+            return motorTaskRunnable.getRunningState();
         }
 
         public void cancel() {
@@ -355,7 +349,11 @@ public class PumpUpService {
 
         public void doFinalize() {
             pump.getMotorDriver().shutdown();
-            callback.run();
+            RunningState runningState = motorTaskRunnable.getRunningState();
+            runningState.setRunning(false);
+            runningState.setFinished(true);
+            runningState.setStopTime(System.currentTimeMillis());
+            callback.accept(Optional.of(runningState));
         }
 
         public boolean isRunInfinity() {
@@ -364,7 +362,7 @@ public class PumpUpService {
     }
 
     private interface MotorTaskRunnable extends Runnable {
-        int getPercentageCompleted();
+        RunningState getRunningState();
     }
 
     private class DcMotorTask implements MotorTaskRunnable {
@@ -381,29 +379,34 @@ public class PumpUpService {
             this.cdl = new CountDownLatch(1);
             this.runInfinity = duration == Long.MAX_VALUE;
             this.duration = duration;
-        }
-
-        public void setStart() {
             this.startTime = System.currentTimeMillis();
         }
 
         @Override
         public void run() {
-            dcPump.setPumpedUp(direction == Direction.FORWARD);
             try {
                 cdl.await();
-                PumpUpService.this.cancelPumpUp(dcPump.getId());
+                dcPump.getMotorDriver().setRunning(false);
+                PumpUpService.this.onPumpRunTaskComplete(dcPump.getId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public int getPercentageCompleted() {
-            if (runInfinity) {
-                return 0;
-            }
-            return (int) (((System.currentTimeMillis() - this.startTime) * 100) / duration);
+        public RunningState getRunningState() {
+            long timeElapsed = System.currentTimeMillis() - this.startTime;
+
+            RunningState runningState = new RunningState();
+            runningState.setForward(direction == Direction.FORWARD);
+            runningState.setInPumpUp(!runInfinity);
+            runningState.setStartTime(startTime);
+            runningState.setFinished(false);
+            runningState.setRunning(true);
+            runningState.setPercentage((int) (((timeElapsed) * 100) / duration));
+            runningState.setMlPumped((timeElapsed * 10) /  dcPump.getTimePerClInMs());
+
+            return runningState;
         }
     }
 
@@ -413,7 +416,7 @@ public class PumpUpService {
         Direction direction;
         long stepsToRun;
         boolean isRunInfinity;
-        int percentageDone = 0;
+        long startingtime;
 
         /**
          * @param stepsToRun Long.MAX_VALUE == unlimited
@@ -424,11 +427,22 @@ public class PumpUpService {
             this.cdl = new CountDownLatch(1);
             this.stepsToRun = stepsToRun;
             this.isRunInfinity = stepsToRun == Long.MAX_VALUE;
+            this.startingtime = System.currentTimeMillis();
         }
 
         @Override
-        public int getPercentageCompleted() {
-            return percentageDone;
+        public RunningState getRunningState() {
+            RunningState runningState = new RunningState();
+            long stepsMade = stepsToRun - Math.abs(stepperPump.getMotorDriver().distanceToGo());
+            runningState.setStepsMade(stepsMade);
+            runningState.setMlPumped((stepsMade * 10) / stepperPump.getStepsPerCl());
+            runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
+            runningState.setForward(direction == Direction.FORWARD);
+            runningState.setInPumpUp(!isRunInfinity);
+            runningState.setRunning(true);
+            runningState.setFinished(false);
+            runningState.setStartTime(startingtime);
+            return runningState;
         }
 
         @Override
@@ -447,7 +461,6 @@ public class PumpUpService {
                 driver.move(stepsToRun);
                 while (driver.distanceToGo() != 0) {
                     driver.run();
-                    percentageDone = (int) (100 - ((driver.distanceToGo() * 100) / stepsToRun));
                     if (Thread.interrupted()) {
                         return;
                     }

@@ -8,7 +8,7 @@ import net.alex9849.motorlib.IMotorPin;
 import net.alex9849.motorlib.IStepperMotor;
 import net.alex9849.motorlib.StepperDriver;
 
-@DiscriminatorValue("StepperPump")
+@DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
     private AcceleratingStepper stepperDriver;
     private Integer enablePin;
