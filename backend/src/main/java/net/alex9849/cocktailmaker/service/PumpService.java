@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
+import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
@@ -128,6 +129,10 @@ public class PumpService {
                 });
         maintenanceService.reschedulePumpBack();
         return jobId;
+    }
+
+    public JobMetrics getJobMetrics(long id) {
+        return maintenanceService.getJobMetrics(id);
     }
 
     public void setReversePumpingSettings(ReversePumpingSettings.Full settings) {

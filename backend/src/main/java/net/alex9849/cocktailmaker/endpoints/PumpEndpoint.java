@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
+import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -116,4 +117,15 @@ public class PumpEndpoint {
         pumpService.cancelPumpUp(id);
         return ResponseEntity.ok().build();
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @RequestMapping(value = "jobmetrics/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getJobMetrics(@PathVariable("id") long id) {
+        JobMetrics jobMetrics = pumpService.getJobMetrics(id);
+        if(jobMetrics == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(jobMetrics);
+    }
+
 }

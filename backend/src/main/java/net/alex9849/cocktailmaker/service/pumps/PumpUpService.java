@@ -331,6 +331,19 @@ public class PumpUpService {
 
     }
 
+    public synchronized JobMetrics getJobMetrics(long id) {
+        JobMetrics metrics = this.jobMetricsMap.get(id);
+        if(metrics != null) {
+            return metrics;
+        }
+        for (PumpTask pt : pumpingTasks.values()) {
+            if(pt.getId() == id) {
+                return pt.getJobMetrics();
+            }
+        }
+        return null;
+    }
+
     private class PumpTask {
         private static long maxId;
         private final long id;
@@ -379,6 +392,7 @@ public class PumpUpService {
             metrics.setId(id);
             metrics.setMlPumped(motorTaskRunnable.getMlPumped());
             metrics.setStartTime(motorTaskRunnable.getStartTime());
+            metrics.setStopTime(motorTaskRunnable.getStopTime());
             if(motorTaskRunnable instanceof StepperMotorTask stepperMotorTask) {
                 metrics.setStepsMade(stepperMotorTask.getStepsMade());
             }
@@ -390,9 +404,7 @@ public class PumpUpService {
             RunningState runningState = getRunningState();
             runningState.setRunning(false);
             runningState.setFinished(true);
-            JobMetrics jobMetrics = getJobMetrics();
-            jobMetrics.setStopTime(System.currentTimeMillis());
-            this.finishedJobMetrics = jobMetrics;
+            this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
             callback.accept(Optional.of(runningState));
         }
@@ -406,6 +418,8 @@ public class PumpUpService {
         RunningState getRunningState();
         long getStartTime();
         long getMlPumped();
+
+        Long getStopTime();
     }
 
     private class DcMotorTask implements MotorTaskRunnable {
@@ -466,6 +480,11 @@ public class PumpUpService {
         public long getMlPumped() {
             return (getTimeElapsed() * 10) /  dcPump.getTimePerClInMs();
         }
+
+        @Override
+        public Long getStopTime() {
+            return stopTime;
+        }
     }
 
     private class StepperMotorTask implements MotorTaskRunnable {
@@ -476,6 +495,8 @@ public class PumpUpService {
         boolean isRunInfinity;
         long startingtime;
         long stepsMade;
+
+        Long stopTime;
 
         /**
          * @param stepsToRun Long.MAX_VALUE == unlimited
@@ -510,6 +531,11 @@ public class PumpUpService {
             return (stepsMade * 10) / stepperPump.getStepsPerCl();
         }
 
+        @Override
+        public Long getStopTime() {
+            return stopTime;
+        }
+
         public long getStepsMade() {
             return stepsMade;
         }
@@ -537,6 +563,7 @@ public class PumpUpService {
                     }
                     Thread.yield();
                 }
+                this.stopTime = System.currentTimeMillis();
                 driver.setEnable(false);
                 stepperPump.setPumpedUp(direction == Direction.FORWARD);
                 cdl.await();
