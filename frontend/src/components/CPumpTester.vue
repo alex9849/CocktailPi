@@ -47,7 +47,7 @@
       </div>
       <div class="col-shrink q-pr-sm q-py-sm">
         <q-btn
-          @click="runTester"
+          @click="onClickRun"
           v-if="!pumpTester.running"
           :icon="mdiPlay"
           label="Run"
@@ -55,7 +55,7 @@
           class="bg-green text-white"
         />
         <q-btn
-          @click="cancelTester"
+          @click="onClickCancel"
           v-else
           :icon="mdiStop"
           label="Stop"
@@ -186,6 +186,10 @@ export default {
     this.mdiCheck = mdiCheck
   },
   methods: {
+    onClickRun () {
+    },
+    onClickCancel () {
+    },
     reset () {
       this.pumpTester.result = false
       this.resultState = {

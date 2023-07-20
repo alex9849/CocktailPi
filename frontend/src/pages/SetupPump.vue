@@ -31,7 +31,7 @@
                 :error="!!attrState.name.errorMsg"
                 :loading="attrState.name.loading"
                 debounce="600"
-                :shadow-text="!!pump.name ? null : ('Pump #' + String(pump.id))"
+                :placeholder="'Pump #' + String(pump.id)"
                 outlined
                 filled
                 label="Pump identifier"
