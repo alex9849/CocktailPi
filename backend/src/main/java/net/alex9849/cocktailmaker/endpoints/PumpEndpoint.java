@@ -64,24 +64,27 @@ public class PumpEndpoint {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpup", method = RequestMethod.PUT)
-    public ResponseEntity<?> pumpUp(@PathVariable("id") long id) {
+    public ResponseEntity<?> pumpUp(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_UP, 0));
-        return ResponseEntity.ok().build();
+        long jobId = pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_UP, 0));
+
+        UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
+        return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpback", method = RequestMethod.PUT)
-    public ResponseEntity<?> pumpBack(@PathVariable("id") long id) {
+    public ResponseEntity<?> pumpBack(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0));
-        return ResponseEntity.ok().build();
+        long jobId = pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0));
+        UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
+        return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")

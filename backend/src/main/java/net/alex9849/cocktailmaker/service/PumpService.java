@@ -14,7 +14,6 @@ import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpLockService;
 import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
-import net.alex9849.motorlib.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,7 +91,7 @@ public class PumpService {
                     continue;
                 }
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);
-                maintenanceService.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), () -> {
+                maintenanceService.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), (o) -> {
                     lockService.releasePumpLock(pump.getId(), maintenanceService);
                 });
             }
@@ -108,16 +107,16 @@ public class PumpService {
     }
 
     public void cancelPumpUp(long pumpId) {
-        maintenanceService.cancelPumpUp(pumpId);
+        maintenanceService.cancelByPumpId(pumpId);
         maintenanceService.reschedulePumpBack();
     }
 
-    public void performPumpAdvice(Pump pump, PumpAdvice advice) {
+    public long performPumpAdvice(Pump pump, PumpAdvice advice) {
         if (!lockService.testAndAcquirePumpLock(pump.getId(), maintenanceService)) {
             throw new IllegalArgumentException("Pumps are currently occupied!");
         }
-        maintenanceService.runPumpOrPerformPumpUp(pump, advice,
-                () -> {
+        long jobId = maintenanceService.runPumpOrPerformPumpUp(pump, advice,
+                (o) -> {
                     try {
                         if(advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                             dataService.updatePump(pump);
@@ -128,6 +127,7 @@ public class PumpService {
                     }
                 });
         maintenanceService.reschedulePumpBack();
+        return jobId;
     }
 
     public void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
@@ -177,23 +177,6 @@ public class PumpService {
 
     public CocktailOrderConfiguration fromDto(CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
         return cocktailOrderService.fromDto(orderConfigDto);
-    }
-
-    public PumpOccupation getPumpOccupation(long pumpId) {
-        if(this.cocktailOrderService.isMakingCocktail()) {
-            return PumpOccupation.COCKTAIL_PRODUCTION;
-        }
-        if(this.maintenanceService.isPumpPumpingUp(pumpId)) {
-            return PumpOccupation.PUMPING_UP;
-        }
-        if(this.maintenanceService.isPumpRunning(pumpId)) {
-            return PumpOccupation.RUNNING;
-        }
-        return PumpOccupation.NONE;
-    }
-
-    public enum PumpOccupation {
-        RUNNING, PUMPING_UP, COCKTAIL_PRODUCTION, NONE
     }
 
 }

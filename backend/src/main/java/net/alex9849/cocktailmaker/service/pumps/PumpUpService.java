@@ -43,6 +43,7 @@ public class PumpUpService {
     private ScheduledFuture<?> automaticPumpBackTask;
     private final Map<Long, PumpTask> pumpingTasks = new HashMap<>();
     private Map<Long, RunningState> lastState = new HashMap<>();
+    private final Map<Long, JobMetrics> jobMetricsMap = new HashMap<>();
     private Direction direction = Direction.FORWARD;
 
     public void postConstruct() {
@@ -61,7 +62,7 @@ public class PumpUpService {
     public synchronized void stopAllPumps() {
         List<Pump> pumps = pumpDataService.getAllPumps();
         for (Pump pump : pumps) {
-            cancelPumpUp(pump.getId());
+            cancelByPumpId(pump.getId());
             if (pump.isCanPump()) {
                 pump.getMotorDriver().shutdown();
             }
@@ -76,14 +77,24 @@ public class PumpUpService {
         return this.pumpingTasks.containsKey(pumpId);
     }
 
-    public synchronized void cancelPumpUp(long pumpId) {
+    public synchronized void cancelByPumpId(long pumpId) {
         PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
         if (pumpTask != null) {
             pumpTask.cancel();
+            jobMetricsMap.put(pumpTask.getId(), pumpTask.getJobMetrics());
         }
     }
 
-    public synchronized void runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<RunningState>> callback) {
+    private synchronized void onPumpRunTaskComplete(long pumpId) {
+        PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
+        if (pumpTask != null) {
+            pumpTask.doFinalize();
+            jobMetricsMap.put(pumpTask.getId(), pumpTask.getJobMetrics());
+            webSocketService.broadcastPumpRunningState(pumpId, pumpTask.getRunningState());
+        }
+    }
+
+    public synchronized long runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<RunningState>> callback) {
         if (callback == null) {
             callback = (x) -> {
             };
@@ -102,7 +113,7 @@ public class PumpUpService {
         }
 
         if (isPumpRunning(pump.getId())) {
-            cancelPumpUp(pump.getId());
+            cancelByPumpId(pump.getId());
         }
 
         this.direction = direction;
@@ -149,8 +160,10 @@ public class PumpUpService {
                 stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
             }
 
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, dcPump, timeToRun == Long.MAX_VALUE, task, callback));
+            PumpTask pumpTask = new PumpTask(stopTask, dcPump, timeToRun == Long.MAX_VALUE, task, callback);
+            this.pumpingTasks.put(pump.getId(), pumpTask);
             task.cdl.countDown();
+            return pumpTask.getId();
 
         } else if (pump instanceof StepperPump stepperPump) {
 
@@ -176,19 +189,14 @@ public class PumpUpService {
 
             StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, stepsToRun);
             Future<?> stopTask = liveTasksExecutor.submit(task);
-            this.pumpingTasks.put(pump.getId(), new PumpTask(stopTask, stepperPump, stepsToRun == Long.MAX_VALUE, task, callback));
+            PumpTask pumpTask = new PumpTask(stopTask, stepperPump, stepsToRun == Long.MAX_VALUE, task, callback);
+            this.pumpingTasks.put(pump.getId(), pumpTask);
             task.cdl.countDown();
+            return pumpTask.getId();
 
         } else {
             callback.accept(Optional.empty());
             throw new IllegalStateException("PumpType not known: " + pump.getClass().getName());
-        }
-    }
-
-    private synchronized void onPumpRunTaskComplete(long pumpId) {
-        PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
-        if (pumpTask != null) {
-            pumpTask.doFinalize();
         }
     }
 
@@ -324,13 +332,18 @@ public class PumpUpService {
     }
 
     private class PumpTask {
+        private static long maxId;
+        private final long id;
         private final Future<?> future;
         private final Pump pump;
         private final boolean runInfinity;
         private final MotorTaskRunnable motorTaskRunnable;
         private final Consumer<Optional<RunningState>> callback;
+        private RunningState finishedRunningState;
+        private JobMetrics finishedJobMetrics;
 
         public PumpTask(Future<?> future, Pump pump, boolean runInfinity, MotorTaskRunnable motorTaskRunnable, Consumer<Optional<RunningState>> callback) {
+            this.id = ++maxId;
             this.future = future;
             this.pump = pump;
             this.runInfinity = runInfinity;
@@ -338,8 +351,19 @@ public class PumpUpService {
             this.callback = callback;
         }
 
+        public long getId() {
+            return id;
+        }
+
         public RunningState getRunningState() {
-            return motorTaskRunnable.getRunningState();
+            RunningState runningState;
+            if(finishedRunningState != null) {
+                runningState = finishedRunningState;
+            } else {
+                runningState = motorTaskRunnable.getRunningState();
+            }
+            runningState.setJobId(id);
+            return runningState;
         }
 
         public void cancel() {
@@ -347,12 +371,29 @@ public class PumpUpService {
             doFinalize();
         }
 
+        public JobMetrics getJobMetrics() {
+            if(finishedJobMetrics != null) {
+                return finishedJobMetrics;
+            }
+            JobMetrics metrics = new JobMetrics();
+            metrics.setId(id);
+            metrics.setMlPumped(motorTaskRunnable.getMlPumped());
+            metrics.setStartTime(motorTaskRunnable.getStartTime());
+            if(motorTaskRunnable instanceof StepperMotorTask stepperMotorTask) {
+                metrics.setStepsMade(stepperMotorTask.getStepsMade());
+            }
+            return metrics;
+        }
+
         public void doFinalize() {
             pump.getMotorDriver().shutdown();
-            RunningState runningState = motorTaskRunnable.getRunningState();
+            RunningState runningState = getRunningState();
             runningState.setRunning(false);
             runningState.setFinished(true);
-            runningState.setStopTime(System.currentTimeMillis());
+            JobMetrics jobMetrics = getJobMetrics();
+            jobMetrics.setStopTime(System.currentTimeMillis());
+            this.finishedJobMetrics = jobMetrics;
+            this.finishedRunningState = runningState;
             callback.accept(Optional.of(runningState));
         }
 
@@ -363,6 +404,8 @@ public class PumpUpService {
 
     private interface MotorTaskRunnable extends Runnable {
         RunningState getRunningState();
+        long getStartTime();
+        long getMlPumped();
     }
 
     private class DcMotorTask implements MotorTaskRunnable {
@@ -370,6 +413,7 @@ public class PumpUpService {
         CountDownLatch cdl;
         Direction direction;
         long startTime;
+        Long stopTime;
         boolean runInfinity;
         long duration;
 
@@ -387,26 +431,40 @@ public class PumpUpService {
             try {
                 cdl.await();
                 dcPump.getMotorDriver().setRunning(false);
+                stopTime = System.currentTimeMillis();
                 PumpUpService.this.onPumpRunTaskComplete(dcPump.getId());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
+        private long getTimeElapsed() {
+            if(this.stopTime == null) {
+                return System.currentTimeMillis() - this.startTime;
+            }
+            return this.stopTime - this.startTime;
+        }
+
         @Override
         public RunningState getRunningState() {
-            long timeElapsed = System.currentTimeMillis() - this.startTime;
-
             RunningState runningState = new RunningState();
             runningState.setForward(direction == Direction.FORWARD);
             runningState.setInPumpUp(!runInfinity);
-            runningState.setStartTime(startTime);
             runningState.setFinished(false);
             runningState.setRunning(true);
-            runningState.setPercentage((int) (((timeElapsed) * 100) / duration));
-            runningState.setMlPumped((timeElapsed * 10) /  dcPump.getTimePerClInMs());
+            runningState.setPercentage((int) (((getTimeElapsed()) * 100) / duration));
 
             return runningState;
+        }
+
+        @Override
+        public long getStartTime() {
+            return startTime;
+        }
+
+        @Override
+        public long getMlPumped() {
+            return (getTimeElapsed() * 10) /  dcPump.getTimePerClInMs();
         }
     }
 
@@ -417,6 +475,7 @@ public class PumpUpService {
         long stepsToRun;
         boolean isRunInfinity;
         long startingtime;
+        long stepsMade;
 
         /**
          * @param stepsToRun Long.MAX_VALUE == unlimited
@@ -433,16 +492,26 @@ public class PumpUpService {
         @Override
         public RunningState getRunningState() {
             RunningState runningState = new RunningState();
-            long stepsMade = stepsToRun - Math.abs(stepperPump.getMotorDriver().distanceToGo());
-            runningState.setStepsMade(stepsMade);
-            runningState.setMlPumped((stepsMade * 10) / stepperPump.getStepsPerCl());
             runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
             runningState.setForward(direction == Direction.FORWARD);
             runningState.setInPumpUp(!isRunInfinity);
             runningState.setRunning(true);
             runningState.setFinished(false);
-            runningState.setStartTime(startingtime);
             return runningState;
+        }
+
+        @Override
+        public long getStartTime() {
+            return startingtime;
+        }
+
+        @Override
+        public long getMlPumped() {
+            return (stepsMade * 10) / stepperPump.getStepsPerCl();
+        }
+
+        public long getStepsMade() {
+            return stepsMade;
         }
 
         @Override
@@ -460,7 +529,9 @@ public class PumpUpService {
                 }
                 driver.move(stepsToRun);
                 while (driver.distanceToGo() != 0) {
-                    driver.run();
+                    if(driver.run()) {
+                        stepsMade++;
+                    }
                     if (Thread.interrupted()) {
                         return;
                     }
