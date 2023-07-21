@@ -4,7 +4,7 @@ import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
-import net.alex9849.cocktailmaker.model.pump.RunningState;
+import net.alex9849.cocktailmaker.model.pump.PumpState;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailProgressDto;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -105,13 +104,13 @@ public class WebSocketService {
                 logEntries);
     }
 
-    public void sendPumpRunningStateToUser(long pumpId, RunningState runningState, String username) {
+    public void sendPumpRunningStateToUser(long pumpId, PumpState runningState, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_RUNNING_STATE_DESTINATION + "/" + pumpId,
                 runningState);
     }
 
 
-    public void broadcastPumpRunningState(long pumpId, RunningState runningState) {
+    public void broadcastPumpRunningState(long pumpId, PumpState runningState) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {
