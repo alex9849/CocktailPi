@@ -13,7 +13,7 @@
             @click="onClickCancel"
           />
         </div>
-        <div v-else>
+        <div v-else class="text-center">
           {{ disableReason }}
         </div>
       </div>
@@ -55,7 +55,10 @@
           </q-tabs>
         </div>
       </div>
-      <div class="row justify-center bg-grey-3 items-center">
+      <q-form
+        @submit="onClickRun"
+        class="row justify-center bg-grey-3 items-center"
+      >
         <div class="col-grow">
           <q-input
             v-model:model-value="advice.amount"
@@ -92,7 +95,7 @@
           >
           </q-btn>
         </div>
-      </div>
+      </q-form>
       <q-linear-progress
         :value="progressBar"
         :animation-speed="300"
@@ -121,15 +124,17 @@
             </table>
           </div>
           <div class="col-grow">
-            <div class="row justify-center items-center q-col-gutter-sm">
+            <q-form
+              @submit="clickApplyMlPumpMetric"
+              class="row justify-center items-center q-col-gutter-sm"
+            >
               <div class="col-12 col-lg">
                 <q-input
                   filled
                   dense
                   outlined
-                  :disable="isRunning"
                   label="Actual ml pumped"
-                  v-model:model-value="trueLiquidPumpedField"
+                  v-model:model-value.number="trueLiquidPumpedField"
                 >
                   <template v-slot:append>
                     ml
@@ -161,7 +166,7 @@
                       @click="clickApplyMlPumpMetric"
                       no-caps
                       :dense="$q.screen.xs"
-                      :disable="!calcedPerClMetricValue.val || isRunning"
+                      :disable="!calcedPerClMetricValue.val"
                       class="bg-green text-white"
                       label="Apply"
                       :icon="this.applyMlPumpMetricIcon"
@@ -169,7 +174,7 @@
                   </template>
                 </q-input>
               </div>
-            </div>
+            </q-form>
           </div>
         </div>
       </q-card-section>
@@ -229,9 +234,16 @@ export default {
   },
   methods: {
     onClickRun () {
+      if (!isFinite(this.advice.amount) || this.advice.amount < 1) {
+        return
+      }
+      this.jobMetrics = null
       PumpService.dispatchPumpAdvice(this.pump.id, this.advice)
         .then(id => {
           this.runningJobId = id
+          if (this.runningJobId === this.jobState.lastJobId) {
+            this.fetchMetrics()
+          }
         })
     },
     onClickCancel () {
@@ -249,6 +261,9 @@ export default {
       this.jobMetrics = null
     },
     clickApplyMlPumpMetric () {
+      if (!this.calcedPerClMetricValue.val) {
+        return
+      }
       this.applyMlPumpMetricIcon = mdiCheck
       this.$emit('update:perClMetric', this.calcedPerClMetricValue.val)
       this.trueLiquidPumpedField = ''
