@@ -222,7 +222,7 @@
               class="bg-green text-white"
               :loading="pumpDownBtnLoading"
               @click="onClickPumpUp(true)"
-              :disable="runningState.running"
+              :disable="!!pumpJobState.runningState"
             >
             </q-btn>
             <q-btn
@@ -232,14 +232,14 @@
               :loading="pumpUpBtnLoading"
               class="bg-green text-white"
               @click="onClickPumpUp(false)"
-              :disable="runningState.running"
+              :disable="!!pumpJobState.runningState"
             >
             </q-btn>
             <q-btn
               no-caps
               round
-              :color="runningState.running ? 'negative' : 'positive'"
-              :icon="runningState.running? mdiStop : mdiPlay"
+              :color="pumpJobState.runningState ? 'negative' : 'positive'"
+              :icon="pumpJobState.runningState? mdiStop : mdiPlay"
               :loading="runningBtnLoading"
               class="text-white"
               @click="onClickTurnOnOrOffPump()"
@@ -283,11 +283,14 @@ export default {
       pumpDownBtnLoading: false,
       pumpUpBtnLoading: false,
       runningBtnLoading: false,
-      runningState: {
-        running: false,
-        inPumpUp: false,
-        forward: true,
-        percentage: 0
+      pumpJobState: {
+        lastJobId: null,
+        runningState: {
+          jobId: 0,
+          percentage: 0,
+          forward: true,
+          runInfinity: false
+        }
       }
     }
   },
@@ -297,14 +300,17 @@ export default {
       handler (newValue, oldValue) {
         if (newValue.id !== oldValue.id) {
           WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
-          this.runningState = Object.assign({}, {
-            running: false,
-            inPumpUp: false,
-            forward: true,
-            percentage: 0
+          this.pumpJobState = Object.assign({}, {
+            lastJobId: null,
+            runningState: {
+              jobId: 0,
+              percentage: 0,
+              forward: true,
+              runInfinity: false
+            }
           })
           WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
-            this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
+            this.pumpJobState = Object.assign(this.pumpState, JSON.parse(data.body))
           })
         }
       }
@@ -314,7 +320,7 @@ export default {
     onClickTurnOnOrOffPump () {
       const vm = this
       this.runningBtnLoading = true
-      if (this.runningState.running) {
+      if (this.pumpJobState.runningState) {
         PumpService.stopPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
@@ -368,7 +374,7 @@ export default {
   },
   mounted () {
     WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
-      this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
+      this.pumpJobState = Object.assign(this.pumpJobState, JSON.parse(data.body))
     })
   },
   unmounted () {
@@ -376,15 +382,24 @@ export default {
   },
   computed: {
     progressBar () {
-      let value = this.runningState.forward ? this.runningState.percentage : (1 - this.runningState.percentage)
-      if (!this.runningState.running && !this.runningState.inPumpUp) {
-        value = 0
+      const abortVal = {
+        value: 0,
+        query: false,
+        reverse: false
       }
+      if (!this.pumpJobState.runningState) {
+        return abortVal
+      }
+      const runningState = this.pumpJobState.runningState
+      if (runningState.runInfinity) {
+        return abortVal
+      }
+      let value = runningState.forward ? runningState.percentage : (1 - runningState.percentage)
       value = value / 100
       return {
         value: value,
-        query: this.runningState.running && !this.runningState.inPumpUp,
-        reverse: this.runningState.running && !this.runningState.inPumpUp
+        query: runningState.runInfinity,
+        reverse: !runningState.forward
       }
     },
     typeNameData () {
@@ -412,14 +427,14 @@ export default {
         state.color = 'negative'
         state.label = 'Pumped Down'
       }
-      if (this.runningState.inPumpUp) {
+      /* if (this.runningState.inPumpUp) {
         state.color = 'warning'
         if (this.runningState.forward) {
           state.label = 'Pumping Up'
         } else {
           state.label = 'Pumping Down'
         }
-      }
+      } */
       return state
     },
     pumpState () {
@@ -440,7 +455,7 @@ export default {
           state.color = 'negative'
           state.label = 'Disabled'
       }
-      if (this.runningState.running) {
+      if (this.pumpJobState.runningState) {
         state.color = 'positive'
         state.label = 'Running'
       }
