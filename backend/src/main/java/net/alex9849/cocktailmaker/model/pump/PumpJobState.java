@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.Objects;
 
 @Getter @Setter
-public class PumpState {
+public class PumpJobState {
     Long lastJobId;
     RunningState runningState;
 
@@ -14,7 +14,7 @@ public class PumpState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PumpState jobState = (PumpState) o;
+        PumpJobState jobState = (PumpJobState) o;
         return lastJobId == jobState.lastJobId && Objects.equals(runningState, jobState.runningState);
     }
 

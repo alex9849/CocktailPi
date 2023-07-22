@@ -1,7 +1,7 @@
 package net.alex9849.cocktailmaker.model.pump.motortasks;
 
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
-import net.alex9849.cocktailmaker.model.pump.PumpState;
+import net.alex9849.cocktailmaker.model.pump.PumpJobState;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.motorlib.AcceleratingStepper;
 import net.alex9849.motorlib.Direction;
@@ -18,7 +18,7 @@ public class StepperMotorTask extends PumpTask {
     /**
      * @param stepsToRun Long.MAX_VALUE == unlimited
      */
-    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, long stepsToRun, Consumer<Optional<PumpState.RunningState>> callback) {
+    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, long stepsToRun, Consumer<Optional<PumpJobState.RunningState>> callback) {
         super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, direction, callback);
         this.stepperPump = stepperPump;
         this.stepsToRun = stepsToRun;
@@ -57,8 +57,8 @@ public class StepperMotorTask extends PumpTask {
     }
 
     @Override
-    protected PumpState.RunningState genRunningState() {
-        PumpState.RunningState runningState = new PumpState.RunningState();
+    protected PumpJobState.RunningState genRunningState() {
+        PumpJobState.RunningState runningState = new PumpJobState.RunningState();
         runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());

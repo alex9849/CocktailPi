@@ -4,7 +4,7 @@ import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventActionInformation;
 import net.alex9849.cocktailmaker.model.eventaction.RunningAction;
-import net.alex9849.cocktailmaker.model.pump.PumpState;
+import net.alex9849.cocktailmaker.model.pump.PumpJobState;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailProgressDto;
 import net.alex9849.cocktailmaker.payload.dto.eventaction.EventActionDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
@@ -104,13 +104,13 @@ public class WebSocketService {
                 logEntries);
     }
 
-    public void sendPumpRunningStateToUser(long pumpId, PumpState runningState, String username) {
+    public void sendPumpRunningStateToUser(long pumpId, PumpJobState runningState, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_RUNNING_STATE_DESTINATION + "/" + pumpId,
                 runningState);
     }
 
 
-    public void broadcastPumpRunningState(long pumpId, PumpState runningState) {
+    public void broadcastPumpRunningState(long pumpId, PumpJobState runningState) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {

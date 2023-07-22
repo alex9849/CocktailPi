@@ -20,6 +20,16 @@ class PumpService {
     return axios.put(API_PATH + String(id) + '/pumpback')
   }
 
+  dispatchPumpAdvice (id, advice) {
+    return axios.put(API_PATH + String(id) + '/runjob', advice)
+      .then(response => response.data)
+  }
+
+  getMetrics (jobId) {
+    return axios.get(API_PATH + 'jobmetrics/' + String(jobId))
+      .then(response => response.data)
+  }
+
   startPump (id) {
     const config = {
       params: {

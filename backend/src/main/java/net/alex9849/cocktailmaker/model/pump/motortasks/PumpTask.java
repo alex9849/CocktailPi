@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.model.pump.motortasks;
 
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.model.pump.PumpState;
+import net.alex9849.cocktailmaker.model.pump.PumpJobState;
 import net.alex9849.motorlib.Direction;
 
 import java.util.Optional;
@@ -17,9 +17,9 @@ public abstract class PumpTask implements Runnable {
     private final Pump pump;
     private final CountDownLatch cdl;
     private final boolean runInfinity;
-    private final Consumer<Optional<PumpState.RunningState>> callback;
+    private final Consumer<Optional<PumpJobState.RunningState>> callback;
     private final Direction direction;
-    private PumpState.RunningState finishedRunningState;
+    private PumpJobState.RunningState finishedRunningState;
     private JobMetrics finishedJobMetrics;
     private long startTime;
     private Long stopTime;
@@ -27,7 +27,7 @@ public abstract class PumpTask implements Runnable {
     private Future<?> future;
 
 
-    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, Direction direction, Consumer<Optional<PumpState.RunningState>> callback) {
+    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, Direction direction, Consumer<Optional<PumpJobState.RunningState>> callback) {
         this.prevJobId = prevJobId;
         this.jobId = ++maxId;
         this.cdl = new CountDownLatch(1);
@@ -54,7 +54,7 @@ public abstract class PumpTask implements Runnable {
 
     protected abstract void pumpRun();
 
-    protected abstract PumpState.RunningState genRunningState();
+    protected abstract PumpJobState.RunningState genRunningState();
 
     protected abstract JobMetrics genJobMetrics();
 
@@ -80,8 +80,8 @@ public abstract class PumpTask implements Runnable {
         }
     }
 
-    public PumpState.RunningState getRunningState() {
-        PumpState.RunningState runningState;
+    public PumpJobState.RunningState getRunningState() {
+        PumpJobState.RunningState runningState;
         if(finishedRunningState != null) {
             runningState = finishedRunningState;
         } else {
@@ -109,7 +109,7 @@ public abstract class PumpTask implements Runnable {
     public void doFinalize() {
         this.stopTime = System.currentTimeMillis();
         pump.getMotorDriver().shutdown();
-        PumpState.RunningState runningState = getRunningState();
+        PumpJobState.RunningState runningState = getRunningState();
         this.finishedJobMetrics = getJobMetrics();
         this.finishedRunningState = runningState;
         callback.accept(Optional.of(runningState));

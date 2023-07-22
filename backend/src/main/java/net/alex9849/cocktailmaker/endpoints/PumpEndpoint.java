@@ -6,7 +6,6 @@ import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.motorlib.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +72,7 @@ public class PumpEndpoint {
         long jobId = pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_UP, 0));
 
         UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
@@ -85,12 +84,25 @@ public class PumpEndpoint {
         }
         long jobId = pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0));
         UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(jobId);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @RequestMapping(value = "{id}/runjob", method = RequestMethod.PUT)
+    public ResponseEntity<?> dispatchPumpAdvice(@PathVariable(value = "id") Long id, @Valid @RequestBody PumpAdvice advice, UriComponentsBuilder uriBuilder) {
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        long jobId = pumpService.performPumpAdvice(pump, advice);
+        UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
+        return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "start", method = RequestMethod.PUT)
-    public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id) {
+    public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id, UriComponentsBuilder uriBuilder) {
         if(id == null) {
             pumpService.runAllPumps();
             return ResponseEntity.ok().build();
@@ -99,8 +111,9 @@ public class PumpEndpoint {
         if(pump == null) {
             return ResponseEntity.notFound().build();
         }
-        pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0));
-        return ResponseEntity.ok().build();
+        long jobId = pumpService.performPumpAdvice(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0));
+        UriComponents uriComponents = uriBuilder.path("/api/pump/jobmetrics/{id}").buildAndExpand(jobId);
+        return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")

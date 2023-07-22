@@ -11,18 +11,18 @@
           stretch
           active-bg-color="teal-4"
           align="justify"
-          v-model:model-value="pumpTester.mode"
+          v-model:model-value="advice.type"
         >
           <q-tab
-            name="runSteps"
-            :disable="pumpTester.running"
-            label="Steps"
+            name="PUMP_ML"
+            :disable="isRunning"
+            label="Liquid"
             @click="reset()"
           />
           <q-tab
-            name="runLiquid"
-            :disable="pumpTester.running"
-            label="Liquid"
+            name="PUMP_STEPS"
+            :disable="isRunning"
+            label="Steps"
             @click="reset()"
           />
         </q-tabs>
@@ -31,14 +31,14 @@
     <div class="row justify-center bg-grey-3 items-center">
       <div class="col-grow">
         <q-input
-          v-model:model-value="pumpTester.runVal"
+          v-model:model-value="advice.amount"
           style="padding-inline: 12px"
           type="number"
           square
           hide-bottom-space
           borderless
           :label="runValFieldLabel"
-          :disable="pumpTester.running"
+          :disable="isRunning"
         >
           <template v-slot:append>
             {{ runValSuffix }}
@@ -48,7 +48,7 @@
       <div class="col-shrink q-pr-sm q-py-sm">
         <q-btn
           @click="onClickRun"
-          v-if="!pumpTester.running"
+          v-if="!isRunning"
           :icon="mdiPlay"
           label="Run"
           no-caps
@@ -66,23 +66,23 @@
       </div>
     </div>
     <q-linear-progress
-      :value="runningState.percentage / 100"
+      :value="progressBar"
       :animation-speed="300"
       color="green"
     />
     <q-card-section
-      v-if="pumpTester.result"
+      v-if="!!jobMetrics"
     >
       <div class="row justify-center items-center q-gutter-md">
         <div class="col-shrink">
           <table>
             <tr>
-              <td><b>Steps transmitted:</b></td>
-              <td>{{ pumpTester.running ? '...' : resultState.stepsMade }}</td>
+              <td><b>Steps made:</b></td>
+              <td>{{ jobMetrics.stepsMade }}</td>
             </tr>
             <tr>
-              <td><b>Seconds taken:</b></td>
-              <td>{{ pumpTester.running ? '...' : resultState.timeTaken }}</td>
+              <td><b>Time taken:</b></td>
+              <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
             </tr>
           </table>
         </div>
@@ -93,9 +93,9 @@
                 filled
                 dense
                 outlined
-                :disable="pumpTester.running"
+                :disable="isRunning"
                 label="ml pumped"
-                v-model:model-value="pumpTester.liquidPumpedField"
+                v-model:model-value="trueLiquidPumpedField"
               >
                 <template v-slot:append>
                   ml
@@ -117,7 +117,7 @@
                 outlined
                 disable
                 label="steps/cl"
-                v-model:model-value="pumpTester.liquidPumpedField"
+                v-model:model-value="trueLiquidPumpedField"
               >
                 <template v-slot:append>
                   st/cl
@@ -127,10 +127,10 @@
                     @click="clickApplyMlPumpMetric"
                     no-caps
                     :dense="$q.screen.xs"
-                    :disable="!pumpTester.liquidPumpedField || pumpTester.running"
+                    :disable="!trueLiquidPumpedField || isRunning"
                     class="bg-green text-white"
                     label="Apply"
-                    :icon="this.pumpTester.applyMlPumpMetricIcon"
+                    :icon="this.applyMlPumpMetricIcon"
                   />
                 </template>
               </q-input>
@@ -145,6 +145,7 @@
 <script>
 import { mdiCheck, mdiEqual, mdiPlay, mdiStop, mdiSync } from '@quasar/extras/mdi-v5'
 import WebSocketService from 'src/services/websocket.service'
+import PumpService from 'src/services/pump.service'
 
 export default {
   name: 'CPumpTester',
@@ -159,23 +160,23 @@ export default {
   },
   data: () => {
     return {
-      pumpTester: {
-        mode: 'runSteps',
-        runVal: '',
-        applyMlPumpMetricIcon: mdiSync,
-        liquidPumpedField: '',
-        result: false
+      advice: {
+        type: 'PUMP_ML',
+        amount: ''
       },
-      runningState: {
-        running: false,
-        inPumpUp: false,
-        forward: true,
-        percentage: 0
+      runningJobId: null,
+      applyMlPumpMetricIcon: mdiSync,
+      trueLiquidPumpedField: '',
+      jobState: {
+        lastJobId: null,
+        runningState: {
+          jobId: 0,
+          runInfinity: false,
+          forward: true,
+          percentage: 0
+        }
       },
-      resultState: {
-        stepsMade: 0,
-        timeTaken: 0
-      }
+      jobMetrics: null
     }
   },
   created () {
@@ -187,62 +188,88 @@ export default {
   },
   methods: {
     onClickRun () {
+      PumpService.dispatchPumpAdvice(this.pumpId, this.advice)
+        .then(id => {
+          this.runningJobId = id
+        })
     },
     onClickCancel () {
+      PumpService.stopPump(this.pumpId)
+        .then(() => {
+          this.runningJobId = null
+        })
+    },
+    fetchMetrics () {
+      PumpService.getMetrics(this.runningJobId)
+        .then(metrics => {
+          this.jobMetrics = Object.assign({}, metrics)
+        })
     },
     reset () {
-      this.pumpTester.result = false
-      this.resultState = {
-        stepsMade: 0,
-        timeTaken: 0
-      }
+      this.runningJobId = null
+      this.advice.amount = 0
+      this.jobMetrics = null
     },
     clickApplyMlPumpMetric () {
-      this.pumpTester.applyMlPumpMetricIcon = mdiCheck
+      this.applyMlPumpMetricIcon = mdiCheck
       setTimeout(() => {
-        this.pumpTester.applyMlPumpMetricIcon = mdiSync
+        this.applyMlPumpMetricIcon = mdiSync
       }, 2000)
     }
   },
   watch: {
     pumpId: {
-      immediate: false,
+      immediate: true,
       handler (newValue, oldValue) {
-        if (newValue.id !== oldValue.id) {
-          WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue))
-          this.runningState = Object.assign({}, {
-            running: false,
-            inPumpUp: false,
-            forward: true,
-            percentage: 0
-          })
+        if (newValue !== oldValue) {
+          if (oldValue !== undefined) {
+            WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue))
+            this.jobState = Object.assign({}, {
+              lastJobId: null,
+              runningState: {
+                jobId: 0,
+                runInfinity: false,
+                forward: true,
+                percentage: 0
+              }
+            })
+          }
+
           WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue), (data) => {
-            this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
+            this.jobState = Object.assign(this.jobState, JSON.parse(data.body))
+            if (this.jobState.lastJobId && this.jobState.lastJobId === this.runningJobId) {
+              this.fetchMetrics()
+            }
           })
         }
       }
     }
   },
-  mounted () {
-    WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pumpId), (data) => {
-      this.runningState = Object.assign(this.runningState, JSON.parse(data.body))
-    })
-  },
   unmounted () {
     WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pumpId))
   },
   computed: {
-    runValFieldLabel () {
-      if (this.pumpTester.mode === 'runSteps') {
-        return 'Steps to run'
+    isRunning () {
+      return !!this.jobState.runningState?.jobId && this.jobState.runningState.jobId === this.runningJobId
+    },
+    progressBar () {
+      if (!this.jobState.runningState) {
+        return 0
       }
-      return 'Ml to pump'
+      const runningState = this.jobState.runningState
+      return runningState.percentage / 100
+    },
+    runValFieldLabel () {
+      if (this.advice.type === 'PUMP_ML') {
+        return 'Ml to pump'
+      }
+      return 'Steps to run'
     },
     runValSuffix () {
-      if (this.pumpTester.mode === 'runSteps') {
-        return 'st'
+      if (this.advice.type === 'PUMP_ML') {
+        return 'ml'
       }
-      return 'ml'
+      return 'st'
     }
   }
 }

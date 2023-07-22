@@ -45,7 +45,7 @@ public class PumpMaintenanceService {
     private ScheduledFuture<?> automaticPumpBackTask;
     private final Map<Long, Long> jobIdByPumpId = new HashMap<>();
     private final Map<Long, PumpTask> pumpTasksByJobId = new HashMap<>();
-    private Map<Long, PumpState> lastState = new HashMap<>();
+    private Map<Long, PumpJobState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
 
     public void postConstruct() {
@@ -56,7 +56,7 @@ public class PumpMaintenanceService {
 
     @Scheduled(fixedDelay = 500)
     void performPumpStateUpdate() {
-        for (Map.Entry<Long, PumpState> entry : getPumpState(true).entrySet()) {
+        for (Map.Entry<Long, PumpJobState> entry : getJobStateMapByPumpId(true).entrySet()) {
             webSocketService.broadcastPumpRunningState(entry.getKey(), entry.getValue());
         }
     }
@@ -94,7 +94,7 @@ public class PumpMaintenanceService {
         }
     }
 
-    public synchronized long runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<PumpState.RunningState>> callback) {
+    public synchronized long runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<PumpJobState.RunningState>> callback) {
         if (callback == null) {
             callback = (x) -> {
             };
@@ -279,8 +279,8 @@ public class PumpMaintenanceService {
         return settings;
     }
 
-    public synchronized PumpState getRunningStateByPumpId(long pumpId) {
-        PumpState pumpState = new PumpState();
+    public synchronized PumpJobState getJobStateByPumpId(long pumpId) {
+        PumpJobState pumpState = new PumpJobState();
         PumpTask pumpTask = getCurrentPumpTask(pumpId);
         if(pumpTask == null) {
             return pumpState;
@@ -295,18 +295,18 @@ public class PumpMaintenanceService {
         return pumpState;
     }
 
-    private Map<Long, PumpState> getPumpState(boolean onlyDelta) {
-        Map<Long, PumpState> stateMap = new HashMap<>();
+    private Map<Long, PumpJobState> getJobStateMapByPumpId(boolean onlyDelta) {
+        Map<Long, PumpJobState> stateMap = new HashMap<>();
         for (Long pumpId : this.jobIdByPumpId.keySet()) {
-            PumpState pumpState = getRunningStateByPumpId(pumpId);
+            PumpJobState pumpState = getJobStateByPumpId(pumpId);
             stateMap.put(pumpId, pumpState);
         }
         if (!onlyDelta) {
             return stateMap;
         }
-        Map<Long, PumpState> delta = new HashMap<>();
+        Map<Long, PumpJobState> delta = new HashMap<>();
 
-        for (Map.Entry<Long, PumpState> oldentry : this.lastState.entrySet()) {
+        for (Map.Entry<Long, PumpJobState> oldentry : this.lastState.entrySet()) {
             if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))) {
                 delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
             }
