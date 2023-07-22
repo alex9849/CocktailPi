@@ -1,145 +1,179 @@
 <template>
-  <q-card>
-    <div class="row items-center justify-center bg-teal-3">
-      <div class="col-shrink">
-        <p class="text-subtitle2 q-pa-sm">Metric:</p>
-      </div>
-      <div class="col-grow">
-        <q-tabs
-          class="rounded-borders bg-teal-3"
-          no-caps
-          stretch
-          active-bg-color="teal-4"
-          align="justify"
-          v-model:model-value="advice.type"
-        >
-          <q-tab
-            name="PUMP_ML"
-            :disable="isRunning"
-            label="Liquid"
-            @click="reset()"
+  <div class="relative-position">
+    <div v-if="disable || isUnknownJobRunning" style="z-index: 1; height: 100%; width: 100%" class="row justify-center items-center absolute">
+      <div
+        class="text-h6 text-italic rounded-borders q-pa-sm text-white"
+        style="background: rgba(244, 152, 54, 0.9) !important;"
+      >
+        <div v-if="isUnknownJobRunning" class="row justify-center q-gutter-sm">
+          <p>Unknown job running!</p>
+          <q-btn
+            color="negative"
+            label="Cancel job"
+            @click="onClickCancel"
           />
-          <q-tab
-            name="PUMP_STEPS"
-            :disable="isRunning"
-            label="Steps"
-            @click="reset()"
-          />
-        </q-tabs>
+        </div>
+        <div v-else>
+          {{ disableReason }}
+        </div>
       </div>
     </div>
-    <div class="row justify-center bg-grey-3 items-center">
-      <div class="col-grow">
-        <q-input
-          v-model:model-value="advice.amount"
-          style="padding-inline: 12px"
-          type="number"
-          square
-          hide-bottom-space
-          borderless
-          :label="runValFieldLabel"
-          :disable="isRunning"
-        >
-          <template v-slot:append>
-            {{ runValSuffix }}
-          </template>
-        </q-input>
-      </div>
-      <div class="col-shrink q-pr-sm q-py-sm">
-        <q-btn
-          @click="onClickRun"
-          v-if="!isRunning"
-          :icon="mdiPlay"
-          label="Run"
-          no-caps
-          class="bg-green text-white"
-        />
-        <q-btn
-          @click="onClickCancel"
-          v-else
-          :icon="mdiStop"
-          label="Stop"
-          no-caps
-          class="bg-red text-white"
-        >
-        </q-btn>
-      </div>
-    </div>
-    <q-linear-progress
-      :value="progressBar"
-      :animation-speed="300"
-      color="green"
-    />
-    <q-card-section
-      v-if="!!jobMetrics"
-    >
-      <div class="row justify-center items-center q-gutter-md">
+    <q-card :class="{disabled: disable || isUnknownJobRunning}">
+      <div class="row items-center justify-center bg-teal-3">
         <div class="col-shrink">
-          <table>
-            <tr>
-              <td><b>Steps made:</b></td>
-              <td>{{ jobMetrics.stepsMade }}</td>
-            </tr>
-            <tr>
-              <td><b>Time taken:</b></td>
-              <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
-            </tr>
-          </table>
+          <p class="text-subtitle2 q-pa-sm">Metric:</p>
         </div>
         <div class="col-grow">
-          <div class="row justify-center items-center q-col-gutter-sm">
-            <div class="col-12 col-lg">
-              <q-input
-                filled
-                dense
-                outlined
-                :disable="isRunning"
-                label="ml pumped"
-                v-model:model-value="trueLiquidPumpedField"
-              >
-                <template v-slot:append>
-                  ml
-                </template>
-              </q-input>
-            </div>
-            <div class="col-shrink">
-              <q-icon
-                :name="mdiEqual"
-                size="lg"
-                class="text-grey-8"
-              />
-            </div>
-            <div class="col-12 col-lg">
-              <q-input
-                filled
-                dense
-                readonly
-                outlined
-                disable
-                label="steps/cl"
-                v-model:model-value="trueLiquidPumpedField"
-              >
-                <template v-slot:append>
-                  st/cl
-                </template>
-                <template v-slot:after>
-                  <q-btn
-                    @click="clickApplyMlPumpMetric"
-                    no-caps
-                    :dense="$q.screen.xs"
-                    :disable="!trueLiquidPumpedField || isRunning"
-                    class="bg-green text-white"
-                    label="Apply"
-                    :icon="this.applyMlPumpMetricIcon"
-                  />
-                </template>
-              </q-input>
+          <q-tabs
+            class="rounded-borders bg-teal-3"
+            no-caps
+            stretch
+            active-bg-color="teal-4"
+            align="justify"
+            v-model:model-value="advice.type"
+          >
+            <q-tab
+              name="PUMP_ML"
+              :disable="isRunning"
+              label="Liquid"
+              @click="reset()"
+            />
+            <q-tab
+              v-if="pump.type === 'stepper'"
+              name="PUMP_STEPS"
+              :disable="isRunning"
+              label="Steps"
+              @click="reset()"
+            />
+            <q-tab
+              v-if="pump.type === 'dc'"
+              name="PUMP_TIME"
+              :disable="isRunning"
+              label="Time"
+              @click="reset()"
+            />
+          </q-tabs>
+        </div>
+      </div>
+      <div class="row justify-center bg-grey-3 items-center">
+        <div class="col-grow">
+          <q-input
+            v-model:model-value="advice.amount"
+            style="padding-inline: 12px"
+            type="number"
+            square
+            hide-bottom-space
+            borderless
+            :label="runValField.label"
+            :disable="isRunning"
+          >
+            <template v-slot:append>
+              {{ runValField.suffix }}
+            </template>
+          </q-input>
+        </div>
+        <div class="col-shrink q-pr-sm q-py-sm">
+          <q-btn
+            @click="onClickRun"
+            v-if="!isRunning"
+            :icon="mdiPlay"
+            label="Run"
+            no-caps
+            class="bg-green text-white"
+          />
+          <q-btn
+            @click="onClickCancel"
+            v-else
+            :icon="mdiStop"
+            label="Stop"
+            no-caps
+            class="bg-red text-white"
+          >
+          </q-btn>
+        </div>
+      </div>
+      <q-linear-progress
+        :value="progressBar"
+        :animation-speed="300"
+        color="green"
+      />
+      <q-card-section
+        v-if="!!jobMetrics"
+      >
+        <div class="row justify-center items-center q-gutter-md">
+          <div class="col-shrink">
+            <table>
+              <tr v-if="pump.type === 'stepper'">
+                <td><b>Steps made:</b></td>
+                <td>{{ jobMetrics.stepsMade }}</td>
+              </tr>
+              <tr>
+                <td><b>Liquid pumped:</b></td>
+                <td>
+                  <p>{{ jobMetrics.mlPumped }} ml <i>(should-value)</i></p>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Time taken:</b></td>
+                <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-grow">
+            <div class="row justify-center items-center q-col-gutter-sm">
+              <div class="col-12 col-lg">
+                <q-input
+                  filled
+                  dense
+                  outlined
+                  :disable="isRunning"
+                  label="Actual ml pumped"
+                  v-model:model-value="trueLiquidPumpedField"
+                >
+                  <template v-slot:append>
+                    ml
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-shrink">
+                <q-icon
+                  :name="mdiEqual"
+                  size="lg"
+                  class="text-grey-8"
+                />
+              </div>
+              <div class="col-12 col-lg">
+                <q-input
+                  filled
+                  dense
+                  readonly
+                  outlined
+                  disable
+                  label="steps/cl"
+                  v-model:model-value="trueLiquidPumpedField"
+                >
+                  <template v-slot:append>
+                    st/cl
+                  </template>
+                  <template v-slot:after>
+                    <q-btn
+                      @click="clickApplyMlPumpMetric"
+                      no-caps
+                      :dense="$q.screen.xs"
+                      :disable="!trueLiquidPumpedField || isRunning"
+                      class="bg-green text-white"
+                      label="Apply"
+                      :icon="this.applyMlPumpMetricIcon"
+                    />
+                  </template>
+                </q-input>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </q-card-section>
-  </q-card>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
@@ -150,12 +184,17 @@ import PumpService from 'src/services/pump.service'
 export default {
   name: 'CPumpTester',
   props: {
-    pumpId: {
-      type: Number,
+    pump: {
+      type: Object,
       required: true
     },
-    pumpType: {
-      type: String
+    disable: {
+      type: Boolean,
+      default: false
+    },
+    disableReason: {
+      type: String,
+      default: () => 'Disabled'
     }
   },
   data: () => {
@@ -188,16 +227,13 @@ export default {
   },
   methods: {
     onClickRun () {
-      PumpService.dispatchPumpAdvice(this.pumpId, this.advice)
+      PumpService.dispatchPumpAdvice(this.pump.id, this.advice)
         .then(id => {
           this.runningJobId = id
         })
     },
     onClickCancel () {
-      PumpService.stopPump(this.pumpId)
-        .then(() => {
-          this.runningJobId = null
-        })
+      PumpService.stopPump(this.pump.id)
     },
     fetchMetrics () {
       PumpService.getMetrics(this.runningJobId)
@@ -207,7 +243,7 @@ export default {
     },
     reset () {
       this.runningJobId = null
-      this.advice.amount = 0
+      this.advice.amount = ''
       this.jobMetrics = null
     },
     clickApplyMlPumpMetric () {
@@ -218,12 +254,12 @@ export default {
     }
   },
   watch: {
-    pumpId: {
+    pump: {
       immediate: true,
       handler (newValue, oldValue) {
-        if (newValue !== oldValue) {
+        if (newValue.id !== oldValue?.id) {
           if (oldValue !== undefined) {
-            WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue))
+            WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
             this.jobState = Object.assign({}, {
               lastJobId: null,
               runningState: {
@@ -235,7 +271,7 @@ export default {
             })
           }
 
-          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue), (data) => {
+          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
             this.jobState = Object.assign(this.jobState, JSON.parse(data.body))
             if (this.jobState.lastJobId && this.jobState.lastJobId === this.runningJobId) {
               this.fetchMetrics()
@@ -246,11 +282,17 @@ export default {
     }
   },
   unmounted () {
-    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pumpId))
+    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
     isRunning () {
       return !!this.jobState.runningState?.jobId && this.jobState.runningState.jobId === this.runningJobId
+    },
+    isUnknownJobRunning () {
+      if (!this.jobState.runningState || !this.jobState.runningState.jobId) {
+        return false
+      }
+      return this.jobState.runningState.jobId !== this.runningJobId
     },
     progressBar () {
       if (!this.jobState.runningState) {
@@ -259,17 +301,29 @@ export default {
       const runningState = this.jobState.runningState
       return runningState.percentage / 100
     },
-    runValFieldLabel () {
-      if (this.advice.type === 'PUMP_ML') {
-        return 'Ml to pump'
+    runValField () {
+      switch (this.advice.type) {
+        case 'PUMP_ML':
+          return {
+            label: 'Ml to pump',
+            suffix: 'ml'
+          }
+        case 'PUMP_TIME':
+          return {
+            label: 'Ms to run',
+            suffix: 'ms'
+          }
+        case 'PUMP_STEPS':
+          return {
+            label: 'Steps to run',
+            suffix: 'st'
+          }
+        default:
+          return {
+            label: 'Unknown metric',
+            suffix: 'unknown'
+          }
       }
-      return 'Steps to run'
-    },
-    runValSuffix () {
-      if (this.advice.type === 'PUMP_ML') {
-        return 'ml'
-      }
-      return 'st'
     }
   }
 }

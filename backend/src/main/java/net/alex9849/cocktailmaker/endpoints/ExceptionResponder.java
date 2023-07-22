@@ -29,7 +29,7 @@ public class ExceptionResponder {
     public ResponseEntity<ErrorDetails> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         String errorMsg;
         if(ex.hasFieldErrors()) {
-            errorMsg = ex.getFieldError().getDefaultMessage();
+            errorMsg = ex.getFieldError().getField() + " " + ex.getFieldError().getDefaultMessage();
         } else {
             errorMsg = ex.getMessage();
         }

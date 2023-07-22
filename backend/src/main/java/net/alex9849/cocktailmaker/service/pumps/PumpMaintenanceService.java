@@ -84,7 +84,7 @@ public class PumpMaintenanceService {
         if(pumpTask == null) {
             return false;
         }
-        return pumpTask.isFinished();
+        return !pumpTask.isFinished();
     }
 
     public synchronized void cancelByPumpId(long pumpId) {

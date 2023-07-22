@@ -269,7 +269,7 @@
                 <template v-slot:fields>
                   <p class="text-subtitle1 text-center">Motor tester</p>
                   <c-pump-tester
-                    :pump-id="pump.id"
+                    :pump="pump"
                   />
                 </template>
               </c-assistant-container>
