@@ -445,6 +445,7 @@ export default {
           state.label = 'Ready'
           break
         case 'INCOMPLETE':
+        case 'TESTABLE':
           state.color = 'warning'
           state.label = 'Incomplete Configuration'
           break

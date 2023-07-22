@@ -253,10 +253,8 @@
                   Here you can test your motor and calculate the number of steps that the motor needs to pump one cl.
                   You can run the tester with two metrics:
                   <ul>
-                    <li><b>Steps:</b> Tell the motor how many steps it should take.</li>
-                    <li><b>Liquid:</b> Tell the motor how much liquid it should pump. For this, the "Steps per cl" field
-                      must contain information!
-                    </li>
+                    <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
+                    <li><b>Steps:</b> Tell the motor how many steps he should take.</li>
                   </ul>
                   The system will always track how many steps the motor has made. Depending on how you have configured
                   the motor above, it might happen that the motor skips steps. The tester exists to verify your
@@ -270,6 +268,9 @@
                   <p class="text-subtitle1 text-center">Motor tester</p>
                   <c-pump-tester
                     :pump="pump"
+                    :disable="pump.state === 'INCOMPLETE'"
+                    disable-reason="Required parameter missing"
+                    @update:perClMetric="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event)"
                   />
                 </template>
               </c-assistant-container>

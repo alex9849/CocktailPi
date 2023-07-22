@@ -75,7 +75,11 @@ public class PumpDto {
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
                 if(!pump.isCompleted()) {
-                    this.state = State.INCOMPLETE;
+                    if(pump.isCanPump()) {
+                        this.state = State.TESTABLE;
+                    } else {
+                        this.state = State.INCOMPLETE;
+                    }
                 } else if (pump.isEnabled()) {
                     this.state = State.READY;
                 } else {
@@ -104,7 +108,7 @@ public class PumpDto {
     }
 
     public enum State {
-        INCOMPLETE, DISABLED, READY
+        INCOMPLETE, TESTABLE, DISABLED, READY
     }
 
 }

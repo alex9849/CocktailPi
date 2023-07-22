@@ -14,7 +14,7 @@ public class StepperPump extends Pump {
     private Integer enablePin;
     private Integer stepPin;
     private Integer stepsPerCl;
-    private Integer minStepDeltaInMs;
+    private Integer maxStepsPerSecond;
     private Integer acceleration;
 
     public Integer getEnablePin() {
@@ -45,11 +45,11 @@ public class StepperPump extends Pump {
     }
 
     public Integer getMaxStepsPerSecond() {
-        return minStepDeltaInMs;
+        return maxStepsPerSecond;
     }
 
-    public void setMaxStepsPerSecond(Integer minStepDeltaInMs) {
-        this.minStepDeltaInMs = minStepDeltaInMs;
+    public void setMaxStepsPerSecond(Integer maxStepsPerSecond) {
+        this.maxStepsPerSecond = maxStepsPerSecond;
         resetDriver();
     }
 
@@ -100,11 +100,6 @@ public class StepperPump extends Pump {
     @Override
     public boolean isCanPump() {
         return this.enablePin != null && this.stepPin != null &&
-                this.minStepDeltaInMs != null && this.acceleration != null;
-    }
-
-    @Override
-    public boolean isCompleted() {
-        return super.isCompleted() && this.stepsPerCl != null;
+                this.maxStepsPerSecond != null && this.acceleration != null && this.stepsPerCl != null;
     }
 }

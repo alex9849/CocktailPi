@@ -150,17 +150,17 @@
                   outlined
                   disable
                   label="steps/cl"
-                  v-model:model-value="trueLiquidPumpedField"
+                  :model-value="calcedPerClMetricValue.val"
                 >
                   <template v-slot:append>
-                    st/cl
+                    {{ calcedPerClMetricValue.unit }}
                   </template>
                   <template v-slot:after>
                     <q-btn
                       @click="clickApplyMlPumpMetric"
                       no-caps
                       :dense="$q.screen.xs"
-                      :disable="!trueLiquidPumpedField || isRunning"
+                      :disable="!calcedPerClMetricValue.val || isRunning"
                       class="bg-green text-white"
                       label="Apply"
                       :icon="this.applyMlPumpMetricIcon"
@@ -180,6 +180,7 @@
 import { mdiCheck, mdiEqual, mdiPlay, mdiStop, mdiSync } from '@quasar/extras/mdi-v5'
 import WebSocketService from 'src/services/websocket.service'
 import PumpService from 'src/services/pump.service'
+import { isNumber } from 'lodash'
 
 export default {
   name: 'CPumpTester',
@@ -248,6 +249,8 @@ export default {
     },
     clickApplyMlPumpMetric () {
       this.applyMlPumpMetricIcon = mdiCheck
+      this.$emit('update:perClMetric', this.calcedPerClMetricValue.val)
+      this.trueLiquidPumpedField = ''
       setTimeout(() => {
         this.applyMlPumpMetricIcon = mdiSync
       }, 2000)
@@ -300,6 +303,32 @@ export default {
       }
       const runningState = this.jobState.runningState
       return runningState.percentage / 100
+    },
+    calcedPerClMetricValue () {
+      let metricVal
+      let unit
+      const ret = {
+        unit,
+        val: ''
+      }
+      switch (this.pump.type) {
+        case 'dc':
+          metricVal = this.pump.timePerClInMs
+          ret.unit = 'ms/cl'
+          break
+        case 'stepper':
+          metricVal = this.pump.stepsPerCl
+          ret.unit = 'st/cl'
+          break
+      }
+      if (!isFinite(this.trueLiquidPumpedField) || !isFinite(this.jobMetrics?.mlPumped) ||
+        this.trueLiquidPumpedField <= 0 || this.jobMetrics.mlPumped <= 0) {
+        return ret
+      }
+      if (metricVal) {
+        ret.val = Math.max(1, Math.round((this.jobMetrics.mlPumped / this.trueLiquidPumpedField) * metricVal))
+      }
+      return ret
     },
     runValField () {
       switch (this.advice.type) {
