@@ -76,6 +76,7 @@
           <q-btn
             @click="onClickRun"
             v-if="!isRunning"
+            :disable="!isFinite(advice.amount) || advice.amount < 1"
             :icon="mdiPlay"
             label="Run"
             no-caps
@@ -98,7 +99,7 @@
         color="green"
       />
       <q-card-section
-        v-if="!!jobMetrics"
+        v-if="!!jobMetrics && !isRunning"
       >
         <div class="row justify-center items-center q-gutter-md">
           <div class="col-shrink">

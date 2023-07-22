@@ -55,74 +55,16 @@
         :done-icon="mdiFlashOutline"
       >
         <div class="col-12">
-          <div class="row justify-center q-col-gutter-lg">
-            <div class="col-12 text-center text-bold text-h5">
-              <p>Select the pins that control the pump</p>
-            </div>
-            <div class="col-12">
-              <c-assistant-container>
-                <template v-slot:explanations>
-                  <p>
-                    A stepper motor driver usually has three important pins, that are used to control the motor.
-                  </p>
-                  <ul>
-                    <li>
-                      The step-pin, which gets one pulse for each step, that the motor should do.
-                    </li>
-                    <li>
-                      The enable pin. This pin decides on if the motor should be energized and therefore hold
-                      his current position, or not.
-                    </li>
-                    <li>
-                      The direction pin. It decided on the direction that the motor takes. The direction that
-                      the motors are running to is decided by one single pim, that controls all motor.
-                      Please build your machine in a way that connects that pin with with the direction logic of all
-                      your
-                      motors.
-                    </li>
-                    <li>
-                      Your motor driver very likely also provides more pins (step resolution/sleep/...). Please
-                      configure these statically in hardware!
-                    </li>
-                  </ul>
-                  <p><b>Important:</b> Pin-numbers don't correspond to GPIO numbers, but BCM numbers. BCM refers to the
-                    “Broadcom SOC channel” number, which is the numbering inside the chip which is used on the Raspberry
-                    Pi.
-                    These numbers changed between board versions. These link may help:
-                    <a href="https://pi4j.com/getting-started/understanding-the-pins/#overview" target="_blank">Pi4J -
-                      Understanding the pins</a>
-                  </p>
-                </template>
-                <template v-slot:fields>
-                  <q-input
-                    :model-value="pump.stepPin"
-                    @update:model-value="setPumpAttr('stepPin', pump.stepPin, $event)"
-                    :error-message="attrState.stepPin.errorMsg"
-                    :error="!!attrState.stepPin.errorMsg"
-                    :loading="attrState.stepPin.loading"
-                    debounce="600"
-                    outlined
-                    type="number"
-                    filled
-                    label="Step BCM-Pin"
-                  />
-                  <q-input
-                    :model-value="pump.enablePin"
-                    @update:model-value="setPumpAttr('enablePin', pump.enablePin, $event)"
-                    :error-message="attrState.enablePin.errorMsg"
-                    :error="!!attrState.enablePin.errorMsg"
-                    :loading="attrState.enablePin.loading"
-                    debounce="600"
-                    outlined
-                    type="number"
-                    filled
-                    label="Enable BCM-Pin"
-                  >
-                  </q-input>
-                </template>
-              </c-assistant-container>
-            </div>
-          </div>
+          <c-pump-setup-stepper-hardware-pins
+            :enable-pin="pump.enablePin"
+            @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event)"
+            :enable-pin-error-msg="attrState.enablePin.errorMsg"
+            :enable-pin-loading="attrState.enablePin.loading"
+            :step-pin="pump.stepPin"
+            @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event)"
+            :step-pin-error-msg="attrState.stepPin.errorMsg"
+            :step-pin-loading="attrState.stepPin.loading"
+          />
         </div>
         <div class="col-12 q-ma-lg">
           <q-stepper-navigation>
@@ -447,10 +389,11 @@ import CPumpTester from 'components/CPumpTester'
 import CIngredientSelector from 'components/CIngredientSelector'
 import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 import UserService from 'src/services/user.service'
+import CPumpSetupStepperHardwarePins from 'components/pumpsetup/CPumpSetupStepperHardwarePins.vue'
 
 export default {
   name: 'SetupPump',
-  components: { CPumpTester, CAssistantContainer, CIngredientSelector },
+  components: { CPumpSetupStepperHardwarePins, CPumpTester, CAssistantContainer, CIngredientSelector },
   data () {
     return {
       stepper: 0,
