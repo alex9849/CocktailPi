@@ -391,15 +391,12 @@ export default {
         return abortVal
       }
       const runningState = this.pumpJobState.runningState
-      if (runningState.runInfinity) {
-        return abortVal
-      }
       let value = runningState.forward ? runningState.percentage : (1 - runningState.percentage)
       value = value / 100
       return {
         value: value,
         query: runningState.runInfinity,
-        reverse: !runningState.forward
+        reverse: runningState.runInfinity || !runningState.forward
       }
     },
     typeNameData () {
