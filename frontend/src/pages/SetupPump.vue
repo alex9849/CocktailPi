@@ -59,6 +59,7 @@
           headline="Select the pins that control the pump"
         >
           <c-pump-setup-stepper-hardware-pins
+            v-if="pump.type === 'stepper'"
             :enable-pin="pump.enablePin"
             @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event)"
             :enable-pin-error-msg="attrState.enablePin.errorMsg"
@@ -67,6 +68,13 @@
             @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event)"
             :step-pin-error-msg="attrState.stepPin.errorMsg"
             :step-pin-loading="attrState.stepPin.loading"
+          />
+          <c-pump-setup-dc-hardware-pins
+            v-if="pump.type === 'dc'"
+            :pin="pump.pin"
+            @update:pin="setPumpAttr('pin', pump.pin, $event)"
+            :pin-error-msg="attrState.pin.errorMsg"
+            :pin-loading="attrState.pin.loading"
           />
         </c-setup-step>
         <div class="col-12 q-ma-lg">
@@ -91,6 +99,7 @@
           headline="Calibrate your pump"
         >
           <c-pump-setup-stepper-calibration
+            v-if="pump.type === 'stepper'"
             :acceleration="pump.acceleration"
             :acceleration-error-msg="attrState.acceleration.errorMsg"
             :acceleration-loading="attrState.acceleration.loading"
@@ -138,7 +147,7 @@
           <q-splitter
             :model-value="10"
             horizontal
-            class="q-pb-md"
+            class="q-py-md"
           />
           <c-assistant-container>
             <template v-slot:explanations>
@@ -304,10 +313,12 @@ import PumpService, { pumpDtoMapper } from 'src/services/pump.service'
 import CPumpSetupStepperHardwarePins from 'components/pumpsetup/CPumpSetupStepperHardwarePins.vue'
 import CSetupStep from 'components/pumpsetup/CSetupStep.vue'
 import CPumpSetupStepperCalibration from 'components/pumpsetup/CPumpSetupStepperCalibration.vue'
+import CPumpSetupDcHardwarePins from 'components/pumpsetup/CPumpSetupDcHardwarePins.vue'
 
 export default {
   name: 'SetupPump',
   components: {
+    CPumpSetupDcHardwarePins,
     CPumpSetupStepperCalibration,
     CSetupStep,
     CPumpSetupStepperHardwarePins,
@@ -322,15 +333,20 @@ export default {
         id: '',
         type: '',
         name: '',
-        stepPin: '',
         currentIngredient: '',
-        enablePin: '',
         fillingLevelInMl: '',
         tubeCapacityInMl: '',
+        pumpedUp: false,
+
+        // Stepper-Motor
+        stepPin: '',
+        enablePin: '',
         stepsPerCl: '',
         maxStepsPerSecond: '',
         acceleration: '',
-        pumpedUp: false
+
+        // DC-Motor
+        pin: ''
       },
       attrState: {
         name: {
@@ -379,6 +395,11 @@ export default {
           saved: false
         },
         pumpedUp: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        pin: {
           loading: false,
           errorMsg: '',
           saved: false

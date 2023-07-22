@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -135,7 +134,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pstmt.setBoolean(8, pump.isPumpedUp());
         if(pump instanceof DcPump) {
             DcPump dcPump = (DcPump) pump;
-            pstmt.setObject(9, dcPump.getBcmPin());
+            pstmt.setObject(9, dcPump.getPin());
             pstmt.setObject(10, dcPump.getTimePerClInMs());
             pstmt.setObject(11, dcPump.isPowerStateHigh());
             pstmt.setNull(12, Types.INTEGER);
@@ -165,7 +164,7 @@ public class PumpRepository extends JdbcDaoSupport {
 
         if(Objects.equals(dType, DcPump.class.getAnnotation(DiscriminatorValue.class).value())) {
             DcPump dcPump = new DcPump();
-            dcPump.setBcmPin((Integer) rs.getObject("dc_pin"));
+            dcPump.setPin((Integer) rs.getObject("dc_pin"));
             dcPump.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
             boolean isPowerStateHigh = rs.getBoolean("is_power_state_high");
             if(!rs.wasNull()) {

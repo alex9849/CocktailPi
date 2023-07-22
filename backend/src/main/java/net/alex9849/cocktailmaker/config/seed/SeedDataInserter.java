@@ -136,7 +136,7 @@ public class SeedDataInserter {
 
         final int nrPumps = 8;
         for(int i = 0; i < nrPumps / 2; i++) {
-            dcPump.setBcmPin(i);
+            dcPump.setPin(i);
             dcPump.setName("Pump #" + i);
             this.pumpService.createPump(dcPump);
         }

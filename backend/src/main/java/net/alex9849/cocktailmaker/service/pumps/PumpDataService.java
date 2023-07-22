@@ -43,8 +43,8 @@ public class PumpDataService {
 
     public Pump createPump(Pump pump) {
         List<Integer> pinList = new ArrayList<>();
-        if(pump instanceof DcPump dcPump && dcPump.getBcmPin() != null) {
-            pinList.add(dcPump.getBcmPin());
+        if(pump instanceof DcPump dcPump && dcPump.getPin() != null) {
+            pinList.add(dcPump.getPin());
         } else if (pump instanceof StepperPump stepperPump) {
             if(stepperPump.getEnablePin() != null)
                 pinList.add(stepperPump.getEnablePin());
@@ -78,8 +78,8 @@ public class PumpDataService {
 
         List<Integer> pinList = new ArrayList<>();
         if(pump instanceof DcPump dcPump) {
-            if(dcPump.getBcmPin() != null) {
-                pinList.add(dcPump.getBcmPin());
+            if(dcPump.getPin() != null) {
+                pinList.add(dcPump.getPin());
             }
         } else if (pump instanceof StepperPump stepperPump) {
             if(stepperPump.getEnablePin() != null) {

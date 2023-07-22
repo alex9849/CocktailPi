@@ -11,7 +11,7 @@ import java.util.Objects;
 @DiscriminatorValue("dc")
 public class DcPump extends Pump {
     private Integer timePerClInMs;
-    private Integer bcmPin;
+    private Integer pin;
     private Boolean isPowerStateHigh;
     private DCMotor motorDriver;
 
@@ -23,15 +23,15 @@ public class DcPump extends Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public Integer getBcmPin() {
-        return bcmPin;
+    public Integer getPin() {
+        return pin;
     }
 
-    public void setBcmPin(Integer bcmPin) {
-        if(Objects.equals(this.bcmPin, bcmPin)) {
+    public void setPin(Integer pin) {
+        if(Objects.equals(this.pin, pin)) {
             return;
         }
-        this.bcmPin = bcmPin;
+        this.pin = pin;
         this.resetDriver();
     }
 
@@ -50,7 +50,7 @@ public class DcPump extends Pump {
         }
         if(motorDriver == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
-            IMotorPin runPin = controller.getGpioPin(getBcmPin());
+            IMotorPin runPin = controller.getGpioPin(getPin());
             IMotorPin dirPin = new IMotorPin() {
                 @Override
                 public void digitalWrite(PinState value) {
@@ -91,6 +91,6 @@ public class DcPump extends Pump {
 
     @Override
     public boolean isCanPump() {
-        return this.bcmPin != null && this.timePerClInMs != null && this.isPowerStateHigh != null;
+        return this.pin != null && this.timePerClInMs != null && this.isPowerStateHigh != null;
     }
 }
