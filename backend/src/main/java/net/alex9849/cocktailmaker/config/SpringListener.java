@@ -4,7 +4,7 @@ import net.alex9849.cocktailmaker.config.seed.SeedDataInserter;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
 import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,7 +23,7 @@ public class SpringListener {
     private PumpService pumpService;
 
     @Autowired
-    private PumpUpService pumpUpService;
+    private PumpMaintenanceService pumpUpService;
 
     @Autowired
     private Flyway flyway;

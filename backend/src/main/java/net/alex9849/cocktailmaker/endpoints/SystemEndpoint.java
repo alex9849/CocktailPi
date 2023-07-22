@@ -3,7 +3,7 @@ package net.alex9849.cocktailmaker.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.service.SystemService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +22,7 @@ public class SystemEndpoint {
     private SystemService systemService;
 
     @Autowired
-    private PumpUpService pumpUpService;
+    private PumpMaintenanceService pumpUpService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)

@@ -18,8 +18,8 @@ public class StepperMotorTask extends PumpTask {
     /**
      * @param stepsToRun Long.MAX_VALUE == unlimited
      */
-    public StepperMotorTask(StepperPump stepperPump, Direction direction, long stepsToRun, Consumer<Optional<PumpState.RunningState>> callback) {
-        super(stepperPump, stepsToRun == Long.MAX_VALUE, direction, callback);
+    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, long stepsToRun, Consumer<Optional<PumpState.RunningState>> callback) {
+        super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, direction, callback);
         this.stepperPump = stepperPump;
         this.stepsToRun = stepsToRun;
     }
@@ -62,14 +62,14 @@ public class StepperMotorTask extends PumpTask {
         runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
-        runningState.setJobId(getId());
+        runningState.setJobId(getJobId());
         return runningState;
     }
 
     @Override
     protected JobMetrics genJobMetrics() {
         JobMetrics metrics = new JobMetrics();
-        metrics.setId(getId());
+        metrics.setId(getJobId());
         metrics.setMlPumped(getMlPumped());
         metrics.setStartTime(getStartTime());
         metrics.setStopTime(getStopTime());

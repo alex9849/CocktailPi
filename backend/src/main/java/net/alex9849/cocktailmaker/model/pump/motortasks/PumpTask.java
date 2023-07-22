@@ -12,7 +12,8 @@ import java.util.function.Consumer;
 
 public abstract class PumpTask implements Runnable {
     private static long maxId;
-    private final long id;
+    private final long jobId;
+    private final Long prevJobId;
     private final Pump pump;
     private final CountDownLatch cdl;
     private final boolean runInfinity;
@@ -26,8 +27,9 @@ public abstract class PumpTask implements Runnable {
     private Future<?> future;
 
 
-    public PumpTask(Pump pump, boolean runInfinity, Direction direction, Consumer<Optional<PumpState.RunningState>> callback) {
-        this.id = ++maxId;
+    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, Direction direction, Consumer<Optional<PumpState.RunningState>> callback) {
+        this.prevJobId = prevJobId;
+        this.jobId = ++maxId;
         this.cdl = new CountDownLatch(1);
         this.pump = pump;
         this.direction = direction;
@@ -46,8 +48,8 @@ public abstract class PumpTask implements Runnable {
         cdl.countDown();
     }
 
-    public long getId() {
-        return id;
+    public long getJobId() {
+        return jobId;
     }
 
     protected abstract void pumpRun();
@@ -61,6 +63,10 @@ public abstract class PumpTask implements Runnable {
             return System.currentTimeMillis() - this.startTime;
         }
         return this.stopTime - this.startTime;
+    }
+
+    public Long getPrevJobId() {
+        return prevJobId;
     }
 
     @Override
@@ -81,7 +87,7 @@ public abstract class PumpTask implements Runnable {
         } else {
             runningState = genRunningState();
         }
-        runningState.setJobId(id);
+        runningState.setJobId(jobId);
         return runningState;
     }
 
@@ -123,5 +129,9 @@ public abstract class PumpTask implements Runnable {
 
     protected Long getStopTime() {
         return stopTime;
+    }
+
+    public boolean isFinished() {
+        return stopTime != null;
     }
 }

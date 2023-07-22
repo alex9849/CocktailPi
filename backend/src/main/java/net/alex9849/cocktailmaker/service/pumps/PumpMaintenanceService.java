@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 @Service
 @Transactional
 @EnableScheduling
-public class PumpUpService {
+public class PumpMaintenanceService {
     @Autowired
     private PumpDataService pumpDataService;
 
@@ -37,15 +37,15 @@ public class PumpUpService {
     @Autowired
     private OptionsRepository optionsRepository;
 
-    private final Logger logger = LoggerFactory.getLogger(PumpUpService.class);
+    private final Logger logger = LoggerFactory.getLogger(PumpMaintenanceService.class);
 
     private final ExecutorService liveTasksExecutor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduledTasksExecutor = Executors.newSingleThreadScheduledExecutor();
     private ReversePumpingSettings.Full reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
-    private final Map<Long, PumpTask> pumpingTasks = new HashMap<>();
+    private final Map<Long, Long> jobIdByPumpId = new HashMap<>();
+    private final Map<Long, PumpTask> pumpTasksByJobId = new HashMap<>();
     private Map<Long, PumpState> lastState = new HashMap<>();
-    private final Map<Long, JobMetrics> jobMetricsMap = new HashMap<>();
     private Direction direction = Direction.FORWARD;
 
     public void postConstruct() {
@@ -71,15 +71,26 @@ public class PumpUpService {
         }
     }
 
+    private synchronized PumpTask getCurrentPumpTask(long pumpId) {
+        Long jobId = jobIdByPumpId.get(pumpId);
+        if(jobId == null) {
+            return null;
+        }
+        return pumpTasksByJobId.get(jobId);
+    }
+
     public synchronized boolean isPumpRunning(long pumpId) {
-        return this.pumpingTasks.containsKey(pumpId);
+        PumpTask pumpTask = getCurrentPumpTask(pumpId);
+        if(pumpTask == null) {
+            return false;
+        }
+        return pumpTask.isFinished();
     }
 
     public synchronized void cancelByPumpId(long pumpId) {
-        PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
+        PumpTask pumpTask = getCurrentPumpTask(pumpId);
         if (pumpTask != null) {
             pumpTask.cancel();
-            jobMetricsMap.put(pumpTask.getId(), pumpTask.getJobMetrics());
         }
     }
 
@@ -89,7 +100,13 @@ public class PumpUpService {
             };
         }
         Direction direction = advice.getType() == PumpAdvice.Type.PUMP_DOWN ? Direction.BACKWARD : Direction.FORWARD;
-        if (direction != this.direction && !this.pumpingTasks.isEmpty()) {
+        boolean anyPumpRunning = this.jobIdByPumpId.entrySet().stream()
+                .filter(x -> x.getKey() != pump.getId())
+                .map(Map.Entry::getValue)
+                .map(pumpTasksByJobId::get)
+                .anyMatch(x -> !x.isFinished());
+
+        if (direction != this.direction && anyPumpRunning) {
             callback.accept(Optional.empty());
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
@@ -112,23 +129,14 @@ public class PumpUpService {
             overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
         }
 
-        Consumer<Long> finalizeCallback = (pumpId) -> {
-            synchronized (this) {
-                PumpTask pumpTask = this.pumpingTasks.remove(pumpId);
-                if (pumpTask != null) {
-                    pumpTask.doFinalize();
-                    jobMetricsMap.put(pumpTask.getId(), pumpTask.getJobMetrics());
-                    webSocketService.broadcastPumpRunningState(pumpId, pumpTask.getRunningState());
-                }
-            }
-        };
+        Future<?> jobFuture;
+        PumpTask pumpTask;
+        Long prevJobId = jobIdByPumpId.get(pump.getId());
 
         if (pump instanceof DcPump dcPump) {
             DCMotor dcMotor = dcPump.getMotorDriver();
             dcMotor.setDirection(this.direction);
             dcMotor.setRunning(true);
-            ScheduledFuture<?> stopTask;
-            DcMotorTask task;
             long timeToRun = 0;
 
             switch (advice.getType()) {
@@ -151,18 +159,14 @@ public class PumpUpService {
             }
 
             if (timeToRun == Long.MAX_VALUE) {
-                task = new DcMotorTask(dcPump, this.direction, Long.MAX_VALUE, callback);
-                stopTask = scheduledTasksExecutor.schedule(() -> {
+                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, Long.MAX_VALUE, callback);
+                jobFuture = scheduledTasksExecutor.schedule(() -> {
                 }, 0, TimeUnit.MICROSECONDS);
             } else {
                 long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier / 10);
-                task = new DcMotorTask(dcPump, this.direction, duration, callback);
-                stopTask = scheduledTasksExecutor.schedule(task, duration, TimeUnit.MILLISECONDS);
+                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, duration, callback);
+                jobFuture = scheduledTasksExecutor.schedule(pumpTask, duration, TimeUnit.MILLISECONDS);
             }
-
-            this.pumpingTasks.put(pump.getId(), task);
-            task.readify(stopTask);
-            return task.getId();
 
         } else if (pump instanceof StepperPump stepperPump) {
 
@@ -186,16 +190,18 @@ public class PumpUpService {
                     throw new IllegalArgumentException("DcPump can't run certain amount of time!");
             }
 
-            StepperMotorTask task = new StepperMotorTask(stepperPump, this.direction, stepsToRun, callback);
-            Future<?> stopTask = liveTasksExecutor.submit(task);
-            this.pumpingTasks.put(pump.getId(), task);
-            task.readify(stopTask);
-            return task.getId();
+            pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, stepsToRun, callback);
+            jobFuture = liveTasksExecutor.submit(pumpTask);
 
         } else {
             callback.accept(Optional.empty());
             throw new IllegalStateException("PumpType not known: " + pump.getClass().getName());
         }
+
+        jobIdByPumpId.put(pump.getId(), pumpTask.getJobId());
+        pumpTasksByJobId.put(pumpTask.getJobId(), pumpTask);
+        pumpTask.readify(jobFuture);
+        return pumpTask.getJobId();
     }
     public synchronized void reschedulePumpBack() {
         if (automaticPumpBackTask != null) {
@@ -231,7 +237,7 @@ public class PumpUpService {
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
-        if (!pumpingTasks.isEmpty()) {
+        if (pumpTasksByJobId.values().stream().anyMatch(x -> !x.isFinished())) {
             throw new IllegalStateException("Pumps occupied!");
         }
 
@@ -274,34 +280,34 @@ public class PumpUpService {
     }
 
     public synchronized PumpState getRunningStateByPumpId(long pumpId) {
-        PumpTask pumpTask = this.pumpingTasks.get(pumpId);
-        if(pumpTask != null) {
-            return pumpTask.getRunningState();
+        PumpState pumpState = new PumpState();
+        PumpTask pumpTask = getCurrentPumpTask(pumpId);
+        if(pumpTask == null) {
+            return pumpState;
+        }
+        if (pumpTask.isFinished()) {
+            pumpState.setLastJobId(pumpTask.getJobId());
+            return pumpState;
         }
 
-
-        return runningState;
+        pumpState.setLastJobId(pumpTask.getPrevJobId());
+        pumpState.setRunningState(pumpTask.getRunningState());
+        return pumpState;
     }
 
     private Map<Long, PumpState> getPumpState(boolean onlyDelta) {
         Map<Long, PumpState> stateMap = new HashMap<>();
-        for (PumpTask task : this.pumpingTasks.values()) {
-            PumpState.RunningState runningState = task.getRunningState();
-            stateMap.put(task.pump.getId(), runningState);
+        for (Long pumpId : this.jobIdByPumpId.keySet()) {
+            PumpState pumpState = getRunningStateByPumpId(pumpId);
+            stateMap.put(pumpId, pumpState);
         }
         if (!onlyDelta) {
             return stateMap;
         }
         Map<Long, PumpState> delta = new HashMap<>();
 
-        for (Map.Entry<Long, PumpState.RunningState> oldentry : this.lastState.entrySet()) {
-            if (!stateMap.containsKey(oldentry.getKey())) {
-                //TODO Check if this works
-                PumpState pumpState = new PumpState();
-                pumpState.setLastJobId(oldentry.getValue().getRunningState().getJobId());
-                delta.put(oldentry.getKey(), pumpState);
-
-            } else if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))) {
+        for (Map.Entry<Long, PumpState> oldentry : this.lastState.entrySet()) {
+            if (!oldentry.getValue().equals(stateMap.get(oldentry.getKey()))) {
                 delta.put(oldentry.getKey(), stateMap.get(oldentry.getKey()));
             }
         }
@@ -317,15 +323,10 @@ public class PumpUpService {
     }
 
     public synchronized JobMetrics getJobMetrics(long id) {
-        JobMetrics metrics = this.jobMetricsMap.get(id);
-        if(metrics != null) {
-            return metrics;
+        PumpTask pumpTask = pumpTasksByJobId.get(id);
+        if(pumpTask == null) {
+            return null;
         }
-        for (PumpTask pt : pumpingTasks.values()) {
-            if(pt.getId() == id) {
-                return pt.getJobMetrics();
-            }
-        }
-        return null;
+        return pumpTask.getJobMetrics();
     }
 }

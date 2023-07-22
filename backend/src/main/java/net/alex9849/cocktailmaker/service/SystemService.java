@@ -2,7 +2,7 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class SystemService {
     private boolean isDemoMode;
 
     @Autowired
-    private PumpUpService pumpUpService;
+    private PumpMaintenanceService pumpUpService;
 
     public void shutdown() throws IOException {
         if(isDemoMode) {

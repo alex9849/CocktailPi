@@ -14,7 +14,7 @@ import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpLockService;
 import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.List;
 public class PumpService {
 
     @Autowired
-    private PumpUpService maintenanceService;
+    private PumpMaintenanceService maintenanceService;
 
     @Autowired
     private PumpLockService lockService;

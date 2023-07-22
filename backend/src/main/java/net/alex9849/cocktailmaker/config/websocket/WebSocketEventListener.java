@@ -4,7 +4,7 @@ import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
-import net.alex9849.cocktailmaker.service.pumps.PumpUpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class WebSocketEventListener {
     private PumpDataService pumpService;
 
     @Autowired
-    private PumpUpService maintenanceService;
+    private PumpMaintenanceService maintenanceService;
 
     @Autowired
     private EventService eventService;

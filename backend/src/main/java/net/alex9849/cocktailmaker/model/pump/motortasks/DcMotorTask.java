@@ -12,8 +12,8 @@ public class DcMotorTask extends PumpTask {
     DcPump dcPump;
     long duration;
 
-    public DcMotorTask(DcPump dcPump, Direction direction, long duration, Consumer<Optional<PumpState.RunningState>> callback) {
-        super(dcPump, duration == Long.MAX_VALUE, direction, callback);
+    public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, long duration, Consumer<Optional<PumpState.RunningState>> callback) {
+        super(prevJobId, dcPump, duration == Long.MAX_VALUE, direction, callback);
         this.dcPump = dcPump;
         this.duration = duration;
     }
@@ -29,7 +29,7 @@ public class DcMotorTask extends PumpTask {
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
         runningState.setPercentage((int) (((getTimeElapsed()) * 100) / duration));
-        runningState.setJobId(getId());
+        runningState.setJobId(getJobId());
         return runningState;
     }
 
@@ -40,7 +40,7 @@ public class DcMotorTask extends PumpTask {
     @Override
     protected JobMetrics genJobMetrics() {
         JobMetrics metrics = new JobMetrics();
-        metrics.setId(getId());
+        metrics.setId(getJobId());
         metrics.setMlPumped(getMlPumped());
         metrics.setStartTime(getStartTime());
         metrics.setStopTime(getStopTime());

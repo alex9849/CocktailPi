@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Getter @Setter
 public class PumpState {
-    long lastJobId;
+    Long lastJobId;
     RunningState runningState;
 
     @Override

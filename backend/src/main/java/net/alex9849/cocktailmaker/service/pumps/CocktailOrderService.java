@@ -39,7 +39,7 @@ public class CocktailOrderService {
     private PumpDataService pumpDataService;
 
     @Autowired
-    private PumpUpService pumpUpService;
+    private PumpMaintenanceService pumpUpService;
 
     @Autowired
     private WebSocketService webSocketService;
