@@ -31,6 +31,34 @@
       </q-input>
     </template>
   </c-assistant-container>
+  <q-splitter
+    :model-value="10"
+    horizontal
+    class="q-pb-md"
+  />
+  <c-assistant-container>
+    <template v-slot:explanations>
+      <p>
+        Depending on our setup the motor might run either if the GPIO-pin that controls the pump is set to high or low.
+        Please select the pin-state in which your pump would run in your configuration.
+      </p>
+    </template>
+    <template v-slot:fields>
+      <q-select
+        :model-value="isPowerStateHigh"
+        :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
+        map-options
+        emit-value
+        outlined
+        hide-bottom-space
+        label="Power State"
+        @update:model-value="$emit('update:isPowerStateHigh', $event)"
+        :error-message="isPowerStateHighErrorMsg"
+        :error="!!isPowerStateHighErrorMsg"
+        :loading="isPowerStateHighLoading"
+      />
+    </template>
+  </c-assistant-container>
 </template>
 
 <script>
@@ -43,7 +71,10 @@ export default defineComponent({
   props: {
     pin: {},
     pinErrorMsg: {},
-    pinLoading: {}
+    pinLoading: {},
+    isPowerStateHigh: {},
+    isPowerStateHighErrorMsg: {},
+    isPowerStateHighLoading: {}
   }
 })
 </script>

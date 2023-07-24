@@ -86,7 +86,7 @@ export class PumpDtoMapper {
       currentIngredientId: detailed.currentIngredient?.id,
 
       timePerClInMs: detailed.timePerClInMs,
-      powerStateHigh: detailed.powerStateHigh,
+      isPowerStateHigh: detailed.isPowerStateHigh,
 
       pin: detailed.pin
     }

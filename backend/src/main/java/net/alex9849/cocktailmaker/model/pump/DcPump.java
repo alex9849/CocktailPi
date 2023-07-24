@@ -39,7 +39,7 @@ public class DcPump extends Pump {
         return isPowerStateHigh;
     }
 
-    public void setPowerStateHigh(Boolean isPowerStateHigh) {
+    public void setIsPowerStateHigh(Boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
         this.resetDriver();
     }

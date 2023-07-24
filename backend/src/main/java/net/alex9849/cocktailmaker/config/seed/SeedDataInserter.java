@@ -129,7 +129,7 @@ public class SeedDataInserter {
         DcPump dcPump = new DcPump();
         dcPump.setPumpedUp(false);
         dcPump.setFillingLevelInMl(3000);
-        dcPump.setPowerStateHigh(false);
+        dcPump.setIsPowerStateHigh(false);
         dcPump.setTimePerClInMs(3000);
         dcPump.setTubeCapacityInMl(5.0);
         dcPump.setEnabled(true);

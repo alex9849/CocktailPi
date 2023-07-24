@@ -168,7 +168,7 @@ public class PumpRepository extends JdbcDaoSupport {
             dcPump.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
             boolean isPowerStateHigh = rs.getBoolean("is_power_state_high");
             if(!rs.wasNull()) {
-                dcPump.setPowerStateHigh(isPowerStateHigh);
+                dcPump.setIsPowerStateHigh(isPowerStateHigh);
             }
             pump = dcPump;
         } else if(Objects.equals(dType, StepperPump.class.getAnnotation(DiscriminatorValue.class).value())) {

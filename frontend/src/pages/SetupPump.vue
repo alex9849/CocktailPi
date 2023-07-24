@@ -75,6 +75,10 @@
             @update:pin="setPumpAttr('pin', pump.pin, $event)"
             :pin-error-msg="attrState.pin.errorMsg"
             :pin-loading="attrState.pin.loading"
+            :is-power-state-high="pump.isPowerStateHigh"
+            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event)"
+            :is-power-state-high-error-msg="attrState.isPowerStateHigh.errorMsg"
+            :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
           />
         </c-setup-step>
         <div class="col-12 q-ma-lg">
@@ -335,21 +339,12 @@ export default {
     CAssistantContainer,
     CIngredientSelector
   },
-  async beforeRouteEnter (to, from, next) {
-    console.log('beforeRouteEnter1')
-    const pump = await PumpService.getPump(to.params.pumpId)
-    console.log('beforeRouteEnter2')
-    next(vm => {
-      console.log('next callback')
-      vm.pump = Object.assign({}, pump)
-    })
-  },
   data () {
     return {
       stepper: 0,
       pump: {
         id: '',
-        type: '',
+        type: 'dc',
         name: '',
         currentIngredient: '',
         fillingLevelInMl: '',
@@ -365,6 +360,7 @@ export default {
 
         // DC-Motor
         pin: '',
+        isPowerStateHigh: '',
         timePerClInMs: ''
       },
       attrState: {
@@ -427,12 +423,16 @@ export default {
           loading: false,
           errorMsg: '',
           saved: false
+        },
+        isPowerStateHigh: {
+          loading: false,
+          errorMsg: '',
+          saved: false
         }
       }
     }
   },
-  created () {
-    console.log('created start')
+  async created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiCogs = mdiCogs
@@ -443,6 +443,7 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
+    this.pump = await PumpService.getPump(this.$route.params.pumpId)
     if (this.handleComplete) {
       this.stepper = 1
     }
@@ -498,7 +499,7 @@ export default {
       let val = !!this.pump.tubeCapacityInMl
       switch (this.pump.type) {
         case 'dc':
-          val &&= !!this.pump.timePerClInMs
+          val &&= !!this.pump.timePerClInMs && (this.pump.isPowerStateHigh !== null)
           break
         case 'stepper':
           val &&= !!this.pump.acceleration && !!this.pump.maxStepsPerSecond &&
