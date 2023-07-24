@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@mdi/js": "^4.9.95",
-    "@quasar/extras": "^1.13.3",
+    "@quasar/cli": "^2.2.1",
+    "@quasar/extras": "^1.16.5",
     "@stomp/stompjs": "6.1.2",
     "@vuelidate/core": "^2.0.0-alpha.32",
     "@vuelidate/validators": "^2.0.0-alpha.25",
@@ -23,7 +24,7 @@
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",
     "net": "^1.0.2",
-    "quasar": "^2.6.1",
+    "quasar": "^2.12.3",
     "querystring": "^0.2.1",
     "sockjs-client": "1.5.2",
     "vue": "^3.0.0",
