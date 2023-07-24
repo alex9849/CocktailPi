@@ -151,7 +151,7 @@
                 :pump="pump"
                 :disable="pump.state === 'INCOMPLETE'"
                 disable-reason="Required pump-config parameter missing!"
-                @update:perClMetric="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event)"
+                @update:perClMetric="setPerClMetric($event)"
               />
             </template>
           </c-assistant-container>
@@ -472,6 +472,17 @@ export default {
         .finally(() => {
           this.attrState[attr].loading = false
         })
+    },
+    setPerClMetric (value) {
+      switch (this.pump.type) {
+        case 'dc':
+          this.setPumpAttr('timePerClInMs', this.pump.timePerClInMs, value)
+          return
+        case 'stepper':
+          this.setPumpAttr('stepsPerCl', this.pump.stepsPerCl, value)
+          return
+      }
+      throw new Error('Unknown pump type: ' + this.pump.type)
     }
   },
   computed: {
