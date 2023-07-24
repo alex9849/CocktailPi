@@ -113,6 +113,13 @@
             :max-steps-per-second-loading="attrState.maxStepsPerSecond.loading"
             @update:max-steps-per-second="setPumpAttr('maxStepsPerSecond', pump.maxStepsPerSecond, $event)"
           />
+          <c-pump-setup-dc-calibration
+            v-if="pump.type === 'dc'"
+            :time-per-cl-in-ms="pump.timePerClInMs"
+            @update:time-per-cl-in-ms="setPumpAttr('timePerClInMs', pump.timePerClInMs, $event)"
+            :time-per-cl-in-ms-error-msg-error-msg="attrState.timePerClInMs.errorMsg"
+            :time-per-cl-in-ms-loading-loading="attrState.timePerClInMs.loading"
+          />
           <q-splitter
             :model-value="10"
             horizontal
@@ -314,10 +321,12 @@ import CPumpSetupStepperHardwarePins from 'components/pumpsetup/CPumpSetupSteppe
 import CSetupStep from 'components/pumpsetup/CSetupStep.vue'
 import CPumpSetupStepperCalibration from 'components/pumpsetup/CPumpSetupStepperCalibration.vue'
 import CPumpSetupDcHardwarePins from 'components/pumpsetup/CPumpSetupDcHardwarePins.vue'
+import CPumpSetupDcCalibration from 'components/pumpsetup/CPumpSetupDcCalibration.vue'
 
 export default {
   name: 'SetupPump',
   components: {
+    CPumpSetupDcCalibration,
     CPumpSetupDcHardwarePins,
     CPumpSetupStepperCalibration,
     CSetupStep,
@@ -325,6 +334,15 @@ export default {
     CPumpTester,
     CAssistantContainer,
     CIngredientSelector
+  },
+  async beforeRouteEnter (to, from, next) {
+    console.log('beforeRouteEnter1')
+    const pump = await PumpService.getPump(to.params.pumpId)
+    console.log('beforeRouteEnter2')
+    next(vm => {
+      console.log('next callback')
+      vm.pump = Object.assign({}, pump)
+    })
   },
   data () {
     return {
@@ -346,7 +364,8 @@ export default {
         acceleration: '',
 
         // DC-Motor
-        pin: ''
+        pin: '',
+        timePerClInMs: ''
       },
       attrState: {
         name: {
@@ -403,11 +422,17 @@ export default {
           loading: false,
           errorMsg: '',
           saved: false
+        },
+        timePerClInMs: {
+          loading: false,
+          errorMsg: '',
+          saved: false
         }
       }
     }
   },
-  async created () {
+  created () {
+    console.log('created start')
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiCogs = mdiCogs
@@ -418,7 +443,6 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
-    this.pump = await PumpService.getPump(this.$route.params.pumpId)
     if (this.handleComplete) {
       this.stepper = 1
     }
@@ -462,11 +486,28 @@ export default {
       return !!this.pump.name
     },
     hardwarePinsComplete () {
-      return (!!this.pump.stepPin && !!this.pump.enablePin)
+      switch (this.pump.type) {
+        case 'dc':
+          return (!!this.pump.pin)
+        case 'stepper':
+          return (!!this.pump.stepPin && !!this.pump.enablePin)
+      }
+      throw new Error('Unknown pump type: ' + this.pump.type)
     },
     calibrationComplete () {
-      return !!this.pump.acceleration && !!this.pump.maxStepsPerSecond &&
-        !!this.pump.stepsPerCl && !!this.pump.tubeCapacityInMl
+      let val = !!this.pump.tubeCapacityInMl
+      switch (this.pump.type) {
+        case 'dc':
+          val &&= !!this.pump.timePerClInMs
+          break
+        case 'stepper':
+          val &&= !!this.pump.acceleration && !!this.pump.maxStepsPerSecond &&
+            !!this.pump.stepsPerCl
+          break
+        default:
+          throw new Error('Unknown pump type: ' + this.pump.type)
+      }
+      return val
     },
     pumpTypeStepLabel () {
       if (this.pumpTypeComplete) {
