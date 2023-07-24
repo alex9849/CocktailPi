@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.model.pump.motortasks;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.PumpJobState;
+import net.alex9849.motorlib.DCMotor;
 import net.alex9849.motorlib.Direction;
 
 import java.util.Optional;
@@ -20,7 +21,15 @@ public class DcMotorTask extends PumpTask {
 
     @Override
     protected void pumpRun() {
-        dcPump.getMotorDriver().setRunning(false);
+        DCMotor dcMotor = dcPump.getMotorDriver();
+        dcMotor.setDirection(getDirection());
+        dcMotor.setRunning(true);
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException ignored) {
+            //Ignore
+        }
+        dcMotor.setRunning(false);
     }
 
     @Override

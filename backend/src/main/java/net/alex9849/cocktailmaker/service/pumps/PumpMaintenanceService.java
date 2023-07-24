@@ -7,7 +7,6 @@ import net.alex9849.cocktailmaker.model.pump.motortasks.StepperMotorTask;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.WebSocketService;
-import net.alex9849.motorlib.DCMotor;
 import net.alex9849.motorlib.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +93,7 @@ public class PumpMaintenanceService {
         }
     }
 
-    public synchronized long runPumpOrPerformPumpUp(Pump pump, PumpAdvice advice, Consumer<Optional<PumpJobState.RunningState>> callback) {
+    public synchronized long dispatchPumpJob(Pump pump, PumpAdvice advice, Consumer<Optional<PumpJobState.RunningState>> callback) {
         if (callback == null) {
             callback = (x) -> {
             };
@@ -134,11 +133,8 @@ public class PumpMaintenanceService {
         Long prevJobId = jobIdByPumpId.get(pump.getId());
 
         if (pump instanceof DcPump dcPump) {
-            DCMotor dcMotor = dcPump.getMotorDriver();
-            dcMotor.setDirection(this.direction);
-            dcMotor.setRunning(true);
-            long timeToRun = 0;
 
+            long timeToRun = 0;
             switch (advice.getType()) {
                 case PUMP_ML:
                     timeToRun = (dcPump.getTimePerClInMs() * advice.getAmount()) / 10;
@@ -149,7 +145,7 @@ public class PumpMaintenanceService {
                     timeToRun = (long) (timeToRun * overshootMultiplier);
                     break;
                 case PUMP_TIME:
-                    timeToRun = advice.getAmount() * 1000;
+                    timeToRun = advice.getAmount();
                     break;
                 case RUN:
                     timeToRun = Long.MAX_VALUE;
@@ -160,13 +156,11 @@ public class PumpMaintenanceService {
 
             if (timeToRun == Long.MAX_VALUE) {
                 pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, Long.MAX_VALUE, callback);
-                jobFuture = scheduledTasksExecutor.schedule(() -> {
-                }, 0, TimeUnit.MICROSECONDS);
             } else {
-                long duration = (long) (dcPump.getTubeCapacityInMl() * dcPump.getTimePerClInMs() * overshootMultiplier / 10);
-                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, duration, callback);
-                jobFuture = scheduledTasksExecutor.schedule(pumpTask, duration, TimeUnit.MILLISECONDS);
+                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, timeToRun, callback);
             }
+            jobFuture = liveTasksExecutor.submit(pumpTask);
+
 
         } else if (pump instanceof StepperPump stepperPump) {
 
@@ -223,7 +217,7 @@ public class PumpMaintenanceService {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;
                     }
-                    this.runPumpOrPerformPumpUp(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), (x) -> {
+                    this.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), (x) -> {
                         try {
                             pumpDataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());

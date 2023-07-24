@@ -73,6 +73,7 @@ public abstract class PumpTask implements Runnable {
     public void run() {
         try {
             cdl.await();
+            this.startTime = System.currentTimeMillis();
             pumpRun();
             doFinalize();
         } catch (InterruptedException e) {
@@ -96,6 +97,7 @@ public abstract class PumpTask implements Runnable {
         if(future != null) {
             future.cancel(true);
         }
+        this.stopTime = System.currentTimeMillis();
         doFinalize();
     }
 
