@@ -17,6 +17,8 @@ public abstract class PumpTask implements Runnable {
     private final Pump pump;
     private final CountDownLatch cdl;
     private final boolean runInfinity;
+
+    private final boolean isPumpUpDown;
     private final Consumer<Optional<PumpJobState.RunningState>> callback;
     private final Direction direction;
     private PumpJobState.RunningState finishedRunningState;
@@ -27,11 +29,12 @@ public abstract class PumpTask implements Runnable {
     private Future<?> future;
 
 
-    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, Direction direction, Consumer<Optional<PumpJobState.RunningState>> callback) {
+    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction, Consumer<Optional<PumpJobState.RunningState>> callback) {
         this.prevJobId = prevJobId;
         this.jobId = ++maxId;
         this.cdl = new CountDownLatch(1);
         this.pump = pump;
+        this.isPumpUpDown = isPumpUpDown;
         this.direction = direction;
         this.runInfinity = runInfinity;
         this.startTime = System.currentTimeMillis();
@@ -75,7 +78,17 @@ public abstract class PumpTask implements Runnable {
             cdl.await();
             this.startTime = System.currentTimeMillis();
             pumpRun();
-            doFinalize();
+
+            if(isPumpUpDown && !isCancelledExecutionThread()) {
+                pump.setPumpedUp(getDirection() == Direction.FORWARD);
+            }
+
+            pump.getMotorDriver().shutdown();
+            this.stopTime = System.currentTimeMillis();
+            PumpJobState.RunningState runningState = getRunningState();
+            this.finishedJobMetrics = getJobMetrics();
+            this.finishedRunningState = runningState;
+            callback.accept(Optional.of(runningState));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -97,8 +110,19 @@ public abstract class PumpTask implements Runnable {
         if(future != null) {
             future.cancel(true);
         }
-        this.stopTime = System.currentTimeMillis();
-        doFinalize();
+    }
+
+    protected boolean isCancelledExecutionThread() {
+        if(cancelled) {
+            return true;
+        }
+        if(isFinished()) {
+            return false;
+        }
+        if(Thread.interrupted()) {
+            cancelled = true;
+        }
+        return cancelled;
     }
 
     public JobMetrics getJobMetrics() {
@@ -108,14 +132,14 @@ public abstract class PumpTask implements Runnable {
         return genJobMetrics();
     }
 
-    public void doFinalize() {
+   /* public void doFinalize() {
         this.stopTime = System.currentTimeMillis();
         pump.getMotorDriver().shutdown();
         PumpJobState.RunningState runningState = getRunningState();
         this.finishedJobMetrics = getJobMetrics();
         this.finishedRunningState = runningState;
         callback.accept(Optional.of(runningState));
-    }
+    }*/
 
     protected boolean isRunInfinity() {
         return runInfinity;

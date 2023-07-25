@@ -121,16 +121,20 @@ public class PumpMaintenanceService {
             cancelByPumpId(pump.getId());
         }
 
-        this.direction = direction;
-
         double overshootMultiplier = 1;
         if (advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
+            if(!reversePumpSettings.isEnable()) {
+                throw new IllegalArgumentException("Reverse pumping not enabled!");
+            }
             overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
         }
 
+        this.direction = direction;
         Future<?> jobFuture;
         PumpTask pumpTask;
         Long prevJobId = jobIdByPumpId.get(pump.getId());
+        boolean isPumpUpDown = advice.getType() == PumpAdvice.Type.PUMP_UP
+                || advice.getType() == PumpAdvice.Type.PUMP_DOWN;
 
         if (pump instanceof DcPump dcPump) {
 
@@ -139,10 +143,12 @@ public class PumpMaintenanceService {
                 case PUMP_ML:
                     timeToRun = (dcPump.getTimePerClInMs() * advice.getAmount()) / 10;
                     break;
+                case PUMP_DOWN:
+                    timeToRun = (long) (dcPump.getTimePerClInMs() * dcPump.getTubeCapacityInMl()) / 10;
+                    timeToRun = (long) (timeToRun * overshootMultiplier);
+                    break;
                 case PUMP_UP:
                     timeToRun = (long) (dcPump.getTimePerClInMs() * dcPump.getTubeCapacityInMl()) / 10;
-                case PUMP_DOWN:
-                    timeToRun = (long) (timeToRun * overshootMultiplier);
                     break;
                 case PUMP_TIME:
                     timeToRun = advice.getAmount();
@@ -155,9 +161,9 @@ public class PumpMaintenanceService {
             }
 
             if (timeToRun == Long.MAX_VALUE) {
-                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, Long.MAX_VALUE, callback);
+                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, Long.MAX_VALUE, callback);
             } else {
-                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, timeToRun, callback);
+                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, timeToRun, callback);
             }
             jobFuture = liveTasksExecutor.submit(pumpTask);
 
@@ -184,7 +190,7 @@ public class PumpMaintenanceService {
                     throw new IllegalArgumentException("DcPump can't run certain amount of time!");
             }
 
-            pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, stepsToRun, callback);
+            pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, isPumpUpDown, stepsToRun, callback);
             jobFuture = liveTasksExecutor.submit(pumpTask);
 
         } else {

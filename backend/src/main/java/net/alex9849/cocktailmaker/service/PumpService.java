@@ -96,7 +96,6 @@ public class PumpService {
                     lockService.releasePumpLock(pump.getId(), maintenanceService);
                 });
             }
-            maintenanceService.reschedulePumpBack();
         } finally {
             lockService.releaseGlobal(maintenanceService);
         }
@@ -104,12 +103,10 @@ public class PumpService {
 
     public void stopAllPumps() {
         maintenanceService.stopAllPumps();
-        maintenanceService.reschedulePumpBack();
     }
 
     public void cancelPumpUp(long pumpId) {
         maintenanceService.cancelByPumpId(pumpId);
-        maintenanceService.reschedulePumpBack();
     }
 
     public long performPumpAdvice(Pump pump, PumpAdvice advice) {
@@ -127,7 +124,6 @@ public class PumpService {
                         lockService.releasePumpLock(pump.getId(), maintenanceService);
                     }
                 });
-        maintenanceService.reschedulePumpBack();
         return jobId;
     }
 

@@ -13,8 +13,8 @@ public class DcMotorTask extends PumpTask {
     DcPump dcPump;
     long duration;
 
-    public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, long duration, Consumer<Optional<PumpJobState.RunningState>> callback) {
-        super(prevJobId, dcPump, duration == Long.MAX_VALUE, direction, callback);
+    public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, boolean isPumpUpDown, long duration, Consumer<Optional<PumpJobState.RunningState>> callback) {
+        super(prevJobId, dcPump, duration == Long.MAX_VALUE, isPumpUpDown, direction, callback);
         this.dcPump = dcPump;
         this.duration = duration;
     }

@@ -18,8 +18,8 @@ public class StepperMotorTask extends PumpTask {
     /**
      * @param stepsToRun Long.MAX_VALUE == unlimited
      */
-    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, long stepsToRun, Consumer<Optional<PumpJobState.RunningState>> callback) {
-        super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, direction, callback);
+    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun, Consumer<Optional<PumpJobState.RunningState>> callback) {
+        super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, isPumpUpDown, direction, callback);
         this.stepperPump = stepperPump;
         this.stepsToRun = stepsToRun;
     }
@@ -49,7 +49,7 @@ public class StepperMotorTask extends PumpTask {
             if(driver.run()) {
                 stepsMade++;
             }
-            if (Thread.interrupted()) {
+            if (isCancelledExecutionThread()) {
                 return;
             }
             Thread.yield();
