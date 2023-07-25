@@ -60,6 +60,9 @@ public class SeedDataInserter {
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
 
+    @Value("${alex9849.app.devMode}")
+    private boolean isDevMode;
+
     public void migrate() throws Exception {
         if(!userService.getUsers().isEmpty()) {
             return;
@@ -70,7 +73,7 @@ public class SeedDataInserter {
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
         this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
-        if(isDemoMode) {
+        if(isDemoMode || isDevMode) {
             this.createDemoPumps();
         }
         logger.info("Finished inserting seed data into database.");
@@ -132,12 +135,10 @@ public class SeedDataInserter {
         dcPump.setIsPowerStateHigh(false);
         dcPump.setTimePerClInMs(3000);
         dcPump.setTubeCapacityInMl(5.0);
-        dcPump.setEnabled(true);
 
         final int nrPumps = 8;
         for(int i = 0; i < nrPumps / 2; i++) {
             dcPump.setPin(i);
-            dcPump.setName("Pump #" + i);
             this.pumpService.createPump(dcPump);
         }
 
@@ -148,11 +149,9 @@ public class SeedDataInserter {
         stepperPump.setAcceleration(10);
         stepperPump.setMaxStepsPerSecond(20);
         stepperPump.setTubeCapacityInMl(5.0);
-        stepperPump.setEnabled(true);
         for(int i = nrPumps / 2; i < nrPumps; i++) {
             stepperPump.setEnablePin(i + (i * 2));
             stepperPump.setStepPin(i + (i * 2) + 1);
-            stepperPump.setName("Pump #" + i);
             this.pumpService.createPump(stepperPump);
         }
     }

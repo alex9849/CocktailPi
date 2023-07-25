@@ -202,7 +202,7 @@
         :name="3"
         :icon="mdiPencilOutline"
         header-nav
-        :disable="!calibrationComplete"
+        :disable="!calibrationComplete || !hardwarePinsComplete"
         :done="calibrationComplete"
         :done-icon="mdiPencilOutline"
       >
@@ -295,7 +295,7 @@
         </c-setup-step>
         <div class="col-12 q-ma-lg">
           <q-stepper-navigation>
-            <q-btn @click="stepper++" color="primary" label="Finish"/>
+            <q-btn @click="$router.push({name: 'pumpmanagement'})" color="primary" label="Finish"/>
             <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
           </q-stepper-navigation>
         </div>
@@ -500,9 +500,9 @@ export default {
     hardwarePinsComplete () {
       switch (this.pump.type) {
         case 'dc':
-          return (!!this.pump.pin)
+          return (this.pump.pin !== null)
         case 'stepper':
-          return (!!this.pump.stepPin && !!this.pump.enablePin)
+          return (this.pump.stepPin !== null && this.pump.enablePin !== null)
       }
       throw new Error('Unknown pump type: ' + this.pump.type)
     },

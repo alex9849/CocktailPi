@@ -21,9 +21,7 @@ public class PumpDto {
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
     private interface RemoveIngredient { Boolean getIsRemoveIngredient(); }
     private interface IsPumpedUp { boolean isPumpedUp(); }
-    private interface IsEnabled { boolean isEnabled(); }
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
-    private interface PatchIsEnabled { Boolean getIsEnabled(); }
     private interface Name { String getName(); }
 
     //Read only
@@ -41,13 +39,12 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "dc"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
-        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, PatchIsEnabled, RemoveIngredient, Name {
+        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, RemoveIngredient, Name {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             Boolean isPumpedUp;
             Long currentIngredientId;
             Boolean isRemoveIngredient;
-            Boolean isEnabled;
             String name;
         }
     }
@@ -62,13 +59,12 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
         public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
-                CurrentIngredient, IsPumpedUp, IState, IsEnabled, Name {
+                CurrentIngredient, IsPumpedUp, IState, Name {
             long id;
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             boolean pumpedUp;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
-            boolean enabled;
             String name;
             PumpDto.State state;
 
@@ -80,10 +76,8 @@ public class PumpDto {
                     } else {
                         this.state = State.INCOMPLETE;
                     }
-                } else if (pump.isEnabled()) {
-                    this.state = State.READY;
                 } else {
-                    this.state = State.DISABLED;
+                    this.state = State.READY;
                 }
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());

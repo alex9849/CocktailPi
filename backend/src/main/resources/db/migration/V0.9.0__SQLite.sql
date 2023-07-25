@@ -33,7 +33,6 @@ create table pumps
     dType                 TEXT    not null,
     name                  TEXT unique,
     completed             BOOLEAN not null,
-    enabled               BOOLEAN not null,
     tube_capacity         REAL check (tube_capacity >= 0),
     current_ingredient_id INTEGER references ingredients on delete set null,
     filling_level_in_ml   INTEGER,

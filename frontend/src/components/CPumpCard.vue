@@ -185,9 +185,9 @@
         <div class="row">
           <div class="col-6">
             <p
-              :class="getDisplayAttribute(pump.isPowerStateHigh).class"
+              :class="getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).class"
             >
-              {{ getDisplayAttribute(pump.isPowerStateHigh).label }}
+              {{ getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).label }}
             </p>
           </div>
           <div class="col-6">
@@ -449,9 +449,6 @@ export default {
           state.color = 'warning'
           state.label = 'Incomplete Configuration'
           break
-        case 'DISABLED':
-          state.color = 'negative'
-          state.label = 'Disabled'
       }
       if (this.pumpJobState.runningState) {
         state.color = 'positive'

@@ -15,7 +15,6 @@ public abstract class Pump {
     private Long currentIngredientId;
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
-    private boolean isEnabled;
     private String name;
 
     public long getId() {
@@ -81,14 +80,6 @@ public abstract class Pump {
     }
 
     public abstract IMotor getMotorDriver();
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
 
     public String getName() {
         return name;
