@@ -126,7 +126,7 @@ public class PumpMaintenanceService {
             if(!reversePumpSettings.isEnable()) {
                 throw new IllegalArgumentException("Reverse pumping not enabled!");
             }
-            overshootMultiplier = reversePumpSettings.getSettings().getOvershoot();
+            overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
         }
 
         this.direction = direction;
@@ -177,7 +177,9 @@ public class PumpMaintenanceService {
                     break;
                 case PUMP_UP:
                     stepsToRun = (long) (stepperPump.getStepsPerCl() * stepperPump.getTubeCapacityInMl()) / 10;
+                    break;
                 case PUMP_DOWN:
+                    stepsToRun = (long) (stepperPump.getStepsPerCl() * stepperPump.getTubeCapacityInMl()) / 10;
                     stepsToRun = (long) (stepsToRun * overshootMultiplier);
                     break;
                 case PUMP_STEPS:

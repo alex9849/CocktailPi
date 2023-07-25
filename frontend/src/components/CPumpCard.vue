@@ -383,7 +383,7 @@ export default {
   computed: {
     progressBar () {
       const abortVal = {
-        value: 0,
+        value: this.pump.pumpedUp ? 1 : 0,
         query: false,
         reverse: false
       }
@@ -391,12 +391,12 @@ export default {
         return abortVal
       }
       const runningState = this.pumpJobState.runningState
-      let value = runningState.forward ? runningState.percentage : (1 - runningState.percentage)
+      let value = runningState.forward ? runningState.percentage : (100 - runningState.percentage)
       value = value / 100
       return {
         value: value,
         query: runningState.runInfinity,
-        reverse: runningState.runInfinity || !runningState.forward
+        reverse: runningState.forward && runningState.runInfinity
       }
     },
     typeNameData () {

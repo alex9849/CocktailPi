@@ -21,7 +21,7 @@ public class StepperMotorTask extends PumpTask {
     public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun, Consumer<Optional<PumpJobState.RunningState>> callback) {
         super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, isPumpUpDown, direction, callback);
         this.stepperPump = stepperPump;
-        this.stepsToRun = stepsToRun;
+        this.stepsToRun = Math.max(1, stepsToRun);
     }
 
     public long getMlPumped() {
@@ -42,9 +42,10 @@ public class StepperMotorTask extends PumpTask {
             stepsToRun = 1;
         }
         if (getDirection() == Direction.BACKWARD) {
-            stepsToRun = -stepsToRun;
+            driver.move(-stepsToRun);
+        } else {
+            driver.move(stepsToRun);
         }
-        driver.move(stepsToRun);
         while (driver.distanceToGo() != 0) {
             if(driver.run()) {
                 stepsMade++;

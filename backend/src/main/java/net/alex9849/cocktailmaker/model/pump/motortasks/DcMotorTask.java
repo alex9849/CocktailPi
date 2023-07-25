@@ -16,7 +16,7 @@ public class DcMotorTask extends PumpTask {
     public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, boolean isPumpUpDown, long duration, Consumer<Optional<PumpJobState.RunningState>> callback) {
         super(prevJobId, dcPump, duration == Long.MAX_VALUE, isPumpUpDown, direction, callback);
         this.dcPump = dcPump;
-        this.duration = duration;
+        this.duration = Math.max(1, duration);
     }
 
     @Override
