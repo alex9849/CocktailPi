@@ -12,7 +12,6 @@ public class ReversePumpingSettings {
     private interface Settings { @Valid Details getSettings(); }
     private interface DirectorPin { @NotNull @Valid VoltageDirectorPin getDirectorPin(); }
     private interface BcmPin { @NotNull @Min(0) @Max(31) int getBcmPin(); }
-    private interface IsForwardStateHigh { boolean isForwardStateHigh(); }
     private interface Overshoot { @Min(0) @Max(200) int getOvershoot(); }
     private interface AutoPumpBackTimer { @Min(0) @Max(60) int getAutoPumpBackTimer(); }
 
@@ -30,8 +29,7 @@ public class ReversePumpingSettings {
     }
 
     @Getter @Setter @EqualsAndHashCode
-    public static class VoltageDirectorPin implements BcmPin, IsForwardStateHigh {
+    public static class VoltageDirectorPin implements BcmPin {
         int bcmPin;
-        boolean forwardStateHigh;
     }
 }

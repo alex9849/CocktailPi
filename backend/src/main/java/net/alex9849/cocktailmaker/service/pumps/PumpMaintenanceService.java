@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
+import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.model.pump.*;
 import net.alex9849.cocktailmaker.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailmaker.model.pump.motortasks.PumpTask;
@@ -8,6 +9,7 @@ import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.motorlib.Direction;
+import net.alex9849.motorlib.IMotorPin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class PumpMaintenanceService {
 
     @Autowired
     private WebSocketService webSocketService;
+
+    @Autowired
+    private IGpioController gpioController;
 
     @Autowired
     private OptionsRepository optionsRepository;
@@ -129,7 +134,11 @@ public class PumpMaintenanceService {
             overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
         }
 
+        if(direction == Direction.BACKWARD && !reversePumpSettings.isEnable()) {
+            throw new IllegalArgumentException("Reverse pumping not enabled!");
+        }
         this.direction = direction;
+
         Future<?> jobFuture;
         PumpTask pumpTask;
         Long prevJobId = jobIdByPumpId.get(pump.getId());
@@ -252,13 +261,13 @@ public class PumpMaintenanceService {
             if (pumpDataService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
                 throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
             }
-            optionsRepository.setOption("RPSVDPinFwStateHigh", Boolean.valueOf(vdPin.isForwardStateHigh()).toString());
             optionsRepository.setOption("RPSVDPinBcm", Integer.valueOf(vdPin.getBcmPin()).toString());
+            //Pump.setGlobalDirectionPin(vdPin.getBcmPin());
         } else {
             optionsRepository.delOption("RPSOvershoot", false);
             optionsRepository.delOption("RPSAutoPumpBackTimer", false);
-            optionsRepository.delOption("RPSVDPinFwStateHigh", false);
             optionsRepository.delOption("RPSVDPinBcm", false);
+            //Pump.setGlobalDirectionPin(null);
         }
         this.reversePumpSettings = settings;
         reschedulePumpBack();
@@ -270,7 +279,6 @@ public class PumpMaintenanceService {
         if (settings.isEnable()) {
             ReversePumpingSettings.VoltageDirectorPin vdPin = new ReversePumpingSettings.VoltageDirectorPin();
             vdPin.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm")));
-            vdPin.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPSVDPinFwStateHigh")));
 
             ReversePumpingSettings.Details details = new ReversePumpingSettings.Details();
             details.setDirectorPin(vdPin);

@@ -36,18 +36,6 @@
               hide-bottom-space
               label="BCM-Pin"
             />
-            <q-select
-              v-model:model-value="v.form.settings.directorPin.forwardStateHigh.$model"
-              :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
-              :error-message="v.form.settings.directorPin.forwardStateHigh.$errors[0]?.$message"
-              :error="v.form.settings.directorPin.forwardStateHigh.$errors.length > 0"
-              map-options
-              emit-value
-              outlined
-              :disable="disableForm"
-              hide-bottom-space
-              label="Forward state"
-            />
           </q-card-section>
         </q-card>
       </div>
@@ -118,8 +106,7 @@ export default {
         settings: {
           overshoot: 0,
           directorPin: {
-            bcmPin: 0,
-            forwardStateHigh: false
+            bcmPin: 0
           },
           autoPumpBackTimer: 0
         }
@@ -194,9 +181,6 @@ export default {
             required: requiredIf(() => this.form.enable),
             bcmPin: {
               required: requiredIf(() => this.form.enable)
-            },
-            forwardStateHigh: {
-              required: requiredIf(() => this.form.enable)
             }
           },
           autoPumpBackTimer: {
@@ -213,9 +197,6 @@ export default {
           required: requiredIf(() => this.form.enable),
           minValue: minValue(0),
           maxValue: maxValue(30)
-        },
-        forwardStateHigh: {
-          required: requiredIf(() => this.form.enable)
         }
       }
     }
