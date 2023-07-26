@@ -17,8 +17,8 @@ public class StepperPumpDto {
         @Max(value = 31, message = "StepPin needs to be between 0 and 31") Integer getStepPin();
     }
     private interface StepsPerCl { @Min(1) Integer getStepsPerCl(); }
-    private interface MaxStepsPerSecond { @Min(1) Integer getMaxStepsPerSecond(); }
-    private interface Acceleration { @Min(1) Integer getAcceleration(); }
+    private interface MaxStepsPerSecond { @Min(1) @Max(500000) Integer getMaxStepsPerSecond(); }
+    private interface Acceleration { @Min(1) @Max(500000) Integer getAcceleration(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {

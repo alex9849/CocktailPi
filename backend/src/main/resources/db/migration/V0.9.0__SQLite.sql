@@ -40,10 +40,10 @@ create table pumps
     dc_pin                INTEGER check (dc_pin >= 0),
     time_per_cl_in_ms     INTEGER check (time_per_cl_in_ms >= 1),
     is_power_state_high   BOOLEAN,
-    acceleration          INTEGER check (acceleration >= 1),
+    acceleration          INTEGER check (acceleration BETWEEN 1 and 500000),
     step_pin              INTEGER check (step_pin >= 0),
     enable_pin            INTEGER check (enable_pin >= 0),
-    steps_per_cl          INTEGER check (steps_per_cl >= 1),
+    steps_per_cl          INTEGER check (steps_per_cl BETWEEN 1 and 500000),
     max_steps_per_second  INTEGER check (max_steps_per_second >= 1),
     primary key (id)
 );
