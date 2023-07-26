@@ -43,8 +43,8 @@ create table pumps
     acceleration          INTEGER check (acceleration BETWEEN 1 and 500000),
     step_pin              INTEGER check (step_pin >= 0),
     enable_pin            INTEGER check (enable_pin >= 0),
-    steps_per_cl          INTEGER check (steps_per_cl BETWEEN 1 and 500000),
-    max_steps_per_second  INTEGER check (max_steps_per_second >= 1),
+    steps_per_cl          INTEGER check (steps_per_cl >= 1),
+    max_steps_per_second  INTEGER check (max_steps_per_second BETWEEN 1 and 500000),
     primary key (id)
 );
 
