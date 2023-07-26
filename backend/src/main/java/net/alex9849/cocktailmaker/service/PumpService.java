@@ -92,7 +92,7 @@ public class PumpService {
                     continue;
                 }
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);
-                maintenanceService.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), (o) -> {
+                maintenanceService.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), () -> {
                     lockService.releasePumpLock(pump.getId(), maintenanceService);
                 });
             }
@@ -114,7 +114,7 @@ public class PumpService {
             throw new IllegalArgumentException("Pumps are currently occupied!");
         }
         long jobId = maintenanceService.dispatchPumpJob(pump, advice,
-                (o) -> {
+                () -> {
                     try {
                         if(advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                             dataService.updatePump(pump);

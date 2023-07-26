@@ -51,9 +51,14 @@ public class PumpMaintenanceService {
     private final Map<Long, PumpTask> pumpTasksByJobId = new HashMap<>();
     private Map<Long, PumpJobState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
+    private IMotorPin directionPin;
 
-    public void postConstruct() {
+    public synchronized void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
+        if(reversePumpSettings.isEnable()) {
+            directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
+            directionPin.digitalWrite(direction == Direction.FORWARD ? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
+        }
         this.reschedulePumpBack();
 
     }
@@ -98,27 +103,27 @@ public class PumpMaintenanceService {
         }
     }
 
-    public synchronized long dispatchPumpJob(Pump pump, PumpAdvice advice, Consumer<Optional<PumpJobState.RunningState>> callback) {
-        if (callback == null) {
-            callback = (x) -> {
-            };
-        }
-        Direction direction = advice.getType() == PumpAdvice.Type.PUMP_DOWN ? Direction.BACKWARD : Direction.FORWARD;
-        boolean anyPumpRunning = this.jobIdByPumpId.entrySet().stream()
-                .filter(x -> x.getKey() != pump.getId())
-                .map(Map.Entry::getValue)
+    private synchronized boolean anyPumpsRunning() {
+        return this.jobIdByPumpId.values().stream()
                 .map(pumpTasksByJobId::get)
                 .anyMatch(x -> !x.isFinished());
+    }
 
-        if (direction != this.direction && anyPumpRunning) {
-            callback.accept(Optional.empty());
+    public synchronized long dispatchPumpJob(Pump pump, PumpAdvice advice, Runnable callback) {
+        if (callback == null) {
+            callback = () -> {};
+        }
+        Direction direction = advice.getType() == PumpAdvice.Type.PUMP_DOWN ? Direction.BACKWARD : Direction.FORWARD;
+
+        if (direction != this.direction && anyPumpsRunning()) {
+            callback.run();
             throw new IllegalArgumentException("One or more pumps are currently pumping into the other direction!");
         }
 
         if ((!pump.isCanPumpUp() && (advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN))
                 || !pump.isCanPump()
         ) {
-            callback.accept(Optional.empty());
+            callback.run();
             throw new IllegalArgumentException("Pump setup isn't completed yet!");
         }
 
@@ -127,16 +132,25 @@ public class PumpMaintenanceService {
         }
 
         double overshootMultiplier = 1;
-        if (advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
+        if (direction == Direction.BACKWARD) {
             if(!reversePumpSettings.isEnable()) {
                 throw new IllegalArgumentException("Reverse pumping not enabled!");
             }
-            overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
+            if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
+                overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
+            }
+            this.directionPin.digitalWrite(IMotorPin.PinState.LOW);
+            final Runnable oldCallback = callback;
+            callback = () -> {
+                synchronized (this) {
+                    if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
+                        this.directionPin.digitalWrite(IMotorPin.PinState.HIGH);
+                    }
+                    oldCallback.run();
+                }
+            };
         }
 
-        if(direction == Direction.BACKWARD && !reversePumpSettings.isEnable()) {
-            throw new IllegalArgumentException("Reverse pumping not enabled!");
-        }
         this.direction = direction;
 
         Future<?> jobFuture;
@@ -205,7 +219,7 @@ public class PumpMaintenanceService {
             jobFuture = liveTasksExecutor.submit(pumpTask);
 
         } else {
-            callback.accept(Optional.empty());
+            callback.run();
             throw new IllegalStateException("PumpType not known: " + pump.getClass().getName());
         }
 
@@ -234,7 +248,7 @@ public class PumpMaintenanceService {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;
                     }
-                    this.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), (x) -> {
+                    this.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.PUMP_DOWN, 0), () -> {
                         try {
                             pumpDataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
@@ -262,7 +276,7 @@ public class PumpMaintenanceService {
                 throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
             }
             optionsRepository.setOption("RPSVDPinBcm", Integer.valueOf(vdPin.getBcmPin()).toString());
-            //Pump.setGlobalDirectionPin(vdPin.getBcmPin());
+
         } else {
             optionsRepository.delOption("RPSOvershoot", false);
             optionsRepository.delOption("RPSAutoPumpBackTimer", false);
@@ -270,6 +284,11 @@ public class PumpMaintenanceService {
             //Pump.setGlobalDirectionPin(null);
         }
         this.reversePumpSettings = settings;
+        if(reversePumpSettings.isEnable()) {
+            directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
+            directionPin.digitalWrite(direction == Direction.FORWARD ? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
+        }
+
         reschedulePumpBack();
     }
 

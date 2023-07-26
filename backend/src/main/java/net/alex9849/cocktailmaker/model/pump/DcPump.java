@@ -82,7 +82,7 @@ public class DcPump extends Pump {
                 * this.getTimePerClInMs() / 10d);
     }
 
-    private void resetDriver() {
+    protected void resetDriver() {
         if(this.motorDriver != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;

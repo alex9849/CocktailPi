@@ -18,7 +18,7 @@ public class StepperMotorTask extends PumpTask {
     /**
      * @param stepsToRun Long.MAX_VALUE == unlimited
      */
-    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun, Consumer<Optional<PumpJobState.RunningState>> callback) {
+    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun, Runnable callback) {
         super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, isPumpUpDown, direction, callback);
         this.stepperPump = stepperPump;
         this.stepsToRun = Math.max(1, stepsToRun);

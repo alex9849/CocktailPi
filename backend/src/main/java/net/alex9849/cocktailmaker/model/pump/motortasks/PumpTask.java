@@ -19,7 +19,7 @@ public abstract class PumpTask implements Runnable {
     private final boolean runInfinity;
 
     private final boolean isPumpUpDown;
-    private final Consumer<Optional<PumpJobState.RunningState>> callback;
+    private final Runnable callback;
     private final Direction direction;
     private PumpJobState.RunningState finishedRunningState;
     private JobMetrics finishedJobMetrics;
@@ -29,7 +29,7 @@ public abstract class PumpTask implements Runnable {
     private Future<?> future;
 
 
-    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction, Consumer<Optional<PumpJobState.RunningState>> callback) {
+    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction, Runnable callback) {
         this.prevJobId = prevJobId;
         this.jobId = ++maxId;
         this.cdl = new CountDownLatch(1);
@@ -88,7 +88,7 @@ public abstract class PumpTask implements Runnable {
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
-            callback.accept(Optional.of(runningState));
+            callback.run();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

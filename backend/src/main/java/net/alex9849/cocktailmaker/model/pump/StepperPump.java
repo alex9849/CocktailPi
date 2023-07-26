@@ -62,7 +62,7 @@ public class StepperPump extends Pump {
         resetDriver();
     }
 
-    private void resetDriver() {
+    protected void resetDriver() {
         if(this.stepperDriver != null) {
             this.stepperDriver.shutdown();
             this.stepperDriver = null;
