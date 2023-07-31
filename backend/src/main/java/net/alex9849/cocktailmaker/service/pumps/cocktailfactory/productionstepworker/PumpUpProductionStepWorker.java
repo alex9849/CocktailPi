@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 
 import java.util.HashMap;
@@ -10,9 +11,9 @@ import java.util.Set;
 
 public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWorker {
 
-    public PumpUpProductionStepWorker(Set<DcPump> requiredPumps) {
+    public PumpUpProductionStepWorker(Set<Pump> requiredPumps) {
         Set<PumpPhase> pumpPhases = new HashSet<>();
-        for(DcPump pump : requiredPumps) {
+        for(Pump pump : requiredPumps) {
             if(pump.isPumpedUp()) {
                 continue;
             }
