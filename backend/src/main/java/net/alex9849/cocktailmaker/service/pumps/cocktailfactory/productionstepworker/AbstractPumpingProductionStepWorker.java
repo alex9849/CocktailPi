@@ -1,20 +1,21 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
-import net.alex9849.cocktailmaker.model.pump.DcPump;
+import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
+import net.alex9849.motorlib.AcceleratingStepper;
+import net.alex9849.motorlib.MultiStepper;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public abstract class AbstractPumpingProductionStepWorker extends AbstractProductionStepWorker {
     private final ScheduledExecutorService scheduler;
+    private Thread runner;
     private Set<PumpPhase> pumpPhases;
-    private Set<DcPump> usedPumps;
+    private Set<StepperPump> stepperPumpToComplete;
+    private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
-    private ScheduledFuture<?> finishTask;
     private ScheduledFuture<?> notifierTask;
 
     private int requiredWorkTime;
@@ -26,23 +27,39 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.requiredWorkTime = 0;
         this.usedPumps = new HashSet<>();
         this.pumpPhases = new HashSet<>();
+        this.stepperPumpToComplete = new HashSet<>();
         this.scheduledPumpFutures = new HashSet<>();
     }
 
-    protected synchronized void setPumpPhases(Set<PumpPhase> pumpPhases) {
+    protected synchronized void setDcPumpPhases(Set<PumpPhase> pumpPhases) {
         Objects.requireNonNull(pumpPhases);
         if(this.isStarted()) {
             throw new IllegalStateException("Worker already started!");
         }
         this.pumpPhases = pumpPhases;
-        this.requiredWorkTime = this.pumpPhases.stream().mapToInt(PumpPhase::getStopTime).max().orElse(0);
+        this.requiredWorkTime = Math.max(this.requiredWorkTime,
+                this.pumpPhases.stream().mapToInt(PumpPhase::getStopTime).max().orElse(0));
         this.usedPumps = new HashSet<>();
         for(PumpPhase pumpPhase : this.pumpPhases) {
             this.usedPumps.add(pumpPhase.getPump());
         }
     }
 
-    protected Set<PumpPhase> getPumpPhases() {
+    protected synchronized void setDriversToComplete(Map<StepperPump, Double> mlByPump) {
+        Objects.requireNonNull(mlByPump);
+        if(this.isStarted()) {
+            throw new IllegalStateException("Worker already started!");
+        }
+        for(Map.Entry<StepperPump, Double> entry : mlByPump.entrySet()) {
+            AcceleratingStepper accelStepper = entry.getKey().getMotorDriver();
+            accelStepper.move(entry.getValue().longValue());
+            this.requiredWorkTime = Math.max(this.requiredWorkTime, (int) accelStepper.estimateTimeTillCompletion());
+            stepperPumpToComplete.add(entry.getKey());
+        }
+        this.usedPumps.addAll(mlByPump.keySet());
+    }
+
+    protected Set<PumpPhase> getDcPumpPhases() {
         return pumpPhases;
     }
 
@@ -51,6 +68,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         super.start();
         this.startTime = System.currentTimeMillis();
         this.endTime = this.startTime + this.getRequiredPumpingTime();
+        CountDownLatch cl = new CountDownLatch(this.pumpPhases.size());
 
         for (PumpPhase pumpPhase : this.pumpPhases) {
             scheduledPumpFutures.add(scheduler.schedule(() -> {
@@ -61,11 +79,31 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             scheduledPumpFutures.add(scheduler.schedule(() -> {
                 pumpPhase.getPump().getMotorDriver().setRunning(false);
                 pumpPhase.setStopped();
+                cl.countDown();
             }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
 
+        Runnable runTask = () -> {
+            MultiStepper multiStepper = new MultiStepper();
+            stepperPumpToComplete.forEach(x -> multiStepper.addStepper(x.getMotorDriver()));
+            multiStepper.prepareRun();
+            while (multiStepper.runRound()) {
+                Thread.yield();
+                if(Thread.interrupted()) {
+                    return;
+                }
+            }
+            try {
+                cl.await();
+            } catch (InterruptedException e) {
+                return;
+            }
+            onFinish();
+        };
+        runner = new Thread(runTask);
+        runner.start();
+
         this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
-        this.finishTask = scheduler.schedule(this::onFinish, this.getRequiredPumpingTime(), TimeUnit.MILLISECONDS);
         this.notifySubscribers();
     }
 
@@ -74,8 +112,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         for (ScheduledFuture<?> future : this.scheduledPumpFutures) {
             future.cancel(true);
         }
-        if(this.finishTask != null) {
-            this.finishTask.cancel(true);
+        if(this.runner != null) {
+            this.runner.interrupt();
         }
         if(this.notifierTask != null) {
             this.notifierTask.cancel(false);
@@ -125,21 +163,21 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         return this.requiredWorkTime;
     }
 
-    public Map<DcPump, Integer> getNotUsedLiquid() {
-        Map<DcPump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
-        for(PumpPhase pumpPhase : this.getPumpPhases()) {
+    public Map<Pump, Integer> getNotUsedLiquid() {
+        Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
+        for(PumpPhase pumpPhase : this.getDcPumpPhases()) {
             double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
             notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
             notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
         }
-        Map<DcPump, Integer> notUsedLiquidByPump = new HashMap<>();
-        for(Map.Entry<DcPump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
+        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
+        for(Map.Entry<Pump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
             notUsedLiquidByPump.put(entry.getKey(), (int) Math.round(entry.getValue().doubleValue()));
         }
         return notUsedLiquidByPump;
     }
 
-    public Set<DcPump> getUsedPumps() {
+    public Set<Pump> getUsedPumps() {
         return usedPumps;
     }
 }

@@ -37,6 +37,6 @@ public class AutomaticProductionStepWorker extends AbstractPumpingProductionStep
         PumpTimingStepCalculator pumpTimingStepCalculator = new PumpTimingStepCalculator(matchingPumpByProductionStepIngredient,
                 minimalPumpTime, minimalBreakTime);
 
-        this.setPumpPhases(pumpTimingStepCalculator.getPumpPhases());
+        this.setDcPumpPhases(pumpTimingStepCalculator.getPumpPhases());
     }
 }
