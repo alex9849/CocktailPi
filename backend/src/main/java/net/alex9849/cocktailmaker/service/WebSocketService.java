@@ -35,7 +35,7 @@ public class WebSocketService {
     public static final String WS_ACTIONS_LOG_DESTINATION = "/topic/eventactionlog";
     public static final String WS_PUMP_RUNNING_STATE_DESTINATION = "/topic/pump/runningstate";
 
-    public void broadcastCurrentCocktailProgress(@Nullable CocktailProgress cocktailprogress) {
+    public synchronized void broadcastCurrentCocktailProgress(@Nullable CocktailProgress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
         if(cocktailprogress != null) {
             cocktailprogressDto = new CocktailProgressDto.Response.Detailed(cocktailprogress);
@@ -47,7 +47,7 @@ public class WebSocketService {
         }
     }
 
-    public void sendCurrentCocktailProgessToUser(@Nullable CocktailProgress cocktailProgress, String name) {
+    public synchronized void sendCurrentCocktailProgessToUser(@Nullable CocktailProgress cocktailProgress, String name) {
         Object cocktailProgressDto = "DELETE";
         if(cocktailProgress != null) {
             cocktailProgressDto = new CocktailProgressDto.Response.Detailed(cocktailProgress);
@@ -55,7 +55,7 @@ public class WebSocketService {
         simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailProgressDto);
     }
 
-    public void broadcastPumpLayout(List<Pump> pumps) {
+    public synchronized void broadcastPumpLayout(List<Pump> pumps) {
         List<PumpDto.Response.Detailed> pumpDtos = pumps.stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList());
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
@@ -64,12 +64,12 @@ public class WebSocketService {
         }
     }
 
-    public void sendPumpLayoutToUser(List<Pump> pumps, String username) {
+    public synchronized void sendPumpLayoutToUser(List<Pump> pumps, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_LAYOUT_DESTINATION,
                 pumps.stream().map(PumpDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
-    public void broadcastRunningEventActionsStatus(List<EventActionInformation> eai) {
+    public synchronized void broadcastRunningEventActionsStatus(List<EventActionInformation> eai) {
         List<EventActionDto.Response.RunInformation> pumpDtos = eai.stream()
                 .map(EventActionDto.Response.RunInformation::new).collect(Collectors.toList());
         List<String> subscribers = simpUserRegistry.getUsers().stream()
@@ -79,19 +79,19 @@ public class WebSocketService {
         }
     }
 
-    public void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
+    public synchronized void sendRunningEventActionsStatusToUser(List<EventActionInformation> eai, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_STATUS_DESTINATION,
                 eai.stream().map(EventActionDto.Response.RunInformation::new).collect(Collectors.toList()));
     }
 
-    public void broadcastClearEventActionLog(long runningActionId) {
+    public synchronized void broadcastClearEventActionLog(long runningActionId) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {
             simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId, "DELETE");
         }
     }
-    public void broadcastEventActionLog(long runningActionId, List<RunningAction.LogEntry> logEntries) {
+    public synchronized void broadcastEventActionLog(long runningActionId, List<RunningAction.LogEntry> logEntries) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {
@@ -99,18 +99,18 @@ public class WebSocketService {
         }
     }
 
-    public void sendEventActionLogToUser(long runningActionId, List<RunningAction.LogEntry> logEntries, String username) {
+    public synchronized void sendEventActionLogToUser(long runningActionId, List<RunningAction.LogEntry> logEntries, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_ACTIONS_LOG_DESTINATION + "/" + runningActionId,
                 logEntries);
     }
 
-    public void sendPumpRunningStateToUser(long pumpId, PumpJobState runningState, String username) {
+    public synchronized void sendPumpRunningStateToUser(long pumpId, PumpJobState runningState, String username) {
         simpMessagingTemplate.convertAndSendToUser(username, WS_PUMP_RUNNING_STATE_DESTINATION + "/" + pumpId,
                 runningState);
     }
 
 
-    public void broadcastPumpRunningState(long pumpId, PumpJobState runningState) {
+    public synchronized void broadcastPumpRunningState(long pumpId, PumpJobState runningState) {
         List<String> subscribers = simpUserRegistry.getUsers().stream()
                 .map(SimpUser::getName).toList();
         for(String username : subscribers) {

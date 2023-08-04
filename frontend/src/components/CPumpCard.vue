@@ -296,9 +296,9 @@ export default {
   },
   watch: {
     pump: {
-      immediate: false,
+      immediate: true,
       handler (newValue, oldValue) {
-        if (newValue.id !== oldValue.id) {
+        if (oldValue !== undefined && newValue.id !== oldValue.id) {
           WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
           this.pumpJobState = Object.assign({}, {
             lastJobId: null,
@@ -309,6 +309,8 @@ export default {
               runInfinity: false
             }
           })
+        }
+        if (newValue.id !== oldValue?.id) {
           WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
             this.pumpJobState = Object.assign(this.pumpState, JSON.parse(data.body))
           }, true)
@@ -371,11 +373,6 @@ export default {
     this.mdiReply = mdiReply
     this.mdiShare = mdiShare
     this.mdiSync = mdiSync
-  },
-  mounted () {
-    WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
-      this.pumpJobState = Object.assign(this.pumpJobState, JSON.parse(data.body))
-    }, true)
   },
   unmounted () {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))

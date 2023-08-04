@@ -77,7 +77,7 @@ class WebsocketService {
     this.activeSubscriptions.clear()
   }
 
-  async subscribe (component, path, callback, getLastMsg = false) {
+  subscribe (component, path, callback, getLastMsg = false) {
     if (!this.callbackData.has(path)) {
       this.callbackData.set(path, {
         subscribers: new Map(),
