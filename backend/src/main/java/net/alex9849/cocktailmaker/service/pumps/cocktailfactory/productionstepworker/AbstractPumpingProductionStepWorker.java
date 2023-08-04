@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.AcceleratingStepper;
 import net.alex9849.motorlib.MultiStepper;
+import net.alex9849.motorlib.StepperDriver;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -13,7 +14,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private final ScheduledExecutorService scheduler;
     private Thread runner;
     private Set<PumpPhase> pumpPhases;
-    private Set<StepperPump> stepperPumpToComplete;
+    private Set<AcceleratingStepper> stepperDriverToComplete;
     private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
     private ScheduledFuture<?> notifierTask;
@@ -27,7 +28,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.requiredWorkTime = 0;
         this.usedPumps = new HashSet<>();
         this.pumpPhases = new HashSet<>();
-        this.stepperPumpToComplete = new HashSet<>();
+        this.stepperDriverToComplete = new HashSet<>();
         this.scheduledPumpFutures = new HashSet<>();
     }
 
@@ -45,18 +46,19 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         }
     }
 
-    protected synchronized void setDriversToComplete(Map<StepperPump, Double> mlByPump) {
-        Objects.requireNonNull(mlByPump);
+    protected synchronized void setDriversToComplete(Set<AcceleratingStepper> drivers) {
+        Objects.requireNonNull(drivers);
         if(this.isStarted()) {
             throw new IllegalStateException("Worker already started!");
         }
-        for(Map.Entry<StepperPump, Double> entry : mlByPump.entrySet()) {
-            AcceleratingStepper accelStepper = entry.getKey().getMotorDriver();
-            accelStepper.move(entry.getValue().longValue());
-            this.requiredWorkTime = Math.max(this.requiredWorkTime, (int) accelStepper.estimateTimeTillCompletion());
-            stepperPumpToComplete.add(entry.getKey());
+        for(AcceleratingStepper driver : drivers) {
+            this.requiredWorkTime = Math.max(this.requiredWorkTime, (int) driver.estimateTimeTillCompletion());
+            stepperDriverToComplete.add(driver);
         }
-        this.usedPumps.addAll(mlByPump.keySet());
+    }
+
+    protected void setUsedPumps(Set<Pump> usedPumps) {
+        this.usedPumps = usedPumps;
     }
 
     protected Set<PumpPhase> getDcPumpPhases() {
@@ -85,7 +87,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
         Runnable runTask = () -> {
             MultiStepper multiStepper = new MultiStepper();
-            stepperPumpToComplete.forEach(x -> multiStepper.addStepper(x.getMotorDriver()));
+            stepperDriverToComplete.forEach(multiStepper::addStepper);
             multiStepper.prepareRun();
             while (multiStepper.runRound()) {
                 Thread.yield();

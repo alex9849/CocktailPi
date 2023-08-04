@@ -180,15 +180,21 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsWithIngredients(Long... ingredientIds) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            String ingredientPlaceholders = String.join(", ", Arrays.stream(ingredientIds).map(x -> "?").toArray(String[]::new));
+
             PreparedStatement pstmt = con.prepareStatement("SELECT r.id\n" +
                     "FROM recipes r\n" +
                     "         join production_steps ps on ps.recipe_id = r.id\n" +
                     "         join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
                     "         join ingredients i on i.id = psi.ingredient_id\n" +
-                    "         join all_ingredient_dependencies id on i.id = id.child\n" +
+                    "         join all_ingredient_dependencies id on i.id = id.child and id.is_a IN (" + ingredientPlaceholders + ")\n" +
                     "group by r.id\n" +
-                    "having ? <@ array_agg(id.is_a)");
-            pstmt.setArray(1, con.createArrayOf("int8", ingredientIds));
+                    "having count(distinct id.is_a) == ?;");
+            int currentIndex = 1;
+            for(Long id : ingredientIds) {
+                pstmt.setLong(currentIndex++, id);
+            }
+            pstmt.setInt(currentIndex++, ingredientIds.length);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }

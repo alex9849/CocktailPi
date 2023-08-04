@@ -4,6 +4,7 @@ import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
+import net.alex9849.motorlib.AcceleratingStepper;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +15,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
 
     public PumpUpProductionStepWorker(Set<Pump> requiredPumps) {
         Set<PumpPhase> pumpPhases = new HashSet<>();
-        Map<StepperPump, Double> mlByStepperPump = new HashMap<>();
+        Set<AcceleratingStepper> drivers = new HashSet<>();
         for(Pump pump : requiredPumps) {
             if(pump.isPumpedUp()) {
                 continue;
@@ -24,13 +25,15 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
                 PumpPhase pumpPhase = new PumpPhase(0, runtime, dcPump);
                 pumpPhases.add(pumpPhase);
             } else if (pump instanceof StepperPump stepperPump) {
-                mlByStepperPump.put(stepperPump, stepperPump.getTubeCapacityInMl());
+                AcceleratingStepper acceleratingStepper = stepperPump.getMotorDriver();
+                acceleratingStepper.move(stepperPump.getTubeCapacityInMl().longValue());
+                drivers.add(acceleratingStepper);
             } else {
                 throw new IllegalStateException("Unknown pump-type: " + pump.getClass().getName());
             }
         }
         this.setDcPumpPhases(pumpPhases);
-        this.setDriversToComplete(mlByStepperPump);
+        this.setDriversToComplete(drivers);
     }
 
     protected void onFinish() {

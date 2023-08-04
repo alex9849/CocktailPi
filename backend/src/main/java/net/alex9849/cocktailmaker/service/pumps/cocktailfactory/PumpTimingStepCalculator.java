@@ -2,19 +2,23 @@ package net.alex9849.cocktailmaker.service.pumps.cocktailfactory;
 
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.model.pump.StepperPump;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker.PumpStepIngredient;
+import net.alex9849.motorlib.AcceleratingStepper;
 
 import java.util.*;
 
 public class PumpTimingStepCalculator {
-    private final Integer longestPumpRunTime;
-    private final DcPump longestIngredientPump;
+    private int longestPumpRunTime;
+    private DcPump longestIngredientPump;
     private final Map<DcPump, Integer> otherPumpTimings;
-    private final Set<DcPump> updatedPumps;
+
+    private final Set<AcceleratingStepper> drivers;
+    private final Set<Pump> updatedPumps;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
 
-    public PumpTimingStepCalculator(Map<ProductionStepIngredient, List<DcPump>> matchingPumpByProductionStepIngredient, int minimalPumpTime, int minimalBreakTime) {
+    public PumpTimingStepCalculator(Set<PumpStepIngredient> pumpStepIngredients, int minimalPumpTime, int minimalBreakTime) {
         if(minimalPumpTime <= 0) {
             throw new IllegalArgumentException("minimalPumpTime needs to be at least 1!");
         }
@@ -23,19 +27,20 @@ public class PumpTimingStepCalculator {
             throw new IllegalArgumentException("minimalBreakTime needs to be at least 1!");
         }
         this.minimalBreakTime = minimalBreakTime;
-        if(matchingPumpByProductionStepIngredient.size() == 0) {
-            throw new IllegalArgumentException("matchingPumpByProductionStepIngredient must be non empty!");
+        if(pumpStepIngredients.size() == 0) {
+            throw new IllegalArgumentException("pumpStepIngredients must be non empty!");
         }
         this.updatedPumps = new HashSet<>();
+        this.drivers = new HashSet<>();
+        this.longestPumpRunTime = 0;
         //Prioritize pumps with a low filling level
-        matchingPumpByProductionStepIngredient.values().forEach(x -> x.sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
+        pumpStepIngredients.forEach(x -> x.getApplicablePumps().sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
 
-        Map.Entry<DcPump, Integer> longestRuntime = null;
         Map<DcPump, Integer> timeToRunPerPump = new HashMap<>();
 
-        for(Map.Entry<ProductionStepIngredient, List<DcPump>> currentPumpsRuntime : matchingPumpByProductionStepIngredient.entrySet()) {
-            int remainingAmountToFillInMl = currentPumpsRuntime.getKey().getAmount();
-            for(DcPump pump : currentPumpsRuntime.getValue()) {
+        for(PumpStepIngredient pumpStepIngredient : pumpStepIngredients) {
+            int remainingAmountToFillInMl = pumpStepIngredient.getAmount();
+            for(Pump pump : pumpStepIngredient.getApplicablePumps()) {
                 if(pump.getFillingLevelInMl() == 0) {
                     continue;
                 }
@@ -50,29 +55,47 @@ public class PumpTimingStepCalculator {
                     amountToFillForPumpInMl = pump.getFillingLevelInMl();
                     pump.setFillingLevelInMl(0);
                 }
-                int timeToRun = pump.getConvertMlToRuntime(amountToFillForPumpInMl);
-                timeToRunPerPump.put(pump, timeToRun);
+
+                int timeToRun;
+                if(pump instanceof DcPump dcPump) {
+                    timeToRun = dcPump.getConvertMlToRuntime(amountToFillForPumpInMl);
+                    timeToRunPerPump.put(dcPump, timeToRun);
+                    if(timeToRun > longestPumpRunTime) {
+                        longestPumpRunTime = timeToRun;
+                        longestIngredientPump = dcPump;
+                    }
+
+                } else if (pump instanceof StepperPump stepperPump) {
+                    int stepsToRun = (stepperPump.getStepsPerCl() * amountToFillForPumpInMl) / 10;
+                    AcceleratingStepper accelStepper = stepperPump.getMotorDriver();
+                    accelStepper.move(stepsToRun);
+                    drivers.add(accelStepper);
+                    timeToRun = (int) accelStepper.estimateTimeTillCompletion();
+                    if(timeToRun > longestPumpRunTime) {
+                        longestPumpRunTime = timeToRun;
+                        longestIngredientPump = null;
+                    }
+
+                } else {
+                    throw new IllegalArgumentException("Unknown pump-type: " + pump.getClass().getName());
+                }
+
                 this.updatedPumps.add(pump);
                 remainingAmountToFillInMl -= amountToFillForPumpInMl;
             }
             if(remainingAmountToFillInMl > 0) {
-                throw new IllegalArgumentException("Not enough liquid left: " + currentPumpsRuntime.getKey().getIngredient().getName());
+                throw new IllegalArgumentException("Not enough liquid left: " + pumpStepIngredient.getIngredient().getName());
             }
         }
 
 
-        for(Map.Entry<DcPump, Integer> currentPumpRuntime : timeToRunPerPump.entrySet()) {
-            if(longestRuntime == null || longestRuntime.getValue() < currentPumpRuntime.getValue()) {
-                longestRuntime = currentPumpRuntime;
-            }
+        if(longestIngredientPump != null) {
+            timeToRunPerPump.remove(longestIngredientPump);
         }
-        timeToRunPerPump.remove(longestRuntime.getKey());
-        this.longestIngredientPump = longestRuntime.getKey();
-        this.longestPumpRunTime = longestRuntime.getValue();
         this.otherPumpTimings = timeToRunPerPump;
     }
 
-    public Set<DcPump> getUpdatedPumps() {
+    public Set<Pump> getUpdatedPumps() {
         return updatedPumps;
     }
 
@@ -86,13 +109,15 @@ public class PumpTimingStepCalculator {
 
     public Set<PumpPhase> getPumpPhases() {
         Set<PumpPhase> pumpPhases = new HashSet<>();
-        pumpPhases.add(new PumpPhase(0, this.longestPumpRunTime, this.longestIngredientPump));
+        if(longestIngredientPump != null) {
+            pumpPhases.add(new PumpPhase(0, this.longestPumpRunTime, this.longestIngredientPump));
+        }
 
         for(Map.Entry<DcPump, Integer> ingredientPair : this.otherPumpTimings.entrySet()) {
             DcPump currentPump = ingredientPair.getKey();
             int fullPumpOperatingTime = ingredientPair.getValue();
 
-            //How often does the Pump need to be startet
+            //How often does the Pump need to be started
             int pumpStarts = fullPumpOperatingTime / this.minimalPumpTime;
             if(pumpStarts == 0) {
                 pumpStarts = 1;
@@ -118,5 +143,9 @@ public class PumpTimingStepCalculator {
             }
         }
         return pumpPhases;
+    }
+
+    public Set<AcceleratingStepper> getDrivers() {
+        return drivers;
     }
 }
