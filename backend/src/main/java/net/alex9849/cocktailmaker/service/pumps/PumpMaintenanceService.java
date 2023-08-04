@@ -258,7 +258,7 @@ public class PumpMaintenanceService {
                     });
                 }
             }
-        }, delay, delay, TimeUnit.SECONDS);
+        }, delay, delay, TimeUnit.MINUTES);
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpingSettings.Full settings) {

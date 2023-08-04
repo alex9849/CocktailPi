@@ -94,11 +94,13 @@ public class PumpService {
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);
                 maintenanceService.dispatchPumpJob(pump, new PumpAdvice(PumpAdvice.Type.RUN, 0), () -> {
                     lockService.releasePumpLock(pump.getId(), maintenanceService);
+                    maintenanceService.reschedulePumpBack();
                 });
             }
         } finally {
             lockService.releaseGlobal(maintenanceService);
         }
+        maintenanceService.reschedulePumpBack();
     }
 
     public void stopAllPumps() {
@@ -116,6 +118,7 @@ public class PumpService {
         long jobId = maintenanceService.dispatchPumpJob(pump, advice,
                 () -> {
                     try {
+                        maintenanceService.reschedulePumpBack();
                         if(advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                             dataService.updatePump(pump);
                             webSocketService.broadcastPumpLayout(dataService.getAllPumps());
@@ -124,6 +127,7 @@ public class PumpService {
                         lockService.releasePumpLock(pump.getId(), maintenanceService);
                     }
                 });
+        maintenanceService.reschedulePumpBack();
         return jobId;
     }
 
