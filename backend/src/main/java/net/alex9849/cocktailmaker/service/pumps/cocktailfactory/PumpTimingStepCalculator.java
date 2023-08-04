@@ -13,7 +13,7 @@ public class PumpTimingStepCalculator {
     private DcPump longestIngredientPump;
     private final Map<DcPump, Integer> otherPumpTimings;
 
-    private final Set<AcceleratingStepper> drivers;
+    private final Set<StepperPump> steppersToComplete;
     private final Set<Pump> updatedPumps;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
@@ -31,7 +31,7 @@ public class PumpTimingStepCalculator {
             throw new IllegalArgumentException("pumpStepIngredients must be non empty!");
         }
         this.updatedPumps = new HashSet<>();
-        this.drivers = new HashSet<>();
+        this.steppersToComplete = new HashSet<>();
         this.longestPumpRunTime = 0;
         //Prioritize pumps with a low filling level
         pumpStepIngredients.forEach(x -> x.getApplicablePumps().sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
@@ -69,7 +69,7 @@ public class PumpTimingStepCalculator {
                     int stepsToRun = (stepperPump.getStepsPerCl() * amountToFillForPumpInMl) / 10;
                     AcceleratingStepper accelStepper = stepperPump.getMotorDriver();
                     accelStepper.move(stepsToRun);
-                    drivers.add(accelStepper);
+                    steppersToComplete.add(stepperPump);
                     timeToRun = (int) accelStepper.estimateTimeTillCompletion();
                     if(timeToRun > longestPumpRunTime) {
                         longestPumpRunTime = timeToRun;
@@ -145,7 +145,7 @@ public class PumpTimingStepCalculator {
         return pumpPhases;
     }
 
-    public Set<AcceleratingStepper> getDrivers() {
-        return drivers;
+    public Set<StepperPump> getSteppersToComplete() {
+        return steppersToComplete;
     }
 }

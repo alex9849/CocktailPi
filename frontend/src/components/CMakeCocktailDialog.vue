@@ -373,7 +373,7 @@ export default {
     anyPumpOccupied () {
       let anyRunning = false
       for (const state of this.runningStateByPumpId.values()) {
-        anyRunning |= !!state.runningState
+        anyRunning ||= !!state.runningState
       }
       return anyRunning
     },

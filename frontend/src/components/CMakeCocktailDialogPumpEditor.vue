@@ -95,6 +95,7 @@
         />
         <c-pump-turn-on-off-button
           :pump-id="props.row.id"
+          :running="getPumpState(props.row.id).occupied"
         />
       </q-td>
     </template>

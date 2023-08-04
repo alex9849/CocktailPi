@@ -19,7 +19,6 @@
 import { mdiPlay, mdiStop } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import PumpService from 'src/services/pump.service'
-import WebsocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CPumpTurnOnOffButton',
@@ -27,33 +26,15 @@ export default {
     pumpId: {
       type: Number,
       required: true
-    }
-  },
-  data () {
-    return {
-      running: false
+    },
+    running: {
+      type: Boolean,
+      default: false
     }
   },
   created () {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
-  },
-  watch: {
-    pumpId: {
-      immediate: true,
-      handler (newVal, oldVal) {
-        if (oldVal !== undefined) {
-          WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(oldVal))
-        }
-
-        WebsocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(newVal), (data) => {
-          this.running = !!JSON.parse(data.body).runningState
-        }, true)
-      }
-    }
-  },
-  unmounted () {
-    WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pumpId))
   },
   methods: {
     onClickTurnOnOrOffPump () {
@@ -77,12 +58,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getPumpOccupation: 'pumpLayout/getPumpOccupation'
-    }),
-    disable () {
-      return this.getPumpOccupation(this.pumpId) === 'COCKTAIL_PRODUCTION'
-    }
-
+      disable: 'cocktailProgress/hasCocktailProgress'
+    })
   }
 }
 </script>

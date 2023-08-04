@@ -46,7 +46,7 @@ export default {
     headline () {
       if (this.hasCocktailProgress) {
         return 'Machine occupied! A cocktail ist getting prepared currently!'
-      } else if (this.anyOccupied) {
+      } else if (this.pumpsOccupied) {
         return 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
       } else {
         return 'Machine is not occupied!'

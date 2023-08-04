@@ -15,7 +15,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
 
     public PumpUpProductionStepWorker(Set<Pump> requiredPumps) {
         Set<PumpPhase> pumpPhases = new HashSet<>();
-        Set<AcceleratingStepper> drivers = new HashSet<>();
+        Set<StepperPump> pumpsWithDrivers = new HashSet<>();
         for(Pump pump : requiredPumps) {
             if(pump.isPumpedUp()) {
                 continue;
@@ -27,13 +27,13 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
             } else if (pump instanceof StepperPump stepperPump) {
                 AcceleratingStepper acceleratingStepper = stepperPump.getMotorDriver();
                 acceleratingStepper.move(stepperPump.getTubeCapacityInMl().longValue());
-                drivers.add(acceleratingStepper);
+                pumpsWithDrivers.add(stepperPump);
             } else {
                 throw new IllegalStateException("Unknown pump-type: " + pump.getClass().getName());
             }
         }
         this.setDcPumpPhases(pumpPhases);
-        this.setDriversToComplete(drivers);
+        this.setDriversToComplete(pumpsWithDrivers);
     }
 
     protected void onFinish() {

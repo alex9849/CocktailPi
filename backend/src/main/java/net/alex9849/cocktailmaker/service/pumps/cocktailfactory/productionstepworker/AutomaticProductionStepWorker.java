@@ -38,6 +38,6 @@ public class AutomaticProductionStepWorker extends AbstractPumpingProductionStep
                 minimalPumpTime, minimalBreakTime);
 
         this.setDcPumpPhases(pumpTimingStepCalculator.getPumpPhases());
-        this.setDriversToComplete(pumpTimingStepCalculator.getDrivers());
+        this.setDriversToComplete(pumpTimingStepCalculator.getSteppersToComplete());
     }
 }
