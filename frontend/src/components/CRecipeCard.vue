@@ -7,7 +7,6 @@
     >
       <div
         class="row q-gutter-y-sm"
-        style="position: relative"
       >
         <div
           style="position: absolute; z-index: 1;"
@@ -28,7 +27,7 @@
           placeholder-src="~assets/cocktail-solid.png"
           src="~assets/cocktail-solid.png"
         />
-        <div class="col-12 col-sm-6 col-md-9 q-px-xs">
+        <div class="col-12 col-sm-6 col-md-9 q-px-xs" style="display: flex; flex-direction: column">
           <div class="row">
             <div class="col">
               <h5
@@ -80,8 +79,8 @@
               {{ ingredient.name }}
             </q-chip>
           </div>
-          <div class="row">
-            <div class="col"/>
+          <div style="flex-grow: 1"/>
+          <div class="row justify-end">
             <div class="col" style="display: contents; max-width: max-content">
               by {{ recipe.ownerName }}
             </div>
