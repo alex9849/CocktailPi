@@ -4,22 +4,21 @@
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Add pump"
+        label="Add"
         @click="showAddDialog = true"
+        :icon="mdiPlusCircleOutline"
         no-caps
       />
-    </TopButtonArranger>
-    <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Start all pumps"
+        label="Start all"
         @click="onClickTurnOnAllPumps()"
         :icon="mdiPlay"
         no-caps
       />
       <q-btn
         color="negative"
-        label="Stop all pumps"
+        label="Stop all"
         @click="onClickTurnOffAllPumps()"
         :icon="mdiStop"
         no-caps
@@ -58,7 +57,7 @@
 
 <script>
 import TopButtonArranger from 'components/TopButtonArranger'
-import { mdiDelete, mdiPencilOutline, mdiPlay, mdiStop, mdiAlert } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiPlay, mdiStop, mdiAlert, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import PumpService from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
 import CPumpCard from 'components/CPumpCard.vue'
@@ -73,6 +72,7 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiAlert = mdiAlert
+    this.mdiPlusCircleOutline = mdiPlusCircleOutline
   },
   data () {
     return {
