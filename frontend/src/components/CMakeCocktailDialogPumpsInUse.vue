@@ -14,11 +14,16 @@
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 import { mdiCheck, mdiClose } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
-import { anyOccupied } from 'src/store/modules/pumplayout/getters'
 
 export default {
   name: 'CMakeCocktailDialogPumpsInUse',
   components: { CQHeadlinedCard },
+  props: {
+    pumpsOccupied: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup () {
     return {
       mdiClose: mdiClose,
@@ -27,11 +32,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-      anyOccupied: 'pumpLayout/anyOccupied'
+      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress'
     }),
     isFulfilled () {
-      return !this.hasCocktailProgress && !this.anyOccupied
+      return !this.hasCocktailProgress && !this.pumpsOccupied
     },
     cardClass () {
       return {

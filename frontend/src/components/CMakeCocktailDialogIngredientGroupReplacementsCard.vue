@@ -33,6 +33,7 @@
           fetch-instantly
           :loading="noInputReplacementOptionsLoading"
           label="Replacement"
+          hide-bottom-space
           :selected="replacementEntry.replacement"
           :no-input-options="noInputReplacementOptions"
           @update:selected="$emit('replacementUpdate', $event)"

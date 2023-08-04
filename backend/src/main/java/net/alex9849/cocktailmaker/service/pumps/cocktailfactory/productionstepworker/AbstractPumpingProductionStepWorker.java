@@ -88,7 +88,6 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         Runnable runTask = () -> {
             MultiStepper multiStepper = new MultiStepper();
             stepperDriverToComplete.forEach(multiStepper::addStepper);
-            multiStepper.prepareRun();
             while (multiStepper.runRound()) {
                 Thread.yield();
                 if(Thread.interrupted()) {

@@ -81,13 +81,8 @@ export default {
     }),
     disable () {
       return this.getPumpOccupation(this.pumpId) === 'COCKTAIL_PRODUCTION'
-    },
-    isPumpingUp () {
-      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP'
-    },
-    isPumpTurnedOn () {
-      return this.isPumpingUp || this.getPumpOccupation(this.pumpId) === 'RUNNING'
     }
+
   }
 }
 </script>

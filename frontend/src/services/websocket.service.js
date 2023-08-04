@@ -109,10 +109,12 @@ class WebsocketService {
 
   unsubscribe (component, path) {
     const callbackDataPath = this.callbackData.get(path)
-    callbackDataPath.subscribers.delete(component)
+    if (callbackDataPath) {
+      callbackDataPath.subscribers.delete(component)
 
-    if (callbackDataPath.subscribers.size !== 0) {
-      return
+      if (callbackDataPath.subscribers.size !== 0) {
+        return
+      }
     }
     this.callbackData.delete(path)
 

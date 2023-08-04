@@ -93,7 +93,9 @@
           <c-make-cocktail-dialog-ingredients-to-add-manually
             :unassigned-ingredients="ingredientsToAddManually"
           />
-          <c-make-cocktail-dialog-pumps-in-use/>
+          <c-make-cocktail-dialog-pumps-in-use
+            :pumps-occupied="anyPumpOccupied"
+          />
           <c-make-cocktail-dialog-insufficient-ingredients
             :required-ingredients="feasibilityReport.requiredIngredients"
           />
@@ -158,6 +160,7 @@ import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCock
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
 import WebSocketService from 'src/services/websocket.service'
+import WebsocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CMakeCocktailDialog',
@@ -194,7 +197,8 @@ export default {
       customisations: {
         boost: 100,
         additionalIngredients: []
-      }
+      },
+      runningStateByPumpId: new Map()
     }
   },
   setup () {
@@ -206,6 +210,11 @@ export default {
       mdiMinusThick: mdiMinusThick,
       mdiMinus: mdiMinus,
       mdiAlertOutline: mdiAlertOutline
+    }
+  },
+  unmounted () {
+    for (const id of this.allPumpIds) {
+      WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
     }
   },
   watch: {
@@ -231,6 +240,28 @@ export default {
     getPumpLayout: {
       handler () {
         this.tryCheckFeasibility()
+      }
+    },
+    allPumpIds: {
+      immediate: true,
+      handler (newVal, oldVal) {
+        if (!oldVal) {
+          oldVal = []
+        }
+        const oldValSet = new Set(oldVal)
+        const intersectSet = new Set(newVal.filter(x => oldValSet.has(x)))
+        const toUnsubscribe = oldVal.filter(x => !intersectSet.has(x))
+        const toSubscribe = newVal.filter(x => !intersectSet.has(x))
+
+        for (const id of toUnsubscribe) {
+          WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
+          this.runningStateByPumpId.delete(id)
+        }
+        for (const id of toSubscribe) {
+          WebsocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(id), (data) => {
+            this.runningStateByPumpId.set(id, JSON.parse(data.body))
+          }, true)
+        }
       }
     }
   },
@@ -331,15 +362,24 @@ export default {
       isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
-      getPumpIngredients: 'pumpLayout/getPumpIngredients',
-      isAnyPumpOccupied: 'pumpLayout/anyOccupied'
+      getPumpIngredients: 'pumpLayout/getPumpIngredients'
     }),
+    allPumpIds () {
+      return this.getPumpLayout.map(x => x.id)
+    },
     feasibilityOk () {
       return this.feasibilityReport.feasible && !this.checkingFeasibility
     },
+    anyPumpOccupied () {
+      let anyRunning = false
+      for (const state of this.runningStateByPumpId.values()) {
+        anyRunning |= !!state.runningState
+      }
+      return anyRunning
+    },
     cocktailOrderable () {
       return this.feasibilityOk &&
-        !this.isAnyPumpOccupied &&
+        !this.anyPumpOccupied &&
         !this.hasCocktailProgress &&
         !this.v.amountToProduce.$invalid
     },
