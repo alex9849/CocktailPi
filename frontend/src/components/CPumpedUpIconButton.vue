@@ -22,6 +22,10 @@ export default {
       type: Number,
       required: true
     },
+    pumpType: {
+      type: String,
+      required: true
+    },
     isPumpingUp: {
       type: Boolean,
       required: true
@@ -39,7 +43,8 @@ export default {
   methods: {
     toggle (state) {
       PumpService.patchPump(this.pumpId, pumpDtoMapper.toPumpPatchDto({
-        pumpedUp: state
+        pumpedUp: state,
+        type: this.pumpType
       }))
     }
   },

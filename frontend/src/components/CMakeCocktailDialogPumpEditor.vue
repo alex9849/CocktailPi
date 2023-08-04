@@ -6,6 +6,18 @@
     hide-bottom
     flat
   >
+    <template v-slot:body-cell-id="props">
+      <q-td
+        key="id"
+        :props="props"
+      >
+        <p
+          style="max-width: 150px; overflow: hidden"
+        >
+          {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
+        </p>
+      </q-td>
+    </template>
     <template v-slot:body-cell-currentIngredient="props">
       <q-td
         key="currentIngredient"
@@ -13,7 +25,7 @@
       >
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
-          @update:selected="updatePumpIngredient(props.row.id, $event)"
+          @update:selected="updatePumpIngredient(props.row.id, $event, props.row.type)"
           :disable="getPumpState(props.row.id).occupied"
           clearable
           dense
@@ -45,7 +57,7 @@
       >
         <q-input
           :model-value="props.row.fillingLevelInMl"
-          @update:model-value="updatePumpFillingLevel(props.row.id, Number($event))"
+          @update:model-value="updatePumpFillingLevel(props.row.id, Number($event), props.row.type)"
           debounce="500"
           :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
           :disable="getPumpState(props.row.id).occupied"
@@ -67,6 +79,7 @@
       >
         <c-pumped-up-icon-button
           :pump-id="props.row.id"
+          :pump-type="props.row.type"
           :disable="getPumpState(props.row.id).occupied"
           :is-pumping-up="getPumpState(props.row.id).inPumpUp"
         />
@@ -152,23 +165,25 @@ export default {
     isIngredientNeeded (ingredientId) {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
-    updatePumpFillingLevel (pumpId, newFillingLevel) {
+    updatePumpFillingLevel (pumpId, newFillingLevel, pumpType) {
       if ((!newFillingLevel && newFillingLevel !== 0) || newFillingLevel < 0) {
         return
       }
       this.loadingPumpIdsFillingLevel.push(pumpId)
       PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
-        fillingLevelInMl: newFillingLevel
+        fillingLevelInMl: newFillingLevel,
+        type: pumpType
       }))
         .finally(() => {
           const array = this.loadingPumpIdsFillingLevel
           array.splice(array.indexOf(pumpId), 1)
         })
     },
-    updatePumpIngredient (pumpId, newIngredient) {
+    updatePumpIngredient (pumpId, newIngredient, pumpType) {
       this.loadingPumpIdsCurrentIngredient.push(pumpId)
       PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
-        currentIngredient: newIngredient
+        currentIngredient: newIngredient,
+        type: pumpType
       }))
         .finally(() => {
           const array = this.loadingPumpIdsCurrentIngredient

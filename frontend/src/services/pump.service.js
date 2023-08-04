@@ -96,7 +96,8 @@ export class PumpDtoMapper {
     const dto = {
       fillingLevelInMl: detailed.fillingLevelInMl,
       isPumpedUp: detailed.pumpedUp,
-      currentIngredientId: detailed.currentIngredient?.id
+      currentIngredientId: detailed.currentIngredient?.id,
+      type: detailed.type
     }
     if (detailed.currentIngredient === null) {
       dto.isRemoveIngredient = true
