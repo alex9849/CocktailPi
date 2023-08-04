@@ -490,7 +490,10 @@ export default {
           this.$router.push({ name: 'pumpmanagement' })
         })
         // eslint-disable-next-line no-return-assign
-        .finally(() => this.deleteDialog.loading = false)
+        .finally(() => {
+          this.deleteDialog.loading = false
+          this.deleteDialog.show = false
+        })
     },
     setPumpAttr (attr, currValue, newValue) {
       this.pump[attr] = newValue
