@@ -32,6 +32,16 @@ public class PumpEndpoint {
         return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pumpService.getPump(id)));
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        pumpService.deletePump(id);
+        return ResponseEntity.ok().build();
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {

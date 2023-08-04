@@ -1,6 +1,15 @@
 <template xmlns="http://www.w3.org/1999/html">
   <q-page padding class="page-content">
-    <h5>Pump Setup Assistant</h5>
+    <div class="row q-gutter-sm justify-around items-center q-ma-sm">
+      <p class="col-grow text-h5">Pump Setup Assistant</p>
+      <q-btn
+        color="negative"
+        class="col-auto"
+        @click="deleteDialog.show = true"
+      >
+        Delete Pump
+      </q-btn>
+    </div>
     <q-stepper
       v-model:model-value="stepper"
       active-color="cyan"
@@ -301,6 +310,15 @@
         </div>
       </q-step>
     </q-stepper>
+    <c-question
+      :question="'Delete \'' + pumpName + '\'?'"
+      ok-button-text="Delete"
+      ok-color="negative"
+      :loading="deleteDialog.loading"
+      @clickAbort="deleteDialog.show = false"
+      @clickOk="deletePump"
+      v-model:show="deleteDialog.show"
+    />
   </q-page>
 </template>
 
@@ -326,10 +344,12 @@ import CSetupStep from 'components/pumpsetup/CSetupStep.vue'
 import CPumpSetupStepperCalibration from 'components/pumpsetup/CPumpSetupStepperCalibration.vue'
 import CPumpSetupDcHardwarePins from 'components/pumpsetup/CPumpSetupDcHardwarePins.vue'
 import CPumpSetupDcCalibration from 'components/pumpsetup/CPumpSetupDcCalibration.vue'
+import CQuestion from 'components/CQuestion.vue'
 
 export default {
   name: 'SetupPump',
   components: {
+    CQuestion,
     CPumpSetupDcCalibration,
     CPumpSetupDcHardwarePins,
     CPumpSetupStepperCalibration,
@@ -342,6 +362,10 @@ export default {
   data () {
     return {
       stepper: 0,
+      deleteDialog: {
+        show: false,
+        loading: false
+      },
       pump: {
         id: '',
         type: 'dc',
@@ -455,6 +479,19 @@ export default {
     }
   },
   methods: {
+    deletePump () {
+      this.deleteDialog.loading = true
+      PumpService.deletePump(this.pump.id)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Pump \'' + this.pumpName + '\' deleted!'
+          })
+          this.$router.push({ name: 'pumpmanagement' })
+        })
+        // eslint-disable-next-line no-return-assign
+        .finally(() => this.deleteDialog.loading = false)
+    },
     setPumpAttr (attr, currValue, newValue) {
       this.pump[attr] = newValue
       this.attrState[attr].loading = true
@@ -486,13 +523,8 @@ export default {
     }
   },
   computed: {
-    anyAttrLoading () {
-      for (const key of Object.keys(this.attrState)) {
-        if (this.attrLoading[key].loading === true) {
-          return true
-        }
-      }
-      return false
+    pumpName () {
+      return this.pump.name ? this.pump.name : ('Pump #' + String(this.pump.id))
     },
     handleComplete () {
       return !!this.pump.name
@@ -520,16 +552,6 @@ export default {
           throw new Error('Unknown pump type: ' + this.pump.type)
       }
       return val
-    },
-    pumpTypeStepLabel () {
-      if (this.pumpTypeComplete) {
-        if (this.pump.dtype === 'dc') {
-          return 'Pump type: DC'
-        } else {
-          return 'Pump type: Stepper'
-        }
-      }
-      return 'Pump type'
     }
   }
 }

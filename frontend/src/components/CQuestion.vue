@@ -5,7 +5,7 @@
     @hide="$emit('clickAbort')"
   >
     <q-card class="full-width" :class="cardClass">
-      <q-card-section class="text-center">
+      <q-card-section class="text-center q-pa-sm">
         <h5>{{ question }}</h5>
         <q-splitter
           horizontal
@@ -13,7 +13,7 @@
         />
         <slot name="error-area" />
         <slot />
-        <div class="q-pa-md q-gutter-sm">
+        <div class="q-pt-md q-gutter-sm">
           <slot name="buttons">
             <q-btn
               :color="abortColor"
