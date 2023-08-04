@@ -22,7 +22,11 @@ export default {
       type: Number,
       required: true
     },
-    readOnly: {
+    isPumpingUp: {
+      type: Boolean,
+      required: true
+    },
+    disable: {
       type: Boolean,
       default: true
     }
@@ -41,15 +45,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getPumpOccupation: 'pumpLayout/getPumpOccupation',
       isPumpedUp: 'pumpLayout/isPumpedUp'
     }),
-    isPumpingUp () {
-      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP'
-    },
-    disable () {
-      return this.readOnly || this.getPumpOccupation(this.pumpId) !== 'NONE'
-    },
     color () {
       if (this.isPumpingUp) {
         return 'orange'

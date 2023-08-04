@@ -33,6 +33,14 @@ export default {
     pumpUpDirectionReversed: {
       type: Boolean,
       default: () => false
+    },
+    disable: {
+      type: Boolean,
+      default: false
+    },
+    running: {
+      type: Boolean,
+      default: false
     }
   },
   created () {
@@ -52,11 +60,8 @@ export default {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation'
     }),
-    disable () {
-      return this.getPumpOccupation(this.pumpId) !== 'NONE'
-    },
     loading () {
-      return this.getPumpOccupation(this.pumpId) === 'PUMPING_UP' &&
+      return this.running &&
         (this.currentPumpDirectionReversed === this.pumpUpDirectionReversed)
     }
   }

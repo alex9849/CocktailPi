@@ -28,6 +28,7 @@
     @filter="filterIngredients"
     @filter-abort="abortFilterIngredients"
     :rules="rules"
+    :hide-bottom-space="hideBottomSpace"
   >
     <template v-slot:option="scope">
       <q-item
@@ -64,6 +65,10 @@ export default {
       default: 'Ingredient'
     },
     dense: {
+      type: Boolean,
+      default: false
+    },
+    hideBottomSpace: {
       type: Boolean,
       default: false
     },

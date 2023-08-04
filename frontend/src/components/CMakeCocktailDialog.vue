@@ -157,6 +157,7 @@ import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktai
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
+import WebSocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CMakeCocktailDialog',

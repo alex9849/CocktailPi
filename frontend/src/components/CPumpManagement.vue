@@ -138,7 +138,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getPumpOccupation: 'pumpLayout/getPumpOccupation',
       pumps: 'pumpLayout/getLayout',
       isAllowReversePumping: 'common/isAllowReversePumping'
     }),

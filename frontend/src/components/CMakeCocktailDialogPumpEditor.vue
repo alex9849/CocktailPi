@@ -14,9 +14,10 @@
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
           @update:selected="updatePumpIngredient(props.row.id, $event)"
-          :disable="props.row.occupation !== 'NONE'"
+          :disable="getPumpState(props.row.id).occupied"
           clearable
           dense
+          hide-bottom-space
           filter-manual-ingredients
           filter-ingredient-groups
           :bg-color="markPump(props.row)? 'green-3':undefined"
@@ -47,7 +48,7 @@
           @update:model-value="updatePumpFillingLevel(props.row.id, Number($event))"
           debounce="500"
           :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
-          :disable="props.row.occupation !== 'NONE'"
+          :disable="getPumpState(props.row.id).occupied"
           type="number"
           dense
           outlined
@@ -66,7 +67,8 @@
       >
         <c-pumped-up-icon-button
           :pump-id="props.row.id"
-          :read-only="false"
+          :disable="getPumpState(props.row.id).occupied"
+          :is-pumping-up="getPumpState(props.row.id).inPumpUp"
         />
       </q-td>
     </template>
@@ -79,12 +81,16 @@
         <c-pump-up-button
           v-if="isAllowReversePumping"
           :pump-id="props.row.id"
-          :current-pump-direction-reversed="props.row.reversed"
+          :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
+          :running="getPumpState(props.row.id).inPumpUp"
+          :disable="getPumpState(props.row.id).occupied"
           :pump-up-direction-reversed="true"
         />
         <c-pump-up-button
           :pump-id="props.row.id"
-          :current-pump-direction-reversed="props.row.reversed"
+          :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
+          :running="getPumpState(props.row.id).inPumpUp"
+          :disable="getPumpState(props.row.id).occupied"
           :pump-up-direction-reversed="false"
         />
         <c-pump-turn-on-off-button
@@ -102,6 +108,7 @@ import CIngredientSelector from 'components/CIngredientSelector'
 import CPumpUpButton from 'components/CPumpUpButton'
 import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
+import WebsocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CMakeCocktailDialogPumpEditor',
@@ -122,7 +129,13 @@ export default {
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       loadingPumpIdsCurrentIngredient: [],
-      loadingPumpIdsFillingLevel: []
+      loadingPumpIdsFillingLevel: [],
+      runningStateByPumpId: new Map()
+    }
+  },
+  unmounted () {
+    for (const id of this.allPumpIds) {
+      WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
     }
   },
   methods: {
@@ -160,6 +173,46 @@ export default {
           const array = this.loadingPumpIdsCurrentIngredient
           array.splice(array.indexOf(pumpId), 1)
         })
+    },
+    getPumpState (id) {
+      const abortState = {
+        occupied: false,
+        forward: false,
+        inPumpUp: false
+      }
+      if (!this.runningStateByPumpId.has(id)) {
+        return abortState
+      }
+      const state = this.runningStateByPumpId.get(id)
+      return {
+        occupied: !!state.runningState,
+        forward: !!state.runningState?.forward,
+        inPumpUp: (state.runningState) ? !state.runningState.runInfinity : false
+      }
+    }
+  },
+  watch: {
+    allPumpIds: {
+      immediate: true,
+      handler (newVal, oldVal) {
+        if (!oldVal) {
+          oldVal = []
+        }
+        const oldValSet = new Set(oldVal)
+        const intersectSet = new Set(newVal.filter(x => oldValSet.has(x)))
+        const toUnsubscribe = oldVal.filter(x => !intersectSet.has(x))
+        const toSubscribe = newVal.filter(x => !intersectSet.has(x))
+
+        for (const id of toUnsubscribe) {
+          WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
+          this.runningStateByPumpId.delete(id)
+        }
+        for (const id of toSubscribe) {
+          WebsocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(id), (data) => {
+            this.runningStateByPumpId.set(id, JSON.parse(data.body))
+          }, true)
+        }
+      }
     }
   },
   computed: {
@@ -168,6 +221,9 @@ export default {
       getPumpIngredients: 'pumpLayout/getPumpIngredients',
       isAllowReversePumping: 'common/isAllowReversePumping'
     }),
+    allPumpIds () {
+      return this.getPumpLayout.map(x => x.id)
+    },
     sortedPumpLayout () {
       const sorted = []
       sorted.push(...this.getPumpLayout)
