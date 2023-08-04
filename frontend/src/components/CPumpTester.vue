@@ -278,7 +278,7 @@ export default {
       handler (newValue, oldValue) {
         if (newValue.id !== oldValue?.id) {
           if (oldValue !== undefined) {
-            WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
+            WebSocketService.unsubscribe(this, '/user/topic/runningstate/' + String(oldValue.id))
             this.jobState = Object.assign({}, {
               lastJobId: null,
               runningState: {
@@ -290,18 +290,18 @@ export default {
             })
           }
 
-          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
+          WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
             this.jobState = Object.assign(this.jobState, JSON.parse(data.body))
             if (this.jobState.lastJobId && this.jobState.lastJobId === this.runningJobId) {
               this.fetchMetrics()
             }
-          })
+          }, true)
         }
       }
     }
   },
   unmounted () {
-    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pump.id))
+    WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
     isRunning () {

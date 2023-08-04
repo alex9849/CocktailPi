@@ -309,9 +309,9 @@ export default {
               runInfinity: false
             }
           })
-          WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
+          WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
             this.pumpJobState = Object.assign(this.pumpState, JSON.parse(data.body))
-          })
+          }, true)
         }
       }
     }
@@ -373,12 +373,12 @@ export default {
     this.mdiSync = mdiSync
   },
   mounted () {
-    WebSocketService.subscribe('/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
+    WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id), (data) => {
       this.pumpJobState = Object.assign(this.pumpJobState, JSON.parse(data.body))
-    })
+    }, true)
   },
   unmounted () {
-    WebSocketService.unsubscribe('/user/topic/pump/runningstate/' + String(this.pump.id))
+    WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
     progressBar () {

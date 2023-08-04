@@ -5,9 +5,11 @@ import store from '../store'
 import axios from 'axios'
 
 class WebsocketService {
-  reconnectTasks = []
-  subscriptions = []
+  subscriptions = new Map()
   activeSubscriptions = new Map()
+  callbackData = new Map()
+
+  reconnectTasks = []
   stompClient = null
   csrf = null
 
@@ -21,9 +23,9 @@ class WebsocketService {
       store().commit('websocket/setReconnectThrottleInSeconds', 5)
       store().commit('websocket/setShowReconnectDialog', false)
 
-      for (const subscription of vm.subscriptions) {
-        const activeSub = vm.stompClient.subscribe(subscription.path, subscription.callback)
-        vm.activeSubscriptions.set(subscription.path, activeSub)
+      for (const [path, callback] of vm.subscriptions.entries()) {
+        const activeSub = vm.stompClient.subscribe(path, callback)
+        vm.activeSubscriptions.set(path, activeSub)
       }
       store().commit('websocket/setConnected', true)
     }
@@ -75,30 +77,51 @@ class WebsocketService {
     this.activeSubscriptions.clear()
   }
 
-  async subscribe (path, callback) {
-    if (this.activeSubscriptions.has(path)) {
-      this.unsubscribe(path)
+  async subscribe (component, path, callback, getLastMsg = false) {
+    if (!this.callbackData.has(path)) {
+      this.callbackData.set(path, {
+        subscribers: new Map(),
+        lastMsg: null
+      })
     }
-    this.subscriptions.push({ path, callback })
-    if (store().getters['websocket/isConnected']) {
-      const activeSub = this.stompClient.subscribe(path, callback)
-      this.activeSubscriptions.set(path, activeSub)
+    const callbackDataPath = this.callbackData.get(path)
+    callbackDataPath.subscribers.set(component, callback)
+
+    if (getLastMsg && !!callbackDataPath.lastMsg) {
+      callback(callbackDataPath.lastMsg)
+    }
+
+    if (!this.subscriptions.has(path)) {
+      const onMessage = (data) => {
+        const callbackDataPath = this.callbackData.get(path)
+        callbackDataPath.lastMsg = data
+        for (const cb of callbackDataPath.subscribers.values()) {
+          cb(data)
+        }
+      }
+      this.subscriptions.set(path, onMessage)
+      if (store().getters['websocket/isConnected']) {
+        const activeSub = this.stompClient.subscribe(path, onMessage)
+        this.activeSubscriptions.set(path, activeSub)
+      }
     }
   }
 
-  unsubscribe (path) {
-    const subscription = this.subscriptions.find(x => x.path === path)
-    if (!subscription) {
-      return false
+  unsubscribe (component, path) {
+    const callbackDataPath = this.callbackData.get(path)
+    callbackDataPath.subscribers.delete(component)
+
+    if (callbackDataPath.subscribers.size !== 0) {
+      return
     }
-    const index = this.subscriptions.indexOf(subscription)
-    this.subscriptions.splice(index, 1)
+    this.callbackData.delete(path)
+
+    this.subscriptions.delete(path)
     if (!this.activeSubscriptions.has(path)) {
-      return false
+      return
     }
     this.activeSubscriptions.get(path).unsubscribe()
     this.activeSubscriptions.delete(path)
-    return true
   }
 }
 

@@ -31,7 +31,7 @@ export default {
   },
   mounted () {
     const vm = this
-    WebsocketService.subscribe('/user/topic/cocktailprogress', cocktailProgressMessage => {
+    WebsocketService.subscribe(this, '/user/topic/cocktailprogress', cocktailProgressMessage => {
       if (cocktailProgressMessage.body === 'DELETE') {
         vm.setCocktailProgress(null)
       } else {
@@ -39,10 +39,10 @@ export default {
         progress.recipe.lastUpdate = new Date(progress.recipe.lastUpdate)
         vm.setCocktailProgress(progress)
       }
-    })
-    WebsocketService.subscribe('/user/topic/pump/layout', layoutMessage => {
+    }, true)
+    WebsocketService.subscribe(this, '/user/topic/pump/layout', layoutMessage => {
       vm.setPumpLayout(JSON.parse(layoutMessage.body))
-    })
+    }, true)
   },
   methods: {
     ...mapMutations({
@@ -53,8 +53,8 @@ export default {
       WebsocketService.connectWebsocket()
     },
     disconnectWebsocket () {
-      WebsocketService.unsubscribe('/user/topic/cocktailprogress')
-      WebsocketService.unsubscribe('/user/topic/pump/layout')
+      WebsocketService.unsubscribe(this, '/user/topic/cocktailprogress')
+      WebsocketService.unsubscribe(this, '/user/topic/pump/layout')
       WebsocketService.disconnectWebsocket()
     }
   },

@@ -257,23 +257,23 @@ export default {
   },
   mounted () {
     const vm = this
-    WebSocketService.subscribe('/user/topic/eventactionstatus', (data) => {
+    WebSocketService.subscribe(this, '/user/topic/eventactionstatus', (data) => {
       vm.actionStatus.actionStatus.clear()
       data = JSON.parse(data.body)
       for (const actionStatus of data) {
         vm.actionStatus.actionStatus.set(actionStatus.eventActionId, actionStatus)
       }
-    })
+    }, true)
   },
   unmounted () {
-    WebSocketService.unsubscribe('/user/topic/eventactionstatus')
+    WebSocketService.unsubscribe(this, '/user/topic/eventactionstatus')
   },
   methods: {
     showEventActionLog (actionId) {
       this.actionLog.show = true
       this.actionLog.topic = '/user/topic/eventactionlog/' + actionId
       const vm = this
-      WebSocketService.subscribe(this.actionLog.topic, (data) => {
+      WebSocketService.subscribe(this, this.actionLog.topic, (data) => {
         if (data.body === 'DELETE') {
           vm.actionLog.log.splice(0, vm.actionLog.log.length)
         } else {
@@ -283,11 +283,11 @@ export default {
           }
           vm.actionLog.log.push(...data)
         }
-      })
+      }, true)
     },
     hideEventActionLog () {
       this.actionLog.show = false
-      WebSocketService.unsubscribe(this.actionLog.topic)
+      WebSocketService.unsubscribe(this, this.actionLog.topic)
       this.actionLog.topic = null
       this.actionLog.log.splice(0, this.actionLog.log.length)
     },
