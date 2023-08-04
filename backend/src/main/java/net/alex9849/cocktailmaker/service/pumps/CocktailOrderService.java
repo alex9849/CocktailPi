@@ -3,7 +3,6 @@ package net.alex9849.cocktailmaker.service.pumps;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
-import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -26,7 +25,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,7 +62,7 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpDataService.getAllPumps()), p -> p.forEach(x -> pumpDataService.updatePump(x)))
+                new HashSet<>(pumpDataService.getAllCompletedPumps()), p -> p.forEach(x -> pumpDataService.updatePump(x)))
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange);
         this.cocktailFactory = cocktailFactory;
         this.cocktailFactory.makeCocktail();
@@ -102,7 +100,7 @@ public class CocktailOrderService {
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {
-        return new FeasibilityFactory(recipe, orderConfig, pumpDataService.getAllPumps());
+        return new FeasibilityFactory(recipe, orderConfig, pumpDataService.getAllCompletedPumps());
     }
 
     public synchronized void continueCocktailProduction() {

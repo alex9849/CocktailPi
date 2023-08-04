@@ -88,7 +88,7 @@ public class PumpService {
         maintenanceService.stopAllPumps();
         try {
             for (Pump pump : dataService.getAllPumps()) {
-                if (!pump.isCanPumpUp()) {
+                if (!pump.isCanPump()) {
                     continue;
                 }
                 lockService.acquirePumpLock(pump.getId(), maintenanceService);

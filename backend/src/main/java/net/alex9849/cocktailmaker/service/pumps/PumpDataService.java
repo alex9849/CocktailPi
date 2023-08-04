@@ -37,6 +37,10 @@ public class PumpDataService {
         return pumpRepository.findAll();
     }
 
+    public List<Pump> getAllCompletedPumps() {
+        return getAllPumps().stream().filter(Pump::isCompleted).toList();
+    }
+
     public Pump getPump(long id) {
         return pumpRepository.findById(id).orElse(null);
     }
