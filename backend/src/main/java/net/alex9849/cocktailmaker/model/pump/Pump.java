@@ -98,6 +98,6 @@ public abstract class Pump {
     }
 
     public boolean isCompleted() {
-        return this.isCanPumpUp();
+        return this.isCanPumpUp() && this.fillingLevelInMl != null;
     }
 }
