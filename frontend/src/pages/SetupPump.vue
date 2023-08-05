@@ -32,7 +32,7 @@
           headline="How should your pump be called?"
         >
           <div class="row justify-center">
-            <div class="col-6">
+            <div class="col-12 col-sm-10 col-md-7 col-lg-6 q-gutter-md">
               <q-input
                 :model-value="pump.name"
                 @update:model-value="setPumpAttr('name', pump.name, $event)"
@@ -48,8 +48,9 @@
             </div>
           </div>
         </c-setup-step>
-        <div class="col-12 q-ma-lg">
-          <q-stepper-navigation>
+        <div class="col-12">
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
             <q-btn @click="stepper++" color="primary" label="Continue"/>
           </q-stepper-navigation>
         </div>
@@ -90,10 +91,11 @@
             :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
           />
         </c-setup-step>
-        <div class="col-12 q-ma-lg">
-          <q-stepper-navigation>
+        <div class="col-12">
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
             <q-btn @click="stepper++" :disable="!hardwarePinsComplete" color="primary" label="Continue"/>
-            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+            <q-btn flat @click="stepper--" color="primary" label="Back"/>
           </q-stepper-navigation>
         </div>
       </q-step>
@@ -198,8 +200,9 @@
             </template>
           </c-assistant-container>
         </c-setup-step>
-        <div class="col-12 q-ma-lg">
-          <q-stepper-navigation>
+        <div class="col-12">
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
             <q-btn @click="stepper++" :disable="!calibrationComplete" color="primary" label="Continue"/>
             <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
           </q-stepper-navigation>
@@ -232,6 +235,7 @@
                 filled
                 filter-manual-ingredients
                 filter-ingredient-groups
+                hide-bottom-space
               />
             </template>
             <template v-slot:explanations>
@@ -241,7 +245,7 @@
           <q-splitter
             :model-value="10"
             horizontal
-            class="q-pb-md"
+            class="q-py-md"
           />
           <c-assistant-container>
             <template v-slot:fields>
@@ -272,7 +276,7 @@
           <q-splitter
             :model-value="10"
             horizontal
-            class="q-pb-md"
+            class="q-py-md"
           />
           <c-assistant-container>
             <template v-slot:fields>
@@ -302,9 +306,9 @@
             </template>
           </c-assistant-container>
         </c-setup-step>
-        <div class="col-12 q-ma-lg">
+        <div class="col-12">
           <q-stepper-navigation>
-            <q-btn @click="$router.push({name: 'pumpmanagement'})" color="primary" label="Finish"/>
+            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
             <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
           </q-stepper-navigation>
         </div>
@@ -479,6 +483,9 @@ export default {
     }
   },
   methods: {
+    onClickFinish () {
+      this.$router.push({ name: 'pumpmanagement' })
+    },
     deletePump () {
       this.deleteDialog.loading = true
       PumpService.deletePump(this.pump.id)
