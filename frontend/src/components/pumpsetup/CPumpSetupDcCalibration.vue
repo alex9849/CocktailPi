@@ -2,8 +2,8 @@
   <c-assistant-container>
     <template v-slot:explanations>
       <p>
-        "Time per cl in ms" determines how many milliseconds (ms) the pump needs to run to pump one centiliter (cl).
-        This value gets used to determine how long the pump needs to run to pump the requested amount of liquid out of the bottle.
+        "Time per cl in ms" determines how many milliseconds (ms) the pump must run to pump one centiliter (cl).
+        This value is used to determine how long the pump must run to pump the desired amount of liquid from the bottle.
       </p>
     </template>
     <template v-slot:fields>

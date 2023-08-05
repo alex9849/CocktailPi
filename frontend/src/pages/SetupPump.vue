@@ -142,19 +142,34 @@
           />
           <c-assistant-container>
             <template v-slot:explanations>
-              Here you can test your motor and calculate the number of steps that the motor needs to pump one cl.
-              You can run the tester with two metrics:
-              <ul>
-                <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
-                <li><b>Steps:</b> Tell the motor how many steps he should take.</li>
-              </ul>
-              The system will always track how many steps the motor has made. Depending on how you have configured
-              the motor above, it might happen that the motor skips steps. The tester exists to verify your
-              configuration.<br>
-              You can also let the tester calculate the number of steps that the motor took to pump one cl.
-              For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
-              You can use a scale for that. Also, make sure that your hoses are filled with liquid since the tester
-              doesn't take that into account!
+              <div v-if="pump.type === 'stepper'">
+                Here you can test your motor and calculate the number of steps the motor needs to make to pump one cl.
+                You can run the tester in two modes:
+                <ul>
+                  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
+                  <li><b>Steps:</b> Tell the motor how many steps he should take.</li>
+                </ul>
+                The tester is used to check and fine-tune your configuration.<br>
+                You can also let the tester calculate the number of steps that the motor must make to pump one cl.
+                For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
+                You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester
+                does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements.
+                The tester will then correct the configuration according to your measurements.
+              </div>
+              <div v-if="pump.type === 'dc'">
+                Here you can test your motor and calculate the time it takes the motor to pump one cl.
+                You can run the tester in two modes:
+                <ul>
+                  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
+                  <li><b>Time:</b> Tell the motor how many steps he should take.</li>
+                </ul>
+                The tester is used to check and fine-tune your configuration.<br>
+                You can also let the tester calculate the amount of time that the motor must run to pump one cl.
+                For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
+                You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester
+                does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements.
+                The tester will then correct the configuration according to your measurements!
+              </div>
             </template>
             <template v-slot:fields>
               <p class="text-subtitle1 text-center">Motor tester</p>
@@ -175,9 +190,9 @@
             <template v-slot:explanations>
               <p>
                 The tube capacity determines how much liquid is needed to fill the hose that connects
-                the liquid container with the dispensing part of your cocktail machine. This metric is
-                used to accurately fill your hoses with liquid before the actual production of a new drink.
-                It is also used to empty your hoses (pump the liquid back into the container) if the machine hasn't
+                the liquid container with the dispensing part of your cocktail machine. This metric is used to
+                accurately fill your hoses with liquid before actually producing a new drink.
+                It is also used to empty your hoses (pump the liquid back into the container) if the machine has not
                 been used for a while. </p>
             </template>
             <template v-slot:fields>
@@ -269,8 +284,8 @@
             </template>
             <template v-slot:explanations>
               The current filling level of the container that is connected to the pump.
-              This field is used to check if you have enough liquid left to produce a
-              cocktail of a selected size.
+              This field is used to check if there is still enough liquid left
+              to produce a cocktail of a certain size.
             </template>
           </c-assistant-container>
           <q-splitter
@@ -299,10 +314,10 @@
               </div>
             </template>
             <template v-slot:explanations>
-              The "Pumped up"-field holds the information of the filling state of the hoses of a pump.
+              The "Pumped up"-field holds the information about the filling state of the hoses of a pump.
               If the hoses are not filled with liquid, the machine will fill them before producing a cocktail.
               This field is also used to find out from whose pumps the liquid should be pumped back into the
-              container, in case the machine dosen't get used for a specific amount of time.
+              container, if the machine is not used for a certain time.
             </template>
           </c-assistant-container>
         </c-setup-step>

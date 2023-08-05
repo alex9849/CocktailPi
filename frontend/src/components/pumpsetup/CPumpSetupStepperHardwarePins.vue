@@ -6,15 +6,15 @@
       </p>
       <ul>
         <li>
-          The step-pin, which gets one pulse for each step, that the motor should do.
+          The step pin, which receives one pulse for each step the motor is to make.
         </li>
         <li>
-          The enable pin. This pin decides on if the motor should be energized and therefore hold
-          his current position, or not.
+          The enable pin. This pin decides whether the motor should be energized and thus actively
+          hold its current position or not.
         </li>
         <li>
           The direction pin. It decides on the direction that the motor takes. The direction that
-          the motor is running to is decided by one single pin, that controls all motors.
+          the motor is running to is decided by one single pin, that controls the direction for all motors.
           That pin gets defined globally and is not part of this setup!
           Please build your machine in a way that connects that pin with with the direction logic of all
           your motors.

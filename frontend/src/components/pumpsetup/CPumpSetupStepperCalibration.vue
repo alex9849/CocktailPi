@@ -2,9 +2,8 @@
   <c-assistant-container>
     <template v-slot:explanations>
       <p>
-        The acceleration field determines how fast your motor should speed up or break down.
-        If the acceleration is too high, the motor might skip steps on speed up or do too many on break
-        down.
+        The acceleration field determines how fast the motor should accelerate or decelerate.
+        If the acceleration is too high, the motor may skip steps when accelerating or take too many steps when decelerating.
         The acceleration is given in steps per second per second.
       </p>
     </template>
@@ -38,9 +37,8 @@
         The "max steps per second"-field determines fast the motor should spin at max.
         One revolution is normally divided into 200 steps. This can vary depending on the motor and motor
         driver settings.
-        If it is too high, the motor might not be able to keep up and skips steps or even doesn't run at
-        all.
-        If it is too low, the motor will run slower than necessary.<br>
+        If the value is too high, the motor may not be able to keep up and may skip steps or even not run at all.
+        If the value is too low, the motor will run slower than necessary.<br>
       </p>
       <p>
         The rule is:
@@ -76,7 +74,7 @@
   />
   <c-assistant-container>
     <template v-slot:explanations>
-      This field determines how many steps the motor must make to produce one cl.
+      This field determines how many steps the motor must take to pump a cl.
     </template>
     <template v-slot:fields>
       <q-input
