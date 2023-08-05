@@ -503,6 +503,7 @@ export default {
         })
     },
     setPumpAttr (attr, currValue, newValue, remove = false) {
+      this.pump[attr] = newValue
       this.attrState[attr].loading = true
       this.attrState[attr].saved = false
       const patch = {
