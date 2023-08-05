@@ -133,6 +133,7 @@
                   filled
                   dense
                   outlined
+                  type="number"
                   label="Actual ml pumped"
                   v-model:model-value.number="trueLiquidPumpedField"
                 >
