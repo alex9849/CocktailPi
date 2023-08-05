@@ -13,7 +13,7 @@ public class PumpTimingStepCalculator {
     private DcPump longestIngredientPump;
     private final Map<DcPump, Integer> otherPumpTimings;
 
-    private final Set<StepperPump> steppersToComplete;
+    private final Map<StepperPump, Long> steppersToSteps;
     private final Set<Pump> updatedPumps;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
@@ -31,7 +31,7 @@ public class PumpTimingStepCalculator {
             throw new IllegalArgumentException("pumpStepIngredients must be non empty!");
         }
         this.updatedPumps = new HashSet<>();
-        this.steppersToComplete = new HashSet<>();
+        this.steppersToSteps = new HashMap<>();
         this.longestPumpRunTime = 0;
         //Prioritize pumps with a low filling level
         pumpStepIngredients.forEach(x -> x.getApplicablePumps().sort(Comparator.comparingInt(Pump::getFillingLevelInMl)));
@@ -67,10 +67,16 @@ public class PumpTimingStepCalculator {
 
                 } else if (pump instanceof StepperPump stepperPump) {
                     int stepsToRun = (stepperPump.getStepsPerCl() * amountToFillForPumpInMl) / 10;
-                    AcceleratingStepper accelStepper = stepperPump.getMotorDriver();
-                    accelStepper.move(stepsToRun);
-                    steppersToComplete.add(stepperPump);
-                    timeToRun = (int) accelStepper.estimateTimeTillCompletion();
+                    steppersToSteps.put(stepperPump, (long) stepsToRun);
+
+                    AcceleratingStepper aStepper = stepperPump.getMotorDriver();
+                    long cPos = aStepper.getCurrentPosition();
+                    long cTarget = aStepper.getTargetPosition();
+                    aStepper.setCurrentPosition(0);
+                    aStepper.moveTo(stepsToRun);
+                    timeToRun = (int) aStepper.estimateTimeTillCompletion();
+                    aStepper.setCurrentPosition(cPos);
+                    aStepper.moveTo(cTarget);
                     if(timeToRun > longestPumpRunTime) {
                         longestPumpRunTime = timeToRun;
                         longestIngredientPump = null;
@@ -145,7 +151,7 @@ public class PumpTimingStepCalculator {
         return pumpPhases;
     }
 
-    public Set<StepperPump> getSteppersToComplete() {
-        return steppersToComplete;
+    public Map<StepperPump, Long> getSteppersToComplete() {
+        return steppersToSteps;
     }
 }

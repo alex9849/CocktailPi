@@ -15,7 +15,9 @@ public class WrittenInstructionProductionStepWorker extends AbstractProductionSt
     }
 
     @Override
-    public void cancel() {}
+    public boolean cancel() {
+        return super.cancel();
+    }
 
     public void continueProduction() {
         if(!this.isStarted()) {

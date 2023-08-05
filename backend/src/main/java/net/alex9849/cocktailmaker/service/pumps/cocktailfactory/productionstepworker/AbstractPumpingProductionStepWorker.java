@@ -5,7 +5,6 @@ import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.AcceleratingStepper;
 import net.alex9849.motorlib.MultiStepper;
-import net.alex9849.motorlib.StepperDriver;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -14,7 +13,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private final ScheduledExecutorService scheduler;
     private Thread runner;
     private Set<PumpPhase> pumpPhases;
-    private Set<StepperPump> stepperToComplete;
+    private Map<StepperPump, Long> steppersToSteps;
     private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
     private ScheduledFuture<?> notifierTask;
@@ -28,7 +27,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.requiredWorkTime = 0;
         this.usedPumps = new HashSet<>();
         this.pumpPhases = new HashSet<>();
-        this.stepperToComplete = new HashSet<>();
+        this.steppersToSteps = new HashMap<>();
         this.scheduledPumpFutures = new HashSet<>();
     }
 
@@ -46,16 +45,23 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         }
     }
 
-    protected synchronized void setDriversToComplete(Set<StepperPump> stepperToComplete) {
-        Objects.requireNonNull(stepperToComplete);
+    protected synchronized void setSteppersToComplete(Map<StepperPump, Long> steppersToSteps) {
+        Objects.requireNonNull(steppersToSteps);
         if(this.isStarted()) {
             throw new IllegalStateException("Worker already started!");
         }
-        for(StepperPump stepper : stepperToComplete) {
-            this.requiredWorkTime = Math.max(this.requiredWorkTime, (int) stepper.getMotorDriver().estimateTimeTillCompletion());
+        for(Map.Entry<StepperPump, Long> entry : steppersToSteps.entrySet()) {
+            AcceleratingStepper driver = entry.getKey().getMotorDriver();
+            long cPos = driver.getCurrentPosition();
+            long cTarget = driver.getTargetPosition();
+            driver.setCurrentPosition(0);
+            driver.moveTo(entry.getValue());
+            this.requiredWorkTime = Math.max(this.requiredWorkTime, (int) driver.estimateTimeTillCompletion());
+            driver.setCurrentPosition(cPos);
+            driver.moveTo(cTarget);
         }
-        this.stepperToComplete.addAll(stepperToComplete);
-        this.usedPumps.addAll(stepperToComplete);
+        this.steppersToSteps.putAll(steppersToSteps);
+        this.usedPumps.addAll(steppersToSteps.keySet());
     }
     protected Set<PumpPhase> getDcPumpPhases() {
         return pumpPhases;
@@ -84,7 +90,11 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
         Runnable runTask = () -> {
             MultiStepper multiStepper = new MultiStepper();
-            stepperToComplete.forEach(x -> multiStepper.addStepper(x.getMotorDriver()));
+            for(Map.Entry<StepperPump, Long> entry : steppersToSteps.entrySet()) {
+                AcceleratingStepper driver = entry.getKey().getMotorDriver();
+                driver.move(entry.getValue());
+                multiStepper.addStepper(driver);
+            }
             while (multiStepper.runRound()) {
                 if(Thread.interrupted()) {
                     return;
@@ -105,7 +115,10 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     @Override
-    public synchronized void cancel() {
+    public synchronized boolean cancel() {
+        if(!super.cancel()) {
+            return false;
+        }
         for (ScheduledFuture<?> future : this.scheduledPumpFutures) {
             future.cancel(true);
         }
@@ -124,6 +137,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         if (!this.scheduler.isShutdown()) {
             this.scheduler.shutdown();
         }
+        return true;
     }
 
     @Override
@@ -156,20 +170,31 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     public Map<Pump, Integer> getNotUsedLiquid() {
+        if(this.isFinished()) {
+            return new HashMap<>();
+        }
+
         Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
         for(PumpPhase pumpPhase : this.getDcPumpPhases()) {
             double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
             notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
             notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
         }
-        for(StepperPump stepperPump : this.stepperToComplete) {
-            double notUsedLiquid = (double) (stepperPump.getMotorDriver().distanceToGo() * 10) / stepperPump.getStepsPerCl();
-            notUsedLiquidByPumpPrecise.put(stepperPump, notUsedLiquid);
+        if(this.isStarted()) {
+            for(StepperPump stepperPump : this.steppersToSteps.keySet()) {
+                double notUsedLiquid = (double) (stepperPump.getMotorDriver().distanceToGo() * 10) / stepperPump.getStepsPerCl();
+                notUsedLiquidByPumpPrecise.put(stepperPump, notUsedLiquid);
+            }
+        } else {
+            for(Map.Entry<StepperPump, Long> entry : this.steppersToSteps.entrySet()) {
+                notUsedLiquidByPumpPrecise.put(entry.getKey(), entry.getValue().doubleValue());
+            }
         }
+
         Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
-        for(Map.Entry<Pump, Double> entry : notUsedLiquidByPumpPrecise.entrySet()) {
-            notUsedLiquidByPump.put(entry.getKey(), (int) Math.round(entry.getValue().doubleValue()));
-        }
+        notUsedLiquidByPumpPrecise.forEach((key, value) -> {
+            notUsedLiquidByPump.put(key, (int) Math.round(value));
+        });
         return notUsedLiquidByPump;
     }
 

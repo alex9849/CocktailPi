@@ -33,7 +33,9 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
     }
 
     @Override
-    public void cancel() {}
+    public boolean cancel() {
+        return super.cancel();
+    }
 
     @Override
     public ManualStepProgress getProgress() {

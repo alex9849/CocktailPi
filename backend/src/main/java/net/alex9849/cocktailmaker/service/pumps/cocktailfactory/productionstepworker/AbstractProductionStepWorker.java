@@ -8,6 +8,7 @@ public abstract class AbstractProductionStepWorker {
     private final List<Consumer<StepProgress>> subscribers = new ArrayList<>();
     private boolean finished = false;
     private boolean started = false;
+    private boolean cancelled = false;
     private Runnable onFinish = null;
 
     public AbstractProductionStepWorker subscribeToProgress(Consumer<StepProgress> progressInPercentConsumer) {
@@ -25,15 +26,24 @@ public abstract class AbstractProductionStepWorker {
         if(this.started) {
             throw new IllegalStateException("ProductionStepWorker has already been started!");
         }
+        if(this.finished || this.cancelled) {
+            throw new IllegalStateException("ProductionStepWorker has been canceled or finished!");
+        }
         this.started = true;
     }
 
-    public abstract void cancel();
+    public boolean cancel() {
+        if(this.finished || this.cancelled) {
+            return false;
+        }
+        this.cancelled = true;
+        return true;
+    }
 
     public abstract StepProgress getProgress();
 
     protected void setFinished() {
-        if(this.finished) {
+        if(this.finished || this.cancelled) {
             return;
         }
         this.finished = true;
@@ -50,11 +60,11 @@ public abstract class AbstractProductionStepWorker {
         return this.finished;
     }
 
-    public void setOnFinishCallback(Runnable runnable) {
-        this.onFinish = runnable;
+    public boolean isCancelled() {
+        return cancelled;
     }
 
-    enum Mode {
-        MANUAL, AUTOMATIC;
+    public void setOnFinishCallback(Runnable runnable) {
+        this.onFinish = runnable;
     }
 }
