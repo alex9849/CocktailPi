@@ -152,10 +152,10 @@ export default {
     return {
       columns: [
         { name: 'id', label: 'Nr', field: 'id', align: 'left' },
-        { name: 'state', label: 'State', align: 'center' },
         { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
         { name: 'fillingLevelInMl', label: 'Remaining filling level', field: 'fillingLevelInMl', align: 'center' },
         { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
+        { name: 'state', label: 'State', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
       loadingPumpIdsCurrentIngredient: [],
