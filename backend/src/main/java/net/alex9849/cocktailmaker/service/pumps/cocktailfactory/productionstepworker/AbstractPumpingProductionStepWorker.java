@@ -86,10 +86,10 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             MultiStepper multiStepper = new MultiStepper();
             stepperToComplete.forEach(x -> multiStepper.addStepper(x.getMotorDriver()));
             while (multiStepper.runRound()) {
-                Thread.yield();
                 if(Thread.interrupted()) {
                     return;
                 }
+                Thread.yield();
             }
             try {
                 cl.await();
@@ -110,7 +110,12 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             future.cancel(true);
         }
         if(this.runner != null) {
-            this.runner.interrupt();
+            try {
+                this.runner.interrupt();
+                this.runner.join();
+            } catch (InterruptedException e) {
+                //Ignore
+            }
         }
         if(this.notifierTask != null) {
             this.notifierTask.cancel(false);
@@ -134,18 +139,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     private synchronized void stopAllPumps() {
-        Set<Long> seenPumps = new HashSet<>();
-        for(PumpPhase pumpPhase : this.pumpPhases) {
-            if(seenPumps.contains(pumpPhase.getPump().getId())) {
-                continue;
-            }
-            if(pumpPhase.getPump().getMotorDriver().isRunning()) {
-                pumpPhase.getPump().getMotorDriver().setRunning(false);
-            }
-            if(pumpPhase.getState() == PumpPhase.State.RUNNING) {
-                pumpPhase.setStopped();
-            }
-            seenPumps.add(pumpPhase.getPump().getId());
+        for(Pump pump : this.usedPumps) {
+            pump.getMotorDriver().shutdown();
         }
     }
 
