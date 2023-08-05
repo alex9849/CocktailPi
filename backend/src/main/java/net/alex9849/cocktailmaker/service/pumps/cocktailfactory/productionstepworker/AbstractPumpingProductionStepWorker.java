@@ -130,7 +130,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     public StepProgress getProgress() {
         StepProgress progress = new StepProgress();
         if(this.isStarted()) {
-            progress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) (this.endTime - this.startTime))) * 100)));
+            progress.setPercentCompleted(Math.min(100, (int) (((System.currentTimeMillis() - this.startTime) / ((double) (Math.max(1, this.endTime - this.startTime)))) * 100)));
         } else {
             progress.setPercentCompleted(0);
         }
