@@ -8,6 +8,16 @@ export const getPumpIngredients = (state) => {
   return pumpIngredients
 }
 
+export const getReadyPumpIngredients = (state) => {
+  const pumpIngredients = []
+  for (const pump of state.pumpLayout) {
+    if (pump.state === 'READY' && pump.currentIngredient && !pumpIngredients.some(x => x.id === pump.currentIngredient.id)) {
+      pumpIngredients.push(pump.currentIngredient)
+    }
+  }
+  return pumpIngredients
+}
+
 export const isPumpedUp = (state) => {
   return (pumpId) => {
     for (const pump of state.pumpLayout) {

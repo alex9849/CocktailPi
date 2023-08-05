@@ -53,13 +53,6 @@ class PumpService {
       .then(response => response.data)
   }
 
-  updatePump (id, updatePump, onErrorNotify = true) {
-    return axios.put(API_PATH + String(id), updatePump, {
-      onErrorNotify
-    })
-      .then(response => response.data)
-  }
-
   deletePump (id) {
     return axios.delete(API_PATH + String(id))
   }
@@ -94,13 +87,23 @@ export class PumpDtoMapper {
 
   toPumpPatchDto (detailed) {
     const dto = {
+      pin: detailed.pin,
+      timePerClInMs: detailed.timePerClInMs,
+      isPowerStateHigh: detailed.isPowerStateHigh,
+      name: detailed.name,
+      tubeCapacityInMl: detailed.tubeCapacityInMl,
       fillingLevelInMl: detailed.fillingLevelInMl,
       isPumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id,
-      type: detailed.type
-    }
-    if (detailed.currentIngredient === null) {
-      dto.isRemoveIngredient = true
+
+      enablePin: detailed.enablePin,
+      stepPin: detailed.stepPin,
+      acceleration: detailed.acceleration,
+      maxStepsPerSecond: detailed.maxStepsPerSecond,
+      stepsPerCl: detailed.stepsPerCl,
+
+      type: detailed.type,
+      removeFields: (!detailed.removeFields || detailed.removeFields.length === 0) ? undefined : detailed.removeFields
     }
     return dto
   }

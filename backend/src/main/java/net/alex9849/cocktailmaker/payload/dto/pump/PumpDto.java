@@ -10,6 +10,9 @@ import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import org.springframework.beans.BeanUtils;
 
+import java.util.List;
+import java.util.Set;
+
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PumpDto {
@@ -19,10 +22,11 @@ public class PumpDto {
     private interface TubeCapacityInMl { @Min(1) Double getTubeCapacityInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
-    private interface RemoveIngredient { Boolean getIsRemoveIngredient(); }
     private interface IsPumpedUp { boolean isPumpedUp(); }
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
     private interface Name { String getName(); }
+
+    private interface IRemoveFields { Set<String> getRemoveFields(); }
 
     //Read only
     private interface IState {PumpDto.State getState(); }
@@ -39,13 +43,14 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "dc"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
-        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, RemoveIngredient, Name {
+        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             Boolean isPumpedUp;
             Long currentIngredientId;
-            Boolean isRemoveIngredient;
             String name;
+            Set<String> removeFields;
+
         }
     }
 

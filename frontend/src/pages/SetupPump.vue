@@ -35,7 +35,7 @@
             <div class="col-12 col-sm-10 col-md-7 col-lg-6 q-gutter-md">
               <q-input
                 :model-value="pump.name"
-                @update:model-value="setPumpAttr('name', pump.name, $event)"
+                @update:model-value="setPumpAttr('name', pump.name, $event, $event === '')"
                 :error-message="attrState.name.errorMsg"
                 :error="!!attrState.name.errorMsg"
                 :loading="attrState.name.loading"
@@ -71,22 +71,22 @@
           <c-pump-setup-stepper-hardware-pins
             v-if="pump.type === 'stepper'"
             :enable-pin="pump.enablePin"
-            @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event)"
+            @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event, $event === '')"
             :enable-pin-error-msg="attrState.enablePin.errorMsg"
             :enable-pin-loading="attrState.enablePin.loading"
             :step-pin="pump.stepPin"
-            @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event)"
+            @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event, $event === '')"
             :step-pin-error-msg="attrState.stepPin.errorMsg"
             :step-pin-loading="attrState.stepPin.loading"
           />
           <c-pump-setup-dc-hardware-pins
             v-if="pump.type === 'dc'"
             :pin="pump.pin"
-            @update:pin="setPumpAttr('pin', pump.pin, $event)"
+            @update:pin="setPumpAttr('pin', pump.pin, $event, $event === '')"
             :pin-error-msg="attrState.pin.errorMsg"
             :pin-loading="attrState.pin.loading"
             :is-power-state-high="pump.isPowerStateHigh"
-            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event)"
+            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event, $event === '')"
             :is-power-state-high-error-msg="attrState.isPowerStateHigh.errorMsg"
             :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
           />
@@ -118,20 +118,20 @@
             :acceleration="pump.acceleration"
             :acceleration-error-msg="attrState.acceleration.errorMsg"
             :acceleration-loading="attrState.acceleration.loading"
-            @update:acceleration="setPumpAttr('acceleration', pump.acceleration, $event)"
+            @update:acceleration="setPumpAttr('acceleration', pump.acceleration, $event, $event === '')"
             :steps-per-cl="pump.stepsPerCl"
             :steps-per-cl-error-msg="attrState.stepsPerCl.errorMsg"
             :steps-per-cl-loading="attrState.stepsPerCl.loading"
-            @update:steps-per-cl="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event)"
+            @update:steps-per-cl="setPumpAttr('stepsPerCl', pump.stepsPerCl, $event, $event === '')"
             :max-steps-per-second="pump.maxStepsPerSecond"
             :max-steps-per-second-error-msg="attrState.maxStepsPerSecond.errorMsg"
             :max-steps-per-second-loading="attrState.maxStepsPerSecond.loading"
-            @update:max-steps-per-second="setPumpAttr('maxStepsPerSecond', pump.maxStepsPerSecond, $event)"
+            @update:max-steps-per-second="setPumpAttr('maxStepsPerSecond', pump.maxStepsPerSecond, $event, $event === '')"
           />
           <c-pump-setup-dc-calibration
             v-if="pump.type === 'dc'"
             :time-per-cl-in-ms="pump.timePerClInMs"
-            @update:time-per-cl-in-ms="setPumpAttr('timePerClInMs', pump.timePerClInMs, $event)"
+            @update:time-per-cl-in-ms="setPumpAttr('timePerClInMs', pump.timePerClInMs, $event, $event === '')"
             :time-per-cl-in-ms-error-msg-error-msg="attrState.timePerClInMs.errorMsg"
             :time-per-cl-in-ms-loading-loading="attrState.timePerClInMs.loading"
           />
@@ -183,7 +183,7 @@
             <template v-slot:fields>
               <q-input
                 :model-value="pump.tubeCapacityInMl"
-                @update:model-value="setPumpAttr('tubeCapacityInMl', pump.tubeCapacityInMl, $event)"
+                @update:model-value="setPumpAttr('tubeCapacityInMl', pump.tubeCapacityInMl, $event, $event === '')"
                 :error-message="attrState.tubeCapacityInMl.errorMsg"
                 :error="!!attrState.tubeCapacityInMl.errorMsg"
                 :loading="attrState.tubeCapacityInMl.loading"
@@ -226,7 +226,7 @@
             <template v-slot:fields>
               <c-ingredient-selector
                 :model-value="pump.currentIngredient"
-                @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event)"
+                @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event, !$event)"
                 :error-message="attrState.currentIngredient.errorMsg"
                 :error="!!attrState.currentIngredient.errorMsg"
                 :loading="attrState.currentIngredient.loading"
@@ -251,7 +251,7 @@
             <template v-slot:fields>
               <q-input
                 :model-value="pump.fillingLevelInMl"
-                @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event)"
+                @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event, $event === '')"
                 :error-message="attrState.fillingLevelInMl.errorMsg"
                 :error="!!attrState.fillingLevelInMl.errorMsg"
                 :loading="attrState.fillingLevelInMl.loading"
@@ -502,11 +502,19 @@ export default {
           this.deleteDialog.show = false
         })
     },
-    setPumpAttr (attr, currValue, newValue) {
-      this.pump[attr] = newValue
+    setPumpAttr (attr, currValue, newValue, remove = false) {
       this.attrState[attr].loading = true
       this.attrState[attr].saved = false
-      PumpService.updatePump(this.pump.id, pumpDtoMapper.toPumpCreateDto(this.pump), false)
+      const patch = {
+        type: this.pump.type,
+        removeFields: []
+      }
+      if (remove) {
+        patch.removeFields.push(attr)
+      } else {
+        patch[attr] = newValue
+      }
+      PumpService.patchPump(this.pump.id, pumpDtoMapper.toPumpPatchDto(patch), false)
         .then(pump => {
           this.pump = Object.assign(this.pump, pump)
           this.attrState[attr].errorMsg = ''

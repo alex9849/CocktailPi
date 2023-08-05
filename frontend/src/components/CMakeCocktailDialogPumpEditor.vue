@@ -18,6 +18,21 @@
         </p>
       </q-td>
     </template>
+    <template v-slot:body-cell-state="props">
+      <q-td
+        key="state"
+        :props="props"
+        class="text-center"
+      >
+        <q-badge :color="props.row.state === 'READY' ? 'positive' : 'warning'" class="text-subtitle2">
+          <div>
+            <p>
+              {{ props.row.state === 'READY' ? 'OK' : 'Incomplete' }}
+            </p>
+          </div>
+        </q-badge>
+      </q-td>
+    </template>
     <template v-slot:body-cell-currentIngredient="props">
       <q-td
         key="currentIngredient"
@@ -25,7 +40,7 @@
       >
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
-          @update:selected="updatePumpIngredient(props.row.id, $event, props.row.type)"
+          @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, !$event)"
           :disable="getPumpState(props.row.id).occupied"
           clearable
           dense
@@ -34,7 +49,7 @@
           filter-ingredient-groups
           :bg-color="markPump(props.row)? 'green-3':undefined"
           :no-input-options="missingAutomaticIngredients"
-          :loading="loadingPumpIdsCurrentIngredient.includes(props.row.id, 0)"
+          :loading="attrState.currentIngredient.includes(props.row.id, 0)"
         >
           <template
             v-slot:afterIngredientName="{scope}"
@@ -57,9 +72,9 @@
       >
         <q-input
           :model-value="props.row.fillingLevelInMl"
-          @update:model-value="updatePumpFillingLevel(props.row.id, Number($event), props.row.type)"
+          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number($event), $event === '')"
           debounce="500"
-          :loading="loadingPumpIdsFillingLevel.includes(props.row.id, 0)"
+          :loading="attrState.fillingLevelInMl.includes(props.row.id, 0)"
           :disable="getPumpState(props.row.id).occupied"
           type="number"
           dense
@@ -137,6 +152,7 @@ export default {
     return {
       columns: [
         { name: 'id', label: 'Nr', field: 'id', align: 'left' },
+        { name: 'state', label: 'State', align: 'center' },
         { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
         { name: 'fillingLevelInMl', label: 'Remaining filling level', field: 'fillingLevelInMl', align: 'center' },
         { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
@@ -144,6 +160,10 @@ export default {
       ],
       loadingPumpIdsCurrentIngredient: [],
       loadingPumpIdsFillingLevel: [],
+      attrState: {
+        currentIngredient: [],
+        fillingLevelInMl: []
+      },
       runningStateByPumpId: new Map()
     }
   },
@@ -159,35 +179,26 @@ export default {
       }
       return this.sortedPumpLayout.find(x => {
         return !!x.currentIngredient &&
-          pump.currentIngredient.id === x.currentIngredient.id
+          pump.currentIngredient.id === x.currentIngredient.id && x.state === 'READY'
       }) === pump
     },
     isIngredientNeeded (ingredientId) {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
-    updatePumpFillingLevel (pumpId, newFillingLevel, pumpType) {
-      if ((!newFillingLevel && newFillingLevel !== 0) || newFillingLevel < 0) {
-        return
+    setPumpAttr (attr, pumpId, pumpType, newValue, remove = false) {
+      const patch = {
+        type: pumpType,
+        removeFields: []
       }
-      this.loadingPumpIdsFillingLevel.push(pumpId)
-      PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
-        fillingLevelInMl: newFillingLevel,
-        type: pumpType
-      }))
+      if (remove) {
+        patch.removeFields.push(attr)
+      } else {
+        patch[attr] = newValue
+      }
+      this.attrState[attr].push(pumpId)
+      PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto(patch), false)
         .finally(() => {
-          const array = this.loadingPumpIdsFillingLevel
-          array.splice(array.indexOf(pumpId), 1)
-        })
-    },
-    updatePumpIngredient (pumpId, newIngredient, pumpType) {
-      this.loadingPumpIdsCurrentIngredient.push(pumpId)
-      PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto({
-        currentIngredient: newIngredient,
-        type: pumpType
-      }))
-        .finally(() => {
-          const array = this.loadingPumpIdsCurrentIngredient
-          array.splice(array.indexOf(pumpId), 1)
+          this.attrState[attr].splice(this.attrState[attr].indexOf(pumpId), 1)
         })
     },
     getPumpState (id) {
@@ -234,7 +245,7 @@ export default {
   computed: {
     ...mapGetters({
       getPumpLayout: 'pumpLayout/getLayout',
-      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      getReadyPumpIngredients: 'pumpLayout/getReadyPumpIngredients',
       isAllowReversePumping: 'common/isAllowReversePumping'
     }),
     allPumpIds () {
@@ -246,7 +257,7 @@ export default {
       return sorted.sort((a, b) => a.id - b.id)
     },
     unassignedIngredients () {
-      return this.neededIngredients.filter(x => !this.getPumpIngredients.some(y => x.id === y.id))
+      return this.neededIngredients.filter(x => !this.getReadyPumpIngredients.some(y => x.id === y.id))
     },
     missingAutomaticIngredients () {
       return this.unassignedIngredients.filter(x => x.type === 'automated')

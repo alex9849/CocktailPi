@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -141,6 +138,12 @@ public class PumpDataService {
         if(patchPumpDto == null) {
             return toPatch;
         }
+        Set<String> removeFields;
+        if(patchPumpDto.getRemoveFields() != null) {
+            removeFields = patchPumpDto.getRemoveFields();
+        } else {
+            removeFields = new HashSet<>();
+        }
         if(patchPumpDto.getCurrentIngredientId() != null) {
             Ingredient ingredient = ingredientService.getIngredient(patchPumpDto.getCurrentIngredientId());
             if(ingredient == null) {
@@ -150,11 +153,17 @@ public class PumpDataService {
                 throw new IllegalArgumentException("Ingredient must be an AutomatedIngredient!");
             }
             toPatch.setCurrentIngredient((AutomatedIngredient) ingredient);
+        } else {
+            if(removeFields.contains("currentIngredient")) {
+                toPatch.setCurrentIngredient(null);
+            }
         }
-        if(patchPumpDto.getIsRemoveIngredient() != null && patchPumpDto.getIsRemoveIngredient()) {
-            toPatch.setCurrentIngredient(null);
-        }
-        BeanUtils.copyProperties(patchPumpDto, toPatch, SpringUtility.getNullPropertyNames(patchPumpDto));
+        String[] ignoreFields = SpringUtility.getNullPropertyNames(patchPumpDto);
+        ignoreFields = Arrays.stream(ignoreFields)
+                .filter(x -> !removeFields.contains(x))
+                .toArray(String[]::new);
+        BeanUtils.copyProperties(patchPumpDto, toPatch, ignoreFields);
+
         if(patchPumpDto.getIsPumpedUp() != null) {
             toPatch.setPumpedUp(patchPumpDto.getIsPumpedUp());
         }

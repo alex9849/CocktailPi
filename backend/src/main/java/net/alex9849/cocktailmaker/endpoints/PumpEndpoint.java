@@ -50,16 +50,6 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create pumpDto) {
-        Pump updatePump = pumpService.fromDto(pumpDto);
-        updatePump.setId(id);
-        pumpService.updatePump(updatePump);
-        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(updatePump));
-    }
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create patchPumpDto) {
@@ -68,8 +58,8 @@ public class PumpEndpoint {
             return ResponseEntity.notFound().build();
         }
         Pump updatePump = pumpService.fromDto(patchPumpDto, toUpdate);
-        pumpService.updatePump(updatePump);
-        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pumpService.updatePump(updatePump)));
+        updatePump = pumpService.updatePump(updatePump);
+        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(updatePump));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
