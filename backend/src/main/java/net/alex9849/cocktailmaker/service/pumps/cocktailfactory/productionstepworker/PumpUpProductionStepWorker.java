@@ -26,7 +26,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
                 pumpPhases.add(pumpPhase);
             } else if (pump instanceof StepperPump stepperPump) {
                 AcceleratingStepper acceleratingStepper = stepperPump.getMotorDriver();
-                acceleratingStepper.move(stepperPump.getTubeCapacityInMl().longValue());
+                acceleratingStepper.move((long) (stepperPump.getStepsPerCl() * (stepperPump.getTubeCapacityInMl() / 10)));
                 pumpsWithDrivers.add(stepperPump);
             } else {
                 throw new IllegalStateException("Unknown pump-type: " + pump.getClass().getName());
