@@ -14,6 +14,9 @@
         <p
           style="max-width: 150px; overflow: hidden"
         >
+          <q-icon
+            :name="getPumpIcon(props.row.type)"
+          />
           {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
         </p>
       </q-td>
@@ -138,6 +141,7 @@ import CPumpUpButton from 'components/CPumpUpButton'
 import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
 import WebsocketService from 'src/services/websocket.service'
+import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'CMakeCocktailDialogPumpEditor',
@@ -166,6 +170,10 @@ export default {
       },
       runningStateByPumpId: new Map()
     }
+  },
+  created () {
+    this.mdiPump = mdiPump
+    this.mdiProgressClock = mdiProgressClock
   },
   unmounted () {
     for (const id of this.allPumpIds) {
@@ -215,6 +223,13 @@ export default {
         occupied: !!state.runningState,
         forward: !!state.runningState?.forward,
         inPumpUp: (state.runningState) ? !state.runningState.runInfinity : false
+      }
+    },
+    getPumpIcon (type) {
+      if (type === 'stepper') {
+        return this.mdiProgressClock
+      } else {
+        return this.mdiPump
       }
     }
   },
