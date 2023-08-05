@@ -24,7 +24,7 @@
         :props="props"
         class="text-center"
       >
-        <q-badge :color="props.row.state === 'READY' ? 'positive' : 'warning'" class="text-subtitle2">
+        <q-badge :color="props.row.state === 'READY' ? 'positive' : 'negative'" class="text-subtitle2">
           <div>
             <p>
               {{ props.row.state === 'READY' ? 'OK' : 'Incomplete' }}

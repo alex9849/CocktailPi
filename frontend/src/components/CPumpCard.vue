@@ -443,8 +443,8 @@ export default {
           break
         case 'INCOMPLETE':
         case 'TESTABLE':
-          state.color = 'warning'
-          state.label = 'Incomplete Configuration'
+          state.color = 'negative'
+          state.label = 'Incomplete'
           break
       }
       if (this.pumpJobState.runningState) {

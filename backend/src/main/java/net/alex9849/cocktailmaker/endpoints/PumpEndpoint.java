@@ -4,15 +4,21 @@ import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
+import net.alex9849.cocktailmaker.model.user.ERole;
+import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,6 +27,15 @@ public class PumpEndpoint {
 
     @Autowired
     private PumpService pumpService;
+
+    private final Set<String> pumpIngEditorAllowedFields;
+
+    public PumpEndpoint() {
+        pumpIngEditorAllowedFields = new HashSet<>();
+        pumpIngEditorAllowedFields.add("isPumpedUp");
+        pumpIngEditorAllowedFields.add("currentIngredient");
+        pumpIngEditorAllowedFields.add("fillingLevelInMl");
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getAllPumps() {
@@ -56,6 +71,20 @@ public class PumpEndpoint {
         Pump toUpdate = pumpService.getPump(id);
         if(toUpdate == null) {
             return ResponseEntity.notFound().build();
+        }
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
+            PumpDto.Request.Create newPatchDto = new DcPumpDto.Request.Create();
+            newPatchDto.setIsPumpedUp(patchPumpDto.getIsPumpedUp());
+            newPatchDto.setFillingLevelInMl(patchPumpDto.getFillingLevelInMl());
+            newPatchDto.setCurrentIngredientId(patchPumpDto.getCurrentIngredientId());
+            Set<String> removeFields = patchPumpDto.getRemoveFields();
+            if(removeFields != null) {
+                newPatchDto.setRemoveFields(new HashSet<>(removeFields.stream()
+                        .filter(pumpIngEditorAllowedFields::contains)
+                        .toList()));
+            }
+            patchPumpDto = newPatchDto;
         }
         Pump updatePump = pumpService.fromDto(patchPumpDto, toUpdate);
         updatePump = pumpService.updatePump(updatePump);
