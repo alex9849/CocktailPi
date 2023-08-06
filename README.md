@@ -3,6 +3,7 @@
 **Main Project Website:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)  
 **Parts list for reproduction:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)  
 **Software setup Instructions:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install)  
+**Community & Support:** [Discord - Click me](https://discord.gg/kGy7Up4b6S)  
 
 The “Cocktail-Maker” is not only a piece of software. 
 It’s a cocktail-mixing-machine, that works with a Raspberry-Pi, 
@@ -65,3 +66,7 @@ You can find the list and an installation tutorial on my website: https://alexan
 # Installation
 
 An installation tutorial can be found here: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install
+
+# Community & Support
+
+If you have questions, want to share your setup or just want to talk about cocktail machines, feel free to join our discord server: [Click me](https://discord.gg/kGy7Up4b6S)
