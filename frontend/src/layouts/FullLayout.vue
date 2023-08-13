@@ -185,6 +185,11 @@ export default {
               to: { name: 'categorymanagement' },
               exact: false
             }, {
+              label: 'GPIO',
+              reqLevel: 3,
+              to: { name: 'gpiomanagement' },
+              exact: false
+            }, {
               label: 'Pumps',
               reqLevel: 3,
               to: { name: 'pumpmanagement' },

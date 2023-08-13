@@ -63,7 +63,7 @@
               <q-btn
                 :icon="mdiPencilOutline"
                 text-color="white"
-                :style="{backgroundColor: '#31ccec'}"
+                color="info"
                 @click="showEditDialog(props.row)"
                 dense
                 rounded

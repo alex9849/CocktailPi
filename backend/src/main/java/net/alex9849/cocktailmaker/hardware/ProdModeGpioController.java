@@ -33,4 +33,8 @@ public class ProdModeGpioController implements IGpioController {
     public synchronized void shutdown() {
         context.shutdown();
     }
+
+    /*public synchronized void test() {
+        context.getI2CProvider().create()
+    }*/
 }

@@ -91,15 +91,15 @@ const routes = [
         component: () => import('pages/IngredientManagement'),
         name: 'ingredientmanagement'
       }, {
-        path: 'admin/usermanagement',
+        path: 'admin/user',
         component: () => import('pages/UserManagement'),
         name: 'usermanagement'
       }, {
-        path: 'admin/usermanagement/create',
+        path: 'admin/user/create',
         component: () => import('pages/UserCreator'),
         name: 'usercreator'
       }, {
-        path: 'admin/usermanagement/:userId/edit',
+        path: 'admin/user/:userId/edit',
         component: () => import('pages/UserEditor'),
         name: 'usereditor'
       }, {
@@ -111,13 +111,21 @@ const routes = [
         component: () => import('pages/SetupPump'),
         name: 'editpump'
       }, {
-        path: 'admin/categorymanagement',
+        path: 'admin/category',
         component: () => import('pages/CategoryManagement'),
         name: 'categorymanagement'
       }, {
-        path: 'admin/eventmanagement',
+        path: 'admin/event',
         component: () => import('pages/EventManagement'),
         name: 'eventmanagement'
+      }, {
+        path: 'admin/gpio',
+        component: () => import('pages/GpioManagement'),
+        name: 'gpiomanagement'
+      }, {
+        path: 'admin/gpio/i2c',
+        component: () => import('pages/I2CManagement'),
+        name: 'i2cmanagement'
       }, {
         path: 'admin/system',
         component: () => import('pages/SystemManagement'),
