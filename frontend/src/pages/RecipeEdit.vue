@@ -13,14 +13,7 @@
         @invalid="isValid = false"
       >
         <template v-slot:below>
-          <div class="q-pa-md q-gutter-sm">
-            <q-btn
-              style="width: 100px"
-              color="negative"
-              label="Abort"
-              no-caps
-              :to="{name: 'recipedetails', params: {id: $route.params.id}}"
-            />
+          <div class="q-gutter-sm">
             <q-btn
               type="submit"
               style="width: 100px"
@@ -30,6 +23,13 @@
               :disable="sending || !isValid"
               :loading="sending"
               @click="updateRecipe"
+            />
+            <q-btn
+              style="width: 100px"
+              color="negative"
+              label="Abort"
+              no-caps
+              :to="{name: 'recipedetails', params: {id: $route.params.id}}"
             />
           </div>
         </template>
