@@ -127,6 +127,14 @@ const routes = [
         component: () => import('pages/I2CManagement'),
         name: 'i2cmanagement'
       }, {
+        path: 'admin/gpio/expander/new',
+        component: () => import('pages/GpioExpanderEdit'),
+        name: 'gpioexpanderadd'
+      }, {
+        path: 'admin/gpio/expander/:id/edit',
+        component: () => import('pages/GpioExpanderEdit'),
+        name: 'gpioexpandereditor'
+      }, {
         path: 'admin/system',
         component: () => import('pages/SystemManagement'),
         name: 'systemmanagement'

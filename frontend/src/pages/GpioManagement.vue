@@ -4,9 +4,12 @@
 
     <div class="row q-col-gutter-md reverse">
       <div class="col-12 col-md-4 col-lg-3">
-        <q-card class="bg-card-container">
+        <q-card class="bg-card-primary">
+          <q-card-section class="q-py-sm bg-card-secondary">
+            <p class="text-weight-medium">Status</p>
+          </q-card-section>
+          <q-separator :value="50" />
           <q-card-section class="q-py-md">
-            <p class="text-h6 text-weight-regular">Status</p>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
                 <q-card flat bordered class="bg-grey-2">
@@ -46,15 +49,6 @@
                   <q-card-section class="row q-py-sm q-col-gutter-xs">
                     <div class="col-12">
                       <p class="text-weight-medium">Bus 1</p>
-                      <p>Baudrate: <q-badge>400k</q-badge></p>
-                      <p>Pins: 1, 2</p>
-                    </div>
-                  </q-card-section>
-                  <q-separator :value="10" />
-                  <q-card-section class="row q-py-sm q-col-gutter-xs">
-                    <div class="col-12">
-                      <p class="text-weight-medium">Bus 2</p>
-                      <p>Baudrate: <q-badge>400k</q-badge></p>
                       <p>Pins: 1, 2</p>
                     </div>
                   </q-card-section>
@@ -67,10 +61,13 @@
       <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
         <div class="row">
           <div class="col-12">
-            <q-card class="bg-card-container">
+            <q-card class="bg-card-primary">
+              <q-card-section class="q-py-sm bg-card-secondary">
+                <p class="text-weight-medium">Local GPIOs:</p>
+              </q-card-section>
+              <q-separator :value="10" />
               <q-card-section class="">
                 <div class="row q-col-gutter-sm">
-                  <p class="text-weight-medium">Local GPIOs:</p>
                   <div class="col-12">
                     <c-gpio-expander-expansion-item />
                   </div>
@@ -81,23 +78,25 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <q-card class="bg-card-container">
+            <q-card class="bg-card-primary">
+              <q-card-section class="q-py-sm bg-card-secondary">
+                <div class="row items-center">
+                  <p class="col text-weight-medium">I2C GPIO Expanders:</p>
+                  <div class="col-shrink">
+                    <q-btn
+                      label="Add"
+                      color="positive"
+                      @click="$router.push({name: 'gpioexpanderadd'})"
+                      :icon="mdiPlusCircleOutline"
+                      no-caps
+
+                    />
+                  </div>
+                </div>
+              </q-card-section>
+              <q-separator :value="10" />
               <q-card-section class="">
                 <div class="row q-col-gutter-sm">
-                  <div class="col-12">
-                    <div class="row items-center">
-                      <p class="col text-weight-medium">I2C GPIO Expanders:</p>
-                      <div class="col-shrink">
-                        <q-btn
-                          label="Add"
-                          color="positive"
-                          :icon="mdiPlusCircleOutline"
-                          no-caps
-
-                        />
-                      </div>
-                    </div>
-                  </div>
                   <div class="col-12">
                     <c-gpio-expander-expansion-item />
                   </div>

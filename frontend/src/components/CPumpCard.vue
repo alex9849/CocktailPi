@@ -1,10 +1,10 @@
 <template>
   <q-card
     bordered
-    class="bg-grey-2"
+    class="bg-card-primary"
     style="display: flex; flex-direction: column"
   >
-    <q-card-section class="row items-center justify-around bg-cyan-1 q-pa-sm">
+    <q-card-section class="row items-center justify-around bg-card-secondary q-pa-sm">
       <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
           {{ pump.name ? pump.name : 'Pump #' + String(pump.id) }}</p>

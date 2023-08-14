@@ -1,7 +1,6 @@
 <template>
   <h5>Reverse pumping</h5>
-  <q-card class="q-pa-md"
-          style="background-color: #f3f3fa"
+  <q-card class="q-pa-md bg-card-primary"
   >
     <q-form class="q-col-gutter-md">
       <div class="row">
