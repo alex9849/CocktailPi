@@ -3,12 +3,10 @@ package net.alex9849.cocktailmaker.model.pump.motortasks;
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.PumpJobState;
-import net.alex9849.motorlib.Direction;
+import net.alex9849.motorlib.motor.Direction;
 
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 public abstract class PumpTask implements Runnable {
     private static long maxId;
@@ -131,15 +129,6 @@ public abstract class PumpTask implements Runnable {
         }
         return genJobMetrics();
     }
-
-   /* public void doFinalize() {
-        this.stopTime = System.currentTimeMillis();
-        pump.getMotorDriver().shutdown();
-        PumpJobState.RunningState runningState = getRunningState();
-        this.finishedJobMetrics = getJobMetrics();
-        this.finishedRunningState = runningState;
-        callback.accept(Optional.of(runningState));
-    }*/
 
     protected boolean isRunInfinity() {
         return runInfinity;

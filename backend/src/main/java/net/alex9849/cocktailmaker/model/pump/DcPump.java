@@ -3,8 +3,9 @@ package net.alex9849.cocktailmaker.model.pump;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
-import net.alex9849.motorlib.DCMotor;
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.motor.DCMotor;
+import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.PinState;
 
 import java.util.Objects;
 
@@ -50,8 +51,8 @@ public class DcPump extends Pump {
         }
         if(motorDriver == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
-            IMotorPin runPin = controller.getGpioPin(getPin());
-            IMotorPin dirPin = new IMotorPin() {
+            IOutputPin runPin = controller.getGpioPin(getPin());
+            IOutputPin dirPin = new IOutputPin() {
                 @Override
                 public void digitalWrite(PinState value) {
                     //TODO implement direction functionality
@@ -62,7 +63,7 @@ public class DcPump extends Pump {
                     return false;
                 }
             };
-            motorDriver = new DCMotor(runPin, dirPin, isPowerStateHigh()? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
+            motorDriver = new DCMotor(runPin, dirPin, isPowerStateHigh()? PinState.HIGH : PinState.LOW);
         }
         return motorDriver;
     }

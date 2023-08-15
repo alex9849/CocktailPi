@@ -1,10 +1,10 @@
 package net.alex9849.cocktailmaker.hardware;
 
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.pin.IOutputPin;
 
 public interface IGpioController {
 
-    IMotorPin getGpioPin(int bcmPinNr);
+    IOutputPin getGpioPin(int bcmPinNr);
 
     void shutdown();
 

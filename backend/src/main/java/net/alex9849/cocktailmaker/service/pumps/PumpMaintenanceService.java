@@ -8,8 +8,9 @@ import net.alex9849.cocktailmaker.model.pump.motortasks.StepperMotorTask;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.WebSocketService;
-import net.alex9849.motorlib.Direction;
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.motor.Direction;
+import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.PinState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 
 @Service
 @Transactional
@@ -51,13 +51,13 @@ public class PumpMaintenanceService {
     private final Map<Long, PumpTask> pumpTasksByJobId = new HashMap<>();
     private Map<Long, PumpJobState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
-    private IMotorPin directionPin;
+    private IOutputPin directionPin;
 
     public synchronized void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
         if(reversePumpSettings.isEnable()) {
             directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
-            directionPin.digitalWrite(direction == Direction.FORWARD ? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
+            directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
         this.reschedulePumpBack();
 
@@ -139,12 +139,12 @@ public class PumpMaintenanceService {
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                 overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
             }
-            this.directionPin.digitalWrite(IMotorPin.PinState.LOW);
+            this.directionPin.digitalWrite(PinState.LOW);
             final Runnable oldCallback = callback;
             callback = () -> {
                 synchronized (this) {
                     if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
-                        this.directionPin.digitalWrite(IMotorPin.PinState.HIGH);
+                        this.directionPin.digitalWrite(PinState.HIGH);
                     }
                     oldCallback.run();
                 }
@@ -286,7 +286,7 @@ public class PumpMaintenanceService {
         this.reversePumpSettings = settings;
         if(reversePumpSettings.isEnable()) {
             directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
-            directionPin.digitalWrite(direction == Direction.FORWARD ? IMotorPin.PinState.HIGH : IMotorPin.PinState.LOW);
+            directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
 
         reschedulePumpBack();

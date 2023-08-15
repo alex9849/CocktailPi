@@ -4,7 +4,6 @@ import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
-import net.alex9849.motorlib.AcceleratingStepper;
 
 import java.util.HashMap;
 import java.util.HashSet;

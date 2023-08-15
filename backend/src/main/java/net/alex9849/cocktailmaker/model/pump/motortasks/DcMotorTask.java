@@ -3,11 +3,8 @@ package net.alex9849.cocktailmaker.model.pump.motortasks;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.PumpJobState;
-import net.alex9849.motorlib.DCMotor;
-import net.alex9849.motorlib.Direction;
-
-import java.util.Optional;
-import java.util.function.Consumer;
+import net.alex9849.motorlib.motor.DCMotor;
+import net.alex9849.motorlib.motor.Direction;
 
 public class DcMotorTask extends PumpTask {
     DcPump dcPump;

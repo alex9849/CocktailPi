@@ -3,11 +3,8 @@ package net.alex9849.cocktailmaker.model.pump.motortasks;
 import net.alex9849.cocktailmaker.model.pump.JobMetrics;
 import net.alex9849.cocktailmaker.model.pump.PumpJobState;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
-import net.alex9849.motorlib.AcceleratingStepper;
-import net.alex9849.motorlib.Direction;
-
-import java.util.Optional;
-import java.util.function.Consumer;
+import net.alex9849.motorlib.motor.AcceleratingStepper;
+import net.alex9849.motorlib.motor.Direction;
 
 public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;

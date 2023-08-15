@@ -1,9 +1,10 @@
 package net.alex9849.cocktailmaker.hardware;
 
 import com.pi4j.io.gpio.digital.DigitalOutput;
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.PinState;
 
-public class ProdModeGpioPin implements IMotorPin {
+public class ProdModeGpioPin implements IOutputPin {
     private DigitalOutput pin;
 
     ProdModeGpioPin(DigitalOutput pin) {

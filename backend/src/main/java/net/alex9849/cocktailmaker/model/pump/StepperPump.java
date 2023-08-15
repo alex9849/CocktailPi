@@ -3,10 +3,11 @@ package net.alex9849.cocktailmaker.model.pump;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.hardware.IGpioController;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
-import net.alex9849.motorlib.AcceleratingStepper;
-import net.alex9849.motorlib.IMotorPin;
-import net.alex9849.motorlib.IStepperMotor;
 import net.alex9849.motorlib.StepperDriver;
+import net.alex9849.motorlib.motor.AcceleratingStepper;
+import net.alex9849.motorlib.motor.IStepperMotor;
+import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.PinState;
 
 @DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
@@ -75,9 +76,9 @@ public class StepperPump extends Pump {
         }
         if(this.stepperDriver == null) {
             IGpioController controller = SpringUtility.getBean(IGpioController.class);
-            IMotorPin enablePin = controller.getGpioPin(getEnablePin());
-            IMotorPin stepPin = controller.getGpioPin(getStepPin());
-            IMotorPin dirPin = new IMotorPin() {
+            IOutputPin enablePin = controller.getGpioPin(getEnablePin());
+            IOutputPin stepPin = controller.getGpioPin(getStepPin());
+            IOutputPin dirPin = new IOutputPin() {
                 @Override
                 public void digitalWrite(PinState value) {
                     //TODO implement direction functionality

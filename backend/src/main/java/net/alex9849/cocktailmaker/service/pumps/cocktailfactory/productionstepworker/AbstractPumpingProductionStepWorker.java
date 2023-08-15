@@ -3,8 +3,8 @@ package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepw
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
-import net.alex9849.motorlib.AcceleratingStepper;
-import net.alex9849.motorlib.MultiStepper;
+import net.alex9849.motorlib.motor.AcceleratingStepper;
+import net.alex9849.motorlib.motor.MultiStepper;
 
 import java.util.*;
 import java.util.concurrent.*;

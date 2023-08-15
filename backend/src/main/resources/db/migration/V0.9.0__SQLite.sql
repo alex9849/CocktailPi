@@ -149,6 +149,22 @@ CREATE TABLE options
     value TEXT not null
 );
 
+CREATE TABLE gpio_boards
+(
+    id          INTEGER not null,
+    name        text    not null,
+    dType       text    not null,
+    subType     text    not null,
+    i2c_address INTEGER not null
+);
+
+CREATE TABLE gpio_pins
+(
+    id     INTEGER not null PRIMARY KEY,
+    pin_nr INTEGER not null,
+    board  INTEGER not null REFERENCES gpio_boards ON DELETE CASCADE,
+    UNIQUE (pin_nr, board)
+);
 
 CREATE VIEW all_ingredient_dependencies AS
 WITH RECURSIVE list_dependencies(child, current, parent)

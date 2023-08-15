@@ -1,8 +1,9 @@
 package net.alex9849.cocktailmaker.hardware;
 
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.PinState;
 
-public class DemoModeGpioPin implements IMotorPin {
+public class DemoModeGpioPin implements IOutputPin {
     private int bcmPinNr;
     private boolean isHigh;
 

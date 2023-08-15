@@ -5,7 +5,7 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfigBuilder;
 import com.pi4j.io.gpio.digital.DigitalState;
-import net.alex9849.motorlib.IMotorPin;
+import net.alex9849.motorlib.pin.IOutputPin;
 
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ public class ProdModeGpioController implements IGpioController {
     public Context context = Pi4J.newAutoContext();
 
     @Override
-    public synchronized IMotorPin getGpioPin(int bcmPinNr) {
+    public synchronized IOutputPin getGpioPin(int bcmPinNr) {
         if(!pinMap.containsKey(bcmPinNr)) {
             DigitalOutputConfigBuilder config = DigitalOutput
                     .newConfigBuilder(context)
