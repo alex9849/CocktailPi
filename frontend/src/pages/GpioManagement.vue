@@ -92,7 +92,7 @@
                       @click="$router.push({name: 'gpioexpanderadd'})"
                       :icon="mdiPlusCircleOutline"
                       no-caps
-
+                      disable
                     />
                   </div>
                 </div>
@@ -100,6 +100,36 @@
               <q-separator :value="10" />
               <q-card-section class="">
                 <div class="row q-col-gutter-sm">
+                  <div class="col-12">
+                    <q-card
+                      flat
+                      bordered
+                    >
+                      <q-card-section>
+                        <p>
+                          <q-icon
+                            :name="mdiAlert"
+                            size="sm"
+                          /> I2C disabled!
+                        </p>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                  <div class="col-12">
+                    <q-card
+                      flat
+                      bordered
+                    >
+                      <q-card-section>
+                        <p>
+                          <q-icon
+                            :name="mdiAlert"
+                            size="sm"
+                          /> No expanders found!
+                        </p>
+                      </q-card-section>
+                    </q-card>
+                  </div>
                   <div class="col-12">
                     <c-gpio-expander-expansion-item />
                   </div>
@@ -118,7 +148,7 @@
 </template>
 
 <script>
-import { mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import { mdiAlert, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CGpioExpanderExpansionItem from 'components/gpiosetup/CGpioExpanderExpansionItem.vue'
 export default {
   name: 'GpioManagement',
@@ -126,6 +156,7 @@ export default {
   },
   components: { CGpioExpanderExpansionItem },
   created () {
+    this.mdiAlert = mdiAlert
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlusCircleOutline = mdiPlusCircleOutline

@@ -15,7 +15,7 @@
               Expander 1
             </q-item-label>
             <q-item-label caption>
-              Address: 0x27, Usage 5/16
+              Address: 0x27, Board: MCP23017, Usage 5/16
             </q-item-label>
           </q-item-section>
           <q-item-section
