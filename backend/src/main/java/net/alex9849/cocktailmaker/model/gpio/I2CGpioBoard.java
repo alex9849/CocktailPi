@@ -1,8 +1,9 @@
 package net.alex9849.cocktailmaker.model.gpio;
 
 
-import com.pi4j.Pi4J;
 import jakarta.persistence.DiscriminatorValue;
+import net.alex9849.cocktailmaker.utils.PinUtils;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.mcp230xx.Mcp23017;
 import net.alex9849.motorlib.pin.IOutputPin;
 
@@ -33,10 +34,10 @@ public class I2CGpioBoard extends GpioBoard {
             throw new IllegalArgumentException("Pin out of range! Requested pin: " + pin + ", Pin range: " + subType.minPin + " - " + subType.maxPin);
         }
         if(boardDriver == null) {
-            //boardDriver = new Mcp23017();
+            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+            boardDriver = new Mcp23017(pinUtils.getI2c(getI2cAddress()));
         }
-        //return boardDriver.getOutputPin()
-        return null;
+        return boardDriver.getOutputPin((byte) pin);
     }
 
     public enum SubType {

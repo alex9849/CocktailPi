@@ -31,7 +31,7 @@ public class WebSocketEventListener {
     private CocktailOrderService cocktailOrderService;
 
     @EventListener
-    public void handleWebSocketConnectListener(SessionSubscribeEvent event) {
+    public synchronized void handleWebSocketConnectListener(SessionSubscribeEvent event) {
         final String simpDestination = (String) event.getMessage().getHeaders().get("simpDestination");
         if(simpDestination == null) {
             return;
