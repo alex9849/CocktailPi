@@ -61,6 +61,8 @@
                   type="number"
                   label="SCL BCM-Pin"
                 />
+                <c-gpio-selector />
+                <c-gpio-selector />
               </template>
             </c-assistant-container>
           </q-card>
@@ -92,10 +94,11 @@
 import CAssistantContainer from 'components/CAssistantContainer.vue'
 import { required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import CGpioSelector from 'components/CGpioSelector.vue'
 
 export default {
   name: 'I2CManagement',
-  components: { CAssistantContainer },
+  components: { CGpioSelector, CAssistantContainer },
   data: () => {
     return {
       config: {
