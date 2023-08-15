@@ -18,7 +18,7 @@ public class PinUtils {
     private Context pi4J;
     private final Map<Integer, IOutputPin> outputPinMap = new HashMap<>();
 
-    public IOutputPin getBoardOutputPin(int address) {
+    public synchronized IOutputPin getBoardOutputPin(int address) {
         if(!outputPinMap.containsKey(address)) {
             DigitalOutputProvider provider = pi4J.dout();
             DigitalOutputConfig runCfg = DigitalOutput.newConfigBuilder(pi4J).address(address).build();
