@@ -1,8 +1,10 @@
 package net.alex9849.cocktailmaker.config;
 
-import net.alex9849.cocktailmaker.hardware.DemoModeGpioController;
-import net.alex9849.cocktailmaker.hardware.IGpioController;
-import net.alex9849.cocktailmaker.hardware.ProdModeGpioController;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.context.ContextBuilder;
+import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
+import com.pi4j.plugin.mock.platform.MockPlatform;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +16,20 @@ public class Config {
     @Value("${alex9849.app.isRaspberryPi}")
     private boolean isRaspberryPi;
 
-    private IGpioController gpioController;
+    private Context gpioController;
 
     @Bean(destroyMethod = "shutdown")
-    public IGpioController getGpioController() {
+    public Context getGpioController() {
         if(gpioController == null) {
+            ContextBuilder ctxBuilder = Pi4J.newContextBuilder();
             if(isRaspberryPi) {
-                gpioController = new ProdModeGpioController();
+                ctxBuilder.add(LinuxFsI2CProvider.newInstance());
+                ctxBuilder.autoDetect();
             } else {
-                gpioController = new DemoModeGpioController();
+                ctxBuilder.add(new MockPlatform());
+                ctxBuilder.autoDetectProviders();
             }
+            gpioController = ctxBuilder.build();
         }
         return gpioController;
     }

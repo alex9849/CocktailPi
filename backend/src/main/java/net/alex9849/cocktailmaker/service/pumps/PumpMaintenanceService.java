@@ -1,6 +1,9 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
-import net.alex9849.cocktailmaker.hardware.IGpioController;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputConfig;
+import com.pi4j.io.gpio.digital.DigitalOutputProvider;
 import net.alex9849.cocktailmaker.model.pump.*;
 import net.alex9849.cocktailmaker.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailmaker.model.pump.motortasks.PumpTask;
@@ -8,8 +11,10 @@ import net.alex9849.cocktailmaker.model.pump.motortasks.StepperMotorTask;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.WebSocketService;
+import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +41,7 @@ public class PumpMaintenanceService {
     private WebSocketService webSocketService;
 
     @Autowired
-    private IGpioController gpioController;
+    private PinUtils pinUtils;
 
     @Autowired
     private OptionsRepository optionsRepository;
@@ -56,7 +61,7 @@ public class PumpMaintenanceService {
     public synchronized void postConstruct() {
         this.reversePumpSettings = this.getReversePumpingSettings();
         if(reversePumpSettings.isEnable()) {
-            directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
+            directionPin = pinUtils.getBoardOutputPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
             directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
         this.reschedulePumpBack();
@@ -285,7 +290,7 @@ public class PumpMaintenanceService {
         }
         this.reversePumpSettings = settings;
         if(reversePumpSettings.isEnable()) {
-            directionPin = gpioController.getGpioPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
+            directionPin = pinUtils.getBoardOutputPin(reversePumpSettings.getSettings().getDirectorPin().getBcmPin());
             directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
 
