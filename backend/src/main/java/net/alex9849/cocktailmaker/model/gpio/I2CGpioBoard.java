@@ -29,15 +29,29 @@ public class I2CGpioBoard extends GpioBoard {
         return subType;
     }
 
-    public IOutputPin providePin(int pin) {
-        if(pin < subType.minPin || pin > getSubType().maxPin) {
-            throw new IllegalArgumentException("Pin out of range! Requested pin: " + pin + ", Pin range: " + subType.minPin + " - " + subType.maxPin);
-        }
+    public Mcp23017 getBoardDriver() {
         if(boardDriver == null) {
             PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
             boardDriver = new Mcp23017(pinUtils.getI2c(getI2cAddress()));
         }
-        return boardDriver.getOutputPin((byte) pin);
+        return boardDriver;
+    }
+
+    @Override
+    protected GpioBoard.Pin getPinUnchecked(int pin) {
+        Pin oPin = new Pin();
+        oPin.setNr(pin);
+        return oPin;
+    }
+
+    @Override
+    public int getMinPin() {
+        return subType.minPin;
+    }
+
+    @Override
+    public int getMaxPin() {
+        return subType.maxPin;
     }
 
     public enum SubType {
@@ -49,6 +63,19 @@ public class I2CGpioBoard extends GpioBoard {
         SubType(int minPin, int maxPin) {
             this.minPin = minPin;
             this.maxPin = maxPin;
+        }
+    }
+
+    public class Pin extends GpioBoard.Pin {
+
+        @Override
+        public IOutputPin getOutputPin() {
+            return I2CGpioBoard.this.getBoardDriver().getOutputPin((byte) this.getPinNr());
+        }
+
+        @Override
+        public I2CGpioBoard getGpioBoard() {
+            return I2CGpioBoard.this;
         }
     }
 

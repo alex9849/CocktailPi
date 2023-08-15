@@ -160,10 +160,9 @@ CREATE TABLE gpio_boards
 
 CREATE TABLE gpio_pins
 (
-    id     INTEGER not null PRIMARY KEY,
     pin_nr INTEGER not null,
     board  INTEGER not null REFERENCES gpio_boards ON DELETE CASCADE,
-    UNIQUE (pin_nr, board)
+    PRIMARY KEY (pin_nr, board)
 );
 
 CREATE VIEW all_ingredient_dependencies AS
