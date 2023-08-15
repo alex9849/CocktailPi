@@ -30,7 +30,7 @@
           <q-card
             flat
             bordered
-            class="bg-card-primary"
+            class="q-pa-md"
           >
             <c-assistant-container>
               <template v-slot:explanations>
@@ -50,7 +50,6 @@
                   outlined
                   hide-bottom-space
                   type="number"
-                  filled
                   label="SDA BCM-Pin"
                 />
                 <q-input
@@ -60,7 +59,6 @@
                   outlined
                   hide-bottom-space
                   type="number"
-                  filled
                   label="SCL BCM-Pin"
                 />
               </template>

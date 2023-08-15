@@ -1,7 +1,7 @@
 <template>
   <div class="row justify-center items-center reverse q-col-gutter-md">
     <div class="col-12 col-lg-6">
-      <div class="q-pa-md">
+      <div class="">
         <slot name="explanations" />
       </div>
     </div>

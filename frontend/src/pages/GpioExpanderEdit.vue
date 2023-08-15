@@ -4,48 +4,156 @@
     <q-card
       flat
       bordered
+      class="q-pa-md bg-card-primary"
     >
-      <q-card-section>
-        <q-input
-          name="Board Identifier"
-        />
-        <q-separator :value="10" />
-        <q-input
-          name="Select board"
-        />
-        <q-separator :value="10" />
-        <q-table
-          title="I2C Address"
-          :columns="columns"
-          :rows="[{0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14, 15: 15}]"
-          hide-bottom
-        >
-          <template v-slot:body-cell="props">
-            <q-td
-              :props="props"
-            >
-              <q-radio
-                disable
-                v-model:model-value="expander.address"
-                :label="props.rowIndex * 16 + props.col.field"
-                :val="props.rowIndex * 16 + props.col.field"
-              />
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
+      <q-form
+        class="q-col-gutter-md"
+      >
+        <div class="col-12">
+          <q-card
+            flat
+            bordered
+            class="q-pa-md"
+          >
+            <c-assistant-container>
+              <template v-slot:fields>
+                <q-input
+                  label="Board Identifier"
+                  outlined
+                  hide-bottom-space
+                />
+                <q-input
+                  label="Select board"
+                  outlined
+                  hide-bottom-space
+                />
+              </template>
+            </c-assistant-container>
+          </q-card>
+        </div>
+        <div class="col-12">
+          <q-card
+            flat
+            bordered
+            class="q-pa-md"
+          >
+            <c-assistant-container>
+              <template v-slot:fields>
+                <q-card bordered flat>
+                  <q-card-section class="q-gutter-sm">
+                    <div
+                      class="row justify-end items-center"
+                    >
+                      <div class="col-grow">
+                        <p class="text-weight-medium text-body1">Connected I2C Devices / Address</p>
+                      </div>
+                      <div class="col-shrink">
+                        <q-btn
+                          class="bg-info text-white"
+                          :icon="mdiSync"
+                          dense
+                          no-caps
+                          label="Re-Check"
+                        />
+                      </div>
+                    </div>
+                    <q-card flat bordered class="bg-grey-1">
+                      <q-card-section class="q-gutter-md">
+                        <div class="row justify-center">
+                            <q-spinner class="col" size="xl" />
+                        </div>
+                        <div class="row justify-center">
+                          Probing addresses...
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                    <q-list
+                      bordered
+                      separator
+                      class="rounded-borders"
+                    >
+                      <q-item
+                        v-for="i in 5"
+                        :key="i"
+                        clickable
+                        v-ripple
+                        disable
+                      >
+                        <q-item-section avatar>
+                          <q-radio
+                            v-model:model-value="expander.address"
+                            :val="i"
+                            label="0x27"
+                            dense
+                            disable
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label caption>
+                            In use by dummy
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                    <q-card
+                      flat
+                      bordered
+                      class="bg-grey-1"
+                    >
+                      <q-card-section
+                        class="flex justify-center items-center"
+                      >
+                        <p>
+                          <q-icon
+                            size="md"
+                            :name="mdiAlert"
+                          />
+                          No devices connected to I2C-bus!
+                        </p>
+                      </q-card-section>
+                    </q-card>
+                  </q-card-section>
+                </q-card>
+              </template>
+            </c-assistant-container>
+          </q-card>
+        </div>
+        <div class="col">
+          <q-card-actions class="q-pa-none">
+            <q-btn
+              style="width: 100px"
+              color="positive"
+              label="Save"
+              @click="$router.push({name: 'gpiomanagement'})"
+            />
+            <q-btn
+              style="width: 100px"
+              color="negative"
+              label="Abort"
+              @click="$router.push({name: 'gpiomanagement'})"
+            />
+          </q-card-actions>
+        </div>
+      </q-form>
     </q-card>
   </q-page>
 </template>
 
 <script>
 
+import CAssistantContainer from 'components/CAssistantContainer.vue'
+import { mdiAlert, mdiSync } from '@quasar/extras/mdi-v5'
+
 export default {
   name: 'GpioExpanderEdit',
+  created () {
+    this.mdiAlert = mdiAlert
+    this.mdiSync = mdiSync
+  },
+  components: { CAssistantContainer },
   data: () => {
     return {
-      i2cDetector: {
-      },
+      i2cDetector: {},
       expander: {
         address: ''
       }
