@@ -1,9 +1,5 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
-import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalOutputProvider;
 import net.alex9849.cocktailmaker.model.pump.*;
 import net.alex9849.cocktailmaker.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailmaker.model.pump.motortasks.PumpTask;
@@ -14,7 +10,6 @@ import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.pin.IOutputPin;
-import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

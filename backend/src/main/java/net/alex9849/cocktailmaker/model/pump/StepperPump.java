@@ -1,9 +1,5 @@
 package net.alex9849.cocktailmaker.model.pump;
 
-import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalOutputProvider;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
@@ -11,7 +7,6 @@ import net.alex9849.motorlib.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.IStepperMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
-import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
 @DiscriminatorValue("stepper")
