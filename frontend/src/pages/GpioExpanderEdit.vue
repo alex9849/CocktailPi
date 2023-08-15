@@ -23,6 +23,7 @@
                   hide-bottom-space
                 />
                 <q-input
+                  :disable="!isNew"
                   label="Select board"
                   outlined
                   hide-bottom-space
@@ -53,6 +54,7 @@
                           :icon="mdiSync"
                           dense
                           no-caps
+                          disable
                           label="Re-Check"
                         />
                       </div>
@@ -76,7 +78,7 @@
                         v-for="i in 5"
                         :key="i"
                         clickable
-                        v-ripple
+                        :v-ripple="false"
                         disable
                       >
                         <q-item-section avatar>

@@ -69,7 +69,10 @@
               <q-card-section class="">
                 <div class="row q-col-gutter-sm">
                   <div class="col-12">
-                    <c-gpio-expander-expansion-item />
+                    <c-gpio-expander-expansion-item
+                      non-editable
+                      pin-prefix="BCM "
+                    />
                   </div>
                 </div>
               </q-card-section>

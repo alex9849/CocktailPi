@@ -15,10 +15,13 @@
               Expander 1
             </q-item-label>
             <q-item-label caption>
-              I2C-bus: 1, Address: 0x27
+              Address: 0x27, Usage 5/16
             </q-item-label>
           </q-item-section>
-          <q-item-section side>
+          <q-item-section
+            side
+            v-if="!nonEditable"
+          >
             <div class="row justify-end q-col-gutter-sm">
               <div>
                 <q-btn
@@ -53,7 +56,7 @@
                 <q-item-section>
                   <div class="row items-center q-col-gutter-md">
                     <div class="col-auto">
-                      BCM {{ idx }}
+                      {{ pinPrefix }}{{ idx }}
                     </div>
                     <div class="col">
                       <q-icon
@@ -77,6 +80,16 @@
 import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 export default {
   name: 'CGpioExpanderExpansionItem',
+  props: {
+    nonEditable: {
+      type: Boolean,
+      default: false
+    },
+    pinPrefix: {
+      type: String,
+      default: () => 'GPIO '
+    }
+  },
   created () {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
