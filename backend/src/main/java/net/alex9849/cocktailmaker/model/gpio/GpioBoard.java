@@ -1,6 +1,10 @@
 package net.alex9849.cocktailmaker.model.gpio;
 
+import net.alex9849.cocktailmaker.repository.GpioRepository;
+import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.pin.IOutputPin;
+
+import java.util.Optional;
 
 public abstract class GpioBoard {
     private long id;
@@ -35,23 +39,27 @@ public abstract class GpioBoard {
     protected abstract Pin getPinUnchecked(int pin);
 
     public abstract class Pin {
-        private int nr;
+        private final int nr;
         private PinResource resource;
+        private boolean resourceValid;
+
+        public Pin(int nr) {
+            this.nr = nr;
+            this.resourceValid = false;
+        }
 
         public int getPinNr() {
             return nr;
         }
 
-        public void setNr(int nr) {
-            this.nr = nr;
-        }
-
         public PinResource getResource() {
+            if(!resourceValid) {
+                GpioRepository repo = SpringUtility.getBean(GpioRepository.class);
+                Optional<PinResource> oResource = repo.getPinResourceByBoardIdAndPin(getBoardId(), getPinNr());
+                resource = oResource.orElse(null);
+                resourceValid = true;
+            }
             return resource;
-        }
-
-        public void setResource(PinResource resource) {
-            this.resource = resource;
         }
 
         public abstract IOutputPin getOutputPin();

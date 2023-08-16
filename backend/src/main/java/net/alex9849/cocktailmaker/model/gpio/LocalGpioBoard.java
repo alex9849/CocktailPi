@@ -19,13 +19,16 @@ public class LocalGpioBoard extends GpioBoard {
 
     @Override
     protected GpioBoard.Pin getPinUnchecked(int pin) {
-        Pin oPin = new Pin();
-        oPin.setNr(pin);
+        Pin oPin = new Pin(pin);
         return oPin;
     }
 
 
     public class Pin extends GpioBoard.Pin {
+
+        public Pin(int nr) {
+            super(nr);
+        }
 
         @Override
         public IOutputPin getOutputPin() {

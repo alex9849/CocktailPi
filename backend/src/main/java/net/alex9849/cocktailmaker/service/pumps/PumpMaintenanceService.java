@@ -26,6 +26,7 @@ import java.util.concurrent.*;
 @Transactional
 @EnableScheduling
 public class PumpMaintenanceService {
+    public static final String REPO_KEY_PUMP_DIRECTION_PIN = "RPS_Direction_Pin";
     @Autowired
     private PumpDataService pumpDataService;
 
@@ -269,21 +270,21 @@ public class PumpMaintenanceService {
             throw new IllegalStateException("Pumps occupied!");
         }
 
-        optionsRepository.setOption("RPSEnable", Boolean.valueOf(settings.isEnable()).toString());
+        optionsRepository.setOption("RPS_Enable", Boolean.valueOf(settings.isEnable()).toString());
         if (settings.isEnable()) {
             ReversePumpingSettings.Details details = settings.getSettings();
-            optionsRepository.setOption("RPSOvershoot", Integer.valueOf(details.getOvershoot()).toString());
-            optionsRepository.setOption("RPSAutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
+            optionsRepository.setOption("RPS_Overshoot", Integer.valueOf(details.getOvershoot()).toString());
+            optionsRepository.setOption("RPS_AutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
             ReversePumpingSettings.VoltageDirectorPin vdPin = details.getDirectorPin();
             if (pumpDataService.findByBcmPin(vdPin.getBcmPin()).isPresent()) {
                 throw new IllegalArgumentException("BCM-Pin is already used by a pump!");
             }
-            optionsRepository.setOption("RPSVDPinBcm", Integer.valueOf(vdPin.getBcmPin()).toString());
+            optionsRepository.setOption(REPO_KEY_PUMP_DIRECTION_PIN, Integer.valueOf(vdPin.getBcmPin()).toString());
 
         } else {
-            optionsRepository.delOption("RPSOvershoot", false);
-            optionsRepository.delOption("RPSAutoPumpBackTimer", false);
-            optionsRepository.delOption("RPSVDPinBcm", false);
+            optionsRepository.delOption("RPS_Overshoot", false);
+            optionsRepository.delOption("RPS_AutoPumpBackTimer", false);
+            optionsRepository.delOption(REPO_KEY_PUMP_DIRECTION_PIN, false);
             //Pump.setGlobalDirectionPin(null);
         }
         this.reversePumpSettings = settings;
@@ -297,15 +298,15 @@ public class PumpMaintenanceService {
 
     public synchronized ReversePumpingSettings.Full getReversePumpingSettings() {
         ReversePumpingSettings.Full settings = new ReversePumpingSettings.Full();
-        settings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPSEnable")));
+        settings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPS_Enable")));
         if (settings.isEnable()) {
             ReversePumpingSettings.VoltageDirectorPin vdPin = new ReversePumpingSettings.VoltageDirectorPin();
-            vdPin.setBcmPin(Integer.parseInt(optionsRepository.getOption("RPSVDPinBcm")));
+            vdPin.setBcmPin(Integer.parseInt(optionsRepository.getOption(REPO_KEY_PUMP_DIRECTION_PIN)));
 
             ReversePumpingSettings.Details details = new ReversePumpingSettings.Details();
             details.setDirectorPin(vdPin);
-            details.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPSOvershoot")));
-            details.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPSAutoPumpBackTimer")));
+            details.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPS_Overshoot")));
+            details.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPS_AutoPumpBackTimer")));
             settings.setSettings(details);
         }
         return settings;

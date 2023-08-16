@@ -6,6 +6,9 @@ import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.service.GpioService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -13,9 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Component
@@ -56,19 +57,63 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
-    /*public List<GpioBoard.Pin> getBoardsByBoardId(long boardId) {
-        return getJdbcTemplate().execute((ConnectionCallback<List<GpioBoard.Pin>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM gpio_pins where lower(dType) = lower(?)");
-            pstmt.setString(1, dType);
+    String s = "SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
+            "FROM gpio_pins pi\n" +
+            "         LEFT JOIN pumps p ON p.dc_pin = pi.pin_nr OR p.enable_pin = pi.pin_nr OR p.step_pin = pi.pin_nr\n" +
+            "         left join options o on pi.pin_nr = o.pin_board and pi.board = o.pin_board\n" +
+            "WHERE pi.board = 1";
+
+    public Optional<PinResource> getPinResourceByBoardIdAndPin(long boardId, int pinNr) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<PinResource>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
+                    "FROM gpio_pins pi\n" +
+                    "         LEFT JOIN pumps p ON p.dc_pin = pi.pin_nr OR p.enable_pin = pi.pin_nr OR p.step_pin = pi.pin_nr\n" +
+                    "         LEFT JOIN options o ON pi.pin_nr = o.pin_board AND pi.board = o.pin_board\n" +
+                    "WHERE pi.board = ? AND pi.pin_nr = ?");
+            pstmt.setLong(1, boardId);
+            pstmt.setInt(2, pinNr);
 
             ResultSet rs = pstmt.executeQuery();
-            List<GpioBoard> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(parseRs(rs));
+            if (rs.next()) {
+                return Optional.ofNullable(parsePinResource(rs));
             }
-            return result;
+            return Optional.empty();
         });
-    }*/
+    }
+
+    private PinResource parsePinResource(ResultSet rs) throws SQLException {
+        PinResource pr = null;
+        if(rs.getObject("pump_id") != null) {
+            pr = new PinResource();
+            pr.setId((long) rs.getObject("pump_id"));
+            pr.setType(PinResource.Type.PUMP);
+            String pump_name = (String) rs.getObject("pump_name");
+            if(pump_name == null) {
+                pump_name = "Pump " + pr.getId();
+            }
+            pr.setName(pump_name);
+
+        } else if (rs.getObject("o_key") != null) {
+            pr = new PinResource();
+            switch ("o_key") {
+                case PumpMaintenanceService.REPO_KEY_PUMP_DIRECTION_PIN:
+                    pr.setType(PinResource.Type.PUMP_DIRECTION);
+                    pr.setName("Pump direction");
+                    break;
+                case GpioService.REPO_KEY_I2C_PIN_SDA:
+                    pr.setType(PinResource.Type.I2C);
+                    pr.setName("I2C SDA");
+                    break;
+                case GpioService.REPO_KEY_I2C_PIN_SCL:
+                    pr.setType(PinResource.Type.I2C);
+                    pr.setName("I2C SCL");
+                    break;
+                default:
+                    pr = null;
+            }
+        }
+        return pr;
+    }
 
     public GpioBoard createBoard(GpioBoard gpioBoard) {
         return getJdbcTemplate().execute((ConnectionCallback<GpioBoard>) con -> {
