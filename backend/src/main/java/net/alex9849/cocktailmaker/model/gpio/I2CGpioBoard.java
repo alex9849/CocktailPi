@@ -7,11 +7,14 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.mcp230xx.Mcp23017;
 import net.alex9849.motorlib.pin.IOutputPin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @DiscriminatorValue("i2c")
 public class I2CGpioBoard extends GpioBoard {
+    private static final Map<Byte, Mcp23017> boardMap = new HashMap<>();
     private final SubType subType;
     private byte i2cAddress;
-    private Mcp23017 boardDriver;
 
     public I2CGpioBoard(SubType subType) {
         this.subType = subType;
@@ -30,11 +33,11 @@ public class I2CGpioBoard extends GpioBoard {
     }
 
     public Mcp23017 getBoardDriver() {
-        if(boardDriver == null) {
+        if(!boardMap.containsKey(getI2cAddress())) {
             PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-            boardDriver = new Mcp23017(pinUtils.getI2c(getI2cAddress()));
+            boardMap.put(getI2cAddress(), new Mcp23017(pinUtils.getI2c(getI2cAddress())));
         }
-        return boardDriver;
+        return boardMap.get(getI2cAddress());
     }
 
     @Override
@@ -77,6 +80,7 @@ public class I2CGpioBoard extends GpioBoard {
         public I2CGpioBoard getGpioBoard() {
             return I2CGpioBoard.this;
         }
+
     }
 
 }

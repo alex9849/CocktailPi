@@ -43,6 +43,20 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
+    public List<GpioBoard> getBoardsByDType(String dType) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<GpioBoard>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM gpio_boards where lower(dType) = lower(?)");
+            pstmt.setString(1, dType);
+
+            ResultSet rs = pstmt.executeQuery();
+            List<GpioBoard> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(parseRs(rs));
+            }
+            return result;
+        });
+    }
+
     public GpioBoard createBoard(GpioBoard gpioBoard) {
         return getJdbcTemplate().execute((ConnectionCallback<GpioBoard>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_boards (name, dType, sub_type, i2c_address) " +
@@ -73,18 +87,19 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
-    private List<Pin> createPins(long boardId, int minPin, int maxPin) {
+    private void createPins(long boardId, int minPin, int maxPin) {
         String valueString = String.join(", ", IntStream.range(minPin, maxPin + 1)
                 .mapToObj(x -> "(?, ?)").toArray(String[]::new));
 
-        return getJdbcTemplate().execute((ConnectionCallback<List<Pin>>) con -> {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_pins (pin_nr, board) " +
-                    "VALUES " + valueString, Statement.RETURN_GENERATED_KEYS);
+                    "VALUES " + valueString);
             for(int i = 0; i <= (maxPin - minPin); i++) {
-                pstmt.setInt(2 * i, minPin + i);
-                pstmt.setLong(2 * i + 1, boardId);
+                pstmt.setInt(2 * i + 1, minPin + i);
+                pstmt.setLong(2 * i + 2, boardId);
             }
             pstmt.execute();
+            return null;
         });
     }
 
@@ -109,6 +124,8 @@ public class GpioRepository extends JdbcDaoSupport {
             I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(I2CGpioBoard.SubType.valueOf(subType));
             i2CGpioBoard.setI2cAddress(rs.getByte("i2c_address"));
             gpioBoard = i2CGpioBoard;
+        } else if (dType.equals(LocalGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {
+            gpioBoard = new LocalGpioBoard();
         } else {
             throw new IllegalArgumentException("GpioBoard-Type doesn't exist: " + dType);
         }

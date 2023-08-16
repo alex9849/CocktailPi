@@ -48,5 +48,9 @@ public abstract class GpioBoard {
         public abstract IOutputPin getOutputPin();
 
         public abstract GpioBoard getGpioBoard();
+
+        public long getBoardId() {
+            return getGpioBoard().getId();
+        }
     }
 }

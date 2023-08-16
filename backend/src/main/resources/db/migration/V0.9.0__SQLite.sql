@@ -151,11 +151,11 @@ CREATE TABLE options
 
 CREATE TABLE gpio_boards
 (
-    id          INTEGER not null,
+    id          INTEGER not null PRIMARY KEY,
     name        text    not null,
     dType       text    not null,
-    subType     text    not null,
-    i2c_address INTEGER not null
+    sub_type    text check (dType != 'i2c' or sub_type IS NOT NULL),
+    i2c_address INTEGER check (dType != 'i2c' or i2c_address IS NOT NULL)
 );
 
 CREATE TABLE gpio_pins

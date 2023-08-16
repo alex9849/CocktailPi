@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -17,10 +18,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredien
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
-import net.alex9849.cocktailmaker.service.CategoryService;
-import net.alex9849.cocktailmaker.service.IngredientService;
-import net.alex9849.cocktailmaker.service.RecipeService;
-import net.alex9849.cocktailmaker.service.UserService;
+import net.alex9849.cocktailmaker.service.*;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +53,9 @@ public class SeedDataInserter {
     @Autowired
     private PumpDataService pumpService;
 
+    @Autowired
+    private GpioService gpioService;
+
     Logger logger = LoggerFactory.getLogger(SeedDataInserter.class);
 
     @Value("${alex9849.app.demoMode}")
@@ -70,6 +71,7 @@ public class SeedDataInserter {
         logger.info("Inserting seed data into database...");
 
         User defaultUser = createDefaultUser();
+        LocalGpioBoard gpioBoard = createLocalGpioBoard();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
         this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
@@ -89,6 +91,12 @@ public class SeedDataInserter {
         defaultUser.setAccountNonLocked(true);
         defaultUser.setAuthority(ERole.ROLE_ADMIN);
         return userService.createUser(defaultUser);
+    }
+
+    public LocalGpioBoard createLocalGpioBoard() {
+        LocalGpioBoard board = new LocalGpioBoard();
+        board.setName("Local board");
+        return (LocalGpioBoard) gpioService.createGpioBoard(board);
     }
 
     private Map<Long, Long> migrateIngredients() throws IOException {
