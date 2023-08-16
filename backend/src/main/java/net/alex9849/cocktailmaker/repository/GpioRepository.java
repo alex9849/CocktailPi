@@ -6,7 +6,6 @@ import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailmaker.model.gpio.Pin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -59,13 +58,13 @@ public class GpioRepository extends JdbcDaoSupport {
 
     public GpioBoard createBoard(GpioBoard gpioBoard) {
         return getJdbcTemplate().execute((ConnectionCallback<GpioBoard>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_boards (name, dType, sub_type, i2c_address) " +
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_boards (name, dType, board_model, i2c_address) " +
                     "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, gpioBoard.getName());
             pstmt.setString(2, gpioBoard.getClass().getAnnotation(DiscriminatorValue.class).value());
 
             if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
-                pstmt.setString(3, i2CGpioBoard.getSubType().name());
+                pstmt.setString(3, i2CGpioBoard.getBoardModel().name());
                 pstmt.setInt(4, i2CGpioBoard.getI2cAddress());
 
             } else if (gpioBoard instanceof LocalGpioBoard) {
@@ -120,8 +119,8 @@ public class GpioRepository extends JdbcDaoSupport {
         String dType = rs.getString("dType");
         GpioBoard gpioBoard;
         if(dType.equals(I2CGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {
-            String subType = rs.getString("sub_type");
-            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(I2CGpioBoard.SubType.valueOf(subType));
+            String boardModel = rs.getString("board_model");
+            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(I2CGpioBoard.BoardModel.valueOf(boardModel));
             i2CGpioBoard.setI2cAddress(rs.getByte("i2c_address"));
             gpioBoard = i2CGpioBoard;
         } else if (dType.equals(LocalGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {

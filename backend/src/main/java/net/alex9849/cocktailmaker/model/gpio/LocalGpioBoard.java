@@ -5,7 +5,7 @@ import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.pin.IOutputPin;
 
-@DiscriminatorValue("Local")
+@DiscriminatorValue("local")
 public class LocalGpioBoard extends GpioBoard {
     @Override
     public int getMinPin() {

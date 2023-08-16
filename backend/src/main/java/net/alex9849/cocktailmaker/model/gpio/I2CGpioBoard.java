@@ -13,11 +13,11 @@ import java.util.Map;
 @DiscriminatorValue("i2c")
 public class I2CGpioBoard extends GpioBoard {
     private static final Map<Byte, Mcp23017> boardMap = new HashMap<>();
-    private final SubType subType;
+    private final BoardModel boardModel;
     private byte i2cAddress;
 
-    public I2CGpioBoard(SubType subType) {
-        this.subType = subType;
+    public I2CGpioBoard(BoardModel boardModel) {
+        this.boardModel = boardModel;
     }
 
     public byte getI2cAddress() {
@@ -28,8 +28,8 @@ public class I2CGpioBoard extends GpioBoard {
         this.i2cAddress = i2cAddress;
     }
 
-    public SubType getSubType() {
-        return subType;
+    public BoardModel getBoardModel() {
+        return boardModel;
     }
 
     public Mcp23017 getBoardDriver() {
@@ -49,21 +49,21 @@ public class I2CGpioBoard extends GpioBoard {
 
     @Override
     public int getMinPin() {
-        return subType.minPin;
+        return boardModel.minPin;
     }
 
     @Override
     public int getMaxPin() {
-        return subType.maxPin;
+        return boardModel.maxPin;
     }
 
-    public enum SubType {
+    public enum BoardModel {
         MCP23017(0, 15);
 
         final int minPin;
         final int maxPin;
 
-        SubType(int minPin, int maxPin) {
+        BoardModel(int minPin, int maxPin) {
             this.minPin = minPin;
             this.maxPin = maxPin;
         }
