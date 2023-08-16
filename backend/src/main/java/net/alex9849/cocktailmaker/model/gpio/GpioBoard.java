@@ -36,6 +36,7 @@ public abstract class GpioBoard {
 
     public abstract class Pin {
         private int nr;
+        private PinResource resource;
 
         public int getPinNr() {
             return nr;
@@ -43,6 +44,14 @@ public abstract class GpioBoard {
 
         public void setNr(int nr) {
             this.nr = nr;
+        }
+
+        public PinResource getResource() {
+            return resource;
+        }
+
+        public void setResource(PinResource resource) {
+            this.resource = resource;
         }
 
         public abstract IOutputPin getOutputPin();

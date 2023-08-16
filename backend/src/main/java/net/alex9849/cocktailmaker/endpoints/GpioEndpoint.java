@@ -5,11 +5,10 @@ import net.alex9849.cocktailmaker.payload.dto.gpio.GpioBoardDto;
 import net.alex9849.cocktailmaker.service.GpioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,6 +19,7 @@ public class GpioEndpoint {
     @Autowired
     private GpioService gpioService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.GET)
     private ResponseEntity<?> getGpioBoards(@RequestParam(value = "dType", required = false) String dType) {
         List<GpioBoard> boards;
@@ -28,6 +28,13 @@ public class GpioEndpoint {
         } else {
             boards = gpioService.getGpioBoardsByType(dType);
         }
+        return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "{id}/pin", method = RequestMethod.GET)
+    private ResponseEntity<?> getGpioPins(@PathVariable(value = "id", required = true) long boardId) {
+        List<GpioBoard> boards = new ArrayList<>();
         return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
     }
 

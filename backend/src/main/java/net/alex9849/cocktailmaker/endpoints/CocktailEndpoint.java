@@ -8,6 +8,7 @@ import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.FeasibilityReportDto;
+import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class CocktailEndpoint {
     private RecipeService recipeService;
 
     @Autowired
-    private CocktailOrderService CocktailOrderService;
+    private CocktailOrderService cocktailOrderService;
+
+    @Autowired
+    private PumpService pumpService;
 
     @RequestMapping(value = "{recipeId}", method = RequestMethod.PUT)
     public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
@@ -38,8 +42,8 @@ public class CocktailEndpoint {
         if(orderConfigDto.getAmountOrderedInMl() == null) {
             orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
         }
-        CocktailOrderConfiguration orderConfig = CocktailOrderService.fromDto(orderConfigDto);
-        CocktailOrderService.orderCocktail(user, recipe, orderConfig);
+        CocktailOrderConfiguration orderConfig = cocktailOrderService.fromDto(orderConfigDto);
+        pumpService.orderCocktail(user, recipe, orderConfig);
         return ResponseEntity.accepted().build();
     }
 
@@ -52,21 +56,21 @@ public class CocktailEndpoint {
         if(orderConfigDto.getAmountOrderedInMl() == null) {
             orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
         }
-        CocktailOrderConfiguration orderConfig = CocktailOrderService.fromDto(orderConfigDto);
-        return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(CocktailOrderService.checkFeasibility(recipe, orderConfig).getFeasibilityReport()));
+        CocktailOrderConfiguration orderConfig = cocktailOrderService.fromDto(orderConfigDto);
+        return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(cocktailOrderService.checkFeasibility(recipe, orderConfig).getFeasibilityReport()));
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     public ResponseEntity<?> cancelCocktail() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CocktailProgress progress = CocktailOrderService.getCurrentCocktailProgress();
+        CocktailProgress progress = cocktailOrderService.getCurrentCocktailProgress();
         if(progress == null) {
             return ResponseEntity.notFound().build();
         }
         if(!Objects.equals(progress.getUser().getId(), user.getId()) && !user.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        if(!CocktailOrderService.cancelCocktailOrder()) {
+        if(!cocktailOrderService.cancelCocktailOrder()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
@@ -74,7 +78,7 @@ public class CocktailEndpoint {
 
     @RequestMapping(value = "continueproduction", method = RequestMethod.POST)
     public ResponseEntity<?> continueCocktailProduction() {
-        CocktailOrderService.continueCocktailProduction();
+        cocktailOrderService.continueCocktailProduction();
         return ResponseEntity.accepted().build();
     }
 

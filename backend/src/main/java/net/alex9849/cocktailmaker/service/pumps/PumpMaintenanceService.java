@@ -134,6 +134,7 @@ public class PumpMaintenanceService {
         double overshootMultiplier = 1;
         if (direction == Direction.BACKWARD) {
             if(!reversePumpSettings.isEnable()) {
+                callback.run();
                 throw new IllegalArgumentException("Reverse pumping not enabled!");
             }
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
@@ -180,6 +181,7 @@ public class PumpMaintenanceService {
                     timeToRun = Long.MAX_VALUE;
                     break;
                 case PUMP_STEPS:
+                    callback.run();
                     throw new IllegalArgumentException("DcPump can't run certain number of steps!");
             }
 
@@ -212,6 +214,7 @@ public class PumpMaintenanceService {
                     stepsToRun = Long.MAX_VALUE;
                     break;
                 case PUMP_TIME:
+                    callback.run();
                     throw new IllegalArgumentException("DcPump can't run certain amount of time!");
             }
 

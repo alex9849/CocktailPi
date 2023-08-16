@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.repository;
 
 import jakarta.annotation.PostConstruct;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,12 +44,34 @@ public class OptionsRepository extends JdbcDaoSupport {
     public void setOption(String key, String value) {
         if(value != null) {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value)\n" +
-                        "VALUES (?, ?)\n" +
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_pin)\n" +
+                        "VALUES (?, ?, ?, ?)\n" +
                         "ON CONFLICT (key) DO UPDATE\n" +
-                        "    SET value = excluded.value");
+                        "    SET value = excluded.value, pin_board = excluded.pin_board, pin_pin = excluded.pin_pin");
                 pstmt.setString(1, key);
                 pstmt.setString(2, value);
+                pstmt.setNull(3, Types.INTEGER);
+                pstmt.setNull(4, Types.INTEGER);
+
+                pstmt.executeUpdate();
+                return null;
+            });
+        } else {
+            delOption(key, false);
+        }
+    }
+
+    public void setPinOption(String key, GpioBoard.Pin pin) {
+        if(pin != null) {
+            getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_pin)\n" +
+                        "VALUES (?, ?, ?, ?)\n" +
+                        "ON CONFLICT (key) DO UPDATE\n" +
+                        "    SET value = excluded.value");
+                pstmt.setNull(1, Types.VARCHAR);
+                pstmt.setNull(2, Types.VARCHAR);
+                pstmt.setLong(3, pin.getBoardId());
+                pstmt.setInt(4, pin.getPinNr());
 
                 pstmt.executeUpdate();
                 return null;

@@ -56,6 +56,20 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
+    /*public List<GpioBoard.Pin> getBoardsByBoardId(long boardId) {
+        return getJdbcTemplate().execute((ConnectionCallback<List<GpioBoard.Pin>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM gpio_pins where lower(dType) = lower(?)");
+            pstmt.setString(1, dType);
+
+            ResultSet rs = pstmt.executeQuery();
+            List<GpioBoard> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(parseRs(rs));
+            }
+            return result;
+        });
+    }*/
+
     public GpioBoard createBoard(GpioBoard gpioBoard) {
         return getJdbcTemplate().execute((ConnectionCallback<GpioBoard>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_boards (name, dType, board_model, i2c_address) " +

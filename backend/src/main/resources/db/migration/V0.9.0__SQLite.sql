@@ -11,6 +11,22 @@ create table users
     primary key (id)
 );
 
+CREATE TABLE gpio_boards
+(
+    id          INTEGER not null PRIMARY KEY,
+    name        text    not null,
+    dType       text    not null,
+    board_model text check (dType != 'i2c' or board_model IS NOT NULL),
+    i2c_address INTEGER check (dType != 'i2c' or i2c_address IS NOT NULL)
+);
+
+CREATE TABLE gpio_pins
+(
+    pin_nr INTEGER not null,
+    board  INTEGER not null REFERENCES gpio_boards ON DELETE CASCADE,
+    PRIMARY KEY (pin_nr, board)
+);
+
 create table ingredients
 (
     id                   INTEGER not null,
@@ -145,24 +161,11 @@ create table event_actions_execution_groups
 
 CREATE TABLE options
 (
-    key   TEXT not null primary key,
-    value TEXT not null
-);
-
-CREATE TABLE gpio_boards
-(
-    id          INTEGER not null PRIMARY KEY,
-    name        text    not null,
-    dType       text    not null,
-    board_model text check (dType != 'i2c' or board_model IS NOT NULL),
-    i2c_address INTEGER check (dType != 'i2c' or i2c_address IS NOT NULL)
-);
-
-CREATE TABLE gpio_pins
-(
-    pin_nr INTEGER not null,
-    board  INTEGER not null REFERENCES gpio_boards ON DELETE CASCADE,
-    PRIMARY KEY (pin_nr, board)
+    key       TEXT not null primary key,
+    value     TEXT not null,
+    pin_board INTEGER,
+    pin_pin   INTEGER,
+    FOREIGN KEY (pin_board, pin_board) REFERENCES gpio_pins
 );
 
 CREATE VIEW all_ingredient_dependencies AS
