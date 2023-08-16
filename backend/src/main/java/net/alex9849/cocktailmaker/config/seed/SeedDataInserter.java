@@ -145,7 +145,8 @@ public class SeedDataInserter {
         dcPump.setTubeCapacityInMl(5.0);
 
         final int nrPumps = 8;
-        for(int i = 0; i < nrPumps / 2; i++) {
+        final int nrDcPumps = 4;
+        for(int i = 0; i < nrDcPumps; i++) {
             dcPump.setPin(i);
             this.pumpService.createPump(dcPump);
         }
@@ -157,9 +158,9 @@ public class SeedDataInserter {
         stepperPump.setAcceleration(10);
         stepperPump.setMaxStepsPerSecond(20);
         stepperPump.setTubeCapacityInMl(5.0);
-        for(int i = nrPumps / 2; i < nrPumps; i++) {
-            stepperPump.setEnablePin(i + (i * 2));
-            stepperPump.setStepPin(i + (i * 2) + 1);
+        for(int i = nrDcPumps; i < nrPumps; i++) {
+            stepperPump.setEnablePin(nrDcPumps + ((i - nrDcPumps) * 2));
+            stepperPump.setStepPin(nrDcPumps + ((i - nrDcPumps) * 2) + 1);
             this.pumpService.createPump(stepperPump);
         }
     }
