@@ -57,12 +57,6 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
-    String s = "SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
-            "FROM gpio_pins pi\n" +
-            "         LEFT JOIN pumps p ON p.dc_pin = pi.pin_nr OR p.enable_pin = pi.pin_nr OR p.step_pin = pi.pin_nr\n" +
-            "         left join options o on pi.pin_nr = o.pin_board and pi.board = o.pin_board\n" +
-            "WHERE pi.board = 1";
-
     public Optional<PinResource> getPinResourceByBoardIdAndPin(long boardId, int pinNr) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<PinResource>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
@@ -85,7 +79,7 @@ public class GpioRepository extends JdbcDaoSupport {
         PinResource pr = null;
         if(rs.getObject("pump_id") != null) {
             pr = new PinResource();
-            pr.setId((long) rs.getObject("pump_id"));
+            pr.setId((int) rs.getObject("pump_id"));
             pr.setType(PinResource.Type.PUMP);
             String pump_name = (String) rs.getObject("pump_name");
             if(pump_name == null) {
@@ -161,7 +155,7 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
-    private Optional<GpioBoard> findById(long id) {
+    public Optional<GpioBoard> findById(long id) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<GpioBoard>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * from gpio_boards WHERE id = ?");
             pstmt.setLong(1, id);

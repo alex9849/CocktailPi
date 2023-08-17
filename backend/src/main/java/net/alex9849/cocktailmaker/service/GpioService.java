@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,6 +24,10 @@ public class GpioService {
 
     public List<GpioBoard> getGpioBoards() {
         return gpioRepository.getBoards();
+    }
+
+    public GpioBoard getGpioBoard(long id) {
+        return gpioRepository.findById(id).orElse(null);
     }
 
     public List<GpioBoard> getGpioBoardsByType(String dType) {

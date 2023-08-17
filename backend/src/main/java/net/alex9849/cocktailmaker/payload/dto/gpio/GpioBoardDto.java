@@ -17,6 +17,7 @@ public class GpioBoardDto {
     private interface Name { String getName(); }
     private interface PinCount { int getPinCount(); }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode
@@ -32,6 +33,7 @@ public class GpioBoardDto {
 
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode

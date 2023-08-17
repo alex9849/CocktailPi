@@ -2,13 +2,13 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.payload.dto.gpio.GpioBoardDto;
+import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 import net.alex9849.cocktailmaker.service.GpioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,9 +33,12 @@ public class GpioEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "{id}/pin", method = RequestMethod.GET)
-    private ResponseEntity<?> getGpioPins(@PathVariable(value = "id", required = true) long boardId) {
-        List<GpioBoard> boards = new ArrayList<>();
-        return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
+    private ResponseEntity<?> getGpioPins(@PathVariable(value = "id") long boardId) {
+        GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);
+        if(gpioBoard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(gpioBoard.getPins().stream().map(PinDto.Response.Detailed::new).toList());
     }
 
 }

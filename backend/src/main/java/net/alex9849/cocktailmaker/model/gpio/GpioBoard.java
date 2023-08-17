@@ -4,6 +4,8 @@ import net.alex9849.cocktailmaker.repository.GpioRepository;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.pin.IOutputPin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class GpioBoard {
@@ -37,6 +39,14 @@ public abstract class GpioBoard {
     }
 
     protected abstract Pin getPinUnchecked(int pin);
+
+    public List<Pin> getPins() {
+        List<Pin> pinList = new ArrayList<>();
+        for(int i = getMinPin(); i <= getMaxPin(); i++) {
+            pinList.add(getPinUnchecked(i));
+        }
+        return pinList;
+    }
 
     public abstract class Pin {
         private final int nr;
