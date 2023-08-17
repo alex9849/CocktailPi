@@ -9,7 +9,7 @@
           class="col-1 text-center text-weight-thin"
           style="font-size: 10px"
         >
-          ©2022 Alexander Liggesmeyer
+          ©2023 Alexander Liggesmeyer
         </p>
         <div class="col-10">
           <div class="row q-gutter-sm justify-evenly">

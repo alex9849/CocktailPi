@@ -63,7 +63,7 @@
           <div class="row justify-center text-subtitle1">
             v%MAVEN_PROJECT_VERSION%
           </div>
-          <div class="row justify-center text-subtitle2">©2022 Alexander Liggesmeyer</div>
+          <div class="row justify-center text-subtitle2">©2023 Alexander Liggesmeyer</div>
           <div class="row justify-center">
             <q-btn
               v-for="link in projectLinks"
@@ -80,7 +80,7 @@
               label="Donate"
               :icon="mdiPiggyBank"
               color="orange-5"
-              @click="openURLInBrowser('https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=B5YNFG7WH4D3S')"
+              @click="clickDonate"
             />
           </div>
         </q-card-section>
@@ -107,7 +107,7 @@ import {
   mdiPiggyBank,
   mdiWeb
 } from '@quasar/extras/mdi-v5'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'FullLayout',
@@ -260,6 +260,13 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setShowDonateDialog: 'common/setShowDonateDialog'
+    }),
+    clickDonate () {
+      this.setShowDonateDialog(true)
+      // @click="openURLInBrowser('https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=B5YNFG7WH4D3S')"
+    },
     openURLInBrowser (url) {
       openURL(url)
     },
