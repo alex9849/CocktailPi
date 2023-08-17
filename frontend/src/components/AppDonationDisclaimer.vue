@@ -13,24 +13,44 @@
         </q-toolbar>
       </q-card-section>
       <q-separator />
-      <q-card-section style="font-size: 15px" class="page-content">
+      <q-card-section style="font-size: 15px; width: 800px" class="page-content">
         <q-card
           flat
           bordered
         >
           <q-card-section>
             <p>
-              This software is free, but still it took and takes a lot time to develop in maintain it.
+              This software is free, but still it took and takes a lot time to develop and maintain it.
               The developer of CocktailMaker (me) develops it in his free time. I'm also a student who doesn't have a real income yet.
             </p>
-            <p>Here are some more reasons by you should donate:</p>
+            <div class="q-pa-md q-gutter-sm">
+              <div class="row justify-center">
+                <q-btn
+                  style="width: 300px"
+                  :icon="mdiGithub"
+                  color="black"
+                >
+                  Donate via Github sponsors
+                </q-btn>
+              </div>
+              <div class="row justify-center">
+                <q-btn
+                  style="width: 300px"
+                  color="info"
+                  :icon="mdiPaypal"
+                >
+                  Donate via PayPal
+                </q-btn>
+              </div>
+            </div>
+            <p>Here are some more reasons why you should donate:</p>
             <ul>
               <li>
                 Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case, ...).
                 Nevertheless this hardware wouldn't function if the CocktailMaker software wouldn't exist.
               </li>
               <li>
-                Before adding this disclaimer I got around 50€ of donations in two years. You might think that that someone else will donate, but sadly they think that too.
+                You might think that that someone else will donate, but sadly they think that too. Before adding this disclaimer I got around 50€ of donations in two years
               </li>
               <li>
                 I usually don't get any feedback for the software. It doesn't collect any data. I have no idea how many people are out there using it.
