@@ -67,11 +67,42 @@
               </q-card-section>
               <q-separator :value="10" />
               <q-card-section class="">
-                <div class="row q-col-gutter-sm">
-                  <div class="col-12">
+                <div class="row q-col-gutter-sm justify-center">
+                  <div
+                    v-if="localBoards.loading"
+                  >
+                    <q-spinner
+                      size="xl"
+                      class="text-info q-ma-md"
+                    />
+                  </div>
+                  <div class="col-12"
+                       v-else-if="localBoards.boards.length === 0"
+                  >
+                    <q-card
+                      flat
+                      bordered
+                    >
+                      <q-card-section>
+                        <p>
+                          <q-icon
+                            :name="mdiAlert"
+                            size="sm"
+                          /> No boards found!
+                        </p>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                  <div
+                    v-else
+                    class="col-12"
+                    v-for="localBoard in localBoards.boards"
+                    :key="localBoard.id"
+                  >
                     <c-gpio-expander-expansion-item
                       non-editable
                       pin-prefix="BCM "
+                      :board="localBoard"
                     />
                   </div>
                 </div>
@@ -99,8 +130,18 @@
               </q-card-section>
               <q-separator :value="10" />
               <q-card-section class="">
-                <div class="row q-col-gutter-sm">
-                  <div class="col-12">
+                <div class="row q-col-gutter-sm justify-center">
+                  <div
+                    v-if="i2cBoards.loading"
+                  >
+                    <q-spinner
+                      size="xl"
+                      class="text-info q-ma-md"
+                    />
+                  </div>
+                  <div class="col-12"
+                       v-else-if="false"
+                  >
                     <q-card
                       flat
                       bordered
@@ -115,7 +156,9 @@
                       </q-card-section>
                     </q-card>
                   </div>
-                  <div class="col-12">
+                  <div class="col-12"
+                       v-else-if="i2cBoards.boards.length === 0"
+                  >
                     <q-card
                       flat
                       bordered
@@ -130,11 +173,14 @@
                       </q-card-section>
                     </q-card>
                   </div>
-                  <div class="col-12">
-                    <c-gpio-expander-expansion-item />
-                  </div>
-                  <div class="col-12">
-                    <c-gpio-expander-expansion-item />
+                  <div class="col-12"
+                       v-else
+                       :key="board.id"
+                       v-for="board in i2cBoards.boards"
+                  >
+                    <c-gpio-expander-expansion-item
+                      :board="board"
+                    />
                   </div>
                 </div>
               </q-card-section>
@@ -150,9 +196,20 @@
 <script>
 import { mdiAlert, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CGpioExpanderExpansionItem from 'components/gpiosetup/CGpioExpanderExpansionItem.vue'
+import GpioService from 'src/services/gpio.service'
 export default {
   name: 'GpioManagement',
-  methods: {
+  data: () => {
+    return {
+      localBoards: {
+        loading: false,
+        boards: []
+      },
+      i2cBoards: {
+        loading: false,
+        boards: []
+      }
+    }
   },
   components: { CGpioExpanderExpansionItem },
   created () {
@@ -160,6 +217,20 @@ export default {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
+    this.localBoards.loading = true
+    GpioService.getBoardsByType(GpioService.types.LOCAL)
+      .then(x => {
+        this.localBoards.boards = x
+      }).finally(() => {
+        this.localBoards.loading = false
+      })
+    this.i2cBoards.loading = true
+    GpioService.getBoardsByType(GpioService.types.I2C)
+      .then(x => {
+        this.i2cBoards.boards = x
+      }).finally(() => {
+        this.i2cBoards.loading = false
+      })
   }
 }
 

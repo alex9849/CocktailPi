@@ -5,6 +5,7 @@
   >
     <q-expansion-item
       header-class="q-pa-sm"
+      @show="fetchPins"
     >
       <template v-if="true" v-slot:header>
         <q-item class="full-width">
@@ -12,10 +13,10 @@
             <q-item-label
               class="text-weight-bold"
             >
-              Expander 1
+              {{ board.name }}
             </q-item-label>
             <q-item-label caption>
-              Address: 0x27, Board: MCP23017, Usage 5/16
+              {{ caption }}
             </q-item-label>
           </q-item-section>
           <q-item-section
@@ -49,24 +50,38 @@
         </q-item>
       </template>
       <template v-slot:default>
+        <q-separator />
         <div class="row justify-center bg-grey-2">
-          <div class="col-12 col-lg-8">
+          <q-spinner
+            v-if="pins.loading"
+            class="text-info q-ma-md"
+            size="xl"
+          />
+          <div
+            v-else
+            class="col-12 col-lg-8"
+          >
             <q-list separator class="bg-white">
-              <q-item :key="idx" v-for="idx in 36">
+              <q-item :key="pin.nr" v-for="pin in pins.pins">
                 <q-item-section>
                   <div class="row items-center q-col-gutter-md">
                     <div class="col-auto">
-                      {{ pinPrefix }}{{ idx }}
+                      {{ pinPrefix }}{{ pin.nr }}
                     </div>
                     <div class="col">
                       <q-icon
-                        name="check"
+                        :name="pin.inUse ? 'check' : 'close'"
                         size="sm"
                       />
                     </div>
                   </div>
                 </q-item-section>
-                <q-item-section side>Pump4</q-item-section>
+                <q-item-section
+                  v-if="!!pin.pinResource"
+                  side
+                >
+                  {{ pin.pinResource.name }}
+                </q-item-section>
               </q-item>
             </q-list>
           </div>
@@ -78,6 +93,7 @@
 
 <script>
 import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import GpioService from 'src/services/gpio.service'
 export default {
   name: 'CGpioExpanderExpansionItem',
   props: {
@@ -88,11 +104,45 @@ export default {
     pinPrefix: {
       type: String,
       default: () => 'GPIO '
+    },
+    board: {
+      type: Object,
+      required: true
+    }
+  },
+  data: () => {
+    return {
+      pins: {
+        loading: false,
+        pins: []
+      }
     }
   },
   created () {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
+  },
+  methods: {
+    fetchPins () {
+      this.pins.loading = true
+      GpioService.getBoardPins(this.board.id)
+        .then(x => {
+          this.pins.pins = x
+        })
+        .finally(() => {
+          this.pins.loading = false
+        })
+    }
+  },
+  computed: {
+    caption () {
+      if (this.board.type === 'local') {
+        return 'Board: Local, Usage: ' + this.board.usedPinCount + '/' + this.board.pinCount
+      } else if (this.board.type === 'i2c') {
+        return 'Address: 0x27, Board: MCP23017, Usage: ' + this.board.usedPinCount + '/' + this.board.pinCount
+      }
+      return ''
+    }
   }
 }
 </script>

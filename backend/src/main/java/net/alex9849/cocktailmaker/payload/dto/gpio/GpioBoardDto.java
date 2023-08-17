@@ -16,6 +16,7 @@ public class GpioBoardDto {
     private interface Id { long getId(); }
     private interface Name { String getName(); }
     private interface PinCount { int getPinCount(); }
+    private interface UsedPinCount { int getUsedPinCount(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
@@ -37,14 +38,16 @@ public class GpioBoardDto {
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
-        public abstract static class Detailed implements Id, Name, PinCount {
+        public abstract static class Detailed implements Id, Name, PinCount, UsedPinCount {
             long id;
             String name;
             int pinCount;
+            int usedPinCount;
 
             protected Detailed(GpioBoard gpioBoard) {
                 BeanUtils.copyProperties(gpioBoard, this);
                 pinCount = (gpioBoard.getMaxPin() - gpioBoard.getMinPin()) + 1;
+                usedPinCount = (int) gpioBoard.getPins().stream().filter(x -> x.getResource() != null).count();
             }
 
             public static Detailed toDto(GpioBoard gpioBoard) {
