@@ -12,6 +12,11 @@ class GpioService {
       .then(x => x.data)
   }
 
+  getBoards () {
+    return axios.get(API_PATH)
+      .then(x => x.data)
+  }
+
   getBoardPins (boardId) {
     return axios.get(API_PATH + boardId + '/pin')
       .then(x => x.data)

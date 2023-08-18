@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 
 public class PinDto {
     private interface Nr { int getNr(); }
+    private interface BoardId { long getBoardId(); }
     private interface PinResource { PinResourceDto.Response.Detailed getPinResource(); }
     private interface InUse { boolean isInUse(); }
 
@@ -16,11 +17,13 @@ public class PinDto {
         @EqualsAndHashCode
         public static class Detailed implements Nr, PinResource, InUse {
             int nr;
+            long boardId;
             PinResourceDto.Response.Detailed pinResource;
             boolean inUse;
 
             public Detailed(GpioBoard.Pin pin) {
                 this.nr = pin.getPinNr();
+                this.boardId = pin.getBoardId();
                 if(pin.getResource() != null) {
                     this.pinResource = new PinResourceDto.Response.Detailed(pin.getResource());
                 }

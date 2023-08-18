@@ -38,31 +38,29 @@
                 Some boards provide more then one I2C bus. The cocktailmaker software only supports one I2C bus a the time.<br>
                 This supported bus is the device at <q-badge outline class="text-black">/sys/bus/i2c/devices/i2c-1</q-badge>
                 on the underlying linux filesystem.<br>
-                On normal Raspberry PIs the pins used for SDL and SCL are on normally <b>2 for SDA</b> and <b>3 for SDL</b>.<br>
+                On normal Raspberry PIs the pins used for SDL and SCL are on normally <b>2 for SDA</b> and <b>3 for SDL</b>.
+                <p>If you can't see the pins that you want to use here, make sure that you don't have them assigned to something already.</p>
+                <br>
                 <b>The fields for the SDL and SCL pin don't influence the selected bus.</b> They only decide on which pins get
-                blocked from being assigned to a pump or different connected hardware within the cocktailmaker software.
+                marked as inUse.
               </template>
               <template v-slot:fields>
-                <q-input
+                <c-gpio-selector
+                  disallow-expander-pins
                   v-model:model-value="v.config.sdaPin.$model"
                   :error-message="v.config.sdaPin.$errors[0]?.$message"
                   :error="v.config.sdaPin.$errors.length > 0"
-                  outlined
-                  hide-bottom-space
-                  type="number"
-                  label="SDA BCM-Pin"
+                  label="SDA Pin"
+                  error
+                  error-message="Test"
                 />
-                <q-input
+                <c-gpio-selector
+                  disallow-expander-pins
                   v-model:model-value="v.config.sclPin.$model"
+                  label="SCL Pin"
                   :error-message="v.config.sclPin.$errors[0]?.$message"
                   :error="v.config.sclPin.$errors.length > 0"
-                  outlined
-                  hide-bottom-space
-                  type="number"
-                  label="SCL BCM-Pin"
                 />
-                <c-gpio-selector />
-                <c-gpio-selector />
               </template>
             </c-assistant-container>
           </q-card>
