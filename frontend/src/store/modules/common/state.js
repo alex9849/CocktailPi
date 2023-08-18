@@ -3,7 +3,7 @@ export default function () {
     lastRecipeListRoute: null,
     showDonateDialog: false,
     externalLink: {
-      asQrCode: true,
+      asQrCode: false,
       destination: null,
       trigger: false
     },
