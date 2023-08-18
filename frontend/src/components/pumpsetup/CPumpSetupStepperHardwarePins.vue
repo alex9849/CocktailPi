@@ -33,31 +33,22 @@
       </p>
     </template>
     <template v-slot:fields>
-      <q-input
+      <c-gpio-selector
         :model-value="stepPin"
         @update:model-value="$emit('update:stepPin', $event)"
         :error-message="stepPinErrorMsg"
         :error="!!stepPinErrorMsg"
         :loading="stepPinLoading"
-        debounce="600"
-        outlined
-        type="number"
-        filled
-        label="Step BCM-Pin"
+        label="Step Pin"
       />
-      <q-input
+      <c-gpio-selector
         :model-value="enablePin"
         @update:model-value="$emit('update:enablePin', $event)"
         :error-message="enablePinErrorMsg"
         :error="!!enablePinErrorMsg"
         :loading="enablePinLoading"
-        debounce="600"
-        outlined
-        type="number"
-        filled
-        label="Enable BCM-Pin"
-      >
-      </q-input>
+        label="Enable Pin"
+      />
     </template>
   </c-assistant-container>
 </template>
@@ -65,10 +56,11 @@
 <script>
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
+import CGpioSelector from 'components/CGpioSelector.vue'
 
 export default defineComponent({
   name: 'CPumpSetupStepperHardwarePins',
-  components: { CAssistantContainer },
+  components: { CGpioSelector, CAssistantContainer },
   props: {
     enablePin: {},
     enablePinErrorMsg: {},
