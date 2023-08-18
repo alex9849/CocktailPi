@@ -7,13 +7,15 @@
     <q-card>
       <q-card-section>
         <q-toolbar>
-          <q-toolbar-title>
-            <p class="text-h3 text-center">Your support is needed!</p>
+          <q-toolbar-title class="text-center">
+            <p class="text-h3" style="white-space: initial">Your support is needed!</p>
+            <p class="text-weight-thin">Scroll down <q-icon :name="mdiChevronDoubleDown"/></p>
+
           </q-toolbar-title>
         </q-toolbar>
       </q-card-section>
       <q-separator />
-      <q-card-section style="font-size: 15px; width: 800px" class="page-content">
+      <q-card-section style="font-size: 15px; max-width: 800px" class="page-content">
         <q-card
           flat
           bordered
@@ -175,7 +177,7 @@
 <script>
 
 import { mdiGithub } from '@quasar/extras/mdi-v5'
-import { mdiEmoticon, mdiEmoticonExcited, mdiPaypal } from '@mdi/js'
+import { mdiChevronDoubleDown, mdiEmoticon, mdiEmoticonExcited, mdiPaypal } from '@mdi/js'
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -185,6 +187,7 @@ export default {
     this.mdiPaypal = mdiPaypal
     this.mdiEmoticon = mdiEmoticon
     this.mdiEmoticonExcited = mdiEmoticonExcited
+    this.mdiChevronDoubleDown = mdiChevronDoubleDown
   },
   data: () => {
     return {
