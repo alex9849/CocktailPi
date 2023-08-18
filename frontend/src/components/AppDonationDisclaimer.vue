@@ -9,12 +9,14 @@
         <q-toolbar>
           <q-toolbar-title class="text-center">
             <p class="text-h3" style="white-space: initial">Your support is needed!</p>
-            <p class="text-weight-thin">Scroll down <q-icon :name="mdiChevronDoubleDown"/></p>
+            <p class="text-weight-thin">Scroll down
+              <q-icon :name="mdiChevronDoubleDown"/>
+            </p>
 
           </q-toolbar-title>
         </q-toolbar>
       </q-card-section>
-      <q-separator />
+      <q-separator/>
       <q-card-section style="font-size: 15px; max-width: 800px" class="page-content">
         <q-card
           flat
@@ -23,7 +25,8 @@
           <q-card-section>
             <p>
               This software is free, but still it took and takes a lot time to develop and maintain it.
-              The developer of CocktailMaker (me) develops it in his free time. I'm also a student who doesn't have a real income yet.
+              The developer of CocktailMaker (me) develops it in his free time. I'm also a student who doesn't have a
+              real income yet.
             </p>
             <div class="q-pa-md q-gutter-sm">
               <div class="row justify-center">
@@ -50,15 +53,20 @@
             <p>Here are some more reasons why you should donate:</p>
             <ul>
               <li>
-                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case, ...).
+                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,
+                ...).
                 Nevertheless this hardware wouldn't function if the CocktailMaker software wouldn't exist.
               </li>
               <li>
-                You might think that that someone else will donate, but sadly they think that too. Before adding this disclaimer I got around 50€ of donations in two years
+                You might think that that someone else will donate, but sadly they think that too. Before adding this
+                disclaimer I got around 50€ of donations in two years
               </li>
               <li>
-                I usually don't get any feedback for the software. It doesn't collect any data. I have no idea how many people are out there using it.
-                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on CocktailMaker.</li>
+                I usually don't get any feedback for the software. It doesn't collect any data. I have no idea how many
+                people are out there using it.
+                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on
+                CocktailMaker.
+              </li>
               <li>
                 Developing this software causes costs. I as a developer often buy hardware, just to test
                 if it would function with the device and make sense.
@@ -66,10 +74,12 @@
             </ul>
             <p>
               Donating to CocktailMaker is entirely voluntary. While the software remains free to use, your contribution
-              demonstrates your appreciation for the developer's hard work and dedication, motivating them to continue refining and expanding the software's capabilities.
+              demonstrates your appreciation for the developer's hard work and dedication, motivating them to continue
+              refining and expanding the software's capabilities.
             </p>
             <p>
-              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software is worth to you.
+              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software
+              is worth to you.
               You can also do monthly donations if you want to support me and my work over a period of time.
             </p>
           </q-card-section>
@@ -97,11 +107,10 @@
               </div>
             </div>
           </q-card-section>
+          <q-separator/>
           <q-card-section>
-            <q-card
+            <div
               v-if="!clickedDonated"
-              flat
-              bordered
             >
               <q-card-section class="q-pa-sm text-center text-h5">
                 Thank you very much!
@@ -131,12 +140,8 @@
                   </div>
                 </div>
               </q-card-section>
-            </q-card>
-            <q-card
-              v-else
-              flat
-              bordered
-            >
+            </div>
+            <div v-else>
               <q-card-section class="q-pa-sm text-center text-h5">
                 Please note that lying is not nice.
               </q-card-section>
@@ -165,7 +170,7 @@
                   </div>
                 </div>
               </q-card-section>
-            </q-card>
+            </div>
           </q-card-section>
         </q-card>
       </q-card-section>
