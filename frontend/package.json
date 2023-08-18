@@ -31,7 +31,8 @@
     "vue-router": "^4.2.4",
     "vuedraggable": "^4.1.0",
     "vuelidate": "^0.7.5",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.0.0",

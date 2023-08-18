@@ -6,6 +6,7 @@
   <app-donation-disclaimer
     ref="donationDisclaimer"
   />
+  <app-qr-link />
 </template>
 
 <style scoped>
@@ -16,10 +17,11 @@
 import { store } from '../store'
 import AppSocket from 'components/AppSocket'
 import AppDonationDisclaimer from 'components/AppDonationDisclaimer.vue'
+import AppQrLink from 'components/AppQrLink.vue'
 
 export default {
   name: 'LoggedInLayout',
-  components: { AppDonationDisclaimer, AppSocket },
+  components: { AppQrLink, AppDonationDisclaimer, AppSocket },
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),

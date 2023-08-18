@@ -9,3 +9,12 @@ export const setGlobalSettings = (state, payload) => {
 export const setShowDonateDialog = (state, payload) => {
   state.showDonateDialog = payload
 }
+
+export const setShowExternalLinksAsQrCode = (state, payload) => {
+  state.externalLink.asQrCode = payload
+}
+
+export const openExternalLink = (state, payload) => {
+  state.externalLink.destination = payload
+  state.externalLink.trigger = !state.externalLink.trigger
+}

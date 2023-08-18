@@ -29,8 +29,9 @@
                   style="width: 300px"
                   :icon="mdiGithub"
                   color="black"
+                  @click="clickDonateGitHub"
                 >
-                  Donate via Github sponsors
+                  Donate via GitHub sponsors
                 </q-btn>
               </div>
               <div class="row justify-center">
@@ -38,6 +39,7 @@
                   style="width: 300px"
                   color="info"
                   :icon="mdiPaypal"
+                  @click="clickDonatePaypal"
                 >
                   Donate via PayPal
                 </q-btn>
@@ -54,7 +56,7 @@
               </li>
               <li>
                 I usually don't get any feedback for the software. It doesn't collect any data. I have no idea how many people are out there using it.
-                A donation and also "stars" on Github give me positive feedback and motivate me to continue working on CocktailMaker.</li>
+                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on CocktailMaker.</li>
               <li>
                 Developing this software causes costs. I as a developer often buy hardware, just to test
                 if it would function with the device and make sense.
@@ -65,7 +67,7 @@
               demonstrates your appreciation for the developer's hard work and dedication, motivating them to continue refining and expanding the software's capabilities.
             </p>
             <p>
-              You can donate using Github Sponsors or Paypal. You can pick any amount that you think that the software is worth to you.
+              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software is worth to you.
               You can also do monthly donations if you want to support me and my work over a period of time.
             </p>
           </q-card-section>
@@ -75,15 +77,17 @@
                 <q-btn
                   style="width: 300px"
                   :icon="mdiGithub"
+                  @click="clickDonateGitHub"
                   color="black"
                 >
-                  Donate via Github sponsors
+                  Donate via GitHub sponsors
                 </q-btn>
               </div>
               <div class="row justify-center">
                 <q-btn
                   style="width: 300px"
                   color="info"
+                  @click="clickDonatePaypal"
                   :icon="mdiPaypal"
                 >
                   Donate via PayPal
@@ -194,11 +198,18 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setShowDonateDialog: 'common/setShowDonateDialog'
+      setShowDonateDialog: 'common/setShowDonateDialog',
+      openExternalLink: 'common/openExternalLink'
     }),
     closeDialog () {
       this.clickedDonated = false
       this.setShowDonateDialog(false)
+    },
+    clickDonatePaypal () {
+      this.openExternalLink('https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=B5YNFG7WH4D3S')
+    },
+    clickDonateGitHub () {
+      this.openExternalLink('https://github.com/sponsors/alex9849')
     }
   }
 }

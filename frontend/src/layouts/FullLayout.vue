@@ -71,7 +71,7 @@
               round
               dense
               flat
-              @click="openURLInBrowser(link.link)"
+              @click="openExternalLink(link.link)"
               :icon="link.icon"
             />
           </div>
@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import { openURL } from 'quasar'
 import AppHeader from '../components/AppHeader'
 import {
   mdiAccount,
@@ -261,14 +260,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setShowDonateDialog: 'common/setShowDonateDialog'
+      setShowDonateDialog: 'common/setShowDonateDialog',
+      openExternalLink: 'common/openExternalLink'
     }),
     clickDonate () {
       this.setShowDonateDialog(true)
-      // @click="openURLInBrowser('https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=B5YNFG7WH4D3S')"
-    },
-    openURLInBrowser (url) {
-      openURL(url)
     },
     handleResize () {
       this.windowWidth = window.innerWidth
