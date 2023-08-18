@@ -24,7 +24,7 @@ CREATE TABLE gpio_pins
 (
     pin_nr INTEGER not null,
     board  INTEGER not null REFERENCES gpio_boards ON DELETE CASCADE,
-    PRIMARY KEY (pin_nr, board)
+    PRIMARY KEY (board, pin_nr)
 );
 
 create table ingredients
