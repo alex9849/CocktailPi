@@ -1,3 +1,5 @@
+import { PumpDtoMapper } from 'src/services/pump.service'
+
 const API_PATH = 'api/gpio/'
 import axios from 'axios'
 
@@ -23,4 +25,15 @@ class GpioService {
   }
 }
 
+export class PinDtoMapper {
+  toPinSelectDto (reduced) {
+    return {
+      nr: reduced.nr,
+      boardId: reduced.boardId
+    }
+  }
+}
+
 export default new GpioService()
+
+export const pinDtoMapper = new PinDtoMapper()

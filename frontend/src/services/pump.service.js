@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { pinDtoMapper } from 'src/services/gpio.service'
 
 const API_PATH = 'api/pump/'
 
@@ -86,8 +87,20 @@ export class PumpDtoMapper {
   }
 
   toPumpPatchDto (detailed) {
+    let dcPumpPin = null
+    if (detailed.pin) {
+      dcPumpPin = pinDtoMapper.toPinSelectDto(detailed.pin)
+    }
+    let stepperEnablePin = null
+    if (detailed.enablePin) {
+      stepperEnablePin = pinDtoMapper.toPinSelectDto(detailed.enablePin)
+    }
+    let stepperStepPin = null
+    if (detailed.stepPin) {
+      stepperStepPin = pinDtoMapper.toPinSelectDto(detailed.stepPin)
+    }
     const dto = {
-      pin: detailed.pin,
+      pin: dcPumpPin,
       timePerClInMs: detailed.timePerClInMs,
       isPowerStateHigh: detailed.isPowerStateHigh,
       name: detailed.name,
@@ -96,8 +109,8 @@ export class PumpDtoMapper {
       isPumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id,
 
-      enablePin: detailed.enablePin,
-      stepPin: detailed.stepPin,
+      enablePin: stepperEnablePin,
+      stepPin: stepperStepPin,
       acceleration: detailed.acceleration,
       maxStepsPerSecond: detailed.maxStepsPerSecond,
       stepsPerCl: detailed.stepsPerCl,

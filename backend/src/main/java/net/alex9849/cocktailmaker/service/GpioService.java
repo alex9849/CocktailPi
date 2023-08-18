@@ -4,6 +4,7 @@ import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 import net.alex9849.cocktailmaker.repository.GpioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,17 @@ public class GpioService {
 
     public void enableI2C() {
         //Delegate to system service
+    }
+
+    public GpioBoard.Pin fromDto(PinDto.Request.Select pinDto) {
+        if(pinDto == null) {
+            return null;
+        }
+        GpioBoard board = gpioRepository.findById(pinDto.getBoardId()).orElse(null);
+        if(board == null) {
+            throw new IllegalArgumentException("GpioBoard with id \"" + pinDto.getBoardId() + "\" doesn't exist!");
+        }
+        return board.getPin(pinDto.getNr());
     }
 
 }

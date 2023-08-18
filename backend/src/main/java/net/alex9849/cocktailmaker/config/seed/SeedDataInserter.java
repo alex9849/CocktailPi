@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
@@ -76,7 +77,7 @@ public class SeedDataInserter {
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
         this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
         if(isDemoMode || isDevMode) {
-            this.createDemoPumps();
+            this.createDemoPumps(gpioBoard);
         }
         logger.info("Finished inserting seed data into database.");
     }
@@ -136,7 +137,7 @@ public class SeedDataInserter {
         return oldToNewIdMap;
     }
 
-    private void createDemoPumps() {
+    private void createDemoPumps(GpioBoard gpioBoard) {
         DcPump dcPump = new DcPump();
         dcPump.setPumpedUp(false);
         dcPump.setFillingLevelInMl(3000);
@@ -147,7 +148,7 @@ public class SeedDataInserter {
         final int nrPumps = 8;
         final int nrDcPumps = 4;
         for(int i = 0; i < nrDcPumps; i++) {
-            dcPump.setPin(i);
+            dcPump.setPin(gpioBoard.getPin(i));
             this.pumpService.createPump(dcPump);
         }
 
@@ -159,8 +160,8 @@ public class SeedDataInserter {
         stepperPump.setMaxStepsPerSecond(20);
         stepperPump.setTubeCapacityInMl(5.0);
         for(int i = nrDcPumps; i < nrPumps; i++) {
-            stepperPump.setEnablePin(nrDcPumps + ((i - nrDcPumps) * 2));
-            stepperPump.setStepPin(nrDcPumps + ((i - nrDcPumps) * 2) + 1);
+            stepperPump.setEnablePin(gpioBoard.getPin(nrDcPumps + ((i - nrDcPumps) * 2)));
+            stepperPump.setStepPin(gpioBoard.getPin(nrDcPumps + ((i - nrDcPumps) * 2) + 1));
             this.pumpService.createPump(stepperPump);
         }
     }

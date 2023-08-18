@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.motor.DCMotor;
@@ -12,7 +13,7 @@ import java.util.Objects;
 @DiscriminatorValue("dc")
 public class DcPump extends Pump {
     private Integer timePerClInMs;
-    private Integer pin;
+    private GpioBoard.Pin pin;
     private Boolean isPowerStateHigh;
     private DCMotor motorDriver;
 
@@ -24,14 +25,11 @@ public class DcPump extends Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public Integer getPin() {
+    public GpioBoard.Pin getPin() {
         return pin;
     }
 
-    public void setPin(Integer pin) {
-        if(Objects.equals(this.pin, pin)) {
-            return;
-        }
+    public void setPin(GpioBoard.Pin pin) {
         this.pin = pin;
         this.resetDriver();
     }
@@ -51,7 +49,7 @@ public class DcPump extends Pump {
         }
         if(motorDriver == null) {
             PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-            IOutputPin runPin = pinUtils.getBoardOutputPin(getPin());
+            IOutputPin runPin = getPin().getOutputPin();
             IOutputPin dirPin = new IOutputPin() {
                 @Override
                 public void digitalWrite(PinState value) {

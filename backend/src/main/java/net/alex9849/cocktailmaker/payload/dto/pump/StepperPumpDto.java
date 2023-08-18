@@ -4,18 +4,16 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
+import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StepperPumpDto {
-    private interface EnablePin {
-        @Min(value = 0, message = "EnablePin needs to be between 0 and 31")
-        @Max(value = 31, message = "EnablePin needs to be between 0 and 31") Integer getEnablePin();
-    }
-    private interface StepPin {
-        @Min(value = 0, message = "StepPin needs to be between 0 and 31")
-        @Max(value = 31, message = "StepPin needs to be between 0 and 31") Integer getStepPin();
-    }
+
+    private interface EnablePinResponse { PinDto.Response.Reduced getEnablePin(); }
+    private interface EnablePinRequest { PinDto.Request.Select getEnablePin(); }
+    private interface StepPinResponse { PinDto.Response.Reduced getStepPin(); }
+    private interface StepPinRequest { PinDto.Request.Select getStepPin(); }
     private interface StepsPerCl { @Min(1) Integer getStepsPerCl(); }
     private interface MaxStepsPerSecond { @Min(1) @Max(500000) Integer getMaxStepsPerSecond(); }
     private interface Acceleration { @Min(1) @Max(500000) Integer getAcceleration(); }
@@ -24,10 +22,10 @@ public class StepperPumpDto {
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Create extends PumpDto.Request.Create implements EnablePin, StepPin, StepsPerCl,
+        public static class Create extends PumpDto.Request.Create implements EnablePinRequest, StepPinRequest, StepsPerCl,
                 MaxStepsPerSecond, Acceleration {
-            Integer enablePin;
-            Integer stepPin;
+            PinDto.Request.Select enablePin;
+            PinDto.Request.Select stepPin;
             Integer stepsPerCl;
             Integer maxStepsPerSecond;
             Integer acceleration;
@@ -40,16 +38,22 @@ public class StepperPumpDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
-        public static class Detailed extends PumpDto.Response.Detailed implements EnablePin, StepPin, StepsPerCl,
+        public static class Detailed extends PumpDto.Response.Detailed implements EnablePinResponse, StepPinResponse, StepsPerCl,
                 MaxStepsPerSecond, Acceleration {
-            Integer enablePin;
-            Integer stepPin;
+            PinDto.Response.Reduced enablePin;
+            PinDto.Response.Reduced stepPin;
             Integer stepsPerCl;
             Integer maxStepsPerSecond;
             Integer acceleration;
 
             protected Detailed(StepperPump stepperPump) {
                 super(stepperPump);
+                if(stepperPump.getEnablePin() != null) {
+                    enablePin = new PinDto.Response.Reduced(stepperPump.getEnablePin());
+                }
+                if(stepperPump.getStepPin() != null) {
+                    stepPin = new PinDto.Response.Reduced(stepperPump.getStepPin());
+                }
             }
 
             @Override

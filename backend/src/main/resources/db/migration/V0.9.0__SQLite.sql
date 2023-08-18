@@ -53,15 +53,21 @@ create table pumps
     current_ingredient_id INTEGER references ingredients on delete set null,
     filling_level_in_ml   INTEGER,
     is_pumped_up          BOOLEAN not null default false,
-    dc_pin                INTEGER check (dc_pin >= 0),
+    dc_pin_board          INTEGER,
+    dc_pin_nr             INTEGER,
     time_per_cl_in_ms     INTEGER check (time_per_cl_in_ms >= 1),
     is_power_state_high   BOOLEAN,
     acceleration          INTEGER check (acceleration BETWEEN 1 and 500000),
-    step_pin              INTEGER check (step_pin >= 0),
-    enable_pin            INTEGER check (enable_pin >= 0),
+    step_pin_board        INTEGER,
+    step_pin_nr           INTEGER,
+    enable_pin_board      INTEGER,
+    enable_pin_nr         INTEGER,
     steps_per_cl          INTEGER check (steps_per_cl >= 1),
     max_steps_per_second  INTEGER check (max_steps_per_second BETWEEN 1 and 500000),
-    primary key (id)
+    primary key (id),
+    FOREIGN KEY (dc_pin_board, dc_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL,
+    FOREIGN KEY (step_pin_board, step_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL,
+    FOREIGN KEY (enable_pin_board, enable_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL
 );
 
 create table recipes
@@ -165,7 +171,7 @@ CREATE TABLE options
     value     TEXT not null,
     pin_board INTEGER,
     pin_pin   INTEGER,
-    FOREIGN KEY (pin_board, pin_board) REFERENCES gpio_pins
+    FOREIGN KEY (pin_board, pin_board) REFERENCES gpio_pins ON DELETE SET NULL
 );
 
 CREATE VIEW all_ingredient_dependencies AS

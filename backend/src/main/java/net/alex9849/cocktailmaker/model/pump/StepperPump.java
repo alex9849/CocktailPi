@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.StepperDriver;
@@ -12,26 +13,26 @@ import net.alex9849.motorlib.pin.PinState;
 @DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
     private AcceleratingStepper stepperDriver;
-    private Integer enablePin;
-    private Integer stepPin;
+    private GpioBoard.Pin enablePin;
+    private GpioBoard.Pin stepPin;
     private Integer stepsPerCl;
     private Integer maxStepsPerSecond;
     private Integer acceleration;
 
-    public Integer getEnablePin() {
+    public GpioBoard.Pin getEnablePin() {
         return enablePin;
     }
 
-    public void setEnablePin(Integer enablePin) {
+    public void setEnablePin(GpioBoard.Pin enablePin) {
         this.enablePin = enablePin;
         resetDriver();
     }
 
-    public Integer getStepPin() {
+    public GpioBoard.Pin getStepPin() {
         return stepPin;
     }
 
-    public void setStepPin(Integer stepPin) {
+    public void setStepPin(GpioBoard.Pin stepPin) {
         this.stepPin = stepPin;
         resetDriver();
     }
@@ -75,10 +76,9 @@ public class StepperPump extends Pump {
             throw new IllegalStateException("Motor not ready for pumping!");
         }
         if(this.stepperDriver == null) {
-            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
 
-            IOutputPin enablePin = pinUtils.getBoardOutputPin(getEnablePin());
-            IOutputPin stepPin = pinUtils.getBoardOutputPin(getStepPin());
+            IOutputPin enablePin = getEnablePin().getOutputPin();
+            IOutputPin stepPin = getStepPin().getOutputPin();
             IOutputPin dirPin = new IOutputPin() {
                 @Override
                 public void digitalWrite(PinState value) {

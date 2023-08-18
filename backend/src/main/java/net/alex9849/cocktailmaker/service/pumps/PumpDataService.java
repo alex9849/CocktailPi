@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.service.pumps;
 
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
@@ -9,6 +11,7 @@ import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
+import net.alex9849.cocktailmaker.service.GpioService;
 import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +30,9 @@ public class PumpDataService {
     @Autowired
     private IngredientService ingredientService;
 
+    @Autowired
+    private GpioService gpioService;
+
     //
     // CRUD actions
     //
@@ -43,23 +49,19 @@ public class PumpDataService {
     }
 
     public Pump createPump(Pump pump) {
-        List<Integer> pinList = new ArrayList<>();
-        if(pump instanceof DcPump dcPump && dcPump.getPin() != null) {
-            pinList.add(dcPump.getPin());
-        } else if (pump instanceof StepperPump stepperPump) {
-            if(stepperPump.getEnablePin() != null)
-                pinList.add(stepperPump.getEnablePin());
-            if(stepperPump.getStepPin() != null)
-                pinList.add(stepperPump.getStepPin());
-        }
-        for(Integer pin : pinList) {
-            Optional<Pump> oPump = pumpRepository.findByBcmPin(pin);
-            if(oPump.isPresent()) {
-                if(oPump.get().getId() != pump.getId()) {
-                    throw new IllegalArgumentException("BCM-Pin already in use!");
-                }
+        List<PinResource> pinResources = new ArrayList<>();
+        if(pump instanceof DcPump dcPump) {
+            if(dcPump.getPin() != null && dcPump.getPin().getResource() != null) {
+                pinResources.add(dcPump.getPin().getResource());
             }
-            //TODO check if pin already in use by other services
+        } else if (pump instanceof StepperPump stepperPump) {
+            if(stepperPump.getEnablePin() != null && stepperPump.getEnablePin().getResource() != null)
+                pinResources.add(stepperPump.getEnablePin().getResource());
+            if(stepperPump.getStepPin() != null && stepperPump.getStepPin().getResource() != null)
+                pinResources.add(stepperPump.getStepPin().getResource());
+        }
+        if(!pinResources.isEmpty()) {
+            throw new IllegalArgumentException("BCM-Pin already in use!");
         }
         pump = pumpRepository.create(pump);
         //Turn off pump
@@ -77,27 +79,23 @@ public class PumpDataService {
             throw new IllegalArgumentException("Can't change pump type!");
         }
 
-        List<Integer> pinList = new ArrayList<>();
+        List<PinResource> pinResources = new ArrayList<>();
         if(pump instanceof DcPump dcPump) {
-            if(dcPump.getPin() != null) {
-                pinList.add(dcPump.getPin());
+            if(dcPump.getPin() != null && dcPump.getPin().getResource() != null) {
+                pinResources.add(dcPump.getPin().getResource());
             }
         } else if (pump instanceof StepperPump stepperPump) {
-            if(stepperPump.getEnablePin() != null) {
-                pinList.add(stepperPump.getEnablePin());
+            if(stepperPump.getEnablePin() != null && stepperPump.getEnablePin().getResource() != null) {
+                pinResources.add(stepperPump.getEnablePin().getResource());
             }
-            if(stepperPump.getStepPin() != null) {
-                pinList.add(stepperPump.getStepPin());
+            if(stepperPump.getStepPin() != null && stepperPump.getStepPin().getResource() != null) {
+                pinResources.add(stepperPump.getStepPin().getResource());
             }
         }
-        for(Integer pin : pinList) {
-            Optional<Pump> oPump = pumpRepository.findByBcmPin(pin);
-            if(oPump.isPresent()) {
-                if(oPump.get().getId() != pump.getId()) {
-                    throw new IllegalArgumentException("BCM-Pin already in use!");
-                }
+        for(PinResource resource : pinResources) {
+            if(resource.getType() != PinResource.Type.PUMP && resource.getId() != pump.getId()) {
+                throw new IllegalArgumentException("BCM-Pin already in use!");
             }
-            //TODO check if pin already in use by other services
         }
         if(beforeUpdate.get().isCanPump()) {
             beforeUpdate.get().getMotorDriver().shutdown();
@@ -158,6 +156,7 @@ public class PumpDataService {
                 toPatch.setCurrentIngredient(null);
             }
         }
+
         String[] ignoreFields = SpringUtility.getNullPropertyNames(patchPumpDto);
         ignoreFields = Arrays.stream(ignoreFields)
                 .filter(x -> !removeFields.contains(x))
@@ -167,7 +166,68 @@ public class PumpDataService {
         if(patchPumpDto.getIsPumpedUp() != null) {
             toPatch.setPumpedUp(patchPumpDto.getIsPumpedUp());
         }
+
+        if(toPatch instanceof StepperPump stepperPump) {
+            return fromDto((StepperPumpDto.Request.Create) patchPumpDto, stepperPump);
+        } else if(toPatch instanceof DcPump dcPump) {
+            return fromDto((DcPumpDto.Request.Create) patchPumpDto, dcPump);
+        }
         return toPatch;
+    }
+
+    private Pump fromDto(DcPumpDto.Request.Create patchPumpDto, DcPump toPatchDc) {
+        if(patchPumpDto == null) {
+            return toPatchDc;
+        }
+        Set<String> removeFields;
+        if(patchPumpDto.getRemoveFields() != null) {
+            removeFields = patchPumpDto.getRemoveFields();
+        } else {
+            removeFields = new HashSet<>();
+        }
+
+        if(patchPumpDto.getPin() != null) {
+            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getPin());
+            toPatchDc.setPin(pin);
+        } else {
+            if(removeFields.contains("pin")) {
+                toPatchDc.setPin(null);
+            }
+        }
+
+        return toPatchDc;
+    }
+
+    private Pump fromDto(StepperPumpDto.Request.Create patchPumpDto, StepperPump toPatchStepper) {
+        if(patchPumpDto == null) {
+            return toPatchStepper;
+        }
+        Set<String> removeFields;
+        if(patchPumpDto.getRemoveFields() != null) {
+            removeFields = patchPumpDto.getRemoveFields();
+        } else {
+            removeFields = new HashSet<>();
+        }
+
+        if(patchPumpDto.getEnablePin() != null) {
+            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getEnablePin());
+            toPatchStepper.setEnablePin(pin);
+        } else {
+            if(removeFields.contains("enablePin")) {
+                toPatchStepper.setEnablePin(null);
+            }
+        }
+
+        if(patchPumpDto.getStepPin() != null) {
+            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getStepPin());
+            toPatchStepper.setStepPin(pin);
+        } else {
+            if(removeFields.contains("stepPin")) {
+                toPatchStepper.setStepPin(null);
+            }
+        }
+
+        return toPatchStepper;
     }
 
     public Set<Long> findIngredientIdsOnPump() {

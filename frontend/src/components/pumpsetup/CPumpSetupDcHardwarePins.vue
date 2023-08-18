@@ -16,19 +16,14 @@
       </p>
     </template>
     <template v-slot:fields>
-      <q-input
+      <c-gpio-selector
         :model-value="pin"
         @update:model-value="$emit('update:pin', $event)"
         :error-message="pinErrorMsg"
         :error="!!pinErrorMsg"
         :loading="pinLoading"
-        debounce="600"
-        outlined
-        type="number"
-        filled
-        label="BCM-Pin"
-      >
-      </q-input>
+        label="Control Pin"
+      />
     </template>
   </c-assistant-container>
   <q-splitter
@@ -64,10 +59,11 @@
 <script>
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
+import CGpioSelector from 'components/CGpioSelector.vue'
 
 export default defineComponent({
   name: 'CPumpSetupDcHardwarePins',
-  components: { CAssistantContainer },
+  components: { CGpioSelector, CAssistantContainer },
   props: {
     pin: {},
     pinErrorMsg: {},
