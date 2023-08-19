@@ -2,11 +2,13 @@ package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
-import net.alex9849.cocktailmaker.model.settings.I2CSettings;
-import net.alex9849.cocktailmaker.payload.dto.settings.I2cSettingsDto;
+import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
+import net.alex9849.cocktailmaker.utils.PinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -108,6 +110,10 @@ public class SystemService {
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
+        if(i2CSettings.isEnable()) {
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
+        }
+
         try {
             Process process;
             if (i2CSettings.isEnable()) {
@@ -144,5 +150,15 @@ public class SystemService {
         }
         stdInput.close();
         return found;
+    }
+
+    public I2CSettings getI2cSettings() {
+        I2CSettings i2CSettings = new I2CSettings();
+        i2CSettings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("I2C_Enable")));
+        if(i2CSettings.isEnable()) {
+            i2CSettings.setSdaPin(optionsRepository.getPinOption(REPO_KEY_I2C_PIN_SDA).orElse(null));
+            i2CSettings.setSclPin(optionsRepository.getPinOption(REPO_KEY_I2C_PIN_SCL).orElse(null));
+        }
+        return i2CSettings;
     }
 }

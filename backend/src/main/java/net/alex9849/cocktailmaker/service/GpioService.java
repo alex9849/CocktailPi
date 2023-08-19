@@ -5,6 +5,7 @@ import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.model.system.GpioStatus;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 import net.alex9849.cocktailmaker.repository.GpioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,9 @@ public class GpioService {
 
     public Optional<PinResource> getPinResourceByBoardIdAndPin(long boardId, int pinNr) {
         return gpioRepository.getPinResourceByBoardIdAndPin(boardId, pinNr);
+    }
+
+    public GpioStatus getGpioStatus() {
+        return gpioRepository.getGpioStatus();
     }
 }

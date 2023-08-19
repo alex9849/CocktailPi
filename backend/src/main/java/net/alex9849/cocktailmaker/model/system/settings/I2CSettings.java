@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model.settings;
+package net.alex9849.cocktailmaker.model.system.settings;
 
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 

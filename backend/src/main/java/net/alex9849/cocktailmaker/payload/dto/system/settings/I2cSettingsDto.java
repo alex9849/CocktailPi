@@ -1,7 +1,7 @@
-package net.alex9849.cocktailmaker.payload.dto.settings;
+package net.alex9849.cocktailmaker.payload.dto.system.settings;
 
 import lombok.*;
-import net.alex9849.cocktailmaker.model.settings.I2CSettings;
+import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

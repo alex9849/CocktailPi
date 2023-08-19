@@ -1,11 +1,11 @@
-package net.alex9849.cocktailmaker.payload.dto.settings;
+package net.alex9849.cocktailmaker.payload.dto.system.settings;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import net.alex9849.cocktailmaker.model.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

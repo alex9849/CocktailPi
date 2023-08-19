@@ -12,14 +12,26 @@
           <q-card-section class="q-py-md">
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
-                <q-card flat bordered class="bg-grey-2">
+                <q-card
+                  flat bordered class="bg-grey-2"
+                >
                   <q-card-section class="q-py-xs bg-cyan-1">
                     <p class="text-weight-medium">Pin usage</p>
                   </q-card-section>
-                  <q-separator :value="10" />
-                  <q-card-section class="row q-py-sm q-col-gutter-xs">
-                    <p class="col-12 col-sm-6 col-md-12">Pins usage: <q-badge>1/36</q-badge></p>
-                    <p class="col-12 col-sm-6 col-md-12">Expansion cards: <q-badge>1</q-badge></p>
+                  <q-separator />
+                  <q-card-section
+                    v-if="gpioStatus.loading"
+                    class="row q-py-sm q-col-gutter-xs"
+                  >
+                    <q-skeleton class="col-12 col-sm-6 col-md-12" type="text" />
+                    <q-skeleton class="col-12 col-sm-6 col-md-12" type="text" />
+                  </q-card-section>
+                  <q-card-section
+                    v-else
+                    class="row q-py-sm q-col-gutter-xs"
+                  >
+                    <p class="col-12 col-sm-6 col-md-12">Pins usage: <q-badge>{{ gpioStatus.data.pinsUsed }}/{{gpioStatus.data.pinsAvailable}}</q-badge></p>
+                    <p class="col-12 col-sm-6 col-md-12">GPIO boards: <q-badge>{{ gpioStatus.data.boardsAvailable}}</q-badge></p>
                   </q-card-section>
                 </q-card>
               </div>
@@ -41,15 +53,33 @@
                       />
                     </div>
                   </q-card-section>
-                  <q-separator :value="10" />
+                  <q-separator />
                   <q-card-section class="row q-py-sm q-col-gutter-xs">
-                    <p class="col-12 col-sm-6 col-md-12">Status: <q-badge class="bg-negative">disabled</q-badge></p>
+                    <p class="col-12 col-sm-6 col-md-12">
+                      Status:
+                      <q-skeleton
+                        v-if="i2cStatus.loading"
+                        type="QBadge"
+                        class="flex inline items-center no-wrap"
+                      />
+                      <q-badge
+                        v-else
+                        :class="{'bg-negative': !i2cStatus.data.enabled , 'bg-positive': i2cStatus.data.enabled}"
+                      >
+                        {{i2cStatus.data.enabled ? 'enabled' : 'disabled'}}
+                      </q-badge>
+                    </p>
                   </q-card-section>
-                  <q-separator :value="10" />
-                  <q-card-section class="row q-py-sm q-col-gutter-xs">
+                  <q-separator
+                    v-if="i2cStatus.data.enabled"
+                  />
+                  <q-card-section
+                    v-if="i2cStatus.data.enabled"
+                    class="row q-py-sm q-col-gutter-xs"
+                  >
                     <div class="col-12">
                       <p class="text-weight-medium">Bus 1</p>
-                      <p>Pins: 1, 2</p>
+                      <p>Pins: {{ i2cStatus.data.scaPin?.nr }}, {{ i2cStatus.data.sdlPin?.nr }}</p>
                     </div>
                   </q-card-section>
                 </q-card>
@@ -65,7 +95,7 @@
               <q-card-section class="q-py-sm bg-card-secondary">
                 <p class="text-weight-medium">Local GPIOs:</p>
               </q-card-section>
-              <q-separator :value="10" />
+              <q-separator />
               <q-card-section class="">
                 <div class="row q-col-gutter-sm justify-center">
                   <div
@@ -140,7 +170,7 @@
                     />
                   </div>
                   <div class="col-12"
-                       v-else-if="false"
+                       v-else-if="!i2cStatus.data.enabled"
                   >
                     <q-card
                       flat
@@ -197,17 +227,34 @@
 import { mdiAlert, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CGpioExpanderExpansionItem from 'components/gpiosetup/CGpioExpanderExpansionItem.vue'
 import GpioService from 'src/services/gpio.service'
+import SystemService from 'src/services/system.service'
 export default {
   name: 'GpioManagement',
   data: () => {
     return {
       localBoards: {
-        loading: false,
+        loading: true,
         boards: []
       },
       i2cBoards: {
-        loading: false,
+        loading: true,
         boards: []
+      },
+      gpioStatus: {
+        loading: true,
+        data: {
+          pinsUsed: '',
+          pinsAvailable: '',
+          boardsAvailable: ''
+        }
+      },
+      i2cStatus: {
+        loading: true,
+        data: {
+          enabled: false,
+          sdlPin: '',
+          scaPin: ''
+        }
       }
     }
   },
@@ -230,6 +277,22 @@ export default {
         this.i2cBoards.boards = x
       }).finally(() => {
         this.i2cBoards.loading = false
+      })
+    this.gpioStatus.loading = true
+    GpioService.getGpioStatus()
+      .then(x => {
+        this.gpioStatus.data = x
+      })
+      .finally(() => {
+        this.gpioStatus.loading = false
+      })
+    this.i2cStatus.loading = true
+    SystemService.getI2cSettings()
+      .then(x => {
+        this.i2cStatus.data = x
+      })
+      .finally(() => {
+        this.i2cStatus.loading = false
       })
   }
 }

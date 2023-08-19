@@ -6,11 +6,12 @@ import net.alex9849.cocktailmaker.model.pump.*;
 import net.alex9849.cocktailmaker.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailmaker.model.pump.motortasks.PumpTask;
 import net.alex9849.cocktailmaker.model.pump.motortasks.StepperMotorTask;
-import net.alex9849.cocktailmaker.model.settings.ReversePumpSettings;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettingsDto;
+import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.GpioService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
+import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
@@ -269,20 +270,13 @@ public class PumpMaintenanceService {
     }
 
     public synchronized void setReversePumpingSettings(ReversePumpSettings settings) {
-        if (pumpTasksByJobId.values().stream().anyMatch(x -> !x.isFinished())) {
-            throw new IllegalStateException("Pumps occupied!");
-        }
-
         optionsRepository.setOption("RPS_Enable", Boolean.valueOf(settings.isEnable()).toString());
         if (settings.isEnable()) {
             ReversePumpSettings.Config details = settings.getSettings();
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP_DIRECTION, null, details.getDirectorPin());
             optionsRepository.setOption("RPS_Overshoot", Integer.valueOf(details.getOvershoot()).toString());
             optionsRepository.setOption("RPS_AutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
 
-            PinResource pinResource = details.getDirectorPin().getResource();
-            if(pinResource != null && pinResource.getType() != PinResource.Type.PUMP_DIRECTION) {
-                throw new IllegalArgumentException("Pin is already used!");
-            }
             optionsRepository.setPinOption(REPO_KEY_PUMP_DIRECTION_PIN, details.getDirectorPin());
 
         } else {

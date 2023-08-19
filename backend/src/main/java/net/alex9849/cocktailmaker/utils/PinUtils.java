@@ -8,13 +8,14 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.io.i2c.I2CProvider;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class PinUtils {
@@ -49,6 +50,26 @@ public class PinUtils {
             }
         }
         return i2CMap.get(address);
+    }
+
+    public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, GpioBoard.Pin... pins) {
+        List<PinResource> pinResources = new ArrayList<>();
+        Set<Map.Entry<Long, Integer>> cPins = new HashSet<>();
+        boolean pinDoubled = false;
+        for(GpioBoard.Pin cPin : pins) {
+            if (cPin != null && cPin.getResource() != null) {
+                pinResources.add(cPin.getResource());
+                pinDoubled |= !cPins.add(Map.entry(cPin.getBoardId(), cPin.getPinNr()));
+            }
+        }
+        if(pinDoubled) {
+            throw new IllegalArgumentException("I2C Pins need to be different!");
+        }
+        for(PinResource resource : pinResources) {
+            if(!(resource.getType() == allowedType && (allowedIdIfTypeMatch == null || resource.getId() == allowedIdIfTypeMatch))) {
+                throw new IllegalArgumentException("Pin already in use!");
+            }
+        }
     }
 
 }

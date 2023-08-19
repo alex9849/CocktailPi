@@ -3,10 +3,8 @@ package net.alex9849.cocktailmaker.repository;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
-import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
-import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.model.gpio.*;
+import net.alex9849.cocktailmaker.model.system.GpioStatus;
 import net.alex9849.cocktailmaker.service.SystemService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +167,32 @@ public class GpioRepository extends JdbcDaoSupport {
                 return Optional.of(parseRs(rs));
             }
             return Optional.empty();
+        });
+    }
+
+    public GpioStatus getGpioStatus() {
+        return getJdbcTemplate().execute((ConnectionCallback<GpioStatus>) con -> {
+            PreparedStatement pstmt = con.prepareStatement(
+                    "SELECT COUNT(distinct gb.id)      AS nr_boards,\n" +
+                            "       COUNT(gp.pin_nr)           AS pins_available,\n" +
+                            "       COUNT(ifnull(p.id, o.key)) AS pins_used\n" +
+                            "from gpio_boards gb\n" +
+                            "         LEFT JOIN gpio_pins gp on gb.id = gp.board\n" +
+                            "         LEFT JOIN options o on gp.board = o.pin_board and gp.pin_nr = o.pin_nr\n" +
+                            "         LEFT JOIN pumps p on (gp.board = p.dc_pin_board and gp.pin_nr = p.dc_pin_nr) or\n" +
+                            "                              (gp.board = p.step_pin_board and gp.pin_nr = p.step_pin_nr) or\n" +
+                            "                              (gp.board = p.enable_pin_board and gp.pin_nr = p.enable_pin_nr)"
+            );
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                GpioStatus status = new GpioStatus();
+                status.setBoardsAvailable(rs.getInt("nr_boards"));
+                status.setPinsAvailable(rs.getInt("pins_available"));
+                status.setPinsUsed(rs.getInt("pins_used"));
+                return status;
+            }
+            throw new IllegalStateException("Error loading Gpio status");
         });
     }
 

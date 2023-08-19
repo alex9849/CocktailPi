@@ -23,6 +23,11 @@ class GpioService {
     return axios.get(API_PATH + boardId + '/pin')
       .then(x => x.data)
   }
+
+  getGpioStatus () {
+    return axios.get(API_PATH + '/status')
+      .then(x => x.data)
+  }
 }
 
 export class PinDtoMapper {

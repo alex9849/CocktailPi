@@ -13,6 +13,7 @@ import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
 import net.alex9849.cocktailmaker.service.GpioService;
 import net.alex9849.cocktailmaker.service.IngredientService;
+import net.alex9849.cocktailmaker.utils.PinUtils;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +52,11 @@ public class PumpDataService {
     public Pump createPump(Pump pump) {
         List<PinResource> pinResources = new ArrayList<>();
         if(pump instanceof DcPump dcPump) {
-            if(dcPump.getPin() != null && dcPump.getPin().getResource() != null) {
-                pinResources.add(dcPump.getPin().getResource());
+            if(dcPump.getPin() != null) {
+                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), dcPump.getPin());
             }
         } else if (pump instanceof StepperPump stepperPump) {
-            if(stepperPump.getEnablePin() != null && stepperPump.getEnablePin().getResource() != null)
-                pinResources.add(stepperPump.getEnablePin().getResource());
-            if(stepperPump.getStepPin() != null && stepperPump.getStepPin().getResource() != null)
-                pinResources.add(stepperPump.getStepPin().getResource());
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), stepperPump.getEnablePin(), stepperPump.getStepPin());
         }
         if(!pinResources.isEmpty()) {
             throw new IllegalArgumentException("BCM-Pin already in use!");
@@ -72,39 +70,19 @@ public class PumpDataService {
     }
     public Pump updatePump(Pump pump) {
         Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
-        if(!beforeUpdate.isPresent()) {
+        if(beforeUpdate.isEmpty()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
         if(!beforeUpdate.get().getClass().equals(pump.getClass())) {
             throw new IllegalArgumentException("Can't change pump type!");
         }
 
-        List<PinResource> pinResources = new ArrayList<>();
-        Set<Map.Entry<Long, Integer>> pins = new HashSet<>();
-        boolean pinDoubled = false;
         if(pump instanceof DcPump dcPump) {
-            if(dcPump.getPin() != null && dcPump.getPin().getResource() != null) {
-                pinResources.add(dcPump.getPin().getResource());
-                pinDoubled |= !pins.add(Map.entry(dcPump.getPin().getBoardId(), dcPump.getPin().getPinNr()));
-            }
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), dcPump.getPin());
         } else if (pump instanceof StepperPump stepperPump) {
-            if(stepperPump.getEnablePin() != null && stepperPump.getEnablePin().getResource() != null) {
-                pinResources.add(stepperPump.getEnablePin().getResource());
-                pinDoubled |= !pins.add(Map.entry(stepperPump.getEnablePin().getBoardId(), stepperPump.getEnablePin().getPinNr()));
-            }
-            if(stepperPump.getStepPin() != null && stepperPump.getStepPin().getResource() != null) {
-                pinResources.add(stepperPump.getStepPin().getResource());
-                pinDoubled |= !pins.add(Map.entry(stepperPump.getStepPin().getBoardId(), stepperPump.getStepPin().getPinNr()));
-            }
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), stepperPump.getEnablePin(), stepperPump.getStepPin());
         }
-        if(pinDoubled) {
-            throw new IllegalArgumentException("Pin already in use!");
-        }
-        for(PinResource resource : pinResources) {
-            if(resource.getType() != PinResource.Type.PUMP && resource.getId() != pump.getId()) {
-                throw new IllegalArgumentException("Pin already in use!");
-            }
-        }
+
         if(beforeUpdate.get().isCanPump()) {
             beforeUpdate.get().getMotorDriver().shutdown();
         }

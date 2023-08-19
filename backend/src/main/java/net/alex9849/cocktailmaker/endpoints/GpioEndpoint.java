@@ -32,6 +32,12 @@ public class GpioEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "status", method = RequestMethod.GET)
+    private ResponseEntity<?> getStatus() {
+        return ResponseEntity.ok(gpioService.getGpioStatus());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "{id}/pin", method = RequestMethod.GET)
     private ResponseEntity<?> getGpioPins(@PathVariable(value = "id") long boardId) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);

@@ -63,6 +63,11 @@ class SystemService {
     }
     return axios.put(API_PATH + 'settings/i2c', dto)
   }
+
+  getI2cSettings () {
+    return axios.get(API_PATH + 'settings/i2c')
+      .then(x => x.data)
+  }
 }
 
 export default new SystemService()
