@@ -75,6 +75,16 @@
               </q-item-section>
             </q-item>
           </template>
+          <template v-slot:append>
+            <q-btn
+              v-if="this.selection.board && clearable"
+              :icon="mdiCloseCircle"
+              flat
+              dense
+              round
+              @click.stop="onClear()"
+            />
+          </template>
         </q-select>
       </div>
     </q-card>
@@ -94,6 +104,7 @@
 <script>
 
 import GpioService from 'src/services/gpio.service'
+import { mdiCloseCircle } from '@mdi/js'
 
 export default {
   name: 'CGpioSelector',
@@ -122,6 +133,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    clearable: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {
@@ -139,6 +154,7 @@ export default {
   },
   emits: ['update:model-value'],
   created () {
+    this.mdiCloseCircle = mdiCloseCircle
     this.fetchBoards()
   },
   watch: {
@@ -173,6 +189,10 @@ export default {
       if (!this.pinsFetched && this.selection.board) {
         this.fetchPins(this.selection.board.id)
       }
+    },
+    onClear () {
+      this.onSelectBoard(null)
+      this.$refs.pinSelect.blur()
     },
     resetFetchedPins () {
       this.pinsFetched = false
