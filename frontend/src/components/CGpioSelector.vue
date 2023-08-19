@@ -6,29 +6,48 @@
           class="col-6"
           label="Board"
           bg-color="white"
-          v-model:model-value="selection.board"
+          :model-value="selection.board"
+          @update:modelValue="onSelectBoard"
           :options="boards"
           option-label="name"
           option-value="id"
-          :loading="loadingBoards"
-          :disable="loadingBoards"
           :error="error"
+          :disable="loading"
           square
           filled
           no-error-icon
           hide-bottom-space
-        />
+        >
+          <template
+            v-slot:no-option
+          >
+            <q-linear-progress
+              v-if="loadingBoards"
+              query
+              reverse
+              size="xs"
+              color="info"
+            />
+            <q-item v-if="loadingBoards">
+              <q-item-section>
+                <i>Loading Boards...</i>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           style="border-left: solid #D5D5D5FF 1px"
           class="col-6"
           bg-color="white"
           :label="label ? label : 'SCL-Pin'"
-          v-model:model-value="selection.pin"
-          @update:modelValue="onPinSelect"
-          :disable="loadingPins"
-          :loading="loadingPins"
+          :model-value="selection.pin"
+          ref="pinSelect"
+          @update:modelValue="onSelectPin"
+          @popupShow="onOpenPinSelectPopup"
           :option-label="x => x ? pinIdPrefix + x.nr : null"
           :error="error"
+          :disable="loading"
+          :loading="loading"
           option-value="nr"
           square
           :options="selectablePins"
@@ -36,12 +55,23 @@
           hide-bottom-space
         >
           <template
-            v-if="!selection.board"
             v-slot:no-option
           >
-            <q-item>
+            <q-item v-if="!selection.board">
               <q-item-section>
                 <i>Select a board first.</i>
+              </q-item-section>
+            </q-item>
+            <q-linear-progress
+              v-if="loadingPins"
+              query
+              reverse
+              size="xs"
+              color="info"
+            />
+            <q-item v-if="loadingPins">
+              <q-item-section>
+                <i>Loading Pins...</i>
               </q-item-section>
             </q-item>
           </template>
@@ -88,6 +118,10 @@ export default {
     allowedInUsePins: {
       type: Array,
       default: () => []
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {
@@ -96,11 +130,9 @@ export default {
         board: '',
         pin: ''
       },
-      boards: [{
-        value: 1,
-        label: 'Local'
-      }],
+      boards: [],
       pins: [],
+      pinsFetched: false,
       loadingBoards: true,
       loadingPins: false
     }
@@ -118,28 +150,34 @@ export default {
         }
         this.setSelectionFromModelValue()
       }
-    },
-    'selection.board': {
-      immediate: true,
-      handler (val, oldval) {
-        if (!val) {
-          this.pins = []
-          if (this.selection.pin) {
-            this.onPinSelect(null)
-            this.selection.pin = ''
-          }
-          return
-        }
-        if (val.id === oldval?.id) {
-          return
-        }
-        this.selection.pin = ''
-        this.onPinSelect(null)
-        this.fetchPins(val.id)
-      }
     }
   },
   methods: {
+    onSelectBoard (board) {
+      if (this.selection.board?.id === board?.id) {
+        return
+      }
+      this.selection.board = board
+      this.resetFetchedPins()
+      if (this.selection.pin) {
+        this.selection.pin = ''
+        this.emitPin()
+      }
+    },
+    onSelectPin (pin) {
+      this.selection.pin = pin
+      this.emitPin()
+      this.$refs.pinSelect.blur()
+    },
+    onOpenPinSelectPopup () {
+      if (!this.pinsFetched && this.selection.board) {
+        this.fetchPins(this.selection.board.id)
+      }
+    },
+    resetFetchedPins () {
+      this.pinsFetched = false
+      this.pins = []
+    },
     setSelectionFromModelValue () {
       if (this.loadingBoards || !this.modelValue) {
         return
@@ -174,13 +212,14 @@ export default {
       GpioService.getBoardPins(boardId)
         .then(x => {
           this.pins = x
+          this.pinsFetched = true
         })
         .finally(() => {
           this.loadingPins = false
         })
     },
-    onPinSelect (pin) {
-      this.$emit('update:model-value', pin)
+    emitPin () {
+      this.$emit('update:model-value', this.selection.pin)
     }
   },
   computed: {
@@ -197,7 +236,7 @@ export default {
           .filter(x => x.boardId === this.selection.board?.id)
           .map(x => x.nr)
       )
-      if (this.modelValue && this.modelValue.boardId === this.selection.board?.id) {
+      if (this.modelValue && this.modelValue.boardId === this.selection.board?.id && !this.loadingPins) {
         allowedPinIds.add(this.modelValue.nr)
       }
       for (const pin of this.pins) {

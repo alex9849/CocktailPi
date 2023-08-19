@@ -29,7 +29,7 @@
   <q-splitter
     :model-value="10"
     horizontal
-    class="q-pb-md"
+    class="q-py-md"
   />
   <c-assistant-container>
     <template v-slot:explanations>
