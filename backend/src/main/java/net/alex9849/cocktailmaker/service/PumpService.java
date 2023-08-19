@@ -9,7 +9,7 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.model.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;

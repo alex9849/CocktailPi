@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import net.alex9849.cocktailmaker.model.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -37,7 +38,7 @@ public class ReversePumpSettingsDto {
             Config.Response.Detailed settings;
 
             public Detailed(ReversePumpSettings rps) {
-                this.enable = rps.enable;
+                this.enable = rps.isEnable();
                 if(rps.getSettings() != null) {
                     this.settings = new Config.Response.Detailed(rps.getSettings());
                 }

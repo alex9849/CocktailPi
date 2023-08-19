@@ -1,10 +1,10 @@
-package net.alex9849.cocktailmaker.payload.dto.settings;
+package net.alex9849.cocktailmaker.model.settings;
 
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 
 public class ReversePumpSettings {
-    boolean enable;
-    Config settings;
+    private boolean enable;
+    private Config settings;
 
     public boolean isEnable() {
         return enable;
@@ -23,9 +23,9 @@ public class ReversePumpSettings {
     }
 
     public static class Config {
-        GpioBoard.Pin directorPin;
-        int overshoot;
-        int autoPumpBackTimer;
+        private GpioBoard.Pin directorPin;
+        private int overshoot;
+        private int autoPumpBackTimer;
 
         public GpioBoard.Pin getDirectorPin() {
             return directorPin;

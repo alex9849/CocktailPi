@@ -1,11 +1,12 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.model.settings.I2CSettings;
+import net.alex9849.cocktailmaker.model.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.payload.dto.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.SystemService;
-import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,5 +66,13 @@ public class SystemEndpoint {
     @RequestMapping(value = "settings/global", method = RequestMethod.GET)
     public ResponseEntity<?> getGlobalSettings() {;
         return ResponseEntity.ok(systemService.getGlobalSettings());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "settings/i2c", method = RequestMethod.PUT)
+    public ResponseEntity<?> setI2C(@RequestBody @Valid I2cSettingsDto.Request dto) throws IOException {
+        I2CSettings i2CSettings = systemService.fromDto(dto);
+        systemService.setI2cSettings(i2CSettings);
+        return ResponseEntity.ok().build();
     }
 }

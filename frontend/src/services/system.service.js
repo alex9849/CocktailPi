@@ -46,6 +46,23 @@ class SystemService {
     return axios.get(API_PATH + 'settings/global')
       .then(response => response.data)
   }
+
+  setI2cSettings (settings) {
+    const dto = {
+      enable: settings.enable
+    }
+    if (settings.enable) {
+      dto.sdaPin = {
+        nr: settings.sdaPin.nr,
+        boardId: settings.sdaPin.boardId
+      }
+      dto.sclPin = {
+        nr: settings.sdaPin.nr,
+        boardId: settings.sdaPin.boardId
+      }
+    }
+    return axios.put(API_PATH + 'settings/i2c', dto)
+  }
 }
 
 export default new SystemService()

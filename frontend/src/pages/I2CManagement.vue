@@ -8,6 +8,7 @@
     >
       <q-form
         class="q-col-gutter-md"
+        @submit.prevent="submit"
       >
         <div
           class="col-12"
@@ -72,7 +73,8 @@
               color="positive"
               label="Save"
               :disable="v.config.$invalid"
-              @click="$router.push({name: 'gpiomanagement'})"
+              :loading="submitting"
+              @click="submit"
             />
             <q-btn
               style="width: 100px"
@@ -93,6 +95,7 @@ import CAssistantContainer from 'components/CAssistantContainer.vue'
 import { required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CGpioSelector from 'components/CGpioSelector.vue'
+import SystemService from 'src/services/system.service'
 
 export default {
   name: 'I2CManagement',
@@ -103,12 +106,26 @@ export default {
         enable: false,
         sdaPin: null,
         sclPin: null
-      }
+      },
+      submitting: false
     }
   },
   setup () {
     return {
       v: useVuelidate()
+    }
+  },
+  methods: {
+    submit () {
+      if (this.v.config.$invalid) {
+        return
+      }
+      this.submitting = true
+      SystemService.setI2cSettings(this.config)
+        .then(() => this.$router.push({ name: 'gpiomanagement' }))
+        .finally(() => {
+          this.submitting = false
+        })
     }
   },
   validations () {
