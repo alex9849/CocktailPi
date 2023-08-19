@@ -14,12 +14,16 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class OptionsRepository extends JdbcDaoSupport {
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private GpioRepository gpioRepository;
 
     @PostConstruct
     private void initialize() {
@@ -33,7 +37,6 @@ public class OptionsRepository extends JdbcDaoSupport {
             pstmt.setString(1, key);
 
             ResultSet rs = pstmt.executeQuery();
-            List<UUID> results = new ArrayList<>();
             if (rs.next()) {
                 return rs.getString("value");
             }
@@ -44,10 +47,10 @@ public class OptionsRepository extends JdbcDaoSupport {
     public void setOption(String key, String value) {
         if(value != null) {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_pin)\n" +
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_nr)\n" +
                         "VALUES (?, ?, ?, ?)\n" +
                         "ON CONFLICT (key) DO UPDATE\n" +
-                        "    SET value = excluded.value, pin_board = excluded.pin_board, pin_pin = excluded.pin_pin");
+                        "    SET value = excluded.value, pin_board = excluded.pin_board, pin_nr = excluded.pin_nr");
                 pstmt.setString(1, key);
                 pstmt.setString(2, value);
                 pstmt.setNull(3, Types.INTEGER);
@@ -64,11 +67,11 @@ public class OptionsRepository extends JdbcDaoSupport {
     public void setPinOption(String key, GpioBoard.Pin pin) {
         if(pin != null) {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
-                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_pin)\n" +
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_nr)\n" +
                         "VALUES (?, ?, ?, ?)\n" +
                         "ON CONFLICT (key) DO UPDATE\n" +
                         "    SET value = excluded.value");
-                pstmt.setNull(1, Types.VARCHAR);
+                pstmt.setString(1, key);
                 pstmt.setNull(2, Types.VARCHAR);
                 pstmt.setLong(3, pin.getBoardId());
                 pstmt.setInt(4, pin.getPinNr());
@@ -79,6 +82,24 @@ public class OptionsRepository extends JdbcDaoSupport {
         } else {
             delOption(key, false);
         }
+    }
+
+    public Optional<GpioBoard.Pin> getPinOption(String key) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<GpioBoard.Pin>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT pin_board, pin_nr FROM options WHERE key = ?");
+            pstmt.setString(1, key);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                long boardId = rs.getLong("pin_board");
+                if(rs.wasNull()) {
+                    return Optional.empty();
+                }
+                GpioBoard gpioBoard = gpioRepository.findById(boardId).orElse(null);
+                return Optional.of(gpioBoard.getPin((Integer) rs.getObject("pin_nr")));
+            }
+            return Optional.empty();
+        });
     }
 
     public void delOption(String key, boolean like) {

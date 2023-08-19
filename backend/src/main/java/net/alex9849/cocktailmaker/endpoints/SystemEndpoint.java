@@ -1,7 +1,9 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
+import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettingsDto;
+import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.SystemService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class SystemEndpoint {
     private SystemService systemService;
 
     @Autowired
-    private PumpMaintenanceService pumpUpService;
+    private PumpService pumpService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)
@@ -38,18 +40,19 @@ public class SystemEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "settings/reversepumping", method = RequestMethod.PUT)
-    public ResponseEntity<?> setReversePumpSettings(@RequestBody @Valid ReversePumpingSettings.Full settings) {
+    public ResponseEntity<?> setReversePumpSettings(@RequestBody @Valid ReversePumpSettingsDto.Request.Create settings) {
         if(settings.isEnable() && settings.getSettings() == null) {
             throw new IllegalStateException("Settings-Details are null!");
         }
-        pumpUpService.setReversePumpingSettings(settings);
+        ReversePumpSettings reversePumpSettings = pumpService.fromDto(settings);
+        pumpService.setReversePumpingSettings(reversePumpSettings);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "settings/reversepumping", method = RequestMethod.GET)
     public ResponseEntity<?> getReversePumpSettings() {;
-        return ResponseEntity.ok(pumpUpService.getReversePumpingSettings());
+        return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(pumpService.getReversePumpingSettings()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -168,10 +168,10 @@ create table event_actions_execution_groups
 CREATE TABLE options
 (
     key       TEXT not null primary key,
-    value     TEXT not null,
+    value     TEXT,
     pin_board INTEGER,
-    pin_pin   INTEGER,
-    FOREIGN KEY (pin_board, pin_board) REFERENCES gpio_pins ON DELETE SET NULL
+    pin_nr    INTEGER,
+    FOREIGN KEY (pin_board, pin_nr) REFERENCES gpio_pins ON DELETE SET NULL
 );
 
 CREATE VIEW all_ingredient_dependencies AS

@@ -25,15 +25,13 @@
           </q-card-section>
           <q-separator/>
           <q-card-section class="q-gutter-sm">
-            <q-input
-              v-model:model-value="v.form.settings.directorPin.bcmPin.$model"
-              :error-message="v.form.settings.directorPin.bcmPin.$errors[0]?.$message"
-              :error="v.form.settings.directorPin.bcmPin.$errors.length > 0"
-              type="number"
-              outlined
+            <c-gpio-selector
+              v-model:model-value="v.form.settings.directorPin.$model"
+              :error-message="v.form.settings.directorPin.$errors[0]?.$message"
+              :error="v.form.settings.directorPin.$errors.length > 0"
+              label="Director-Pin"
               :disable="disableForm"
-              hide-bottom-space
-              label="BCM-Pin"
+              clearable
             />
           </q-card-section>
         </q-card>
@@ -93,9 +91,11 @@ import { maxValue, minValue, required, maxLength, minLength, requiredIf, helpers
 import useVuelidate from '@vuelidate/core'
 import SystemService from 'src/services/system.service'
 import { mapActions } from 'vuex'
+import CGpioSelector from 'components/CGpioSelector.vue'
 
 export default {
   name: 'CReversePumpingSettings',
+  components: { CGpioSelector },
   data: () => {
     return {
       saving: false,
@@ -177,10 +177,7 @@ export default {
             required: requiredIf(() => this.form.enable)
           },
           directorPin: {
-            required: requiredIf(() => this.form.enable),
-            bcmPin: {
-              required: requiredIf(() => this.form.enable)
-            }
+            required: requiredIf(() => this.form.enable)
           },
           autoPumpBackTimer: {
             required: requiredIf(() => this.form.enable)
@@ -191,13 +188,6 @@ export default {
     if (this.form.enable) {
       val.form.settings.overshoot.minValue = minValue(0)
       val.form.settings.overshoot.maxValue = maxValue(200)
-      val.form.settings.directorPin = {
-        bcmPin: {
-          required: requiredIf(() => this.form.enable),
-          minValue: minValue(0),
-          maxValue: maxValue(30)
-        }
-      }
     }
     return val
   }

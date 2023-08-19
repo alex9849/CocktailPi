@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { pinDtoMapper } from 'src/services/gpio.service'
 
 const API_PATH = 'api/system/'
 
@@ -18,7 +19,17 @@ class SystemService {
   }
 
   setReversePumpSettings (settings) {
-    return axios.put(API_PATH + 'settings/reversepumping', settings)
+    const dto = {
+      enable: settings.enable
+    }
+    if (settings.settings) {
+      dto.settings = {
+        directorPin: pinDtoMapper.toPinSelectDto(settings.settings.directorPin),
+        overshoot: settings.settings.overshoot,
+        autoPumpBackTimer: settings.settings.autoPumpBackTimer
+      }
+    }
+    return axios.put(API_PATH + 'settings/reversepumping', dto)
   }
 
   getReversePumpSettings () {

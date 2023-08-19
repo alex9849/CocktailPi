@@ -12,7 +12,7 @@
           option-label="name"
           option-value="id"
           :error="error"
-          :disable="loading"
+          :disable="loading || disable"
           square
           filled
           no-error-icon
@@ -46,7 +46,7 @@
           @popupShow="onOpenPinSelectPopup"
           :option-label="x => x ? pinIdPrefix + x.nr : null"
           :error="error"
-          :disable="loading"
+          :disable="loading || disable"
           :loading="loading"
           option-value="nr"
           square
@@ -78,6 +78,7 @@
           <template v-slot:append>
             <q-btn
               v-if="this.selection.board && clearable"
+              :disable="loading || disable"
               :icon="mdiCloseCircle"
               flat
               dense
@@ -137,6 +138,10 @@ export default {
     clearable: {
       type: Boolean,
       default: false
+    },
+    disable: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {
@@ -176,7 +181,7 @@ export default {
       this.selection.board = board
       this.resetFetchedPins()
       if (this.selection.pin) {
-        this.selection.pin = ''
+        this.selection.pin = null
         this.emitPin()
       }
     },
@@ -260,7 +265,7 @@ export default {
         allowedPinIds.add(this.modelValue.nr)
       }
       for (const pin of this.pins) {
-        if (pin.inUse && !allowedPinIds.has(pin.nr)) {
+        if ((pin.inUse) && !allowedPinIds.has(pin.nr)) {
           continue
         }
         pins.push(pin)

@@ -9,7 +9,8 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailmaker.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpingSettings;
+import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.payload.dto.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpLockService;
@@ -137,7 +138,7 @@ public class PumpService {
         return maintenanceService.getJobMetrics(id);
     }
 
-    public void setReversePumpingSettings(ReversePumpingSettings.Full settings) {
+    public void setReversePumpingSettings(ReversePumpSettings settings) {
         if (!lockService.testAndAcquireGlobal(maintenanceService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
@@ -174,6 +175,10 @@ public class PumpService {
     public CocktailProgress getCurrentCocktailProgress() {
         return cocktailOrderService.getCurrentCocktailProgress();
     }
+    public ReversePumpSettings getReversePumpingSettings() {
+        return maintenanceService.getReversePumpingSettings();
+    }
+
     public Pump fromDto(PumpDto.Request.Create pumpDto) {
         return dataService.fromDto(pumpDto);
     }
@@ -186,4 +191,7 @@ public class PumpService {
         return cocktailOrderService.fromDto(orderConfigDto);
     }
 
+    public ReversePumpSettings fromDto(ReversePumpSettingsDto.Request.Create dto) {
+        return maintenanceService.fromDto(dto);
+    }
 }

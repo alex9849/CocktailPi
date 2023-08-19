@@ -62,9 +62,9 @@ public class GpioRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
                     "FROM gpio_pins pi\n" +
                     "         LEFT JOIN pumps p ON (p.dc_pin_nr = pi.pin_nr AND p.dc_pin_board = pi.board)" +
-                    " OR (p.enable_pin_nr = pi.pin_nr AND p.enable_pin_board = pi.board)" +
-                    " OR (p.step_pin_nr = pi.pin_nr AND p.step_pin_board = pi.board)\n" +
-                    "         LEFT JOIN options o ON pi.pin_nr = o.pin_board AND pi.board = o.pin_board\n" +
+                    "                  OR (p.enable_pin_nr = pi.pin_nr AND p.enable_pin_board = pi.board)" +
+                    "                  OR (p.step_pin_nr = pi.pin_nr AND p.step_pin_board = pi.board)\n" +
+                    "         LEFT JOIN options o ON pi.pin_nr = o.pin_nr AND pi.board = o.pin_board\n" +
                     "WHERE pi.board = ? AND pi.pin_nr = ?");
             pstmt.setLong(1, boardId);
             pstmt.setInt(2, pinNr);
@@ -91,7 +91,7 @@ public class GpioRepository extends JdbcDaoSupport {
 
         } else if (rs.getObject("o_key") != null) {
             pr = new PinResource();
-            switch ("o_key") {
+            switch (rs.getString("o_key")) {
                 case PumpMaintenanceService.REPO_KEY_PUMP_DIRECTION_PIN:
                     pr.setType(PinResource.Type.PUMP_DIRECTION);
                     pr.setName("Pump direction");
