@@ -80,21 +80,29 @@ public class PumpDataService {
         }
 
         List<PinResource> pinResources = new ArrayList<>();
+        Set<Map.Entry<Long, Integer>> pins = new HashSet<>();
+        boolean pinDoubled = false;
         if(pump instanceof DcPump dcPump) {
             if(dcPump.getPin() != null && dcPump.getPin().getResource() != null) {
                 pinResources.add(dcPump.getPin().getResource());
+                pinDoubled |= !pins.add(Map.entry(dcPump.getPin().getBoardId(), dcPump.getPin().getPinNr()));
             }
         } else if (pump instanceof StepperPump stepperPump) {
             if(stepperPump.getEnablePin() != null && stepperPump.getEnablePin().getResource() != null) {
                 pinResources.add(stepperPump.getEnablePin().getResource());
+                pinDoubled |= !pins.add(Map.entry(stepperPump.getEnablePin().getBoardId(), stepperPump.getEnablePin().getPinNr()));
             }
             if(stepperPump.getStepPin() != null && stepperPump.getStepPin().getResource() != null) {
                 pinResources.add(stepperPump.getStepPin().getResource());
+                pinDoubled |= !pins.add(Map.entry(stepperPump.getStepPin().getBoardId(), stepperPump.getStepPin().getPinNr()));
             }
+        }
+        if(pinDoubled) {
+            throw new IllegalArgumentException("Pin already in use!");
         }
         for(PinResource resource : pinResources) {
             if(resource.getType() != PinResource.Type.PUMP && resource.getId() != pump.getId()) {
-                throw new IllegalArgumentException("BCM-Pin already in use!");
+                throw new IllegalArgumentException("Pin already in use!");
             }
         }
         if(beforeUpdate.get().isCanPump()) {
