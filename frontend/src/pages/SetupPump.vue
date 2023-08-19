@@ -71,18 +71,18 @@
           <c-pump-setup-stepper-hardware-pins
             v-if="pump.type === 'stepper'"
             :enable-pin="pump.enablePin"
-            @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event, $event === '')"
+            @update:enable-pin="setPumpAttr('enablePin', pump.enablePin, $event, !$event)"
             :enable-pin-error-msg="attrState.enablePin.errorMsg"
             :enable-pin-loading="attrState.enablePin.loading"
             :step-pin="pump.stepPin"
-            @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event, $event === '')"
+            @update:step-pin="setPumpAttr('stepPin', pump.stepPin, $event, !$event)"
             :step-pin-error-msg="attrState.stepPin.errorMsg"
             :step-pin-loading="attrState.stepPin.loading"
           />
           <c-pump-setup-dc-hardware-pins
             v-if="pump.type === 'dc'"
             :pin="pump.pin"
-            @update:pin="setPumpAttr('pin', pump.pin, $event, $event === '')"
+            @update:pin="setPumpAttr('pin', pump.pin, $event, !$event)"
             :pin-error-msg="attrState.pin.errorMsg"
             :pin-loading="attrState.pin.loading"
             :is-power-state-high="pump.isPowerStateHigh"

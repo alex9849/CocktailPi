@@ -23,6 +23,7 @@
         :error="!!pinErrorMsg"
         :loading="pinLoading"
         label="Control Pin"
+        clearable
       />
     </template>
   </c-assistant-container>
