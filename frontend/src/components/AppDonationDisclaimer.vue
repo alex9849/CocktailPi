@@ -112,10 +112,14 @@
             <div
               v-if="donationSettings.donated"
             >
-              <p class="text-center text-h5">
-                Thank you for your donation. You made a difference!
-                <p class="text-caption">This happens less often then you might think. But you are not part of that problem.</p>
-              </p>
+              <div class="text-center">
+                <p class="text-h5">
+                  Thank you for your donation. You made a difference!
+                </p>
+                <p class="text-caption">
+                  This happens less often then you might think. But you are not part of that problem.
+                </p>
+              </div>
               <q-card-section>
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
