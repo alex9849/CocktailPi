@@ -57,9 +57,11 @@ public class PinUtils {
         Set<Map.Entry<Long, Integer>> cPins = new HashSet<>();
         boolean pinDoubled = false;
         for(GpioBoard.Pin cPin : pins) {
-            if (cPin != null && cPin.getResource() != null) {
-                pinResources.add(cPin.getResource());
+            if (cPin != null) {
                 pinDoubled |= !cPins.add(Map.entry(cPin.getBoardId(), cPin.getPinNr()));
+                if(cPin.getResource() != null) {
+                    pinResources.add(cPin.getResource());
+                }
             }
         }
         if(pinDoubled) {
