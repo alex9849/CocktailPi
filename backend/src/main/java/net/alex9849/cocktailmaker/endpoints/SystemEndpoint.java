@@ -81,4 +81,10 @@ public class SystemEndpoint {
     public ResponseEntity<?> getI2C() throws IOException {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "i2cprobe", method = RequestMethod.GET)
+    public ResponseEntity<?> getI2CProbe() throws IOException {
+        return ResponseEntity.ok(systemService.probeI2c());
+    }
 }

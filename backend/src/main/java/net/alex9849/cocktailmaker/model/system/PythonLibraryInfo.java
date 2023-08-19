@@ -1,4 +1,4 @@
-package net.alex9849.cocktailmaker.model;
+package net.alex9849.cocktailmaker.model.system;
 
 public class PythonLibraryInfo {
     private String name;

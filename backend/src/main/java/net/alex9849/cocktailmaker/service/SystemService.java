@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.PythonLibraryInfo;
+import net.alex9849.cocktailmaker.model.system.I2cAddress;
+import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
@@ -130,13 +131,13 @@ public class SystemService {
         }
     }
 
-    public List<Integer> probeI2c() throws IOException {
+    public List<I2cAddress> probeI2c() throws IOException {
         Process process = Runtime.getRuntime().exec("i2cdetect -y 1");
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String s = null;
         int line = 1;
         Pattern pattern = Pattern.compile("[0-9a-f][0-9a-f]");
-        List<Integer> found = new ArrayList<>();
+        List<I2cAddress> found = new ArrayList<>();
         while ((s = stdInput.readLine()) != null) {
             if(line++ <= 1) {
                 //Skip first 2 lines
@@ -145,7 +146,9 @@ public class SystemService {
             Matcher matcher = pattern.matcher(s);
             matcher.find();
             while (matcher.find()) {
-                found.add(Integer.parseInt(matcher.group(), 16));
+                I2cAddress addr = new I2cAddress();
+                addr.setAddress(Integer.parseInt(matcher.group(), 16));
+                found.add(addr);
             }
         }
         stdInput.close();
