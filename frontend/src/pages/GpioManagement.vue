@@ -55,15 +55,16 @@
                   </q-card-section>
                   <q-separator />
                   <q-card-section class="row q-py-sm q-col-gutter-xs">
-                    <p class="col-12 col-sm-6 col-md-12">
+                    <q-skeleton
+                      v-if="i2cStatus.loading"
+                      class="col-12 col-sm-6 col-md-12" type="text"
+                    />
+                    <p
+                      v-else
+                      class="col-12 col-sm-6 col-md-12"
+                    >
                       Status:
-                      <q-skeleton
-                        v-if="i2cStatus.loading"
-                        type="QBadge"
-                        class="flex inline items-center no-wrap"
-                      />
                       <q-badge
-                        v-else
                         :class="{'bg-negative': !i2cStatus.data.enable , 'bg-positive': i2cStatus.data.enable}"
                       >
                         {{i2cStatus.data.enable ? 'enabled' : 'disabled'}}
