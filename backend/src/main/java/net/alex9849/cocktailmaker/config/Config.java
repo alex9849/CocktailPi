@@ -23,16 +23,18 @@ public class Config {
         if(gpioController == null) {
             ContextBuilder ctxBuilder = Pi4J.newContextBuilder();
             if(isRaspberryPi) {
-                ctxBuilder.add(LinuxFsI2CProvider.newInstance());
+                //ctxBuilder.add(LinuxFsI2CProvider.newInstance());
                 /**
                  ctxBuilder.add(LinuxFsI2CProvider.newInstance());
                  ctxBuilder.add(LinuxFsDigitalInputProvider.newInstance());
                  ctxBuilder.add(LinuxFsDigitalOutputProvider.newInstance());
                  */
                 ctxBuilder.autoDetect();
+                ctxBuilder.setDefaultPlatform("pigpio");
             } else {
                 ctxBuilder.add(new MockPlatform());
-                ctxBuilder.autoDetectProviders();
+                ctxBuilder.autoDetect();
+                ctxBuilder.setDefaultPlatform("mock");
             }
             gpioController = ctxBuilder.build();
         }

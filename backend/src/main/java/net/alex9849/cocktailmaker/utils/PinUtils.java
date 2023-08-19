@@ -30,7 +30,6 @@ public class PinUtils {
                     .address(address)
                     .shutdown(DigitalState.HIGH)
                     .initial(DigitalState.HIGH)
-                    .provider("pigpio-digital-output")
                     .build();
 
             if(!pi4J.registry().exists(config.id())) {
