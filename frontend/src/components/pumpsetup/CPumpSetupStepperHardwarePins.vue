@@ -39,7 +39,9 @@
         :error-message="stepPinErrorMsg"
         :error="!!stepPinErrorMsg"
         :loading="stepPinLoading"
-        label="Step Pin"
+        label="(local) Step Pin"
+        disallow-expander-pins
+        clearable
       />
       <c-gpio-selector
         :model-value="enablePin"
@@ -48,6 +50,7 @@
         :error="!!enablePinErrorMsg"
         :loading="enablePinLoading"
         label="Enable Pin"
+        clearable
       />
     </template>
   </c-assistant-container>

@@ -10,9 +10,9 @@ import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StepperPumpDto {
 
-    private interface EnablePinResponse { PinDto.Response.Reduced getEnablePin(); }
+    private interface EnablePinResponse { PinDto.Response.PumpPin getEnablePin(); }
     private interface EnablePinRequest { PinDto.Request.Select getEnablePin(); }
-    private interface StepPinResponse { PinDto.Response.Reduced getStepPin(); }
+    private interface StepPinResponse { PinDto.Response.PumpPin getStepPin(); }
     private interface StepPinRequest { PinDto.Request.Select getStepPin(); }
     private interface StepsPerCl { @Min(1) Integer getStepsPerCl(); }
     private interface MaxStepsPerSecond { @Min(1) @Max(500000) Integer getMaxStepsPerSecond(); }
@@ -40,8 +40,8 @@ public class StepperPumpDto {
         @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends PumpDto.Response.Detailed implements EnablePinResponse, StepPinResponse, StepsPerCl,
                 MaxStepsPerSecond, Acceleration {
-            PinDto.Response.Reduced enablePin;
-            PinDto.Response.Reduced stepPin;
+            PinDto.Response.PumpPin enablePin;
+            PinDto.Response.PumpPin stepPin;
             Integer stepsPerCl;
             Integer maxStepsPerSecond;
             Integer acceleration;
@@ -49,10 +49,10 @@ public class StepperPumpDto {
             protected Detailed(StepperPump stepperPump) {
                 super(stepperPump);
                 if(stepperPump.getEnablePin() != null) {
-                    enablePin = new PinDto.Response.Reduced(stepperPump.getEnablePin());
+                    enablePin = new PinDto.Response.PumpPin(stepperPump.getEnablePin());
                 }
                 if(stepperPump.getStepPin() != null) {
-                    stepPin = new PinDto.Response.Reduced(stepperPump.getStepPin());
+                    stepPin = new PinDto.Response.PumpPin(stepperPump.getStepPin());
                 }
             }
 

@@ -113,9 +113,9 @@
         </div>
         <div class="col-6">
           <p
-            :class="getDisplayAttribute(pump.stepPin).class"
+            :class="getDisplayPin(pump.stepPin).class"
           >
-            {{ getDisplayAttribute(pump.stepPin).label }}
+            {{ getDisplayPin(pump.stepPin).label }}
           </p>
         </div>
       </div>
@@ -130,9 +130,9 @@
       <div class="row">
         <div class="col-6">
           <p
-            :class="getDisplayAttribute(pump.enablePin).class"
+            :class="getDisplayPin(pump.enablePin).class"
           >
-            {{ getDisplayAttribute(pump.enablePin).label }}
+            {{ getDisplayPin(pump.enablePin).label }}
           </p>
         </div>
         <div class="col-6">
@@ -168,9 +168,9 @@
           </div>
           <div class="col-6">
             <p
-              :class="getDisplayAttribute(pump.pin).class"
+              :class="getDisplayPin(pump.pin).class"
             >
-              {{ getDisplayAttribute(pump.pin).label }}
+              {{ getDisplayPin(pump.pin).label }}
             </p>
           </div>
         </div>
@@ -360,6 +360,19 @@ export default {
         return {
           class: 'text-black',
           label: String(attr) + suffix
+        }
+      }
+    },
+    getDisplayPin (pin) {
+      if (!pin) {
+        return {
+          class: 'text-red',
+          label: '-- missing --'
+        }
+      } else {
+        return {
+          class: 'text-black',
+          label: pin.boardName + ' / ' + pin.pinName
         }
       }
     }
