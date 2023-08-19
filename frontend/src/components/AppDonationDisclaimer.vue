@@ -110,11 +110,45 @@
           <q-separator/>
           <q-card-section>
             <div
-              v-if="!clickedDonated"
+              v-if="donationSettings.donated"
             >
-              <q-card-section class="q-pa-sm text-center text-h5">
-                Thank you very much!
+              <p class="text-center text-h5">
+                Thank you for your donation. You made a difference!
+                <p class="text-caption">This happens less often then you might think. But you are not part of that problem.</p>
+              </p>
+              <q-card-section>
+                <div class="q-gutter-sm">
+                  <div class="row justify-center">
+                    <q-btn
+                      color="positive"
+                      style="width: 500px"
+                      no-caps
+                      :disable="loadingDonationModify"
+                      @click="closeDialog"
+                    >
+                      Great people button (Close disclaimer)
+                    </q-btn>
+                  </div>
+                  <div class="row justify-center">
+                    <q-btn
+                      color="negative"
+                      style="width: 500px"
+                      no-caps
+                      :loading="loadingDonationModify"
+                      @click="clickUndonate()"
+                    >
+                      I didn't donate
+                    </q-btn>
+                  </div>
+                </div>
               </q-card-section>
+            </div>
+            <div
+              v-else-if="!clickedDonated"
+            >
+              <p class="text-center text-h5">
+                Thank you very much!
+              </p>
               <q-card-section>
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
@@ -142,18 +176,19 @@
               </q-card-section>
             </div>
             <div v-else>
-              <q-card-section class="q-pa-sm text-center text-h5">
+              <p class="text-center text-h5">
                 Please note that lying is not nice.
-              </q-card-section>
+              </p>
               <q-card-section>
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
                     <q-btn
                       color="positive"
                       style="width: 500px"
+                      :loading="loadingDonationModify"
                       no-caps
                       :icon-right="mdiEmoticonExcited"
-                      @click="closeDialog"
+                      @click="setDonated(true)"
                     >
                       I didn't lie
                     </q-btn>
@@ -161,6 +196,7 @@
                   <div class="row justify-center">
                     <q-btn
                       color="negative"
+                      :disable="loadingDonationModify"
                       style="width: 500px"
                       no-caps
                       @click="clickedDonated = false"
@@ -183,7 +219,8 @@
 
 import { mdiGithub } from '@quasar/extras/mdi-v5'
 import { mdiChevronDoubleDown, mdiEmoticon, mdiEmoticonExcited, mdiPaypal } from '@mdi/js'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+import SystemService from 'src/services/system.service'
 
 export default {
   name: 'AppDonationDisclaimer',
@@ -196,18 +233,48 @@ export default {
   },
   data: () => {
     return {
-      clickedDonated: false
+      firstOpen: true,
+      clickedDonated: false,
+      loadingDonationModify: false,
+      timerTask: null
     }
   },
   computed: {
     ...mapGetters({
-      show: 'common/isShowDonateDialog'
+      show: 'common/isShowDonateDialog',
+      donationSettings: 'common/getDonationSettings'
     })
+  },
+  watch: {
+    show (val) {
+      if (val) {
+        this.firstOpen = false
+      }
+    },
+    donationSettings: {
+      immediate: true,
+      handler (val) {
+        if (this.timerTask !== null) {
+          clearTimeout(this.timerTask)
+          this.timerTask = null
+        }
+        if (val.showDisclaimer) {
+          this.timerTask = setTimeout(() => {
+            if (this.firstOpen) {
+              this.setShowDonateDialog(true)
+            }
+          }, val.disclaimerDelay)
+        }
+      }
+    }
   },
   methods: {
     ...mapMutations({
       setShowDonateDialog: 'common/setShowDonateDialog',
       openExternalLink: 'common/openExternalLink'
+    }),
+    ...mapActions({
+      fetchGlobalSettings: 'common/fetchGlobalSettings'
     }),
     closeDialog () {
       this.clickedDonated = false
@@ -218,6 +285,25 @@ export default {
     },
     clickDonateGitHub () {
       this.openExternalLink('https://github.com/sponsors/alex9849')
+    },
+    clickConfirmDonate () {
+      this.setDonated(true)
+    },
+    clickUndonate () {
+      this.setDonated(false)
+        .then(() => {
+          this.clickedDonated = false
+        })
+    },
+    setDonated (donated) {
+      this.loadingDonationModify = true
+      return SystemService.setDonated(donated)
+        .then(() => {
+          this.fetchGlobalSettings()
+        })
+        .finally(() => {
+          this.loadingDonationModify = false
+        })
     }
   }
 }

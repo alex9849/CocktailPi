@@ -68,6 +68,11 @@ class SystemService {
     return axios.get(API_PATH + 'settings/i2c')
       .then(x => x.data)
   }
+
+  setDonated (value) {
+    return axios.put(API_PATH + 'settings/donated', value,
+      { headers: { 'Content-Type': 'application/json' } })
+  }
 }
 
 export default new SystemService()

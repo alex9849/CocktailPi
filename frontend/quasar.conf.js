@@ -83,11 +83,11 @@ module.exports = function (/* ctx */) {
       proxy: {
         // proxy all webpack dev-server requests starting with /api to our Spring Boot backend (localhost:8088)
         '/api/*': {
-          target: 'http://localhost:8080',
+          target: 'http://192.168.0.124:8080',
           changeOrigin: true
         },
         '/websocket/*': {
-          target: 'ws://localhost:8080',
+          target: 'ws://192.168.0.124:8080',
           ws: true
         }
       }

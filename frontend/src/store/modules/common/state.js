@@ -8,7 +8,12 @@ export default function () {
       trigger: false
     },
     globalSettings: {
-      allowReversePumping: false
+      allowReversePumping: false,
+      donation: {
+        donated: false,
+        showDisclaimer: false,
+        disclaimerDelay: 30000
+      }
     }
   }
 }

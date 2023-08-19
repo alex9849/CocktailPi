@@ -90,7 +90,16 @@ public class SystemService {
     public GlobalSettings getGlobalSettings() {
         GlobalSettings globalSettings = new GlobalSettings();
         globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
+        GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
+        donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated")));
+        donationSettings.setShowDisclaimer(!donationSettings.isDonated());
+        donationSettings.setDisclaimerDelay(30000);
+        globalSettings.setDonation(donationSettings);
         return globalSettings;
+    }
+
+    public void setDonated(boolean value) {
+        optionsRepository.setOption("Donated", Boolean.valueOf(value).toString());
     }
 
     public I2CSettings fromDto(I2cSettingsDto.Request dto) {

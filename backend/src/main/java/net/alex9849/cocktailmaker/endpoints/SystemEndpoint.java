@@ -56,6 +56,12 @@ public class SystemEndpoint {
         return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(pumpService.getReversePumpingSettings()));
     }
 
+    @RequestMapping(value = "settings/donated", method = RequestMethod.PUT)
+    public ResponseEntity<?> setDonated(@RequestBody boolean value) {
+        systemService.setDonated(value);
+        return ResponseEntity.ok().build();
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/shutdown", method = RequestMethod.PUT)
     public ResponseEntity<?> shutdown() throws IOException {
