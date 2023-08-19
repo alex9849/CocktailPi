@@ -64,22 +64,22 @@
                       />
                       <q-badge
                         v-else
-                        :class="{'bg-negative': !i2cStatus.data.enabled , 'bg-positive': i2cStatus.data.enabled}"
+                        :class="{'bg-negative': !i2cStatus.data.enable , 'bg-positive': i2cStatus.data.enable}"
                       >
-                        {{i2cStatus.data.enabled ? 'enabled' : 'disabled'}}
+                        {{i2cStatus.data.enable ? 'enabled' : 'disabled'}}
                       </q-badge>
                     </p>
                   </q-card-section>
                   <q-separator
-                    v-if="i2cStatus.data.enabled"
+                    v-if="i2cStatus.data.enable"
                   />
                   <q-card-section
-                    v-if="i2cStatus.data.enabled"
+                    v-if="i2cStatus.data.enable"
                     class="row q-py-sm q-col-gutter-xs"
                   >
                     <div class="col-12">
-                      <p class="text-weight-medium">Bus 1</p>
-                      <p>Pins: {{ i2cStatus.data.scaPin?.nr }}, {{ i2cStatus.data.sdlPin?.nr }}</p>
+                      <p>SDA-Pin: {{ i2cStatus.data.sdaPin?.nr }}</p>
+                      <p>SCL-Pin: {{ i2cStatus.data.sclPin?.nr }}</p>
                     </div>
                   </q-card-section>
                 </q-card>
@@ -153,7 +153,7 @@
                       @click="$router.push({name: 'gpioexpanderadd'})"
                       :icon="mdiPlusCircleOutline"
                       no-caps
-                      :disable="!i2cStatus.data?.enabled"
+                      :disable="!i2cStatus.data?.enable"
                     />
                   </div>
                 </div>
@@ -170,7 +170,7 @@
                     />
                   </div>
                   <div class="col-12"
-                       v-else-if="!i2cStatus.data.enabled"
+                       v-else-if="!i2cStatus.data.enable"
                   >
                     <q-card
                       flat
@@ -251,7 +251,7 @@ export default {
       i2cStatus: {
         loading: true,
         data: {
-          enabled: false,
+          enable: false,
           sdlPin: '',
           scaPin: ''
         }
