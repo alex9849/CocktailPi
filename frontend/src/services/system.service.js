@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { pinDtoMapper } from 'src/services/gpio.service'
+import {pinDtoMapper} from 'src/services/gpio.service'
 
 const API_PATH = 'api/system/'
 
@@ -57,8 +57,8 @@ class SystemService {
         boardId: settings.sdaPin.boardId
       }
       dto.sclPin = {
-        nr: settings.sdaPin.nr,
-        boardId: settings.sdaPin.boardId
+        nr: settings.sclPin.nr,
+        boardId: settings.sclPin.boardId
       }
     }
     return axios.put(API_PATH + 'settings/i2c', dto)

@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 @Service
 @Transactional
 public class SystemService {
+    public static final String REPO_KEY_I2C_PIN_SDA = "I2C_Pin_SDA";
+    public static final String REPO_KEY_I2C_PIN_SCL = "I2C_Pin_SCL";
 
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
@@ -115,8 +117,8 @@ public class SystemService {
             }
             process.waitFor();
             optionsRepository.setOption("I2C_Enable", String.valueOf(i2CSettings.isEnable()));
-            optionsRepository.setPinOption("I2C_SCL", i2CSettings.getSclPin());
-            optionsRepository.setPinOption("I2C_SDA", i2CSettings.getSdaPin());
+            optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SCL, i2CSettings.getSclPin());
+            optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SDA, i2CSettings.getSdaPin());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

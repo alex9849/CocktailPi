@@ -7,7 +7,7 @@ import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
-import net.alex9849.cocktailmaker.service.GpioService;
+import net.alex9849.cocktailmaker.service.SystemService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Component
@@ -96,11 +98,11 @@ public class GpioRepository extends JdbcDaoSupport {
                     pr.setType(PinResource.Type.PUMP_DIRECTION);
                     pr.setName("Pump direction");
                     break;
-                case GpioService.REPO_KEY_I2C_PIN_SDA:
+                case SystemService.REPO_KEY_I2C_PIN_SDA:
                     pr.setType(PinResource.Type.I2C);
                     pr.setName("I2C SDA");
                     break;
-                case GpioService.REPO_KEY_I2C_PIN_SCL:
+                case SystemService.REPO_KEY_I2C_PIN_SCL:
                     pr.setType(PinResource.Type.I2C);
                     pr.setName("I2C SCL");
                     break;

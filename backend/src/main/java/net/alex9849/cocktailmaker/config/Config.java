@@ -24,6 +24,11 @@ public class Config {
             ContextBuilder ctxBuilder = Pi4J.newContextBuilder();
             if(isRaspberryPi) {
                 ctxBuilder.add(LinuxFsI2CProvider.newInstance());
+                /**
+                 ctxBuilder.add(LinuxFsI2CProvider.newInstance());
+                 ctxBuilder.add(LinuxFsDigitalInputProvider.newInstance());
+                 ctxBuilder.add(LinuxFsDigitalOutputProvider.newInstance());
+                 */
                 ctxBuilder.autoDetect();
             } else {
                 ctxBuilder.add(new MockPlatform());

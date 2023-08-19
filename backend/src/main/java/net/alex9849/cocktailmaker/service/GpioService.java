@@ -17,8 +17,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class GpioService {
-    public static final String REPO_KEY_I2C_PIN_SDA = "I2C_Pin_SDA";
-    public static final String REPO_KEY_I2C_PIN_SCL = "I2C_Pin_SCL";
 
     @Autowired
     private GpioRepository gpioRepository;

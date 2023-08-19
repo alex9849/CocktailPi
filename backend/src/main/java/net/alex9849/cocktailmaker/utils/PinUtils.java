@@ -3,12 +3,11 @@ package net.alex9849.cocktailmaker.utils;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalOutputProvider;
+import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.io.i2c.I2CProvider;
-import com.pi4j.plugin.linuxfs.provider.i2c.I2CConstants;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,17 @@ public class PinUtils {
 
     public synchronized IOutputPin getBoardOutputPin(int address) {
         if(!outputPinMap.containsKey(address)) {
-            DigitalOutputProvider provider = pi4J.dout();
-            DigitalOutputConfig runCfg = DigitalOutput.newConfigBuilder(pi4J).address(address).build();
-            if(!pi4J.registry().exists(runCfg.id())) {
-                outputPinMap.put(address, new Pi4JOutputPin(provider.create(runCfg)));
+            DigitalOutputConfig config = DigitalOutput
+                    .newConfigBuilder(pi4J)
+                    .address(address)
+                    .shutdown(DigitalState.HIGH)
+                    .initial(DigitalState.HIGH)
+                    .provider("pigpio-digital-output")
+                    .build();
+
+            if(!pi4J.registry().exists(config.id())) {
+                DigitalOutput pin = pi4J.create(config);
+                outputPinMap.put(address, new Pi4JOutputPin(pin));
             }
         }
         return outputPinMap.get(address);
