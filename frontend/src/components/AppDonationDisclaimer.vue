@@ -182,26 +182,33 @@
               <q-card-section>
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
+                    <q-checkbox
+                      label="I didn't lie"
+                      v-model:model-value="notLieCheckBox"
+                    />
+                  </div>
+                  <div class="row justify-center">
                     <q-btn
                       color="positive"
                       style="width: 500px"
+                      :disable="!notLieCheckBox"
                       :loading="loadingDonationModify"
                       no-caps
                       :icon-right="mdiEmoticonExcited"
-                      @click="setDonated(true)"
+                      @click="() => {setDonated(true); notLieCheckBox = false}"
                     >
-                      I didn't lie
+                      Confirm
                     </q-btn>
                   </div>
                   <div class="row justify-center">
                     <q-btn
-                      color="negative"
+                      color="grey"
                       :disable="loadingDonationModify"
                       style="width: 500px"
                       no-caps
-                      @click="clickedDonated = false"
+                      @click="() => {clickedDonated = false; notLieCheckBox = false;}"
                     >
-                      I lied
+                      Go back
                     </q-btn>
                   </div>
                 </div>
@@ -235,6 +242,7 @@ export default {
     return {
       firstOpen: true,
       clickedDonated: false,
+      notLieCheckBox: false,
       loadingDonationModify: false,
       timerTask: null
     }
