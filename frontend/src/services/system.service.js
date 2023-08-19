@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {pinDtoMapper} from 'src/services/gpio.service'
+import { pinDtoMapper } from 'src/services/gpio.service'
 
 const API_PATH = 'api/system/'
 
