@@ -153,7 +153,7 @@
                       @click="$router.push({name: 'gpioexpanderadd'})"
                       :icon="mdiPlusCircleOutline"
                       no-caps
-                      disable
+                      :disable="!i2cStatus.data?.enabled"
                     />
                   </div>
                 </div>
