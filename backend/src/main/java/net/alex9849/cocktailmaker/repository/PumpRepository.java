@@ -206,7 +206,7 @@ public class PumpRepository extends JdbcDaoSupport {
             long enableBoardId = rs.getLong("enable_pin_board");
             if(!rs.wasNull()) {
                 GpioBoard gpioBoard = gpioRepository.findById(enableBoardId).orElse(null);
-                stepperPump.setStepPin(gpioBoard.getPin((Integer) rs.getObject("enable_pin_nr")));
+                stepperPump.setEnablePin(gpioBoard.getPin((Integer) rs.getObject("enable_pin_nr")));
             }
             stepperPump.setStepsPerCl((Integer) rs.getObject("steps_per_cl"));
             stepperPump.setMaxStepsPerSecond((Integer) rs.getObject("max_steps_per_second"));
