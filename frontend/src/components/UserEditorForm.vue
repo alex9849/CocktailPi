@@ -1,7 +1,7 @@
 <template>
   <q-form
     ref="userEditorForm"
-    class="innerpadding q-gutter-y-md"
+    class="q-gutter-y-xs"
     greedy
     @submit.prevent="$emit('submit')"
   >

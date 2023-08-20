@@ -19,6 +19,7 @@
           >
             <q-toggle
               v-model:model-value="v.config.enable.$model"
+              :disable="submitting"
               label="Enable I2C"
               color="positive"
             />
@@ -52,12 +53,12 @@
                   :error-message="v.config.sdaPin.$errors[0]?.$message"
                   :error="v.config.sdaPin.$errors.length > 0"
                   label="SDA Pin"
-                  error
-                  error-message="Test"
+                  :disable="submitting"
                 />
                 <c-gpio-selector
                   disallow-expander-pins
                   v-model:model-value="v.config.sclPin.$model"
+                  :disable="submitting"
                   label="SCL Pin"
                   :error-message="v.config.sclPin.$errors[0]?.$message"
                   :error="v.config.sclPin.$errors.length > 0"
@@ -80,6 +81,7 @@
               style="width: 100px"
               color="negative"
               label="Abort"
+              :disable="submitting"
               @click="$router.push({name: 'gpiomanagement'})"
             />
           </q-card-actions>
@@ -109,6 +111,12 @@ export default {
       },
       submitting: false
     }
+  },
+  async beforeRouteEnter (to, from, next) {
+    const cfg = await SystemService.getI2cSettings()
+    next(vm => {
+      vm.config = cfg
+    })
   },
   setup () {
     return {

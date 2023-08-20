@@ -16,14 +16,7 @@
           @invalid="isValid = false"
         >
           <template v-slot:below>
-            <div class="q-pa-md q-gutter-sm">
-              <q-btn
-                style="width: 100px"
-                color="negative"
-                label="Abort"
-                no-caps
-                :to="{name: 'usermanagement'}"
-              />
+            <div class="q-gutter-sm">
               <q-btn
                 type="submit"
                 style="width: 100px"
@@ -32,6 +25,13 @@
                 no-caps
                 :disable="loading || !isValid"
                 @click="sendUpdateUser()"
+              />
+              <q-btn
+                style="width: 100px"
+                color="negative"
+                label="Abort"
+                no-caps
+                :to="{name: 'usermanagement'}"
               />
             </div>
           </template>
