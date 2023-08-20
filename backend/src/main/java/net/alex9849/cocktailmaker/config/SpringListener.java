@@ -33,8 +33,8 @@ public class SpringListener {
     @Autowired
     private SeedDataInserter seedDataInserter;
 
-    @PostConstruct
-    public void onPostConstruct() throws Exception {
+    @EventListener
+    public void handleContextRefreshed(ContextRefreshedEvent event) throws Exception {
         flyway.migrate();
         seedDataInserter.migrate();
         pumpService.postConstruct();
