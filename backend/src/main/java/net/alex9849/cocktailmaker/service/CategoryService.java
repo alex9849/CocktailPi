@@ -57,4 +57,7 @@ public class CategoryService {
         return category;
     }
 
+    public List<Category> getByRecipeId(long recipeId) {
+        return categoryRepository.findByRecipeId(recipeId);
+    }
 }

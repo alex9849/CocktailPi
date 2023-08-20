@@ -219,4 +219,8 @@ public class PumpDataService {
     public Set<Long> findIngredientIdsOnPump() {
         return pumpRepository.findIngredientIdsOnPump();
     }
+
+    public List<Pump> findPumpsWithIngredient(long ingredientId) {
+        return pumpRepository.findPumpsWithIngredient(ingredientId);
+    }
 }

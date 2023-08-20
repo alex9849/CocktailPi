@@ -14,6 +14,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionSt
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
 import net.alex9849.cocktailmaker.repository.CollectionRepository;
+import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
 import net.alex9849.cocktailmaker.repository.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class RecipeService {
 
     @Autowired
     RecipeRepository recipeRepository;
+
+    @Autowired
+    ProductionStepRepository productionStepRepository;
 
     @Autowired
     IngredientService ingredientService;
@@ -200,5 +204,9 @@ public class RecipeService {
         }
         psi.setIngredient(ingredient);
         return psi;
+    }
+
+    public List<ProductionStep> getProductionStepsByRecipeId(long recipeId) {
+        return productionStepRepository.loadByRecipeId(recipeId);
     }
 }

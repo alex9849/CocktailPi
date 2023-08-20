@@ -3,6 +3,8 @@ package net.alex9849.cocktailmaker.model.recipe.ingredient;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.repository.PumpRepository;
+import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
 @DiscriminatorValue("AutomatedIngredient")
@@ -20,7 +22,7 @@ public class AutomatedIngredient extends AddableIngredient {
 
     public boolean isOnPump() {
         if(isOnPump == null) {
-            PumpRepository pRepository = SpringUtility.getBean(PumpRepository.class);
+            PumpDataService pRepository = SpringUtility.getBean(PumpDataService.class);
             isOnPump = pRepository.findPumpsWithIngredient(getId()).stream().anyMatch(Pump::isCompleted);
         }
         return isOnPump;

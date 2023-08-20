@@ -7,6 +7,8 @@ import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngr
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.repository.CategoryRepository;
 import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
+import net.alex9849.cocktailmaker.service.CategoryService;
+import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 
@@ -122,8 +124,8 @@ public class Recipe {
 
     public List<ProductionStep> getProductionSteps() {
         if(this.productionSteps == null) {
-            ProductionStepRepository psRepository = SpringUtility.getBean(ProductionStepRepository.class);
-            this.productionSteps = psRepository.loadByRecipeId(this.id);
+            RecipeService rService = SpringUtility.getBean(RecipeService.class);
+            this.productionSteps = rService.getProductionStepsByRecipeId(this.id);
         }
         return this.productionSteps;
     }
@@ -134,8 +136,8 @@ public class Recipe {
 
     public List<Category> getCategories() {
         if(this.categories == null) {
-            CategoryRepository cRepository = SpringUtility.getBean(CategoryRepository.class);
-            this.categories = cRepository.findByRecipeId(this.id);
+            CategoryService cService = SpringUtility.getBean(CategoryService.class);
+            this.categories = cService.getByRecipeId(this.id);
         }
         return this.categories;
     }

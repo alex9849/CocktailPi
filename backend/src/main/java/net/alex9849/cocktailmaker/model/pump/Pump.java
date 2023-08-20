@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.model.pump;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.repository.IngredientRepository;
+import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.motor.IMotor;
 
@@ -35,8 +36,8 @@ public abstract class Pump {
 
     public AutomatedIngredient getCurrentIngredient() {
         if(currentIngredientId != null && currentIngredient == null) {
-            IngredientRepository pRepository = SpringUtility.getBean(IngredientRepository.class);
-            Ingredient ingredient = pRepository.findById(currentIngredientId).orElse(null);
+            IngredientService ingredientService = SpringUtility.getBean(IngredientService.class);
+            Ingredient ingredient = ingredientService.getIngredient(currentIngredientId);
 
             if(!(ingredient instanceof AutomatedIngredient)) {
                 currentIngredientId = null;
