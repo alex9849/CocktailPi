@@ -30,7 +30,6 @@
                   :icon="mdiPencilOutline"
                   text-color="white"
                   color="info"
-                  @click.stop=""
                   dense
                   rounded
                 />
@@ -40,7 +39,7 @@
                   :icon="mdiDelete"
                   text-color="white"
                   color="negative"
-                  @click.stop=""
+                  @click.stop="$emit('clickDelete')"
                   dense
                   rounded
                 />
@@ -110,6 +109,7 @@ export default {
       required: true
     }
   },
+  emits: ['clickDelete'],
   data: () => {
     return {
       pins: {

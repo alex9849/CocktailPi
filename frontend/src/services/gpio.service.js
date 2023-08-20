@@ -32,6 +32,10 @@ class GpioService {
     return axios.put(API_PATH + '/' + id, gpioBoardDto)
   }
 
+  deleteGpioBoard (id) {
+    return axios.delete(API_PATH + '/' + id)
+  }
+
   getBoardPins (boardId) {
     return axios.get(API_PATH + boardId + '/pin')
       .then(x => x.data)

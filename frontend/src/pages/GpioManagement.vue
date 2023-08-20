@@ -211,6 +211,7 @@
                   >
                     <c-gpio-expander-expansion-item
                       :board="board"
+                      @clickDelete="onClickDelete(board)"
                     />
                   </div>
                 </div>
@@ -220,6 +221,26 @@
         </div>
       </div>
     </div>
+    <c-question
+      :question="'Delete \'' + deleteDialog.board?.name + '\'?'"
+      :show="deleteDialog.show"
+      ok-color="negative"
+      ok-button-text="Delete"
+      @clickOk="onConfirmDelete"
+      @clickAbort="abortDelete"
+    >
+      <template
+        v-if="deleteDialog.errorMessage"
+      >
+        <q-banner
+          class="bg-negative text-white"
+          rounded
+          dense
+        >
+          {{ deleteDialog.errorMessage }}
+        </q-banner>
+      </template>
+    </c-question>
   </q-page>
 
 </template>
@@ -229,10 +250,16 @@ import { mdiAlert, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@qu
 import CGpioExpanderExpansionItem from 'components/gpiosetup/CGpioExpanderExpansionItem.vue'
 import GpioService from 'src/services/gpio.service'
 import SystemService from 'src/services/system.service'
+import CQuestion from 'components/CQuestion.vue'
 export default {
   name: 'GpioManagement',
   data: () => {
     return {
+      deleteDialog: {
+        board: null,
+        show: false,
+        errorMessage: ''
+      },
       localBoards: {
         loading: true,
         boards: []
@@ -259,7 +286,7 @@ export default {
       }
     }
   },
-  components: { CGpioExpanderExpansionItem },
+  components: { CQuestion, CGpioExpanderExpansionItem },
   created () {
     this.mdiAlert = mdiAlert
     this.mdiDelete = mdiDelete
@@ -271,13 +298,6 @@ export default {
         this.localBoards.boards = x
       }).finally(() => {
         this.localBoards.loading = false
-      })
-    this.i2cBoards.loading = true
-    GpioService.getBoardsByType(GpioService.types.I2C)
-      .then(x => {
-        this.i2cBoards.boards = x
-      }).finally(() => {
-        this.i2cBoards.loading = false
       })
     this.gpioStatus.loading = true
     GpioService.getGpioStatus()
@@ -295,6 +315,37 @@ export default {
       .finally(() => {
         this.i2cStatus.loading = false
       })
+    this.fetchI2cBoards()
+  },
+  methods: {
+    fetchI2cBoards () {
+      this.i2cBoards.loading = true
+      GpioService.getBoardsByType(GpioService.types.I2C)
+        .then(x => {
+          this.i2cBoards.boards = x
+        }).finally(() => {
+          this.i2cBoards.loading = false
+        })
+    },
+    onClickDelete (board) {
+      this.deleteDialog.board = board
+      this.deleteDialog.show = true
+    },
+    abortDelete () {
+      this.deleteDialog.board = null
+      this.deleteDialog.show = false
+      this.deleteDialog.errorMessage = ''
+    },
+    onConfirmDelete () {
+      GpioService.deleteGpioBoard(this.deleteDialog.board.id)
+        .then(() => {
+          this.fetchI2cBoards()
+          this.abortDelete()
+        })
+        .catch(err => {
+          this.deleteDialog.errorMessage = err?.response?.data?.message
+        })
+    }
   }
 }
 
