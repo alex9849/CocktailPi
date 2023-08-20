@@ -70,7 +70,7 @@ public class OptionsRepository extends JdbcDaoSupport {
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_nr)\n" +
                         "VALUES (?, ?, ?, ?)\n" +
                         "ON CONFLICT (key) DO UPDATE\n" +
-                        "    SET value = excluded.value");
+                        "    SET value = excluded.value, pin_board = excluded.pin_board, pin_nr = excluded.pin_nr");
                 pstmt.setString(1, key);
                 pstmt.setNull(2, Types.VARCHAR);
                 pstmt.setLong(3, pin.getBoardId());
