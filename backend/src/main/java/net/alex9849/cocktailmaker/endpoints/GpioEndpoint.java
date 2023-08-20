@@ -62,7 +62,7 @@ public class GpioEndpoint {
         GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
         gpioBoard.setId(id);
         gpioBoard = gpioService.updateGpioBoard(gpioBoard);
-        return ResponseEntity.ok(gpioBoard);
+        return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(gpioBoard));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
