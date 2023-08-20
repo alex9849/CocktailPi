@@ -300,14 +300,6 @@ export default {
       }).finally(() => {
         this.localBoards.loading = false
       })
-    this.gpioStatus.loading = true
-    GpioService.getGpioStatus()
-      .then(x => {
-        this.gpioStatus.data = x
-      })
-      .finally(() => {
-        this.gpioStatus.loading = false
-      })
     this.i2cStatus.loading = true
     SystemService.getI2cSettings()
       .then(x => {
@@ -317,6 +309,7 @@ export default {
         this.i2cStatus.loading = false
       })
     this.fetchI2cBoards()
+    this.fetchGpiostatus()
   },
   methods: {
     fetchI2cBoards () {
@@ -326,6 +319,16 @@ export default {
           this.i2cBoards.boards = x
         }).finally(() => {
           this.i2cBoards.loading = false
+        })
+    },
+    fetchGpiostatus () {
+      this.gpioStatus.loading = true
+      GpioService.getGpioStatus()
+        .then(x => {
+          this.gpioStatus.data = x
+        })
+        .finally(() => {
+          this.gpioStatus.loading = false
         })
     },
     onClickDelete (board) {
@@ -340,6 +343,7 @@ export default {
     onConfirmDelete () {
       GpioService.deleteGpioBoard(this.deleteDialog.board.id)
         .then(() => {
+          this.fetchGpiostatus()
           this.fetchI2cBoards()
           this.abortDelete()
         })

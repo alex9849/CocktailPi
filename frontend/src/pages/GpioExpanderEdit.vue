@@ -91,12 +91,14 @@
                         v-for="i2cDevice in i2cProber.probe"
                         :key="i2cDevice.address"
                         clickable
+                        @click="() => {v.expander.address.$model = i2cDevice.address}"
                         :v-ripple="false"
                         :disable="i2cDevice.isUse && i2cDevice.resource.id !== expander.id"
                       >
                         <q-item-section avatar>
                           <q-radio
-                            v-model:model-value="v.expander.address.$model"
+                            :model-value="v.expander.address.$model"
+                            @update:modelValue="v.expander.address.$model = $event"
                             :val="i2cDevice.address"
                             dense
                             :disable="i2cDevice.isUse && i2cDevice.resource.id !== expander.id"
@@ -241,6 +243,9 @@ export default {
         .finally(() => {
           this.i2cProber.loading = false
         })
+    },
+    selectAddress (address) {
+
     }
   },
   computed: {
