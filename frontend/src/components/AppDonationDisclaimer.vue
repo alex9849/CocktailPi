@@ -187,7 +187,7 @@
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
                     <q-checkbox
-                      label="I didn't lie"
+                      label="I'm not a liar"
                       v-model:model-value="notLieCheckBox"
                     />
                   </div>
