@@ -110,7 +110,7 @@ public class GpioService {
             throw new IllegalArgumentException("LocalGpioBoard can't be deleted!");
         }
         if(gpioBoard.getPins().stream().anyMatch(x -> x.getResource() != null)) {
-            throw new IllegalStateException("Board-Pins are assigned to resources!");
+            throw new IllegalStateException("Some pins from the board are still assigned to resources!");
         }
         gpioRepository.deleteBoard(id);
 
