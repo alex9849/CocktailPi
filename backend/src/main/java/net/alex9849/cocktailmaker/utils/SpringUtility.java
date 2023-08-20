@@ -1,5 +1,11 @@
 package net.alex9849.cocktailmaker.utils;
 
+import lombok.SneakyThrows;
+import net.alex9849.cocktailmaker.config.seed.SeedDataInserter;
+import net.alex9849.cocktailmaker.service.EventService;
+import net.alex9849.cocktailmaker.service.PumpService;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +20,20 @@ import java.util.Set;
 public class SpringUtility implements ApplicationContextAware {
 
     @Autowired
+    private Flyway flyway;
+
+    @Autowired
+    private SeedDataInserter seedDataInserter;
+
+
+    @Autowired
     private static ApplicationContext applicationContext;
 
+    @SneakyThrows
     public void setApplicationContext(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+        flyway.migrate();
+        seedDataInserter.migrate();
     }
 
     /*

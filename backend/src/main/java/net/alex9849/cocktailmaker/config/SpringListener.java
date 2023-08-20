@@ -27,16 +27,8 @@ public class SpringListener {
     @Autowired
     private PumpMaintenanceService pumpUpService;
 
-    @Autowired
-    private Flyway flyway;
-
-    @Autowired
-    private SeedDataInserter seedDataInserter;
-
     @EventListener
-    public void handleContextRefreshed(ContextRefreshedEvent event) throws Exception {
-        flyway.migrate();
-        seedDataInserter.migrate();
+    public void handleContextRefreshed(ContextRefreshedEvent event) {
         pumpService.postConstruct();
         pumpUpService.postConstruct();
     }

@@ -111,13 +111,14 @@ public abstract class PumpTask implements Runnable {
     }
 
     protected boolean isCancelledExecutionThread() {
+        boolean interrupted = Thread.interrupted();
         if(cancelled) {
             return true;
         }
         if(isFinished()) {
             return false;
         }
-        if(Thread.interrupted()) {
+        if(interrupted) {
             cancelled = true;
         }
         return cancelled;

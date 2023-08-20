@@ -48,9 +48,8 @@
           :error="error"
           :disable="loading || disable"
           :loading="loading"
-          option-value="nr"
           square
-          :options="selectablePins"
+          :options="pins"
           filled
           hide-bottom-space
         >
@@ -85,6 +84,24 @@
               round
               @click.stop="onClear()"
             />
+          </template>
+          <template v-slot:option="{opt, toggleOption}">
+            <q-item
+              clickable
+              @click="toggleOption(opt)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ pinIdPrefix }}{{ opt.nr }}
+                </q-item-label>
+                <q-item-label
+                  v-if="opt.inUse"
+                  caption
+                >
+                  In use
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </template>
         </q-select>
       </div>
@@ -253,24 +270,6 @@ export default {
         return 'BCM '
       }
       return 'GPIO'
-    },
-    selectablePins () {
-      const pins = []
-      const allowedPinIds = new Set(
-        this.allowedInUsePins
-          .filter(x => x.boardId === this.selection.board?.id)
-          .map(x => x.nr)
-      )
-      if (this.modelValue && this.modelValue.boardId === this.selection.board?.id && !this.loadingPins) {
-        allowedPinIds.add(this.modelValue.nr)
-      }
-      for (const pin of this.pins) {
-        if ((pin.inUse) && !allowedPinIds.has(pin.nr)) {
-          continue
-        }
-        pins.push(pin)
-      }
-      return pins
     }
   }
 }

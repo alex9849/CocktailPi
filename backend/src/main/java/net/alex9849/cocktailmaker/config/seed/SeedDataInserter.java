@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
+@Transactional
 public class SeedDataInserter {
     @Autowired
     private IngredientService ingredientService;
