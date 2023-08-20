@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
 import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
+import net.alex9849.cocktailmaker.payload.dto.system.I2cAddressDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.service.PumpService;
@@ -91,6 +92,6 @@ public class SystemEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "i2cprobe", method = RequestMethod.GET)
     public ResponseEntity<?> getI2CProbe() throws IOException {
-        return ResponseEntity.ok(systemService.probeI2c());
+        return ResponseEntity.ok(systemService.probeI2c().stream().map(I2cAddressDto.Response::new).toList());
     }
 }

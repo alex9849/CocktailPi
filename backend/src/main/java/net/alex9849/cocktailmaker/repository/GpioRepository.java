@@ -71,13 +71,13 @@ public class GpioRepository extends JdbcDaoSupport {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return Optional.ofNullable(parsePinResource(rs));
+                return Optional.ofNullable(parsePinResourceGpio(rs));
             }
             return Optional.empty();
         });
     }
 
-    private PinResource parsePinResource(ResultSet rs) throws SQLException {
+    private PinResource parsePinResourceGpio(ResultSet rs) throws SQLException {
         PinResource pr = null;
         if(rs.getObject("pump_id") != null) {
             pr = new PinResource();
@@ -212,6 +212,27 @@ public class GpioRepository extends JdbcDaoSupport {
         gpioBoard.setId(rs.getLong("id"));
         gpioBoard.setName(rs.getString("name"));
         return gpioBoard;
+    }
+
+    public Optional<PinResource> getPinResourceByI2CAddress(int address) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<PinResource>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT gb.id, gb.name from gpio_boards gb where i2c_address = ?");
+            pstmt.setLong(1, address);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return Optional.ofNullable(parsePinResourceI2C(rs));
+            }
+            return Optional.empty();
+        });
+    }
+
+    private PinResource parsePinResourceI2C(ResultSet rs) throws SQLException {
+        PinResource pr = new PinResource();
+        pr.setName(rs.getString("name"));
+        pr.setType(PinResource.Type.GPIO_BOARD);
+        pr.setId(rs.getLong("id"));
+        return pr;
     }
 
 }

@@ -51,3 +51,14 @@ export const recipeOrderOptions = {
     }
   }
 }
+
+export const i2cExpanderBoardTypes = {
+  data: () => {
+    return {
+      i2cExpanderBoardTypes: [{
+        label: 'MCP23017',
+        value: 'MCP23017'
+      }]
+    }
+  }
+}

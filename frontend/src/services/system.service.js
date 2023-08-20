@@ -73,6 +73,11 @@ class SystemService {
     return axios.put(API_PATH + 'settings/donated', value,
       { headers: { 'Content-Type': 'application/json' } })
   }
+
+  getI2CProbe () {
+    return axios.get(API_PATH + '/i2cprobe')
+      .then(x => x.data)
+  }
 }
 
 export default new SystemService()

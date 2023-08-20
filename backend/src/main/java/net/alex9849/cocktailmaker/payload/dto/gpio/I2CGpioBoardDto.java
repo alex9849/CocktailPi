@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.gpio;
 
 import lombok.*;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class I2CGpioBoardDto {
@@ -17,7 +18,6 @@ public class I2CGpioBoardDto {
         public static class Create extends GpioBoardDto.Request.Create implements I2cAddress, BoardModel {
             String boardModel;
             byte address;
-
         }
 
     }
@@ -32,8 +32,10 @@ public class I2CGpioBoardDto {
             String boardModel;
             byte address;
 
-            protected Detailed(GpioBoard gpioBoard) {
+            protected Detailed(I2CGpioBoard gpioBoard) {
                 super(gpioBoard);
+                this.boardModel = gpioBoard.getBoardModel().toString();
+                this.address = gpioBoard.getI2cAddress();
             }
 
             @Override

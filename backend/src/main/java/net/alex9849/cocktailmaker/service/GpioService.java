@@ -60,14 +60,6 @@ public class GpioService {
 
     }
 
-    public void checkI2C() {
-        //Delegate to system service
-    }
-
-    public void enableI2C() {
-        //Delegate to system service
-    }
-
     public GpioBoard.Pin fromDto(PinDto.Request.Select pinDto) {
         if(pinDto == null) {
             return null;
@@ -81,6 +73,10 @@ public class GpioService {
 
     public Optional<PinResource> getPinResourceByBoardIdAndPin(long boardId, int pinNr) {
         return gpioRepository.getPinResourceByBoardIdAndPin(boardId, pinNr);
+    }
+
+    public Optional<PinResource> getPinResourceByI2CAddress(int address) {
+        return gpioRepository.getPinResourceByI2CAddress(address);
     }
 
     public GpioStatus getGpioStatus() {

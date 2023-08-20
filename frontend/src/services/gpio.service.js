@@ -19,6 +19,14 @@ class GpioService {
       .then(x => x.data)
   }
 
+  createGpioBoard (gpioBoardDto) {
+    return axios.post(API_PATH, gpioBoardDto)
+  }
+
+  updateGpioBoard (id, gpioBoardDto) {
+    return axios.put(API_PATH + '/' + id, gpioBoardDto)
+  }
+
   getBoardPins (boardId) {
     return axios.get(API_PATH + boardId + '/pin')
       .then(x => x.data)
@@ -39,6 +47,18 @@ export class PinDtoMapper {
   }
 }
 
+export class GpioBoardDtoMapper {
+  toGpioBoardDto (gpioBoard) {
+    return {
+      name: gpioBoard.name,
+      address: gpioBoard.address,
+      boardModel: gpioBoard.boardModel
+    }
+  }
+}
+
 export default new GpioService()
 
 export const pinDtoMapper = new PinDtoMapper()
+
+export const gpioBoardDtoMapper = new GpioBoardDtoMapper()
