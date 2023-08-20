@@ -34,6 +34,16 @@ public class GpioEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "{id}", method = RequestMethod.GET)
+    private ResponseEntity<?> getGpioBoards(@PathVariable("id") long id) {
+        GpioBoard board = gpioService.getGpioBoard(id);
+        if(board == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(board));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.POST)
     private ResponseEntity<?> createGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, UriComponentsBuilder uriBuilder) {
         GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
@@ -50,6 +60,7 @@ public class GpioEndpoint {
             return ResponseEntity.notFound().build();
         }
         GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
+        gpioBoard.setId(id);
         gpioBoard = gpioService.updateGpioBoard(gpioBoard);
         return ResponseEntity.ok(gpioBoard);
     }

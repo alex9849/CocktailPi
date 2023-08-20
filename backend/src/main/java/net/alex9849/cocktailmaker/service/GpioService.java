@@ -42,15 +42,16 @@ public class GpioService {
         List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getClass()
                 .getAnnotation(DiscriminatorValue.class).value());
 
+        if(gpioRepository.getBoardsByName(gpioBoard.getName()).isPresent()) {
+            throw new IllegalArgumentException("A GpioBoard with that name already exists!");
+        }
         if(gpioBoard instanceof LocalGpioBoard) {
             if(!byType.isEmpty()) {
                 throw new IllegalArgumentException("Can't create more than one LocalGpioBoard!");
             }
         } else if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
-            if(byType.stream().anyMatch(x -> x.getName().equalsIgnoreCase(gpioBoard.getName()))) {
-                throw new IllegalArgumentException("Board name already in use!");
-            }
-            if(byType.stream().map(x -> (I2CGpioBoard) x).anyMatch(x -> x.getI2cAddress() == i2CGpioBoard.getI2cAddress())) {
+            Optional<PinResource> oPinResource = getPinResourceByI2CAddress(i2CGpioBoard.getI2cAddress());
+            if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
                 throw new IllegalArgumentException("I2C-Address already in use!");
             }
         } else {
@@ -68,6 +69,12 @@ public class GpioService {
         if(oldGpioBoard.getClass() != gpioBoard.getClass()) {
             throw new IllegalArgumentException("GpioBoard type can't be changed afterwards!");
         }
+
+        Optional<GpioBoard> withNameBoard = gpioRepository.getBoardsByName(gpioBoard.getName());
+        if(withNameBoard.isPresent() && withNameBoard.get().getId() != gpioBoard.getId()) {
+            throw new IllegalArgumentException("A GpioBoard with that name already exists!");
+        }
+
         if(gpioBoard instanceof LocalGpioBoard localGpioBoard) {
             // OK
         } else if (gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
@@ -75,6 +82,11 @@ public class GpioService {
             if(oldI2CGpioBoard.getBoardModel() != i2CGpioBoard.getBoardModel()) {
                 throw new IllegalArgumentException("GpioBoard BoardModel can't be changed afterwards!");
             }
+            Optional<PinResource> oPinResource = getPinResourceByI2CAddress(i2CGpioBoard.getI2cAddress());
+            if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
+                throw new IllegalArgumentException("I2C-Address already in use!");
+            }
+
         } else {
             throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
         }

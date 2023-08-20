@@ -14,7 +14,7 @@ create table users
 CREATE TABLE gpio_boards
 (
     id          INTEGER not null PRIMARY KEY,
-    name        text    not null,
+    name        text    not null unique,
     dType       text    not null,
     board_model text check (dType != 'i2c' or board_model IS NOT NULL),
     i2c_address INTEGER check (dType != 'i2c' or i2c_address IS NOT NULL)

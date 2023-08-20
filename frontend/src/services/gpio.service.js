@@ -19,6 +19,11 @@ class GpioService {
       .then(x => x.data)
   }
 
+  getBoard (id) {
+    return axios.get(API_PATH + '/' + id)
+      .then(x => x.data)
+  }
+
   createGpioBoard (gpioBoardDto) {
     return axios.post(API_PATH, gpioBoardDto)
   }

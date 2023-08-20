@@ -57,6 +57,20 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
+    public Optional<GpioBoard> getBoardsByName(String name) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<GpioBoard>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM gpio_boards where lower(name) = lower(?)");
+            pstmt.setString(1, name);
+
+            ResultSet rs = pstmt.executeQuery();
+            List<GpioBoard> result = new ArrayList<>();
+            if (rs.next()) {
+                return Optional.of(parseRs(rs));
+            }
+            return Optional.empty();
+        });
+    }
+
     public Optional<PinResource> getPinResourceByBoardIdAndPin(long boardId, int pinNr) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<PinResource>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +

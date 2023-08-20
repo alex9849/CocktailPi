@@ -179,6 +179,18 @@ export default {
     this.mdiAlert = mdiAlert
     this.mdiSync = mdiSync
     this.fetchI2cProbe()
+    if (!this.isNew) {
+
+    }
+  },
+  async beforeRouteEnter (to, from, next) {
+    if (to.name === 'gpioexpandereditor') {
+      const board = await GpioService.getBoard(to.params.id)
+      next(vm => {
+        vm.expander = board
+      })
+    }
+    next()
   },
   components: { CAssistantContainer },
   mixins: [i2cExpanderBoardTypes],

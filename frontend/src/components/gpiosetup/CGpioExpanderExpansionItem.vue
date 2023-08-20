@@ -26,7 +26,7 @@
             <div class="row justify-end q-col-gutter-sm">
               <div>
                 <q-btn
-                  @click="$router.push({name: 'gpioexpandereditor', params: {id: 1}})"
+                  @click="$router.push({name: 'gpioexpandereditor', params: {id: board.id}})"
                   :icon="mdiPencilOutline"
                   text-color="white"
                   color="info"
