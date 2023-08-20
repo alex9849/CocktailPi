@@ -141,6 +141,26 @@ public class GpioRepository extends JdbcDaoSupport {
         });
     }
 
+    public boolean updateBoard(GpioBoard gpioBoard) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE gpio_boards SET name = ?, i2c_address = ? WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, gpioBoard.getName());
+
+            if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+                pstmt.setInt(2, i2CGpioBoard.getI2cAddress());
+
+            } else if (gpioBoard instanceof LocalGpioBoard) {
+                pstmt.setNull(2, Types.INTEGER);
+
+            } else {
+                throw new IllegalStateException("Unknown GPIO-board type: " + gpioBoard.getName());
+            }
+            pstmt.setLong(3, gpioBoard.getId());
+
+            return pstmt.executeUpdate() != 0;
+        });
+    }
+
     private void createPins(long boardId, int minPin, int maxPin) {
         String valueString = String.join(", ", IntStream.range(minPin, maxPin + 1)
                 .mapToObj(x -> "(?, ?)").toArray(String[]::new));
@@ -234,5 +254,4 @@ public class GpioRepository extends JdbcDaoSupport {
         pr.setId(rs.getLong("id"));
         return pr;
     }
-
 }

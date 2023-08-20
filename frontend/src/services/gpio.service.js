@@ -6,7 +6,7 @@ import axios from 'axios'
 class GpioService {
   types = {
     LOCAL: 'local',
-    I2C: 'ic2'
+    I2C: 'i2c'
   }
 
   getBoardsByType (dType) {
@@ -52,7 +52,8 @@ export class GpioBoardDtoMapper {
     return {
       name: gpioBoard.name,
       address: gpioBoard.address,
-      boardModel: gpioBoard.boardModel
+      boardModel: gpioBoard.boardModel,
+      type: gpioBoard.type
     }
   }
 }

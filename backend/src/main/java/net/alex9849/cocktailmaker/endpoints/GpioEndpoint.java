@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -29,6 +31,27 @@ public class GpioEndpoint {
             boards = gpioService.getGpioBoardsByType(dType);
         }
         return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "", method = RequestMethod.POST)
+    private ResponseEntity<?> createGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, UriComponentsBuilder uriBuilder) {
+        GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
+        gpioBoard = gpioService.createGpioBoard(gpioBoard);
+        UriComponents uriComponents = uriBuilder.path("/api/gpio/{id}").buildAndExpand(gpioBoard.getId());
+        return ResponseEntity.created(uriComponents.toUri()).build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "{id}", method = RequestMethod.PUT)
+    private ResponseEntity<?> updateGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, @PathVariable("id") long id) {
+        GpioBoard oldGpioBoard = gpioService.getGpioBoard(id);
+        if(oldGpioBoard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
+        gpioBoard = gpioService.updateGpioBoard(gpioBoard);
+        return ResponseEntity.ok(gpioBoard);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

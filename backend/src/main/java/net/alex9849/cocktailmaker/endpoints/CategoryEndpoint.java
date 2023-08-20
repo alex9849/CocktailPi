@@ -46,6 +46,10 @@ public class CategoryEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCategory(@PathVariable(value = "id") long id, @Valid @RequestBody CategoryDto.Request.Create categoryDto) {
+        Category oldCategory = categoryService.getCategory(id);
+        if(oldCategory == null) {
+            return ResponseEntity.notFound().build();
+        }
         Category category = categoryService.fromDto(categoryDto);
         category.setId(id);
         categoryService.updateCategory(category);

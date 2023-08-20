@@ -1,13 +1,13 @@
 package net.alex9849.cocktailmaker.payload.dto.gpio;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class I2CGpioBoardDto {
-    private interface I2cAddress { byte getAddress(); }
-    private interface BoardModel { String getBoardModel(); }
+    private interface I2cAddress { @NotNull byte getAddress(); }
+    private interface BoardModel { @NotNull String getBoardModel(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {

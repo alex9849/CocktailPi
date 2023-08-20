@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.payload.dto.gpio;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
@@ -14,7 +15,7 @@ import org.springframework.beans.BeanUtils;
 public class GpioBoardDto {
 
     private interface Id { long getId(); }
-    private interface Name { String getName(); }
+    private interface Name { @NotNull String getName(); }
     private interface PinCount { int getPinCount(); }
     private interface UsedPinCount { int getUsedPinCount(); }
 
@@ -24,8 +25,8 @@ public class GpioBoardDto {
         @Getter @Setter @EqualsAndHashCode
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "local"),
-                @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "i2c")
+                @JsonSubTypes.Type(value = LocalGpioBoardDto.Request.Create.class, name = "local"),
+                @JsonSubTypes.Type(value = I2CGpioBoardDto.Request.Create.class, name = "i2c")
         })
         public static class Create implements Name {
             String name;

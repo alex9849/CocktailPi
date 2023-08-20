@@ -22,12 +22,15 @@
                   outlined
                   hide-bottom-space
                   v-model:model-value="v.expander.name.$model"
+                  :disable="saving"
                 />
                 <q-select
-                  :disable="!isNew"
+                  :disable="!isNew || saving"
                   label="Select board type"
                   v-model:model-value="v.expander.boardModel.$model"
                   :options="i2cExpanderBoardTypes"
+                  emit-value
+                  map-options
                   outlined
                   hide-bottom-space
                 />
@@ -142,6 +145,7 @@
               style="width: 100px"
               color="positive"
               label="Save"
+              :loading="saving"
               :disable="v.expander.$invalid"
               @click="saveGpioBoard"
             />
@@ -149,6 +153,7 @@
               style="width: 100px"
               color="negative"
               label="Abort"
+              :disable="saving"
               @click="$router.push({name: 'gpiomanagement'})"
             />
           </q-card-actions>
@@ -188,7 +193,8 @@ export default {
         id: -1,
         name: '',
         address: '',
-        boardModel: ''
+        boardModel: '',
+        type: 'i2c'
       }
     }
   },

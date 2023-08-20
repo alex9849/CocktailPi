@@ -6,6 +6,9 @@ import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.GpioStatus;
+import net.alex9849.cocktailmaker.payload.dto.gpio.GpioBoardDto;
+import net.alex9849.cocktailmaker.payload.dto.gpio.I2CGpioBoardDto;
+import net.alex9849.cocktailmaker.payload.dto.gpio.LocalGpioBoardDto;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 import net.alex9849.cocktailmaker.repository.GpioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,7 @@ public class GpioService {
     }
 
     public GpioBoard createGpioBoard(GpioBoard gpioBoard) {
-        List<GpioBoard> byType = getGpioBoardsByType(LocalGpioBoard.class
+        List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getClass()
                 .getAnnotation(DiscriminatorValue.class).value());
 
         if(gpioBoard instanceof LocalGpioBoard) {
@@ -54,6 +57,29 @@ public class GpioService {
             throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
         }
         return gpioRepository.createBoard(gpioBoard);
+    }
+
+    public GpioBoard updateGpioBoard(GpioBoard gpioBoard) {
+        Optional<GpioBoard> oOldGpioBoard = gpioRepository.findById(gpioBoard.getId());
+        if(oOldGpioBoard.isEmpty()) {
+            throw new IllegalArgumentException("GpioBoard with id " + gpioBoard.getId() + " doesn't exist.");
+        }
+        GpioBoard oldGpioBoard = oOldGpioBoard.get();
+        if(oldGpioBoard.getClass() != gpioBoard.getClass()) {
+            throw new IllegalArgumentException("GpioBoard type can't be changed afterwards!");
+        }
+        if(gpioBoard instanceof LocalGpioBoard localGpioBoard) {
+            // OK
+        } else if (gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+            I2CGpioBoard oldI2CGpioBoard = (I2CGpioBoard) oldGpioBoard;
+            if(oldI2CGpioBoard.getBoardModel() != i2CGpioBoard.getBoardModel()) {
+                throw new IllegalArgumentException("GpioBoard BoardModel can't be changed afterwards!");
+            }
+        } else {
+            throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
+        }
+        gpioRepository.updateBoard(gpioBoard);
+        return gpioRepository.findById(gpioBoard.getId()).orElse(null);
     }
 
     public void deleteGpioBoard() {
@@ -81,5 +107,24 @@ public class GpioService {
 
     public GpioStatus getGpioStatus() {
         return gpioRepository.getGpioStatus();
+    }
+
+    public GpioBoard fromDto(GpioBoardDto.Request.Create gpioBoardDto) {
+        if(gpioBoardDto == null) {
+            return null;
+        }
+        GpioBoard gpioBoard;
+        if(gpioBoardDto instanceof LocalGpioBoardDto.Request.Create) {
+            gpioBoard = new LocalGpioBoard();
+        } else if (gpioBoardDto instanceof I2CGpioBoardDto.Request.Create i2cGpioBoardDto) {
+            I2CGpioBoard.BoardModel boardModel = I2CGpioBoard.BoardModel.valueOf(i2cGpioBoardDto.getBoardModel());
+            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(boardModel);
+            i2CGpioBoard.setI2cAddress(i2cGpioBoardDto.getAddress());
+            gpioBoard = i2CGpioBoard;
+        } else {
+            throw new IllegalArgumentException("Unknown board type: " + gpioBoardDto.getClass().getName());
+        }
+        gpioBoard.setName(gpioBoardDto.getName());
+        return gpioBoard;
     }
 }
