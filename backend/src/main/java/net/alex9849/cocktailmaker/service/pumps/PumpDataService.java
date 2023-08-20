@@ -87,6 +87,9 @@ public class PumpDataService {
             beforeUpdate.get().getMotorDriver().shutdown();
         }
         pumpRepository.update(pump);
+        if(pump.isCanPump()) {
+            pump.getMotorDriver().shutdown();
+        }
         return pump;
     }
 

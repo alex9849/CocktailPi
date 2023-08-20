@@ -93,7 +93,7 @@
                         clickable
                         @click="() => {v.expander.address.$model = i2cDevice.address}"
                         :v-ripple="false"
-                        :disable="i2cDevice.isUse && i2cDevice.resource.id !== expander.id"
+                        :disable="i2cDevice.inUse && i2cDevice.resource.id !== expander.id"
                       >
                         <q-item-section avatar>
                           <q-radio
@@ -101,12 +101,18 @@
                             @update:modelValue="v.expander.address.$model = $event"
                             :val="i2cDevice.address"
                             dense
-                            :disable="i2cDevice.isUse && i2cDevice.resource.id !== expander.id"
+                            :disable="i2cDevice.inUse && i2cDevice.resource.id !== expander.id"
                           >
                             <template v-slot:default>
                               Address {{ i2cDevice.address }} (0x{{ i2cDevice.address.toString(16) }})
                             </template>
                           </q-radio>
+                        </q-item-section>
+                        <q-item-section
+                          v-if="i2cDevice.inUse && i2cDevice.resource.id !== expander.id"
+                          class="text-italic"
+                        >
+                          (In use)
                         </q-item-section>
                         <q-item-section
                           v-if="i2cDevice.isUse"
