@@ -33,6 +33,9 @@ public class I2CGpioBoard extends GpioBoard {
     }
 
     public Mcp23017 getBoardDriver() {
+        if(boardMap.containsKey(getI2cAddress()) && !boardMap.get(getI2cAddress()).isOpen()) {
+            boardMap.remove(getI2cAddress());
+        }
         if(!boardMap.containsKey(getI2cAddress())) {
             PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
             boardMap.put(getI2cAddress(), new Mcp23017(pinUtils.getI2c(getI2cAddress())));

@@ -49,6 +49,9 @@ class GpioService {
 
 export class PinDtoMapper {
   toPinSelectDto (reduced) {
+    if (!reduced) {
+      return null
+    }
     return {
       nr: reduced.nr,
       boardId: reduced.boardId

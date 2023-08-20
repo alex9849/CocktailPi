@@ -57,11 +57,12 @@ public class PinUtils {
         if(!outputPinMap.containsKey(address)) {
             return;
         }
-        outputPinMap.get(address).shutdown(pi4J);
+        DigitalOutput dout = outputPinMap.remove(address);
+        pi4J.shutdown(dout.id());
     }
 
     public synchronized void shutdownI2C() {
-        i2CMap.values().forEach(x -> x.shutdown(pi4J));
+        i2CMap.values().forEach(x -> pi4J.shutdown(x.id()));
         i2CMap.clear();
     }
 

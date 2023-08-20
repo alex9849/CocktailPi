@@ -73,7 +73,7 @@
         <q-btn
           label="Save"
           :loading="saving"
-          :disable="v.form.$error"
+          :disable="v.form.$invalid"
           color="green"
           @click="onClickSave"
         />
@@ -104,9 +104,7 @@ export default {
         enable: false,
         settings: {
           overshoot: 0,
-          directorPin: {
-            bcmPin: 0
-          },
+          directorPin: null,
           autoPumpBackTimer: 0
         }
       },

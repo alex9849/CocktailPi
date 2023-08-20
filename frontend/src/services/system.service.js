@@ -22,7 +22,7 @@ class SystemService {
     const dto = {
       enable: settings.enable
     }
-    if (settings.settings) {
+    if (settings.enable) {
       dto.settings = {
         directorPin: pinDtoMapper.toPinSelectDto(settings.settings.directorPin),
         overshoot: settings.settings.overshoot,

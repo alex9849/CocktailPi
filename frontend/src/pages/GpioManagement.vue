@@ -224,6 +224,7 @@
     <c-question
       :question="'Delete \'' + deleteDialog.board?.name + '\'?'"
       :show="deleteDialog.show"
+      @update:show="abortDelete"
       ok-color="negative"
       ok-button-text="Delete"
       @clickOk="onConfirmDelete"
