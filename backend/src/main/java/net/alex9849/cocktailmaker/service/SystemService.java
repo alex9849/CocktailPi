@@ -45,6 +45,9 @@ public class SystemService {
     @Autowired
     private OptionsRepository optionsRepository;
 
+    @Autowired
+    private PinUtils pinUtils;
+
     public void shutdown() throws IOException {
         if(isDemoMode) {
             throw new IllegalArgumentException("System can't be shutdown in demomode!");
@@ -122,6 +125,13 @@ public class SystemService {
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
+            pinUtils.shutdownOutputPin(i2CSettings.getSdaPin().getPinNr());
+            pinUtils.shutdownOutputPin(i2CSettings.getSclPin().getPinNr());
+        } else {
+            if(!gpioService.getGpioBoardsByType("i2c").isEmpty()) {
+                throw new IllegalStateException("I2C expanders found!");
+            }
+            pinUtils.shutdownI2C();
         }
 
         try {

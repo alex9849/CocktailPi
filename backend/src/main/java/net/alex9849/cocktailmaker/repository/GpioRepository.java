@@ -268,4 +268,12 @@ public class GpioRepository extends JdbcDaoSupport {
         pr.setId(rs.getLong("id"));
         return pr;
     }
+
+    public boolean deleteBoard(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("DELETE FROM gpio_boards WHERE id = ?");
+            pstmt.setLong(1, id);
+            return pstmt.executeUpdate() != 0;
+        });
+    }
 }

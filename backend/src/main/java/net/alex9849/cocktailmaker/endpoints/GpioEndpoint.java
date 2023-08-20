@@ -66,6 +66,17 @@ public class GpioEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
+    private ResponseEntity<?> deleteGpioBoard(@PathVariable("id") long id) {
+        GpioBoard gpioBoard = gpioService.getGpioBoard(id);
+        if(gpioBoard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        gpioService.deleteGpioBoard(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "status", method = RequestMethod.GET)
     private ResponseEntity<?> getStatus() {
         return ResponseEntity.ok(gpioService.getGpioStatus());

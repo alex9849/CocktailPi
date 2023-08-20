@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.utils;
 
 import com.pi4j.context.Context;
+import com.pi4j.io.IOType;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfig;
 import com.pi4j.io.gpio.digital.DigitalState;
@@ -21,7 +22,7 @@ import java.util.*;
 public class PinUtils {
     @Autowired
     private Context pi4J;
-    private final Map<Integer, IOutputPin> outputPinMap = new HashMap<>();
+    private final Map<Integer, DigitalOutput> outputPinMap = new HashMap<>();
     private final Map<Integer, I2C> i2CMap = new HashMap<>();
 
     public synchronized IOutputPin getBoardOutputPin(int address) {
@@ -35,10 +36,10 @@ public class PinUtils {
 
             if(!pi4J.registry().exists(config.id())) {
                 DigitalOutput pin = pi4J.create(config);
-                outputPinMap.put(address, new Pi4JOutputPin(pin));
+                outputPinMap.put(address, pin);
             }
         }
-        return outputPinMap.get(address);
+        return new Pi4JOutputPin(outputPinMap.get(address));
     }
 
     public synchronized I2C getI2c(int address) {
@@ -50,6 +51,18 @@ public class PinUtils {
             }
         }
         return i2CMap.get(address);
+    }
+
+    public synchronized void shutdownOutputPin(int address) {
+        if(!outputPinMap.containsKey(address)) {
+            return;
+        }
+        outputPinMap.get(address).shutdown(pi4J);
+    }
+
+    public synchronized void shutdownI2C() {
+        i2CMap.values().forEach(x -> x.shutdown(pi4J));
+        i2CMap.clear();
     }
 
     public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, GpioBoard.Pin... pins) {

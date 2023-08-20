@@ -65,9 +65,9 @@ create table pumps
     steps_per_cl          INTEGER check (steps_per_cl >= 1),
     max_steps_per_second  INTEGER check (max_steps_per_second BETWEEN 1 and 500000),
     primary key (id),
-    FOREIGN KEY (dc_pin_board, dc_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL,
-    FOREIGN KEY (step_pin_board, step_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL,
-    FOREIGN KEY (enable_pin_board, enable_pin_nr) REFERENCES gpio_pins ON DELETE SET NULL
+    FOREIGN KEY (dc_pin_board, dc_pin_nr) REFERENCES gpio_pins ON DELETE RESTRICT,
+    FOREIGN KEY (step_pin_board, step_pin_nr) REFERENCES gpio_pins ON DELETE RESTRICT,
+    FOREIGN KEY (enable_pin_board, enable_pin_nr) REFERENCES gpio_pins ON DELETE RESTRICT
 );
 
 create table recipes
@@ -171,7 +171,7 @@ CREATE TABLE options
     value     TEXT,
     pin_board INTEGER,
     pin_nr    INTEGER,
-    FOREIGN KEY (pin_board, pin_nr) REFERENCES gpio_pins ON DELETE SET NULL
+    FOREIGN KEY (pin_board, pin_nr) REFERENCES gpio_pins ON DELETE RESTRICT
 );
 
 CREATE VIEW all_ingredient_dependencies AS

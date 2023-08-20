@@ -25,6 +25,9 @@ public class GpioService {
     @Autowired
     private GpioRepository gpioRepository;
 
+    @Autowired
+    private SystemService systemService;
+
 
     public List<GpioBoard> getGpioBoards() {
         return gpioRepository.getBoards();
@@ -50,6 +53,9 @@ public class GpioService {
                 throw new IllegalArgumentException("Can't create more than one LocalGpioBoard!");
             }
         } else if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+            if(!systemService.getI2cSettings().isEnable()) {
+                throw new IllegalStateException("I2C is disabled!");
+            }
             Optional<PinResource> oPinResource = getPinResourceByI2CAddress(i2CGpioBoard.getI2cAddress());
             if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
                 throw new IllegalArgumentException("I2C-Address already in use!");
@@ -94,7 +100,19 @@ public class GpioService {
         return gpioRepository.findById(gpioBoard.getId()).orElse(null);
     }
 
-    public void deleteGpioBoard() {
+    public void deleteGpioBoard(long id) {
+        Optional<GpioBoard> oGpioBoard = gpioRepository.findById(id);
+        if(oGpioBoard.isEmpty()) {
+            return;
+        }
+        GpioBoard gpioBoard = oGpioBoard.get();
+        if(gpioBoard instanceof LocalGpioBoard) {
+            throw new IllegalArgumentException("LocalGpioBoard can't be deleted!");
+        }
+        if(gpioBoard.getPins().stream().anyMatch(x -> x.getResource() != null)) {
+            throw new IllegalStateException("Board-Pins are assigned to resources!");
+        }
+        gpioRepository.deleteBoard(id);
 
     }
 
