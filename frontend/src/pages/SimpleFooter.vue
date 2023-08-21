@@ -4,14 +4,27 @@
     leave-active-class="animated fadeOutDown"
   >
     <q-footer v-if="showFooter" class="bg-indigo-10" bordered>
-      <div class="row justify-evenly items-center q-ma-xs">
-        <p
-          class="col-1 text-center text-weight-thin"
-          style="font-size: 10px"
+      <div class="row justify-around items-center q-ma-xs">
+        <div
+          class="col-shrink row justify-start items-center"
         >
-          ©2023 Alexander Liggesmeyer
-        </p>
-        <div class="col-10">
+          <p
+            class="text-center"
+            style="font-size: 10px; max-width: 100px"
+          >
+            ©2023 Alexander Liggesmeyer
+          </p>
+          <q-btn
+            outline
+            dense
+            :icon="mdiPiggyBank"
+            color="orange-5"
+            @click="setShowDonateDialog(true)"
+          >
+            $
+          </q-btn>
+        </div>
+        <div class="col-grow">
           <div class="row q-gutter-sm justify-evenly">
             <q-btn v-for="link in footerLinks"
                    :key="link.label"
@@ -26,7 +39,7 @@
             />
           </div>
         </div>
-        <div class="col-1 row justify-end">
+        <div class="col-shrink row justify-end">
           <q-btn round flat class="bg-indigo-5"
                  dense icon="keyboard_arrow_down"
                  @click="showFooter = false"
@@ -49,6 +62,9 @@
 </template>
 
 <script>
+import { mdiPiggyBank } from '@quasar/extras/mdi-v5'
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'SimpleFooter',
   data: () => {
@@ -66,6 +82,14 @@ export default {
         }
       }]
     }
+  },
+  created () {
+    this.mdiPiggyBank = mdiPiggyBank
+  },
+  methods: {
+    ...mapMutations({
+      setShowDonateDialog: 'common/setShowDonateDialog'
+    })
   }
 }
 </script>

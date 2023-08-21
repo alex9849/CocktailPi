@@ -4,7 +4,9 @@
     persistent
     maximized
   >
-    <q-card>
+    <q-card
+      :dark="dark"
+    >
       <q-card-section>
         <q-toolbar>
           <q-toolbar-title class="text-center">
@@ -16,11 +18,14 @@
           </q-toolbar-title>
         </q-toolbar>
       </q-card-section>
-      <q-separator/>
+      <q-separator
+        :dark="dark"
+      />
       <q-card-section style="font-size: 15px; max-width: 800px" class="page-content">
         <q-card
           flat
           bordered
+          :dark="dark"
         >
           <q-card-section>
             <p>
@@ -33,7 +38,8 @@
                 <q-btn
                   style="width: 300px"
                   :icon="mdiGithub"
-                  color="black"
+                  :color="dark ? 'white' : 'black'"
+                  :class="{'text-black': dark}"
                   @click="clickDonateGitHub"
                 >
                   Donate via GitHub sponsors
@@ -90,7 +96,8 @@
                   style="width: 300px"
                   :icon="mdiGithub"
                   @click="clickDonateGitHub"
-                  color="black"
+                  :color="dark ? 'white' : 'black'"
+                  :class="{'text-black': dark}"
                 >
                   Donate via GitHub sponsors
                 </q-btn>
@@ -107,7 +114,9 @@
               </div>
             </div>
           </q-card-section>
-          <q-separator/>
+          <q-separator
+            :dark="dark"
+          />
           <q-card-section>
             <div
               v-if="donationSettings.donated"
@@ -187,6 +196,7 @@
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
                     <q-checkbox
+                      :dark="dark"
                       label="I'm not a liar"
                       v-model:model-value="notLieCheckBox"
                     />
@@ -199,7 +209,7 @@
                       :loading="loadingDonationModify"
                       no-caps
                       :icon-right="mdiEmoticonExcited"
-                      @click="() => {setDonated(true); notLieCheckBox = false}"
+                      @click="clickConfirmDonate"
                     >
                       Confirm
                     </q-btn>
@@ -255,7 +265,10 @@ export default {
     ...mapGetters({
       show: 'common/isShowDonateDialog',
       donationSettings: 'common/getDonationSettings'
-    })
+    }),
+    dark () {
+      return this.$route.path.includes('/simple/')
+    }
   },
   watch: {
     show (val) {
@@ -300,6 +313,7 @@ export default {
     },
     clickConfirmDonate () {
       this.setDonated(true)
+      this.notLieCheckBox = false
     },
     clickUndonate () {
       this.setDonated(false)

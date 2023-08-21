@@ -10,9 +10,9 @@
       @update:model-value="onPageClick($event - 1)"
       :max="pagination.totalPages"
       :max-pages="9"
-      color="white"
       active-color="yellow"
       text-color="yellow"
+      active-text-color="black"
       :boundary-numbers="true"
       size="md"
       outline
