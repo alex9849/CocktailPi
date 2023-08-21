@@ -151,6 +151,7 @@ public class PumpMaintenanceService {
                 synchronized (this) {
                     if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
                         this.directionPin.digitalWrite(PinState.HIGH);
+                        this.direction = Direction.FORWARD;
                     }
                     oldCallback.run();
                 }
