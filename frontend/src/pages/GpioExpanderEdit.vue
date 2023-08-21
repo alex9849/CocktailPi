@@ -110,7 +110,7 @@
                         </q-item-section>
                         <q-item-section
                           v-if="i2cDevice.inUse && i2cDevice.resource.id !== expander.id"
-                          class="text-italic"
+                          class="text-italic text-grey-7"
                         >
                           (In use)
                         </q-item-section>

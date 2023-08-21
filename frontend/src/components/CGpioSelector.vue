@@ -90,16 +90,16 @@
               clickable
               @click="toggleOption(opt)"
             >
-              <q-item-section>
+              <q-item-section avatar>
                 <q-item-label>
                   {{ pinIdPrefix }}{{ opt.nr }}
                 </q-item-label>
-                <q-item-label
-                  v-if="opt.inUse"
-                  caption
-                >
-                  In use
-                </q-item-label>
+              </q-item-section>
+              <q-item-section
+                v-if="opt.inUse"
+                class="text-italic text-grey-7"
+              >
+                (In use)
               </q-item-section>
             </q-item>
           </template>
