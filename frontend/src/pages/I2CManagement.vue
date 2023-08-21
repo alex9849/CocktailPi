@@ -43,8 +43,12 @@
                 On normal Raspberry PIs the pins used for SDL and SCL are on normally <b>2 for SDA</b> and <b>3 for SDL</b>.
                 <p>If you can't see the pins that you want to use here, make sure that you don't have them assigned to something already.</p>
                 <br>
-                <b>The fields for the SDL and SCL pin don't influence the selected bus.</b> They only decide on which pins get
-                marked as inUse.
+                <b>The fields for the SDL and SCL pin don't influence the selected bus.</b>
+                <q-card flat bordered style="border-color: #f12d36; border-width: 2px" class="q-pa-sm">
+                  <p><b><u>WARNING!!!:</u></b> Enabling and disabling the I2C-bus will trigger unix commands that
+                    configure the I2C bus. Make sure that SDA and SCL are selected correctly. Otherwise it can happen,
+                    that pins are in use as normal pins and I2C pins at the same time. This will crash the application!</p>
+                </q-card>
               </template>
               <template v-slot:fields>
                 <c-gpio-selector
