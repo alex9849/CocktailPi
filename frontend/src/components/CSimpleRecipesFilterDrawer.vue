@@ -43,43 +43,94 @@
             emit-value
             map-options
             use-chips
+            hide-bottom-space
             label="Contains ingredients"
             :model-value="filter.containsIngredients"
             @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
           />
         </q-item-section>
       </q-item>
-      <q-item tag="label" dark v-ripple>
-        <q-item-section side top>
-          <q-checkbox
-            dark
-            :model-value="filter.automaticallyFabricable"
-            @update:model-value="$emit('update:filter', {...filter, automaticallyFabricable: $event})"
-          />
-        </q-item-section>
+      <q-item>
+        <q-card
+          flat
+          bordered
+          style="border-color: #c0c0c0"
+          class="bg-transparent"
+        >
+          <p class="text-grey-4 q-px-sm">Fabricable</p>
+          <q-separator dark />
+          <q-list>
+            <q-item
+              tag="label"
+              class="q-px-xs"
+              dark
+              v-ripple
+            >
+              <q-item-section side top>
+                <q-radio
+                  color="white"
+                  keep-color
+                  :model-value="filter.fabricable"
+                  @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                  val=""
+                ></q-radio>
+              </q-item-section>
 
-        <q-item-section>
-          <q-item-label>Automatically fabricable</q-item-label>
-          <q-item-label caption>
-            Only shows recipes that can be produced fully automatic
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item tag="label" dark v-ripple>
-        <q-item-section side top>
-          <q-checkbox
-            dark
-            :model-value="filter.fabricableWithOwnedIngredients"
-            @update:model-value="$emit('update:filter', {...filter, fabricableWithOwnedIngredients: $event})"
-          />
-        </q-item-section>
+              <q-item-section>
+                <q-item-label>All</q-item-label>
+                <q-item-label caption>
+                  Shows all recips
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              tag="label"
+              class="q-px-xs"
+              dark
+              v-ripple
+            >
+              <q-item-section side top>
+                <q-radio
+                  color="white"
+                  keep-color
+                  :model-value="filter.fabricable"
+                  @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                  val="manual"
+                />
+              </q-item-section>
 
-        <q-item-section>
-          <q-item-label>Fabricable</q-item-label>
-          <q-item-label caption>
-            Only shows recipes that can be produced with owned ingredients
-          </q-item-label>
-        </q-item-section>
+              <q-item-section>
+                <q-item-label>Fabricable</q-item-label>
+                <q-item-label caption>
+                  Only shows recipes that can be produced with owned ingredients
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              tag="label"
+              class="q-px-xs"
+              dark
+              v-ripple
+            >
+              <q-item-section side top>
+                <q-radio
+                  color="white"
+                  keep-color
+                  :model-value="filter.fabricable"
+                  @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                  val="auto"
+                />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>Automatically fabricable</q-item-label>
+                <q-item-label caption>
+                  Only shows recipes that can be produced fully automatic
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
       </q-item>
       <q-item>
         <q-item-section>
@@ -167,8 +218,7 @@ export default {
     defaultFilter () {
       return {
         query: '',
-        automaticallyFabricable: false,
-        fabricableWithOwnedIngredients: false,
+        fabricable: '',
         containsIngredients: [],
         orderBy: null
       }

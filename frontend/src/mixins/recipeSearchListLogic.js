@@ -44,12 +44,7 @@ export const recipeSearchListLogic = {
       return {
         filter: {
           query: queryParams.query ? queryParams.query : '',
-          automaticallyFabricable: queryParams.automaticallyFabricable
-            ? (queryParams.automaticallyFabricable === 'true')
-            : false,
-          fabricableWithOwnedIngredients: queryParams.fabricableWithOwnedIngredients
-            ? (queryParams.fabricableWithOwnedIngredients === 'true')
-            : false,
+          fabricable: queryParams.fabricable ? queryParams.fabricable : '',
           containsIngredients: containsIngredients,
           orderBy: queryParams.orderBy
         },
@@ -67,8 +62,7 @@ export const recipeSearchListLogic = {
           RecipeService.getRecipes(this.pagination.page,
             this.onlyOwnRecipes ? this.user.id : null,
             this.collectionId,
-            this.filter.automaticallyFabricable,
-            this.filter.fabricableWithOwnedIngredients,
+            this.filter.fabricable,
             this.filter.containsIngredients,
             this.filter.query,
             this.categoryId,

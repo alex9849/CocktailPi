@@ -48,8 +48,7 @@ public class RecipeEndpoint {
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
                                          @RequestParam(value = "inCollection", required = false) Long inCollectionId,
-                                         @RequestParam(value = "fabricable", defaultValue = "false") boolean isFabricable,
-                                         @RequestParam(value = "inBar", defaultValue = "false") boolean isInBar,
+                                         @RequestParam(value = "fabricable", defaultValue = "all") String fabricable,
                                          @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
                                          @RequestParam(value = "searchName", required = false) String searchName,
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
@@ -83,9 +82,14 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "name");
                 break;
         }
+        RecipeService.FabricableFilter fabricableFilter = switch (fabricable) {
+            case "manual" -> RecipeService.FabricableFilter.IN_BAR;
+            case "auto" -> RecipeService.FabricableFilter.AUTOMATICALLY;
+            default -> RecipeService.FabricableFilter.ALL;
+        };
         Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId,
-                inCollectionId, inCategory, containsIngredients, searchName, isFabricable,
-                isInBar, page, pageSize, sort);
+                inCollectionId, inCategory, containsIngredients, searchName, fabricableFilter,
+                page, pageSize, sort);
         List<RecipeDto.Response.SearchResult> recipeDtos = recipePage.stream().map(RecipeDto.Response.SearchResult::new).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }

@@ -19,7 +19,7 @@ class RecipeService {
       .then(response => response.data)
   }
 
-  getRecipes (page, ownerId, inCollection, fabricable, inBar, containsIngredients,
+  getRecipes (page, ownerId, inCollection, fabricable, containsIngredients,
     searchName, inCategoryId, orderBy) {
     const inCategory = inCategoryId
     let params = {
@@ -27,7 +27,6 @@ class RecipeService {
       ownerId,
       inCollection,
       fabricable,
-      inBar,
       containsIngredients,
       searchName,
       inCategory,

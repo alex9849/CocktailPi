@@ -18,20 +18,42 @@
                 <div
                   class="row justify-evenly q-col-gutter-sm q-pa-sm"
                 >
-                  <q-checkbox
-                    :model-value="filter.fabricableWithOwnedIngredients"
-                    @update:model-value="$emit('update:filter', {...filter, fabricableWithOwnedIngredients: $event})"
-                    class="col-12 col-sm-6"
-                  >
-                    Fabricable with owned ingredients
-                  </q-checkbox>
-                  <q-checkbox
-                    :model-value="filter.automaticallyFabricable"
-                    @update:model-value="$emit('update:filter', {...filter, automaticallyFabricable: $event})"
-                    class="col-12 col-sm-6"
-                  >
-                    Can be fabricated fully automatic
-                  </q-checkbox>
+                  <div class="col-12">
+                    <q-card
+                      class="row items-center justify-start"
+                      flat
+                      bordered
+                    >
+                      <div class="col-shrink">
+                        <p class="q-px-sm text-grey-7">Fabricable:</p>
+                      </div>
+                      <div class="col-grow">
+                        <div class="row">
+                          <q-radio
+                            label="Show all"
+                            :model-value="filter.fabricable"
+                            @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                            val=""
+                            class="col-12 col-sm-4"
+                          />
+                          <q-radio
+                            label="Fabricable with owned ingredients"
+                            :model-value="filter.fabricable"
+                            @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                            val="manual"
+                            class="col-12 col-sm-4"
+                          />
+                          <q-radio
+                            label="Fabricable fully automatic"
+                            :model-value="filter.fabricable"
+                            @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
+                            val="auto"
+                            class="col-12 col-sm-4"
+                          />
+                        </div>
+                      </div>
+                    </q-card>
+                  </div>
                   <c-ingredient-selector
                     :model-value="filter.containsIngredients"
                     @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
@@ -125,8 +147,7 @@ export default {
     defaultFilter () {
       return {
         query: '',
-        automaticallyFabricable: false,
-        fabricableWithOwnedIngredients: false,
+        fabricable: '',
         containsIngredients: [],
         orderBy: null
       }

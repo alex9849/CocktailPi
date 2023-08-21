@@ -97,8 +97,7 @@ export default {
         update()
         return
       }
-      RecipeService.getRecipes(0, null, null,
-        null, null, null, val, null, null)
+      RecipeService.getRecipes(0, null, null, null, null, val, null, null)
         .then(page => {
           update(() => {
             this.fetchedOptions = page.content
