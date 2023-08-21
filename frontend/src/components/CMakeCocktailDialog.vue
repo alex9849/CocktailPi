@@ -34,32 +34,32 @@
       <q-card-section class="page-content q-gutter-md">
         <div class="flex justify-center">
           <q-input
-            :model-value="v.amountToProduce.$model"
+            v-model:model-value="v.amountToProduce.$model"
             label="Amount to produce"
             outlined
-            readonly
             hide-bottom-space
             bg-color="grey-2"
             input-class="text-center text-weight-medium"
             style="width: 400px"
+            debounce="500"
             rounded
             suffix="ml"
             :rules="[
             val => !v.amountToProduce.required.$invalid || 'Required',
-            val => !v.amountToProduce.minValue.$invalid || 'Min 50ml',
-            val => !v.amountToProduce.maxValue.$invalid || 'Max 1000ml'
+            val => !v.amountToProduce.minValue.$invalid || 'Min 10ml',
+            val => !v.amountToProduce.maxValue.$invalid || 'Max 5000ml'
           ]"
           >
             <template v-slot:prepend >
               <q-btn
-                :disable="v.amountToProduce.$model < 100"
+                :disable="v.amountToProduce.$model < 60"
                 class="q-mx-xs"
                 :icon="mdiMinusThick"
                 dense round
                 @click="v.amountToProduce.$model -= 50"
               />
               <q-btn
-                :disable="v.amountToProduce.$model < 60"
+                :disable="v.amountToProduce.$model < 20"
                 class="q-mx-xs"
                 :icon="mdiMinus"
                 round
@@ -68,14 +68,14 @@
             </template>
             <template v-slot:append >
               <q-btn
-                :disable="v.amountToProduce.$model > 990"
+                :disable="v.amountToProduce.$model > 4990"
                 :icon="mdiPlus"
                 class="q-mx-xs"
                 round
                 @click="v.amountToProduce.$model += 10"
               />
               <q-btn
-                :disable="v.amountToProduce.$model > 950"
+                :disable="v.amountToProduce.$model > 4950"
                 :icon="mdiPlusThick"
                 class="q-mx-xs"
                 dense round
@@ -392,8 +392,8 @@ export default {
     return {
       amountToProduce: {
         required,
-        minValue: minValue(50),
-        maxValue: maxValue(1000)
+        minValue: minValue(10),
+        maxValue: maxValue(5000)
       }
     }
   }

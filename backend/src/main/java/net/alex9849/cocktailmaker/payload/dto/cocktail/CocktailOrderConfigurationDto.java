@@ -9,7 +9,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CocktailOrderConfigurationDto {
-    public interface AmountToProduce { @Min(50) @Max(1000) Integer getAmountOrderedInMl(); }
+    public interface AmountToProduce { @Min(10) @Max(5000) Integer getAmountOrderedInMl(); }
     public interface ProductionStepReplacements { @NotNull() List<List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create>> getProductionStepReplacements(); }
     public interface Customisations { @NotNull() CustomisationsDto.Request.Create getCustomisations(); }
 
