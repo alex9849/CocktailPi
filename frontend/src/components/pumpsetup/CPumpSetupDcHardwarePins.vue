@@ -65,6 +65,7 @@
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
 import CGpioSelector from 'components/CGpioSelector.vue'
+import {mapMutations} from "vuex";
 
 export default defineComponent({
   name: 'CPumpSetupDcHardwarePins',
@@ -76,6 +77,11 @@ export default defineComponent({
     isPowerStateHigh: {},
     isPowerStateHighErrorMsg: {},
     isPowerStateHighLoading: {}
+  },
+  methods: {
+    ...mapMutations({
+      openExternalLink: 'common/openExternalLink'
+    })
   }
 })
 </script>
