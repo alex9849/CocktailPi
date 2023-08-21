@@ -73,9 +73,9 @@
               </li>
             </ul>
             <p>
-              Donating to CocktailMaker is entirely voluntary. While the software remains free to use, your contribution
-              demonstrates your appreciation for the developer's hard work and dedication, motivating them to continue
-              refining and expanding the software's capabilities.
+              Donating is entirely voluntary. While the software remains free to use, your contribution
+              demonstrates your appreciation for the hard work and dedication, that were required to develop this software.
+              A donation also motivates me to continue refining and expanding the software's capabilities.
             </p>
             <p>
               You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software
