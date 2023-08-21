@@ -61,6 +61,24 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.12</version>
+        <executions>
+          <execution>
+            <id>timestamp-property</id>
+            <goals>
+              <goal>timestamp-property</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <name>current.year</name>
+              <pattern>yyyy</pattern>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
         <version>1.5.2</version>
@@ -79,8 +97,16 @@
             <include>**/*.js</include>
           </includes>
           <regex>false</regex>
-          <token>%MAVEN_PROJECT_VERSION%</token>
-          <value>${project.parent.version}</value>
+          <replacements>
+            <replacement>
+              <token>%MAVEN_PROJECT_VERSION%</token>
+              <value>${project.parent.version}</value>
+            </replacement>
+            <replacement>
+              <token>%CURRENT_YEAR%</token>
+              <value>${current.year}</value>
+            </replacement>
+          </replacements>
         </configuration>
       </plugin>
     </plugins>

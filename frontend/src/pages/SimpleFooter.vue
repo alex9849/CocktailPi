@@ -12,7 +12,7 @@
             class="text-center"
             style="font-size: 10px; max-width: 100px"
           >
-            ©2023 Alexander Liggesmeyer
+            ©%CURRENT_YEAR% Alexander Liggesmeyer
           </p>
           <q-btn
             outline

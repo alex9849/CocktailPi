@@ -63,7 +63,7 @@
           <div class="row justify-center text-subtitle1">
             v%MAVEN_PROJECT_VERSION%
           </div>
-          <div class="row justify-center text-subtitle2">©2023 Alexander Liggesmeyer</div>
+          <div class="row justify-center text-subtitle2">©%CURRENT_YEAR% Alexander Liggesmeyer</div>
           <div class="row justify-center">
             <q-btn
               v-for="link in projectLinks"
