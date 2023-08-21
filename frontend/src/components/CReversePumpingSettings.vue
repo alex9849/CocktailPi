@@ -149,13 +149,13 @@ export default {
         })
     },
     fetchSettings () {
-      this.loading = false
+      this.loading = true
       SystemService.getReversePumpSettings()
         .then(settings => {
           this.v.form.$model = Object.assign(this.form, settings)
         })
         .finally(() => {
-          this.saving = false
+          this.loading = false
         })
     }
   },
