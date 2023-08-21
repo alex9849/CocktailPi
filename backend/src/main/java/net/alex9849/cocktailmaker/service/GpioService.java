@@ -85,16 +85,19 @@ public class GpioService {
             throw new IllegalArgumentException("A GpioBoard with that name already exists!");
         }
 
-        if(gpioBoard instanceof LocalGpioBoard localGpioBoard) {
+        if(gpioBoard instanceof LocalGpioBoard) {
             // OK
         } else if (gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
             I2CGpioBoard oldI2CGpioBoard = (I2CGpioBoard) oldGpioBoard;
             if(oldI2CGpioBoard.getBoardModel() != i2CGpioBoard.getBoardModel()) {
                 throw new IllegalArgumentException("GpioBoard BoardModel can't be changed afterwards!");
             }
-            Optional<PinResource> oPinResource = getPinResourceByI2CAddress(i2CGpioBoard.getI2cAddress());
-            if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
-                throw new IllegalArgumentException("I2C-Address already in use!");
+            Optional<PinResource> oPinResource = getPinResourceByI2CAddress(oldI2CGpioBoard.getI2cAddress());
+            if(oPinResource.get().getId() != gpioBoard.getId()) {
+                if(oPinResource.isPresent()) {
+                    throw new IllegalArgumentException("I2C-Address already in use!");
+                }
+                pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
             }
 
         } else {

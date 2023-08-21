@@ -75,7 +75,7 @@ class SystemService {
   }
 
   getI2CProbe () {
-    return axios.get(API_PATH + '/i2cprobe')
+    return axios.get(API_PATH + 'i2cprobe')
       .then(x => x.data)
   }
 }

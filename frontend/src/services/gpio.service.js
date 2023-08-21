@@ -20,7 +20,7 @@ class GpioService {
   }
 
   getBoard (id) {
-    return axios.get(API_PATH + '/' + id)
+    return axios.get(API_PATH + id)
       .then(x => x.data)
   }
 
@@ -29,11 +29,11 @@ class GpioService {
   }
 
   updateGpioBoard (id, gpioBoardDto) {
-    return axios.put(API_PATH + '/' + id, gpioBoardDto)
+    return axios.put(API_PATH + id, gpioBoardDto)
   }
 
   deleteGpioBoard (id) {
-    return axios.delete(API_PATH + '/' + id)
+    return axios.delete(API_PATH + id)
   }
 
   getBoardPins (boardId) {
@@ -42,7 +42,7 @@ class GpioService {
   }
 
   getGpioStatus () {
-    return axios.get(API_PATH + '/status')
+    return axios.get(API_PATH + 'status')
       .then(x => x.data)
   }
 }
