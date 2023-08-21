@@ -65,7 +65,7 @@ public class PumpMaintenanceService {
             directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
         this.reschedulePumpBack();
-
+        this.stopAllPumps();
     }
 
     @Scheduled(fixedDelay = 500)

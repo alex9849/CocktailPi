@@ -41,9 +41,6 @@ public class PumpService {
     @Autowired
     private CocktailOrderService cocktailOrderService;
 
-    public void postConstruct() {
-        maintenanceService.stopAllPumps();
-    }
 
     public List<Pump> getAllPumps() {
         return dataService.getAllPumps();
