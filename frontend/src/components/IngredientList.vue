@@ -143,7 +143,7 @@
           @clickAbort="closeProductionStepEditor"
           @clickSave="saveEditProductionStep"
         >
-          <q-splitter :model-value="10" horizontal />
+          <q-separator />
           <production-step-list-editor
             v-model:model-value="editor.editingObject"
             :new-production-step="editor.isCreatingNew"

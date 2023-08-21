@@ -135,10 +135,8 @@
             :time-per-cl-in-ms-error-msg-error-msg="attrState.timePerClInMs.errorMsg"
             :time-per-cl-in-ms-loading-loading="attrState.timePerClInMs.loading"
           />
-          <q-splitter
-            :model-value="10"
-            horizontal
-            class="q-pb-md"
+          <q-separator
+            class="q-mb-md"
           />
           <c-assistant-container>
             <template v-slot:explanations>
@@ -181,10 +179,8 @@
               />
             </template>
           </c-assistant-container>
-          <q-splitter
-            :model-value="10"
-            horizontal
-            class="q-py-md"
+          <q-separator
+            class="q-my-md"
           />
           <c-assistant-container>
             <template v-slot:explanations>
@@ -257,10 +253,8 @@
               Optional: The ingredient that is currently connected to the pump.
             </template>
           </c-assistant-container>
-          <q-splitter
-            :model-value="10"
-            horizontal
-            class="q-py-md"
+          <q-separator
+            class="q-my-md"
           />
           <c-assistant-container>
             <template v-slot:fields>
@@ -288,10 +282,8 @@
               to produce a cocktail of a certain size.
             </template>
           </c-assistant-container>
-          <q-splitter
-            :model-value="10"
-            horizontal
-            class="q-py-md"
+          <q-separator
+            class="q-my-md"
           />
           <c-assistant-container>
             <template v-slot:fields>

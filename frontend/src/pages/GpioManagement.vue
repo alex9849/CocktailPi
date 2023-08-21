@@ -8,7 +8,7 @@
           <q-card-section class="q-py-sm bg-card-secondary">
             <p class="text-weight-medium">Status</p>
           </q-card-section>
-          <q-separator :value="50" />
+          <q-separator />
           <q-card-section class="q-py-md">
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
@@ -159,7 +159,7 @@
                   </div>
                 </div>
               </q-card-section>
-              <q-separator :value="10" />
+              <q-separator />
               <q-card-section class="">
                 <div class="row q-col-gutter-sm justify-center">
                   <div

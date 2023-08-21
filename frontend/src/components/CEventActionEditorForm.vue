@@ -135,7 +135,7 @@
                 val => !v.modelValue.type.required.$invalid || 'Required'
               ]"
     />
-    <q-splitter :model-value="10"/>
+    <q-separator />
     <q-card
       bordered
       flat
@@ -268,10 +268,7 @@
                   transition-hide="none"
                 />
                 <div v-if="!installedPythonLibraries.loading">
-                  <q-splitter
-                    :model-value="10"
-                    horizontal
-                  />
+                  <q-separator />
                   <table
                     v-if="installedPythonLibraries.libraries.length !== 0"
                     style="width: 100%"

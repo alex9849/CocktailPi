@@ -34,10 +34,8 @@
       />
     </template>
   </c-assistant-container>
-  <q-splitter
-    :model-value="10"
-    horizontal
-    class="q-py-md"
+  <q-separator
+    class="q-my-md"
   />
   <c-assistant-container>
     <template v-slot:explanations>

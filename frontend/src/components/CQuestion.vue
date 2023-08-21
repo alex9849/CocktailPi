@@ -7,10 +7,7 @@
     <q-card class="full-width" :class="cardClass">
       <q-card-section class="text-center q-pa-sm">
         <h5>{{ question }}</h5>
-        <q-splitter
-          horizontal
-          :model-value="10"
-        />
+        <q-separator />
         <slot name="error-area" />
         <slot />
         <div class="q-pt-md q-gutter-sm">

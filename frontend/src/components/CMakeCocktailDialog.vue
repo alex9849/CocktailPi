@@ -26,10 +26,7 @@
                  v-close-popup
           />
         </q-toolbar>
-        <q-splitter
-          horizontal
-          :model-value="10"
-        />
+        <q-separator />
       </q-card-section>
       <q-card-section class="page-content q-gutter-md">
         <div class="flex justify-center">

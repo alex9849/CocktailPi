@@ -26,10 +26,8 @@
       </q-input>
     </template>
   </c-assistant-container>
-  <q-splitter
-    :model-value="10"
-    horizontal
-    class="q-pb-md"
+  <q-separator
+    class="q-mb-md"
   />
   <c-assistant-container>
     <template v-slot:explanations>
@@ -67,10 +65,8 @@
       </q-input>
     </template>
   </c-assistant-container>
-  <q-splitter
-    :model-value="10"
-    horizontal
-    class="q-pb-md"
+  <q-separator
+    class="q-mb-md"
   />
   <c-assistant-container>
     <template v-slot:explanations>

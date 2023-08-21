@@ -28,7 +28,7 @@
               ]"
       @update:model-value="e => setValue('alcoholContent', e)"
     />
-    <q-splitter :model-value="10" horizontal/>
+    <q-separator />
     <q-tabs
       class="text-teal"
       inline-label

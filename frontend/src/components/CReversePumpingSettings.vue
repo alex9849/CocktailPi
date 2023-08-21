@@ -23,7 +23,7 @@
           <q-card-section>
             <div class="text-subtitle2">Voltage director pin</div>
           </q-card-section>
-          <q-separator/>
+          <q-separator />
           <q-card-section class="q-gutter-sm">
             <c-gpio-selector
               v-model:model-value="v.form.settings.directorPin.$model"
