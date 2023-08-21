@@ -60,6 +60,14 @@ public class PinUtils {
         pi4J.shutdown(dout.id());
     }
 
+    public synchronized void shutdownI2CAddress(int address) {
+        if(!i2CMap.containsKey(address)) {
+            return;
+        }
+        I2C i2c = i2CMap.remove(address);
+        pi4J.shutdown(i2c.id());
+    }
+
     public synchronized void shutdownI2C() {
         i2CMap.values().forEach(x -> pi4J.shutdown(x.id()));
         i2CMap.clear();

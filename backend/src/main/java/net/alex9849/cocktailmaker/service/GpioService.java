@@ -11,6 +11,7 @@ import net.alex9849.cocktailmaker.payload.dto.gpio.I2CGpioBoardDto;
 import net.alex9849.cocktailmaker.payload.dto.gpio.LocalGpioBoardDto;
 import net.alex9849.cocktailmaker.payload.dto.gpio.PinDto;
 import net.alex9849.cocktailmaker.repository.GpioRepository;
+import net.alex9849.cocktailmaker.utils.PinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ public class GpioService {
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private PinUtils pinUtils;
 
 
     public List<GpioBoard> getGpioBoards() {
@@ -112,8 +116,10 @@ public class GpioService {
         if(gpioBoard.getPins().stream().anyMatch(x -> x.getResource() != null)) {
             throw new IllegalStateException("Some pins from the board are still assigned to resources!");
         }
+        if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+            pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
+        }
         gpioRepository.deleteBoard(id);
-
     }
 
     public GpioBoard.Pin fromDto(PinDto.Request.Select pinDto) {
