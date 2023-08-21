@@ -24,12 +24,16 @@
           configure these statically in hardware!
         </li>
       </ul>
-      <p><b>Important:</b> Pin-numbers don't correspond to GPIO numbers, but BCM numbers. BCM refers to the
-        “Broadcom SOC channel” number, which is the numbering inside the chip which is used on the Raspberry
-        Pi.
-        These numbers changed between board versions. These link may help:
-        <a href="https://pi4j.com/getting-started/understanding-the-pins/#overview" target="_blank">Pi4J -
-          Understanding the pins</a>
+      <p><b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don't necessarily correspond
+        to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside
+        the chip which is used on the Raspberry Pi.
+        These numbers changed between board versions. This link may help:
+        <u
+          class="text-info clickable"
+          @click="openExternalLink('https://pi4j.com/getting-started/understanding-the-pins/#overview')"
+        >
+          Pi4J - Understanding the pins
+        </u>
       </p>
     </template>
     <template v-slot:fields>
@@ -60,6 +64,7 @@
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
 import CGpioSelector from 'components/CGpioSelector.vue'
+import { mapMutations } from 'vuex'
 
 export default defineComponent({
   name: 'CPumpSetupStepperHardwarePins',
@@ -71,6 +76,11 @@ export default defineComponent({
     stepPin: {},
     stepPinErrorMsg: {},
     stepPinLoading: {}
+  },
+  methods: {
+    ...mapMutations({
+      openExternalLink: 'common/openExternalLink'
+    })
   }
 })
 </script>
