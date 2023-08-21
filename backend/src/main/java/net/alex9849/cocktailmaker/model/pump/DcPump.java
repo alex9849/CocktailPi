@@ -8,8 +8,6 @@ import net.alex9849.motorlib.motor.DCMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
-import java.util.Objects;
-
 @DiscriminatorValue("dc")
 public class DcPump extends Pump {
     private Integer timePerClInMs;

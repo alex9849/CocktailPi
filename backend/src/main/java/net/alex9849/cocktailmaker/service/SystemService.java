@@ -1,9 +1,9 @@
 package net.alex9849.cocktailmaker.service;
 
-import net.alex9849.cocktailmaker.model.system.I2cAddress;
-import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.model.system.I2cAddress;
+import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;

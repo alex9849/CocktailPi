@@ -1,7 +1,5 @@
 package net.alex9849.cocktailmaker.model.system;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.service.GpioService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;

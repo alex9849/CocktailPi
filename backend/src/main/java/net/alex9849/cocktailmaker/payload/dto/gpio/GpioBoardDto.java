@@ -7,8 +7,6 @@ import lombok.*;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailmaker.payload.dto.pump.DcPumpDto;
-import net.alex9849.cocktailmaker.payload.dto.pump.StepperPumpDto;
 import org.springframework.beans.BeanUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

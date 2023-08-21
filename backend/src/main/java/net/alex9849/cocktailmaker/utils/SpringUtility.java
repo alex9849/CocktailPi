@@ -2,9 +2,6 @@ package net.alex9849.cocktailmaker.utils;
 
 import lombok.SneakyThrows;
 import net.alex9849.cocktailmaker.config.seed.SeedDataInserter;
-import net.alex9849.cocktailmaker.service.EventService;
-import net.alex9849.cocktailmaker.service.PumpService;
-import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;

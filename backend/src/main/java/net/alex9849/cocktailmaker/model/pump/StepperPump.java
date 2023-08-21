@@ -2,8 +2,6 @@ package net.alex9849.cocktailmaker.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
-import net.alex9849.cocktailmaker.utils.PinUtils;
-import net.alex9849.cocktailmaker.utils.SpringUtility;
 import net.alex9849.motorlib.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.IStepperMotor;

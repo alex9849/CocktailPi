@@ -2,8 +2,6 @@ package net.alex9849.cocktailmaker.model.recipe.ingredient;
 
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailmaker.model.pump.Pump;
-import net.alex9849.cocktailmaker.repository.PumpRepository;
-import net.alex9849.cocktailmaker.service.PumpService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
 

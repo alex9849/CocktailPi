@@ -3,7 +3,10 @@ package net.alex9849.cocktailmaker.repository;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailmaker.model.gpio.*;
+import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.I2CGpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.GpioStatus;
 import net.alex9849.cocktailmaker.service.SystemService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
