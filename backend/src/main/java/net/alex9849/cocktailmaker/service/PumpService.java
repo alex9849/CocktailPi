@@ -18,12 +18,10 @@ import net.alex9849.cocktailmaker.service.pumps.PumpLockService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional()
 public class PumpService {
 
     @Autowired
@@ -147,14 +145,10 @@ public class PumpService {
     }
 
     public void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
-        if (!lockService.testAndAcquireGlobal(maintenanceService)) {
+        if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
-        try {
-            cocktailOrderService.orderCocktail(user, recipe, orderConfiguration);
-        } finally {
-            lockService.releaseGlobal(maintenanceService);
-        }
+        cocktailOrderService.orderCocktail(user, recipe, orderConfiguration, () -> lockService.releaseGlobal(cocktailOrderService));
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {

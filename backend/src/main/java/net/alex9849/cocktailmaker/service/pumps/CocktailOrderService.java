@@ -49,7 +49,7 @@ public class CocktailOrderService {
     private EventService eventService;
 
 
-    public synchronized void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
+    public synchronized void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration, Runnable onFinishCallback) {
         if(this.cocktailFactory != null) {
             throw new IllegalArgumentException("A cocktail is already being fabricated!");
         }
@@ -63,7 +63,12 @@ public class CocktailOrderService {
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
                 new HashSet<>(pumpDataService.getAllCompletedPumps()), p -> p.forEach(x -> pumpDataService.updatePump(x)))
-                .subscribeProgress(this::onCocktailProgressSubscriptionChange);
+                .subscribeProgress(this::onCocktailProgressSubscriptionChange)
+                .subscribeProgress(progess -> {
+                    switch (progess.getState()) {
+                        case FINISHED, CANCELLED -> onFinishCallback.run();
+                    }
+                });
         this.cocktailFactory = cocktailFactory;
         this.cocktailFactory.makeCocktail();
         this.pumpUpService.reschedulePumpBack();
