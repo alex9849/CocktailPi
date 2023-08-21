@@ -36,6 +36,9 @@ public class SystemService {
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
 
+    @Value("${alex9849.app.devMode}")
+    private boolean isDevMode;
+
     @Autowired
     private PumpMaintenanceService pumpUpService;
 
@@ -95,7 +98,7 @@ public class SystemService {
         globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
         GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
         donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated")));
-        donationSettings.setShowDisclaimer(!donationSettings.isDonated());
+        donationSettings.setShowDisclaimer(!donationSettings.isDonated() && !isDemoMode && !isDevMode);
         donationSettings.setDisclaimerDelay(30000);
         globalSettings.setDonation(donationSettings);
         return globalSettings;
