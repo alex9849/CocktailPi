@@ -8,6 +8,7 @@
     >
       <q-form
         class="q-col-gutter-md"
+        @submit.prevent="saveGpioBoard"
       >
         <div class="col-12">
           <q-card
@@ -225,6 +226,9 @@ export default {
   },
   methods: {
     saveGpioBoard () {
+      if (this.v.expander.$invalid) {
+        return
+      }
       let promise
       this.saving = true
       if (this.isNew) {
