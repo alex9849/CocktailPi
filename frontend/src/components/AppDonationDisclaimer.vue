@@ -11,7 +11,7 @@
         <q-toolbar>
           <q-toolbar-title class="text-center">
             <p class="text-h3" style="white-space: initial">Your support is needed!</p>
-            <p class="text-weight-thin">Scroll down
+            <p class="text-weight-thin">Scroll down to close
               <q-icon :name="mdiChevronDoubleDown"/>
             </p>
 
@@ -28,6 +28,7 @@
           :dark="dark"
         >
           <q-card-section>
+            <h6 class="text-center">This software is free, but donations are appreciated!</h6>
             <p>
               This software is free, but still it took and takes a lot time to develop and maintain it.
               The developer of CocktailMaker (me) develops it in his free time. I'm also a student who doesn't have a

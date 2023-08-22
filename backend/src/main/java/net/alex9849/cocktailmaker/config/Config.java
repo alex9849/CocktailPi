@@ -6,6 +6,15 @@ import com.pi4j.context.ContextBuilder;
 import com.pi4j.library.pigpio.PiGpio;
 import com.pi4j.library.pigpio.impl.PiGpioNativeImpl;
 import com.pi4j.plugin.mock.platform.MockPlatform;
+import com.pi4j.plugin.mock.provider.gpio.analog.MockAnalogInputProvider;
+import com.pi4j.plugin.mock.provider.gpio.analog.MockAnalogInputProviderImpl;
+import com.pi4j.plugin.mock.provider.gpio.digital.MockDigitalInputProvider;
+import com.pi4j.plugin.mock.provider.gpio.digital.MockDigitalOutputProvider;
+import com.pi4j.plugin.mock.provider.i2c.MockI2CProvider;
+import com.pi4j.plugin.mock.provider.pwm.MockPwmProvider;
+import com.pi4j.plugin.mock.provider.serial.MockSerialProvider;
+import com.pi4j.plugin.mock.provider.spi.MockSpiProvider;
+import com.pi4j.plugin.mock.provider.spi.MockSpiProviderImpl;
 import com.pi4j.plugin.pigpio.provider.gpio.digital.PiGpioDigitalInputProvider;
 import com.pi4j.plugin.pigpio.provider.gpio.digital.PiGpioDigitalOutputProvider;
 import com.pi4j.plugin.pigpio.provider.i2c.PiGpioI2CProvider;
@@ -39,7 +48,12 @@ public class Config {
                 ctxBuilder.add(PiGpioI2CProvider.newInstance(piGpio));
                 ctxBuilder.add(PiGpioPwmProvider.newInstance(piGpio));
             } else {
-                ctxBuilder.add(new MockPlatform());
+                ctxBuilder.add(MockDigitalInputProvider.newInstance());
+                ctxBuilder.add(MockDigitalOutputProvider.newInstance());
+                ctxBuilder.add(MockSpiProvider.newInstance());
+                ctxBuilder.add(MockSerialProvider.newInstance());
+                ctxBuilder.add(MockI2CProvider.newInstance());
+                ctxBuilder.add(MockPwmProvider.newInstance());
             }
             gpioController = ctxBuilder.build();
         }

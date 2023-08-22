@@ -99,7 +99,7 @@ public class SystemService {
         GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
         donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated")));
         donationSettings.setShowDisclaimer(!donationSettings.isDonated() && !isDemoMode && !isDevMode);
-        donationSettings.setDisclaimerDelay(30000);
+        donationSettings.setDisclaimerDelay(60000);
         globalSettings.setDonation(donationSettings);
         return globalSettings;
     }
