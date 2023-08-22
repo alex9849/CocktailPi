@@ -7,7 +7,7 @@ cocktailsFilePath = 'data/recipes.json'
 ingredientsFilePath = 'data/ingredients.json'
 categoriesFilePath = 'data/categories.json'
 headers = {'Content-type': 'application/json'}
-cocktailMakerUrl = "http://192.168.0.124:8080"
+cocktailMakerUrl = "http://localhost:8080"
 user = 'admin'
 password = '123456'
 
