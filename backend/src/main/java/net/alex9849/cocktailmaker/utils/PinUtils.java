@@ -10,6 +10,7 @@ import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.io.i2c.I2CProvider;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
+import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import java.util.*;
 public class PinUtils {
     @Autowired
     private Context pi4J;
+
+    @Autowired
+    private PumpMaintenanceService maintenanceService;
     private final Map<Integer, DigitalOutput> outputPinMap = new HashMap<>();
     private final Map<Integer, I2C> i2CMap = new HashMap<>();
 

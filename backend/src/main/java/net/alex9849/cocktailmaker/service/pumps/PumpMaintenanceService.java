@@ -59,13 +59,19 @@ public class PumpMaintenanceService {
     private IOutputPin directionPin;
 
     public synchronized void postConstruct() {
+        configureReversePumpSettings(true);
+        this.stopAllPumps();
+    }
+
+    private void configureReversePumpSettings (boolean reschedulePumpBack) {
         this.reversePumpSettings = this.getReversePumpingSettings();
         if(reversePumpSettings.isEnable()) {
             directionPin = reversePumpSettings.getSettings().getDirectorPin().getOutputPin();
             directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
         }
-        this.reschedulePumpBack();
-        this.stopAllPumps();
+        if(reschedulePumpBack) {
+            this.reschedulePumpBack();
+        }
     }
 
     @Scheduled(fixedDelay = 500)
@@ -286,14 +292,7 @@ public class PumpMaintenanceService {
             optionsRepository.delOption(REPO_KEY_PUMP_DIRECTION_PIN, false);
             optionsRepository.setOption("RPS_Enable", Boolean.valueOf(settings.isEnable()).toString());
         }
-
-        this.reversePumpSettings = settings;
-        if(reversePumpSettings.isEnable()) {
-            directionPin = reversePumpSettings.getSettings().getDirectorPin().getOutputPin();
-            directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
-        }
-
-        reschedulePumpBack();
+        configureReversePumpSettings(true);
     }
 
     public synchronized ReversePumpSettings getReversePumpingSettings() {
@@ -377,5 +376,9 @@ public class PumpMaintenanceService {
             rps.setSettings(cfg);
         }
         return rps;
+    }
+
+    public void reloadPins() {
+        configureReversePumpSettings(false);
     }
 }
