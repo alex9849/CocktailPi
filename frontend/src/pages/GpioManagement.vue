@@ -150,7 +150,7 @@
                   <div class="col-shrink">
                     <q-btn
                       label="Add"
-                      color="positive"
+                      :color="i2cStatus.data?.enable ? 'positive': 'grey'"
                       @click="$router.push({name: 'gpioexpanderadd'})"
                       :icon="mdiPlusCircleOutline"
                       no-caps
