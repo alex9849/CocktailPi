@@ -7,7 +7,7 @@ cocktailsFilePath = 'data/recipes.json'
 ingredientsFilePath = 'data/ingredients.json'
 categoriesFilePath = 'data/categories.json'
 headers = {'Content-type': 'application/json'}
-cocktailMakerUrl = "http://localhost:8080"
+cocktailMakerUrl = "http://192.168.0.124:8080"
 user = 'admin'
 password = '123456'
 
@@ -22,13 +22,13 @@ def fetchRecipesFromServer():
     recipes = []
     token = provideAuthToken(cocktailMakerUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/recipe", {'inPublic': True}, headers=headers)
+    response = requests.get(cocktailMakerUrl + "/api/recipe/", {'inPublic': True}, headers=headers)
     totalPages = response.json()['totalPages']
     for recipe in response.json()['content']:
         recipeIds.append(recipe['id'])
 
     for page in range(1, totalPages):
-        response = requests.get(cocktailMakerUrl + "/api/recipe", {'inPublic': True, 'page': page}, headers=headers)
+        response = requests.get(cocktailMakerUrl + "/api/recipe/", {'inPublic': True, 'page': page}, headers=headers)
         for recipe in response.json()['content']:
             recipeIds.append(recipe['id'])
 
@@ -61,7 +61,7 @@ def fetchCategoriesFromServer():
     categories = []
     token = provideAuthToken(cocktailMakerUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/category", headers=headers)
+    response = requests.get(cocktailMakerUrl + "/api/category/", headers=headers)
     if (response.json() != None):
         categories.extend(response.json())
 
