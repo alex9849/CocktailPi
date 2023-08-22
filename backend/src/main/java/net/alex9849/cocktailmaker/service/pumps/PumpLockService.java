@@ -26,7 +26,7 @@ public class PumpLockService {
 
     public synchronized void acquirePumpLock(long pumpId, Object acquirer) {
         if(!canAcquirePumpLock(pumpId, acquirer)) {
-            throw new IllegalArgumentException("Pump already locked!");
+            throw new IllegalArgumentException("Pump locked by different service!");
         }
         LockData ld = lockByPumpId.computeIfAbsent(pumpId, p -> new LockData());
         ld.owner = acquirer;
@@ -43,7 +43,7 @@ public class PumpLockService {
 
     public synchronized void releasePumpLock(long pumpId, Object acquirer) {
         if(!canAcquirePumpLock(pumpId, acquirer)) {
-            throw new IllegalArgumentException("Pump locked by different owner!");
+            throw new IllegalArgumentException("Pump locked by different service!");
         }
         lockByPumpId.computeIfPresent(pumpId, (k, v) -> {
             if((--v.times_acquired) <= 0) {
@@ -62,7 +62,7 @@ public class PumpLockService {
 
     public synchronized void acquireGlobal(Object acquirer) {
         if(!canAcquireGlobal(acquirer)) {
-            throw new IllegalArgumentException("Pump locked by different owner!");
+            throw new IllegalArgumentException("Pump locked by different service!");
         }
         if(globalLock == null) {
             globalLock = new LockData();
@@ -81,7 +81,7 @@ public class PumpLockService {
 
     public synchronized void releaseGlobal(Object acquirer) {
         if(!canAcquireGlobal(acquirer)) {
-            throw new IllegalArgumentException("Pump locked by different owner!");
+            throw new IllegalArgumentException("Pump locked by different service!");
         }
         if(globalLock == null) {
             return;
