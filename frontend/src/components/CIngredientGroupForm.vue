@@ -12,12 +12,14 @@
       filled
       label="Name"
       outlined
+      hide-bottom-space
       @update:model-value="e => setValue('name', e)"
     />
     <c-ingredient-selector
       :selected="parentGroup"
       clearable
       filled
+      hide-bottom-space
       filter-automatic-ingredients
       filter-manual-ingredients
       label="Parent group"

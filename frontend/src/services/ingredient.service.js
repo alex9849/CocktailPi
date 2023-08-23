@@ -68,6 +68,7 @@ class IngredientDtoMapper {
         type: ingredient.type,
         alcoholContent: ingredient.alcoholContent,
         name: ingredient.name,
+        bottleSize: ingredient.bottleSize,
         parentGroupId: ingredient.parentGroupId,
         pumpTimeMultiplier: ingredient.pumpTimeMultiplier
       }

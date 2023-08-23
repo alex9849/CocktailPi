@@ -56,6 +56,16 @@
           {{ props.row.alcoholContent }}%
         </q-td>
       </template>
+      <template v-slot:body-cell-bottleSize="props">
+        <q-td
+          key="alcoholContent"
+          :props="props"
+        >
+          <p v-if="props.row.type === 'automated'">
+            {{ props.row.bottleSize }} {{ props.row.unit }}
+          </p>
+        </q-td>
+      </template>
       <template v-slot:body-cell-actions="props">
         <q-td
           key="actions"
@@ -143,6 +153,7 @@ export default {
         { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
         { name: 'type', label: 'Type', field: 'type', align: 'center' },
         { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
+        { name: 'bottleSize', label: 'Bottle size', field: 'bottleSize', align: 'center' },
         { name: 'unit', label: 'Unit', field: 'unit', align: 'center' },
         { name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center' },
         { name: 'parentGroup', label: 'Parent group', field: 'parentGroupName', align: 'center' },

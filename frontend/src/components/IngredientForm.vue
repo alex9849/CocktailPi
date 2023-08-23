@@ -7,6 +7,7 @@
       outlined
       :disable="disable"
       :model-value="modelValue.name"
+      hide-bottom-space
       :rules="[
                 val => !v.modelValue.name.required.$invalid || 'Required',
                 val => !v.modelValue.name.maxLength.$invalid || 'Max 30'
@@ -19,6 +20,7 @@
       outlined
       :disable="disable"
       filled
+      hide-bottom-space
       type="number"
       :model-value="modelValue.alcoholContent"
       :rules="[
@@ -56,6 +58,7 @@
       >
         <c-ingredient-selector
           :selected="parentGroup"
+          hide-bottom-space
           clearable
           filled
           filter-automatic-ingredients
@@ -64,8 +67,23 @@
           @update:selected="e => setParentGroup(e)"
         />
         <q-input
+          label="Bottle size"
+          outlined
+          hide-bottom-space
+          :disable="disable"
+          filled
+          type="number"
+          :model-value="modelValue.bottleSize"
+          :rules="[
+                val => !v.modelValue.bottleSize.required.$invalid || 'Required',
+                val => !v.modelValue.bottleSize.minValue.$invalid || 'Must be positive'
+              ]"
+          @update:model-value="e => setValue('bottleSize', e)"
+        />
+        <q-input
           label="Pump time multiplier"
           outlined
+          hide-bottom-space
           :disable="disable"
           :model-value="currentIngredientMultiplierString"
           :rules="[
@@ -85,6 +103,7 @@
         <c-ingredient-selector
           :selected="parentGroup"
           clearable
+          hide-bottom-space
           filled
           filter-automatic-ingredients
           filter-manual-ingredients
@@ -95,6 +114,7 @@
         <q-select
           filled
           clearable
+          hide-bottom-space
           :model-value="modelValue.unit"
           @update:model-value="e => setValue('unit', e)"
           :options="units"
@@ -177,6 +197,10 @@ export default {
           required: requiredIf(() => this.modelValue.type === 'automated'),
           minValue: minValue(0),
           maxValue: maxValue(10)
+        },
+        bottleSize: {
+          required: requiredIf(() => this.modelValue.type === 'automated'),
+          minValue: minValue(0)
         },
         unit: {
           required: requiredIf(() => this.modelValue.type === 'manual')

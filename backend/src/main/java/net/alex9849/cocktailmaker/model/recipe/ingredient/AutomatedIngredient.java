@@ -9,6 +9,7 @@ import net.alex9849.cocktailmaker.utils.SpringUtility;
 public class AutomatedIngredient extends AddableIngredient {
     private double pumpTimeMultiplier;
     private Boolean isOnPump;
+    private int bottleSize;
 
     public double getPumpTimeMultiplier() {
         return pumpTimeMultiplier;
@@ -16,6 +17,14 @@ public class AutomatedIngredient extends AddableIngredient {
 
     public void setPumpTimeMultiplier(double pumpTimeMultiplier) {
         this.pumpTimeMultiplier = pumpTimeMultiplier;
+    }
+
+    public int getBottleSize() {
+        return bottleSize;
+    }
+
+    public void setBottleSize(int bottleSize) {
+        this.bottleSize = bottleSize;
     }
 
     public boolean isOnPump() {
