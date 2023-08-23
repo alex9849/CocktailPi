@@ -31,15 +31,17 @@ create table ingredients
 (
     id                   INTEGER not null,
     dType                TEXT    not null,
-    alcohol_content      INTEGER check (
-                alcohol_content <= 100
-            AND alcohol_content >= 0
-        ),
+    alcohol_content      INTEGER,
     parent_group_id      INTEGER REFERENCES ingredients ON DELETE SET NULL CHECK (parent_group_id != id),
+    bottle_size          INTEGER,
     unit                 TEXT,
     in_bar               BOOLEAN,
     name                 TEXT    not null unique,
-    pump_time_multiplier REAL check (dType != 'AutomatedIngredient' OR pump_time_multiplier IS NOT NULL),
+    pump_time_multiplier REAL,
+    constraint check_nn_bottle_size check (dType != 'AutomatedIngredient' OR bottle_size IS NOT NULL),
+    constraint check_range_alcohol_content check (alcohol_content BETWEEN 0 AND 100),
+    constraint check_nn_pump_time_multiplier check (dType != 'AutomatedIngredient' OR pump_time_multiplier IS NOT NULL),
+    constraint check_not_self_parent_group_id check (parent_group_id != id),
     primary key (id)
 );
 

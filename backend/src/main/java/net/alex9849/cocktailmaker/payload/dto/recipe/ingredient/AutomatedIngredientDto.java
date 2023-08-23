@@ -10,7 +10,7 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AutomatedIngredientDto {
     private interface PumpTimeMultiplier { @NotNull @Min(1) double getPumpTimeMultiplier(); }
-    private interface BottleSize { @Min(0) Integer getBottleSize();}
+    private interface BottleSize { @NotNull @Min(0) Integer getBottleSize();}
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
