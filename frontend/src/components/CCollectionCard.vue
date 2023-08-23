@@ -20,7 +20,7 @@
       <q-card-section class="col-8 q-pa-sm">
         <div class="text-h5" style="margin-bottom: 0">{{ modelValue.name }}</div>
         <div class="text-caption text-grey">
-          {{ modelValue.size }} Cocktail(s) / {{ modelValue.completed? 'complete' : 'incomplete'}}
+          {{ modelValue.size }} Cocktail(s)
         </div>
         <div class="text-caption text-grey dotted-overflow" style="">
           {{ modelValue.description }}

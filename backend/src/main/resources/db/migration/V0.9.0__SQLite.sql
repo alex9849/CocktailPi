@@ -122,7 +122,6 @@ create table collections
     id          INTEGER NOT NULL,
     name        TEXT    NOT NULL,
     description TEXT    NOT NULL,
-    completed   BOOLEAN NOT NULL,
     image       BLOB,
     owner_id    INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
     last_update INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -123,10 +123,6 @@
                   </q-file>
                 </div>
               </div>
-              <q-checkbox label="complete"
-                          :disable="!editData.editMode || editData.saving"
-                          v-model:model-value="editData.collection.completed"
-              />
               <q-input label="description"
                        outlined
                        autogrow
@@ -230,15 +226,13 @@ export default {
         collection: {
           name: '',
           description: '',
-          hasImage: false,
-          completed: false
+          hasImage: false
         }
       },
       collection: {
         name: 'Test',
         description: '',
-        hasImage: false,
-        complete: false
+        hasImage: false
       },
       showDeleteCollectionDialog: false,
       deletingCollection: false
@@ -352,8 +346,7 @@ export default {
           description: {
             required,
             maxLength: maxLength(2000)
-          },
-          complete: {}
+          }
         }
       }
     }

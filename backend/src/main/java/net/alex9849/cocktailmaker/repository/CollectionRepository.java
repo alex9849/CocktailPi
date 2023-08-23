@@ -33,12 +33,11 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public Collection create(Collection collection) {
         return getJdbcTemplate().execute((ConnectionCallback<Collection>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (name, description, completed, owner_id) " +
-                    "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (name, description, owner_id) " +
+                    "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, collection.getName());
             pstmt.setString(2, collection.getDescription());
-            pstmt.setBoolean(3, collection.isCompleted());
-            pstmt.setLong(4, collection.getOwner().getId());
+            pstmt.setLong(3, collection.getOwner().getId());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -52,12 +51,11 @@ public class CollectionRepository extends JdbcDaoSupport {
     public boolean update(Collection collection) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE collections SET name = ?, description = ?, " +
-                    "completed = ?, owner_id = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
+                    "owner_id = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             pstmt.setString(1, collection.getName());
             pstmt.setString(2, collection.getDescription());
-            pstmt.setBoolean(3, collection.isCompleted());
-            pstmt.setLong(4, collection.getOwner().getId());
-            pstmt.setLong(5, collection.getId());
+            pstmt.setLong(3, collection.getOwner().getId());
+            pstmt.setLong(4, collection.getId());
             return pstmt.executeUpdate() != 0;
         });
     }
@@ -157,7 +155,6 @@ public class CollectionRepository extends JdbcDaoSupport {
         collection.setId(rs.getLong("id"));
         collection.setName(rs.getString("name"));
         collection.setDescription(rs.getString("description"));
-        collection.setCompleted(rs.getBoolean("completed"));
         collection.setOwnerId(rs.getLong("owner_id"));
         collection.setHasImage(rs.getObject("image") != null);
         collection.setLastUpdate(rs.getTimestamp("last_update"));

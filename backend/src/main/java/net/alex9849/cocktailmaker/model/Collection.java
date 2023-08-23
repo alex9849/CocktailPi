@@ -11,7 +11,6 @@ public class Collection {
     private String name;
     private boolean hasImage;
     private String description;
-    private boolean completed;
     private long ownerId;
     private User owner;
     private int size;
@@ -55,14 +54,6 @@ public class Collection {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 
     public int getSize() {
