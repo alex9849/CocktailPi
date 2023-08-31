@@ -70,7 +70,7 @@
                 bordered style="background-color: #f3f3fa"
         >
           <q-card-section class="col">
-            <q-form @submit.prevent="() => {}"
+            <q-form @submit.prevent="onClickSafe"
                     class="q-gutter-md"
             >
               <div>
@@ -137,30 +137,34 @@
                         val => !v.editData.collection.description.maxLength.$invalid || 'Maximal length 2000']"
               >
               </q-input>
-              <q-btn
-                v-if="!editData.editMode && isCanEdit"
-                @click="editData.editMode = true"
-                color="grey"
-                label="Edit"
-                no-caps
-              />
-              <q-btn
-                v-if="editData.editMode"
-                :disable="editData.saving"
-                @click="onAbortEdit()"
-                color="negative"
-                label="Abort"
-                no-caps
-              />
-              <q-btn
-                v-if="editData.editMode"
-                type="submit"
-                color="positive"
-                :loading="editData.saving"
-                label="Save"
-                @click="onClickSafe()"
-                no-caps
-              />
+              <q-card-actions class="q-pa-none">
+                <q-btn
+                  style="width: 100px"
+                  v-if="!editData.editMode && isCanEdit"
+                  @click="editData.editMode = true"
+                  color="grey"
+                  label="Edit"
+                  no-caps
+                />
+                <q-btn
+                  style="width: 100px"
+                  v-if="editData.editMode"
+                  type="submit"
+                  color="positive"
+                  :loading="editData.saving"
+                  label="Save"
+                  no-caps
+                />
+                <q-btn
+                  style="width: 100px"
+                  v-if="editData.editMode"
+                  :disable="editData.saving"
+                  @click="onAbortEdit()"
+                  color="negative"
+                  label="Abort"
+                  no-caps
+                />
+              </q-card-actions>
             </q-form>
           </q-card-section>
         </q-card>
@@ -250,7 +254,7 @@ export default {
   },
   watch: {
     collection: {
-      handler (newValue) {
+      handler () {
         this.resetEditData()
       }
     }
