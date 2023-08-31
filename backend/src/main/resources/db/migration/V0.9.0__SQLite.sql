@@ -119,7 +119,7 @@ CREATE TABLE recipe_categories
 create table collections
 (
     id          INTEGER NOT NULL,
-    name        TEXT    NOT NULL,
+    name        TEXT    NOT NULL UNIQUE,
     description TEXT    NOT NULL,
     image       BLOB,
     owner_id    INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,

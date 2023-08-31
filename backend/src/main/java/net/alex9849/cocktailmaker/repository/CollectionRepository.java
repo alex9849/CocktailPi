@@ -104,6 +104,15 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findIdsContainingName(String name) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(name) = ?");
+            pstmt.setString(1, name);
+            pstmt.executeQuery();
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public List<Collection> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();

@@ -30,6 +30,10 @@ public class CollectionService {
     private UserService userService;
 
     public Collection createCollection(Collection collection) {
+        Set<Long> idsWithName = collectionRepository.findIdsContainingName(collection.getName());
+        if(!idsWithName.isEmpty()) {
+            throw new IllegalArgumentException("A collection with that name already exists!");
+        }
         return collectionRepository.create(collection);
     }
 
@@ -37,6 +41,11 @@ public class CollectionService {
         if(collectionRepository.findByIds(collection.getId()).isEmpty()) {
             throw new IllegalArgumentException("Collection doesn't exist!");
         }
+        Set<Long> idsWithName = collectionRepository.findIdsContainingName(collection.getName());
+        if(idsWithName.stream().anyMatch(x -> x != collection.getId())) {
+            throw new IllegalArgumentException("A collection with that name already exists!");
+        }
+
         collectionRepository.update(collection);
         if(removeImage) {
             collectionRepository.setImage(collection.getId(), null);
