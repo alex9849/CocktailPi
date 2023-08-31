@@ -33,6 +33,19 @@
         </router-link>
       </div>
     </div>
+    <div
+    >
+    </div>
+    <q-card
+      v-if="collections.length === 0"
+      flat bordered
+      class="bg-card-secondary"
+    >
+      <div class="row q-pa-md items-center q-gutter-sm">
+        <q-icon size="sm" :name="mdiAlert" />
+        <p class="">No collections found!</p>
+      </div>
+    </q-card>
     <c-edit-dialog
       v-model:show="createCollection.menuOpen"
       :saving="createCollection.saving"
@@ -57,8 +70,7 @@
 <script>
 import CCollectionCard from 'components/CCollectionCard'
 import CollectionService from '../services/collection.service'
-import store from '../store'
-import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import { mdiAlert, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CEditDialog from 'components/CEditDialog'
 import { mapGetters } from 'vuex'
 import { maxLength, minLength, required } from '@vuelidate/validators'
@@ -91,6 +103,9 @@ export default {
       v: useVuelidate(),
       mdiPlusCircleOutline: mdiPlusCircleOutline
     }
+  },
+  created () {
+    this.mdiAlert = mdiAlert
   },
   computed: {
     ...mapGetters({
