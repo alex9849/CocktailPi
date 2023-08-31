@@ -133,7 +133,7 @@
     <c-delete-warning
       ref="deleteDialog"
       :delete-method="deleteUser"
-      :list-point-method="x => x.username + ' (' + x.email + ')'"
+      :list-point-method="x => x.username"
       item-name-plural="users"
       item-name-singular="user"
       @deleteFailure="fetchAll"
