@@ -74,17 +74,6 @@
           />
         </template>
       </q-table>
-      <h5
-
-        style="padding-top: 15px; padding-bottom: 15px"
-      >
-        Ingredients you should buy
-      </h5>
-      <q-card flat class="bg-grey-4">
-        <q-card-section class="text-center">
-          Feature not implemented yet!
-        </q-card-section>
-      </q-card>
     </div>
     <c-edit-dialog
       v-model:show="editOptions.editDialog"
