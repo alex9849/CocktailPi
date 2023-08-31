@@ -127,7 +127,7 @@
                   Thank you for your donation. You made a difference!
                 </p>
                 <p class="text-caption">
-                  This happens less often then you might think. But you are not part of that problem.
+                  This happens less often then you might think. Thank you very much!
                 </p>
               </div>
               <q-card-section>

@@ -6,37 +6,34 @@
       style="padding: 10px"
     >
       <div
-        class="row q-gutter-y-sm"
+        class="row q-col-gutter-md"
       >
-        <div
-          style="position: absolute; z-index: 1;"
-        >
-          <slot name="beforePicture"/>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 flex">
+          <q-img
+            :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+            v-if="recipe.hasImage"
+            placeholder-src="~assets/cocktail-solid.png"
+            :ratio="16/9"
+            style="flex-grow: 1"
+            class="rounded-borders"
+          />
+          <q-img
+            v-else
+            :ratio="16/9"
+            style="flex-grow: 1"
+            class="rounded-borders"
+            placeholder-src="~assets/cocktail-solid.png"
+            src="~assets/cocktail-solid.png"
+          />
         </div>
-        <q-img
-          :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
-          v-if="recipe.hasImage"
-          placeholder-src="~assets/cocktail-solid.png"
-          :ratio="16/9"
-          class="col-12 col-sm-6 col-md-3 rounded-borders q-px-xs"
-        />
-        <q-img
-          v-else
-          :ratio="16/9"
-          class="col-12 col-sm-6 col-md-3 rounded-borders q-px-xs"
-          placeholder-src="~assets/cocktail-solid.png"
-          src="~assets/cocktail-solid.png"
-        />
-        <div class="col-12 col-sm-6 col-md-9 q-px-xs" style="display: flex; flex-direction: column">
+        <div class="col-12 col-sm-6 col-md-8 col-lg-9" style="display: flex; flex-direction: column">
           <div class="row">
             <div class="col">
-              <h5
-                style="margin: 0; padding-bottom: 10px;"
-              >
+              <p class="text-h5">
                 <slot name="headline">
                   <b>{{ recipe.name }}</b>
                 </slot>
-              </h5>
+              </p>
             </div>
             <div class="col/"/>
             <div class="row">
@@ -81,9 +78,9 @@
           </div>
           <div style="flex-grow: 1"/>
           <div class="row justify-end">
-            <div class="col" style="display: contents; max-width: max-content">
+            <p class="text-grey">
               by {{ recipe.ownerName }}
-            </div>
+            </p>
           </div>
         </div>
       </div>

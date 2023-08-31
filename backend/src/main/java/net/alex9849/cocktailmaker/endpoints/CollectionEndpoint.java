@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.Collection;
+import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailmaker.service.CollectionService;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/collection/")
@@ -39,25 +41,22 @@ public class CollectionEndpoint {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getCollection(@PathVariable(value = "id") long id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Collection collection = collectionService.getCollectionById(id);
         if(collection == null) {
             return ResponseEntity.notFound().build();
-        }
-        if(collection.getOwner().getId() != principal.getId()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(new CollectionDto.Response.Detailed(collection));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getCollections(@RequestParam(value = "ownerId", required = true) long ownerId) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(ownerId != principal.getId()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    public ResponseEntity<?> getCollections(@RequestParam(value = "ownerId", required = false) Long ownerId) {
+        List<Collection> collectionList;
+        if(ownerId != null) {
+            collectionList = collectionService.getCollectionsByOwner(ownerId);
+        } else {
+            collectionList = collectionService.getAll();
         }
-        return ResponseEntity.ok(collectionService.getCollectionsByOwner(ownerId)
-                .stream().map(CollectionDto.Response.Detailed::new));
+        return ResponseEntity.ok(collectionList.stream().map(CollectionDto.Response.Detailed::new));
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
@@ -79,7 +78,8 @@ public class CollectionEndpoint {
         if(existingCollection == null) {
             return ResponseEntity.notFound().build();
         }
-        if (existingCollection.getOwner().getId() != principal.getId()) {
+        if (existingCollection.getOwner().getId() != principal.getId()
+                && principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Collection updateCollection = collectionService.fromDto(collectionDto, existingCollection.getOwnerId());
@@ -104,7 +104,8 @@ public class CollectionEndpoint {
         if(existingCollection == null) {
             return ResponseEntity.notFound().build();
         }
-        if (existingCollection.getOwner().getId() != principal.getId()) {
+        if (existingCollection.getOwner().getId() != principal.getId()
+                && principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         collectionService.deleteCollection(id);
@@ -119,7 +120,8 @@ public class CollectionEndpoint {
         if(existingCollection == null) {
             return ResponseEntity.notFound().build();
         }
-        if (existingCollection.getOwner().getId() != principal.getId()) {
+        if (existingCollection.getOwner().getId() != principal.getId()
+                && principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         collectionService.addRecipe(recipeId, collectionId);
@@ -134,7 +136,8 @@ public class CollectionEndpoint {
         if(existingCollection == null) {
             return ResponseEntity.notFound().build();
         }
-        if (existingCollection.getOwner().getId() != principal.getId()) {
+        if (existingCollection.getOwner().getId() != principal.getId()
+                && principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         collectionService.removeRecipe(recipeId, collectionId);

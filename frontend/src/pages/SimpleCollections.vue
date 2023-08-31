@@ -47,7 +47,7 @@ export default {
     fetchCollections () {
       const vm = this
       vm.isLoading = true
-      CollectionService.getCollectionsByUser(this.currentUser.id)
+      CollectionService.getCollections()
         .then(collections => {
           vm.collections = collections
         })

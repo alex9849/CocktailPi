@@ -17,13 +17,19 @@
                src="~assets/cocktail-solid.png"
         />
       </q-card-section>
-      <q-card-section class="col-8 q-pa-sm">
+      <q-card-section class="col-8 q-pa-sm flex column">
         <div class="text-h5" style="margin-bottom: 0">{{ modelValue.name }}</div>
         <div class="text-caption text-grey">
           {{ modelValue.size }} Cocktail(s)
         </div>
         <div class="text-caption text-grey dotted-overflow" style="">
           {{ modelValue.description }}
+        </div>
+        <div style="flex-grow: 1" />
+        <div class="row justify-end">
+          <p class="text-caption text-grey">
+            by {{ modelValue.ownerName }}
+          </p>
         </div>
       </q-card-section>
     </q-card-section>

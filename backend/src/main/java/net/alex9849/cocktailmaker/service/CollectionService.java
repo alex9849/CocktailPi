@@ -101,4 +101,11 @@ public class CollectionService {
     public byte[] getImage(long collectionId) {
         return collectionRepository.getImage(collectionId).orElse(null);
     }
+
+    public List<Collection> getAll() {
+        Set<Long> ids = collectionRepository.findAllIds();
+        if(ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return collectionRepository.findByIds(ids.toArray(new Long[1]));    }
 }

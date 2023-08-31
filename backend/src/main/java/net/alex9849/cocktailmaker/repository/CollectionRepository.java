@@ -97,6 +97,13 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> findAllIds() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections");
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public List<Collection> findByIds(Long... ids) {
         if(ids.length == 0) {
             return new ArrayList<>();

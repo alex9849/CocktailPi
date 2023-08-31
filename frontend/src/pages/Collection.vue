@@ -1,7 +1,9 @@
 <template>
   <q-page class="page-content" padding>
     <h5>{{ collection.name }}</h5>
-    <top-button-arranger>
+    <top-button-arranger
+      v-if="isCanEdit"
+    >
       <q-btn
         v-if="!editRecipeMode.active"
         @click="editRecipeMode.active = true"
@@ -136,7 +138,7 @@
               >
               </q-input>
               <q-btn
-                v-if="!editData.editMode"
+                v-if="!editData.editMode && isCanEdit"
                 @click="editData.editMode = true"
                 color="grey"
                 label="Edit"
@@ -192,6 +194,7 @@ import CEditDialog from 'components/CEditDialog'
 import CRecipeSelector from 'components/CRecipeSelector'
 import CRecipeSearchList from 'components/CRecipeSearchList'
 import useVuelidate from '@vuelidate/core'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Collection',
@@ -250,6 +253,14 @@ export default {
       handler (newValue) {
         this.resetEditData()
       }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getUser: 'auth/getUser'
+    }),
+    isCanEdit () {
+      return this.getUser.adminLevel >= 3 || this.getUser.id === this.collection.ownerId
     }
   },
   methods: {

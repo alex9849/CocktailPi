@@ -54,17 +54,6 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
                                          @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(inCollectionId != null) {
-            Collection collection = collectionService.getCollectionById(inCollectionId);
-            if(collection == null) {
-                inCollectionId = null;
-            } else {
-                if (!Objects.equals(principal.getId(), collection.getOwner().getId())) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-                }
-            }
-        }
         final int pageSize = 10;
         page = Math.max(page, 0);
         Sort sort;

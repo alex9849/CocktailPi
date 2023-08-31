@@ -69,8 +69,7 @@ export default {
   name: 'MyCollections',
   components: { TopButtonArranger, CEditDialog, CCollectionCard },
   async beforeRouteEnter (to, from, next) {
-    const userId = store().getters['auth/getUser'].id
-    const collections = await CollectionService.getCollectionsByUser(userId)
+    const collections = await CollectionService.getCollections()
     next(vm => {
       vm.collections = collections
     })
@@ -110,7 +109,7 @@ export default {
       this.isLoading = true
       const vm = this
       setTimeout(() => {
-        CollectionService.getCollectionsByUser(this.currentUser.id)
+        CollectionService.getCollections()
           .then(collections => {
             vm.collections = collections
           })

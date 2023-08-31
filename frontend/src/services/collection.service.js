@@ -42,6 +42,11 @@ class CollectionService {
       .then(response => response.data.map(x => this.afterCollectionLoad(x)))
   }
 
+  getCollections () {
+    return axios.get(API_PATH)
+      .then(response => response.data.map(x => this.afterCollectionLoad(x)))
+  }
+
   addRecipeToCollection (collectionId, recipeId) {
     return axios.post(API_PATH + String(collectionId) + '/add', recipeId,
       { headers: { 'Content-Type': 'application/json' } })

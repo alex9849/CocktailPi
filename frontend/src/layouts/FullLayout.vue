@@ -141,7 +141,7 @@ export default {
               exact: false
             }, {
               reqLevel: 0,
-              label: 'My collections',
+              label: 'Collections',
               to: { name: 'mycollections' },
               exact: false
             }, {

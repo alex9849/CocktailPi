@@ -15,6 +15,8 @@ public class CollectionDto {
     private interface HasImage { boolean isHasImage(); }
     private interface Size { int getSize(); }
     private interface LastUpdate { Date getLastUpdate(); }
+    private interface OwnerName { String getOwnerName(); }
+    private interface OwnerId { long getOwnerId(); }
 
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,16 +31,21 @@ public class CollectionDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Id, Name, Description, HasImage, CollectionDto.Size, LastUpdate {
+        public static class Detailed implements Id, Name, Description, HasImage, CollectionDto.Size, LastUpdate,
+                OwnerId, OwnerName {
             long id;
             String name;
             String description;
+            String ownerName;
+            long ownerId;
             boolean hasImage;
             int size;
             Date lastUpdate;
 
             public Detailed(Collection collection) {
                 BeanUtils.copyProperties(collection, this);
+                ownerName = collection.getOwner().getUsername();
+                ownerId = collection.getOwnerId();
             }
         }
     }
