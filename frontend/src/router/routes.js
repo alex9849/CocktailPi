@@ -60,7 +60,7 @@ const routes = [
             name: 'collection'
           }, {
             path: 'user/profile',
-            component: () => import('pages/Profile'),
+            component: () => import('pages/UserEditor'),
             name: 'myprofile'
           }, {
             path: 'recipe/add',
@@ -100,7 +100,7 @@ const routes = [
             name: 'usermanagement'
           }, {
             path: 'admin/user/create',
-            component: () => import('pages/UserCreator'),
+            component: () => import('pages/UserEditor'),
             name: 'usercreator'
           }, {
             path: 'admin/user/:userId/edit',

@@ -62,14 +62,6 @@
             />
           </q-td>
         </template>
-        <template v-slot:body-cell-fullname="props">
-          <q-td
-            key="fullname"
-            :props="props"
-          >
-            {{ props.row.firstname }} {{ props.row.lastname }}
-          </q-td>
-        </template>
         <template v-slot:body-cell-role="props">
           <q-td
             key="role"
@@ -168,8 +160,6 @@ export default {
       colums: [
         { name: 'username', label: 'Username', field: 'username', align: 'left' },
         { name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center' },
-        { name: 'fullname', label: 'Full name', field: '', align: 'left' },
-        { name: 'email', label: 'E-Mail', field: 'email', align: 'left' },
         { name: 'role', label: 'Role', field: 'role', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
@@ -218,7 +208,7 @@ export default {
         .then(users => {
           this.data = users
           this.isLoading = false
-        }, err => {
+        }, () => {
           this.loading = false
         })
     },

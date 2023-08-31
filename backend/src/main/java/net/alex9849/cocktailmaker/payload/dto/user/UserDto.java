@@ -12,22 +12,16 @@ import org.springframework.beans.BeanUtils;
 public class UserDto {
     public interface Id { long getId(); }
     public interface Username { @NotNull @Size(min = 3, max = 20) String getUsername(); }
-    public interface Firstname { @NotNull @Size(max = 20)String getFirstname(); }
-    public interface Lastname { @NotNull @Size(max = 20) String getLastname(); }
     public interface IsAccountNonLocked { @NotNull boolean isAccountNonLocked(); }
-    public interface Email { @Size(max = 50) @NotBlank @jakarta.validation.constraints.Email String getEmail(); }
     public interface Password { @NotBlank @Size(min = 6, max = 40) String getPassword(); }
     public interface AdminLevel { int getAdminLevel(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements Username, Firstname, Lastname, IsAccountNonLocked, Email, Password, AdminLevel {
+        public static class Create implements Username, IsAccountNonLocked, Password, AdminLevel {
             String username;
-            String firstname;
-            String lastname;
             boolean isAccountNonLocked;
-            String email;
             String password;
             int adminLevel;
         }
@@ -36,13 +30,10 @@ public class UserDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Id, Username, Firstname, Lastname, IsAccountNonLocked, Email, AdminLevel {
+        public static class Detailed implements Id, Username, IsAccountNonLocked, AdminLevel {
             long id;
             String username;
-            String firstname;
-            String lastname;
             boolean isAccountNonLocked;
-            String email;
             int adminLevel;
 
             public Detailed(User user) {

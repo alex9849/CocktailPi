@@ -1,10 +1,7 @@
 create table users
 (
     id                    INTEGER not null,
-    email                 TEXT unique,
-    firstname             TEXT    not null,
     is_account_non_locked BOOLEAN not null,
-    lastname              TEXT    not null,
     password              TEXT,
     role                  TEXT    not null,
     username              TEXT    not null unique,

@@ -188,9 +188,6 @@ export default {
     this.mdiAlert = mdiAlert
     this.mdiSync = mdiSync
     this.fetchI2cProbe()
-    if (!this.isNew) {
-
-    }
   },
   async beforeRouteEnter (to, from, next) {
     if (to.name === 'gpioexpandereditor') {
@@ -253,9 +250,6 @@ export default {
         .finally(() => {
           this.i2cProber.loading = false
         })
-    },
-    selectAddress (address) {
-
     }
   },
   computed: {

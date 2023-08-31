@@ -87,9 +87,6 @@ public class SeedDataInserter {
     private User createDefaultUser() {
         User defaultUser = new User();
         defaultUser.setUsername("Admin");
-        defaultUser.setFirstname("Admin");
-        defaultUser.setLastname("Example");
-        defaultUser.setEmail("admin@localhost.local");
         defaultUser.setPassword("123456");
         defaultUser.setAccountNonLocked(true);
         defaultUser.setAuthority(ERole.ROLE_ADMIN);
