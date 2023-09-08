@@ -24,6 +24,7 @@
 
 <script>
 import SimpleRecipesSearchList from 'pages/SimpleRecipesSearchList'
+import { mdiAlert } from '@quasar/extras/mdi-v5'
 export default {
   name: 'SimpleRecipes',
   components: { SimpleRecipesSearchList },
@@ -31,6 +32,9 @@ export default {
     return {
       showNoData: false
     }
+  },
+  created () {
+    this.mdiAlert = mdiAlert
   }
 }
 </script>
