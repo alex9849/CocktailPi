@@ -31,7 +31,8 @@
       <q-card-section class="page-content q-gutter-md">
         <div class="flex justify-center">
           <q-input
-            v-model:model-value="v.amountToProduce.$model"
+            :model-value="v.amountToProduce.$model"
+            @update:modelValue="v.amountToProduce.$model = Number($event)"
             label="Amount to produce"
             type="number"
             outlined
