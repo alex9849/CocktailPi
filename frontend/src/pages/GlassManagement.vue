@@ -68,6 +68,13 @@
             </q-btn>
           </q-td>
         </template>
+        <template v-slot:body-cell-size="props">
+          <q-td :props="props"
+                key="nonLocked"
+          >
+            {{ props.row.size }} ml
+          </q-td>
+        </template>
         <template v-slot:body-cell-default="props">
           <q-td :props="props"
                 key="nonLocked"
