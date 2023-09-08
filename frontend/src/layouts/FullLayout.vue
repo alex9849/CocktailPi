@@ -200,6 +200,11 @@ export default {
               to: { name: 'pumpmanagement' },
               exact: false
             }, {
+              label: 'Glasses',
+              reqLevel: 3,
+              to: { name: 'glassmanagement' },
+              exact: false
+            }, {
               label: 'Events',
               reqLevel: 3,
               to: { name: 'eventmanagement' },

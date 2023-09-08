@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Events</h5>
+    <h5>Event Management</h5>
     <TopButtonArranger>
       <q-btn
         color="negative"

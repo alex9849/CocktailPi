@@ -3,13 +3,6 @@
     <h5>User Management</h5>
     <TopButtonArranger>
       <q-btn
-        color="negative"
-        label="Delete selected users"
-        no-caps
-        :disable="isLoading"
-        @click="$refs.deleteDialog.openForItems(selected)"
-      />
-      <q-btn
         color="positive"
         label="Create user"
         no-caps
@@ -34,18 +27,8 @@
         hide-bottom
         ref="userTable"
         :loading="isLoading"
-        selection="multiple"
-        v-model:selected="selected"
         :pagination="{rowsPerPage: 0, sortBy: 'id'}"
       >
-        <template v-slot:body-selection="scope">
-          <div class="text-center">
-            <q-checkbox
-              v-if="getUser.id !== scope.row.id"
-              v-model:model-value="scope.selected"
-            />
-          </div>
-        </template>
         <template v-slot:body-cell-nonLocked="props">
           <q-td :props="props"
                 key="nonLocked"
@@ -104,12 +87,6 @@
             </q-btn>
           </q-td>
         </template>
-        <template v-slot:header-selection>
-          <q-checkbox
-            :model-value="isAllSelectedCheckboxState"
-            @update:model-value="v => v? selectAll() : $refs.userTable.clearSelection()"
-          />
-        </template>
         <template
           v-slot:bottom-row
         >
@@ -154,11 +131,10 @@ export default {
   components: { CDeleteWarning, TopButtonArranger },
   data () {
     return {
-      selected: [],
       isLoading: false,
       data: [],
       colums: [
-        { name: 'username', label: 'Username', field: 'username', align: 'left' },
+        { name: 'username', label: 'Username', field: 'username', align: 'center' },
         { name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center' },
         { name: 'role', label: 'Role', field: 'role', align: 'center' },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
@@ -190,16 +166,7 @@ export default {
   computed: {
     ...mapGetters({
       getUser: 'auth/getUser'
-    }),
-    isAllSelectedCheckboxState () {
-      if (this.selected.length === 0) {
-        return false
-      }
-      if (this.selected.length === this.data.length - 1) {
-        return true
-      }
-      return undefined
-    }
+    })
   },
   methods: {
     fetchAll () {
@@ -215,12 +182,7 @@ export default {
     deleteUser (id) {
       return UserService.deleteUser(id)
     },
-    selectAll () {
-      const toSelect = this.data.filter(x => x.id !== this.getUser.id)
-      this.selected.push(...toSelect)
-    },
     onDeleteSuccess () {
-      this.selected.splice(0, this.selected.length)
       this.fetchAll()
     },
     onRefreshButton () {

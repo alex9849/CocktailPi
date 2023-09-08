@@ -1,14 +1,7 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>CategoryManagement</h5>
+    <h5>Category Management</h5>
     <TopButtonArranger>
-      <q-btn
-        color="negative"
-        label="Delete selected categories"
-        :disable="loading"
-        @click="openDeleteDialog(true)"
-        no-caps
-      />
       <q-btn
         color="positive"
         label="Create category"
@@ -30,8 +23,6 @@
         :columns="columns"
         :rows="categories"
         :loading="loading"
-        v-model:selected="selected"
-        selection="multiple"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
         no-data-label="No categories found"
@@ -41,14 +32,6 @@
           <q-tr
             :props="props"
           >
-            <q-td
-              auto-width
-              style="text-align: center"
-            >
-              <q-checkbox
-                v-model="props.selected"
-              />
-            </q-td>
             <q-td
               key="name"
               :props="props"

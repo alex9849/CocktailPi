@@ -2,13 +2,6 @@
   <TopButtonArranger>
     <q-btn
       :disable="loading"
-      color="negative"
-      label="Delete selected groups"
-      no-caps
-      @click="$refs.deleteDialog.openForItems(selected)"
-    />
-    <q-btn
-      :disable="loading"
       color="positive"
       label="Create group"
       no-caps
@@ -25,14 +18,12 @@
   </TopButtonArranger>
   <div class="q-py-md">
     <q-table
-      v-model:selected="selected"
       :columns="columns"
       :loading="loading"
       :pagination="{rowsPerPage: 10, sortBy: 'name'}"
       :rows="groups"
       :filter="filter"
       hide-no-data
-      selection="multiple"
     >
       <template v-slot:top-right>
         <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
@@ -40,13 +31,6 @@
             <q-icon name="search" />
           </template>
         </q-input>
-      </template>
-      <template v-slot:body-selection="props">
-        <div class="text-center">
-          <q-checkbox
-            v-model:model-value="props.selected"
-          />
-        </div>
       </template>
       <template v-slot:body-cell-alcoholContent="props">
         <q-td
@@ -139,7 +123,6 @@ export default {
   data () {
     return {
       filter: '',
-      selected: [],
       groups: [],
       columns: [
         { name: 'name', label: 'Group', field: 'name', align: 'center' },
@@ -221,7 +204,6 @@ export default {
       return min + ' - ' + max + '%'
     },
     onDeleteSuccess () {
-      this.selected.splice(0, this.selected.length)
       this.fetchAll()
     },
     deleteGroup (id) {

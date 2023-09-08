@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>GPIO</h5>
+    <h5>GPIO Management</h5>
 
     <div class="row q-col-gutter-md reverse">
       <div class="col-12 col-md-4 col-lg-3">

@@ -1,5 +1,5 @@
 <template>
-  <h5>Pumps</h5>
+  <h5>Pump Management</h5>
   <div class="q-gutter-sm">
     <TopButtonArranger>
       <q-btn

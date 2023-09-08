@@ -146,6 +146,10 @@ const routes = [
             path: 'admin/system',
             component: () => import('pages/SystemManagement'),
             name: 'systemmanagement'
+          }, {
+            path: 'admin/glass',
+            component: () => import('pages/GlassManagement'),
+            name: 'glassmanagement'
           }
           ]
         }, {
