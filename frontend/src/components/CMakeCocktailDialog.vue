@@ -33,6 +33,7 @@
           <q-input
             v-model:model-value="v.amountToProduce.$model"
             label="Amount to produce"
+            type="number"
             outlined
             hide-bottom-space
             bg-color="grey-2"

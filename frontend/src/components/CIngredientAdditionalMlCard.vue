@@ -3,7 +3,9 @@
     <q-card-section class="q-gutter-sm">
       <p class="text-subtitle2">{{ ingredientName }}</p>
       <q-input :model-value="amountCopy"
-               readonly
+               @update:modelValue="updateAmount(Number($event) - amountCopy)"
+               type="number"
+               debounce="500"
                rounded
                outlined
                input-class="text-center text-weight-medium"
@@ -28,6 +30,7 @@
 <script>
 
 import { mdiPlus, mdiMinus } from '@quasar/extras/mdi-v5'
+import { isNumber } from 'lodash'
 
 export default {
   name: 'CIngredientAdditionalMlCard',
@@ -66,6 +69,7 @@ export default {
     this.mdiMinus = mdiMinus
   },
   methods: {
+    isNumber,
     updateAmount (toAdd) {
       const changed = this.amountCopy + toAdd
       if (changed < 0) {

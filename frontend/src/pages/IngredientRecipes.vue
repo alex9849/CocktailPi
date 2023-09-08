@@ -64,6 +64,7 @@
 import RecipeService from 'src/services/recipe.service'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import CMakeCocktailDialog from 'components/CMakeCocktailDialog.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IngredientRecipes',
@@ -83,10 +84,30 @@ export default {
       }
     }
   },
+  watch: {
+    'orderDialog.show' (newVal) {
+      if (newVal) {
+        return
+      }
+      this.loadIngredientRecipes()
+    },
+    cocktailProgress (newVal) {
+      if (newVal) {
+        return
+      }
+      this.loadIngredientRecipes()
+    }
+  },
   created () {
     this.mdiAlert = mdiAlert
   },
   methods: {
+    loadIngredientRecipes () {
+      RecipeService.getIngredientRecipes()
+        .then(x => {
+          this.ingredientRecipes = x
+        })
+    },
     onClickIngredientRecipe (ingredientRecipe) {
       this.orderDialog.recipe = ingredientRecipe
       this.orderDialog.show = true
@@ -96,6 +117,11 @@ export default {
       this.orderDialog.recipe = null
       this.$store.commit('cocktailProgress/setShowProgressDialog', true)
     }
+  },
+  computed: {
+    ...mapGetters({
+      cocktailProgress: 'cocktailProgress/hasCocktailProgress'
+    })
   }
 }
 
