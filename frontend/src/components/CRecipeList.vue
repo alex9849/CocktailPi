@@ -2,7 +2,7 @@
   <div>
     <div class="row q-col-gutter-md">
       <slot name="firstItem"/>
-      <div v-if="recipes.length === 0 && !!noDataMessage"
+      <div v-if="showNoData"
            class="col-12"
       >
         <q-card
@@ -11,7 +11,7 @@
           class="bg-grey-1"
         >
           <q-card-section class="text-center">
-            {{ noDataMessage }}
+            No recipes found!
           </q-card-section>
         </q-card>
       </div>
@@ -63,9 +63,9 @@ export default {
       type: Array,
       required: true
     },
-    noDataMessage: {
-      type: String,
-      required: false
+    showNoData: {
+      type: Boolean,
+      default: false
     }
   },
   created () {

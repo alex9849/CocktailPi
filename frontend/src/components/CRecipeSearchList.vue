@@ -8,7 +8,7 @@
     />
     <c-recipe-list
       :recipes="recipes"
-      :no-data-message="noDataMessage"
+      :showNoData="recipes.length === 0 && !loading"
     >
       <template v-slot:firstItem
       >
