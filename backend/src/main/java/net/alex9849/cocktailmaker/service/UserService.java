@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.service;
 
+import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.user.UserDto;
@@ -19,6 +20,8 @@ import java.util.Optional;
 @Transactional
 public class UserService {
 
+    private User systemUser;
+
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
 
@@ -30,6 +33,16 @@ public class UserService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @PostConstruct
+    public void postConstruct() {
+        User system = new User();
+        system.setId(-1);
+        system.setUsername("System");
+        system.setAccountNonLocked(true);
+        system.setAuthority(ERole.ROLE_ADMIN);
+        this.systemUser = system;
+    }
 
     /**
      *
@@ -82,6 +95,10 @@ public class UserService {
 
     public User getUser(long userId) {
         return userRepository.findById(userId).orElse(null);
+    }
+
+    public User getSystemUser() {
+        return systemUser;
     }
 
     public ERole toRole(int level) {

@@ -75,6 +75,10 @@ const routes = [
             component: () => import('pages/RecipesPublic'),
             name: 'publicrecipes'
           }, {
+            path: 'recipe/ingredients',
+            component: () => import('pages/IngredientRecipes'),
+            name: 'ingredientrecipes'
+          }, {
             path: 'recipe/public/category/:cid',
             component: () => import('pages/RecipesPublic'),
             name: 'publiccategoryrecipes'

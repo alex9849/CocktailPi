@@ -1,6 +1,8 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.pump.Pump;
+import net.alex9849.cocktailmaker.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
@@ -22,10 +24,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +39,9 @@ public class RecipeService {
 
     @Autowired
     ProductionStepRepository productionStepRepository;
+
+    @Autowired
+    PumpService pumpService;
 
     @Autowired
     IngredientService ingredientService;
@@ -99,6 +101,56 @@ public class RecipeService {
             return new PageImpl<>(Collections.emptyList());
         }
         return new PageImpl<>(recipeRepository.findByIds(offset, pageSize, sort, retained.toArray(new Long[1])), pageable, retained.size());
+    }
+
+    public List<IngredientRecipe> getCurrentIngredientRecipes() {
+        List<Ingredient> ingredients = ingredientService.getIngredientByFilter(null, true, false,
+                true, null, false, true, false, false);
+        List<Pump> pumps = pumpService.getAllPumps();
+        return ingredients.stream()
+                .map(x -> genIngredientRecipe(x, pumps))
+                .sorted(Comparator.comparing(Recipe::getName))
+                .toList();
+    }
+
+    public IngredientRecipe getIngredientRecipe(long ingredientId) {
+        Ingredient ingredient = ingredientService.getIngredient(ingredientId);
+        if(ingredient == null) {
+            return null;
+        }
+        return genIngredientRecipe(ingredient);
+    }
+
+    public IngredientRecipe genIngredientRecipe(Ingredient ingredient) {
+        return genIngredientRecipe(ingredient, pumpService.getAllPumps());
+    }
+
+    public IngredientRecipe genIngredientRecipe(Ingredient ingredient, List<Pump> pumps) {
+        IngredientRecipe recipe = new IngredientRecipe();
+        long mlLeft = pumps.stream()
+                .filter(Pump::isCompleted)
+                .filter(x -> x.getCurrentIngredientId() != null)
+                .filter(x -> x.getCurrentIngredientId() == ingredient.getId())
+                .mapToInt(Pump::getFillingLevelInMl).sum();
+        recipe.setIngredient(ingredient);
+        recipe.setId(ingredient.getId());
+        recipe.setName(ingredient.getName());
+        recipe.setOwner(userService.getSystemUser());
+        recipe.setHasImage(false);
+        recipe.setCategories(new ArrayList<>());
+        recipe.setDescription(ingredient.getName());
+        recipe.setLastUpdate(new Date());
+        recipe.setDefaultAmountToFill(50);
+        ProductionStepIngredient psIngredient = new ProductionStepIngredient();
+        psIngredient.setIngredient(ingredient);
+        psIngredient.setScale(false);
+        psIngredient.setBoostable(false);
+        psIngredient.setAmount(50);
+        AddIngredientsProductionStep aiProductionStep = new AddIngredientsProductionStep();
+        aiProductionStep.setStepIngredients(new ArrayList<>(List.of(psIngredient)));
+        recipe.setProductionSteps(new ArrayList<>(List.of(aiProductionStep)));
+        recipe.setMlLeft(mlLeft);
+        return recipe;
     }
 
     public Recipe getById(long id) {

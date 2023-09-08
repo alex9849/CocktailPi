@@ -1,14 +1,23 @@
 import axios from 'axios'
+import JsUtils from 'src/services/JsUtils'
 
 const API_PATH = 'api/cocktail/'
 
 class CocktailService {
-  order (recipeId, orderConfig) {
-    return axios.put(API_PATH + String(recipeId), orderConfig)
+  order (recipeId, orderConfig, isIngredient = false) {
+    let params = {
+      isIngredient
+    }
+    params = JsUtils.cleanObject(params)
+    return axios.put(API_PATH + String(recipeId), orderConfig, { params })
   }
 
-  checkFeasibility (recipeId, orderConfig) {
-    return axios.put(API_PATH + String(recipeId) + '/feasibility', orderConfig)
+  checkFeasibility (recipeId, orderConfig, isIngredient = false) {
+    let params = {
+      isIngredient
+    }
+    params = JsUtils.cleanObject(params)
+    return axios.put(API_PATH + String(recipeId) + '/feasibility', orderConfig, { params })
       .then(response => response.data)
   }
 

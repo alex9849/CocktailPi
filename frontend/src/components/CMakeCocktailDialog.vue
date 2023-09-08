@@ -318,7 +318,7 @@ export default {
     },
     checkFeasibility (orderConfig) {
       this.checkingFeasibility = true
-      CocktailService.checkFeasibility(this.recipe.id, orderConfig)
+      CocktailService.checkFeasibility(this.recipe.id, orderConfig, this.isIngredientRecipe)
         .then(report => {
           this.feasibilityReport = report
 
@@ -348,7 +348,7 @@ export default {
         })
     },
     onMakeCocktail () {
-      CocktailService.order(this.recipe.id, this.getCurrentOrderConfigurationDto())
+      CocktailService.order(this.recipe.id, this.getCurrentOrderConfigurationDto(), this.isIngredientRecipe)
         .then(() => {
           this.$emit('postOrder')
         })
@@ -366,6 +366,9 @@ export default {
     },
     feasibilityOk () {
       return this.feasibilityReport.feasible && !this.checkingFeasibility
+    },
+    isIngredientRecipe () {
+      return this.recipe.type === 'ingredientrecipe'
     },
     anyPumpOccupied () {
       let anyRunning = false

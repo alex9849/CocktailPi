@@ -33,9 +33,16 @@ public class CocktailEndpoint {
     private PumpService pumpService;
 
     @RequestMapping(value = "{recipeId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId, @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
+    public ResponseEntity<?> orderCocktail(@PathVariable("recipeId") long recipeId,
+                                           @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient,
+                                           @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Recipe recipe = recipeService.getById(recipeId);
+        Recipe recipe;
+        if(isIngredient) {
+            recipe = recipeService.getIngredientRecipe(recipeId);
+        } else {
+            recipe = recipeService.getById(recipeId);
+        }
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }
@@ -48,8 +55,15 @@ public class CocktailEndpoint {
     }
 
     @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.PUT)
-    public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId, @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto) {
-        Recipe recipe = recipeService.getById(recipeId);
+    public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId,
+                                              @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto,
+                                              @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {
+        Recipe recipe;
+        if(isIngredient) {
+            recipe = recipeService.getIngredientRecipe(recipeId);
+        } else {
+            recipe = recipeService.getById(recipeId);
+        }
         if(recipe == null) {
             return ResponseEntity.notFound().build();
         }

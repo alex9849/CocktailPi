@@ -89,6 +89,10 @@ public class RecipeDto {
                 this.categories = recipe.getCategories().stream().map(CategoryDto.Duplex.Detailed::new)
                         .collect(Collectors.toSet());
             }
+
+            public String getType() {
+                return "recipe";
+            }
         }
 
         @Getter @Setter @EqualsAndHashCode

@@ -2,11 +2,15 @@ package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.Collection;
+import net.alex9849.cocktailmaker.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
+import net.alex9849.cocktailmaker.payload.dto.recipe.IngredientRecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.service.CollectionService;
+import net.alex9849.cocktailmaker.service.IngredientService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.ImageUtils;
@@ -41,6 +45,9 @@ public class RecipeEndpoint {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    IngredientService ingredientService;
 
     @Autowired
     CollectionService collectionService;
@@ -85,12 +92,26 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     ResponseEntity<?> getRecipe(@PathVariable("id") long id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new RecipeDto.Response.Detailed(recipe));
+    }
+
+    @RequestMapping(path = "ingredient/{id}", method = RequestMethod.GET)
+    ResponseEntity<?> getIngredientRecipe(@PathVariable("id") long id) {
+        IngredientRecipe recipe = recipeService.getIngredientRecipe(id);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new IngredientRecipeDto.Response.Detailed(recipe));
+    }
+
+    @RequestMapping(path = "ingredient", method = RequestMethod.GET)
+    ResponseEntity<?> getIngredientRecipes() {
+        List<IngredientRecipe> recipes = recipeService.getCurrentIngredientRecipes();
+        return ResponseEntity.ok(recipes.stream().map(IngredientRecipeDto.Response.Detailed::new).toList());
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")

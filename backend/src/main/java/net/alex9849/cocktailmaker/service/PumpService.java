@@ -7,6 +7,7 @@ import net.alex9849.cocktailmaker.model.pump.PumpAdvice;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
+import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.cocktail.CocktailOrderConfigurationDto;
@@ -143,6 +144,18 @@ public class PumpService {
             lockService.releaseGlobal(maintenanceService);
         }
     }
+
+    /*public void orderIngredient(User user, Ingredient ingredient, CocktailOrderConfiguration orderConfiguration) {
+        if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
+            throw new IllegalArgumentException("Some pumps are currently occupied!");
+        }
+        cocktailOrderService.orderCocktail(user, ingredient, orderConfiguration, () -> lockService.releaseGlobal(cocktailOrderService));
+
+    }
+
+    public FeasibilityFactory checkFeasibility(Ingredient ingredient, CocktailOrderConfiguration orderConfig) {
+        return cocktailOrderService.checkFeasibility(ingredient, orderConfig);
+    }*/
 
     public void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
         if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
