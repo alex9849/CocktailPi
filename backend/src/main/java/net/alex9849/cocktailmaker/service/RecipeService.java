@@ -143,7 +143,7 @@ public class RecipeService {
         recipe.setDefaultAmountToFill(50);
         ProductionStepIngredient psIngredient = new ProductionStepIngredient();
         psIngredient.setIngredient(ingredient);
-        psIngredient.setScale(false);
+        psIngredient.setScale(true);
         psIngredient.setBoostable(false);
         psIngredient.setAmount(50);
         AddIngredientsProductionStep aiProductionStep = new AddIngredientsProductionStep();
