@@ -26,7 +26,6 @@
     <c-simple-recipe-list
       class="col-12"
       :recipes="recipes"
-      :no-data-message="noDataMessage"
     />
   </div>
 </template>
@@ -39,7 +38,20 @@ import { recipeSearchListLogic } from 'src/mixins/recipeSearchListLogic'
 export default {
   name: 'SimpleRecipesSearchList',
   components: { CSimpleRecipesFilterDrawer, CSimpleRecipeList },
-  mixins: [recipeSearchListLogic]
+  mixins: [recipeSearchListLogic],
+  emits: ['empty'],
+  watch: {
+    recipes (newVal) {
+      if (this.loading) {
+        return
+      }
+      if (newVal.length === 0) {
+        this.$emit('empty', true)
+      } else {
+        this.$emit('empty', false)
+      }
+    }
+  }
 }
 </script>
 

@@ -1,7 +1,24 @@
 <template>
-  <q-page padding class="page-content">
+  <q-page padding class="page-content column flex">
     <h4 class="text-white text-center">Recipes</h4>
-    <simple-recipes-search-list />
+    <simple-recipes-search-list
+      @empty="showNoData = $event"
+    />
+    <div class="row items-center"
+         style="flex-grow: 1"
+         v-if="showNoData"
+    >
+      <div
+        class="col-12 text-h5 text-white"
+      >
+        <div class="row items-center justify-center">
+          <q-icon :name="mdiAlert" color="white" size="lg"/>
+          <p>
+            No recipes found!
+          </p>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -9,7 +26,12 @@
 import SimpleRecipesSearchList from 'pages/SimpleRecipesSearchList'
 export default {
   name: 'SimpleRecipes',
-  components: { SimpleRecipesSearchList }
+  components: { SimpleRecipesSearchList },
+  data () {
+    return {
+      showNoData: false
+    }
+  }
 }
 </script>
 

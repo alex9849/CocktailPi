@@ -112,12 +112,6 @@ export const recipeSearchListLogic = {
   computed: {
     ...mapGetters({
       user: 'auth/getUser'
-    }),
-    noDataMessage () {
-      if (this.loading) {
-        return ''
-      }
-      return 'No recipes found!'
-    }
+    })
   }
 }

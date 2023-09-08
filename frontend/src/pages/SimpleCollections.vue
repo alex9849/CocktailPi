@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="page-content">
+  <q-page padding class="page-content column flex">
     <h4 class="text-white text-center">Collections</h4>
     <div class="row q-col-gutter-md justify-evenly">
       <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
@@ -18,6 +18,21 @@
         </router-link>
       </div>
     </div>
+    <div class="row items-center"
+         style="flex-grow: 1"
+         v-if="collections.length === 0 && !isLoading"
+    >
+      <div
+        class="col-12 text-h5 text-white"
+      >
+        <div class="row items-center justify-center">
+          <q-icon :name="mdiAlert" color="white" size="lg"/>
+          <p>
+            No collections found!
+          </p>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -25,6 +40,7 @@
 import CollectionService from 'src/services/collection.service'
 import { mapGetters } from 'vuex'
 import CCollectionCard from 'components/CCollectionCard'
+import { mdiAlert } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'SimpleCollections',
@@ -42,6 +58,7 @@ export default {
   },
   created () {
     this.fetchCollections()
+    this.mdiAlert = mdiAlert
   },
   methods: {
     fetchCollections () {

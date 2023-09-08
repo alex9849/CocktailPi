@@ -40,10 +40,6 @@ export default {
       type: Array,
       required: true
     },
-    noDataMessage: {
-      type: String,
-      required: false
-    },
     dense: {
       type: Boolean,
       default: false
