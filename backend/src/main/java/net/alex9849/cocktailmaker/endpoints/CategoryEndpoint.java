@@ -27,7 +27,7 @@ public class CategoryEndpoint {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllCategory(@PathVariable(value = "id") long id) {
+    public ResponseEntity<?> getCategory(@PathVariable(value = "id") long id) {
         Category category = categoryService.getCategory(id);
         if(category == null) {
             return ResponseEntity.notFound().build();

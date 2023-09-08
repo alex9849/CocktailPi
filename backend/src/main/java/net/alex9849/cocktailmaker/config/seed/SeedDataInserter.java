@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.Glass;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailmaker.model.pump.DcPump;
@@ -13,6 +14,7 @@ import net.alex9849.cocktailmaker.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailmaker.model.user.ERole;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
+import net.alex9849.cocktailmaker.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
@@ -59,6 +61,9 @@ public class SeedDataInserter {
     @Autowired
     private GpioService gpioService;
 
+    @Autowired
+    private GlassService glassService;
+
     Logger logger = LoggerFactory.getLogger(SeedDataInserter.class);
 
     @Value("${alex9849.app.demoMode}")
@@ -68,7 +73,7 @@ public class SeedDataInserter {
     private boolean isDevMode;
 
     public void migrate() throws Exception {
-        if(!userService.getUsers().isEmpty()) {
+        if (!userService.getUsers().isEmpty()) {
             return;
         }
         logger.info("Inserting seed data into database...");
@@ -78,7 +83,7 @@ public class SeedDataInserter {
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
         this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
-        if(isDemoMode || isDevMode) {
+        if (isDemoMode || isDevMode) {
             this.createDemoPumps(gpioBoard);
         }
         logger.info("Finished inserting seed data into database.");
@@ -104,9 +109,9 @@ public class SeedDataInserter {
         Map<Long, Long> childParentRelation = new HashMap<>();
         List<IngredientDto.Response.Detailed> ingredientDtos = loadFromFile("/db/defaultdata/ingredients.json", IngredientDto.Response.Detailed.class);
 
-        for(IngredientDto.Response.Detailed ingredientDto : ingredientDtos) {
+        for (IngredientDto.Response.Detailed ingredientDto : ingredientDtos) {
             IngredientDto.Request.Create createDto = IngredientDto.Request.Create.fromDetailedDto(ingredientDto);
-            if(createDto.getParentGroupId() != null) {
+            if (createDto.getParentGroupId() != null) {
                 Long parentGroupId = createDto.getParentGroupId();
                 childParentRelation.put(ingredientDto.getId(), parentGroupId);
                 createDto.setParentGroupId(null);
@@ -114,7 +119,7 @@ public class SeedDataInserter {
             Ingredient createdIngredient = ingredientService.createIngredient(ingredientService.fromDto(createDto));
             oldToNewIdMap.put(ingredientDto.getId(), createdIngredient.getId());
         }
-        for(Map.Entry<Long, Long> entry : childParentRelation.entrySet()) {
+        for (Map.Entry<Long, Long> entry : childParentRelation.entrySet()) {
             Long child = oldToNewIdMap.get(entry.getKey());
             Long parent = oldToNewIdMap.get(entry.getValue());
             Ingredient ingredient = ingredientService.getIngredient(child);
@@ -128,7 +133,7 @@ public class SeedDataInserter {
         Map<Long, Long> oldToNewIdMap = new HashMap<>();
         List<CategoryDto.Duplex.Detailed> categoryDtos = loadFromFile("/db/defaultdata/categories.json", CategoryDto.Duplex.Detailed.class);
 
-        for(CategoryDto.Duplex.Detailed categoryDto : categoryDtos) {
+        for (CategoryDto.Duplex.Detailed categoryDto : categoryDtos) {
             CategoryDto.Request.Create createDto = new CategoryDto.Request.Create(categoryDto);
             Category createdCategory = categoryService.createCategory(categoryService.fromDto(createDto));
             oldToNewIdMap.put(categoryDto.getId(), createdCategory.getId());
@@ -146,7 +151,7 @@ public class SeedDataInserter {
 
         final int nrPumps = 8;
         final int nrDcPumps = 4;
-        for(int i = 0; i < nrDcPumps; i++) {
+        for (int i = 0; i < nrDcPumps; i++) {
             dcPump.setPin(gpioBoard.getPin(i));
             this.pumpService.createPump(dcPump);
         }
@@ -158,7 +163,7 @@ public class SeedDataInserter {
         stepperPump.setAcceleration(10);
         stepperPump.setMaxStepsPerSecond(20);
         stepperPump.setTubeCapacityInMl(5.0);
-        for(int i = nrDcPumps; i < nrPumps; i++) {
+        for (int i = nrDcPumps; i < nrPumps; i++) {
             stepperPump.setEnablePin(gpioBoard.getPin(nrDcPumps + ((i - nrDcPumps) * 2)));
             stepperPump.setStepPin(gpioBoard.getPin(nrDcPumps + ((i - nrDcPumps) * 2) + 1));
             this.pumpService.createPump(stepperPump);
@@ -167,8 +172,13 @@ public class SeedDataInserter {
 
     private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap, Map<Long, Long> categoriesOldIdToNewIdMap) throws IOException {
         List<RecipeDto.Response.Detailed> recipeDtos = loadFromFile("/db/defaultdata/recipes.json", RecipeDto.Response.Detailed.class);
+        Glass defaultGlass = new Glass();
+        defaultGlass.setSize(250);
+        defaultGlass.setName("Default");
+        defaultGlass = glassService.createGlass(defaultGlass);
 
-        for(RecipeDto.Response.Detailed recipeDto : recipeDtos) {
+        for (RecipeDto.Response.Detailed recipeDto : recipeDtos) {
+            recipeDto.setDefaultGlass(new GlassDto.Duplex.Detailed(defaultGlass));
             RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(recipeDto);
             createDto.setOwnerId(owner.getId());
             createDto.setCategoryIds(createDto.getCategoryIds()
@@ -176,22 +186,22 @@ public class SeedDataInserter {
                     .collect(Collectors.toSet()));
 
             //Change IngredientIds
-            for(ProductionStepDto.Request.Create pStep : createDto.getProductionSteps()) {
-                if(pStep instanceof WrittenInstructionProductionStepDto.Request.Create) {
+            for (ProductionStepDto.Request.Create pStep : createDto.getProductionSteps()) {
+                if (pStep instanceof WrittenInstructionProductionStepDto.Request.Create) {
                     continue;
                 }
-                if(!(pStep instanceof AddIngredientsProductionStepDto.Request.Create)) {
+                if (!(pStep instanceof AddIngredientsProductionStepDto.Request.Create)) {
                     throw new IllegalStateException("Unknown class type: " + pStep.getClass().getName());
                 }
                 AddIngredientsProductionStepDto.Request.Create aiPStep = (AddIngredientsProductionStepDto.Request.Create) pStep;
-                for(ProductionStepIngredientDto.Request.Create ingredient : aiPStep.getStepIngredients()) {
+                for (ProductionStepIngredientDto.Request.Create ingredient : aiPStep.getStepIngredients()) {
                     ingredient.setIngredientId(ingredientsOldIdToNewIdMap.get(ingredient.getIngredientId()));
                 }
             }
             Recipe recipe = recipeService.createRecipe(recipeService.fromDto(createDto));
 
             InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/" + recipeDto.getName() + ".jpg");
-            if(recipeImageStream != null) {
+            if (recipeImageStream != null) {
                 BufferedImage image = ImageIO.read(recipeImageStream);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ImageIO.write(image, "jpg", out);

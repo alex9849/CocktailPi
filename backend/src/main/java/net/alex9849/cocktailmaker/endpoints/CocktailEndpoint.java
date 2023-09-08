@@ -47,7 +47,7 @@ public class CocktailEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(orderConfigDto.getAmountOrderedInMl() == null) {
-            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
+            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultGlass().getSize());
         }
         CocktailOrderConfiguration orderConfig = cocktailOrderService.fromDto(orderConfigDto);
         pumpService.orderCocktail(user, recipe, orderConfig);
@@ -68,7 +68,7 @@ public class CocktailEndpoint {
             return ResponseEntity.notFound().build();
         }
         if(orderConfigDto.getAmountOrderedInMl() == null) {
-            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultAmountToFill());
+            orderConfigDto.setAmountOrderedInMl((int) recipe.getDefaultGlass().getSize());
         }
         CocktailOrderConfiguration orderConfig = cocktailOrderService.fromDto(orderConfigDto);
         return ResponseEntity.ok(new FeasibilityReportDto.Response.Detailed(cocktailOrderService.checkFeasibility(recipe, orderConfig).getFeasibilityReport()));

@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.Glass;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -15,9 +16,7 @@ import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.AddIngredien
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.WrittenInstructionProductionStepDto;
-import net.alex9849.cocktailmaker.repository.CollectionRepository;
-import net.alex9849.cocktailmaker.repository.ProductionStepRepository;
-import net.alex9849.cocktailmaker.repository.RecipeRepository;
+import net.alex9849.cocktailmaker.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -51,6 +50,10 @@ public class RecipeService {
 
     @Autowired
     CollectionRepository collectionRepository;
+
+    @Autowired
+    GlassService glassService;
+
 
     public Recipe createRecipe(Recipe recipe) {
         if(userService.getUser(recipe.getOwner().getId()) == null) {
@@ -107,8 +110,9 @@ public class RecipeService {
         List<Ingredient> ingredients = ingredientService.getIngredientByFilter(null, true, false,
                 true, null, false, true, false, false);
         List<Pump> pumps = pumpService.getAllPumps();
+        Glass siDefaultGlass = glassService.getIngredientRecipeDefaultGlass();
         return ingredients.stream()
-                .map(x -> genIngredientRecipe(x, pumps))
+                .map(x -> genIngredientRecipe(x, pumps, siDefaultGlass))
                 .sorted(Comparator.comparing(Recipe::getName))
                 .toList();
     }
@@ -122,10 +126,10 @@ public class RecipeService {
     }
 
     public IngredientRecipe genIngredientRecipe(Ingredient ingredient) {
-        return genIngredientRecipe(ingredient, pumpService.getAllPumps());
+        return genIngredientRecipe(ingredient, pumpService.getAllPumps(), glassService.getIngredientRecipeDefaultGlass());
     }
 
-    public IngredientRecipe genIngredientRecipe(Ingredient ingredient, List<Pump> pumps) {
+    public IngredientRecipe genIngredientRecipe(Ingredient ingredient, List<Pump> pumps, Glass defaultGlass) {
         IngredientRecipe recipe = new IngredientRecipe();
         long mlLeft = pumps.stream()
                 .filter(Pump::isCompleted)
@@ -140,7 +144,7 @@ public class RecipeService {
         recipe.setCategories(new ArrayList<>());
         recipe.setDescription(ingredient.getName());
         recipe.setLastUpdate(new Date());
-        recipe.setDefaultAmountToFill(50);
+        recipe.setDefaultGlass(defaultGlass);
         ProductionStepIngredient psIngredient = new ProductionStepIngredient();
         psIngredient.setIngredient(ingredient);
         psIngredient.setScale(true);

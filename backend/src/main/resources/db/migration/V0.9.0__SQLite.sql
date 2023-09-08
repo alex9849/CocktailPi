@@ -69,15 +69,25 @@ create table pumps
     FOREIGN KEY (enable_pin_board, enable_pin_nr) REFERENCES gpio_pins ON DELETE RESTRICT
 );
 
+CREATE TABLE glasses
+(
+    id   INTEGER not null,
+    name TEXT    not null,
+    size INTEGER not null,
+    primary key (id),
+    CONSTRAINT unique_name unique (name),
+    CONSTRAINT size_range check (size BETWEEN 1 AND 5000)
+);
+
 create table recipes
 (
-    id                     INTEGER not null,
-    description            TEXT    not null,
-    image                  BLOB,
-    name                   TEXT    not null,
-    owner_id               INTEGER not null references users on delete cascade,
-    last_update            INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    default_amount_to_fill INTEGER NOT NULL DEFAULT 250,
+    id          INTEGER not null,
+    description TEXT    not null,
+    image       BLOB,
+    name        TEXT    not null,
+    owner_id    INTEGER not null references users on delete cascade,
+    last_update INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    glass_id    INTEGER references glasses on delete set null,
     primary key (id)
 );
 

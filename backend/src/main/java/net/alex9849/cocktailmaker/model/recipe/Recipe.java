@@ -1,11 +1,13 @@
 package net.alex9849.cocktailmaker.model.recipe;
 
 import net.alex9849.cocktailmaker.model.Category;
+import net.alex9849.cocktailmaker.model.Glass;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.model.user.User;
 import net.alex9849.cocktailmaker.service.CategoryService;
+import net.alex9849.cocktailmaker.service.GlassService;
 import net.alex9849.cocktailmaker.service.RecipeService;
 import net.alex9849.cocktailmaker.service.UserService;
 import net.alex9849.cocktailmaker.utils.SpringUtility;
@@ -23,7 +25,9 @@ public class Recipe {
     private Long ownerId;
     private String description;
     private Date lastUpdate;
-    private long defaultAmountToFill;
+
+    private Long defaultGlassId;
+    private Glass defaultGlass;
     private List<ProductionStep> productionSteps;
     private List<Category> categories;
 
@@ -67,14 +71,6 @@ public class Recipe {
         this.lastUpdate = lastUpdate;
     }
 
-    public long getDefaultAmountToFill() {
-        return defaultAmountToFill;
-    }
-
-    public void setDefaultAmountToFill(long defaultAmountToFill) {
-        this.defaultAmountToFill = defaultAmountToFill;
-    }
-
     //
     // Lazy loading methods
     //
@@ -95,10 +91,40 @@ public class Recipe {
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         return productionStepIngredients.stream().anyMatch(ProductionStepIngredient::isBoostable)
                 && ! productionStepIngredients.stream().allMatch(ProductionStepIngredient::isBoostable);
+    }
+
+    public Glass getDefaultGlass() {
+        if(defaultGlassId == null) {
+            return null;
+        }
+        if(defaultGlass == null) {
+            GlassService gService = SpringUtility.getBean(GlassService.class);
+            defaultGlass = gService.getById(defaultGlassId);
+        }
+        if(defaultGlass == null) {
+            defaultGlassId = null;
+        }
+        return defaultGlass;
+    }
+
+    public void setDefaultGlass(Glass defaultGlass) {
+        this.defaultGlassId = (defaultGlass != null)? defaultGlass.getId() : null;
+        this.defaultGlass = defaultGlass;
+    }
+
+    public long getDefaultGlassId() {
+        return defaultGlassId;
+    }
+
+    public void setDefaultGlassId(long defaultGlassId) {
+        if(!Objects.equals(this.defaultGlassId, defaultGlassId)) {
+            this.defaultGlass = null;
+        }
+        this.defaultGlassId = ownerId;
     }
 
     public User getOwner() {

@@ -10,6 +10,7 @@ import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailmaker.payload.dto.category.CategoryDto;
+import net.alex9849.cocktailmaker.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailmaker.payload.dto.recipe.productionstep.ProductionStepDto;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +29,9 @@ public class RecipeDto {
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
     private interface Categories { @NotNull Set<CategoryDto.Duplex.Detailed> getCategories(); }
     private interface CategoryIds { @NotNull Set<Long> getCategoryIds(); }
-    private interface DefaultAmountToFill { @NotNull @Min(50) long getDefaultAmountToFill(); }
+    private interface DefaultGlass { GlassDto.Duplex.Detailed getDefaultGlass(); }
+
+    private interface DefaultGlassId { long getDefaultGlassId(); }
 
     private interface OwnerName { String getOwnerName(); }
     private interface Boostable { boolean isBoostable(); }
@@ -40,13 +43,13 @@ public class RecipeDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements Name, OwnerId, Description, ProductionStepsCreated, CategoryIds, DefaultAmountToFill {
+        public static class Create implements Name, OwnerId, Description, ProductionStepsCreated, CategoryIds, DefaultGlassId {
             String name;
             long ownerId;
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
             Set<Long> categoryIds;
-            long defaultAmountToFill;
+            long defaultGlassId;
 
             public Create() {}
 
@@ -58,6 +61,9 @@ public class RecipeDto {
                 this.categoryIds = detailed.getCategories()
                         .stream().map(CategoryDto.Duplex.Detailed::getId)
                         .collect(Collectors.toSet());
+                if(detailed.getDefaultGlass() != null) {
+                    this.defaultGlassId = detailed.getDefaultGlass().getId();
+                }
             }
         }
     }
@@ -67,7 +73,7 @@ public class RecipeDto {
 
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
-                HasImage, DefaultAmountToFill, LastUpdate, Boostable {
+                HasImage, DefaultGlass, LastUpdate, Boostable {
             long id;
             String name;
             long ownerId;
@@ -76,7 +82,7 @@ public class RecipeDto {
             List<ProductionStepDto.Response.Detailed> productionSteps;
             Set<CategoryDto.Duplex.Detailed> categories;
             boolean hasImage;
-            long defaultAmountToFill;
+            GlassDto.Duplex.Detailed defaultGlass;
             Date lastUpdate;
 
             public Detailed() {}
@@ -89,6 +95,9 @@ public class RecipeDto {
                         .map(ProductionStepDto.Response.Detailed::toDto).collect(Collectors.toList());
                 this.categories = recipe.getCategories().stream().map(CategoryDto.Duplex.Detailed::new)
                         .collect(Collectors.toSet());
+                if(recipe.getDefaultGlass() != null) {
+                    this.defaultGlass = new GlassDto.Duplex.Detailed(recipe.getDefaultGlass());
+                }
             }
 
             public static RecipeDto.Response.Detailed toDto(Recipe recipe) {

@@ -10,11 +10,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,13 +29,7 @@ public class RecipeRepository extends JdbcDaoSupport {
     private ProductionStepRepository productionStepRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private RecipeCategoryRepository recipeCategoryRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     public long count() {
         return getJdbcTemplate().execute((ConnectionCallback<Long>) con -> {
@@ -85,10 +77,10 @@ public class RecipeRepository extends JdbcDaoSupport {
             final String query;
             if (ids != null) {
                 String idQuestionmarks = Arrays.stream(ids).map(x -> "?").collect(Collectors.joining(","));
-                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes where id IN (" + idQuestionmarks + ") " + sortSql + " LIMIT ? OFFSET ?";
+                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, glass_id FROM recipes where id IN (" + idQuestionmarks + ") " + sortSql + " LIMIT ? OFFSET ?";
                 params.addAll(List.of(ids));
             } else {
-                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, default_amount_to_fill FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
+                query = "SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, glass_id FROM recipes " + sortSql + " LIMIT ? OFFSET ?";
             }
             params.add(limit);
             params.add(offset);
@@ -110,11 +102,15 @@ public class RecipeRepository extends JdbcDaoSupport {
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, last_update, " +
-                    "owner_id, default_amount_to_fill) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "owner_id, glass_id) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setLong(3, recipe.getOwnerId());
-            pstmt.setLong(4, recipe.getDefaultAmountToFill());
+            if(recipe.getDefaultGlass() != null) {
+                pstmt.setLong(4, recipe.getDefaultGlass().getId());
+            } else {
+                pstmt.setNull(4, Types.INTEGER);
+            }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -133,11 +129,11 @@ public class RecipeRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
                     "description = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
-                    "default_amount_to_fill = ? WHERE id = ?");
+                    "glass_id = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setLong(3, recipe.getOwnerId());
-            pstmt.setLong(4, recipe.getDefaultAmountToFill());
+            pstmt.setLong(4, recipe.getDefaultGlass().getId());
             pstmt.setLong(5, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
@@ -295,7 +291,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         lastUpdate.setTime(rs.getLong("last_update"));
         recipe.setLastUpdate(lastUpdate);
         recipe.setHasImage(rs.getBoolean("has_image"));
-        recipe.setDefaultAmountToFill(rs.getLong("default_amount_to_fill"));
+        recipe.setDefaultGlassId(rs.getLong("glass_id"));
         return recipe;
     }
 }
