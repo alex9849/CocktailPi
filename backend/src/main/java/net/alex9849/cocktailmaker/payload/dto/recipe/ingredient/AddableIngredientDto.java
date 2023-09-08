@@ -70,6 +70,7 @@ public abstract class AddableIngredientDto {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
         public abstract static class Reduced extends IngredientDto.Response.Reduced {
+            int alcoholContent;
             boolean inBar;
 
             protected Reduced(AddableIngredient ingredient) {

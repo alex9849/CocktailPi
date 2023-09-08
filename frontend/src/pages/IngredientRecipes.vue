@@ -14,8 +14,12 @@
           flat
           bordered
           class="bg-grey-1 clickable"
-          @click="onClickIngredientRecipe(iRecipe)"
+          :class="{'disabled': orderDialog.loadingId !== null}"
+          @click="openOrderDialog(iRecipe)"
         >
+          <q-inner-loading
+            :showing="orderDialog.loadingId === iRecipe.id"
+          />
           <q-card-section horizontal>
             <q-card-section class="col-4 q-pa-sm">
               <q-img :ratio="1"
@@ -44,7 +48,7 @@
         >
           <div class="row q-pa-md items-center q-gutter-sm">
             <q-icon size="sm" :name="mdiAlert" />
-            <p class="">No ingredients assigned to pumps!</p>
+            <p>No ingredients assigned to pumps!</p>
           </div>
         </q-card>
       </div>
@@ -79,6 +83,7 @@ export default {
     return {
       ingredientRecipes: [],
       orderDialog: {
+        loadingId: null,
         show: false,
         recipe: null
       }
@@ -108,14 +113,24 @@ export default {
           this.ingredientRecipes = x
         })
     },
-    onClickIngredientRecipe (ingredientRecipe) {
-      this.orderDialog.recipe = ingredientRecipe
-      this.orderDialog.show = true
-    },
     onPostOrder () {
       this.orderDialog.show = false
       this.orderDialog.recipe = null
+      this.orderDialog.loadingId = null
       this.$store.commit('cocktailProgress/setShowProgressDialog', true)
+    },
+    openOrderDialog (recipe) {
+      if (this.orderDialog.loadingId !== null) {
+        return
+      }
+      this.orderDialog.loadingId = recipe.id
+      RecipeService.getRecipe(recipe.id, recipe.type === 'ingredientrecipe')
+        .then(recipe => {
+          this.orderDialog.recipe = Object.assign({}, recipe)
+          this.orderDialog.show = true
+        }).finally(() => {
+          this.orderDialog.loadingId = null
+        })
     }
   },
   computed: {

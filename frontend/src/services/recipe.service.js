@@ -49,8 +49,12 @@ class RecipeService {
       .then(response => response.data)
   }
 
-  getRecipe (id) {
-    return axios.get(API_PATH + String(id))
+  getRecipe (id, isIngredient = false) {
+    let params = {
+      isIngredient
+    }
+    params = JsUtils.cleanObject(params)
+    return axios.get(API_PATH + String(id), { params })
       .then(response => this.afterRecipeLoad(response.data))
   }
 

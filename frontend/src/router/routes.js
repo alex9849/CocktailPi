@@ -164,6 +164,10 @@ const routes = [
             component: () => import('pages/SimpleRecipes.vue'),
             name: 'simplerecipes'
           }, {
+            path: 'recipe/ingredients',
+            component: () => import('pages/SimpleIngredientRecipes.vue'),
+            name: 'simpleingredientrecipes'
+          }, {
             path: 'orderprogress',
             component: () => import('pages/SimpleOrderProgress.vue'),
             name: 'simpleorderprogress'

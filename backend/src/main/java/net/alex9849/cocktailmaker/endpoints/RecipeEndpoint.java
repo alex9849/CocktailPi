@@ -86,17 +86,23 @@ public class RecipeEndpoint {
         Page<Recipe> recipePage = recipeService.getRecipesByFilter(ownerId,
                 inCollectionId, inCategory, containsIngredients, searchName, fabricableFilter,
                 page, pageSize, sort);
-        List<RecipeDto.Response.SearchResult> recipeDtos = recipePage.stream().map(RecipeDto.Response.SearchResult::new).collect(Collectors.toList());
+        List<RecipeDto.Response.SearchResult> recipeDtos = recipePage.stream().map(RecipeDto.Response.SearchResult::toDto).collect(Collectors.toList());
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipe(@PathVariable("id") long id) {
-        Recipe recipe = recipeService.getById(id);
+    ResponseEntity<?> getRecipe(@PathVariable("id") long id,
+                                @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {
+        Recipe recipe;
+        if(isIngredient) {
+            recipe = recipeService.getIngredientRecipe(id);
+        } else {
+            recipe = recipeService.getById(id);
+        }
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new RecipeDto.Response.Detailed(recipe));
+        return ResponseEntity.ok(RecipeDto.Response.Detailed.toDto(recipe));
     }
 
     @RequestMapping(path = "ingredient/{id}", method = RequestMethod.GET)
@@ -105,13 +111,13 @@ public class RecipeEndpoint {
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new IngredientRecipeDto.Response.Detailed(recipe));
+        return ResponseEntity.ok(RecipeDto.Response.Detailed.toDto(recipe));
     }
 
     @RequestMapping(path = "ingredient", method = RequestMethod.GET)
     ResponseEntity<?> getIngredientRecipes() {
         List<IngredientRecipe> recipes = recipeService.getCurrentIngredientRecipes();
-        return ResponseEntity.ok(recipes.stream().map(IngredientRecipeDto.Response.Detailed::new).toList());
+        return ResponseEntity.ok(recipes.stream().map(IngredientRecipeDto.Response.SearchResult::toDto).toList());
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")
@@ -135,7 +141,7 @@ public class RecipeEndpoint {
             recipeService.setImage(recipe.getId(), out.toByteArray());
         }
         UriComponents uriComponents = uriBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getId());
-        return ResponseEntity.created(uriComponents.toUri()).body(new RecipeDto.Response.Detailed(recipe));
+        return ResponseEntity.created(uriComponents.toUri()).body(RecipeDto.Response.Detailed.toDto(recipe));
     }
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR', 'ADMIN', 'PUMP_INGREDIENT_EDITOR')")

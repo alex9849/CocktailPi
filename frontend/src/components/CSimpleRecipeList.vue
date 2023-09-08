@@ -21,7 +21,7 @@
           :loading="orderDialog.loadingId === recipe.id"
           :class="{'disabled': orderDialog.loadingId !== null}"
           class="clickable"
-          @click="openOrderDialog(recipe.id)"
+          @click="openOrderDialog(recipe)"
         />
       </div>
     </div>
@@ -71,12 +71,12 @@ export default {
     onPostOrder () {
       this.$router.push({ name: 'simpleorderprogress' })
     },
-    openOrderDialog (recipeId) {
+    openOrderDialog (recipe) {
       if (this.orderDialog.loadingId !== null) {
         return
       }
-      this.orderDialog.loadingId = recipeId
-      RecipeService.getRecipe(recipeId)
+      this.orderDialog.loadingId = recipe.id
+      RecipeService.getRecipe(recipe.id, recipe.type === 'ingredientrecipe')
         .then(recipe => {
           this.orderDialog.recipe = Object.assign({}, recipe)
           this.orderDialog.show = true

@@ -23,6 +23,22 @@ public class IngredientRecipeDto {
                 return "ingredientrecipe";
             }
         }
+
+        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        public static class SearchResult extends RecipeDto.Response.SearchResult {
+            IngredientDto.Response.Reduced ingredient;
+            long mlLeft;
+
+            public SearchResult(IngredientRecipe ingredientRecipe) {
+                super(ingredientRecipe);
+                this.mlLeft = ingredientRecipe.getMlLeft();
+                this.ingredient = IngredientDto.Response.Reduced.toDto(ingredientRecipe.getIngredient());
+            }
+
+            public String getType() {
+                return "ingredientrecipe";
+            }
+        }
     }
 
 }

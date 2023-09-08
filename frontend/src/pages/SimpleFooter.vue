@@ -80,6 +80,11 @@ export default {
         to: {
           name: 'simplerecipes'
         }
+      }, {
+        label: 'Ingredients',
+        to: {
+          name: 'simpleingredientrecipes'
+        }
       }]
     }
   },

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import net.alex9849.cocktailmaker.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
@@ -90,6 +91,14 @@ public class RecipeDto {
                         .collect(Collectors.toSet());
             }
 
+            public static RecipeDto.Response.Detailed toDto(Recipe recipe) {
+                if(recipe instanceof IngredientRecipe ingredientRecipe) {
+                    return new IngredientRecipeDto.Response.Detailed(ingredientRecipe);
+                } else {
+                    return new Detailed(recipe);
+                }
+            }
+
             public String getType() {
                 return "recipe";
             }
@@ -115,6 +124,18 @@ public class RecipeDto {
                         .map(ProductionStepIngredient::getIngredient)
                         .map(IngredientDto.Response.Reduced::toDto)
                         .collect(Collectors.toSet());
+            }
+
+            public static RecipeDto.Response.SearchResult toDto(Recipe recipe) {
+                if(recipe instanceof IngredientRecipe ingredientRecipe) {
+                    return new IngredientRecipeDto.Response.SearchResult(ingredientRecipe);
+                } else {
+                    return new SearchResult(recipe);
+                }
+            }
+
+            public String getType() {
+                return "recipe";
             }
         }
     }
