@@ -112,15 +112,12 @@ import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktai
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
-import WebSocketService from 'src/services/websocket.service'
 import WebsocketService from 'src/services/websocket.service'
 import CMakeCocktailDialogAmountToProduce from 'components/CMakeCocktailDialogAmountToProduce.vue'
-import CQHeadlinedCard from 'components/CQHeadlinedCard.vue'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
-    CQHeadlinedCard,
     CMakeCocktailDialogAmountToProduce,
     CMakeCocktailDialogRecipeCustomiser,
     CMakeCocktailDialogPumpsInUse,
@@ -143,6 +140,7 @@ export default {
   data () {
     return {
       amountToProduceValid: false,
+      glassSelectorInitialized: false,
       amountToProduce: 250,
       feasibilityReportValid: false,
       feasibilityReport: {
@@ -152,7 +150,6 @@ export default {
         totalAmountInMl: 0
       },
       checkingFeasibility: true,
-      glassSelectorInitialized: false,
       pumpEditorExpanded: false,
       customisations: {
         boost: 100,

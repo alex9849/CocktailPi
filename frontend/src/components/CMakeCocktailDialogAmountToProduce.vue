@@ -16,9 +16,7 @@
       :error="!selectedGlass"
       error-message="Field required!"
       hide-bottom-space
-    >
-
-    </q-select>
+    />
     <q-input
       v-else
       :model-value="modelValue"
@@ -201,15 +199,6 @@ export default {
     },
     showGlassSelector () {
       return this.isGlassSelect && this.availableGlasses.length !== 0
-    }
-  },
-  validations () {
-    return {
-      amountToProduce: {
-        required,
-        minValue: minValue(10),
-        maxValue: maxValue(5000)
-      }
     }
   }
 }
