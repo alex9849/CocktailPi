@@ -49,7 +49,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row" v-if="recipe.description">
             <div class="col dotted-overflow">
               {{ recipe.description }}
             </div>

@@ -89,6 +89,7 @@ export class RecipeDtoMapper {
       defaultAmountToFill: detailed.defaultAmountToFill,
       description: detailed.description,
       productionSteps: [],
+      defaultGlassId: detailed.defaultGlass?.id,
       categoryIds: []
     }
     for (const category of detailed.categories) {

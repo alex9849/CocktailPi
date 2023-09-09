@@ -104,7 +104,11 @@ public class RecipeRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, last_update, " +
                     "owner_id, glass_id) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
-            pstmt.setString(2, recipe.getDescription());
+            if(recipe.getDescription() != null) {
+                pstmt.setString(2, recipe.getDescription());
+            } else {
+                pstmt.setNull(2, Types.VARCHAR);
+            }
             pstmt.setLong(3, recipe.getOwnerId());
             if(recipe.getDefaultGlass() != null) {
                 pstmt.setLong(4, recipe.getDefaultGlass().getId());
@@ -131,7 +135,11 @@ public class RecipeRepository extends JdbcDaoSupport {
                     "description = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
                     "glass_id = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
-            pstmt.setString(2, recipe.getDescription());
+            if(recipe.getDescription() != null) {
+                pstmt.setString(2, recipe.getDescription());
+            } else {
+                pstmt.setNull(2, Types.VARCHAR);
+            }
             pstmt.setLong(3, recipe.getOwnerId());
             if(recipe.getDefaultGlass() != null) {
                 pstmt.setLong(4, recipe.getDefaultGlass().getId());

@@ -64,7 +64,7 @@ const routes = [
             name: 'myprofile'
           }, {
             path: 'recipe/add',
-            component: () => import('pages/RecipeAdd'),
+            component: () => import('pages/RecipeEdit'),
             name: 'recipeadd'
           }, {
             path: 'recipe/own',

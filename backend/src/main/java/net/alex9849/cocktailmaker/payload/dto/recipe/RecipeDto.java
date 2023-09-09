@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class RecipeDto {
     private interface Id { long getId(); }
     private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
-    private interface Description { @NotNull @Size(min = 1, max = 3000) String getDescription(); }
+    private interface Description { @Size(max = 3000) String getDescription(); }
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
     private interface Categories { @NotNull Set<CategoryDto.Duplex.Detailed> getCategories(); }

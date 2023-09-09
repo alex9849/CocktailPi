@@ -82,7 +82,7 @@ CREATE TABLE glasses
 create table recipes
 (
     id          INTEGER not null,
-    description TEXT    not null,
+    description TEXT,
     image       BLOB,
     name        TEXT    not null,
     owner_id    INTEGER not null references users on delete cascade,
