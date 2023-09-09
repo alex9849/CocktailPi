@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center q-col-gutter-sm">
     <q-select
       v-if="showGlassSelector"
       :model-value="selectedGlass"
