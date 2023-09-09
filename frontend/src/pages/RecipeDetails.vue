@@ -1,7 +1,7 @@
 <template>
   <q-page class="page-content" padding>
     <div class="row">
-      <div class="col vcenter">
+      <div class="col">
         <h5>{{ recipe.name }}</h5>
       </div>
     </div>
@@ -24,13 +24,6 @@
         >
           Make cocktail
         </q-btn>
-        <!--q-btn
-          v-else
-          color="warning"
-          @click="showMakeCocktailDialog = true"
-        >
-          Make cocktail (Half-Automatic)
-        </q-btn-->
         <q-btn
           color="red"
           @click="deleteDialog = true"
@@ -70,7 +63,35 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div>
+        <q-card bordered class="bg-grey-3 shadow-1">
+          <q-card-section>
+            <div style="display: block ruby">
+              <b>Categories: </b>
+              <div
+                v-if="recipe.categories.length !== 0"
+              >
+                <q-badge
+                  class="q-mx-xs"
+                  v-for="category in recipe.categories"
+                  :key="category.id"
+                  :label="category.name"
+                />
+              </div>
+              <div
+                v-else
+              >
+                None
+              </div>
+            </div>
+            <p><b>Default glass:</b> {{ printGlass }}</p>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div
+        v-if="recipe.description"
+        class="row"
+      >
         <div class="col">
           <q-card bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
             <q-card-section>
@@ -109,6 +130,7 @@ import CQuestion from '../components/CQuestion'
 import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
+import category from 'src/store/modules/category'
 
 export default {
   name: 'RecipeDetails',
@@ -117,7 +139,8 @@ export default {
     return {
       recipe: {
         owner: {},
-        productionSteps: []
+        productionSteps: [],
+        categories: []
       },
       loaded: false,
       deleting: false,
@@ -169,6 +192,9 @@ export default {
     }
   },
   computed: {
+    category () {
+      return category
+    },
     ...mapGetters({
       user: 'auth/getUser',
       isAdminRole: 'auth/isAdmin',
@@ -194,19 +220,16 @@ export default {
           })
         }
       }
+    },
+    printGlass () {
+      if (!this.recipe.defaultGlass) {
+        return 'None'
+      }
+      return this.recipe.defaultGlass.name + ' (' + this.recipe.defaultGlass.size + ' ml)'
     }
   }
 }
 </script>
 
 <style scoped>
-.innerpadding > * {
-  padding: 10px;
-}
-
-.vcenter {
-  display: inline-block;
-  vertical-align: middle;
-  float: none;
-}
 </style>
