@@ -52,8 +52,8 @@ const routes = [
             name: 'bar'
           }, {
             path: 'collection/own',
-            component: () => import('pages/MyCollections'),
-            name: 'mycollections'
+            component: () => import('pages/Collections'),
+            name: 'collections'
           }, {
             path: 'collection/:id',
             component: () => import('pages/Collection'),

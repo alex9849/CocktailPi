@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
-    <h5>Edit user</h5>
     <div class="page-content">
+      <h5>Edit user</h5>
       <q-banner v-if="form.error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
         {{ form.error }}
       </q-banner>

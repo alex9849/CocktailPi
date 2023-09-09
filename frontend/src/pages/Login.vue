@@ -182,12 +182,41 @@ export default {
 }
 </script>
 
-<style scoped>
-  .backgroundImage {
-    background: url('../assets/login-background.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+<style>
+  @media (max-width: 571px) {
+    body {
+      background: url('../assets/login/background_s.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+  }
+  @media (min-width: 572px) and (max-width: 857px) {
+    body {
+      background: url('../assets/login/background_m.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+  }
+  @media (min-width: 858px) and (max-width: 1143px) {
+    body {
+      background: url('../assets/login/background_l.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+  }
+  @media (min-width: 1144px) {
+    body {
+      background: url('../assets/login/background_xl.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
   }
 </style>

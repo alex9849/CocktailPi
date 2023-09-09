@@ -1,6 +1,10 @@
 <template>
   <q-page class="page-content" padding>
     <h5>{{ collection.name }}</h5>
+    <q-breadcrumbs separator="/" class="text-orange" active-color="secondary">
+      <q-breadcrumbs-el label="Collections" :to="{ name: 'collections' }" />
+      <q-breadcrumbs-el :label="collection.name" />
+    </q-breadcrumbs>
     <top-button-arranger
       v-if="isCanEdit"
     >
@@ -272,7 +276,7 @@ export default {
       this.deletingCollection = true
       CollectionService.deleteCollection(this.collection.id)
         .then(() => {
-          this.$router.push({ name: 'mycollections' })
+          this.$router.push({ name: 'collections' })
         })
         .finally(() => {
           this.deletingCollection = false

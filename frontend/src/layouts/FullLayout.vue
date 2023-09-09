@@ -142,7 +142,7 @@ export default {
             }, {
               reqLevel: 0,
               label: 'Collections',
-              to: { name: 'mycollections' },
+              to: { name: 'collections' },
               exact: false
             }, {
               label: 'My recipes',
