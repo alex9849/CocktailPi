@@ -6,6 +6,7 @@ import urllib
 cocktailsFilePath = 'data/recipes.json'
 ingredientsFilePath = 'data/ingredients.json'
 categoriesFilePath = 'data/categories.json'
+glassFilePath = 'data/glasses.json'
 headers = {'Content-type': 'application/json'}
 cocktailMakerUrl = "http://localhost:8080"
 user = 'admin'
@@ -56,6 +57,17 @@ def fetchIngredientsFromServer():
     with open(ingredientsFilePath, 'w') as outfile:
         json.dump(ingredients, outfile)
 
+def fetchGlassesFromServer():
+    glasses = []
+    token = provideAuthToken(cocktailMakerUrl, user, password)
+    headers['Authorization'] = token
+    response = requests.get(cocktailMakerUrl + "/api/glass/", headers=headers)
+    if (response.json() != None):
+        glasses.extend(response.json())
+
+    with open(glassFilePath, 'w') as outfile:
+        json.dump(glasses, outfile)
+
 
 def fetchCategoriesFromServer():
     categories = []
@@ -76,5 +88,6 @@ def provideAuthToken(url, username, password):
 
 if __name__ == "__main__":
     fetchCategoriesFromServer()
+    fetchGlassesFromServer()
     fetchIngredientsFromServer()
     fetchRecipesFromServer()

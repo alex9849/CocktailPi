@@ -82,11 +82,23 @@ public class SeedDataInserter {
         LocalGpioBoard gpioBoard = createLocalGpioBoard();
         Map<Long, Long> ingredientsOldIdToNewIdMap = this.migrateIngredients();
         Map<Long, Long> categoriesOldIdToNewIdMap = this.migrateCategories();
-        this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap);
+        Map<Long, Long> glassesOldIdToNewIdMap = this.migrateGlasses();
+        this.migrateRecipes(defaultUser, ingredientsOldIdToNewIdMap, categoriesOldIdToNewIdMap, glassesOldIdToNewIdMap);
         if (isDemoMode || isDevMode) {
             this.createDemoPumps(gpioBoard);
         }
         logger.info("Finished inserting seed data into database.");
+    }
+
+    private Map<Long, Long> migrateGlasses() throws IOException {
+        Map<Long, Long> oldToNewIdMap = new HashMap<>();
+        List<GlassDto.Duplex.Detailed> glassDtos = loadFromFile("/db/defaultdata/glasses.json", GlassDto.Duplex.Detailed.class);
+
+        for (GlassDto.Duplex.Detailed glassDto : glassDtos) {
+            Glass createdGlass = glassService.createGlass(glassService.fromDto(glassDto));
+            oldToNewIdMap.put(glassDto.getId(), createdGlass.getId());
+        }
+        return oldToNewIdMap;
     }
 
     private User createDefaultUser() {
@@ -170,20 +182,19 @@ public class SeedDataInserter {
         }
     }
 
-    private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap, Map<Long, Long> categoriesOldIdToNewIdMap) throws IOException {
+    private void migrateRecipes(User owner, Map<Long, Long> ingredientsOldIdToNewIdMap,
+                                Map<Long, Long> categoriesOldIdToNewIdMap, Map<Long, Long> glassesOldIdToNewIdMap) throws IOException {
         List<RecipeDto.Response.Detailed> recipeDtos = loadFromFile("/db/defaultdata/recipes.json", RecipeDto.Response.Detailed.class);
-        Glass defaultGlass = new Glass();
-        defaultGlass.setSize(250);
-        defaultGlass.setName("Default");
-        defaultGlass = glassService.createGlass(defaultGlass);
 
         for (RecipeDto.Response.Detailed recipeDto : recipeDtos) {
-            recipeDto.setDefaultGlass(new GlassDto.Duplex.Detailed(defaultGlass));
             RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(recipeDto);
             createDto.setOwnerId(owner.getId());
             createDto.setCategoryIds(createDto.getCategoryIds()
                     .stream().map(categoriesOldIdToNewIdMap::get)
                     .collect(Collectors.toSet()));
+            if(createDto.getDefaultGlassId() != null) {
+                createDto.setDefaultGlassId(glassesOldIdToNewIdMap.get(createDto.getDefaultGlassId()));
+            }
 
             //Change IngredientIds
             for (ProductionStepDto.Request.Create pStep : createDto.getProductionSteps()) {
