@@ -1,5 +1,4 @@
 import store from '../store'
-import Error404 from 'pages/Error404.vue'
 
 function redirectIfNotAuthenticated (to, from, next) {
   if (!store().getters['auth/isLoggedIn']) {
@@ -34,14 +33,13 @@ const routes = [
       {
         path: '/',
         component: () => import('layouts/LoggedInLayout.vue'),
-        redirect: { name: 'login' },
         beforeEnter: redirectIfNotAuthenticated,
         children: [{
           path: '/',
           component: () => import('layouts/FullLayout.vue'),
           children: [{
             path: '',
-            beforeEnter: (to, from, next) => next({ name: 'dashboard' })
+            redirect: { name: 'dashboard' }
           }, {
             path: 'dashboard',
             component: () => import('pages/Dashboard'),
@@ -193,9 +191,9 @@ const routes = [
       // Always leave this as last one,
       // but you can also remove it
       {
-        path: '/:catchAll(.*)*',
+        path: ':catchAll(.*)*',
         name: '404Page',
-        component: Error404
+        component: () => import('pages/Error404.vue')
       }
     ]
   }
