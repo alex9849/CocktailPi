@@ -120,11 +120,11 @@ public class Recipe {
         return defaultGlassId;
     }
 
-    public void setDefaultGlassId(long defaultGlassId) {
+    public void setDefaultGlassId(Long defaultGlassId) {
         if(!Objects.equals(this.defaultGlassId, defaultGlassId)) {
             this.defaultGlass = null;
         }
-        this.defaultGlassId = ownerId;
+        this.defaultGlassId = defaultGlassId;
     }
 
     public User getOwner() {

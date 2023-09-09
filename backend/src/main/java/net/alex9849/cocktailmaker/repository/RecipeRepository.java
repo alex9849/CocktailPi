@@ -133,7 +133,11 @@ public class RecipeRepository extends JdbcDaoSupport {
             pstmt.setString(1, recipe.getName());
             pstmt.setString(2, recipe.getDescription());
             pstmt.setLong(3, recipe.getOwnerId());
-            pstmt.setLong(4, recipe.getDefaultGlass().getId());
+            if(recipe.getDefaultGlass() != null) {
+                pstmt.setLong(4, recipe.getDefaultGlass().getId());
+            } else {
+                pstmt.setNull(4, Types.INTEGER);
+            }
             pstmt.setLong(5, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());

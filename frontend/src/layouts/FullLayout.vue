@@ -157,14 +157,13 @@ export default {
           reqLevel: 0,
           subSections: [
             {
-              label: 'Ingredients',
-              to: { name: 'ingredientrecipes' },
-              exact: true,
-              reqLevel: 0
-            },
-            {
               label: 'All',
               to: { name: 'publicrecipes' },
+              exact: true,
+              reqLevel: 0
+            }, {
+              label: 'Ingredients',
+              to: { name: 'ingredientrecipes' },
               exact: true,
               reqLevel: 0
             }
@@ -286,12 +285,6 @@ export default {
     setCategories (categories) {
       this.sidebarItems[1].subSections = [
         {
-          label: 'Ingredients',
-          to: { name: 'ingredientrecipes' },
-          exact: true,
-          reqLevel: 0
-        },
-        {
           label: 'All',
           to: { name: 'publicrecipes' },
           exact: true,
@@ -306,6 +299,12 @@ export default {
           exact: true
         })
       }
+      this.sidebarItems[1].subSections.push({
+        label: 'Ingredients',
+        to: { name: 'ingredientrecipes' },
+        exact: true,
+        reqLevel: 0
+      })
     }
   }
 }

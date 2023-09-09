@@ -31,7 +31,7 @@ public class RecipeDto {
     private interface CategoryIds { @NotNull Set<Long> getCategoryIds(); }
     private interface DefaultGlass { GlassDto.Duplex.Detailed getDefaultGlass(); }
 
-    private interface DefaultGlassId { long getDefaultGlassId(); }
+    private interface DefaultGlassId { Long getDefaultGlassId(); }
 
     private interface OwnerName { String getOwnerName(); }
     private interface Boostable { boolean isBoostable(); }
@@ -49,7 +49,7 @@ public class RecipeDto {
             String description;
             List<ProductionStepDto.Request.Create> productionSteps;
             Set<Long> categoryIds;
-            long defaultGlassId;
+            Long defaultGlassId;
 
             public Create() {}
 
