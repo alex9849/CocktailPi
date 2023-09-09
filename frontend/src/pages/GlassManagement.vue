@@ -118,6 +118,20 @@
         @deleteSuccess="onDeleteSuccess"
       />
     </div>
+    <c-edit-dialog
+      v-model:show="editOptions.editDialog"
+      :error-message="editOptions.editErrorMessage"
+      :saving="editOptions.saving"
+      :title="editOptions.editDialogHeadline"
+      :valid="editOptions.valid"
+      @clickAbort="closeEditDialog"
+      @clickSave="onClickEditDialogSave"
+    >
+      <c-glass-form
+        v-model:model-value="editOptions.editGlass"
+        @invalid="editOptions.valid = !$event"
+      />
+    </c-edit-dialog>
   </q-page>
 </template>
 
@@ -127,10 +141,12 @@ import TopButtonArranger from 'components/TopButtonArranger.vue'
 import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import CDeleteWarning from 'components/CDeleteWarning.vue'
 import GlassService from 'src/services/glass.service'
+import CEditDialog from 'components/CEditDialog.vue'
+import CGlassForm from 'components/CGlassForm.vue'
 
 export default {
   name: 'GlassManagement',
-  components: { CDeleteWarning, TopButtonArranger },
+  components: { CGlassForm, CEditDialog, CDeleteWarning, TopButtonArranger },
   async beforeRouteEnter (to, from, next) {
     const glasses = await GlassService.getAllGlasses()
     next(vm => {
@@ -144,10 +160,30 @@ export default {
         { name: 'name', label: 'Name', field: 'name', align: 'center' },
         { name: 'size', label: 'Size', field: 'size', align: 'center' },
         { name: 'default', label: 'Default', field: 'default', align: 'center' },
-        { name: 'useForSingleIngredients', label: 'For single ingredients', field: 'useForSingleIngredients', align: 'center' },
+        {
+          name: 'useForSingleIngredients',
+          label: 'For single ingredients',
+          field: 'useForSingleIngredients',
+          align: 'center'
+        },
         { name: 'actions', label: 'Actions', field: '', align: 'center' }
       ],
-      loading: false
+      loading: false,
+      editOptions: {
+        valid: false,
+        editDialogHeadline: '',
+        editErrorMessage: '',
+        saving: false,
+        editDialog: false,
+        editGlass: {},
+        newGlass: {
+          id: -1,
+          name: '',
+          size: '',
+          useForSingleIngredients: false,
+          default: false
+        }
+      }
     }
   },
   created () {
@@ -158,7 +194,41 @@ export default {
   },
   methods: {
     showEditDialog (glass) {
-
+      if (glass) {
+        this.editOptions.editGlass = Object.assign({}, glass)
+        this.editOptions.editDialogHeadline = 'Edit glass'
+      } else {
+        this.editOptions.editGlass = Object.assign({}, this.editOptions.newGlass)
+        this.editOptions.editDialogHeadline = 'Create glass'
+      }
+      this.editOptions.editDialog = true
+    },
+    closeEditDialog () {
+      this.editOptions.editIngredient = Object.assign({}, this.editOptions.newGlass)
+      this.editOptions.editDialog = false
+      this.editOptions.editErrorMessage = ''
+    },
+    onClickEditDialogSave () {
+      const isNew = this.editOptions.editGlass.id === -1
+      this.editOptions.saving = true
+      let promise
+      if (isNew) {
+        promise = GlassService.createGlass(this.editOptions.editGlass)
+      } else {
+        promise = GlassService.updateGlass(this.editOptions.editGlass)
+      }
+      promise = promise.then((recipe) => {
+        const msg = 'Glass ' + (this.isNew ? 'created' : 'updated') + ' successfully'
+        this.$q.notify({
+          type: 'positive',
+          message: msg
+        })
+        this.closeEditDialog()
+        this.onRefresh()
+      })
+      promise.finally(() => {
+        this.editOptions.saving = false
+      })
     },
     onRefresh () {
       this.loading = true

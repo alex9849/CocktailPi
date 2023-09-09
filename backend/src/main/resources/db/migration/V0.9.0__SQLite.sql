@@ -76,7 +76,7 @@ CREATE TABLE glasses
     size INTEGER not null,
     primary key (id),
     CONSTRAINT unique_name unique (name),
-    CONSTRAINT size_range check (size BETWEEN 1 AND 5000)
+    CONSTRAINT size_range check (size BETWEEN 10 AND 5000)
 );
 
 create table recipes

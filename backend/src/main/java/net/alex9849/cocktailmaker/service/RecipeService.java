@@ -199,9 +199,16 @@ public class RecipeService {
         for(Long categoryId : recipeDto.getCategoryIds()) {
             Category category = categoryService.getCategory(categoryId);
             if(category == null) {
-                throw new IllegalArgumentException("Category with id " + category.getId() + " doesn't exist!");
+                throw new IllegalArgumentException("Category with id " + categoryId + " doesn't exist!");
             }
             categories.add(category);
+        }
+        if(recipeDto.getDefaultGlassId() != null) {
+            Glass glass = glassService.getById(recipeDto.getDefaultGlassId());
+            if(glass == null) {
+                throw new IllegalArgumentException("Glass with id " + recipeDto.getDefaultGlassId() + " doesn't exist!");
+            }
+            recipe.setDefaultGlass(glass);
         }
         recipe.setCategories(categories);
         User user = userService.getUser(recipeDto.getOwnerId());
