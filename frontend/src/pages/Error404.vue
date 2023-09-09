@@ -1,23 +1,27 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
-    <div>
-      <div style="font-size: 30vh">
-        404
-      </div>
+  <div class="window-height window-width row bg-blue items-center text-white">
+    <div class="col-12 col-md-6">
+      <div class="text-center">
+        <div style="font-size: 30vh">
+          404
+        </div>
+        <div class="text-h2" style="opacity:.4">
+          Oops. Nothing here...
+        </div>
 
-      <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+        <q-btn
+          class="q-mt-xl"
+          color="white"
+          text-color="blue"
+          unelevated
+          to="/"
+          label="Go Home"
+          no-caps
+        />
       </div>
-
-      <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        label="Go Home"
-        no-caps
-      />
+    </div>
+    <div class="col-0 col-md-6 row justify-center">
+      <img style="height: 90vh; max-width: inherit; object-fit: contain" src="~assets/cocktailfaces/orange_juice_character_6.svg">
     </div>
   </div>
 </template>

@@ -184,7 +184,7 @@ export default {
 
 <style>
   @media (max-width: 571px) {
-    body {
+    .backgroundImage {
       background: url('../assets/login/background_s.jpg') no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -193,7 +193,7 @@ export default {
     }
   }
   @media (min-width: 572px) and (max-width: 857px) {
-    body {
+    .backgroundImage {
       background: url('../assets/login/background_m.jpg') no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -202,7 +202,7 @@ export default {
     }
   }
   @media (min-width: 858px) and (max-width: 1143px) {
-    body {
+    .backgroundImage {
       background: url('../assets/login/background_l.jpg') no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -211,7 +211,7 @@ export default {
     }
   }
   @media (min-width: 1144px) {
-    body {
+    .backgroundImage {
       background: url('../assets/login/background_xl.jpg') no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
