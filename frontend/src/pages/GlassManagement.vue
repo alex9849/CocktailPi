@@ -3,7 +3,17 @@
     padding
     class="page-content"
   >
-    <h5>Glass Management</h5>
+    <h5>Glass Management
+      <q-btn
+        :icon="mdiInformation"
+        dense
+        flat
+        round
+        color="grey"
+        @click="showHelp = true"
+      >
+      </q-btn>
+    </h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
@@ -132,13 +142,49 @@
         @invalid="editOptions.valid = !$event"
       />
     </c-edit-dialog>
+    <q-dialog
+      v-model:model-value="showHelp"
+    >
+      <q-card>
+        <q-card-section class="q-gutter-y-sm">
+          <h6>Glasses:</h6>
+          <p>
+            Different types of cocktails are typically served in various glass styles, each with its unique size.
+            When placing a cocktail order, you have two options: you can either specify the desired liquid quantity
+            for the machine to dispense or choose a specific glass type. If you opt for the latter, the machine will
+            automatically dispense an amount of liquid that matches the selected glass's volume.
+          </p>
+          <p>
+            The liquid quantity that the machine should produce is always chosen by the ordering user.
+            However, it is possible to assign each recipe a glass that is selected by default.
+          </p>
+          <p>
+            If no default glass has been selected for a particular recipe, the software will automatically default to
+            using the predefined "<i>default</i>" glass.
+          </p>
+          <p>
+            It is possible to dispense single ingredients. The default glass for these orders can also be selected
+            here using the "<i>Use for single ingredients</i>"-property.
+          </p>
+        </q-card-section>
+        <q-card-section class="row justify-center">
+          <q-btn
+            class="col-auto"
+            color="grey"
+            @click="showHelp = false"
+          >
+            Close
+          </q-btn>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 
 import TopButtonArranger from 'components/TopButtonArranger.vue'
-import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline, mdiInformation } from '@quasar/extras/mdi-v5'
 import CDeleteWarning from 'components/CDeleteWarning.vue'
 import GlassService from 'src/services/glass.service'
 import CEditDialog from 'components/CEditDialog.vue'
@@ -156,6 +202,7 @@ export default {
   data: () => {
     return {
       glasses: [],
+      showHelp: false,
       columns: [
         { name: 'name', label: 'Name', field: 'name', align: 'center' },
         { name: 'size', label: 'Size', field: 'size', align: 'center' },
@@ -191,6 +238,7 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiCheckCircle = mdiCheckCircle
+    this.mdiInformation = mdiInformation
   },
   methods: {
     showEditDialog (glass) {
