@@ -29,62 +29,15 @@
         <q-separator />
       </q-card-section>
       <q-card-section class="page-content q-gutter-md">
-        <div class="flex justify-center">
-          <q-input
-            :model-value="v.amountToProduce.$model"
-            @update:modelValue="v.amountToProduce.$model = Number($event)"
-            label="Amount to produce"
-            type="number"
-            outlined
-            hide-bottom-space
-            bg-color="grey-2"
-            input-class="text-center text-weight-medium"
-            style="width: 400px"
-            debounce="500"
-            rounded
-            suffix="ml"
-            :rules="[
-            val => !v.amountToProduce.required.$invalid || 'Required',
-            val => !v.amountToProduce.minValue.$invalid || 'Min 10ml',
-            val => !v.amountToProduce.maxValue.$invalid || 'Max 5000ml'
-          ]"
-          >
-            <template v-slot:prepend >
-              <q-btn
-                :disable="v.amountToProduce.$model < 60"
-                class="q-mx-xs"
-                :icon="mdiMinusThick"
-                dense round
-                @click="v.amountToProduce.$model -= 50"
-              />
-              <q-btn
-                :disable="v.amountToProduce.$model < 20"
-                class="q-mx-xs"
-                :icon="mdiMinus"
-                round
-                @click="v.amountToProduce.$model -= 10"
-              />
-            </template>
-            <template v-slot:append >
-              <q-btn
-                :disable="v.amountToProduce.$model > 4990"
-                :icon="mdiPlus"
-                class="q-mx-xs"
-                round
-                @click="v.amountToProduce.$model += 10"
-              />
-              <q-btn
-                :disable="v.amountToProduce.$model > 4950"
-                :icon="mdiPlusThick"
-                class="q-mx-xs"
-                dense round
-                @click="v.amountToProduce.$model += 50"
-              />
-            </template>
-          </q-input>
-        </div>
+        <c-make-cocktail-dialog-amount-to-produce
+          v-model:model-value="v.amountToProduce.$model"
+          :recipe-default-glass="recipe.defaultGlass"
+          @initialized="glassSelectorInitialized = true; tryCheckFeasibility()"
+          @valid="amountToProduceValid = $event; tryCheckFeasibility()"
+        />
         <div class="q-gutter-y-sm">
           <c-make-cocktail-dialog-ingredient-group-replacements
+            v-if="feasibilityReportValid"
             :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
             :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
             @ReplacementUpdate="onReplacementUpdate($event.prodStepNr, $event.toReplaceId, $event.replacement)"
@@ -96,6 +49,7 @@
             :pumps-occupied="anyPumpOccupied"
           />
           <c-make-cocktail-dialog-insufficient-ingredients
+            v-if="feasibilityReportValid"
             :required-ingredients="feasibilityReport.requiredIngredients"
           />
           <c-make-cocktail-dialog-recipe-customiser
@@ -149,7 +103,7 @@
 <script>
 import CocktailService from '../services/cocktail.service'
 import { mapGetters } from 'vuex'
-import { mdiAlertOutline, mdiPlay, mdiPlusThick, mdiPlus, mdiMinusThick, mdiMinus } from '@quasar/extras/mdi-v5'
+import { mdiAlertOutline, mdiPlay, mdiPlusThick, mdiPlus, mdiMinusThick, mdiMinus, mdiClose } from '@quasar/extras/mdi-v5'
 import { maxValue, minValue, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
@@ -160,10 +114,14 @@ import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsIn
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
 import WebSocketService from 'src/services/websocket.service'
 import WebsocketService from 'src/services/websocket.service'
+import CMakeCocktailDialogAmountToProduce from 'components/CMakeCocktailDialogAmountToProduce.vue'
+import CQHeadlinedCard from 'components/CQHeadlinedCard.vue'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
+    CQHeadlinedCard,
+    CMakeCocktailDialogAmountToProduce,
     CMakeCocktailDialogRecipeCustomiser,
     CMakeCocktailDialogPumpsInUse,
     CMakeCocktailDialogIngredientGroupReplacements,
@@ -184,7 +142,9 @@ export default {
   emits: ['update:show', 'postOrder'],
   data () {
     return {
+      amountToProduceValid: false,
       amountToProduce: 250,
+      feasibilityReportValid: false,
       feasibilityReport: {
         ingredientGroupReplacements: [],
         requiredIngredients: [],
@@ -192,6 +152,7 @@ export default {
         totalAmountInMl: 0
       },
       checkingFeasibility: true,
+      glassSelectorInitialized: false,
       pumpEditorExpanded: false,
       customisations: {
         boost: 100,
@@ -208,7 +169,8 @@ export default {
       mdiPlus: mdiPlus,
       mdiMinusThick: mdiMinusThick,
       mdiMinus: mdiMinus,
-      mdiAlertOutline: mdiAlertOutline
+      mdiAlertOutline: mdiAlertOutline,
+      mdiClose: mdiClose
     }
   },
   unmounted () {
@@ -223,7 +185,6 @@ export default {
         if (!newValue) {
           return
         }
-        this.amountToProduce = newValue.defaultAmountToFill
         this.customisations.boost = 100
         this.customisations.additionalIngredients.slice(0, this.customisations.additionalIngredients.length)
         this.tryCheckFeasibility()
@@ -266,7 +227,8 @@ export default {
   },
   methods: {
     tryCheckFeasibility (orderConfig = this.getCurrentOrderConfigurationDto()) {
-      if (!this.recipe || !this.getPumpLayout || !this.amountToProduce) {
+      if (!this.recipe || !this.getPumpLayout || !this.amountToProduce ||
+        !this.glassSelectorInitialized || !this.amountToProduceValid) {
         return
       }
       this.checkFeasibility(orderConfig)
@@ -323,6 +285,7 @@ export default {
       CocktailService.checkFeasibility(this.recipe.id, orderConfig, this.isIngredientRecipe)
         .then(report => {
           this.feasibilityReport = report
+          this.feasibilityReportValid = true
 
           const additionalIngredientIds = new Set()
           this.customisations.additionalIngredients.forEach(x => additionalIngredientIds.add(x.ingredient.id))
@@ -383,7 +346,8 @@ export default {
       return this.feasibilityOk &&
         !this.anyPumpOccupied &&
         !this.hasCocktailProgress &&
-        !this.v.amountToProduce.$invalid
+        !this.v.amountToProduce.$invalid &&
+        this.amountToProduceValid
     },
     ingredientsToAddManually () {
       return this.feasibilityReport.requiredIngredients
