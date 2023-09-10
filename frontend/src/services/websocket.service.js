@@ -13,6 +13,12 @@ class WebsocketService {
   stompClient = null
   csrf = null
 
+  constructor () {
+    addEventListener('beforeunload', (event) => {
+      this.disconnectWebsocket()
+    })
+  }
+
   async connectWebsocket () {
     this.stompClient = Stomp.over(() => new SockJS(store().getters['auth/getFormattedServerAddress'] + '/websocket'))
     this.stompClient.connectHeaders = {
