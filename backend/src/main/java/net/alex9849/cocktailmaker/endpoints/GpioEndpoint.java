@@ -35,7 +35,7 @@ public class GpioEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    private ResponseEntity<?> getGpioBoards(@PathVariable("id") long id) {
+    private ResponseEntity<?> getGpioBoard(@PathVariable("id") long id) {
         GpioBoard board = gpioService.getGpioBoard(id);
         if(board == null) {
             return ResponseEntity.notFound().build();

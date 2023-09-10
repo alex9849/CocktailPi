@@ -181,6 +181,7 @@ import { i2cExpanderBoardTypes } from 'src/mixins/constants'
 import GpioService, { gpioBoardDtoMapper } from 'src/services/gpio.service'
 import { required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import UserService from 'src/services/user.service'
 
 export default {
   name: 'GpioExpanderEdit',
@@ -191,7 +192,15 @@ export default {
   },
   async beforeRouteEnter (to, from, next) {
     if (to.name === 'gpioexpandereditor') {
-      const board = await GpioService.getBoard(to.params.id)
+      let board
+      try {
+        board = await GpioService.getBoard(to.params.id)
+      } catch (e) {
+        if (e.response.status === 404) {
+          next({ name: '404Page' })
+          return
+        }
+      }
       next(vm => {
         vm.expander = board
       })
