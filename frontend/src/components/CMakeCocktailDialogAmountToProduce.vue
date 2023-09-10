@@ -125,6 +125,7 @@ export default {
     this.loading = true
     GlassService.getAllGlasses()
       .then(x => {
+        x.sort((a, b) => a.size - b.size)
         this.availableGlasses = x
         for (const glass of x) {
           if (glass.default && !this.recipeDefaultGlass) {
