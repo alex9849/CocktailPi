@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service.pumps;
 import net.alex9849.cocktailmaker.model.FeasibilityReport;
 import net.alex9849.cocktailmaker.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailmaker.model.eventaction.EventTrigger;
+import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailmaker.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailmaker.model.recipe.Recipe;
@@ -62,7 +63,7 @@ public class CocktailOrderService {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpDataService.getAllCompletedPumps()), p -> p.forEach(x -> pumpDataService.updatePump(x)))
+                new HashSet<>(pumpDataService.getAllCompletedPumps()), this::onRequestPumpPersist)
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange)
                 .subscribeProgress(progess -> {
                     switch (progess.getState()) {
@@ -74,6 +75,11 @@ public class CocktailOrderService {
         this.pumpUpService.reschedulePumpBack();
     }
 
+    private void onRequestPumpPersist(Set<Pump> pumps) {
+        pumps.forEach(p -> pumpDataService.updatePump(p));
+        webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
+    }
+
     private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
         if(progress.getState() == CocktailProgress.State.CANCELLED || progress.getState() == CocktailProgress.State.FINISHED) {
             this.scheduler.schedule(() -> {
@@ -81,7 +87,6 @@ public class CocktailOrderService {
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
                 this.pumpUpService.reschedulePumpBack();
             }, 5000, TimeUnit.MILLISECONDS);
-            this.webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
         }
         this.webSocketService.broadcastCurrentCocktailProgress(progress);
 
