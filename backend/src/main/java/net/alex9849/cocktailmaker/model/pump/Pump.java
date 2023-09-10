@@ -100,4 +100,37 @@ public abstract class Pump {
     public boolean isCompleted() {
         return this.isCanPumpUp() && this.fillingLevelInMl != null;
     }
+
+    protected abstract boolean isHwPinsCompleted();
+
+    protected abstract boolean isCalibrationCompleted();
+
+    public SetupStage getSetupStage() {
+        boolean handleComplete = getName() != null;
+        boolean isHwPinsComplete = isHwPinsCompleted();
+        boolean isCalibrationComplete = isCalibrationCompleted();
+        boolean stateComplete = getCurrentIngredient() != null && getFillingLevelInMl() != null;
+        SetupStage stage = SetupStage.HANDLE;
+        if(handleComplete) {
+            stage = SetupStage.HW_PINS;
+        }
+        if(isHwPinsComplete) {
+            stage = SetupStage.CALIBRATE;
+        }
+        if(isHwPinsComplete && isCalibrationComplete) {
+            stage = SetupStage.STATE;
+        }
+        if(isHwPinsComplete && isCalibrationComplete && stateComplete) {
+            stage = SetupStage.COMPLETE;
+        }
+        return stage;
+    }
+
+    public enum SetupStage {
+        HANDLE(0), HW_PINS(1), CALIBRATE(2), STATE(3), COMPLETE(4);
+        public int level;
+        SetupStage(int level) {
+            this.level = level;
+        }
+    }
 }

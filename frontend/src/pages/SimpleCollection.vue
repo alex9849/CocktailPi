@@ -35,7 +35,15 @@ export default {
   },
   components: { SimpleRecipesSearchList },
   async beforeRouteEnter (to, from, next) {
-    const collection = await CollectionService.getCollection(to.params.collectionId)
+    let collection
+    try {
+      collection = await CollectionService.getCollection(to.params.collectionId)
+    } catch (e) {
+      if (e.response.status === 404) {
+        next({ name: '404Page' })
+        return
+      }
+    }
     next(vm => {
       vm.collection = collection
     })

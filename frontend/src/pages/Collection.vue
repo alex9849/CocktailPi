@@ -33,6 +33,7 @@
       <div class="col-12 col-md-8 col-lg-9">
         <c-recipe-search-list
           ref="recipeSearchList"
+          v-if="collectionLoaded"
           :collection-id="collection.id"
         >
           <template v-slot:firstItem>
@@ -214,10 +215,19 @@ export default {
     TopButtonArranger
   },
   async beforeRouteEnter (to, from, next) {
-    const collection = await CollectionService.getCollection(to.params.id)
+    let collection
+    try {
+      collection = await CollectionService.getCollection(to.params.id)
+    } catch (e) {
+      if (e.response.status === 404) {
+        next({ name: '404Page' })
+        return
+      }
+    }
     next(vm => {
       vm.collection = collection
       vm.editData.collection = Object.assign({}, collection)
+      vm.collectionLoaded = true
     })
   },
   data () {
@@ -241,10 +251,12 @@ export default {
         }
       },
       collection: {
+        id: -1,
         name: 'Test',
         description: '',
         hasImage: false
       },
+      collectionLoaded: false,
       showDeleteCollectionDialog: false,
       deletingCollection: false
     }
@@ -292,9 +304,8 @@ export default {
           })
         })
         .finally(() => {
-          this.$refs.recipeSearchList.updateRecipes(false).finally(() => {
-            this.editRecipeMode.deletingRecipIds = this.editRecipeMode.deletingRecipIds.filter(x => x !== recipeId)
-          })
+          this.$refs.recipeSearchList.onClickSearch()
+          this.editRecipeMode.deletingRecipIds = this.editRecipeMode.deletingRecipIds.filter(x => x !== recipeId)
         })
     },
     onAddRecipe (recipeId) {
@@ -308,7 +319,7 @@ export default {
         })
         .finally(() => {
           this.editRecipeMode.addingRecipe = false
-          this.$refs.recipeSearchList.updateRecipes(false)
+          this.$refs.recipeSearchList.onClickSearch()
         })
     },
     onImageSelect (image) {

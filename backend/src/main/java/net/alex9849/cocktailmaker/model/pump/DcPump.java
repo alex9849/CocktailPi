@@ -87,6 +87,16 @@ public class DcPump extends Pump {
     }
 
     @Override
+    protected boolean isHwPinsCompleted() {
+        return this.pin != null && this.isPowerStateHigh != null;
+    }
+
+    @Override
+    protected boolean isCalibrationCompleted() {
+        return this.timePerClInMs != null && this.getTubeCapacityInMl() != null;
+    }
+
+    @Override
     public boolean isCanPump() {
         return this.pin != null && this.timePerClInMs != null && this.isPowerStateHigh != null;
     }

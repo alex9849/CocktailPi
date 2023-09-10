@@ -29,6 +29,7 @@ public class PumpDto {
 
     //Read only
     private interface IState {PumpDto.State getState(); }
+    private interface ISetupStage {int getSetupStage(); }
 
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -63,7 +64,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
         public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
-                CurrentIngredient, IsPumpedUp, IState, Name {
+                CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name {
             long id;
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
@@ -71,6 +72,7 @@ public class PumpDto {
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             String name;
             PumpDto.State state;
+            int setupStage;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
@@ -83,6 +85,7 @@ public class PumpDto {
                 } else {
                     this.state = State.READY;
                 }
+                this.setupStage = pump.getSetupStage().level;
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }

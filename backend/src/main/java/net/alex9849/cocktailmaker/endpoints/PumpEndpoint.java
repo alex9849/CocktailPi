@@ -44,7 +44,11 @@ public class PumpEndpoint {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getPump(@PathVariable("id") long id) {
-        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pumpService.getPump(id)));
+        Pump pump = pumpService.getPump(id);
+        if(pump == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pump));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

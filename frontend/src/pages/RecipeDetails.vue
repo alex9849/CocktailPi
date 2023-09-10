@@ -131,6 +131,7 @@ import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import category from 'src/store/modules/category'
+import CollectionService from 'src/services/collection.service'
 
 export default {
   name: 'RecipeDetails',
@@ -153,7 +154,16 @@ export default {
       next()
       return
     }
-    const recipe = await RecipeService.getRecipe(to.params.id)
+
+    let recipe
+    try {
+      recipe = await RecipeService.getRecipe(to.params.id)
+    } catch (e) {
+      if (e.response.status === 404) {
+        next({ name: '404Page' })
+        return
+      }
+    }
     next(vm => {
       vm.recipe = recipe
       vm.loaded = true
@@ -161,7 +171,14 @@ export default {
   },
   async beforeRouteUpdate (to, from, next) {
     if (this.recipe.id !== Number.parseInt(to.params.id)) {
-      this.recipe = await RecipeService.getRecipe(to.params.id)
+      try {
+        this.recipe = await RecipeService.getRecipe(to.params.id)
+      } catch (e) {
+        if (e.response.status === 404) {
+          next({ name: '404Page' })
+          return
+        }
+      }
     }
     next()
   },

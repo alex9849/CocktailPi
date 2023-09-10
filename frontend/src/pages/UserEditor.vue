@@ -168,7 +168,15 @@ export default {
     } else {
       userId = to.params.userId
     }
-    const user = await UserService.getUser(userId)
+    let user
+    try {
+      user = await UserService.getUser(userId)
+    } catch (e) {
+      if (e.response.status === 404) {
+        next({ name: '404Page' })
+        return
+      }
+    }
     next(vm => {
       vm.user = user
       vm.user.password = ''

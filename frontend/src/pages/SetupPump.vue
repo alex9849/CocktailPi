@@ -220,13 +220,13 @@
         </div>
       </q-step>
       <q-step
-        caption="Optional"
+        :caption="stateComplete ? 'Complete' : 'Optional'"
         title="State"
         :name="3"
         :icon="mdiPencilOutline"
         header-nav
-        :disable="!calibrationComplete || !hardwarePinsComplete"
         :done="calibrationComplete"
+        :disable="!calibrationComplete || !hardwarePinsComplete"
         :done-icon="mdiPencilOutline"
       >
         <c-setup-step
@@ -467,7 +467,23 @@ export default {
       }
     }
   },
-  async created () {
+  async beforeRouteEnter (to, from, next) {
+    let pump
+    try {
+      pump = await PumpService.getPump(to.params.pumpId)
+    } catch (e) {
+      if (e.response.status === 404) {
+        next({ name: '404Page' })
+        return
+      }
+    }
+    const stepper = Math.min(3, pump.setupStage)
+    next(vm => {
+      vm.pump = pump
+      vm.stepper = stepper
+    })
+  },
+  created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiCogs = mdiCogs
@@ -478,16 +494,6 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiEqual = mdiEqual
-    this.pump = await PumpService.getPump(this.$route.params.pumpId)
-    if (this.handleComplete) {
-      this.stepper = 1
-    }
-    if (this.hardwarePinsComplete) {
-      this.stepper = 2
-    }
-    if (this.hardwarePinsComplete && this.calibrationComplete) {
-      this.stepper = 3
-    }
   },
   methods: {
     onClickFinish () {
@@ -556,28 +562,13 @@ export default {
       return !!this.pump.name
     },
     hardwarePinsComplete () {
-      switch (this.pump.type) {
-        case 'dc':
-          return (this.pump.pin !== null)
-        case 'stepper':
-          return (this.pump.stepPin !== null && this.pump.enablePin !== null)
-      }
-      throw new Error('Unknown pump type: ' + this.pump.type)
+      return this.pump.setupStage > 1
     },
     calibrationComplete () {
-      let val = !!this.pump.tubeCapacityInMl
-      switch (this.pump.type) {
-        case 'dc':
-          val &&= !!this.pump.timePerClInMs && (this.pump.isPowerStateHigh !== null)
-          break
-        case 'stepper':
-          val &&= !!this.pump.acceleration && !!this.pump.maxStepsPerSecond &&
-            !!this.pump.stepsPerCl
-          break
-        default:
-          throw new Error('Unknown pump type: ' + this.pump.type)
-      }
-      return val
+      return this.pump.setupStage > 2
+    },
+    stateComplete () {
+      return this.pump.setupStage > 3
     }
   }
 }

@@ -69,6 +69,16 @@ public class StepperPump extends Pump {
         }
     }
 
+    @Override
+    protected boolean isHwPinsCompleted() {
+        return this.enablePin != null && this.stepPin != null;
+    }
+
+    @Override
+    protected boolean isCalibrationCompleted() {
+        return this.acceleration != null && this.stepsPerCl != null && this.maxStepsPerSecond != null;
+    }
+
     public AcceleratingStepper getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");

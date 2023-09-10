@@ -30,7 +30,33 @@
         <c-recipe-list
           :recipes="recipes"
           :showNoData="recipes.length === 0 && !loading"
-        />
+        >
+          <template v-slot:firstItem>
+            <div class="col-12 q-col-gutter-y-md"
+                 v-if="!!$slots.firstItem"
+            >
+              <slot name="firstItem"></slot>
+            </div>
+          </template>
+          <template v-slot:recipeTopRight="{recipe}">
+            <slot name="recipeTopRight"
+                  v-if="!!$slots.recipeTopRight"
+                  :recipe="recipe"
+            />
+          </template>
+          <template v-slot:recipeHeadline="{recipe}">
+            <slot name="recipeHeadline"
+                  v-if="!!$slots.recipeHeadline"
+                  :recipe="recipe"
+            />
+          </template>
+          <template
+            v-slot:lastItem
+            v-if="!!$slots.lastItem"
+          >
+            <slot name="lastItem"></slot>
+          </template>
+        </c-recipe-list>
       </template>
     </q-infinite-scroll>
   </div>
