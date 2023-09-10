@@ -14,6 +14,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private Thread runner;
     private Set<PumpPhase> pumpPhases;
     private Map<StepperPump, Long> steppersToSteps;
+    private Map<Pump, Integer> notUsedLiquid;
     private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
     private ScheduledFuture<?> notifierTask;
@@ -29,6 +30,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.pumpPhases = new HashSet<>();
         this.steppersToSteps = new HashMap<>();
         this.scheduledPumpFutures = new HashSet<>();
+        this.notUsedLiquid = new HashMap<>();
     }
 
     protected synchronized void setDcPumpPhases(Set<PumpPhase> pumpPhases) {
@@ -133,6 +135,25 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         if(this.notifierTask != null) {
             this.notifierTask.cancel(false);
         }
+
+        Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
+        for(PumpPhase pumpPhase : this.getDcPumpPhases()) {
+            double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
+            notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
+            notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
+        }
+        if(this.isStarted()) {
+            for(StepperPump stepperPump : this.steppersToSteps.keySet()) {
+                double notUsedLiquid = (double) (stepperPump.getMotorDriver().distanceToGo() * 10) / stepperPump.getStepsPerCl();
+                notUsedLiquidByPumpPrecise.put(stepperPump, notUsedLiquid);
+            }
+        } else {
+            for(Map.Entry<StepperPump, Long> entry : this.steppersToSteps.entrySet()) {
+                notUsedLiquidByPumpPrecise.put(entry.getKey(), 10 * entry.getValue().doubleValue() / entry.getKey().getStepsPerCl());
+            }
+        }
+        notUsedLiquidByPumpPrecise.forEach((key, value) -> notUsedLiquid.put(key, (int) Math.round(value)));
+
         this.stopAllPumps();
         if (!this.scheduler.isShutdown()) {
             this.scheduler.shutdown();
@@ -170,32 +191,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     public Map<Pump, Integer> getNotUsedLiquid() {
-        if(this.isFinished()) {
-            return new HashMap<>();
-        }
-
-        Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
-        for(PumpPhase pumpPhase : this.getDcPumpPhases()) {
-            double notUsedLiquid = notUsedLiquidByPumpPrecise.computeIfAbsent(pumpPhase.getPump(), p -> 0d);
-            notUsedLiquid += pumpPhase.getRemainingLiquidToPump();
-            notUsedLiquidByPumpPrecise.put(pumpPhase.getPump(), notUsedLiquid);
-        }
-        if(this.isStarted()) {
-            for(StepperPump stepperPump : this.steppersToSteps.keySet()) {
-                double notUsedLiquid = (double) (stepperPump.getMotorDriver().distanceToGo() * 10) / stepperPump.getStepsPerCl();
-                notUsedLiquidByPumpPrecise.put(stepperPump, notUsedLiquid);
-            }
-        } else {
-            for(Map.Entry<StepperPump, Long> entry : this.steppersToSteps.entrySet()) {
-                notUsedLiquidByPumpPrecise.put(entry.getKey(), entry.getValue().doubleValue());
-            }
-        }
-
-        Map<Pump, Integer> notUsedLiquidByPump = new HashMap<>();
-        notUsedLiquidByPumpPrecise.forEach((key, value) -> {
-            notUsedLiquidByPump.put(key, (int) Math.round(value));
-        });
-        return notUsedLiquidByPump;
+        return this.notUsedLiquid;
     }
 
     public Set<Pump> getUsedPumps() {
