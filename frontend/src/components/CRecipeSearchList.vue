@@ -4,79 +4,160 @@
       v-model:filter="filter"
       ref="filter"
       class="bg-grey-1"
-      @clickSearch="updateRecipes"
+      @clickSearch="onClickSearch"
     />
-    <c-recipe-list
-      :recipes="recipes"
-      :showNoData="recipes.length === 0 && !loading"
+    <q-infinite-scroll
+      @load="onLoad"
+      :offset="250"
+      ref="infiniteScroll"
     >
-      <template v-slot:firstItem
-      >
-        <div class="col-12 q-col-gutter-y-md"
-             v-if="!!$slots.firstItem || loading"
+      <template v-slot:loading>
+        <q-card
+          class="q-my-md"
+          flat
+          bordered
         >
-          <slot name="firstItem"></slot>
-          <div v-if="loading">
-            <q-card flat
-                    bordered
-            >
-              <q-card-section class="q-pa-md">
-                <q-icon :name="mdiAlert" size="sm"/>
-                Loading...
-              </q-card-section>
-              <q-inner-loading showing>
-                <q-spinner size="40px" color="info" />
-              </q-inner-loading>
-            </q-card>
-          </div>
-        </div>
+          <q-card-section class="q-pa-md">
+            <q-icon :name="mdiAlert" size="sm"/>
+            Loading...
+          </q-card-section>
+          <q-inner-loading showing>
+            <q-spinner size="40px" color="info"/>
+          </q-inner-loading>
+        </q-card>
       </template>
-      <template v-slot:recipeTopRight="{recipe}"
-
-      >
-        <slot name="recipeTopRight"
-              v-if="!!$slots.recipeTopRight"
-              :recipe="recipe"
+      <template v-slot:default>
+        <c-recipe-list
+          :recipes="recipes"
+          :showNoData="recipes.length === 0 && !loading"
         />
       </template>
-      <template v-slot:recipeHeadline="{recipe}"
-
-      >
-        <slot name="recipeHeadline"
-              v-if="!!$slots.recipeHeadline"
-              :recipe="recipe"
-        />
-      </template>
-      <template v-slot:lastItem
-                v-if="!!$slots.lastItem"
-      >
-        <slot name="lastItem"></slot>
-      </template>
-    </c-recipe-list>
-    <q-pagination
-      class="flex justify-center"
-      :model-value="pagination.page + 1"
-      @update:model-value="onPageClick($event - 1)"
-      color="grey-8"
-      :max="pagination.totalPages"
-      :max-pages="9"
-      :boundary-numbers="true"
-      size="md"
-      outline
-      direction-links
-    />
+    </q-infinite-scroll>
   </div>
 </template>
 
 <script>
 import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
 import CRecipeList from 'components/CRecipeList'
-import { recipeSearchListLogic } from 'src/mixins/recipeSearchListLogic'
+import RecipeService from 'src/services/recipe.service'
+import { mdiAlert } from '@quasar/extras/mdi-v5'
+import JsUtils from 'src/services/JsUtils'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CRecipeSearchList',
   components: { CRecipeList, CRecipeSearchFilterCard },
-  mixins: [recipeSearchListLogic]
+  props: {
+    collectionId: {
+      type: Number,
+      required: false
+    },
+    onlyOwnRecipes: {
+      type: Boolean,
+      required: false
+    },
+    categoryId: {
+      type: Number,
+      required: false
+    }
+  },
+  data () {
+    return {
+      recipes: [],
+      loading: false,
+      filter: this.routeOptions().filter,
+      pagination: {
+        page: 0,
+        totalPages: 1
+      }
+    }
+  },
+  created () {
+    this.mdiAlert = mdiAlert
+  },
+  methods: {
+    onLoad (index, done) {
+      if (this.pagination.totalPages < index) {
+        done()
+        this.$refs.infiniteScroll.stop()
+        return
+      }
+      this.updateRecipes(true, index - 1)
+        .then(x => {
+          done()
+        })
+    },
+    routeOptions () {
+      const queryParams = this.$route.query
+      let containsIngredients = queryParams.containsIngredients ? queryParams.containsIngredients : []
+      if (!Array.isArray(containsIngredients)) {
+        containsIngredients = [containsIngredients]
+      }
+
+      return {
+        filter: {
+          query: queryParams.query ? queryParams.query : '',
+          fabricable: queryParams.fabricable ? queryParams.fabricable : '',
+          containsIngredients: containsIngredients,
+          orderBy: queryParams.orderBy
+        }
+      }
+    },
+    updateRoute () {
+      let query = Object.assign({}, this.filter)
+      query = JsUtils.cleanObject(query)
+      this.$router.replace({ name: this.$route.name, query: query }).catch(() => {})
+    },
+    updateRecipes (withLoadingAnimation = true, page) {
+      this.loading = true
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          RecipeService.getRecipes(page,
+            this.onlyOwnRecipes ? this.user.id : null,
+            this.collectionId,
+            this.filter.fabricable,
+            this.filter.containsIngredients,
+            this.filter.query,
+            this.categoryId,
+            this.filter.orderBy
+          ).then(page => {
+            this.recipes.push(...page.content)
+            this.pagination.totalPages = page.totalPages
+            this.pagination.page = page.number
+            this.loading = false
+            resolve(page.content)
+          }, error => {
+            this.loading = false
+            reject(error)
+          })
+        }, withLoadingAnimation ? 500 : 0)
+      })
+    },
+    onClickSearch () {
+      window.scrollTo({ top: 0 })
+      this.updateRoute()
+      this.recipes = []
+      this.$refs.infiniteScroll.reset()
+      this.$refs.infiniteScroll.resume()
+      this.$refs.infiniteScroll.trigger()
+    }
+  },
+  watch: {
+    collectionId () {
+      this.onClickSearch()
+    },
+    onlyOwnRecipes () {
+      this.onClickSearch()
+    },
+    categoryId () {
+      this.onClickSearch()
+    }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'auth/getUser'
+    })
+  }
 }
 </script>
 
