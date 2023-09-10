@@ -2,6 +2,7 @@
   <q-page padding class="page-content column flex">
     <h4 class="text-white text-center">Collection: {{ collection.name }}</h4>
     <simple-recipes-search-list
+      v-if="collectionLoaded"
       :collection-id="collection.id"
       @empty="showNoData = $event"
     />
@@ -48,10 +49,12 @@ export default {
     }
     next(vm => {
       vm.collection = collection
+      vm.collectionLoaded = true
     })
   },
   data () {
     return {
+      collectionLoaded: false,
       collection: {
         name: 'Test',
         description: '',
