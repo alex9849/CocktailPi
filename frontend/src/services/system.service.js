@@ -78,6 +78,23 @@ class SystemService {
     return axios.get(API_PATH + 'i2cprobe')
       .then(x => x.data)
   }
+
+  getDefaultFilter () {
+    return axios.get(API_PATH + 'settings/defaultfilter')
+      .then(x => {
+        x = x.data
+        if (!x.enable) {
+          x.filter = {
+            fabricable: ''
+          }
+        }
+        return x
+      })
+  }
+
+  setDefaultFilter (defaultFilter) {
+    return axios.put(API_PATH + 'settings/defaultfilter', defaultFilter)
+  }
 }
 
 export default new SystemService()

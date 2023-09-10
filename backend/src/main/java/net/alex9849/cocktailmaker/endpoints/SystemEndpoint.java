@@ -1,9 +1,11 @@
 package net.alex9849.cocktailmaker.endpoints;
 
 import jakarta.validation.Valid;
+import net.alex9849.cocktailmaker.model.system.settings.DefaultFilterSettings;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
 import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.payload.dto.system.I2cAddressDto;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailmaker.service.PumpService;
@@ -93,5 +95,18 @@ public class SystemEndpoint {
     @RequestMapping(value = "i2cprobe", method = RequestMethod.GET)
     public ResponseEntity<?> getI2CProbe() throws IOException {
         return ResponseEntity.ok(systemService.probeI2c().stream().map(I2cAddressDto.Response::new).toList());
+    }
+
+    @RequestMapping(value = "settings/defaultfilter", method = RequestMethod.GET)
+    public ResponseEntity<?> getDefaultFilter() {
+        return ResponseEntity.ok(new DefaultFilterDto.Duplex.Detailed(systemService.getDefaultFilterSettings()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "settings/defaultfilter", method = RequestMethod.PUT)
+    public ResponseEntity<?> getDefaultFilter(@Valid @RequestBody DefaultFilterDto.Duplex.Detailed filter) {
+        DefaultFilterSettings dfs = systemService.fromDto(filter);
+        systemService.setDefaultFilterSettings(dfs);
+        return ResponseEntity.ok().build();
     }
 }

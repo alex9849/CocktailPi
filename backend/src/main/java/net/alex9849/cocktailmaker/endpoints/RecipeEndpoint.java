@@ -61,7 +61,7 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
                                          @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
-        final int pageSize = 10;
+        final int pageSize = 12;
         page = Math.max(page, 0);
         Sort sort;
         switch (orderBy) {

@@ -4,7 +4,9 @@ import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.I2cAddress;
 import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
+import net.alex9849.cocktailmaker.model.system.settings.DefaultFilterSettings;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
@@ -32,6 +34,8 @@ import java.util.regex.Pattern;
 public class SystemService {
     public static final String REPO_KEY_I2C_PIN_SDA = "I2C_Pin_SDA";
     public static final String REPO_KEY_I2C_PIN_SCL = "I2C_Pin_SCL";
+    public static final String REPO_KEY_DF_ENABLE = "DF_Enable";
+    public static final String REPO_KEY_DF_SETTING_FABRICABLE = "DF_Settings_Fabricable";
 
     @Value("${alex9849.app.demoMode}")
     private boolean isDemoMode;
@@ -185,5 +189,54 @@ public class SystemService {
             i2CSettings.setSclPin(optionsRepository.getPinOption(REPO_KEY_I2C_PIN_SCL).orElse(null));
         }
         return i2CSettings;
+    }
+
+    public DefaultFilterSettings getDefaultFilterSettings() {
+        DefaultFilterSettings defaultFilter = new DefaultFilterSettings();
+        defaultFilter.setEnable(Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_DF_ENABLE)));
+        if(defaultFilter.isEnable()) {
+            DefaultFilterSettings.Filter filter = new DefaultFilterSettings.Filter();
+            String fabricableString = optionsRepository.getOption(REPO_KEY_DF_SETTING_FABRICABLE);
+            try {
+                filter.setFabricable(RecipeService.FabricableFilter.valueOf(fabricableString));
+            } catch (IllegalArgumentException e) {
+                filter.setFabricable(RecipeService.FabricableFilter.ALL);
+            }
+            defaultFilter.setFilter(filter);
+        }
+        return defaultFilter;
+    }
+
+    public DefaultFilterSettings setDefaultFilterSettings(DefaultFilterSettings settings) {
+        optionsRepository.setOption(REPO_KEY_DF_ENABLE, Boolean.toString(settings.isEnable()));
+        if(settings.isEnable()) {
+            DefaultFilterSettings.Filter filter = settings.getFilter();
+            optionsRepository.setOption(REPO_KEY_DF_SETTING_FABRICABLE, filter.getFabricable().toString());
+        } else {
+            optionsRepository.delOption(REPO_KEY_DF_SETTING_FABRICABLE, false);
+        }
+        return getDefaultFilterSettings();
+    }
+
+    public DefaultFilterSettings fromDto(DefaultFilterDto.Duplex.Detailed dto) {
+        if(dto == null) {
+            return null;
+        }
+        DefaultFilterSettings dfs = new DefaultFilterSettings();
+
+        if(!dto.isEnable() || dto.getFilter() == null) {
+            dfs.setEnable(false);
+            return dfs;
+        }
+        dfs.setEnable(true);
+        DefaultFilterSettings.Filter filter = new DefaultFilterSettings.Filter();
+        switch (dto.getFilter().getFabricable()) {
+            case "" -> filter.setFabricable(RecipeService.FabricableFilter.ALL);
+            case "auto" -> filter.setFabricable(RecipeService.FabricableFilter.AUTOMATICALLY);
+            case "manual" -> filter.setFabricable(RecipeService.FabricableFilter.IN_BAR);
+            default -> throw new IllegalArgumentException("Unknown filter type: " + dto.getFilter().getFabricable());
+        }
+        dfs.setFilter(filter);
+        return dfs;
     }
 }
