@@ -8,3 +8,12 @@ export const fetchGlobalSettings = ({ commit }) => {
     }
   )
 }
+
+export const fetchDefaultFilter = ({ commit }) => {
+  return SystemService.getDefaultFilter().then(
+    x => {
+      commit('setDefaultFilter', x)
+      return Promise.resolve(x)
+    }
+  )
+}

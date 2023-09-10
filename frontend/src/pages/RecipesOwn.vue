@@ -30,10 +30,15 @@
 import CRecipeSearchList from '../components/CRecipeSearchList'
 import TopButtonArranger from 'components/TopButtonArranger'
 import { mapGetters } from 'vuex'
+import store from '../store'
 
 export default {
   name: 'OwnRecipes',
   components: { TopButtonArranger, CRecipeSearchList },
+  async beforeRouteEnter (to, from, next) {
+    await store().dispatch('common/fetchDefaultFilter')
+    next()
+  },
   data () {
     return {
       refreshing: false

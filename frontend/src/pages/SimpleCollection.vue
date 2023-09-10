@@ -27,6 +27,7 @@
 import CollectionService from 'src/services/collection.service'
 import SimpleRecipesSearchList from 'pages/SimpleRecipesSearchList'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
+import store from '../store'
 
 export default {
   name: 'SimpleCollection',
@@ -35,6 +36,7 @@ export default {
   },
   components: { SimpleRecipesSearchList },
   async beforeRouteEnter (to, from, next) {
+    await store().dispatch('common/fetchDefaultFilter')
     let collection
     try {
       collection = await CollectionService.getCollection(to.params.collectionId)

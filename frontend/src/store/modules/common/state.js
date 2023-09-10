@@ -14,6 +14,10 @@ export default function () {
         showDisclaimer: false,
         disclaimerDelay: 30000
       }
+    },
+    defaultFilter: {
+      enable: false,
+      filter: null
     }
   }
 }

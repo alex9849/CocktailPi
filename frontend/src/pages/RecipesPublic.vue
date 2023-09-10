@@ -42,9 +42,10 @@ export default {
       refreshing: false
     }
   },
-  beforeRouteEnter (to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     to.meta.category = store().getters['category/getCategories']
       .find(x => x.id == to.params.cid)
+    await store().dispatch('common/fetchDefaultFilter')
     next()
   },
   beforeRouteUpdate (to, from, next) {

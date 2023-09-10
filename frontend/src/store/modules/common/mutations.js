@@ -18,3 +18,7 @@ export const openExternalLink = (state, payload) => {
   state.externalLink.destination = payload
   state.externalLink.trigger = !state.externalLink.trigger
 }
+
+export const setDefaultFilter = (state, payload) => {
+  state.defaultFilter = payload
+}

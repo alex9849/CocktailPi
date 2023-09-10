@@ -41,14 +41,20 @@ export const recipeSearchListLogic = {
         containsIngredients = [containsIngredients]
       }
 
+      const filter = {
+        query: queryParams.query ? queryParams.query : '',
+        fabricable: queryParams.fabricable ? queryParams.fabricable : '',
+        containsIngredients: containsIngredients,
+        orderBy: queryParams.orderBy
+      }
+      const filterSet = filter.query || filter.fabricable || filter.containsIngredients.length !== 0 || filter.orderBy
+      const defaultFilter = this.$store.getters['common/getDefaultFilter']
+      if (defaultFilter.enable && !filterSet) {
+        filter.fabricable = defaultFilter.filter.fabricable
+        this.updateRoute(filter)
+      }
       return {
-        filter: {
-          query: queryParams.query ? queryParams.query : '',
-          fabricable: queryParams.fabricable ? queryParams.fabricable : '',
-          containsIngredients: containsIngredients,
-          orderBy: queryParams.orderBy
-        },
-        page: queryParams.page ? (Number(queryParams.page) - 1) : 0
+        filter
       }
     },
     updateRecipes (withLoadingAnimation = true) {
@@ -80,14 +86,14 @@ export const recipeSearchListLogic = {
         }, withLoadingAnimation ? 500 : 0)
       })
     },
-    updateRoute () {
+    updateRoute (filter = this.filter) {
       let query = {
-        page: this.pagination.page + 1
+        page: this.pagination?.page + 1
       }
       if (query.page === 1) {
         delete query.page
       }
-      query = Object.assign(query, this.filter)
+      query = Object.assign(query, filter)
       query = JsUtils.cleanObject(query)
       this.$router.replace({ name: this.$route.name, query: query }).catch(() => {})
     },

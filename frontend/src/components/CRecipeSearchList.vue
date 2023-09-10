@@ -69,6 +69,7 @@ import RecipeService from 'src/services/recipe.service'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
 import { mapGetters } from 'vuex'
+import SystemService from 'src/services/system.service'
 
 export default {
   name: 'CRecipeSearchList',
@@ -119,20 +120,27 @@ export default {
       if (!Array.isArray(containsIngredients)) {
         containsIngredients = [containsIngredients]
       }
-
+      const filter = {
+        query: queryParams.query ? queryParams.query : '',
+        fabricable: queryParams.fabricable ? queryParams.fabricable : '',
+        containsIngredients: containsIngredients,
+        orderBy: queryParams.orderBy
+      }
+      const filterSet = filter.query || filter.fabricable || filter.containsIngredients.length !== 0 || filter.orderBy
+      const defaultFilter = this.$store.getters['common/getDefaultFilter']
+      if (defaultFilter.enable && !filterSet) {
+        filter.fabricable = defaultFilter.filter.fabricable
+        this.updateRoute(filter)
+      }
       return {
-        filter: {
-          query: queryParams.query ? queryParams.query : '',
-          fabricable: queryParams.fabricable ? queryParams.fabricable : '',
-          containsIngredients: containsIngredients,
-          orderBy: queryParams.orderBy
-        }
+        filter
       }
     },
-    updateRoute () {
-      let query = Object.assign({}, this.filter)
+    updateRoute (filter = this.filter) {
+      let query = Object.assign({}, filter)
       query = JsUtils.cleanObject(query)
-      this.$router.replace({ name: this.$route.name, query: query }).catch(() => {})
+      this.$router.replace({ name: this.$route.name, query: query }).catch(() => {
+      })
     },
     updateRecipes (withLoadingAnimation = true, page) {
       this.loading = true

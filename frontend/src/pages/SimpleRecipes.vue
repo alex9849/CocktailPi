@@ -25,9 +25,15 @@
 <script>
 import SimpleRecipesSearchList from 'pages/SimpleRecipesSearchList'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
+import store from '../store'
+
 export default {
   name: 'SimpleRecipes',
   components: { SimpleRecipesSearchList },
+  async beforeRouteEnter (to, from, next) {
+    await store().dispatch('common/fetchDefaultFilter')
+    next()
+  },
   data () {
     return {
       showNoData: false
