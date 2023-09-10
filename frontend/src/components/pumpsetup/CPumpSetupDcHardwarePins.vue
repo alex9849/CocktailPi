@@ -51,6 +51,7 @@
         map-options
         emit-value
         outlined
+        clearable
         hide-bottom-space
         label="Power State"
         @update:model-value="$emit('update:isPowerStateHigh', $event)"
