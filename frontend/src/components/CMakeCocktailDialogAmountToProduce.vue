@@ -134,6 +134,9 @@ export default {
           }
         }
         this.$emit('initialized')
+        if (this.availableGlasses.length === 0) {
+          this.$emit('valid', true)
+        }
       })
       .finally(() => {
         this.loading = false
