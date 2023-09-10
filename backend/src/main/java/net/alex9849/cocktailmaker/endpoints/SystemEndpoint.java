@@ -106,7 +106,7 @@ public class SystemEndpoint {
     @RequestMapping(value = "settings/defaultfilter", method = RequestMethod.PUT)
     public ResponseEntity<?> getDefaultFilter(@Valid @RequestBody DefaultFilterDto.Duplex.Detailed filter) {
         DefaultFilterSettings dfs = systemService.fromDto(filter);
-        systemService.setDefaultFilterSettings(dfs);
-        return ResponseEntity.ok().build();
+        dfs = systemService.setDefaultFilterSettings(dfs);
+        return ResponseEntity.ok(new DefaultFilterDto.Duplex.Detailed(dfs));
     }
 }

@@ -94,6 +94,15 @@ class SystemService {
 
   setDefaultFilter (defaultFilter) {
     return axios.put(API_PATH + 'settings/defaultfilter', defaultFilter)
+      .then(x => {
+        x = x.data
+        if (!x.enable) {
+          x.filter = {
+            fabricable: ''
+          }
+        }
+        return x
+      })
   }
 }
 

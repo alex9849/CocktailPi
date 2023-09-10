@@ -56,18 +56,21 @@
               <div class="col-grow">
                 <div class="row">
                   <q-radio
+                    :disable="defaultFilter.saving"
                     label="Show all"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val=""
                     class="col-12 col-sm-4"
                   />
                   <q-radio
+                    :disable="defaultFilter.saving"
                     label="Fabricable with owned ingredients"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val="manual"
                     class="col-12 col-sm-4"
                   />
                   <q-radio
+                    :disable="defaultFilter.saving"
                     label="Fabricable fully automatic"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val="auto"
@@ -151,9 +154,6 @@ export default {
     onClickSaveDefaultFilter () {
       this.defaultFilter.saving = true
       SystemService.setDefaultFilter(this.defaultFilter.data)
-        .then(() => {
-          return SystemService.getDefaultFilter()
-        })
         .then((x) => {
           this.defaultFilter.data = x
           this.$q.notify({
