@@ -76,7 +76,7 @@ public class StepperPump extends Pump {
 
     @Override
     protected boolean isCalibrationCompleted() {
-        return this.acceleration != null && this.stepsPerCl != null && this.maxStepsPerSecond != null;
+        return this.acceleration != null && this.stepsPerCl != null && this.maxStepsPerSecond != null && this.getTubeCapacityInMl() != null;
     }
 
     public AcceleratingStepper getMotorDriver() {
