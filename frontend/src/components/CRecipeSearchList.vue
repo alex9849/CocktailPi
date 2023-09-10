@@ -82,7 +82,7 @@ export default {
         this.$refs.infiniteScroll.stop()
         return
       }
-      this.updateRecipes(true, index - 1)
+      this.updateRecipes(false, index - 1)
         .then(x => {
           done()
         })
