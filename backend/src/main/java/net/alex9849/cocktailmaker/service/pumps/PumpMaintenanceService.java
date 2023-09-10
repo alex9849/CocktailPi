@@ -149,7 +149,7 @@ public class PumpMaintenanceService {
                 throw new IllegalArgumentException("Reverse pumping not enabled!");
             }
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
-                overshootMultiplier += reversePumpSettings.getSettings().getOvershoot();
+                overshootMultiplier += reversePumpSettings.getSettings().getOvershoot() / 100d;
             }
             this.directionPin.digitalWrite(PinState.LOW);
             final Runnable oldCallback = callback;
