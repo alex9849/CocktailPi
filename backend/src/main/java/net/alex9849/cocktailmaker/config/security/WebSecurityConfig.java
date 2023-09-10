@@ -65,7 +65,6 @@ public class WebSecurityConfig {
                         authorizeHttpRequests
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers("/websocket/**").permitAll()
-                                .requestMatchers("/api/csrf").permitAll()
                                 .requestMatchers("/api/auth/refreshToken").authenticated()
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/recipe/*/image").permitAll()
@@ -75,44 +74,10 @@ public class WebSecurityConfig {
                 )
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("**")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
-                )
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .headers(c -> c.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         return http.build();
-    }
-}
-
-final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
-    private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
-
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
-        this.delegate.handle(request, response, csrfToken);
-    }
-
-    @Override
-    public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-        if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {
-            return super.resolveCsrfTokenValue(request, csrfToken);
-        }
-        return this.delegate.resolveCsrfTokenValue(request, csrfToken);
-    }
-}
-
-final class CsrfCookieFilter extends OncePerRequestFilter {
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
-        csrfToken.getToken();
-
-        filterChain.doFilter(request, response);
     }
 }

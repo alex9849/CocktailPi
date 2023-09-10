@@ -60,17 +60,10 @@ class WebsocketService {
       }, reconnectThrottle * 1000))
     }
     try {
-      this.csrf = await this.getCsrfToken()
-      this.stompClient.connectHeaders[this.csrf.headerName] = this.csrf.token
       this.stompClient.activate()
     } catch (e) {
       this.stompClient.onWebSocketClose()
     }
-  }
-
-  async getCsrfToken () {
-    const token = await axios.get('/api/csrf')
-    return token.data
   }
 
   disconnectWebsocket () {
