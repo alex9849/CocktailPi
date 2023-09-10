@@ -209,7 +209,7 @@ export default {
       if (this.v.editRecipe.$invalid) {
         return
       }
-      this.loading = true
+      this.sending = true
       const dto = recipeDtoMapper.toRecipeCreateDto(this.editRecipe.recipe)
 
       let promise
@@ -228,7 +228,7 @@ export default {
         this.$router.push({ name: 'recipedetails', params: { id: recipe.id } })
       })
       promise.finally(() => {
-        this.loading = false
+        this.sending = false
       })
     }
   },

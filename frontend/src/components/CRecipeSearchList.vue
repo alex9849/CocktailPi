@@ -8,7 +8,7 @@
     />
     <q-infinite-scroll
       @load="onLoad"
-      :offset="250"
+      :offset="300"
       ref="infiniteScroll"
     >
       <template v-slot:loading>

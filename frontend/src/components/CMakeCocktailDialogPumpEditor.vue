@@ -74,6 +74,7 @@
         :props="props"
       >
         <q-input
+          style="min-width: 200px"
           :model-value="props.row.fillingLevelInMl"
           @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number($event), $event === '')"
           debounce="500"
