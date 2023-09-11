@@ -1,5 +1,10 @@
 # CocktailMaker
 
+**Main Project Website:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)  
+**Parts list for reproduction:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)  
+**Software setup Instructions:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install)  
+**Community & Support:** [Discord - Click me](https://discord.gg/kGy7Up4b6S)  
+
 The “Cocktail-Maker” is not only a piece of software. 
 It’s a cocktail-mixing-machine, that works with a Raspberry-Pi, 
 that controls multiple pumps, which have different ingredients assigned. 
@@ -15,12 +20,32 @@ production step get bottled at the same time.
 The order in which ingredients get bottled can be changed via drag & 
 drop.
 
+# Main Features:
+
+The controlling software is designed to enhance your cocktail-making experience like never before. With its advanced features, you can easily create and customize your favorite cocktails with just a few clicks.
+- Add and edit recipes within the user interface.
+- Extra user interface for enhanced local touchscreen usage.
+- Virtual stirring functionality.
+- Ingredient substitution for greater flexibility.
+- Custom recipe adjustments can be made while ordering.
+- Create recipe collections for easy organization.
+- Multiple users with different roles can be added for greater security.
+- Event system allows for triggering custom actions at specific events.
+- Manual production steps can be added and prompted during production for greater precision.
+- Automatically detect which recipes can be ordered and which cannot, for smoother operation.
+- _And much more …._
+
 # Demo
 A demo can be found here: https://cocktailmaker-demo.liggesmeyer.net/
 User: Admin  
 Password: 123456  
 
+# Call to action
+Developing the software for this cocktail machine took a lot of time, and I still have features in mind that I want to implement. The cocktail maker software doesn’t send any data to me or other third parties, so I don’t get any feedback when someone is using the software. If you like the project, please consider giving it a „star“ on GitHub so that I can see that people are using it. Alternatively, I would also appreciate donations. The latter can be done here: https://github.com/sponsors/alex9849
+
 # Build the hardware
+
+You can find a more detailed instruction with an example list of building parts on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
 
 In order to use this machine in a useful way, you need to build your own hardware.
 In simple words produces the Cocktail-Maker-Software different recipes by 
@@ -36,25 +61,12 @@ is that you need to be able to apply that concept to your setup.
 ![Blueprint with voltage direcor](./documentation/img/blueprint-vd.png "Blueprint with voltage direcor")
 
 ### This is the hardware that I've used for my machine:
- * 1x RaspberryPi: https://amzn.to/3NYmSvH (Other platforms like NanoPi or BananaPi are not supported)
- * 1x Relay-Board: https://amzn.to/3yIcjrk
- * 8x Dosing pumps: https://amzn.to/3NWLPry or with prime: https://amzn.to/3Obbvkm
- * 8x Diodes (reverse current diodes)
- * 1x 9V Power supply: https://bit.ly/2ZJPIcP
- * Silicone hose: https://amzn.to/3AJXmHA
- * Cables
- 
-### Fancy stuff.
-You can also use this (additional) hardware to improve your setup even more:
- * 1x Touchscreen 7 inch: https://amzn.to/3uJ2wQr
- * 16x 12V Dosing pump: https://amzn.to/3P5PWmi (More expensive, but I was told that the pump is also more quiet. It is also faster.)
- * 1x 16-Channel Relay-Board: https://amzn.to/3ayIfpX
- * 1x 12V power supply: https://amzn.to/3IxwDA1 (Can be used with 12V pumps)
- * 1x 12V power stabalizer: https://amzn.to/3uFtsAw (Can be used to power the machine by battery)
- * 1x 5V step down power supply: https://amzn.to/3Rsmb0J (for the raspberry)
- * 4x Rectifier diode: https://amzn.to/3yyz3tK (If you use the power supply and the power stabalizer)
- * 1x LAN-Cable box: https://amzn.to/3P66ril (For the case)
+You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
 
 # Installation
 
-An installation tutorial can be found here: https://github.com/alex9849/pi-cocktail-maker/wiki/Installation
+An installation tutorial can be found here: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install
+
+# Community & Support
+
+If you have questions, want to share your setup or just want to talk about cocktail machines, feel free to join our discord server: [Click me](https://discord.gg/kGy7Up4b6S)
