@@ -39,7 +39,7 @@
             <q-img
               v-if="recipe.hasImage"
               :ratio="16/9"
-              :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+              :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getTime()"
               class="rounded-borders shadow-1"
               placeholder-src="~assets/cocktail-solid.png"
             />

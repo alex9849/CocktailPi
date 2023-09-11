@@ -10,7 +10,7 @@
       >
         <div class="col-12 col-sm-4 col-md-4 col-lg-3 flex">
           <q-img
-            :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+            :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getTime()"
             v-if="recipe.hasImage"
             placeholder-src="~assets/cocktail-solid.png"
             :ratio="16/9"

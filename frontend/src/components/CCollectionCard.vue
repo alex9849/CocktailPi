@@ -5,7 +5,7 @@
         <q-img v-if="modelValue.hasImage"
                :src="this.$store.getters['auth/getFormattedServerAddress']
                   + '/api/collection/' + this.modelValue.id + '/image?timestamp='
-                  + this.modelValue.lastUpdate.getMilliseconds()"
+                  + this.modelValue.lastUpdate.getTime()"
                placeholder-src="~assets/cocktail-solid.png"
                :ratio="1"
                class="rounded-borders"

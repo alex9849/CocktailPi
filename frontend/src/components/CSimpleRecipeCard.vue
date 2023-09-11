@@ -18,7 +18,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none col-12">
       <q-img
-        :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
+        :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getTime()"
         v-if="recipe.hasImage"
         placeholder-src="~assets/cocktail-solid.png"
         :ratio="16/9"

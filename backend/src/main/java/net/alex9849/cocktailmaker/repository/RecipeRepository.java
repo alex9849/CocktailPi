@@ -299,9 +299,7 @@ public class RecipeRepository extends JdbcDaoSupport {
         recipe.setId(rs.getLong("id"));
         recipe.setDescription(rs.getString("description"));
         recipe.setName(rs.getString("name"));
-        Date lastUpdate = new Date();
-        lastUpdate.setTime(rs.getLong("last_update"));
-        recipe.setLastUpdate(lastUpdate);
+        recipe.setLastUpdate(rs.getTimestamp("last_update"));
         recipe.setHasImage(rs.getBoolean("has_image"));
         recipe.setDefaultGlassId(rs.getLong("glass_id"));
         return recipe;

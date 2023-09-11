@@ -82,7 +82,7 @@
                 <q-img v-if="collection.hasImage"
                        class="col rounded-borders"
                        style="max-height: 200px"
-                       :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + collection.id + '/image?timestamp=' + collection.lastUpdate.getMilliseconds()"
+                       :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + collection.id + '/image?timestamp=' + collection.lastUpdate.getTime()"
                 />
               </div>
               <q-input label="Name"
