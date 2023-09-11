@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-buster
+FROM openjdk:17-jdk-buster
 EXPOSE 8080/tcp
 
 RUN apt update
