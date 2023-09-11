@@ -145,18 +145,6 @@ public class PumpService {
         }
     }
 
-    /*public void orderIngredient(User user, Ingredient ingredient, CocktailOrderConfiguration orderConfiguration) {
-        if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
-            throw new IllegalArgumentException("Some pumps are currently occupied!");
-        }
-        cocktailOrderService.orderCocktail(user, ingredient, orderConfiguration, () -> lockService.releaseGlobal(cocktailOrderService));
-
-    }
-
-    public FeasibilityFactory checkFeasibility(Ingredient ingredient, CocktailOrderConfiguration orderConfig) {
-        return cocktailOrderService.checkFeasibility(ingredient, orderConfig);
-    }*/
-
     public void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
         if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
