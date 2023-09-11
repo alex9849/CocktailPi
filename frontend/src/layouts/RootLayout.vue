@@ -14,6 +14,10 @@ export default {
   created () {
     const isKiosk = Object.hasOwn(this.$route.query, 'isKiosk')
     this.setShowExternalLinksAsQrCode((isKiosk))
+    const isMobile = Object.hasOwn(this.$route.query, 'isMobile')
+    if (isMobile) {
+      this.$q.platform.is.mobile = true
+    }
   },
   methods: {
     ...mapMutations({
