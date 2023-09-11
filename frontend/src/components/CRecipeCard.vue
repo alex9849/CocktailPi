@@ -8,7 +8,7 @@
       <div
         class="row q-col-gutter-md"
       >
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 flex">
+        <div class="col-12 col-sm-4 col-md-4 col-lg-3 flex">
           <q-img
             :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getMilliseconds()"
             v-if="recipe.hasImage"
@@ -26,7 +26,7 @@
             src="~assets/cocktail-solid.png"
           />
         </div>
-        <div class="col-12 col-sm-6 col-md-8 col-lg-9" style="display: flex; flex-direction: column">
+        <div class="col-12 col-sm-8 col-md-8 col-lg-9" style="display: flex; flex-direction: column">
           <div class="row">
             <div class="col">
               <p class="text-h5">
