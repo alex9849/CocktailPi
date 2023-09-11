@@ -70,13 +70,6 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
-        pumpService.deletePump(id);
-        return ResponseEntity.ok().build();
-    }
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create patchPumpDto) {
