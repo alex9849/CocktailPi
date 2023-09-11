@@ -17,7 +17,8 @@ import java.util.Set;
 public class PumpDto {
     //Common
     private interface Id { long getId(); }
-    private interface FillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
+    private interface FillingLevelInMl { @Min(0) int getFillingLevelInMl(); }
+    private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
     private interface TubeCapacityInMl { @Min(1) Double getTubeCapacityInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
@@ -43,7 +44,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "dc"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
-        public static class Create implements FillingLevelInMl, TubeCapacityInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields {
+        public static class Create implements TubeCapacityInMl, PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             Boolean isPumpedUp;
@@ -67,7 +68,7 @@ public class PumpDto {
                 CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name {
             long id;
             Double tubeCapacityInMl;
-            Integer fillingLevelInMl;
+            int fillingLevelInMl;
             boolean pumpedUp;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             String name;

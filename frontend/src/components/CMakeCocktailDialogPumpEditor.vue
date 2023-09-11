@@ -82,7 +82,7 @@
         <q-input
           style="min-width: 200px"
           :model-value="props.row.fillingLevelInMl"
-          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number($event), $event === '')"
+          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event))"
           debounce="500"
           :loading="attrState.fillingLevelInMl.includes(props.row.id, 0)"
           :disable="getPumpState(props.row.id).occupied"
@@ -95,7 +95,7 @@
           </template>
           <template v-slot:after>
             <q-btn
-              @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize), $event === '')"
+              @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize))"
               :loading="attrState.fillingLevelInMl.includes(props.row.id, 0)"
               :disable="getPumpState(props.row.id).occupied || !props.row.currentIngredient"
               dense

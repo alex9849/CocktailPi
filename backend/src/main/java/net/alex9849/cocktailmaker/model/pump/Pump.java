@@ -11,7 +11,7 @@ import java.util.Objects;
 public abstract class Pump {
     private long id;
     private Double tubeCapacityInMl;
-    private Integer fillingLevelInMl;
+    private int fillingLevelInMl;
     private Long currentIngredientId;
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
@@ -64,11 +64,11 @@ public abstract class Pump {
         this.currentIngredientId = (currentIngredient != null)? currentIngredient.getId() : null;
     }
 
-    public Integer getFillingLevelInMl() {
+    public int getFillingLevelInMl() {
         return fillingLevelInMl;
     }
 
-    public void setFillingLevelInMl(Integer fillingLevelInMl) {
+    public void setFillingLevelInMl(int fillingLevelInMl) {
         this.fillingLevelInMl = fillingLevelInMl;
     }
 
@@ -98,7 +98,7 @@ public abstract class Pump {
     }
 
     public boolean isCompleted() {
-        return this.isCanPumpUp() && this.fillingLevelInMl != null;
+        return this.isCanPumpUp();
     }
 
     protected abstract boolean isHwPinsCompleted();
@@ -109,7 +109,6 @@ public abstract class Pump {
         boolean handleComplete = getName() != null;
         boolean isHwPinsComplete = isHwPinsCompleted();
         boolean isCalibrationComplete = isCalibrationCompleted();
-        boolean stateComplete = getCurrentIngredient() != null && getFillingLevelInMl() != null;
         SetupStage stage = SetupStage.HANDLE;
         if(handleComplete) {
             stage = SetupStage.HW_PINS;
@@ -120,14 +119,11 @@ public abstract class Pump {
         if(isHwPinsComplete && isCalibrationComplete) {
             stage = SetupStage.STATE;
         }
-        if(isHwPinsComplete && isCalibrationComplete && stateComplete) {
-            stage = SetupStage.COMPLETE;
-        }
         return stage;
     }
 
     public enum SetupStage {
-        HANDLE(0), HW_PINS(1), CALIBRATE(2), STATE(3), COMPLETE(4);
+        HANDLE(0), HW_PINS(1), CALIBRATE(2), STATE(3);
         public int level;
         SetupStage(int level) {
             this.level = level;

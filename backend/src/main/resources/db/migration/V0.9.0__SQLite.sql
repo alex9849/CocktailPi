@@ -50,7 +50,7 @@ create table pumps
     completed             BOOLEAN not null,
     tube_capacity         REAL check (tube_capacity >= 0),
     current_ingredient_id INTEGER references ingredients on delete set null,
-    filling_level_in_ml   INTEGER,
+    filling_level_in_ml   INTEGER not null check (filling_level_in_ml >= 0),
     is_pumped_up          BOOLEAN not null default false,
     dc_pin_board          INTEGER,
     dc_pin_nr             INTEGER,

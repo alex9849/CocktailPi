@@ -220,7 +220,7 @@
         </div>
       </q-step>
       <q-step
-        :caption="stateComplete ? 'Complete' : 'Optional'"
+        caption="Optional"
         title="State"
         :name="3"
         :icon="mdiPencilOutline"
@@ -260,7 +260,7 @@
             <template v-slot:fields>
               <q-input
                 :model-value="pump.fillingLevelInMl"
-                @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event, $event === '')"
+                @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event === '' ? 0 : Number($event))"
                 :error-message="attrState.fillingLevelInMl.errorMsg"
                 :error="!!attrState.fillingLevelInMl.errorMsg"
                 :loading="attrState.fillingLevelInMl.loading"
@@ -477,7 +477,7 @@ export default {
         return
       }
     }
-    const stepper = Math.min(3, pump.setupStage)
+    const stepper = pump.setupStage
     next(vm => {
       vm.pump = pump
       vm.stepper = stepper
@@ -566,9 +566,6 @@ export default {
     },
     calibrationComplete () {
       return this.pump.setupStage > 2
-    },
-    stateComplete () {
-      return this.pump.setupStage > 3
     }
   }
 }
