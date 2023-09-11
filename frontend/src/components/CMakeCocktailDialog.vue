@@ -32,8 +32,7 @@
         <c-make-cocktail-dialog-amount-to-produce
           v-model:model-value="v.amountToProduce.$model"
           :recipe-default-glass="recipe.defaultGlass"
-          @initialized="glassSelectorInitialized = true; tryCheckFeasibility()"
-          @valid="amountToProduceValid = $event; tryCheckFeasibility()"
+          :default-value-no-glass="250"
         />
         <div class="q-gutter-y-sm">
           <c-make-cocktail-dialog-ingredient-group-replacements
@@ -139,9 +138,7 @@ export default {
   emits: ['update:show', 'postOrder'],
   data () {
     return {
-      amountToProduceValid: false,
-      glassSelectorInitialized: false,
-      amountToProduce: 250,
+      amountToProduce: '',
       feasibilityReportValid: false,
       feasibilityReport: {
         ingredientGroupReplacements: [],
@@ -224,8 +221,7 @@ export default {
   },
   methods: {
     tryCheckFeasibility (orderConfig = this.getCurrentOrderConfigurationDto()) {
-      if (!this.recipe || !this.getPumpLayout || !this.amountToProduce ||
-        !this.glassSelectorInitialized || !this.amountToProduceValid) {
+      if (!this.recipe || !this.getPumpLayout || !this.amountToProduce) {
         return
       }
       this.checkFeasibility(orderConfig)
@@ -343,8 +339,7 @@ export default {
       return this.feasibilityOk &&
         !this.anyPumpOccupied &&
         !this.hasCocktailProgress &&
-        !this.v.amountToProduce.$invalid &&
-        this.amountToProduceValid
+        !this.v.amountToProduce.$invalid
     },
     ingredientsToAddManually () {
       return this.feasibilityReport.requiredIngredients
