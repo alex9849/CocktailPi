@@ -212,21 +212,21 @@ CREATE TRIGGER check_illegal_ingredient_cycle
     ON ingredients
     WHEN new.parent_group_id IS NOT NULL
 BEGIN
-    SELECT CASE
-               WHEN EXISTS(WITH RECURSIVE list_parents(id, parent_id)
-                                              AS (SELECT i.id AS id, i.parent_group_id AS parent_id
-                                                  FROM ingredients AS i
-                                                  WHERE i.parent_group_id = NEW.id --My id to insert
-                                                  UNION ALL
-                                                  SELECT i.id AS id, i.parent_group_id AS parent_id
-                                                  FROM ingredients AS i
-                                                           join list_parents lp on i.parent_group_id = lp.id)
-                           SELECT *
-                           from list_parents
-                           WHERE list_parents.id = NEW.parent_group_id --My own (new) parent;
-                           LIMIT 1) THEN
-                   RAISE(ABORT, 'Illegal cycle detected')
-               END;
+SELECT CASE
+           WHEN EXISTS(WITH RECURSIVE list_parents(id, parent_id)
+                                          AS (SELECT i.id AS id, i.parent_group_id AS parent_id
+                                              FROM ingredients AS i
+                                              WHERE i.parent_group_id = NEW.id --My id to insert
+                                              UNION ALL
+                                              SELECT i.id AS id, i.parent_group_id AS parent_id
+                                              FROM ingredients AS i
+                                                       join list_parents lp on i.parent_group_id = lp.id)
+                       SELECT *
+                       from list_parents
+                       WHERE list_parents.id = NEW.parent_group_id --My own (new) parent;
+                       LIMIT 1) THEN
+               RAISE(ABORT, 'Illegal cycle detected')
+           END;
 END;
 
 
@@ -235,13 +235,13 @@ CREATE TRIGGER check_illegal_ingredient_parent_insert
     ON ingredients
     WHEN NEW.parent_group_id IS NOT NULL
 BEGIN
-    SELECT CASE
-               WHEN EXISTS(SELECT i.id
-                           FROM ingredients i
-                           WHERE i.id = NEW.parent_group_id
-                             and i.dType != 'IngredientGroup') THEN
-                   RAISE(ABORT, 'Parent must be an IngredientGroup!')
-               END;
+SELECT CASE
+           WHEN EXISTS(SELECT i.id
+                       FROM ingredients i
+                       WHERE i.id = NEW.parent_group_id
+                         and i.dType != 'IngredientGroup') THEN
+               RAISE(ABORT, 'Parent must be an IngredientGroup!')
+           END;
 END;
 
 
@@ -250,13 +250,13 @@ CREATE TRIGGER check_illegal_ingredient_parent_update
     ON ingredients
     WHEN NEW.parent_group_id IS NOT NULL
 BEGIN
-    SELECT CASE
-               WHEN EXISTS(SELECT i.id
-                           FROM ingredients i
-                           WHERE i.id = NEW.parent_group_id
-                             and i.dType != 'IngredientGroup') THEN
-                   RAISE(ABORT, 'Parent must be an IngredientGroup!')
-               END;
+SELECT CASE
+           WHEN EXISTS(SELECT i.id
+                       FROM ingredients i
+                       WHERE i.id = NEW.parent_group_id
+                         and i.dType != 'IngredientGroup') THEN
+               RAISE(ABORT, 'Parent must be an IngredientGroup!')
+           END;
 END;
 
 
@@ -264,8 +264,8 @@ CREATE TRIGGER check_illegal_ingredient_dtype_update
     BEFORE UPDATE
     ON ingredients
 BEGIN
-    SELECT CASE
-               WHEN (old.dType == 'IngredientGroup' OR new.dType == 'IngredientGroup') AND old.dType != new.dType THEN
-                   RAISE(ABORT, 'Cant\t update from or to IngredientGroup!')
-               END;
+SELECT CASE
+           WHEN (old.dType == 'IngredientGroup' OR new.dType == 'IngredientGroup') AND old.dType != new.dType THEN
+               RAISE(ABORT, 'Cant\t update from or to IngredientGroup!')
+           END;
 END;
