@@ -15,8 +15,14 @@
           style="max-width: 150px; overflow: hidden"
         >
           <q-icon
-            :name="getPumpIcon(props.row.type)"
+            v-if="props.row.type === 'dc'"
+            :name="mdiPump"
           />
+          <q-icon
+            v-else
+          >
+            <img src="~assets/icons/stepper-motor.svg" />
+          </q-icon>
           {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
         </p>
       </q-td>
@@ -96,13 +102,12 @@
               class="q-ml-xs"
               color="green"
             >
-              <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" class="q-mr-xs">
-                <g>
-                  <path id="svg_1" fill="#FFFFFF" d="m10.38095,19.2987a0.80952,0.74545 0 0 1 -0.80952,-0.74545l0,-7.45455c0,-1.49091 0.80952,-2.79545 1.61905,-2.98182l0,-3.35455a0.40476,0.37273 0 0 1 0.40476,-0.37273l0.80952,0a0.40476,0.37273 0 0 1 0.40476,0.37273l0,3.35455c0.80952,0.18636 1.61905,1.49091 1.61905,2.98182l0,7.45455a0.80952,0.74545 0 0 1 -0.80952,0.74545l-3.2381,0z"/>
-                  <path id="svg_2" fill="#FFFFFF" d="m20.80898,6.44156l-3.49238,5.44156l2.24,0a7.51429,8.16234 0 0 1 -7.51429,8.16234c-1.25238,0 -2.46719,-0.3401 -3.50667,-0.95227l-1.82848,1.98617c1.54043,1.0611 3.36891,1.68688 5.33514,1.68688a10.01905,10.88312 0 0 0 10.01905,-10.88312l1.86072,0m-19.39405,0a7.51429,8.16234 0 0 1 7.51429,-8.16234c1.25238,0 2.46719,0.3401 3.50667,0.95227l1.82848,-1.98617c-1.54043,-1.0611 -3.36891,-1.68688 -5.33514,-1.68688a10.01905,10.88312 0 0 0 -10.01905,10.88312l-2.02327,0l3.27565,5.44156l3.60075,-5.44156"/>
-                </g>
-              </svg>
-              <p>Fill</p>
+              <div class="q-gutter-xs row">
+                <q-icon class="text-white">
+                  <img style="filter: brightness(0) invert(1);" src="~assets/icons/refill-bottle.svg" />
+                </q-icon>
+                <p>Fill</p>
+              </div>
             </q-btn>
           </template>
         </q-input>

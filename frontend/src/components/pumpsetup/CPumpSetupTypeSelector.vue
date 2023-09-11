@@ -28,7 +28,9 @@
               @click="$emit('clickType', 'stepper')"
             >
               <q-card-section class="text-center">
-                <q-icon size="lg" :name="mdiProgressClock"/>
+                <q-icon size="lg">
+                  <img src="~assets/icons/stepper-motor.svg" />
+                </q-icon>
                 <p class="text-bold">Stepper-Pump</p>
               </q-card-section>
             </q-card>

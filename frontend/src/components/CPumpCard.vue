@@ -12,8 +12,17 @@
           class="q-ma-none"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
         >
-          <q-icon :name="typeNameData.icon"/>
-          {{ typeNameData.label }}
+          <q-icon
+            v-if="pump.type === 'dc'"
+            :name="mdiPump"
+          >
+          </q-icon>
+          <q-icon
+            v-else
+          >
+            <img src="~assets/icons/stepper-motor.svg" />
+          </q-icon>
+          {{ pump.type === 'dc' ? 'DC Pump' : 'Stepper Pump' }}
         </p>
       </div>
       <div class="col-shrink">
@@ -407,19 +416,6 @@ export default {
         value: value,
         query: runningState.runInfinity,
         reverse: runningState.forward && runningState.runInfinity
-      }
-    },
-    typeNameData () {
-      if (this.pump.type === 'stepper') {
-        return {
-          icon: this.mdiProgressClock,
-          label: 'Stepper Pump'
-        }
-      } else {
-        return {
-          icon: this.mdiPump,
-          label: 'DC Pump'
-        }
       }
     },
     pumpedUpState () {
