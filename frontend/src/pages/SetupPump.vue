@@ -86,7 +86,7 @@
             :pin-error-msg="attrState.pin.errorMsg"
             :pin-loading="attrState.pin.loading"
             :is-power-state-high="pump.isPowerStateHigh"
-            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event, !$event)"
+            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event, $event === null)"
             :is-power-state-high-error-msg="attrState.isPowerStateHigh.errorMsg"
             :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
           />
