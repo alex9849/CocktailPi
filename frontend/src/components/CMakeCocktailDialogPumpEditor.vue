@@ -49,7 +49,7 @@
       >
         <c-ingredient-selector
           :selected="props.row.currentIngredient"
-          @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, !$event)"
+          @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, attrState.currentIngredient, !$event)"
           :disable="getPumpState(props.row.id).occupied"
           clearable
           dense
@@ -58,7 +58,7 @@
           filter-ingredient-groups
           :bg-color="markPump(props.row)? 'green-3':undefined"
           :no-input-options="missingAutomaticIngredients"
-          :loading="attrState.currentIngredient.includes(props.row.id, 0)"
+          :loading="attrState.currentIngredient.has(props.row.id)"
         >
           <template
             v-slot:afterIngredientName="{scope}"
@@ -82,10 +82,10 @@
         <q-input
           style="min-width: 200px"
           :model-value="props.row.fillingLevelInMl"
-          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event))"
+          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event), attrState.fillingLevelInMl)"
           debounce="500"
-          :loading="attrState.fillingLevelInMl.includes(props.row.id, 0)"
-          :disable="getPumpState(props.row.id).occupied"
+          :loading="attrState.fillingLevelInMl.has(props.row.id)"
+          :disable="getPumpState(props.row.id).occupied || attrState.fillingLevelInMlRefill.has(props.row.id)"
           type="number"
           dense
           outlined
@@ -95,9 +95,9 @@
           </template>
           <template v-slot:after>
             <q-btn
-              @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize))"
-              :loading="attrState.fillingLevelInMl.includes(props.row.id, 0)"
-              :disable="getPumpState(props.row.id).occupied || !props.row.currentIngredient"
+              @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize), attrState.fillingLevelInMlRefill)"
+              :loading="attrState.fillingLevelInMlRefill.has(props.row.id)"
+              :disable="getPumpState(props.row.id).occupied || !props.row.currentIngredient || attrState.fillingLevelInMl.has(props.row.id)"
               dense
               class="q-ml-xs"
               color="green"
@@ -189,8 +189,9 @@ export default {
       loadingPumpIdsCurrentIngredient: [],
       loadingPumpIdsFillingLevel: [],
       attrState: {
-        currentIngredient: [],
-        fillingLevelInMl: []
+        currentIngredient: new Set(),
+        fillingLevelInMl: new Set(),
+        fillingLevelInMlRefill: new Set()
       },
       runningStateByPumpId: new Map()
     }
@@ -217,7 +218,7 @@ export default {
     isIngredientNeeded (ingredientId) {
       return this.neededIngredients.some(x => x.id === ingredientId)
     },
-    setPumpAttr (attr, pumpId, pumpType, newValue, remove = false) {
+    setPumpAttr (attr, pumpId, pumpType, newValue, loadingSet, remove = false) {
       const patch = {
         type: pumpType,
         removeFields: []
@@ -227,10 +228,10 @@ export default {
       } else {
         patch[attr] = newValue
       }
-      this.attrState[attr].push(pumpId)
+      loadingSet.add(pumpId)
       PumpService.patchPump(pumpId, pumpDtoMapper.toPumpPatchDto(patch), false)
         .finally(() => {
-          this.attrState[attr].splice(this.attrState[attr].indexOf(pumpId), 1)
+          loadingSet.delete(pumpId)
         })
     },
     getPumpState (id) {
