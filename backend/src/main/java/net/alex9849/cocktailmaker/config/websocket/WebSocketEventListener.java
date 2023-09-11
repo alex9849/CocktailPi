@@ -6,14 +6,14 @@ import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailmaker.service.pumps.PumpDataService;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.Objects;
 
 @Component
-public class WebSocketEventListener {
+public class WebSocketEventListener implements ApplicationListener<SessionSubscribeEvent> {
 
     @Autowired
     private WebSocketService webSocketService;
@@ -30,24 +30,24 @@ public class WebSocketEventListener {
     @Autowired
     private CocktailOrderService cocktailOrderService;
 
-    @EventListener
-    public synchronized void handleWebSocketConnectListener(SessionSubscribeEvent event) {
+    @Override
+    public void onApplicationEvent(SessionSubscribeEvent event) {
         final String simpDestination = (String) event.getMessage().getHeaders().get("simpDestination");
-        if(simpDestination == null) {
+        if (simpDestination == null) {
             return;
         }
-        if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_COCKTAIL_DESTINATION)) {
+        if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_COCKTAIL_DESTINATION)) {
             webSocketService.sendCurrentCocktailProgessToUser(cocktailOrderService.getCurrentCocktailProgress(), event.getUser().getName());
         }
-        if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_PUMP_LAYOUT_DESTINATION)) {
+        if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_PUMP_LAYOUT_DESTINATION)) {
             webSocketService.sendPumpLayoutToUser(pumpService.getAllPumps(), event.getUser().getName());
         }
-        if(Objects.equals(simpDestination, "/user" + WebSocketService.WS_ACTIONS_STATUS_DESTINATION)) {
+        if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_ACTIONS_STATUS_DESTINATION)) {
             webSocketService.sendRunningEventActionsStatusToUser(eventService.getRunningActionsInformation(), event.getUser().getName());
         }
 
         final String userPumpRunningStateDestination = "/user" + WebSocketService.WS_PUMP_RUNNING_STATE_DESTINATION + "/";
-        if(simpDestination.startsWith(userPumpRunningStateDestination)) {
+        if (simpDestination.startsWith(userPumpRunningStateDestination)) {
             long pumpId;
             try {
                 String stringActionId = simpDestination.substring(userPumpRunningStateDestination.length());
@@ -55,12 +55,11 @@ public class WebSocketEventListener {
             } catch (NumberFormatException e) {
                 pumpId = -1L;
             }
-            System.out.println("Received subscription for pump: " + pumpId);
             webSocketService.sendPumpRunningStateToUser(pumpId, maintenanceService.getJobStateByPumpId(pumpId), event.getUser().getName());
         }
 
         final String userDestinationActionsLogDestination = "/user" + WebSocketService.WS_ACTIONS_LOG_DESTINATION + "/";
-        if(simpDestination.startsWith(userDestinationActionsLogDestination)) {
+        if (simpDestination.startsWith(userDestinationActionsLogDestination)) {
             long actionId;
             try {
                 String stringActionId = simpDestination.substring(userDestinationActionsLogDestination.length());
