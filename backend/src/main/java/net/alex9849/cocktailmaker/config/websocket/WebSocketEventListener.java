@@ -55,6 +55,7 @@ public class WebSocketEventListener {
             } catch (NumberFormatException e) {
                 pumpId = -1L;
             }
+            System.out.println("Received subscription for pump: " + pumpId);
             webSocketService.sendPumpRunningStateToUser(pumpId, maintenanceService.getJobStateByPumpId(pumpId), event.getUser().getName());
         }
 

@@ -294,12 +294,7 @@ export default {
       runningBtnLoading: false,
       pumpJobState: {
         lastJobId: null,
-        runningState: {
-          jobId: 0,
-          percentage: 0,
-          forward: true,
-          runInfinity: false
-        }
+        runningState: null
       }
     }
   },
@@ -309,19 +304,10 @@ export default {
       handler (newValue, oldValue) {
         if (oldValue !== undefined && newValue.id !== oldValue.id) {
           WebSocketService.unsubscribe('/user/topic/runningstate/' + String(oldValue.id))
-          this.pumpJobState = Object.assign({}, {
-            lastJobId: null,
-            runningState: {
-              jobId: 0,
-              percentage: 0,
-              forward: true,
-              runInfinity: false
-            }
-          })
         }
         if (newValue.id !== oldValue?.id) {
           WebSocketService.subscribe(this, '/user/topic/pump/runningstate/' + String(newValue.id), (data) => {
-            this.pumpJobState = Object.assign(this.pumpState, JSON.parse(data.body))
+            this.pumpJobState = Object.assign({}, JSON.parse(data.body))
           }, true)
         }
       }

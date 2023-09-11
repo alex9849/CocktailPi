@@ -248,13 +248,6 @@ export default {
         forward: !!state.runningState?.forward,
         inPumpUp: (state.runningState) ? !state.runningState.runInfinity : false
       }
-    },
-    getPumpIcon (type) {
-      if (type === 'stepper') {
-        return this.mdiProgressClock
-      } else {
-        return this.mdiPump
-      }
     }
   },
   watch: {
