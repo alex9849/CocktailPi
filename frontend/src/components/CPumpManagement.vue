@@ -51,7 +51,6 @@
   </div>
   <c-pump-setup-type-selector
     v-model:show="showAddDialog"
-    @clickType="onClickAddPump($event)"
   />
 </template>
 
@@ -80,20 +79,6 @@ export default {
     }
   },
   methods: {
-    onClickAddPump (type) {
-      const newPump = {
-        type: type
-      }
-      PumpService.createPump(newPump)
-        .then(response => {
-          this.$router.push({
-            name: 'editpump',
-            params: {
-              pumpId: response.data.id
-            }
-          })
-        })
-    },
     onClickTurnOnAllPumps () {
       const vm = this
       PumpService.startPump(null).then(() => {
