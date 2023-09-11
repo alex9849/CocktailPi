@@ -130,6 +130,9 @@ public class SystemService {
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("I2C can't be configured in demomode!");
+        }
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
             pinUtils.shutdownOutputPin(i2CSettings.getSdaPin().getPinNr());
@@ -158,6 +161,12 @@ public class SystemService {
     }
 
     public List<I2cAddress> probeI2c() throws IOException {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("I2C can't be probed in demomode!");
+        }
+        if(!getI2cSettings().isEnable()) {
+            throw new IllegalArgumentException("I2C is disabled!");
+        }
         Process process = Runtime.getRuntime().exec("i2cdetect -y 1");
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String s = null;
