@@ -17,7 +17,6 @@
     :emit-value="emitValue"
     option-label="name"
     option-value="id"
-    :autofocus="autofocus"
     input-debounce="0"
     :error-message="errorMessage"
     :error="error"
@@ -72,10 +71,6 @@ export default {
       default: false
     },
     rounded: {
-      type: Boolean,
-      default: false
-    },
-    autofocus: {
       type: Boolean,
       default: false
     },
