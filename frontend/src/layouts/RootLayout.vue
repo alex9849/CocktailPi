@@ -12,9 +12,13 @@ import { mapMutations } from 'vuex'
 export default {
   name: 'RootLayout',
   created () {
-    const isKiosk = Object.hasOwn(this.$route.query, 'isKiosk')
-    this.setShowExternalLinksAsQrCode((isKiosk))
-    const isMobile = Object.hasOwn(this.$route.query, 'isMobile')
+    let isKiosk = Object.hasOwn(this.$route.query, 'isKiosk')
+    let isMobile = Object.hasOwn(this.$route.query, 'isMobile')
+    if (this.$route.redirectedFrom) {
+      isKiosk |= Object.hasOwn(this.$route.redirectedFrom.query, 'isKiosk')
+      isMobile |= Object.hasOwn(this.$route.redirectedFrom.query, 'isMobile')
+    }
+    this.setShowExternalLinksAsQrCode(!!isKiosk)
     if (isMobile) {
       this.$q.platform.is.mobile = true
     }
