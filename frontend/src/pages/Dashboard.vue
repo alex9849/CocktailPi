@@ -15,15 +15,20 @@ export default {
       quotes: [
         'What a wonderful day for a cocktail!',
         'Let the evening beGIN...',
-        'Keep calm and drink a cocktail!'
-      ],
-      otherQuotes: [
+        'Keep calm and drink a cocktail!',
         'Theres always time for a cocktail!',
         'I\'ll drink to that!',
         'Trust me, you can dance!',
-        'You look like you need a drink.',
         'Civilization begins with distillation.',
-        'Every good story starts with whisky.'
+        'Every good story starts with whisky.',
+        'A cocktail done right is like a meal in itself.',
+        'Sip happens! Time to drink-tail.',
+        'Shake it \'til you make it!',
+        'When life throws lemons, catch them and make a cocktail.',
+        'Shaken, not stirred.',
+        'It’s a cocktail o’clock.',
+        'On cloud wine!',
+        'Sip back and relax.'
       ]
     }
   },
