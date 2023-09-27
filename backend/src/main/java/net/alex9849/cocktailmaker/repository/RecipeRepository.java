@@ -56,7 +56,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public List<Recipe> findByIds(long offset, long limit, Sort sort, Long... ids) {
         return getJdbcTemplate().execute((ConnectionCallback<List<Recipe>>) con -> {
-            StringBuilder sortSql = new StringBuilder("");
+            StringBuilder sortSql = new StringBuilder();
             boolean isSortFirst = true;
             for (Sort.Order order : sort) {
                 if (isSortFirst) {

@@ -72,10 +72,10 @@ public class RecipeEndpoint {
                 sort = Sort.by(Sort.Direction.ASC, "last_update");
                 break;
             case "nameDesc":
-                sort = Sort.by(Sort.Direction.DESC, "name");
+                sort = Sort.by(Sort.Direction.DESC, "lower(name)");
                 break;
             default:
-                sort = Sort.by(Sort.Direction.ASC, "name");
+                sort = Sort.by(Sort.Direction.ASC, "lower(name)");
                 break;
         }
         RecipeService.FabricableFilter fabricableFilter = switch (fabricable) {
