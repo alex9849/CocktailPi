@@ -160,17 +160,15 @@ export default {
       next()
       return
     }
-    let userId
-    let disableForm = false
-    if (to.name === 'myprofile') {
-      disableForm = true
-      userId = store().getters['auth/getUser'].id
-    } else {
-      userId = to.params.userId
-    }
     let user
+    let disableForm = false
     try {
-      user = await UserService.getUser(userId)
+      if (to.name === 'myprofile') {
+        disableForm = true
+        user = await UserService.getMe()
+      } else {
+        user = await UserService.getUser(to.params.userId)
+      }
     } catch (e) {
       if (e.response.status === 404) {
         next({ name: '404Page' })
@@ -247,7 +245,11 @@ export default {
           updatePassword,
           userDto: updateUser
         }
-        promise = UserService.updateUser(updateRequest, this.editUser.id)
+        if (this.$route.name === 'myprofile') {
+          promise = UserService.updateMe(updateRequest)
+        } else {
+          promise = UserService.updateUser(updateRequest, this.editUser.id)
+        }
       }
       if (this.isProfile) {
         promise = promise.then(() => {
