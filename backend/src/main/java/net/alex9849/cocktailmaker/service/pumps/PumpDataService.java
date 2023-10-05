@@ -69,13 +69,14 @@ public class PumpDataService {
         return pump;
     }
     public Pump updatePump(Pump pump) {
-        Optional<Pump> beforeUpdate = pumpRepository.findById(pump.getId());
-        if(beforeUpdate.isEmpty()) {
+        Optional<Pump> oBeforeUpdate = pumpRepository.findById(pump.getId());
+        if(oBeforeUpdate.isEmpty()) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
-        if(!beforeUpdate.get().getClass().equals(pump.getClass())) {
+        if(!oBeforeUpdate.get().getClass().equals(pump.getClass())) {
             throw new IllegalArgumentException("Can't change pump type!");
         }
+        Pump beforeUpdate = oBeforeUpdate.get();
 
         if(pump instanceof DcPump dcPump) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), dcPump.getPin());
@@ -83,11 +84,16 @@ public class PumpDataService {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), stepperPump.getEnablePin(), stepperPump.getStepPin());
         }
 
-        if(beforeUpdate.get().isCanPump()) {
-            beforeUpdate.get().getMotorDriver().shutdown();
-        }
+
         pumpRepository.update(pump);
-        if(pump.isCanPump()) {
+        if (beforeUpdate.isCanPump() && pump.isCanPump()){
+            if(!Objects.equals(beforeUpdate.getMotorDriver(), pump.getMotorDriver())) {
+                beforeUpdate.getMotorDriver().shutdown();
+                pump.getMotorDriver().shutdown();
+            }
+        } else if (beforeUpdate.isCanPump()) {
+            beforeUpdate.getMotorDriver().shutdown();
+        } else if (pump.isCanPump()) {
             pump.getMotorDriver().shutdown();
         }
         return pump;

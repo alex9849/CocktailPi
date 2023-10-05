@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepw
 
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.MultiStepper;
@@ -23,7 +24,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private long startTime;
     private long endTime;
 
-    public AbstractPumpingProductionStepWorker() {
+    public AbstractPumpingProductionStepWorker(CocktailFactory cocktailFactory) {
+        super(cocktailFactory);
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.requiredWorkTime = 0;
         this.usedPumps = new HashSet<>();

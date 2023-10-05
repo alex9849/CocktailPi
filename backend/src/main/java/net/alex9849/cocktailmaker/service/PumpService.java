@@ -149,7 +149,12 @@ public class PumpService {
         if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
-        cocktailOrderService.orderCocktail(user, recipe, orderConfiguration, () -> lockService.releaseGlobal(cocktailOrderService));
+        try {
+            cocktailOrderService.orderCocktail(user, recipe, orderConfiguration, () -> lockService.releaseGlobal(cocktailOrderService));
+        } catch (Exception e) {
+            lockService.releaseGlobal(cocktailOrderService);
+            throw e;
+        }
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {

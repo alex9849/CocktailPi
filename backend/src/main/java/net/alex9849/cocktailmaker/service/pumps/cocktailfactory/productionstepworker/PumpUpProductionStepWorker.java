@@ -3,6 +3,7 @@ package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepw
 import net.alex9849.cocktailmaker.model.pump.DcPump;
 import net.alex9849.cocktailmaker.model.pump.Pump;
 import net.alex9849.cocktailmaker.model.pump.StepperPump;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.PumpPhase;
 
 import java.util.HashMap;
@@ -12,7 +13,8 @@ import java.util.Set;
 
 public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWorker {
 
-    public PumpUpProductionStepWorker(Set<Pump> requiredPumps) {
+    public PumpUpProductionStepWorker(CocktailFactory cocktailFactory, Set<Pump> requiredPumps) {
+        super(cocktailFactory);
         Set<PumpPhase> pumpPhases = new HashSet<>();
         Map<StepperPump, Long> steppersToSteps = new HashMap<>();
         for(Pump pump : requiredPumps) {
@@ -35,6 +37,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
 
     protected void onFinish() {
         getUsedPumps().forEach(p -> p.setPumpedUp(true));
+        getCocktailFactory().requestPumpPersist(getUsedPumps());
         super.onFinish();
     }
 

@@ -57,7 +57,7 @@ public class CocktailFactory {
         }
         Set<Pump> usedPumps = this.getUpdatedPumps();
         if(!usedPumps.isEmpty()) {
-            this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(usedPumps));
+            this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(this, usedPumps));
         }
 
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
@@ -86,7 +86,7 @@ public class CocktailFactory {
         }
         if(pStep instanceof WrittenInstructionProductionStep) {
             WrittenInstructionProductionStep wIPStep = (WrittenInstructionProductionStep) pStep;
-            return Arrays.asList(new WrittenInstructionProductionStepWorker(wIPStep.getMessage()));
+            return Arrays.asList(new WrittenInstructionProductionStepWorker(this, wIPStep.getMessage()));
         }
         throw new IllegalStateException("ProductionStepType unknown!");
     }
@@ -115,16 +115,16 @@ public class CocktailFactory {
             }
         }
         if(!manualProductionSteps.isEmpty()) {
-            workers.add(new ManualProductionStepWorker(manualProductionSteps));
+            workers.add(new ManualProductionStepWorker(this, manualProductionSteps));
         }
         if(!automaticProductionSteps.isEmpty()) {
-            workers.add(new AutomaticProductionStepWorker(pumps,
+            workers.add(new AutomaticProductionStepWorker(this, pumps,
                     automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
         }
         return workers;
     }
 
-    private void requestPumpPersist(Set<Pump> pumps) {
+    public void requestPumpPersist(Set<Pump> pumps) {
         if(this.onRequestPumpPersist == null) {
             return;
         }

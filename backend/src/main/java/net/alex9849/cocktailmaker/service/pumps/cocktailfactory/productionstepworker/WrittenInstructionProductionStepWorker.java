@@ -1,10 +1,13 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
+
 public class WrittenInstructionProductionStepWorker extends AbstractProductionStepWorker
         implements ManualFinishable {
     private final String message;
 
-    public WrittenInstructionProductionStepWorker(String message) {
+    public WrittenInstructionProductionStepWorker(CocktailFactory cocktailFactory, String message) {
+        super(cocktailFactory);
         this.message = message;
     }
 

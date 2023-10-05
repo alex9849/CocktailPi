@@ -1,15 +1,22 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class AbstractProductionStepWorker {
+    private final CocktailFactory cocktailFactory;
     private final List<Consumer<StepProgress>> subscribers = new ArrayList<>();
     private boolean finished = false;
     private boolean started = false;
     private boolean cancelled = false;
     private Runnable onFinish = null;
+
+    public AbstractProductionStepWorker(CocktailFactory cocktailFactory) {
+        this.cocktailFactory = cocktailFactory;
+    }
 
     public AbstractProductionStepWorker subscribeToProgress(Consumer<StepProgress> progressInPercentConsumer) {
         this.subscribers.add(progressInPercentConsumer);
@@ -20,6 +27,10 @@ public abstract class AbstractProductionStepWorker {
         for(Consumer<StepProgress> currConsumer : this.subscribers) {
             currConsumer.accept(getProgress());
         }
+    }
+
+    protected CocktailFactory getCocktailFactory() {
+        return cocktailFactory;
     }
 
     public void start() {

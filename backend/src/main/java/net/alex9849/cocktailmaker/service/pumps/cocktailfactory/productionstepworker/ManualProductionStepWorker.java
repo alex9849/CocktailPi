@@ -1,6 +1,7 @@
 package net.alex9849.cocktailmaker.service.pumps.cocktailfactory.productionstepworker;
 
 import net.alex9849.cocktailmaker.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailmaker.service.pumps.cocktailfactory.CocktailFactory;
 
 import java.util.List;
 
@@ -8,7 +9,8 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         implements ManualFinishable {
     private final List<ProductionStepIngredient> productionStepInstructions;
 
-    public ManualProductionStepWorker(List<ProductionStepIngredient> productionStepInstructions) {
+    public ManualProductionStepWorker(CocktailFactory cocktailFactory, List<ProductionStepIngredient> productionStepInstructions) {
+        super(cocktailFactory);
         if(productionStepInstructions.size() == 0) {
             throw new IllegalArgumentException("ProductionStepInstructions must be non-empty!");
         }
