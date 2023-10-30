@@ -31,7 +31,7 @@ public class ExecutePythonEventAction extends FileEventAction {
             writer.close();
             reader.close();
 
-            process = Runtime.getRuntime().exec("python -u " + file.getAbsolutePath());
+            process = Runtime.getRuntime().exec("python3 -u " + file.getAbsolutePath());
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errorInput = new BufferedReader(new InputStreamReader(process.getErrorStream()));
