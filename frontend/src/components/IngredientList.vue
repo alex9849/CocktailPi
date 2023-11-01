@@ -18,6 +18,15 @@
         :class="{'alternateGrey': alternateRowColors}"
         class="dragItem"
       >
+        <q-item-section
+          v-if="showPStepDragIcon"
+          side
+        >
+          <q-icon
+            style="cursor: grab"
+            :name="mdiDrag"
+          />
+        </q-item-section>
         <q-item-section avatar>
           <q-avatar color="grey">{{ index + 1}}.</q-avatar>
         </q-item-section>
@@ -68,6 +77,15 @@
           >
             <template #item="sublist">
               <q-item class="dragItem">
+                <q-item-section
+                  v-if="showIngredientDragIcon"
+                  side
+                >
+                  <q-icon
+                    style="cursor: grab"
+                    :name="mdiDrag"
+                  />
+                </q-item-section>
                 <q-item-section>
                   <div style="display: ruby">
                     {{ sublist.element.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
@@ -167,7 +185,7 @@
 </template>
 
 <script>
-import { mdiCallSplit, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
+import { mdiCallSplit, mdiDelete, mdiPencilOutline, mdiPlusCircleOutline, mdiDrag } from '@quasar/extras/mdi-v5'
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from 'components/CEditDialog'
@@ -207,6 +225,15 @@ export default {
         ingredientIndex: -1,
         editingObject: null
       }
+    }
+  },
+  computed: {
+    showPStepDragIcon () {
+      return this.editable && this.productionSteps.length > 1
+    },
+    showIngredientDragIcon () {
+      return this.editable && this.productionSteps
+        .filter(x => x.type === 'addIngredients').length > 1
     }
   },
   watch: {
@@ -302,10 +329,20 @@ export default {
           this.productionSteps.push(this.editor.editingObject)
         } else {
           // Ingredient
-          this.productionSteps.push({
-            type: 'addIngredients',
-            stepIngredients: [this.editor.editingObject]
-          })
+          let added = false
+          for (const iStep of this.productionSteps.slice().reverse()) {
+            if (iStep.type === 'addIngredients') {
+              iStep.stepIngredients.push(this.editor.editingObject)
+              added = true
+              break
+            }
+          }
+          if (!added) {
+            this.productionSteps.push({
+              type: 'addIngredients',
+              stepIngredients: [this.editor.editingObject]
+            })
+          }
         }
       }
       this.closeProductionStepEditor()
@@ -353,7 +390,8 @@ export default {
       mdiPlusCircleOutline: mdiPlusCircleOutline,
       mdiPencilOutline: mdiPencilOutline,
       mdiDelete: mdiDelete,
-      mdiCallSplit: mdiCallSplit
+      mdiCallSplit: mdiCallSplit,
+      mdiDrag: mdiDrag
     }
   }
 }

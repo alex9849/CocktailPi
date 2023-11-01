@@ -111,7 +111,7 @@
           >
             <q-btn
               v-if="getEventActionStatus(props.row.id).hasLog"
-              :icon="mdiFormatListText"
+              :icon="mdiConsole"
               :style="{backgroundColor: '#31ccec'}"
               @click="showEventActionLog(props.row.id)"
               dense
@@ -200,7 +200,7 @@
 
 <script>
 
-import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiFormatListText } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiConsole } from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
@@ -252,7 +252,7 @@ export default {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiSkullCrossbones = mdiSkullCrossbones
-    this.mdiFormatListText = mdiFormatListText
+    this.mdiConsole = mdiConsole
     this.initialize()
   },
   mounted () {
