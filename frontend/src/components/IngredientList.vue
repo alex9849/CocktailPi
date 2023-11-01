@@ -332,7 +332,13 @@ export default {
           let added = false
           for (const iStep of this.productionSteps.slice().reverse()) {
             if (iStep.type === 'addIngredients') {
-              iStep.stepIngredients.push(this.editor.editingObject)
+              const existingIngredient = iStep.stepIngredients
+                .find(x => x.ingredient.id === this.editor.editingObject.ingredient.id)
+              if (existingIngredient) {
+                existingIngredient.amount += this.editor.editingObject.amount
+              } else {
+                iStep.stepIngredients.push(this.editor.editingObject)
+              }
               added = true
               break
             }
