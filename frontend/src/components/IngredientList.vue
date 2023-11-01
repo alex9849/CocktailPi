@@ -3,7 +3,7 @@
     :itemKey="step => productionSteps.indexOf(step)"
     :model-value="productionSteps"
     @update:model-value="onProductionStepListDrag($event)"
-    :disabled="!editable"
+    :disabled="!editable || disable"
     :delay="400"
     :delayOnTouchOnly="true"
     :touchStartThreshold="10"
@@ -65,7 +65,7 @@
             :animation="200"
             :delay="400"
             :delayOnTouchOnly="true"
-            :disabled="!editable"
+            :disabled="!editable || disable"
             :itemKey="step => productionSteps.indexOf(step)"
             :model-value="element.stepIngredients"
             :touchStartThreshold="10"
@@ -201,6 +201,10 @@ export default {
       default: () => []
     },
     editable: {
+      type: Boolean,
+      default: false
+    },
+    disable: {
       type: Boolean,
       default: false
     },

@@ -122,7 +122,8 @@
             >
               <IngredientList
                 v-model:model-value="v.editRecipe.recipe.productionSteps.$model"
-                :editable="!disabled"
+                editable
+                :disable="disabled"
               />
             </q-card-section>
           </q-card>
