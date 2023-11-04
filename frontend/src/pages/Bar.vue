@@ -1,10 +1,10 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Ingredients owned</h5>
+    <h5>{{ $t('bar_page.headline') }}</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Add ingredient"
+        :label="$t('bar_page.add_btn_label')"
         :disable="loading"
         @click="editOptions.editDialog = true"
         no-caps
@@ -12,7 +12,7 @@
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('bar_page.refresh_btn_label')"
         :disable="loading"
         :loading="loading"
         @click="onRefresh"
@@ -26,7 +26,7 @@
         :loading="loading"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
-        no-data-label="No ingredients found"
+        :no-data-label="$t('bar_page.owned_table.no_data_msg')"
       >
         <template v-if="getAdminLevel >= 2"
                   v-slot:body-cell-actions="props"
@@ -43,7 +43,7 @@
               rounded
             >
               <q-tooltip>
-                Delete
+                {{ $t('bar_page.owned_table.delete_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -61,7 +61,7 @@
           <td
             style="color: #b5b5b5"
           >
-            {{ ownedIngredients.length }} ingredient(s) in total
+            {{ $t('bar_page.owned_table.nr_ingredients_owned', {nrIngredients: ownedIngredients.length}) }}
           </td>
           <td rowspan="5"/>
         </template>
@@ -78,18 +78,20 @@
     <c-edit-dialog
       v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
-      title="Add Ingredient"
+      :title="$t('bar_page.add_dialog.headline')"
       :saving="editOptions.saving"
       :valid="editOptions.valid"
+      :save-btn-label="$t('bar_page.add_dialog.save_btn_label')"
+      :abort-btn-label="$t('bar_page.add_dialog.abort_btn_label')"
       @clickAbort="closeEditDialog"
       @clickSave="onAddOwnedIngredient"
     >
       <c-ingredient-selector
-        label="Ingredient"
+        :label="$t('bar_page.add_dialog.ingredient_selector_label')"
         :disable="editOptions.saving"
         filter-ingredient-groups
         v-model:selected="v.editOptions.addIngredient.$model"
-        :rules="[() => !v.editOptions.addIngredient.$error || 'Required']"
+        :rules="[() => !v.editOptions.addIngredient.$error || $t('bar_page.add_dialog.required_error')]"
       />
     </c-edit-dialog>
   </q-page>
@@ -140,11 +142,11 @@ export default {
     }),
     columns () {
       const columns = [
-        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
-        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' }
+        { name: 'name', label: this.$t('bar_page.owned_table.columns.ingredient'), field: 'name', align: 'center' },
+        { name: 'alcoholContent', label: this.$t('bar_page.owned_table.columns.alc_content'), field: 'alcoholContent', align: 'center' }
       ]
       if (this.getAdminLevel >= 2) {
-        columns.push({ name: 'actions', label: 'Actions', field: '', align: 'center' })
+        columns.push({ name: 'actions', label: this.$t('bar_page.owned_table.columns.actions'), field: '', align: 'center' })
       }
       return columns
     }
@@ -174,7 +176,7 @@ export default {
         vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
-          message: 'Ingredient added successfully'
+          message: vm.$t('bar_page.notifications.ingredient_added')
         })
         vm.closeEditDialog()
       }
@@ -195,15 +197,16 @@ export default {
         })
     },
     onRemoveOwnedIngredient (id) {
+      const vm = this
       IngredientService.removeFromBar(id)
         .then(() => {
-          this.onRefresh()
-          this.$q.notify({
+          vm.onRefresh()
+          vm.$q.notify({
             type: 'positive',
-            message: 'Ingredient removed successfully'
+            message: vm.$t('bar_page.notifications.ingredient_removed')
           })
         }, err => {
-          this.$q.notify({
+          vm.$q.notify({
             type: 'negative',
             message: err.response.data.message
           })

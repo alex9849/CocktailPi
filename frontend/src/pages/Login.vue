@@ -6,7 +6,7 @@
         <q-card-section style="text-align: center">
           <div class="text-h4">
             <img src="../assets/logo-full.svg" style="width: 80px"/>
-            <p>{{ $t('login.headline') }}</p>
+            <p>{{ $t('login-page.headline') }}</p>
           </div>
         </q-card-section>
         <q-card-section>
@@ -43,7 +43,7 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login.username-field-label')"
+            :label="$t('login-page.username-field-label')"
             v-model="v.loginRequest.username.$model"
             lazy-rules
             :rules="[
@@ -57,7 +57,7 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login.password-field-label')"
+            :label="$t('login-page.password-field-label')"
             type="password"
             v-model="v.loginRequest.password.$model"
             lazy-rules
@@ -70,7 +70,7 @@
             </template>
           </q-input>
           <q-checkbox
-            :label="$t('login.remember-me-label')"
+            :label="$t('login-page.remember-me-label')"
             v-if="!$q.platform.is.cordova"
             v-model="loginRequest.remember"
           />
@@ -85,7 +85,7 @@
             color="primary"
             :disable="disableLogin"
           >
-            {{ $t('login.login-btn-label') }}
+            {{ $t('login-page.login-btn-label') }}
           </q-btn>
         </q-card-section>
       </q-form>

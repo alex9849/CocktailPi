@@ -28,14 +28,14 @@
           <div class="q-pa-md q-gutter-sm">
             <q-btn
               color="grey"
-              label="Abort"
+              :label="abortBtnLabel"
               style="width: 150px"
               :disable="saving"
               @click="() => {$emit('update:show', false); $emit('clickAbort')}"
             />
             <q-btn
               color="green"
-              label="Save"
+              :label="saveBtnLabel"
               type="submit"
               style="width: 150px"
               :disable="!valid"
@@ -53,6 +53,14 @@
 export default {
   name: 'CEditDialog',
   props: {
+    saveBtnLabel: {
+      type: String,
+      default: 'Save'
+    },
+    abortBtnLabel: {
+      type: String,
+      default: 'Abort'
+    },
     show: {
       type: Boolean,
       required: true
