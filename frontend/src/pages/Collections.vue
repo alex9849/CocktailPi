@@ -1,16 +1,16 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>My collections</h5>
+    <h5>{{ $t('page.collections.headline') }}</h5>
     <top-button-arranger>
       <q-btn
         color="positive"
-        label="Create collection"
+        :label="$t('page.collections.add_btn_label')"
         no-caps
         @click="onClickCreateCollectionMenu"
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.collections.refresh_btn_label')"
         :disable="isLoading"
         :loading="isLoading"
         @click="refreshCollections"
@@ -43,25 +43,27 @@
     >
       <div class="row q-pa-md items-center q-gutter-sm">
         <q-icon size="sm" :name="mdiAlert" />
-        <p class="">No collections found!</p>
+        <p>{{ $t('page.collections.no_collections_msg') }}</p>
       </div>
     </q-card>
     <c-edit-dialog
       v-model:show="createCollection.menuOpen"
       :saving="createCollection.saving"
-      title="Create collection"
+      :title="$t('page.collections.create_dialog.headline')"
+      :save-btn-label="$t('page.collections.create_dialog.create_btn_label')"
+      :abort-btn-label="$t('page.collections.create_dialog.abort_btn_label')"
       :valid="!v.createCollection.$invalid"
       :error-message="createCollection.errorMessage"
       @clickAbort="onCloseCreateCollectionMenu"
       @clickSave="onClickSafeNewCollection"
     >
       <q-input
-        label="Name"
+        :label="$t('page.collections.create_dialog.name_field_label')"
         v-model:model-value="v.createCollection.name.$model"
         outlined
-        :rules="[val => !v.createCollection.name.required.$invalid || 'Required',
-              val => !v.createCollection.name.minLength.$invalid || 'Min 3 letters',
-              val => !v.createCollection.name.maxLength.$invalid || 'Max 20 letters']"
+        :rules="[val => !v.createCollection.name.required.$invalid || $t('errors.field_required'),
+              val => !v.createCollection.name.minLength.$invalid || $t('errors.min_letters', {nr: 3}),
+              val => !v.createCollection.name.maxLength.$invalid || $t('errors.max_letters', {nr: 20})]"
       />
     </c-edit-dialog>
   </q-page>

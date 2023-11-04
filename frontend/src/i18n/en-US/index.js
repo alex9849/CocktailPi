@@ -1,7 +1,9 @@
 export default {
   errors: {
     field_required: 'Required',
-    not_valid_url: 'Not a valid URL'
+    not_valid_url: 'Not a valid URL',
+    min_letters: 'Min {nr} letters',
+    max_letters: 'Max {nr} letters'
   },
   header: {
     machine_name: 'CocktailMaker',
@@ -82,9 +84,19 @@ export default {
     404: {
       go_home_btn_label: 'Go Home',
       message: 'Oops. Nothing here...'
+    },
+    collections: {
+      headline: 'My collections',
+      add_btn_label: 'Create collection',
+      refresh_btn_label: 'Refresh',
+      no_collections_msg: 'No collections found!',
+      create_dialog: {
+        headline: 'Create collection',
+        name_field_label: 'Name',
+        abort_btn_label: 'Abort',
+        create_btn_label: 'Create'
+      }
     }
   },
-  component: {
-
-  }
+  component: {}
 }
