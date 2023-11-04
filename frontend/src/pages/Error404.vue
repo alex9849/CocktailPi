@@ -6,7 +6,7 @@
           404
         </div>
         <div class="text-h2" style="opacity:.4; font-size: 7vh">
-          Oops. Nothing here...
+          {{ $t('404.message') }}
         </div>
 
         <q-btn
@@ -16,7 +16,7 @@
           size="xl"
           unelevated
           to="/"
-          label="Go Home"
+          :label="$t('404.go-home-btn-label')"
           no-caps
         />
       </div>
