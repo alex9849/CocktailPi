@@ -1,17 +1,17 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>My Recipes</h5>
+    <h5>{{ $t('page.recipes.my_recipes_headline') }}</h5>
     <top-button-arranger>
       <q-btn
         v-if="isRecipeCreatorRole"
         color="positive"
-        label="Create recipe"
+        :label="$t('page.recipes.create_recipe_btn_label')"
         no-caps
         :to="{name: 'recipeadd'}"
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.recipes.refresh_btn_label')"
         no-caps
         :disable="refreshing"
         @click="onRefreshButton"

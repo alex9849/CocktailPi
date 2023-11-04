@@ -96,6 +96,12 @@ export default {
         abort_btn_label: 'Abort',
         create_btn_label: 'Create'
       }
+    },
+    recipes: {
+      my_recipes_headline: 'My recipes',
+      all_recipes_headline: 'Public recipes',
+      create_recipe_btn_label: 'Create recipe',
+      refresh_btn_label: 'Refresh'
     }
   },
   component: {}
