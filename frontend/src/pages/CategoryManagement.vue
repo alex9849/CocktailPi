@@ -231,9 +231,15 @@ export default {
       const onSuccess = function () {
         vm.editOptions.editCategorySaving = false
         vm.editOptions.editErrorMessage = ''
+        let msg
+        if (vm.iseditCategoryNew) {
+          msg = vm.$t('page.category_mgmt.notifications.category_created')
+        } else {
+          msg = vm.$t('page.category_mgmt.notifications.category_updated')
+        }
         vm.$q.notify({
           type: 'positive',
-          message: 'Category ' + (vm.iseditCategoryNew ? 'created' : 'updated') + ' successfully'
+          message: msg
         })
         vm.closeEditDialog()
       }
@@ -267,7 +273,7 @@ export default {
           vm.deleteOptions.deleteErrorMessage = ''
           vm.$q.notify({
             type: 'positive',
-            message: 'Categorie(s) deleted successfully'
+            message: vm.$t('page.category_mgmt.notifications.category_deleted')
           })
         }, err => {
           vm.deleteOptions.deleteLoading = false

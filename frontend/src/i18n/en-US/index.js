@@ -214,6 +214,11 @@ export default {
         delete_btn_tooltip: 'Delete',
         nr_categories: '{nr} categorie(s) in total'
       },
+      notifications: {
+        category_updated: 'Category updated successfully',
+        category_created: 'Category created successfully',
+        category_deleted: 'Category deleted successfully'
+      },
       create_dialog: {
         headline_edit: 'Edit category',
         headline_create: 'Create category',
