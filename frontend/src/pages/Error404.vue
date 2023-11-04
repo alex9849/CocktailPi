@@ -16,7 +16,7 @@
           size="xl"
           unelevated
           to="/"
-          :label="$t('404.go-home-btn-label')"
+          :label="$t('404.go_home_btn_label')"
           no-caps
         />
       </div>

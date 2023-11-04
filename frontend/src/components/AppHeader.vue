@@ -3,7 +3,7 @@
     <q-toolbar>
       <slot name="left" />
       <q-toolbar-title>
-        {{ $t('header.machine-name') }}
+        {{ $t('header.machine_name') }}
       </q-toolbar-title>
 
       <div>
@@ -20,7 +20,7 @@
                 <q-icon :name="mdiAccountBox"/>
               </q-item-section>
               <q-item-section>
-                {{ $t('header.profile.profile-btn-label') }}
+                {{ $t('header.profile.profile_btn_label') }}
               </q-item-section>
             </q-item>
             <q-item clickable @click="logout()">
@@ -28,7 +28,7 @@
                 <q-icon :name="mdiPower"/>
               </q-item-section>
               <q-item-section>
-                {{ $t('header.profile.logout-btn-label') }}
+                {{ $t('header.profile.logout_btn_label') }}
               </q-item-section>
             </q-item>
           </q-list>

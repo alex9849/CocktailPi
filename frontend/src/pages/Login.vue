@@ -6,7 +6,7 @@
         <q-card-section style="text-align: center">
           <div class="text-h4">
             <img src="../assets/logo-full.svg" style="width: 80px"/>
-            <p>{{ $t('login-page.headline') }}</p>
+            <p>{{ $t('login_page.headline') }}</p>
           </div>
         </q-card-section>
         <q-card-section>
@@ -29,8 +29,8 @@
             :disable="loading"
             v-model="serverAddress"
             :rules="[
-            val => v.serverAddress.required || 'Required',
-            val => v.serverAddress.isURL || 'Not a valid URL'
+            val => v.serverAddress.required || $t('errors.field_required'),
+            val => v.serverAddress.isURL || $t('errors.not_valid_url')
             ]"
             filled
             lazy-rules
@@ -43,11 +43,11 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login-page.username-field-label')"
+            :label="$t('login_page.username_field_label')"
             v-model="v.loginRequest.username.$model"
             lazy-rules
             :rules="[
-              val => !v.loginRequest.username.$error || 'Required'
+              val => !v.loginRequest.username.$error || $t('errors.field_required')
             ]"
           >
             <template v-slot:prepend>
@@ -57,12 +57,12 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login-page.password-field-label')"
+            :label="$t('login_page.password_field_label')"
             type="password"
             v-model="v.loginRequest.password.$model"
             lazy-rules
             :rules="[
-              val => !v.loginRequest.password.$error || 'Required'
+              val => !v.loginRequest.password.$error || $t('errors.field_required')
             ]"
           >
             <template v-slot:prepend>
@@ -70,7 +70,7 @@
             </template>
           </q-input>
           <q-checkbox
-            :label="$t('login-page.remember-me-label')"
+            :label="$t('login_page.remember_me_label')"
             v-if="!$q.platform.is.cordova"
             v-model="loginRequest.remember"
           />
@@ -85,7 +85,7 @@
             color="primary"
             :disable="disableLogin"
           >
-            {{ $t('login-page.login-btn-label') }}
+            {{ $t('login_page.login_btn_label') }}
           </q-btn>
         </q-card-section>
       </q-form>
@@ -154,9 +154,9 @@ export default {
         }).catch(err => {
           this.loading = false
           if (!!err.response && err.response.status === 401) {
-            this.showError('Username or password wrong!')
+            this.showError(this.$t('login_page.errors.credentials_invalid'))
           } else {
-            this.showError('Couldn\'t contact server!')
+            this.showError(this.$t('login_page.errors.server_unreachable'))
           }
         })
     },

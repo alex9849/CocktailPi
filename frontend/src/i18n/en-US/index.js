@@ -1,46 +1,54 @@
 export default {
+  errors: {
+    field_required: 'Required',
+    not_valid_url: 'Not a valid URL'
+  },
   header: {
-    'machine-name': 'CocktailMaker',
+    machine_name: 'CocktailMaker',
     profile: {
-      'profile-btn-label': 'Profile',
-      'logout-btn-label': 'Logout'
+      profile_btn_label: 'Profile',
+      logout_btn_label: 'Logout'
     }
   },
-  'full-layout': {
+  full_layout: {
     sidebar: {
       me: {
         label: 'Me',
         dashboard: 'Dashboard',
-        'simple-view': 'Simple view',
+        simple_view: 'Simple view',
         bar: 'Bar',
         collections: 'Collections',
-        'my-recipes': 'My recipes'
+        my_recipes: 'My recipes'
       },
       cocktails: {
         label: 'Cocktails',
-        'category-all': 'All',
+        category_all: 'All',
         ingredients: 'Ingredients'
       },
       administration: {
         label: 'Administration',
-        'user-mgmt': 'Users',
-        'ingredient-mgmt': 'Ingredients',
-        'category-mgmt': 'Categories',
-        'gpio-mgmt': 'GPIO',
-        'pump-mgmt': 'Pumps',
-        'glass-mgmt': 'Glasses',
-        'event-mgmt': 'Events',
-        'system-mgmt': 'System'
+        user_mgmt: 'Users',
+        ingredient_mgmt: 'Ingredients',
+        category_mgmt: 'Categories',
+        gpio_mgmt: 'GPIO',
+        pump_mgmt: 'Pumps',
+        glass_mgmt: 'Glasses',
+        event_mgmt: 'Events',
+        system_mgmt: 'System'
       }
     },
-    'donate-btn-label': 'Donate'
+    donate_btn_label: 'Donate'
   },
-  'login-page': {
-    'login-btn-label': 'Login',
+  login_page: {
+    login_btn_label: 'Login',
     headline: 'Login',
-    'password-field-label': 'Password',
-    'username-field-label': 'Username',
-    'remember-me-label': 'Remember me'
+    password_field_label: 'Password',
+    username_field_label: 'Username',
+    remember_me_label: 'Remember me',
+    errors: {
+      credentials_invalid: 'Username or password wrong!',
+      server_unreachable: 'Couldn\'t contact server!'
+    }
   },
   bar_page: {
     headline: 'Ingredients owned',
@@ -69,7 +77,7 @@ export default {
     }
   },
   404: {
-    'go-home-btn-label': 'Go Home',
+    go_home_btn_label: 'Go Home',
     message: 'Oops. Nothing here...'
   }
 }
