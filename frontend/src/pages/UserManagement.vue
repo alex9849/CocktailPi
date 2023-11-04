@@ -1,17 +1,17 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>User Management</h5>
+    <h5>{{ $t('page.user_mgmt.headline') }}</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Create user"
+        :label="$t('page.user_mgmt.create_user_btn_label')"
         no-caps
         :disable="isLoading"
         :to="{name: 'usercreator'}"
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.user_mgmt.refresh_users_btn_label')"
         :disable="isLoading"
         :loading="isLoading"
         @click="onRefreshButton"
@@ -70,7 +70,7 @@
               rounded
             >
               <q-tooltip>
-                Edit
+                {{ $t('page.user_mgmt.edit_user_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -82,7 +82,7 @@
               rounded
             >
               <q-tooltip>
-                Delete
+                {{ $t('page.user_mgmt.delete_user_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -93,7 +93,7 @@
           <td
             style="color: #b5b5b5"
           >
-            {{ data.length }} user(s) in total
+            {{ $t('page.user_mgmt.user_table.nr_users', {nr: data.length}) }}
           </td>
           <td rowspan="5"/>
         </template>
@@ -111,8 +111,7 @@
       ref="deleteDialog"
       :delete-method="deleteUser"
       :list-point-method="x => x.username"
-      item-name-plural="users"
-      item-name-singular="user"
+      :headline="$t('page.user_mgmt.delete_dialog.headline')"
       @deleteFailure="fetchAll"
       @deleteSuccess="onDeleteSuccess"
     />
@@ -134,10 +133,10 @@ export default {
       isLoading: false,
       data: [],
       colums: [
-        { name: 'username', label: 'Username', field: 'username', align: 'center' },
-        { name: 'nonLocked', label: 'Active', field: 'nonLocked', align: 'center' },
-        { name: 'role', label: 'Role', field: 'role', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        { name: 'username', label: this.$t('page.user_mgmt.user_table.columns.username'), field: 'username', align: 'center' },
+        { name: 'nonLocked', label: this.$t('page.user_mgmt.user_table.columns.active'), field: 'nonLocked', align: 'center' },
+        { name: 'role', label: this.$t('page.user_mgmt.user_table.columns.role'), field: 'role', align: 'center' },
+        { name: 'actions', label: this.$t('page.user_mgmt.user_table.columns.actions'), field: '', align: 'center' }
       ],
       roles: [
         {

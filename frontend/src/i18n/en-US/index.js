@@ -102,6 +102,33 @@ export default {
       all_recipes_headline: 'Public recipes',
       create_recipe_btn_label: 'Create recipe',
       refresh_btn_label: 'Refresh'
+    },
+    ingredient_recipes: {
+      headline: 'Pumpable ingredients',
+      no_ingredients_available: 'No ingredients assigned to pumps!',
+      recipe: {
+        ml_left: '{nr} ml left',
+        alc_content: '{nr}% alcohol'
+      }
+    },
+    user_mgmt: {
+      headline: 'User Management',
+      create_user_btn_label: 'Create user',
+      refresh_users_btn_label: 'Refresh',
+      edit_user_btn_tooltip: 'Edit',
+      delete_user_btn_tooltip: 'Delete',
+      user_table: {
+        nr_users: '{{nr}} user(s) in total',
+        columns: {
+          username: 'Username',
+          active: 'Active',
+          role: 'Role',
+          actions: 'Actions'
+        }
+      },
+      delete_dialog: {
+        headline: 'The following user will be deleted:'
+      }
     }
   },
   component: {}

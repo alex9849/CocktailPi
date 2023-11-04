@@ -2,7 +2,7 @@
   <c-question
     v-model:show="open"
     :loading="deleteLoading"
-    :question="headline"
+    :question="internalHeadline"
     ok-button-text="Delete"
     ok-color="red"
     @clickAbort="closeDialog"
@@ -66,11 +66,7 @@ export default {
       type: Function,
       required: true
     },
-    itemNameSingular: {
-      type: String,
-      required: true
-    },
-    itemNamePlural: {
+    headline: {
       type: String,
       required: true
     }
@@ -118,14 +114,11 @@ export default {
     }
   },
   computed: {
-    headline () {
+    internalHeadline () {
       if (this.deleteItems.length === 0) {
-        return 'No ' + this.itemNamePlural + '  selected!'
+        return 'Nothing selected!'
       }
-      if (this.deleteItems.length === 1) {
-        return 'The following ' + this.itemNameSingular + ' will be deleted:'
-      }
-      return 'The following ' + this.itemNamePlural + ' will be deleted:'
+      return this.headline
     }
   }
 }

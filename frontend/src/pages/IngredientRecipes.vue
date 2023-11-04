@@ -3,7 +3,7 @@
     padding
     class="page-content"
   >
-    <h5>Pumpable Ingredients</h5>
+    <h5>{{ $t('page.ingredient_recipes.headline') }}</h5>
     <div class="row q-col-gutter-md">
       <div
         class="col-12 col-sm-6 col-lg-4 d-flex items-stretch"
@@ -31,8 +31,8 @@
             <q-card-section class="col-8 q-pa-sm flex column">
               <div class="text-h5" style="margin-bottom: 0">{{ iRecipe.name }}</div>
               <div class="text-caption text-grey">
-                <p>{{ iRecipe.ingredient.alcoholContent }}% alcohol</p>
-                <p>{{ iRecipe.mlLeft }}ml left</p>
+                <p>{{ $t('page.ingredient_recipes.recipe.ml_left', {nr: iRecipe.ingredient.alcoholContent})}}</p>
+                <p>{{ $t('page.ingredient_recipes.recipe.alc_content', {nr: iRecipe.mlLeft})}}</p>
               </div>
             </q-card-section>
           </q-card-section>
@@ -48,7 +48,7 @@
         >
           <div class="row q-pa-md items-center q-gutter-sm">
             <q-icon size="sm" :name="mdiAlert" />
-            <p>No ingredients assigned to pumps!</p>
+            <p>{{ $t('page.ingredient_recipes.no_ingredients_available')}}</p>
           </div>
         </q-card>
       </div>
