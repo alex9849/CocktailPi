@@ -24,15 +24,16 @@
     "core-js": "^3.6.5",
     "lodash": "~4.17.19",
     "net": "^1.0.2",
+    "qrcode": "^1.5.3",
     "quasar": "^2.12.3",
     "querystring": "^0.2.1",
     "sockjs-client": "1.5.2",
     "vue": "^3.3.4",
+    "vue-i18n": "^9.4.1",
     "vue-router": "^4.2.4",
     "vuedraggable": "^4.1.0",
     "vuelidate": "^0.7.5",
-    "vuex": "^4.1.0",
-    "qrcode": "^1.5.3"
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.0.0",
