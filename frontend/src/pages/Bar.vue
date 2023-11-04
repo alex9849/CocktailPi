@@ -1,10 +1,10 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>{{ $t('bar_page.headline') }}</h5>
+    <h5>{{ $t('page.bar.headline') }}</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
-        :label="$t('bar_page.add_btn_label')"
+        :label="$t('page.bar.add_btn_label')"
         :disable="loading"
         @click="editOptions.editDialog = true"
         no-caps
@@ -12,7 +12,7 @@
       />
       <q-btn
         color="info"
-        :label="$t('bar_page.refresh_btn_label')"
+        :label="$t('page.bar.refresh_btn_label')"
         :disable="loading"
         :loading="loading"
         @click="onRefresh"
@@ -26,7 +26,7 @@
         :loading="loading"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
-        :no-data-label="$t('bar_page.owned_table.no_data_msg')"
+        :no-data-label="$t('page.bar.owned_table.no_data_msg')"
       >
         <template v-if="getAdminLevel >= 2"
                   v-slot:body-cell-actions="props"
@@ -43,7 +43,7 @@
               rounded
             >
               <q-tooltip>
-                {{ $t('bar_page.owned_table.delete_btn_tooltip') }}
+                {{ $t('page.bar.owned_table.delete_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -61,7 +61,7 @@
           <td
             style="color: #b5b5b5"
           >
-            {{ $t('bar_page.owned_table.nr_ingredients_owned', {nrIngredients: ownedIngredients.length}) }}
+            {{ $t('page.bar.owned_table.nr_ingredients_owned', {nrIngredients: ownedIngredients.length}) }}
           </td>
           <td rowspan="5"/>
         </template>
@@ -78,20 +78,20 @@
     <c-edit-dialog
       v-model:show="editOptions.editDialog"
       :error-message="editOptions.editErrorMessage"
-      :title="$t('bar_page.add_dialog.headline')"
+      :title="$t('page.bar.add_dialog.headline')"
       :saving="editOptions.saving"
       :valid="editOptions.valid"
-      :save-btn-label="$t('bar_page.add_dialog.save_btn_label')"
-      :abort-btn-label="$t('bar_page.add_dialog.abort_btn_label')"
+      :save-btn-label="$t('page.bar.add_dialog.save_btn_label')"
+      :abort-btn-label="$t('page.bar.add_dialog.abort_btn_label')"
       @clickAbort="closeEditDialog"
       @clickSave="onAddOwnedIngredient"
     >
       <c-ingredient-selector
-        :label="$t('bar_page.add_dialog.ingredient_selector_label')"
+        :label="$t('page.bar.add_dialog.ingredient_selector_label')"
         :disable="editOptions.saving"
         filter-ingredient-groups
         v-model:selected="v.editOptions.addIngredient.$model"
-        :rules="[() => !v.editOptions.addIngredient.$error || $t('bar_page.add_dialog.required_error')]"
+        :rules="[() => !v.editOptions.addIngredient.$error || $t('page.bar.add_dialog.required_error')]"
       />
     </c-edit-dialog>
   </q-page>
@@ -142,11 +142,11 @@ export default {
     }),
     columns () {
       const columns = [
-        { name: 'name', label: this.$t('bar_page.owned_table.columns.ingredient'), field: 'name', align: 'center' },
-        { name: 'alcoholContent', label: this.$t('bar_page.owned_table.columns.alc_content'), field: 'alcoholContent', align: 'center' }
+        { name: 'name', label: this.$t('page.bar.owned_table.columns.ingredient'), field: 'name', align: 'center' },
+        { name: 'alcoholContent', label: this.$t('page.bar.owned_table.columns.alc_content'), field: 'alcoholContent', align: 'center' }
       ]
       if (this.getAdminLevel >= 2) {
-        columns.push({ name: 'actions', label: this.$t('bar_page.owned_table.columns.actions'), field: '', align: 'center' })
+        columns.push({ name: 'actions', label: this.$t('page.bar.owned_table.columns.actions'), field: '', align: 'center' })
       }
       return columns
     }
@@ -176,7 +176,7 @@ export default {
         vm.editOptions.editErrorMessage = ''
         vm.$q.notify({
           type: 'positive',
-          message: vm.$t('bar_page.notifications.ingredient_added')
+          message: vm.$t('page.bar.notifications.ingredient_added')
         })
         vm.closeEditDialog()
       }
@@ -203,7 +203,7 @@ export default {
           vm.onRefresh()
           vm.$q.notify({
             type: 'positive',
-            message: vm.$t('bar_page.notifications.ingredient_removed')
+            message: vm.$t('page.bar.notifications.ingredient_removed')
           })
         }, err => {
           vm.$q.notify({

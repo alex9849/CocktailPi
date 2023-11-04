@@ -6,7 +6,7 @@
           404
         </div>
         <div class="text-h2" style="opacity:.4; font-size: 7vh">
-          {{ $t('404.message') }}
+          {{ $t('page.404.message') }}
         </div>
 
         <q-btn
@@ -16,7 +16,7 @@
           size="xl"
           unelevated
           to="/"
-          :label="$t('404.go_home_btn_label')"
+          :label="$t('page.404.go_home_btn_label')"
           no-caps
         />
       </div>

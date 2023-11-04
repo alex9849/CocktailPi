@@ -6,7 +6,7 @@
         <q-card-section style="text-align: center">
           <div class="text-h4">
             <img src="../assets/logo-full.svg" style="width: 80px"/>
-            <p>{{ $t('login_page.headline') }}</p>
+            <p>{{ $t('page.login.headline') }}</p>
           </div>
         </q-card-section>
         <q-card-section>
@@ -43,7 +43,7 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login_page.username_field_label')"
+            :label="$t('page.login.username_field_label')"
             v-model="v.loginRequest.username.$model"
             lazy-rules
             :rules="[
@@ -57,7 +57,7 @@
           <q-input
             :disable="loading"
             filled
-            :label="$t('login_page.password_field_label')"
+            :label="$t('page.login.password_field_label')"
             type="password"
             v-model="v.loginRequest.password.$model"
             lazy-rules
@@ -70,7 +70,7 @@
             </template>
           </q-input>
           <q-checkbox
-            :label="$t('login_page.remember_me_label')"
+            :label="$t('page.login.remember_me_label')"
             v-if="!$q.platform.is.cordova"
             v-model="loginRequest.remember"
           />
@@ -85,7 +85,7 @@
             color="primary"
             :disable="disableLogin"
           >
-            {{ $t('login_page.login_btn_label') }}
+            {{ $t('page.login.login_btn_label') }}
           </q-btn>
         </q-card-section>
       </q-form>
@@ -154,9 +154,9 @@ export default {
         }).catch(err => {
           this.loading = false
           if (!!err.response && err.response.status === 401) {
-            this.showError(this.$t('login_page.errors.credentials_invalid'))
+            this.showError(this.$t('page.login.errors.credentials_invalid'))
           } else {
-            this.showError(this.$t('login_page.errors.server_unreachable'))
+            this.showError(this.$t('page.login.errors.server_unreachable'))
           }
         })
     },
