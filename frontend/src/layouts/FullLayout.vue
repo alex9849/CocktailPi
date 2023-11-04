@@ -77,7 +77,7 @@
           </div>
           <div class="row justify-center">
             <q-btn
-              label="Donate"
+              :label="$t('full-layout.donate-btn-label')"
               :icon="mdiPiggyBank"
               color="orange-5"
               @click="clickDonate"
@@ -120,96 +120,96 @@ export default {
       windowWidth: 0,
       sidebarItems: [
         {
-          label: 'ME',
+          label: this.$t('full-layout.sidebar.me.label').toUpperCase(),
           icon: mdiAccount,
           reqLevel: 0,
           subSections: [
             {
               reqLevel: 0,
-              label: 'Dashboard',
+              label: this.$t('full-layout.sidebar.me.dashboard'),
               to: { name: 'dashboard' },
               exact: false
             }, {
               reqLevel: 0,
-              label: 'Simple view',
+              label: this.$t('full-layout.sidebar.me.simple-view'),
               to: { name: 'simplecollections' },
               exact: false
             }, {
               reqLevel: 0,
-              label: 'Bar',
+              label: this.$t('full-layout.sidebar.me.bar'),
               to: { name: 'bar' },
               exact: false
             }, {
               reqLevel: 0,
-              label: 'Collections',
+              label: this.$t('full-layout.sidebar.me.collections'),
               to: { name: 'collections' },
               exact: false
             }, {
-              label: 'My recipes',
+              label: this.$t('full-layout.sidebar.me.my-recipes'),
               reqLevel: 1,
               to: { name: 'myrecipes' },
               exact: false
             }
           ]
         }, {
-          label: 'PUBLIC COCKTAILS',
+          label: this.$t('full-layout.sidebar.cocktails.label').toUpperCase(),
           icon: mdiEarth,
           reqLevel: 0,
           subSections: [
             {
-              label: 'All',
+              label: this.$t('full-layout.sidebar.cocktails.category-all'),
               to: { name: 'publicrecipes' },
               exact: true,
               reqLevel: 0
             }, {
-              label: 'Ingredients',
+              label: this.$t('full-layout.sidebar.cocktails.ingredients'),
               to: { name: 'ingredientrecipes' },
               exact: true,
               reqLevel: 0
             }
           ]
         }, {
-          label: 'ADMINISTRATION',
+          label: this.$t('full-layout.sidebar.administration.label').toUpperCase(),
           icon: mdiCogs,
           reqLevel: 3,
           subSections: [
             {
-              label: 'Users',
+              label: this.$t('full-layout.sidebar.administration.user-mgmt'),
               reqLevel: 3,
               to: { name: 'usermanagement' },
               exact: false
             }, {
-              label: 'Ingredients',
+              label: this.$t('full-layout.sidebar.administration.ingredient-mgmt'),
               reqLevel: 3,
               to: { name: 'ingredientmanagement' },
               exact: false
             }, {
-              label: 'Categories',
+              label: this.$t('full-layout.sidebar.administration.category-mgmt'),
               reqLevel: 3,
               to: { name: 'categorymanagement' },
               exact: false
             }, {
-              label: 'GPIO',
+              label: this.$t('full-layout.sidebar.administration.gpio-mgmt'),
               reqLevel: 3,
               to: { name: 'gpiomanagement' },
               exact: false
             }, {
-              label: 'Pumps',
+              label: this.$t('full-layout.sidebar.administration.pump-mgmt'),
               reqLevel: 3,
               to: { name: 'pumpmanagement' },
               exact: false
             }, {
-              label: 'Glasses',
+              label: this.$t('full-layout.sidebar.administration.glass-mgmt'),
               reqLevel: 3,
               to: { name: 'glassmanagement' },
               exact: false
             }, {
-              label: 'Events',
+              label: this.$t('full-layout.sidebar.administration.event-mgmt'),
               reqLevel: 3,
               to: { name: 'eventmanagement' },
               exact: false
             }, {
-              label: 'System',
+              label: this.$t('full-layout.sidebar.administration.system-mgmt'),
               reqLevel: 3,
               to: { name: 'systemmanagement' },
               exact: false
@@ -285,7 +285,7 @@ export default {
     setCategories (categories) {
       this.sidebarItems[1].subSections = [
         {
-          label: 'All',
+          label: this.$t('full-layout.sidebar.cocktails.category-all'),
           to: { name: 'publicrecipes' },
           exact: true,
           reqLevel: 0
@@ -300,7 +300,7 @@ export default {
         })
       }
       this.sidebarItems[1].subSections.push({
-        label: 'Ingredients',
+        label: this.$t('full-layout.sidebar.cocktails.ingredients'),
         to: { name: 'ingredientrecipes' },
         exact: true,
         reqLevel: 0
