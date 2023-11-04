@@ -1,17 +1,17 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Category Management</h5>
+    <h5>{{ $t('page.category_mgmt.headline') }}</h5>
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Create category"
+        :label="$t('page.category_mgmt.create_btn_label')"
         :disable="loading"
         @click="showEditDialog(null)"
         no-caps
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.category_mgmt.refresh_btn_label')"
         :disable="loading"
         :loading="loading"
         @click="onRefresh"
@@ -25,7 +25,7 @@
         :loading="loading"
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
-        no-data-label="No categories found"
+        :no-data-label="$t('page.category_mgmt.no_data_msg')"
         style="background-color: #f3f3fa"
       >
         <template v-slot:body="props">
@@ -52,7 +52,7 @@
                 rounded
               >
                 <q-tooltip>
-                  Edit
+                  {{ $t('page.category_mgmt.category_table.edit_btn_tooltip') }}
                 </q-tooltip>
               </q-btn>
               <q-btn
@@ -63,7 +63,7 @@
                 rounded
               >
                 <q-tooltip>
-                  Delete
+                  {{ $t('page.category_mgmt.category_table.delete_btn_tooltip') }}
                 </q-tooltip>
               </q-btn>
             </q-td>
@@ -75,7 +75,7 @@
           <td
             style="color: #b5b5b5"
           >
-            {{ categories.length + ' ' + ((categories.length === 1)? 'category' : 'categories')}} in total
+            {{ $t('page.category_mgmt.category_table.nr_categories', {nr: categories.length}) }}
           </td>
           <td rowspan="5"/>
         </template>
@@ -90,9 +90,10 @@
       </q-table>
     </div>
     <c-question
-      :question="deleteQuestionMessage"
+      :question="$t('page.category_mgmt.delete_dialog.headline')"
       ok-color="red"
-      ok-button-text="Delete"
+      :ok-button-text="$t('page.category_mgmt.delete_dialog.ok_btn_label')"
+      :abort-button-text="$t('page.category_mgmt.delete_dialog.abort_btn_label')"
       :loading="deleteOptions.deleteLoading"
       v-model:show="deleteOptions.deleteDialog"
       @clickOk="deleteSelected"
@@ -132,18 +133,20 @@
       :title="editDialogHeadline"
       :saving="editOptions.editCategorySaving"
       :valid="editOptions.valid"
+      :save-btn-label="$t('page.category_mgmt.create_dialog.save_btn_label')"
+      :abort-btn-label="$t('page.category_mgmt.create_dialog.abort_btn_label')"
       @clickAbort="closeEditDialog"
       @clickSave="onClickSaveCategory"
     >
       <q-input
-        label="Name"
+        :label="$t('page.category_mgmt.create_dialog.name_field_label')"
         outlined
         :disable="editOptions.editCategorySaving"
         v-model:model-value="v.editOptions.editCategory.name.$model"
         filled
         :rules="[
-                val => !v.editOptions.editCategory.name.required.$invalid || 'Required',
-                val => !v.editOptions.editCategory.name.maxLength.$invalid || 'Max 15'
+                val => !v.editOptions.editCategory.name.required.$invalid || $t('errors.field_required'),
+                val => !v.editOptions.editCategory.name.maxLength.$invalid || $t('errors.max_letters', {nr: 15})
               ]"
       />
     </c-edit-dialog>
@@ -165,8 +168,8 @@ export default {
   data () {
     return {
       columns: [
-        { name: 'name', label: 'Category', field: 'name', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        { name: 'name', label: this.$t('page.category_mgmt.category_table.columns.category'), field: 'name', align: 'center' },
+        { name: 'actions', label: this.$t('page.category_mgmt.category_table.columns.actions'), field: '', align: 'center' }
       ],
       selected: [],
       loading: false,
@@ -319,23 +322,14 @@ export default {
     ...mapGetters({
       categories: 'category/getCategories'
     }),
-    deleteQuestionMessage () {
-      if (this.deleteOptions.deleteCategory.length === 0) {
-        return 'No categories selected!'
-      }
-      if (this.deleteOptions.deleteCategory.length === 1) {
-        return 'The following category will be deleted:'
-      }
-      return 'The following categories will be deleted:'
-    },
     iseditCategoryNew () {
       return this.editOptions.editCategory.id === -1
     },
     editDialogHeadline () {
       if (this.iseditCategoryNew) {
-        return 'Create category'
+        return this.$t('page.category_mgmt.create_dialog.headline_create')
       }
-      return 'Edit category'
+      return this.$t('page.category_mgmt.create_dialog.headline_edit')
     }
   }
 }
