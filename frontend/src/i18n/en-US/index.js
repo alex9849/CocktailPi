@@ -283,6 +283,74 @@ export default {
       edit_dialog: {
         headline_create: 'Create glass',
         headline_edit: 'Edit glass'
+      },
+      help_dialog: {
+        headline: 'Glasses:',
+        text: 'Different types of cocktails are typically served in various glass styles, each with its unique size. ' +
+          'When placing a cocktail order, you have two options: you can either specify the desired liquid quantity ' +
+          'for the machine to dispense or choose a specific glass type. If you opt for the latter, the machine will ' +
+          'automatically dispense an amount of liquid that matches the selected glass\'s volume.\n\n' +
+          'The liquid quantity that the machine should produce is always chosen by the ordering user. ' +
+          'However, it is possible to assign each recipe a glass that is selected by default.\n\n' +
+          'If no default glass has been selected for a particular recipe, the software will automatically default to ' +
+          'using the predefined "default" glass.\n\n' +
+          'It is possible to dispense single ingredients. The default glass for these orders can also be selected ' +
+          'here using the "Use for single ingredients"-property.'
+      }
+    },
+    event_mgmt: {
+      headline: 'Event Management',
+      add_btn_label: 'Add action',
+      refresh_btn_label: 'Refresh',
+      delete_btn_label: 'Delete selected actions',
+      action_table: {
+        columns: {
+          trigger: 'Trigger',
+          description: 'Description',
+          comment: 'Comment',
+          groups: 'Execution-groups',
+          status: 'Status',
+          actions: 'Actions'
+        },
+        view_logs_btn_tooltip: 'View logs',
+        edit_btn_tooltip: 'Edit',
+        delete_btn_tooltip: 'Delete'
+      },
+      delete_dialog: {
+        headline: 'Delete Actions?'
+      },
+      edit_dialog: {
+        headline_create: 'Create new action',
+        headline_edit: 'Edit action'
+      },
+      notifications: {
+        action_created: 'Action created successfully!',
+        action_updated: 'Action updated successfully!'
+      }
+    },
+    system_mgmt: {
+      system: {
+        headline: 'System Management',
+        shutdown_btn_label: 'Shutdown system',
+        shutdown_dialog: {
+          headline: 'Shut down?',
+          ok_btn_label: 'Shutdown',
+          abort_btn_label: 'Abort'
+        }
+      },
+      default_filter: {
+        headline: 'Default filter',
+        enable_btn_label: 'Enable default filter',
+        fabricable: {
+          headline: 'Fabricable:',
+          show_all: 'Show all',
+          fabricable_owned: 'Fabricable with owned ingredients',
+          fabricable_auto: 'Fabricable fully automatic'
+        },
+        save_btn_label: 'Save',
+        notifications: {
+          settings_updated: 'Settings updated!'
+        }
       }
     }
   },

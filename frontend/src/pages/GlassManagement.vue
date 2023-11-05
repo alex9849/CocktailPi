@@ -158,24 +158,9 @@
     >
       <q-card>
         <q-card-section class="q-gutter-y-sm">
-          <h6>Glasses:</h6>
-          <p>
-            Different types of cocktails are typically served in various glass styles, each with its unique size.
-            When placing a cocktail order, you have two options: you can either specify the desired liquid quantity
-            for the machine to dispense or choose a specific glass type. If you opt for the latter, the machine will
-            automatically dispense an amount of liquid that matches the selected glass's volume.
-          </p>
-          <p>
-            The liquid quantity that the machine should produce is always chosen by the ordering user.
-            However, it is possible to assign each recipe a glass that is selected by default.
-          </p>
-          <p>
-            If no default glass has been selected for a particular recipe, the software will automatically default to
-            using the predefined "<i>default</i>" glass.
-          </p>
-          <p>
-            It is possible to dispense single ingredients. The default glass for these orders can also be selected
-            here using the "<i>Use for single ingredients</i>"-property.
+          <h6>{{ $t('page.glass_mgmt.help_dialog.headline') }}</h6>
+          <p style="white-space: pre-line">
+            {{ $t('page.glass_mgmt.help_dialog.text') }}
           </p>
         </q-card-section>
         <q-card-section class="row justify-center">

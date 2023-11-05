@@ -1,22 +1,22 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>Event Management</h5>
+    <h5>{{ $t('page.event_mgmt.headline') }}</h5>
     <TopButtonArranger>
       <q-btn
         color="negative"
-        label="Delete selected actions"
+        :label="$t('page.event_mgmt.delete_btn_label')"
         no-caps
         @click="$refs.deleteDialog.openForItems(selected)"
       />
       <q-btn
         color="positive"
-        label="Add action"
+        :label="$t('page.event_mgmt.add_btn_label')"
         no-caps
         @click="showEditDialog(null)"
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.event_mgmt.refresh_btn_label')"
         no-caps
         :disable="isLoading"
         :loading="isLoading"
@@ -119,7 +119,7 @@
               text-color="white"
             >
               <q-tooltip>
-                View logs
+                {{ $t('page.event_mgmt.action_table.view_logs_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -131,7 +131,7 @@
               text-color="white"
             >
               <q-tooltip>
-                Edit
+                {{ $t('page.event_mgmt.action_table.edit_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -142,7 +142,7 @@
               rounded
             >
               <q-tooltip>
-                Delete
+                {{ $t('page.event_mgmt.action_table.delete_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -169,10 +169,9 @@
     </c-edit-dialog>
     <c-delete-warning
       ref="deleteDialog"
+      :headline="$t('page.event_mgmt.delete_dialog.headline')"
       :delete-method="deleteEventAction"
       :list-point-method="x => x.description"
-      item-name-plural="Actions"
-      item-name-singular="Action"
       @deleteFailure="initialize"
       @deleteSuccess="onDeleteSuccess"
     />
@@ -230,12 +229,12 @@ export default {
         previousFileName: undefined
       },
       columns: [
-        { name: 'trigger', label: 'Trigger', field: 'trigger', align: 'center' },
-        { name: 'description', label: 'Description', field: 'description', align: 'center' },
-        { name: 'comment', label: 'Comment', field: 'comment', align: 'center' },
-        { name: 'executionGroups', label: 'Execution-groups', field: 'executionGroups', align: 'center' },
-        { name: 'status', label: 'Status', field: 'status', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        { name: 'trigger', label: this.$t('page.event_mgmt.action_table.columns.trigger'), field: 'trigger', align: 'center' },
+        { name: 'description', label: this.$t('page.event_mgmt.action_table.columns.description'), field: 'description', align: 'center' },
+        { name: 'comment', label: this.$t('page.event_mgmt.action_table.columns.comment'), field: 'comment', align: 'center' },
+        { name: 'executionGroups', label: this.$t('page.event_mgmt.action_table.columns.groups'), field: 'executionGroups', align: 'center' },
+        { name: 'status', label: this.$t('page.event_mgmt.action_table.columns.status'), field: 'status', align: 'center' },
+        { name: 'actions', label: this.$t('page.event_mgmt.action_table.columns.actions'), field: '', align: 'center' }
       ],
       actionStatus: {
         actionStatus: new Map(),
@@ -341,11 +340,11 @@ export default {
       if (this.isNewEditEventAction) {
         promise = EventActionService.createEvent(dto,
           this.editOptions.selectedFile)
-        successMessage = 'Action created successfully!'
+        successMessage = this.$t('page.event_mgmt.notifications.action_created')
       } else {
         promise = EventActionService.updateEvent(this.editOptions.editEventAction.id, dto,
           this.editOptions.selectedFile)
-        successMessage = 'Action updated successfully!'
+        successMessage = this.$t('page.event_mgmt.notifications.action_updated')
       }
       promise.then(() => {
         this.$q.notify({
@@ -379,9 +378,9 @@ export default {
     },
     editDialogHeadline () {
       if (this.isNewEditEventAction) {
-        return 'Create new action'
+        return this.$t('page.event_mgmt.edit_dialog.headline_create')
       } else {
-        return 'Edit action'
+        return this.$t('page.event_mgmt.edit_dialog.headline_edit')
       }
     }
   }

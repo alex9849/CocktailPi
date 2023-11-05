@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>System Management</h5>
+    <h5>{{ $t('page.system_mgmt.system.headline') }}</h5>
     <q-card
       flat
       bordered
@@ -17,13 +17,13 @@
               color="red"
               @click="shutdown.dialog = true"
             >
-              Shutdown system
+              {{ $t('page.system_mgmt.system.shutdown_btn_label') }}
             </q-btn>
           </div>
         </div>
       </q-card-section>
     </q-card>
-    <h5>Default filter</h5>
+    <h5>{{ $t('page.system_mgmt.default_filter.headline') }}</h5>
     <q-card
       flat
       bordered
@@ -33,7 +33,7 @@
         <div class="row">
           <q-card class="col" flat bordered>
             <q-toggle
-              label="Enable default filter"
+              :label="$t('page.system_mgmt.default_filter.enable_btn_label')"
               color="green"
               :disable="defaultFilter.saving"
               v-model:model-value="v.defaultFilter.data.enable.$model"
@@ -51,27 +51,27 @@
               bordered
             >
               <div class="col-shrink">
-                <p class="q-px-sm text-grey-7">Fabricable:</p>
+                <p class="q-px-sm text-grey-7">{{ $t('page.system_mgmt.default_filter.fabricable.headline') }}</p>
               </div>
               <div class="col-grow">
                 <div class="row">
                   <q-radio
                     :disable="defaultFilter.saving"
-                    label="Show all"
+                    :label="$t('page.system_mgmt.default_filter.fabricable.show_all')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val=""
                     class="col-12 col-sm-4"
                   />
                   <q-radio
                     :disable="defaultFilter.saving"
-                    label="Fabricable with owned ingredients"
+                    :label="$t('page.system_mgmt.default_filter.fabricable.fabricable_owned')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val="manual"
                     class="col-12 col-sm-4"
                   />
                   <q-radio
                     :disable="defaultFilter.saving"
-                    label="Fabricable fully automatic"
+                    :label="$t('page.system_mgmt.default_filter.fabricable.fabricable_auto')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
                     val="auto"
                     class="col-12 col-sm-4"
@@ -83,7 +83,7 @@
         </div>
         <div class="row justify-end">
           <q-btn
-            label="Save"
+            :label="$t('page.system_mgmt.default_filter.save_btn_label')"
             :loading="defaultFilter.saving"
             :disable="v.defaultFilter.data.$invalid"
             color="green"
@@ -94,11 +94,12 @@
     </q-card>
     <c-question
       v-model:show="shutdown.dialog"
-      question="Shut down?"
+      :question="$t('page.system_mgmt.system.shutdown_dialog.headline')"
       @clickAbort="shutdown.dialog = false"
       @clickOk="doShutdown"
       ok-color="red"
-      ok-button-text="Shutdown"
+      :abort-button-text="$t('page.system_mgmt.system.shutdown_dialog.abort_btn_label')"
+      :ok-button-text="$t('page.system_mgmt.system.shutdown_dialog.ok_btn_label')"
     />
   </q-page>
 </template>
@@ -158,7 +159,7 @@ export default {
           this.defaultFilter.data = x
           this.$q.notify({
             type: 'positive',
-            message: 'Settings updated!'
+            message: this.$t('page.system_mgmt.default_filter.notifications.settings_updated')
           })
         })
         .finally(x => {
