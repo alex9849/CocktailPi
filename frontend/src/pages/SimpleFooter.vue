@@ -67,21 +67,21 @@ import { mapMutations } from 'vuex'
 
 export default {
   name: 'SimpleFooter',
-  data: () => {
+  data () {
     return {
       showFooter: true,
       footerLinks: [{
-        label: 'Collections',
+        label: this.$t('simple_footer.collections_btn_label'),
         to: {
           name: 'simplecollections'
         }
       }, {
-        label: 'Recipes',
+        label: this.$t('simple_footer.recipes_btn_label'),
         to: {
           name: 'simplerecipes'
         }
       }, {
-        label: 'Ingredients',
+        label: this.$t('simple_footer.ingredients_btn_label'),
         to: {
           name: 'simpleingredientrecipes'
         }

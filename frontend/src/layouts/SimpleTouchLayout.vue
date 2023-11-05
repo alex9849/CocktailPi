@@ -3,7 +3,9 @@
     <q-header class="bg-indigo-10">
       <div class="row justify-between">
         <div class="col-shrink bg-indigo-10 flex items-center">
-          <q-toolbar-title class="q-ma-sm">CocktailMaker</q-toolbar-title>
+          <q-toolbar-title class="q-ma-sm">
+            {{ $t('simple_header.machine_name') }}
+          </q-toolbar-title>
         </div>
         <transition
           appear
@@ -33,7 +35,7 @@
                   class="bg-green-8"
                   no-caps flat
                   dense color="white"
-                  label="Go to details >>"
+                  :label="$t('simple_header.go_to_cocktail_progress_btn_label')"
                   :to="{name: 'simpleorderprogress'}"
                 />
               </div>
@@ -42,19 +44,19 @@
         </transition>
         <div class="col-shrink bg-indigo-10 flex items-center">
           <q-btn no-caps dense class="bg-red q-ma-sm" @click="showLeaveDialog = true">
-            Leave simple-view
+            {{ $t('simple_header.leave_sv_btn_label') }}
           </q-btn>
         </div>
       </div>
     </q-header>
     <c-question
-      ok-button-text="Yes"
+      :ok-button-text="$t('simple_header.leave_sv_dialog.yes_btn_label')"
       ok-color="green"
-      abort-button-text="No"
+      :abort-button-text="$t('simple_header.leave_sv_dialog.no_btn_label')"
       @clickOk="$router.push({name: 'dashboard'})"
       @clickAbort="showLeaveDialog = false"
       v-model:show="showLeaveDialog"
-      question="Leave simple view?"
+      :question="$t('simple_header.leave_sv_dialog.headline')"
     />
     <q-page-container>
       <router-view />

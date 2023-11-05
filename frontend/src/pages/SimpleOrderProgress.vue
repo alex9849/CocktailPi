@@ -9,8 +9,8 @@
         class="row q-col-gutter-md"
       >
         <div class="col-12 q-gutter-y-md">
-          <h4 class="text-center">Current order</h4>
-          <div class="text-center text-h5" style="display: block ruby">Producing:
+          <h4 class="text-center">{{ $t('page.simple_cocktail_progress.headline') }}</h4>
+          <div class="text-center text-h5" style="display: block ruby">{{ $t('page.simple_cocktail_progress.producing') }}
             <p class="text-italic">{{ cocktailProgress.recipe.name }}</p>
           </div>
           <div
@@ -27,7 +27,7 @@
         v-else
       >
         <div class="col-12">
-          <h4 class="text-center">No cocktail is being prepared currently</h4>
+          <h4 class="text-center">{{ $t('page.simple_cocktail_progress.no_cocktail_in_progress') }}</h4>
         </div>
       </div>
       <div class="row justify-center q-col-gutter-md">
@@ -36,7 +36,7 @@
             size="lg"
             dense
             class="bg-grey-8"
-            label="<< Go back"
+            :label="$t('page.simple_cocktail_progress.go_back_btn_label')"
             no-caps
             @click="$router.go(-1)"
           />
@@ -45,7 +45,7 @@
           <q-btn
             v-if="hasCocktailProgress"
             class="bg-negative"
-            label="Cancel order"
+            :label="$t('page.simple_cocktail_progress.cancel_btn_label')"
             no-caps
             size="lg"
             dense

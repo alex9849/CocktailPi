@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content column flex">
-    <h4 class="text-white text-center">Pumpable Ingredients</h4>
+    <h4 class="text-white text-center">{{ $t('page.simple_ingredient_recipes.headline') }}</h4>
     <div class="row">
       <div class="col-12 justify-center">
         <div>
@@ -25,7 +25,7 @@
         <div class="row items-center justify-center">
           <q-icon :name="mdiAlert" color="white" size="lg"/>
           <p>
-            No ingredients assigned to pumps!
+            {{ $t('page.simple_ingredient_recipes.no_data_msg') }}
           </p>
         </div>
       </div>

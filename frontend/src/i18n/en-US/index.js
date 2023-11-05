@@ -12,6 +12,21 @@ export default {
       logout_btn_label: 'Logout'
     }
   },
+  simple_header: {
+    machine_name: 'CocktailMaker',
+    leave_sv_btn_label: 'Leave simple-view',
+    go_to_cocktail_progress_btn_label: 'Go to details >>',
+    leave_sv_dialog: {
+      headline: 'Leave simple view?',
+      yes_btn_label: 'Yes',
+      no_btn_label: 'No'
+    }
+  },
+  simple_footer: {
+    collections_btn_label: 'Collections',
+    recipes_btn_label: 'Recipes',
+    ingredients_btn_label: 'Ingredients'
+  },
   layout: {
     full_layout: {
       sidebar: {
@@ -352,6 +367,29 @@ export default {
           settings_updated: 'Settings updated!'
         }
       }
+    },
+    simple_collections: {
+      headline: 'Collections',
+      no_collections_msg: 'No collections found!'
+    },
+    simple_recipes: {
+      headline: 'Recipes',
+      no_data_msg: 'No recipes found!'
+    },
+    simple_ingredient_recipes: {
+      headline: 'Pumpable Ingredients',
+      no_data_msg: 'No ingredients assigned to pumps!'
+    },
+    simple_collection: {
+      headline: 'Collection: {name}',
+      no_data_msg: 'No recipes found!'
+    },
+    simple_cocktail_progress: {
+      headline: 'Current order',
+      producing: 'Producing:',
+      no_cocktail_in_progress: 'No cocktail is being prepared currently!',
+      go_back_btn_label: '<< Go back',
+      cancel_btn_label: 'Cancel order'
     }
   },
   component: {
