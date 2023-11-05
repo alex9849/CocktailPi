@@ -3,7 +3,7 @@
     padding
     class="page-content"
   >
-    <h5>Glass Management
+    <h5>{{ $t('page.glass_mgmt.headline') }}
       <q-btn
         :icon="mdiInformation"
         dense
@@ -17,14 +17,14 @@
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Create glass"
+        :label="$t('page.glass_mgmt.add_glass_btn_label')"
         :disable="loading"
         @click="showEditDialog(null)"
         no-caps
       />
       <q-btn
         color="info"
-        label="Refresh"
+        :label="$t('page.glass_mgmt.refresh_btn_label')"
         :disable="loading"
         :loading="loading"
         @click="onRefresh"
@@ -62,7 +62,7 @@
               @click="showEditDialog(props.row)"
             >
               <q-tooltip>
-                Edit
+                {{ $t('page.glass_mgmt.glass_table.edit_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -73,7 +73,7 @@
               @click="$refs.deleteDialog.openForItems([props.row])"
             >
               <q-tooltip>
-                Delete
+                {{ $t('page.glass_mgmt.glass_table.delete_btn_tooltip') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -210,21 +210,21 @@ export default {
       vm.glasses = glasses
     })
   },
-  data: () => {
+  data () {
     return {
       glasses: [],
       showHelp: false,
       columns: [
-        { name: 'name', label: 'Name', field: 'name', align: 'center' },
-        { name: 'size', label: 'Size', field: 'size', align: 'center' },
-        { name: 'default', label: 'Default', field: 'default', align: 'center' },
+        { name: 'name', label: this.$t('page.glass_mgmt.glass_table.columns.name'), field: 'name', align: 'center' },
+        { name: 'size', label: this.$t('page.glass_mgmt.glass_table.columns.size'), field: 'size', align: 'center' },
+        { name: 'default', label: this.$t('page.glass_mgmt.glass_table.columns.default'), field: 'default', align: 'center' },
         {
           name: 'useForSingleIngredients',
-          label: 'For single ingredients',
+          label: this.$t('page.glass_mgmt.glass_table.columns.for_single_ingredients'),
           field: 'useForSingleIngredients',
           align: 'center'
         },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        { name: 'actions', label: this.$t('page.glass_mgmt.glass_table.columns.actions'), field: '', align: 'center' }
       ],
       loading: false,
       editOptions: {
@@ -255,10 +255,10 @@ export default {
     showEditDialog (glass) {
       if (glass) {
         this.editOptions.editGlass = Object.assign({}, glass)
-        this.editOptions.editDialogHeadline = 'Edit glass'
+        this.editOptions.editDialogHeadline = this.$t('page.glass_mgmt.edit_dialog.headline_edit')
       } else {
         this.editOptions.editGlass = Object.assign({}, this.editOptions.newGlass)
-        this.editOptions.editDialogHeadline = 'Create glass'
+        this.editOptions.editDialogHeadline = this.$t('page.glass_mgmt.edit_dialog.headline_create')
       }
       this.editOptions.editDialog = true
     },
@@ -277,7 +277,12 @@ export default {
         promise = GlassService.updateGlass(this.editOptions.editGlass)
       }
       promise = promise.then((recipe) => {
-        const msg = 'Glass ' + (this.isNew ? 'created' : 'updated') + ' successfully'
+        let msg
+        if (this.isNew) {
+          msg = this.$t('page.glass_mgmt.notifications.glass_created')
+        } else {
+          msg = this.$t('page.glass_mgmt.notifications.glass_updated')
+        }
         this.$q.notify({
           type: 'positive',
           message: msg

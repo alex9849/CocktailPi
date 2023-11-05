@@ -261,9 +261,28 @@ export default {
       }
     },
     glass_mgmt: {
-      headline: '',
+      headline: 'Glass Management',
+      add_glass_btn_label: 'Create glass',
+      refresh_btn_label: 'Refresh',
       glass_table: {
+        columns: {
+          name: 'Name',
+          size: 'Size',
+          default: 'Default',
+          for_single_ingredients: 'For single ingredients',
+          actions: 'Actions'
+        },
+        edit_btn_tooltip: 'Edit',
+        delete_btn_tooltip: 'Delete',
         nr_glasses: '{nr} glasses in total'
+      },
+      notifications: {
+        glass_updated: 'Glass updated successfully',
+        glass_created: 'Glass created successfully'
+      },
+      edit_dialog: {
+        headline_create: 'Create glass',
+        headline_edit: 'Edit glass'
       }
     }
   },
