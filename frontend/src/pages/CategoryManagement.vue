@@ -26,7 +26,6 @@
         hide-bottom
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
         :no-data-label="$t('page.category_mgmt.no_data_msg')"
-        style="background-color: #f3f3fa"
       >
         <template v-slot:body="props">
           <q-tr

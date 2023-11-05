@@ -226,6 +226,45 @@ export default {
         save_btn_label: 'Save',
         abort_btn_label: 'Abort'
       }
+    },
+    gpio_mgmt: {
+      headline: 'GPIO Management',
+      status_box: {
+        headline: 'Status',
+        pin_box: {
+          headline: 'Pin usage',
+          pin_usage: 'Pin usage:',
+          gpio_boards: 'GPIO boards:'
+        },
+        i2c_box: {
+          headline: 'I2C',
+          configure_btn_label: 'Configure',
+          status: 'Status',
+          sda_pin: 'SDA-Pin:',
+          scl_pin: 'SCL-Pin:'
+        }
+      },
+      local_gpio_box: {
+        headline: 'Local GPIOs:',
+        no_boards_found: 'No boards found!'
+      },
+      i2c_expander_box: {
+        add_btn_label: 'Add',
+        headline: 'I2C GPIO Expanders:',
+        i2c_disabled: 'I2C disabled!',
+        no_expanders_found: 'No expanders found!'
+      },
+      delete_dialog: {
+        headline: 'Delete {boardName}?',
+        ok_btn_label: 'Delete',
+        abort_btn_label: 'Abort'
+      }
+    },
+    glass_mgmt: {
+      headline: '',
+      glass_table: {
+        nr_glasses: '{nr} glasses in total'
+      }
     }
   },
   component: {

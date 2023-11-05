@@ -1,12 +1,12 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>GPIO Management</h5>
+    <h5>{{ $t('page.gpio_mgmt.headline') }}</h5>
 
     <div class="row q-col-gutter-md reverse">
       <div class="col-12 col-md-4 col-lg-3">
         <q-card class="bg-card-primary">
           <q-card-section class="q-py-sm bg-card-secondary">
-            <p class="text-weight-medium">Status</p>
+            <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.headline') }}</p>
           </q-card-section>
           <q-separator />
           <q-card-section class="q-py-md">
@@ -16,7 +16,7 @@
                   flat bordered class="bg-grey-2"
                 >
                   <q-card-section class="q-py-xs bg-cyan-1">
-                    <p class="text-weight-medium">Pin usage</p>
+                    <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.pin_box.headline') }}</p>
                   </q-card-section>
                   <q-separator />
                   <q-card-section
@@ -30,8 +30,8 @@
                     v-else
                     class="row q-py-sm q-col-gutter-xs"
                   >
-                    <p class="col-12 col-sm-6 col-md-12">Pins usage: <q-badge>{{ gpioStatus.data.pinsUsed }}/{{gpioStatus.data.pinsAvailable}}</q-badge></p>
-                    <p class="col-12 col-sm-6 col-md-12">GPIO boards: <q-badge>{{ gpioStatus.data.boardsAvailable}}</q-badge></p>
+                    <p class="col-12 col-sm-6 col-md-12">{{ $t('page.gpio_mgmt.status_box.pin_box.pin_usage') }} <q-badge>{{ gpioStatus.data.pinsUsed }}/{{gpioStatus.data.pinsAvailable}}</q-badge></p>
+                    <p class="col-12 col-sm-6 col-md-12">{{ $t('page.gpio_mgmt.status_box.pin_box.gpio_boards') }} <q-badge>{{ gpioStatus.data.boardsAvailable}}</q-badge></p>
                   </q-card-section>
                 </q-card>
               </div>
@@ -39,12 +39,12 @@
                 <q-card flat bordered class="bg-grey-2">
                   <q-card-section class="q-py-xs q-pr-xs bg-cyan-1 row items-center">
                     <div class="col">
-                      <p class="text-weight-medium">I2C</p>
+                      <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.i2c_box.headline') }}</p>
                     </div>
                     <div class="col-shrink">
                       <q-btn
                         color="info"
-                        label="Configure"
+                        :label="$t('page.gpio_mgmt.status_box.i2c_box.configure_btn_label')"
                         :icon="mdiPencilOutline"
                         @click="$router.push({name: 'i2cmanagement'})"
                         dense
@@ -63,7 +63,7 @@
                       v-else
                       class="col-12 col-sm-6 col-md-12"
                     >
-                      Status:
+                      {{ $t('page.gpio_mgmt.status_box.i2c_box.status') }}
                       <q-badge
                         :class="{'bg-negative': !i2cStatus.data.enable , 'bg-positive': i2cStatus.data.enable}"
                       >
@@ -79,8 +79,8 @@
                     class="row q-py-sm q-col-gutter-xs"
                   >
                     <div class="col-12">
-                      <p>SDA-Pin: {{ i2cStatus.data.sdaPin?.nr }}</p>
-                      <p>SCL-Pin: {{ i2cStatus.data.sclPin?.nr }}</p>
+                      <p>{{ $t('page.gpio_mgmt.status_box.i2c_box.sda_pin') }} {{ i2cStatus.data.sdaPin?.nr }}</p>
+                      <p>{{ $t('page.gpio_mgmt.status_box.i2c_box.scl_pin') }} {{ i2cStatus.data.sclPin?.nr }}</p>
                     </div>
                   </q-card-section>
                 </q-card>
@@ -94,7 +94,7 @@
           <div class="col-12">
             <q-card class="bg-card-primary">
               <q-card-section class="q-py-sm bg-card-secondary">
-                <p class="text-weight-medium">Local GPIOs:</p>
+                <p class="text-weight-medium">{{ $t('page.gpio_mgmt.local_gpio_box.headline') }}</p>
               </q-card-section>
               <q-separator />
               <q-card-section class="">
@@ -119,7 +119,7 @@
                           <q-icon
                             :name="mdiAlert"
                             size="sm"
-                          /> No boards found!
+                          />{{ $t('page.gpio_mgmt.local_gpio_box.no_boards_found') }}
                         </p>
                       </q-card-section>
                     </q-card>
@@ -146,10 +146,10 @@
             <q-card class="bg-card-primary">
               <q-card-section class="q-py-sm bg-card-secondary">
                 <div class="row items-center">
-                  <p class="col text-weight-medium">I2C GPIO Expanders:</p>
+                  <p class="col text-weight-medium">{{ $t('page.gpio_mgmt.i2c_expander_box.headline') }}</p>
                   <div class="col-shrink">
                     <q-btn
-                      label="Add"
+                      :label="$t('page.gpio_mgmt.i2c_expander_box.add_btn_label')"
                       :color="i2cStatus.data?.enable ? 'positive': 'grey'"
                       @click="$router.push({name: 'gpioexpanderadd'})"
                       :icon="mdiPlusCircleOutline"
@@ -182,7 +182,7 @@
                           <q-icon
                             :name="mdiAlert"
                             size="sm"
-                          /> I2C disabled!
+                          /> {{ $t('page.gpio_mgmt.i2c_expander_box.i2c_disabled') }}
                         </p>
                       </q-card-section>
                     </q-card>
@@ -199,7 +199,7 @@
                           <q-icon
                             :name="mdiAlert"
                             size="sm"
-                          /> No expanders found!
+                          /> {{ $t('page.gpio_mgmt.i2c_expander_box.no_expanders_found') }}
                         </p>
                       </q-card-section>
                     </q-card>
@@ -222,11 +222,12 @@
       </div>
     </div>
     <c-question
-      :question="'Delete \'' + deleteDialog.board?.name + '\'?'"
+      :question="$t('page.gpio_mgmt.delete_dialog.no_expanders_found', {boardName: deleteDialog.board?.name})"
       :show="deleteDialog.show"
       @update:show="abortDelete"
       ok-color="negative"
-      ok-button-text="Delete"
+      :ok-button-text="$t('page.gpio_mgmt.delete_dialog.ok_btn_label')"
+      :abort-button-text="$t('page.gpio_mgmt.delete_dialog.abort_btn_label')"
       @clickOk="onConfirmDelete"
       @clickAbort="abortDelete"
     >

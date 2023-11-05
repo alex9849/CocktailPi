@@ -35,9 +35,9 @@
       <q-table
         :columns="columns"
         :loading="loading"
-        :pagination="{rowsPerPage: 10, sortBy: 'name'}"
+        :pagination="{rowsPerPage: 0, sortBy: 'name'}"
+        hide-bottom
         :rows="glasses"
-        hide-no-data
       >
         <template
           v-slot:loading
@@ -80,14 +80,14 @@
         </template>
         <template v-slot:body-cell-size="props">
           <q-td :props="props"
-                key="nonLocked"
+                key="size"
           >
             {{ props.row.size }} ml
           </q-td>
         </template>
         <template v-slot:body-cell-default="props">
           <q-td :props="props"
-                key="nonLocked"
+                key="default"
           >
             <q-icon
               v-if="props.row.default"
@@ -103,7 +103,7 @@
         </template>
         <template v-slot:body-cell-useForSingleIngredients="props">
           <q-td :props="props"
-                key="nonLocked"
+                key="useForSingleIngredients"
           >
             <q-icon
               v-if="props.row.useForSingleIngredients"
@@ -117,9 +117,20 @@
             />
           </q-td>
         </template>
+        <template
+          v-slot:bottom-row
+        >
+          <td
+            style="color: #b5b5b5"
+          >
+            {{ $t('page.glass_mgmt.glass_table.nr_glasses', {nr: glasses.length}) }}
+          </td>
+          <td rowspan="5"/>
+        </template>
       </q-table>
       <c-delete-warning
         ref="deleteDialog"
+        headline="Delete glass?"
         :delete-method="deleteGlass"
         :list-point-method="x => x.name"
         item-name-plural="glasses"
