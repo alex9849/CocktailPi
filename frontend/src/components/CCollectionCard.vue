@@ -18,17 +18,17 @@
         />
       </q-card-section>
       <q-card-section class="col-8 q-pa-sm flex column">
-        <div class="text-h5" style="margin-bottom: 0">{{ modelValue.name }}</div>
+        <div class="text-h5" style="margin-bottom: 0">{{ $t('component.simple_collection_card.name', { name: modelValue.name }) }}</div>
         <div class="text-caption text-grey">
-          {{ modelValue.size }} Cocktail(s)
+          {{ $t('component.simple_collection_card.nr_cocktails', { nr: modelValue.size }) }}
         </div>
         <div class="text-caption text-grey dotted-overflow" style="">
-          {{ modelValue.description }}
+          {{ $t('component.simple_collection_card.desc', { desc: modelValue.description }) }}
         </div>
         <div style="flex-grow: 1" />
         <div class="row justify-end">
           <p class="text-caption text-grey">
-            by {{ modelValue.ownerName }}
+            {{ $t('component.simple_collection_card.owner', { owner: modelValue.ownerName }) }}
           </p>
         </div>
       </q-card-section>

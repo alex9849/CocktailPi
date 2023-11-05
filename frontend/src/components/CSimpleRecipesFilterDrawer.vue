@@ -17,7 +17,7 @@
         icon="chevron_left"
       />
     </div>
-    <h6 class="text-center text-white">Filter</h6>
+    <h6 class="text-center text-white">{{$t('component.simple_recipes_filter_drawer.headline')}}</h6>
     <q-separator size="1" color="darkgrey" />
     <q-list padding>
       <q-item dark>
@@ -26,7 +26,7 @@
             dense
             dark
             outlined
-            label="Name"
+            :label="$t('component.simple_recipes_filter_drawer.name_field_label')"
             :model-value="filter.query"
             @update:model-value="$emit('update:filter', {...filter, query: $event})"
             @keypress.enter="onSearch"
@@ -44,7 +44,7 @@
             map-options
             use-chips
             hide-bottom-space
-            label="Contains ingredients"
+            :label="$t('component.simple_recipes_filter_drawer.contains_ingredients_field_label')"
             :model-value="filter.containsIngredients"
             @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
           />
@@ -57,10 +57,12 @@
           style="border-color: #c0c0c0"
           class="bg-transparent"
         >
-          <p class="text-grey-4 q-px-sm">Fabricable</p>
+          <p class="text-grey-4 q-px-sm">{{ $t('component.simple_recipes_filter_drawer.fabricable_box.headline') }}</p>
           <q-separator dark />
           <q-list>
             <q-item
+              :key="option.val"
+              v-for="option in fabricable_options"
               tag="label"
               class="q-px-xs"
               dark
@@ -72,60 +74,14 @@
                   keep-color
                   :model-value="filter.fabricable"
                   @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                  val=""
+                  :val="option.val"
                 ></q-radio>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label>All</q-item-label>
+                <q-item-label>{{ option.label }}</q-item-label>
                 <q-item-label caption>
-                  Shows all recips
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              tag="label"
-              class="q-px-xs"
-              dark
-              v-ripple
-            >
-              <q-item-section side top>
-                <q-radio
-                  color="white"
-                  keep-color
-                  :model-value="filter.fabricable"
-                  @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                  val="manual"
-                />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>Fabricable</q-item-label>
-                <q-item-label caption>
-                  Only shows recipes that can be produced with owned ingredients
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              tag="label"
-              class="q-px-xs"
-              dark
-              v-ripple
-            >
-              <q-item-section side top>
-                <q-radio
-                  color="white"
-                  keep-color
-                  :model-value="filter.fabricable"
-                  @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                  val="auto"
-                />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>Automatically fabricable</q-item-label>
-                <q-item-label caption>
-                  Only shows recipes that can be produced fully automatic
+                  {{ option.desc }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -140,7 +96,7 @@
             dark
             emit-value
             map-options
-            label="Order by"
+            :label="$t('component.simple_recipes_filter_drawer.order_by_selector_label')"
             :options="recipeOrderByOptions"
             :model-value="filter.orderBy"
             @update:model-value="$emit('update:filter', {...filter, orderBy: $event})"
@@ -150,7 +106,7 @@
       <q-item>
         <q-item-section>
           <q-btn
-            label="Search"
+            :label="$t('component.simple_recipes_filter_drawer.search_btn_label')"
             color="info"
             :icon="mdiMagnify"
             @click="onSearch"
@@ -160,7 +116,7 @@
       <q-item>
         <q-item-section>
           <q-btn
-            label="Reset"
+            :label="$t('component.simple_recipes_filter_drawer.reset_btn_label')"
             color="red"
             @click="resetFilter"
           />
@@ -181,7 +137,7 @@
         v-if="!leftDrawerOpen"
         @click="leftDrawerOpen = true"
         color="accent"
-        label="Filter"
+        :label="$t('component.simple_recipes_filter_drawer.open_btn_label')"
         icon="chevron_right"
       />
     </transition>
@@ -209,9 +165,22 @@ export default {
       mdiMagnify: mdiMagnify
     }
   },
-  data: () => {
+  data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      fabricable_options: [{
+        val: '',
+        label: this.$t('component.simple_recipes_filter_drawer.fabricable_box.show_all'),
+        desc: this.$t('component.simple_recipes_filter_drawer.fabricable_box.show_all_desc')
+      }, {
+        val: 'manual',
+        label: this.$t('component.simple_recipes_filter_drawer.fabricable_box.fabricable_owned'),
+        desc: this.$t('component.simple_recipes_filter_drawer.fabricable_box.fabricable_owned_desc')
+      }, {
+        val: 'auto',
+        label: this.$t('component.simple_recipes_filter_drawer.fabricable_box.fabricable_auto'),
+        desc: this.$t('component.simple_recipes_filter_drawer.fabricable_box.fabricable_auto_desc')
+      }]
     }
   },
   methods: {

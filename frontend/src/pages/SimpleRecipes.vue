@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import SimpleRecipesSearchList from 'pages/SimpleRecipesSearchList'
+import SimpleRecipesSearchList from 'components/SimpleRecipesSearchList'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import store from '../store'
 

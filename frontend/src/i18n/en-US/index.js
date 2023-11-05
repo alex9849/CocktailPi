@@ -393,6 +393,30 @@ export default {
     }
   },
   component: {
+    simple_recipes_filter_drawer: {
+      headline: 'Filter',
+      open_btn_label: 'Filter',
+      name_field_label: 'Name',
+      contains_ingredients_field_label: 'Contains ingredients',
+      order_by_selector_label: 'Order by',
+      fabricable_box: {
+        headline: 'Fabricable:',
+        show_all: 'Show all',
+        show_all_desc: 'Shows all recipes',
+        fabricable_owned: 'Fabricable with owned ingredients',
+        fabricable_owned_desc: 'Only shows recipes that can be produced with owned ingredients',
+        fabricable_auto: 'Fabricable fully automatic',
+        fabricable_auto_desc: 'Only shows recipes that can be produced fully automatic'
+      },
+      search_btn_label: 'Search',
+      reset_btn_label: 'Reset'
+    },
+    simple_collection_card: {
+      name: '{name}',
+      nr_cocktails: '{nr} cocktail(s)',
+      desc: '{desc}',
+      owner: 'by {owner}'
+    },
     // Not added yet
     ingredient_mgmt: {
       create_btn_label: 'Create ingredient',
