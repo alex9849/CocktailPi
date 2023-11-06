@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <div class="page-content">
-      <h5>Edit user</h5>
+      <h5>{{ headline }}</h5>
       <q-banner v-if="form.error !== ''" rounded dense class="text-white bg-red-5" style="margin: 3px">
         {{ form.error }}
       </q-banner>
@@ -28,14 +28,14 @@
                   v-model:model-value="v.editUser.username.$model"
                   :disable="form.loading || form.disable"
                   hide-bottom-space
-                  label="Username"
+                  :label="$t('page.user_editor.form.columns.username')"
                 />
                 <q-input
                   outlined
                   v-model:model-value="v.editUser.password.$model"
                   :disable="form.loading || form.disable"
                   hide-bottom-space
-                  label="Password"
+                  :label="$t('page.user_editor.form.columns.password')"
                   :type="form.showPassword? 'text':'password'"
                 >
                   <template v-slot:append>
@@ -52,14 +52,14 @@
                   v-if="!isSelfUser"
                   :options="form.roles"
                   :disable="form.loading || form.disable"
-                  label="Role"
+                  :label="$t('page.user_editor.form.columns.role')"
                 />
                 <q-checkbox
                   v-if="!isSelfUser"
                   :model-value="!v.editUser.accountNonLocked.$model"
                   @update:model-value="e => v.editUser.accountNonLocked.$model = !e"
                   :disable="form.loading || form.disable"
-                  label="Locked"
+                  :label="$t('page.user_editor.form.columns.locked')"
                 />
               </q-card-section>
             </q-card>
@@ -74,7 +74,7 @@
                 color="grey"
                 no-caps
                 @click="form.profileEdit = true; form.disable = false"
-                label="Edit"
+                :label="$t('page.user_editor.form.edit_btn_label')"
               />
             </q-card-actions>
             <q-card-actions
@@ -85,7 +85,7 @@
                 type="submit"
                 style="width: 100px"
                 color="positive"
-                label="Save"
+                :label="$t('page.user_editor.form.save_btn_label')"
                 no-caps
                 :disable="v.editUser.$invalid"
                 :loading="form.loading"
@@ -93,7 +93,7 @@
               <q-btn
                 style="width: 100px"
                 color="negative"
-                label="Abort"
+                :label="$t('page.user_editor.form.abort_btn_label')"
                 no-caps
                 :disable="form.loading"
                 @click="onClickAbort"
@@ -140,16 +140,16 @@ export default {
         roles: [
           {
             value: 0,
-            label: 'User'
+            label: this.$t('page.user_editor.form.roles.user')
           }, {
             value: 1,
-            label: 'Recipe-Creator'
+            label: this.$t('page.user_editor.form.roles.recipe_creator')
           }, {
             value: 2,
-            label: 'Pump-Ingredient-Editor'
+            label: this.$t('page.user_editor.form.roles.pump_ingredient_editor')
           }, {
             value: 3,
-            label: 'Admin'
+            label: this.$t('page.user_editor.form.roles.admin')
           }
         ]
       }
@@ -205,12 +205,12 @@ export default {
     },
     headline () {
       if (this.isNewUser) {
-        return 'Create user'
+        return this.$t('page.user_editor.headline_create')
       }
       if (this.isProfile) {
-        return 'My profile'
+        return this.$t('page.user_editor.headline_profile')
       }
-      return 'Edit user'
+      return this.$t('page.user_editor.headline_edit')
     }
   },
   methods: {
@@ -258,14 +258,20 @@ export default {
           this.updateStoreUser()
           this.$q.notify({
             type: 'positive',
-            message: 'Profile updated'
+            message: this.$t('page.user_editor.notifications.profile_updated')
           })
         })
       } else {
         promise = promise.then(() => {
+          let msg
+          if (this.isNewUser) {
+            msg = this.$t('page.user_editor.notifications.user_created')
+          } else {
+            msg = this.$t('page.user_editor.notifications.user_updated')
+          }
           this.$q.notify({
             type: 'positive',
-            message: this.isNewUser ? 'User created successfully' : 'User updated successfully'
+            message: msg
           })
           this.$router.push({ name: 'usermanagement' })
         })

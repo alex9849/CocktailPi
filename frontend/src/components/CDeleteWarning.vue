@@ -3,7 +3,8 @@
     v-model:show="open"
     :loading="deleteLoading"
     :question="internalHeadline"
-    ok-button-text="Delete"
+    :ok-button-text="$t('component.deleteWarning.delete_btn_label')"
+    :abort-button-text="$t('component.deleteWarning.abort_btn_label')"
     ok-color="red"
     @clickAbort="closeDialog"
     @clickOk="onClickDelete"
@@ -101,7 +102,7 @@ export default {
         .then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: ((vm.deleteItems.length > 1) ? vm.itemNamePlural : this.itemNameSingular) + ' deleted successfully'
+            message: this.$t('component.deleteWarning.success_notification')
           })
           vm.closeDialog()
           vm.deleteLoading = false
@@ -116,7 +117,7 @@ export default {
   computed: {
     internalHeadline () {
       if (this.deleteItems.length === 0) {
-        return 'Nothing selected!'
+        return this.$t('component.deleteWarning.nothing_selected')
       }
       return this.headline
     }

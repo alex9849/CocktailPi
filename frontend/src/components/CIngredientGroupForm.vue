@@ -6,11 +6,11 @@
       :disable="disable"
       :model-value="modelValue.name"
       :rules="[
-                val => !v.modelValue.name.required.$invalid || 'Required',
-                val => !v.modelValue.name.maxLength.$invalid || 'Max 30'
+                val => !v.modelValue.name.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.name.maxLength.$invalid || $t('errors.max_letters', {nr: 30})
               ]"
       filled
-      label="Name"
+      :label="$t('component.ingredientGroupForm.name')"
       outlined
       hide-bottom-space
       @update:model-value="e => setValue('name', e)"
@@ -22,7 +22,7 @@
       hide-bottom-space
       filter-automatic-ingredients
       filter-manual-ingredients
-      label="Parent group"
+      :label="$t('component.ingredientGroupForm.parent_group')"
       :after-fetch-filter-function="removeSelfFromResults"
       @update:selected="e => setParentGroup(e)"
     />

@@ -3,7 +3,7 @@
     <q-btn
       :disable="loading"
       color="positive"
-      label="Create group"
+      :label="$t('component.ingredient_group_mgmt.create_btn_label')"
       no-caps
       @click="showEditDialog(null)"
     />
@@ -11,7 +11,7 @@
       :disable="loading"
       :loading="loading"
       color="info"
-      label="Refresh"
+      :label="$t('component.ingredient_group_mgmt.refresh_btn_label')"
       no-caps
       @click="onRefresh"
     />
@@ -26,9 +26,15 @@
       hide-no-data
     >
       <template v-slot:top-right>
-        <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          outlined
+          dense
+          debounce="300"
+          v-model="filter"
+          :placeholder="$t('component.ingredient_group_mgmt.group_table.search_field_label')"
+        >
           <template v-slot:append>
-            <q-icon name="search" />
+            <q-icon name="search"/>
           </template>
         </q-input>
       </template>
@@ -55,7 +61,7 @@
             @click="showEditDialog(props.row)"
           >
             <q-tooltip>
-              Edit
+              {{ $t('component.ingredient_group_mgmt.group_table.edit_btn_tooltip') }}
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -66,7 +72,7 @@
             @click="$refs.deleteDialog.openForItems([props.row])"
           >
             <q-tooltip>
-              Delete
+              {{ $t('component.ingredient_group_mgmt.group_table.delete_btn_tooltip') }}
             </q-tooltip>
           </q-btn>
         </q-td>
@@ -83,10 +89,9 @@
     <c-delete-warning
       ref="deleteDialog"
       :delete-method="deleteGroup"
+      :headline="$t('component.ingredient_group_mgmt.group_table.delete_dialog.headline')"
       :list-point-method="x => x.name"
-      banner-warning="This also removes the selected groups from all associated recipes!"
-      item-name-plural="groups"
-      item-name-singular="group"
+      :banner-warning="$t('component.ingredient_group_mgmt.group_table.delete_dialog.warning')"
       @deleteFailure="fetchAll"
       @deleteSuccess="onDeleteSuccess"
     />
@@ -125,10 +130,30 @@ export default {
       filter: '',
       groups: [],
       columns: [
-        { name: 'name', label: 'Group', field: 'name', align: 'center' },
-        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
-        { name: 'parentGroup', label: 'Parent group', field: 'parentGroupName', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        {
+          name: 'name',
+          label: this.$t('component.ingredient_group_mgmt.group_table.columns.group'),
+          field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'alcoholContent',
+          label: this.$t('component.ingredient_group_mgmt.group_table.columns.alc_content'),
+          field: 'alcoholContent',
+          align: 'center'
+        },
+        {
+          name: 'parentGroup',
+          label: this.$t('component.ingredient_group_mgmt.group_table.columns.parent_group'),
+          field: 'parentGroupName',
+          align: 'center'
+        },
+        {
+          name: 'actions',
+          label: this.$t('component.ingredient_group_mgmt.group_table.columns.actions'),
+          field: '',
+          align: 'center'
+        }
       ],
       loading: false,
       editOptions: {
@@ -172,9 +197,15 @@ export default {
       const onSuccess = function () {
         vm.editOptions.saving = false
         vm.editOptions.editErrorMessage = ''
+        let msg
+        if (vm.isEditGroupNew()) {
+          msg = vm.$t('component.ingredient_group_mgmt.notifications.group_created')
+        } else {
+          msg = vm.$t('component.ingredient_group_mgmt.notifications.group_updated')
+        }
         vm.$q.notify({
           type: 'positive',
-          message: 'Ingredient ' + (vm.isEditGroupNew ? 'created' : 'updated') + ' successfully'
+          message: msg
         })
         vm.closeEditDialog()
         vm.fetchAll()
@@ -228,9 +259,9 @@ export default {
     },
     editDialogHeadline () {
       if (this.isEditGroupNew) {
-        return 'Create group'
+        return this.$t('component.ingredient_group_mgmt.create_headline')
       }
-      return 'Edit group'
+      return this.$t('component.ingredient_group_mgmt.edit_headline')
     }
   },
   setup () {

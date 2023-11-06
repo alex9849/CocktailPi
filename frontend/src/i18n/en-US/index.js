@@ -424,6 +424,33 @@ export default {
       save_btn_label: 'Create',
       update_btn_label: 'Update',
       abort_btn_label: 'Abort'
+    },
+    user_editor: {
+      headline_edit: 'Edit user',
+      headline_profile: 'My profile',
+      headline_create: 'Create user',
+      form: {
+        columns: {
+          username: 'Username',
+          password: 'Password',
+          role: 'Role',
+          locked: 'Locked'
+        },
+        save_btn_label: 'Save',
+        abort_btn_label: 'Abort',
+        edit_btn_label: 'Edit',
+        roles: {
+          user: 'User',
+          recipe_creator: 'Recipe-Creator',
+          pump_ingredient_editor: 'Pump-Ingredient-Editor',
+          admin: 'Admin'
+        }
+      },
+      notifications: {
+        user_created: 'User created successfully',
+        user_updated: 'User updated successfully',
+        profile_updated: 'Profile updated'
+      }
     }
   },
   component: {
@@ -583,7 +610,46 @@ export default {
       tooltip_on: 'Turn on',
       tooltip_off: 'Turn off'
     },
+    deleteWarning: {
+      delete_btn_label: 'Delete',
+      abort_btn_label: 'Abort',
+      success_notification: 'Deleted successfully!',
+      nothing_selected: 'Nothing selected!'
+    },
+    editDialog: {
+      save_btn_label: 'Save',
+      abort_btn_label: 'Abort'
+    },
+    ingredientGroupForm: {
+      name: 'Name',
+      parent_group: 'Parent group'
+    },
     // Not added yet
+    ingredient_group_mgmt: {
+      create_btn_label: 'Create group',
+      refresh_btn_label: 'Refresh',
+      group_table: {
+        search_field_label: 'Search',
+        columns: {
+          group: 'Group',
+          alc_content: 'Alcohol content',
+          parent_group: 'Parent group',
+          actions: 'Actions'
+        },
+        edit_btn_tooltip: 'Edit',
+        delete_btn_tooltip: 'Delete',
+        delete_dialog: {
+          headline: 'Delete group?',
+          warning: 'This also removes the selected group from all associated recipes!'
+        }
+      },
+      edit_headline: 'Edit group',
+      create_headline: 'Create group',
+      notifications: {
+        group_created: 'Group created successfully',
+        group_updated: 'Group updated successfully'
+      }
+    },
     ingredient_mgmt: {
       create_btn_label: 'Create ingredient',
       refresh_btn_label: 'Refresh',
@@ -597,21 +663,6 @@ export default {
           unit: 'Unit',
           pump_time_multiplier: 'Pump time multiplier',
           parent_group: 'Parent Group',
-          actions: 'Actions'
-        },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete'
-      }
-    },
-    ingredient_group_mgmt: {
-      create_btn_label: 'Create group',
-      refresh_btn_label: 'Refresh',
-      group_table: {
-        search_field_label: 'Search',
-        columns: {
-          group: 'Group',
-          alc_content: 'Alcohol content',
-          parent_group: 'Parent group',
           actions: 'Actions'
         },
         edit_btn_tooltip: 'Edit',
