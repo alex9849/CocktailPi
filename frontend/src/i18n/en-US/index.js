@@ -505,6 +505,84 @@ export default {
       alc_content: '{nr}% alcohol content',
       alc_content_range: '{min} - {min}% alcohol content'
     },
+    make_cocktail_dialog: {
+      headline: 'Order Cocktail',
+      order_btn_label: 'MAKE COCKTAIL ({nr} ml)'
+    },
+    make_cocktail_amount_to_produce: {
+      glass_selector_label: 'Glass',
+      amount_to_produce_label: 'Amount to produce'
+    },
+    make_cocktail_group_replacements: {
+      fulfilled_msg: 'All ingredient-groups have been replaced with concrete ingredients!',
+      not_fulfilled_msg: 'The following ingredient-groups have to get real existing ingredients assigned:',
+      card: {
+        prod_step_label: 'Production step',
+        ingredient_group_label: 'Ingredient group',
+        replacement_label: 'Replacement',
+        tags: {
+          in_bar: 'in bar',
+          not_in_bar: 'not in bar',
+          automatically_addable: 'Automatically addable'
+        }
+      }
+    },
+    make_cocktail_add_manually: {
+      fulfilled_msg: 'All ingredients assigned to pumps! Cocktail can be produced fully automatic!',
+      not_fulfilled_msg: 'The following ingredients have to get added manually or are not assigned to pumps. ' +
+        'You will be asked to add them during the production progress:',
+      tags: {
+        in_bar: 'in bar',
+        not_in_bar: 'not in bar'
+      }
+    },
+    make_cocktail_occupied: {
+      fulfilled_msg: 'Machine is not occupied!',
+      occupied_cocktail_msg: 'Machine occupied! A cocktail ist getting prepared currently!',
+      occupied_pumps_msg: 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
+    },
+    make_cocktail_insufficient_ingredients: {
+      fulfilled_msg: 'The following ingredients will be consumed:',
+      not_fulfilled_msg: 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+    },
+    make_cocktail_customizer: {
+      headline: 'Order customizer',
+      headline_boosting: 'Boosting:',
+      boosting_desc: 'Increases (or decreases) the ml of reported boostable ingredients in the base recipe. ' +
+        '(Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid ' +
+        'dispensed remains the same!',
+      headline_additional_ingredients: 'Additional ingredients:',
+      additional_ingredients_desc: 'Ingredients will be added as last production-step. The dispensed amount of ' +
+        'liquid will be increased by the amount of ordered additional ingredients.',
+      add_new_ingredient_btn_label: 'Add new ingredient',
+      add_new_ingredient_headline: 'Add ingredient',
+      recipe_not_boostable: 'Recipe not boostable!'
+    },
+    make_cocktail_pump_editor: {
+      headline: 'Pump-Layout',
+      pump_table: {
+        required_ingredient: 'Required ingredient',
+        columns: {
+          nr: 'Nr',
+          ingredient: 'Current Ingredient',
+          filling_level: 'Remaining filling level',
+          pumped_up: 'Pumped Up',
+          state: 'State',
+          actions: 'actions'
+        },
+        refill_btn_label: 'Fill',
+        state_ok: 'OK',
+        state_incomplete: 'Incomplete'
+      }
+    },
+    pump_up_btn: {
+      tooltip_up: 'Pump up',
+      tooltip_back: 'Pump back'
+    },
+    pump_turn_on_btn: {
+      tooltip_on: 'Turn on',
+      tooltip_off: 'Turn off'
+    },
     // Not added yet
     ingredient_mgmt: {
       create_btn_label: 'Create ingredient',

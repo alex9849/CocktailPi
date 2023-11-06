@@ -16,8 +16,12 @@
                   square
                   :ripple="false"
           >
-            <div v-if="ingredient.inBar">in bar</div>
-            <div v-else>not in bar</div>
+            <div v-if="ingredient.inBar">
+              {{ $t('component.make_cocktail_add_manually.tags.in_bar') }}
+            </div>
+            <div v-else>
+              {{ $t('component.make_cocktail_add_manually.tags.not_in_bar') }}
+            </div>
           </q-chip>
         </li>
       </ul>
@@ -56,10 +60,9 @@ export default {
     },
     headline () {
       if (this.isFulfilled) {
-        return 'All ingredients assigned to pumps! Cocktail can be produced fully automatic!'
+        return this.$t('component.make_cocktail_add_manually.fulfilled_msg')
       } else {
-        return 'The following ingredients have to get added manually or are not assigned to pumps. ' +
-          'You will be asked to add them during the production progress:'
+        return this.$t('component.make_cocktail_add_manually.not_fulfilled_msg')
       }
     },
     iconClass () {

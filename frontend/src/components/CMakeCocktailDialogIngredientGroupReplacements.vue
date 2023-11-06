@@ -9,30 +9,17 @@
   >
     <template v-slot:content>
       <div class="row justify-center items-center q-pa-sm">
-        <q-table
-          :columns="columns"
-          :rows="tableRows"
-          hide-bottom
-          hide-header
-          dense
-          flat
-          grid
-          class="full-width"
-          :class="cardClass"
-          card-container-class="justify-center"
+        <div
+          v-for="(row, idx) in tableRows"
+          :key="idx"
+          class="q-pa-xs col-xs-12 col-sm-9 col-md-6 col-lg-3 grid-style-transition"
         >
-          <template v-slot:item="{ row }">
-            <div
-              class="q-pa-xs col-xs-12 col-sm-9 col-md-6 col-lg-3 grid-style-transition"
-            >
-              <c-make-cocktail-dialog-ingredient-group-replacements-card
-                :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }"
-                @ReplacementUpdate="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
-                :replacement-entry="row"
-              />
-            </div>
-          </template>
-        </q-table>
+          <c-make-cocktail-dialog-ingredient-group-replacements-card
+            :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }"
+            @ReplacementUpdate="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
+            :replacement-entry="row"
+          />
+        </div>
       </div>
     </template>
   </c-q-headlined-card>
@@ -51,15 +38,6 @@ export default {
     allIngredientGroupsReplaced: Boolean
   },
   emits: ['ReplacementUpdate'],
-  data () {
-    return {
-      columns: [
-        { name: 'productionStep', label: 'Production step', field: 'productionStep' },
-        { name: 'ingredientGroup', label: 'Ingredient group', field: 'ingredientGroup' },
-        { name: 'replacement', label: 'Replacement', field: 'replacement' }
-      ]
-    }
-  },
   methods: {
     onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
       this.$emit('ReplacementUpdate', { prodStepNr: prodStepNr - 1, toReplaceId, replacement })
@@ -92,9 +70,9 @@ export default {
     },
     headline () {
       if (this.isFulfilled) {
-        return 'All ingredient-groups have been replaced with concrete ingredients!'
+        return this.$t('component.make_cocktail_group_replacements.fulfilled_msg')
       } else {
-        return 'The following ingredient-groups have to get real existing ingredients assigned:'
+        return this.$t('component.make_cocktail_group_replacements.not_fulfilled_msg')
       }
     },
     iconClass () {

@@ -9,7 +9,7 @@
     :loading="loading"
   >
     <q-tooltip>
-      {{ pumpUpDirectionReversed ? 'Pump back' : 'Pump up' }}
+      {{ tooltip }}
     </q-tooltip>
   </q-btn>
 </template>
@@ -60,6 +60,12 @@ export default {
     ...mapGetters({
       getPumpOccupation: 'pumpLayout/getPumpOccupation'
     }),
+    tooltip () {
+      if (this.pumpUpDirectionReversed) {
+        return this.$t('component.pump_up_btn.tooltip_back')
+      }
+      return this.$t('component.pump_up_btn.tooltip_up')
+    },
     loading () {
       return this.running &&
         (this.currentPumpDirectionReversed === this.pumpUpDirectionReversed)

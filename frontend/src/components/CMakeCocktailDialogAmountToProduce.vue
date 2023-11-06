@@ -23,7 +23,7 @@
         v-if="showGlassSelector"
         :model-value="selectedGlass"
         @update:modelValue="onGlassSelect($event)"
-        label="Glass"
+        :label="$t('component.make_cocktail_amount_to_produce.glass_selector_label')"
         input-class="text-center text-weight-medium"
         style="width: 400px"
         rounded
@@ -32,14 +32,14 @@
         :options="availableGlasses"
         :option-label="x => x.name + ' (' + x.size + 'ml)'"
         :error="!selectedGlass"
-        error-message="Field required!"
+        :error-message="$t('errors.field_required')"
         hide-bottom-space
       />
       <q-input
         v-else
         :model-value="modelValue"
         @update:modelValue="emitAmountToProduce(Number($event))"
-        label="Amount to produce"
+        :label="$t('component.make_cocktail_amount_to_produce.amount_to_produce_label')"
         type="number"
         outlined
         hide-bottom-space
@@ -50,9 +50,9 @@
         rounded
         suffix="ml"
         :rules="[
-            val => modelValue || 'Required',
-            val => modelValue >= 10 || 'Min 10ml',
-            val => modelValue <= 5000 || 'Max 5000ml'
+            val => modelValue || $t('errors.field_required'),
+            val => modelValue >= 10 || $t('errors.min_metric', {nr: 10, metric: 'ml'}),
+            val => modelValue <= 5000 || $t('errors.max_metric', {nr: 5000, metric: 'ml'})
           ]"
       >
         <template v-slot:prepend>

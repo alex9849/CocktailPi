@@ -45,11 +45,11 @@ export default {
     },
     headline () {
       if (this.hasCocktailProgress) {
-        return 'Machine occupied! A cocktail ist getting prepared currently!'
+        return this.$t('component.make_cocktail_occupied.occupied_cocktail_msg')
       } else if (this.pumpsOccupied) {
-        return 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
+        return this.$t('component.make_cocktail_occupied.occupied_pumps_msg')
       } else {
-        return 'Machine is not occupied!'
+        return this.$t('component.make_cocktail_occupied.fulfilled_msg')
       }
     },
     iconClass () {

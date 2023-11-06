@@ -58,9 +58,9 @@ export default {
     },
     headline () {
       if (this.isFulfilled) {
-        return 'The following ingredients will be consumed:'
+        return this.$t('component.make_cocktail_insufficient_ingredients.fulfilled_msg')
       } else {
-        return 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+        return this.$t('component.make_cocktail_insufficient_ingredients.not_fulfilled_msg')
       }
     },
     iconClass () {

@@ -15,7 +15,7 @@
       <q-card-section class="q-gutter-md">
         <q-toolbar>
           <q-toolbar-title>
-            <div class="text-weight-medium">Order Cocktail</div>
+            <div class="text-weight-medium">{{ $t('component.make_cocktail_dialog.headline') }}</div>
             <div class="text-weight-light">{{ recipe.name }}</div>
           </q-toolbar-title>
           <q-btn flat
@@ -56,25 +56,10 @@
             :disable-boosting="!recipe.boostable"
             @update:customisations="onCustomisationsUpdate($event)"
           />
-          <q-card flat bordered
-                  v-if="isUserPumpIngredientEditor"
-          >
-            <q-card-section class="q-pa-none">
-              <q-expansion-item
-                v-model:model-value="pumpEditorExpanded"
-                class="bg-grey-2"
-              >
-                <template v-slot:header>
-                  <q-item-section class="text-left">
-                    <q-item-label class="text-subtitle2">Pump-Layout</q-item-label>
-                  </q-item-section>
-                </template>
-                <c-make-cocktail-dialog-pump-editor
-                  :needed-ingredients="feasibilityReport.requiredIngredients.map(x => x.ingredient)"
-                />
-              </q-expansion-item>
-            </q-card-section>
-          </q-card>
+          <c-make-cocktail-dialog-pump-editor
+            v-if="isUserPumpIngredientEditor"
+            :needed-ingredients="feasibilityReport.requiredIngredients.map(x => x.ingredient)"
+          />
         </div>
       </q-card-section>
       <q-card-actions
@@ -87,13 +72,8 @@
           @click="onMakeCocktail()"
           :disable="!cocktailOrderable"
         >
-          MAKE COCKTAIL ({{feasibilityReport.totalAmountInMl}} ml)
+          {{ $t('component.make_cocktail_dialog.order_btn_label', {nr: feasibilityReport.totalAmountInMl}) }}
         </q-btn>
-        <q-tooltip
-          v-if="hasCocktailProgress"
-        >
-          {{ "A cocktail is already being made!" }}
-        </q-tooltip>
       </q-card-actions>
     </q-card>
   </q-dialog>

@@ -9,7 +9,7 @@
   >
     <template v-slot:default>
       <q-tooltip>
-        {{ running ? 'Turn off' : 'Turn on' }}
+        {{ tooltip }}
       </q-tooltip>
     </template>
   </q-btn>
@@ -59,7 +59,13 @@ export default {
   computed: {
     ...mapGetters({
       disable: 'cocktailProgress/hasCocktailProgress'
-    })
+    }),
+    tooltip () {
+      if (this.running) {
+        return this.$t('component.pump_turn_on_btn.tooltip_off')
+      }
+      return this.$t('component.pump_turn_on_btn.tooltip_on')
+    }
   }
 }
 </script>

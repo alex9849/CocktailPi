@@ -7,13 +7,19 @@
       >
         <template v-slot:header>
           <q-item-section>
-            <q-item-label class="text-subtitle2">Order customiser</q-item-label>
+            <q-item-label class="text-subtitle2">
+              {{ $t('component.make_cocktail_customizer.headline') }}
+            </q-item-label>
           </q-item-section>
         </template>
         <q-card class="">
           <q-card-section>
-            <p class="text-bold">Boosting:</p>
-            <p class="text-italic">Increases (or decreases) the ml of reported boostable ingredients in the base recipe. (Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid dispensed remains the same!</p>
+            <p class="text-bold">
+              {{ $t('component.make_cocktail_customizer.headline_boosting') }}
+            </p>
+            <p class="text-italic">
+              {{ $t('component.make_cocktail_customizer.boosting_desc') }}
+            </p>
             <q-slider v-model:model-value="customisationsCopy.boost"
                       @change="onUpdateBoost($event)"
                       color="orange"
@@ -33,8 +39,12 @@
             />
           </q-card-section>
           <q-card-section>
-            <p class="text-bold">Additional ingredients:</p>
-            <p class="text-italic">Ingredients will be added as last production-step. The dispensed amount of liquid will be increased by the amount of ordered additional ingredients.</p>
+            <p class="text-bold">
+              {{ $t('component.make_cocktail_customizer.headline_additional_ingredients') }}
+            </p>
+            <p class="text-italic">
+              {{ $t('component.make_cocktail_customizer.additional_ingredients_desc') }}
+            </p>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-3"
                    v-for="additionalIngredient in customisationsCopy.additionalIngredients"
@@ -53,7 +63,9 @@
                     v-if="addIngredient.clicked"
                     class="q-gutter-sm col-12"
                   >
-                    <p class="text-subtitle2">Add ingredient</p>
+                    <p class="text-subtitle2">
+                      {{ $t('component.make_cocktail_customizer.add_new_ingredient_headline') }}
+                    </p>
                     <c-ingredient-selector
                       rounded
                       filter-manual-ingredients
@@ -71,7 +83,9 @@
                   >
                     <div>
                       <q-icon :name="mdiPlusCircleOutline" size="xl" />
-                      <p>Add new ingredient</p>
+                      <p>
+                        {{ $t('component.make_cocktail_customizer.add_new_ingredient_btn_label') }}
+                      </p>
                     </div>
                   </q-btn>
                 </q-card>
@@ -131,7 +145,7 @@ export default {
   computed: {
     boostingSliderLabel () {
       if (this.disableBoosting) {
-        return 'Recipe not boostable!'
+        return this.$t('component.make_cocktail_customizer.recipe_not_boostable')
       }
       return (this.customisationsCopy.boost - 100) + '%'
     }

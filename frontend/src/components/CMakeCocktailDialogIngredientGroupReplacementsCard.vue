@@ -5,7 +5,7 @@
         <q-input
           outlined
           disable
-          label="Production step"
+          :label="$t('component.make_cocktail_group_replacements.card.prod_step_label')"
           readonly
           :model-value="replacementEntry.productionStep"
           dense
@@ -17,7 +17,7 @@
         <q-input
           outlined
           disable
-          label="Ingredient group"
+          :label="$t('component.make_cocktail_group_replacements.card.ingredient_group_label')"
           :model-value="replacementEntry.ingredientGroup.name"
           dense
         >
@@ -32,7 +32,7 @@
           filter-ingredient-groups
           fetch-instantly
           :loading="noInputReplacementOptionsLoading"
-          label="Replacement"
+          :label="$t('component.make_cocktail_group_replacements.card.replacement_label')"
           hide-bottom-space
           :selected="replacementEntry.replacement"
           :no-input-options="noInputReplacementOptions"
@@ -44,25 +44,27 @@
               caption
               class="text-green"
             >
-              automatically addable
+              {{ $t('component.make_cocktail_group_replacements.card.tags.automatically_addable') }}
             </q-item-label>
             <q-item-label
               v-else-if="scope.opt.inBar"
               caption
               class="text-warning"
             >
-              in bar
+              {{ $t('component.make_cocktail_group_replacements.card.tags.in_bar') }}
             </q-item-label>
             <q-item-label
               v-else
               caption
               class="text-negative"
             >
-              not in bar
+              {{ $t('component.make_cocktail_group_replacements.card.tags.not_in_bar') }}
             </q-item-label>
           </template>
           <template v-slot:label>
-            <p class="text-grey-10 text-weight-medium">Replacement</p>
+            <p class="text-grey-10 text-weight-medium">
+              {{ $t('component.make_cocktail_group_replacements.card.replacement_label') }}
+            </p>
           </template>
         </c-ingredient-selector>
       </div>

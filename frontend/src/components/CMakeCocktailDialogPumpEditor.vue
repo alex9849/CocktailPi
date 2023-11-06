@@ -1,160 +1,178 @@
 <template>
-  <q-table
-    :columns="columns"
-    :rows="sortedPumpLayout"
-    :pagination="{rowsPerPage: 0}"
-    hide-bottom
-    flat
-  >
-    <template v-slot:body-cell-id="props">
-      <q-td
-        key="id"
-        :props="props"
+  <q-card flat bordered>
+    <q-card-section class="q-pa-none">
+      <q-expansion-item
+        v-model:model-value="pumpEditorExpanded"
+        class="bg-grey-2"
       >
-        <p
-          style="max-width: 150px; overflow: hidden"
-        >
-          <q-icon
-            v-if="props.row.type === 'dc'"
-            :name="mdiPump"
-          />
-          <q-icon
-            v-else
-          >
-            <img src="~assets/icons/stepper-motor.svg" />
-          </q-icon>
-          {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
-        </p>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-state="props">
-      <q-td
-        key="state"
-        :props="props"
-        class="text-center"
-      >
-        <q-badge :color="props.row.state === 'READY' ? 'positive' : 'negative'" class="text-subtitle2">
-          <div>
-            <p>
-              {{ props.row.state === 'READY' ? 'OK' : 'Incomplete' }}
-            </p>
-          </div>
-        </q-badge>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-currentIngredient="props">
-      <q-td
-        key="currentIngredient"
-        :props="props"
-      >
-        <c-ingredient-selector
-          :selected="props.row.currentIngredient"
-          @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, attrState.currentIngredient, !$event)"
-          :disable="getPumpState(props.row.id).occupied"
-          clearable
-          dense
-          hide-bottom-space
-          filter-manual-ingredients
-          filter-ingredient-groups
-          :bg-color="markPump(props.row)? 'green-3':undefined"
-          :no-input-options="missingAutomaticIngredients"
-          :loading="attrState.currentIngredient.has(props.row.id)"
-        >
-          <template
-            v-slot:afterIngredientName="{scope}"
-          >
-            <q-item-label
-              v-if="!!missingAutomaticIngredients.some(x => x.id === scope.opt.id)"
-              caption
-              class="text-green"
-            >
-              Required ingredient
+        <template v-slot:header>
+          <q-item-section class="text-left">
+            <q-item-label class="text-subtitle2">
+              {{ $t('component.make_cocktail_pump_editor.headline') }}
             </q-item-label>
-          </template>
-        </c-ingredient-selector>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-fillingLevelInMl="props">
-      <q-td
-        key="fillingLevelInMl"
-        :props="props"
-      >
-        <q-input
-          style="min-width: 200px"
-          :model-value="props.row.fillingLevelInMl"
-          @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event), attrState.fillingLevelInMl)"
-          debounce="500"
-          :loading="attrState.fillingLevelInMl.has(props.row.id)"
-          :disable="getPumpState(props.row.id).occupied || attrState.fillingLevelInMlRefill.has(props.row.id)"
-          type="number"
-          dense
-          outlined
+          </q-item-section>
+        </template>
+        <q-table
+          :columns="columns"
+          :rows="sortedPumpLayout"
+          :pagination="{rowsPerPage: 0}"
+          hide-bottom
+          flat
         >
-          <template v-slot:append>
-            <p>ml</p>
-          </template>
-          <template v-slot:after>
-            <q-btn
-              @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize), attrState.fillingLevelInMlRefill)"
-              :loading="attrState.fillingLevelInMlRefill.has(props.row.id)"
-              :disable="getPumpState(props.row.id).occupied || !props.row.currentIngredient || attrState.fillingLevelInMl.has(props.row.id)"
-              dense
-              class="q-ml-xs"
-              color="green"
+          <template v-slot:body-cell-id="props">
+            <q-td
+              key="id"
+              :props="props"
             >
-              <div class="q-gutter-xs row">
-                <q-icon class="text-white">
-                  <img style="filter: brightness(0) invert(1);" src="~assets/icons/refill-bottle.svg" />
+              <p
+                style="max-width: 150px; overflow: hidden"
+              >
+                <q-icon
+                  v-if="props.row.type === 'dc'"
+                  :name="mdiPump"
+                />
+                <q-icon
+                  v-else
+                >
+                  <img src="~assets/icons/stepper-motor.svg"/>
                 </q-icon>
-                <p>Fill</p>
-              </div>
-            </q-btn>
+                {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
+              </p>
+            </q-td>
           </template>
-        </q-input>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-pumpedUp="props">
-      <q-td
-        key="pumpedUp"
-        class="q-pa-md q-gutter-x-sm"
-        :props="props"
-      >
-        <c-pumped-up-icon-button
-          :pump-id="props.row.id"
-          :pump-type="props.row.type"
-          :disable="getPumpState(props.row.id).occupied"
-          :is-pumping-up="getPumpState(props.row.id).inPumpUp"
-        />
-      </q-td>
-    </template>
-    <template v-slot:body-cell-actions="props">
-      <q-td
-        key="actions"
-        class="q-pa-md q-gutter-x-sm"
-        :props="props"
-      >
-        <c-pump-up-button
-          v-if="isAllowReversePumping"
-          :pump-id="props.row.id"
-          :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
-          :running="getPumpState(props.row.id).inPumpUp"
-          :disable="getPumpState(props.row.id).occupied"
-          :pump-up-direction-reversed="true"
-        />
-        <c-pump-up-button
-          :pump-id="props.row.id"
-          :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
-          :running="getPumpState(props.row.id).inPumpUp"
-          :disable="getPumpState(props.row.id).occupied"
-          :pump-up-direction-reversed="false"
-        />
-        <c-pump-turn-on-off-button
-          :pump-id="props.row.id"
-          :running="getPumpState(props.row.id).occupied"
-        />
-      </q-td>
-    </template>
-  </q-table>
+          <template v-slot:body-cell-state="props">
+            <q-td
+              key="state"
+              :props="props"
+              class="text-center"
+            >
+              <q-badge :color="props.row.state === 'READY' ? 'positive' : 'negative'" class="text-subtitle2">
+                <div>
+                  <p>
+                    {{ printPumpState(props.row.state) }}
+                  </p>
+                </div>
+              </q-badge>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-currentIngredient="props">
+            <q-td
+              key="currentIngredient"
+              :props="props"
+            >
+              <c-ingredient-selector
+                :selected="props.row.currentIngredient"
+                @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, attrState.currentIngredient, !$event)"
+                :disable="getPumpState(props.row.id).occupied"
+                clearable
+                dense
+                hide-bottom-space
+                filter-manual-ingredients
+                filter-ingredient-groups
+                :bg-color="markPump(props.row)? 'green-3':undefined"
+                :no-input-options="missingAutomaticIngredients"
+                :loading="attrState.currentIngredient.has(props.row.id)"
+              >
+                <template
+                  v-slot:afterIngredientName="{scope}"
+                >
+                  <q-item-label
+                    v-if="!!missingAutomaticIngredients.some(x => x.id === scope.opt.id)"
+                    caption
+                    class="text-green"
+                  >
+                    {{ $t('component.make_cocktail_pump_editor.pump_table.required_ingredient') }}
+                  </q-item-label>
+                </template>
+              </c-ingredient-selector>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-fillingLevelInMl="props">
+            <q-td
+              key="fillingLevelInMl"
+              :props="props"
+            >
+              <q-input
+                style="min-width: 200px"
+                :model-value="props.row.fillingLevelInMl"
+                @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event), attrState.fillingLevelInMl)"
+                debounce="500"
+                :loading="attrState.fillingLevelInMl.has(props.row.id)"
+                :disable="getPumpState(props.row.id).occupied || attrState.fillingLevelInMlRefill.has(props.row.id)"
+                type="number"
+                dense
+                outlined
+              >
+                <template v-slot:append>
+                  <p>ml</p>
+                </template>
+                <template v-slot:after>
+                  <q-btn
+                    @click="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, Number(props.row.currentIngredient.bottleSize), attrState.fillingLevelInMlRefill)"
+                    :loading="attrState.fillingLevelInMlRefill.has(props.row.id)"
+                    :disable="getPumpState(props.row.id).occupied || !props.row.currentIngredient || attrState.fillingLevelInMl.has(props.row.id)"
+                    dense
+                    class="q-ml-xs"
+                    color="green"
+                  >
+                    <div class="q-gutter-xs row">
+                      <q-icon class="text-white">
+                        <img style="filter: brightness(0) invert(1);" src="~assets/icons/refill-bottle.svg"/>
+                      </q-icon>
+                      <p>
+                        {{ $t('component.make_cocktail_pump_editor.pump_table.refill_btn_label') }}
+                      </p>
+                    </div>
+                  </q-btn>
+                </template>
+              </q-input>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-pumpedUp="props">
+            <q-td
+              key="pumpedUp"
+              class="q-pa-md q-gutter-x-sm"
+              :props="props"
+            >
+              <c-pumped-up-icon-button
+                :pump-id="props.row.id"
+                :pump-type="props.row.type"
+                :disable="getPumpState(props.row.id).occupied"
+                :is-pumping-up="getPumpState(props.row.id).inPumpUp"
+              />
+            </q-td>
+          </template>
+          <template v-slot:body-cell-actions="props">
+            <q-td
+              key="actions"
+              class="q-pa-md q-gutter-x-sm"
+              :props="props"
+            >
+              <c-pump-up-button
+                v-if="isAllowReversePumping"
+                :pump-id="props.row.id"
+                :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
+                :running="getPumpState(props.row.id).inPumpUp"
+                :disable="getPumpState(props.row.id).occupied"
+                :pump-up-direction-reversed="true"
+              />
+              <c-pump-up-button
+                :pump-id="props.row.id"
+                :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
+                :running="getPumpState(props.row.id).inPumpUp"
+                :disable="getPumpState(props.row.id).occupied"
+                :pump-up-direction-reversed="false"
+              />
+              <c-pump-turn-on-off-button
+                :pump-id="props.row.id"
+                :running="getPumpState(props.row.id).occupied"
+              />
+            </q-td>
+          </template>
+        </q-table>
+      </q-expansion-item>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
@@ -179,13 +197,43 @@ export default {
   data () {
     return {
       columns: [
-        { name: 'id', label: 'Nr', field: 'id', align: 'left' },
-        { name: 'currentIngredient', label: 'Current Ingredient', field: 'currentIngredient', align: 'center' },
-        { name: 'fillingLevelInMl', label: 'Remaining filling level', field: 'fillingLevelInMl', align: 'center' },
-        { name: 'pumpedUp', label: 'Pumped Up', field: 'pumpedUp', align: 'center' },
-        { name: 'state', label: 'State', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        {
+          name: 'id',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.nr'),
+          field: 'id',
+          align: 'left'
+        },
+        {
+          name: 'currentIngredient',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.ingredient'),
+          field: 'currentIngredient',
+          align: 'center'
+        },
+        {
+          name: 'fillingLevelInMl',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.filling_level'),
+          field: 'fillingLevelInMl',
+          align: 'center'
+        },
+        {
+          name: 'pumpedUp',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.pumped_up'),
+          field: 'pumpedUp',
+          align: 'center'
+        },
+        {
+          name: 'state',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.state'),
+          align: 'center'
+        },
+        {
+          name: 'actions',
+          label: this.$t('component.make_cocktail_pump_editor.pump_table.columns.actions'),
+          field: '',
+          align: 'center'
+        }
       ],
+      pumpEditorExpanded: false,
       loadingPumpIdsCurrentIngredient: [],
       loadingPumpIdsFillingLevel: [],
       attrState: {
@@ -233,6 +281,12 @@ export default {
         .finally(() => {
           loadingSet.delete(pumpId)
         })
+    },
+    printPumpState (state) {
+      if (state === 'READY') {
+        return this.$t('component.make_cocktail_pump_editor.pump_table.state_ok')
+      }
+      return this.$t('component.make_cocktail_pump_editor.pump_table.state_incomplete')
     },
     getPumpState (id) {
       const abortState = {
