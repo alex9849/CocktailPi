@@ -3,7 +3,7 @@
     <q-btn
       :disable="loading"
       color="positive"
-      label="Create ingredient"
+      :label="$t('component.ingredient_mgmt.create_btn_label')"
       no-caps
       @click="showEditDialog(null)"
     />
@@ -11,7 +11,7 @@
       :disable="loading"
       :loading="loading"
       color="info"
-      label="Refresh"
+      :label="$t('component.ingredient_mgmt.refresh_btn_label')"
       no-caps
       @click="onRefresh"
     />
@@ -26,9 +26,15 @@
       hide-no-data
     >
       <template v-slot:top-right>
-        <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          outlined
+          dense
+          debounce="300"
+          v-model="filter"
+          :placeholder="$t('component.ingredient_mgmt.ingredient_table.search_field_label')"
+        >
           <template v-slot:append>
-            <q-icon name="search" />
+            <q-icon name="search"/>
           </template>
         </q-input>
       </template>
@@ -42,7 +48,7 @@
       </template>
       <template v-slot:body-cell-bottleSize="props">
         <q-td
-          key="alcoholContent"
+          key="bottleSize"
           :props="props"
         >
           <p v-if="props.row.type === 'automated'">
@@ -65,7 +71,7 @@
             @click="showEditDialog(props.row)"
           >
             <q-tooltip>
-              Edit
+              {{ $t('component.ingredient_mgmt.ingredient_table.edit_btn_tooltip') }}
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -76,7 +82,7 @@
             @click="$refs.deleteDialog.openForItems([props.row])"
           >
             <q-tooltip>
-              Delete
+              {{ $t('component.ingredient_mgmt.ingredient_table.delete_btn_tooltip') }}
             </q-tooltip>
           </q-btn>
         </q-td>
@@ -95,9 +101,8 @@
     ref="deleteDialog"
     :delete-method="deleteIngredient"
     :list-point-method="x => x.name"
-    banner-warning="This also removes the selected ingredients from all associated recipes!"
-    item-name-plural="ingredients"
-    item-name-singular="ingredient"
+    :headline="$t('component.ingredient_mgmt.delete_dialog.headline')"
+    :banner-warning="$t('component.ingredient_mgmt.delete_dialog.warning')"
     @deleteFailure="fetchAll"
     @deleteSuccess="onDeleteSuccess"
   />
@@ -134,14 +139,54 @@ export default {
     return {
       filter: '',
       columns: [
-        { name: 'name', label: 'Ingredient', field: 'name', align: 'center' },
-        { name: 'type', label: 'Type', field: 'type', align: 'center' },
-        { name: 'alcoholContent', label: 'Alcohol content', field: 'alcoholContent', align: 'center' },
-        { name: 'bottleSize', label: 'Bottle size', field: 'bottleSize', align: 'center' },
-        { name: 'unit', label: 'Unit', field: 'unit', align: 'center' },
-        { name: 'pumpTimeMultiplier', label: 'Pump time multiplier', field: 'pumpTimeMultiplier', align: 'center' },
-        { name: 'parentGroup', label: 'Parent group', field: 'parentGroupName', align: 'center' },
-        { name: 'actions', label: 'Actions', field: '', align: 'center' }
+        {
+          name: 'name',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.ingredient'),
+          field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'type',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.type'),
+          field: 'type',
+          align: 'center'
+        },
+        {
+          name: 'alcoholContent',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.alc_content'),
+          field: 'alcoholContent',
+          align: 'center'
+        },
+        {
+          name: 'bottleSize',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.bottle_size'),
+          field: 'bottleSize',
+          align: 'center'
+        },
+        {
+          name: 'unit',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.unit'),
+          field: 'unit',
+          align: 'center'
+        },
+        {
+          name: 'pumpTimeMultiplier',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.pump_time_multiplier'),
+          field: 'pumpTimeMultiplier',
+          align: 'center'
+        },
+        {
+          name: 'parentGroup',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.parent_group'),
+          field: 'parentGroupName',
+          align: 'center'
+        },
+        {
+          name: 'actions',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.actions'),
+          field: '',
+          align: 'center'
+        }
       ],
       ingredients: [],
       loading: false,
@@ -196,9 +241,15 @@ export default {
       const onSuccess = function () {
         vm.editOptions.editIngredientSaving = false
         vm.editOptions.editErrorMessage = ''
+        let msg
+        if (vm.isEditIngredientNew) {
+          msg = vm.$t('component.ingredient_mgmt.notifications.ingredient_created')
+        } else {
+          msg = vm.$t('component.ingredient_mgmt.notifications.ingredient_updated')
+        }
         vm.$q.notify({
           type: 'positive',
-          message: 'Ingredient ' + (vm.isEditIngredientNew ? 'created' : 'updated') + ' successfully'
+          message: msg
         })
         vm.closeEditDialog()
         vm.fetchAll()
@@ -247,9 +298,9 @@ export default {
     },
     editDialogHeadline () {
       if (this.isEditIngredientNew) {
-        return 'Create ingredient'
+        return this.$t('component.ingredient_mgmt.edit_dialog.headline_create')
       }
-      return 'Edit ingredient'
+      return this.$t('component.ingredient_mgmt.edit_dialog.headline_edit')
     }
   }
 }

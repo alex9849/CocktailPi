@@ -3,20 +3,20 @@
     class="q-gutter-y-sm"
   >
     <q-input
-      label="Name"
+      :label="$t('component.ingredient_form.name')"
       outlined
       :disable="disable"
       :model-value="modelValue.name"
       hide-bottom-space
       :rules="[
-                val => !v.modelValue.name.required.$invalid || 'Required',
-                val => !v.modelValue.name.maxLength.$invalid || 'Max 30'
+                val => !v.modelValue.name.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.name.maxLength.$invalid || $t('errors.max_letters', {nr: 30}),
               ]"
       filled
       @update:model-value="e => setValue('name', e)"
     />
     <q-input
-      label="Alcohol content"
+      :label="$t('component.ingredient_form.alc_content')"
       outlined
       :disable="disable"
       filled
@@ -24,13 +24,13 @@
       type="number"
       :model-value="modelValue.alcoholContent"
       :rules="[
-                val => !v.modelValue.alcoholContent.required.$invalid || 'Required',
-                val => !v.modelValue.alcoholContent.minValue.$invalid || 'Must be positive',
-                val => !v.modelValue.alcoholContent.maxValue.$invalid || 'Max 100'
+                val => !v.modelValue.alcoholContent.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.alcoholContent.minValue.$invalid || $t('errors.positive'),
+                val => !v.modelValue.alcoholContent.maxValue.$invalid || $t('errors.max_letters', {nr: 100})
               ]"
       @update:model-value="e => setValue('alcoholContent', e)"
     />
-    <q-separator />
+    <q-separator/>
     <q-tabs
       class="text-teal"
       inline-label
@@ -40,12 +40,12 @@
       <q-tab
         :icon="mdiCogs"
         name="automated"
-        label="automated"
+        :label="$t('component.ingredient_form.tab_automated')"
       />
       <q-tab
         :icon="mdiHandRight"
         name="manual"
-        label="manual"
+        :label="$t('component.ingredient_form.tab_manual')"
       />
     </q-tabs>
     <q-tab-panels
@@ -63,11 +63,11 @@
           filled
           filter-automatic-ingredients
           filter-manual-ingredients
-          label="Parent group"
+          :label="$t('component.ingredient_form.parent_group')"
           @update:selected="e => setParentGroup(e)"
         />
         <q-input
-          label="Bottle size"
+          :label="$t('component.ingredient_form.bottle_size')"
           outlined
           hide-bottom-space
           :disable="disable"
@@ -75,21 +75,21 @@
           type="number"
           :model-value="modelValue.bottleSize"
           :rules="[
-                val => !v.modelValue.bottleSize.required.$invalid || 'Required',
-                val => !v.modelValue.bottleSize.minValue.$invalid || 'Must be positive'
+                val => !v.modelValue.bottleSize.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.bottleSize.minValue.$invalid || $t('errors.positive'),
               ]"
           @update:model-value="e => setValue('bottleSize', e)"
         />
         <q-input
-          label="Pump time multiplier"
+          :label="$t('component.ingredient_form.pump_time_multiplier')"
           outlined
           hide-bottom-space
           :disable="disable"
           :model-value="currentIngredientMultiplierString"
           :rules="[
-                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || 'Required',
-                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || 'Must be positive',
-                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || 'Max 10'
+                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
+                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
               ]"
           filled
           mask="#.##"
@@ -107,7 +107,7 @@
           filled
           filter-automatic-ingredients
           filter-manual-ingredients
-          label="Parent group"
+          :label="$t('component.ingredient_form.parent_group')"
           :disable="isDisableParentGroup"
           @update:selected="e => setParentGroup(e)"
         />
@@ -120,7 +120,7 @@
           :options="units"
           emit-value
           map-options
-          label="Unit"
+          :label="$t('component.ingredient_form.unit')"
           :disable="disable"
         />
       </q-tab-panel>
@@ -151,11 +151,11 @@ export default {
   data () {
     return {
       units: [
-        { label: 'gram (g)', value: 'g' },
-        { label: 'milliliter (ml)', value: 'ml' },
-        { label: 'piece(s)', value: 'piece(s)' },
-        { label: 'teaspoon(s)', value: 'teaspoon(s)' },
-        { label: 'tablespoon(s)', value: 'tablespoon(s)' }
+        { label: this.$t('component.ingredient_form.units.gram'), value: 'g' },
+        { label: this.$t('component.ingredient_form.units.milliliter'), value: 'ml' },
+        { label: this.$t('component.ingredient_form.units.piece'), value: 'piece(s)' },
+        { label: this.$t('component.ingredient_form.units.teaspoon'), value: 'teaspoon(s)' },
+        { label: this.$t('component.ingredient_form.units.tablespoon'), value: 'tablespoon(s)' }
       ]
     }
   },

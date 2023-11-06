@@ -5,7 +5,8 @@ export default {
     min_letters: 'Min {nr} letters',
     max_letters: 'Max {nr} letters',
     min_metric: 'Min {nr} {metric}',
-    max_metric: 'Max {nr} {metric}'
+    max_metric: 'Max {nr} {metric}',
+    positive: 'Must be positive'
   },
   header: {
     machine_name: 'CocktailMaker',
@@ -624,7 +625,6 @@ export default {
       name: 'Name',
       parent_group: 'Parent group'
     },
-    // Not added yet
     ingredient_group_mgmt: {
       create_btn_label: 'Create group',
       refresh_btn_label: 'Refresh',
@@ -667,6 +667,35 @@ export default {
         },
         edit_btn_tooltip: 'Edit',
         delete_btn_tooltip: 'Delete'
+      },
+      edit_dialog: {
+        headline_create: 'Create ingredient',
+        headline_edit: 'Edit ingredient'
+      },
+      delete_dialog: {
+        headline: 'Delete Ingredient?',
+        warning: 'This also removes the selected group from all associated recipes!'
+      },
+      notifications: {
+        ingredient_created: 'Ingredient created successfully',
+        ingredient_updated: 'Ingredient updated successfully'
+      }
+    },
+    ingredient_form: {
+      name: 'Name',
+      alc_content: 'Alcohol content',
+      tab_automated: 'Automated',
+      tab_manual: 'Manual',
+      parent_group: 'Parent group',
+      bottle_size: 'Bottle size',
+      pump_time_multiplier: 'Pump time multiplier',
+      unit: 'Unit',
+      units: {
+        gram: 'gram (g)',
+        milliliter: 'milliliter (ml)',
+        piece: 'piece(s)',
+        teaspoon: 'teaspoon(s)',
+        tablespoon: 'tablespoon(s)'
       }
     }
   }
