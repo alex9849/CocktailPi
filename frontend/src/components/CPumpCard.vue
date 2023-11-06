@@ -413,7 +413,7 @@ export default {
       if (this.pump.name) {
         return this.pump.name
       }
-      return this.$t('component.pump_card.fallack_name', { id: this.pump.id })
+      return this.$t('common.pump_fallback_name', { id: this.pump.id })
     },
     printPumpType () {
       if (this.pump.type === 'dc') {

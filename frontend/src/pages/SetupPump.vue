@@ -1,13 +1,13 @@
 <template xmlns="http://www.w3.org/1999/html">
   <q-page padding class="page-content">
     <div class="row q-gutter-sm justify-around items-center q-ma-sm">
-      <p class="col-grow text-h5">Pump Setup Assistant</p>
+      <p class="col-grow text-h5">{{ $t('page.pump_setup.headline') }}</p>
       <q-btn
         color="negative"
         class="col-auto"
         @click="deleteDialog.show = true"
       >
-        Delete Pump
+        {{ $t('page.pump_setup.delete_btn_label') }}
       </q-btn>
     </div>
     <q-stepper
@@ -19,8 +19,8 @@
       header-nav
     >
       <q-step
-        :caption="handleComplete ? 'Complete' : 'Optional'"
-        title="Handle"
+        :caption="handleComplete ? $t('page.pump_setup.caption_complete') : $t('page.pump_setup.caption_optional')"
+        :title="$t('page.pump_setup.name.handle')"
         :name="0"
         :icon="mdiPencilOutline"
         header-nav
@@ -29,7 +29,7 @@
       >
         <c-setup-step
           class="col-12"
-          headline="How should your pump be called?"
+          :headline="$t('page.pump_setup.name.headline')"
         >
           <div class="row justify-center">
             <div class="col-12 col-sm-10 col-md-7 col-lg-6 q-gutter-md">
@@ -40,24 +40,32 @@
                 :error="!!attrState.name.errorMsg"
                 :loading="attrState.name.loading"
                 debounce="600"
-                :placeholder="'Pump #' + String(pump.id)"
+                :placeholder="$t('common.pump_fallback_name', {id: pump.id})"
                 outlined
                 filled
-                label="Pump identifier"
+                :label="$t('page.pump_setup.name.pump_identifier_label')"
               />
             </div>
           </div>
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
-            <q-btn @click="stepper++" color="primary" label="Continue"/>
+            <q-btn
+              @click="onClickFinish"
+              color="primary"
+              :label="$t('page.pump_setup.finish_setup_btn_label')"
+            />
+            <q-btn
+              @click="stepper++"
+              color="primary"
+              :label="$t('page.pump_setup.continue_step_btn_label')"
+            />
           </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
-        :caption="hardwarePinsComplete ? 'Complete' : null"
-        title="Hardware pins"
+        :caption="hardwarePinsComplete ? $t('page.pump_setup.caption_complete') : null"
+        :title="$t('page.pump_setup.hw_pins.handle')"
         :name="1"
         :icon="mdiFlashOutline"
         header-nav
@@ -66,7 +74,7 @@
       >
         <c-setup-step
           class="col-12"
-          headline="Select the pins that control the pump"
+          :headline="$t('page.pump_setup.hw_pins.headline')"
         >
           <c-pump-setup-stepper-hardware-pins
             v-if="pump.type === 'stepper'"
@@ -93,15 +101,29 @@
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
-            <q-btn @click="stepper++" :disable="!hardwarePinsComplete" color="primary" label="Continue"/>
-            <q-btn flat @click="stepper--" color="primary" label="Back"/>
+            <q-btn
+              @click="onClickFinish"
+              color="primary"
+              :label="$t('page.pump_setup.finish_setup_btn_label')"
+            />
+            <q-btn
+              @click="stepper++"
+              :disable="!hardwarePinsComplete"
+              color="primary"
+              :label="$t('page.pump_setup.continue_step_btn_label')"
+            />
+            <q-btn
+              flat
+              @click="stepper--"
+              color="primary"
+              :label="$t('page.pump_setup.go_back_step_btn_label')"
+            />
           </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
-        :caption="calibrationComplete ? 'Complete' : null"
-        title="Calibrate"
+        :caption="calibrationComplete ? $t('page.pump_setup.caption_complete') : null"
+        :title="$t('page.pump_setup.calibration.handle')"
         :name="2"
         :icon="mdiCogs"
         header-nav
@@ -111,7 +133,7 @@
       >
         <c-setup-step
           class="col-12"
-          headline="Calibrate your pump"
+          :headline="$t('page.pump_setup.calibration.headline')"
         >
           <c-pump-setup-stepper-calibration
             v-if="pump.type === 'stepper'"
@@ -140,41 +162,23 @@
           />
           <c-assistant-container>
             <template v-slot:explanations>
-              <div v-if="pump.type === 'stepper'">
-                Here you can test your motor and calculate the number of steps the motor needs to make to pump one cl.
-                You can run the tester in two modes:
-                <ul>
-                  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
-                  <li><b>Steps:</b> Tell the motor how many steps he should take.</li>
-                </ul>
-                The tester is used to check and fine-tune your configuration.<br>
-                You can also let the tester calculate the number of steps that the motor must make to pump one cl.
-                For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
-                You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester
-                does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements.
-                The tester will then correct the configuration according to your measurements.
-              </div>
-              <div v-if="pump.type === 'dc'">
-                Here you can test your motor and calculate the time it takes the motor to pump one cl.
-                You can run the tester in two modes:
-                <ul>
-                  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>
-                  <li><b>Time:</b> Tell the motor how many steps he should take.</li>
-                </ul>
-                The tester is used to check and fine-tune your configuration.<br>
-                You can also let the tester calculate the amount of time that the motor must run to pump one cl.
-                For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test.
-                You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester
-                does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements.
-                The tester will then correct the configuration according to your measurements!
-              </div>
+              <div
+                v-if="pump.type === 'stepper'"
+                v-html="$t('page.pump_setup.calibration.motor_tester.stepper_desc')"
+              />
+              <div
+                v-if="pump.type === 'dc'"
+                v-html="$t('page.pump_setup.calibration.motor_tester.dc_desc')"
+              />
             </template>
             <template v-slot:fields>
-              <p class="text-subtitle1 text-center">Motor tester</p>
+              <p class="text-subtitle1 text-center">
+                {{ $t('page.pump_setup.calibration.motor_tester.headline') }}
+              </p>
               <c-pump-tester
                 :pump="pump"
                 :disable="pump.state === 'INCOMPLETE'"
-                disable-reason="Required pump-config parameter missing!"
+                :disable-reason="$t('page.pump_setup.calibration.motor_tester.disable_reason_parameter_missing')"
                 @update:perClMetric="setPerClMetric($event)"
               />
             </template>
@@ -184,12 +188,7 @@
           />
           <c-assistant-container>
             <template v-slot:explanations>
-              <p>
-                The tube capacity determines how much liquid is needed to fill the hose that connects
-                the liquid container with the dispensing part of your cocktail machine. This metric is used to
-                accurately fill your hoses with liquid before actually producing a new drink.
-                It is also used to empty your hoses (pump the liquid back into the container) if the machine has not
-                been used for a while. </p>
+              {{ $t('page.pump_setup.calibration.tube_capacity_desc') }}
             </template>
             <template v-slot:fields>
               <q-input
@@ -202,7 +201,7 @@
                 outlined
                 type="number"
                 filled
-                label="Tube capacity (in ml)"
+                :label="$t('page.pump_setup.calibration.tube_capacity_label')"
               >
                 <template v-slot:append>
                   ml
@@ -213,15 +212,29 @@
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
-            <q-btn @click="stepper++" :disable="!calibrationComplete" color="primary" label="Continue"/>
-            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+            <q-btn
+              @click="onClickFinish"
+              color="primary"
+              :label="$t('page.pump_setup.finish_setup_btn_label')"
+            />
+            <q-btn
+              @click="stepper++"
+              :disable="!calibrationComplete"
+              color="primary"
+              :label="$t('page.pump_setup.continue_step_btn_label')"
+            />
+            <q-btn
+              flat @click="stepper--"
+              color="primary"
+              :label="$t('page.pump_setup.go_back_step_btn_label')"
+              class="q-ml-sm"
+            />
           </q-stepper-navigation>
         </div>
       </q-step>
       <q-step
         caption="Optional"
-        title="State"
+        :title="$t('page.pump_setup.state.handle')"
         :name="3"
         :icon="mdiPencilOutline"
         header-nav
@@ -231,7 +244,7 @@
       >
         <c-setup-step
           class="col-12"
-          headline="Pump state"
+          :headline="$t('page.pump_setup.state.headline')"
         >
           <c-assistant-container>
             <template v-slot:fields>
@@ -241,7 +254,7 @@
                 :error-message="attrState.currentIngredient.errorMsg"
                 :error="!!attrState.currentIngredient.errorMsg"
                 :loading="attrState.currentIngredient.loading"
-                label="Current ingredient"
+                :label="$t('page.pump_setup.state.ingredient_label')"
                 clearable
                 filled
                 filter-manual-ingredients
@@ -250,7 +263,7 @@
               />
             </template>
             <template v-slot:explanations>
-              Optional: The ingredient that is currently connected to the pump.
+              {{ $t('page.pump_setup.state.ingredient_desc') }}
             </template>
           </c-assistant-container>
           <q-separator
@@ -265,7 +278,7 @@
                 :error="!!attrState.fillingLevelInMl.errorMsg"
                 :loading="attrState.fillingLevelInMl.loading"
                 debounce="600"
-                label="Current filling level"
+                :label="$t('page.pump_setup.state.filling_level_label')"
                 type="number"
                 outlined
                 filled
@@ -277,9 +290,7 @@
               </q-input>
             </template>
             <template v-slot:explanations>
-              The current filling level of the container that is connected to the pump.
-              This field is used to check if there is still enough liquid left
-              to produce a cocktail of a certain size.
+              {{ $t('page.pump_setup.state.filling_level_desc') }}
             </template>
           </c-assistant-container>
           <q-separator
@@ -300,23 +311,29 @@
                     size="xl"
                     class="text-subtitle1"
                     hide-bottom-space
-                    label="Pumped Up"
+                    :label="$t('page.pump_setup.state.pumped_up_label')"
                   />
                 </div>
               </div>
             </template>
             <template v-slot:explanations>
-              The "Pumped up"-field holds the information about the filling state of the hoses of a pump.
-              If the hoses are not filled with liquid, the machine will fill them before producing a cocktail.
-              This field is also used to find out from whose pumps the liquid should be pumped back into the
-              container, if the machine is not used for a certain time.
+              {{ $t('page.pump_setup.state.pumped_up_desc') }}
             </template>
           </c-assistant-container>
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation>
-            <q-btn @click="onClickFinish" color="primary" label="Finish"/>
-            <q-btn flat @click="stepper--" color="primary" label="Back" class="q-ml-sm"/>
+            <q-btn
+              @click="onClickFinish"
+              color="primary"
+              :label="$t('page.pump_setup.finish_setup_btn_label')"
+            />
+            <q-btn
+              flat @click="stepper--"
+              color="primary"
+              :label="$t('page.pump_setup.go_back_step_btn_label')"
+              class="q-ml-sm"
+            />
           </q-stepper-navigation>
         </div>
       </q-step>

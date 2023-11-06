@@ -30,6 +30,9 @@ export default {
     recipes_btn_label: 'Recipes',
     ingredients_btn_label: 'Ingredients'
   },
+  common: {
+    pump_fallback_name: 'Pump #{id}'
+  },
   layout: {
     full_layout: {
       sidebar: {
@@ -474,6 +477,77 @@ export default {
         '<b>The fields for the SDL and SCL pin don\'t influence the selected bus.</b>',
       configuration_warning: '<b><u>WARNING!!!:</b></u> Enabling and disabling the I2C-bus will trigger unix commands that configure the I2C ' +
         'bus. Make sure that SDA and SCL are selected correctly. Otherwise it can happen, that pins are in use as normal pins and I2C pins at the same time. This will crash the application!'
+    },
+    pump_setup: {
+      headline: 'Pump Setup Assistant',
+      delete_btn_label: 'Delete Pump',
+      name: {
+        handle: 'Handle',
+        headline: 'How should your pump be called?',
+        pump_identifier_label: 'Pump identifier'
+      },
+      hw_pins: {
+        handle: 'Hardware pins',
+        headline: 'Select the pins that control the pump'
+      },
+      calibration: {
+        handle: 'Calibrate',
+        headline: 'Calibrate your pump',
+        tube_capacity_label: 'Tube capacity (in ml)',
+        tube_capacity_desc: 'The tube capacity determines how much liquid is needed to fill the hose that connects ' +
+          'the liquid container with the dispensing part of your cocktail machine. This metric is used to ' +
+          'accurately fill your hoses with liquid before actually producing a new drink. ' +
+          'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
+          'been used for a while.',
+        motor_tester: {
+          headline: 'Motor tester',
+          disable_reason_parameter_missing: 'Required pump-config parameter missing!',
+          stepper_desc: 'Here you can test your motor and calculate the number of steps the motor needs to make to pump one cl. ' +
+            'You can run the tester in two modes: ' +
+            '<ul>' +
+            '<li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>' +
+            '<li><b>Steps:</b> Tell the motor how many steps he should take.</li>' +
+            '</ul>' +
+            'The tester is used to check and fine-tune your configuration.<br> ' +
+            'You can also let the tester calculate the number of steps that the motor must make to pump one cl. ' +
+            'For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test. ' +
+            'You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester ' +
+            'does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements. ' +
+            'The tester will then correct the configuration according to your measurements.',
+          dc_desc: 'Here you can test your motor and calculate the time it takes the motor to pump one cl.' +
+            'You can run the tester in two modes:' +
+            '<ul>\n' +
+            '  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>' +
+            '  <li><b>Time:</b> Tell the motor how many steps he should take.</li>' +
+            '</ul>\n' +
+            'The tester is used to check and fine-tune your configuration.<br>' +
+            'You can also let the tester calculate the amount of time that the motor must run to pump one cl. ' +
+            'For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test. ' +
+            'You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester ' +
+            'does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements. ' +
+            'The tester will then correct the configuration according to your measurements!'
+        }
+      },
+      state: {
+        handle: 'State',
+        headline: 'Pump state',
+        pumped_up_label: 'Pumped up',
+        pumped_up_desc: 'The "Pumped up"-field holds the information about the filling state of the hoses of a pump. ' +
+          'If the hoses are not filled with liquid, the machine will fill them before producing a cocktail. ' +
+          'This field is also used to find out from whose pumps the liquid should be pumped back into the ' +
+          'container, if the machine is not used for a certain time.',
+        filling_level_label: 'Current filling level',
+        filling_level_desc: 'The current filling level of the container that is connected to the pump. ' +
+          'This field is used to check if there is still enough liquid left ' +
+          'to produce a cocktail of a certain size.',
+        ingredient_label: 'Current ingredient',
+        ingredient_desc: 'Optional: The ingredient that is currently connected to the pump.'
+      },
+      caption_complete: 'Complete',
+      caption_optional: 'Optional',
+      continue_step_btn_label: 'Continue',
+      go_back_step_btn_label: 'Back',
+      finish_setup_btn_label: 'Finish'
     }
   },
   component: {
