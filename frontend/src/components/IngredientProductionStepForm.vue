@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-ingredient-selector
-      :rules="[val => !v.modelValue.ingredient.required.$invalid || 'Required']"
+      :rules="[val => !v.modelValue.ingredient.required.$invalid || $t('errors.field_required')]"
       :selected="modelValue.ingredient"
       @update:selected="onIngredientSelect($event)"
     />
@@ -11,15 +11,15 @@
       outlined
       :model-value="modelValue.amount"
       :rules="[
-        val => !v.modelValue.amount.required.$invalid || 'Required',
-        val => !v.modelValue.amount.minValue.$invalid || 'Min 1ml'
+        val => !v.modelValue.amount.required.$invalid || $t('errors.field_required'),
+        val => !v.modelValue.amount.minValue.$invalid || $t('errors.min_metric', {nr: '1', metric: printMetric})
       ]"
       @update:model-value="v.modelValue.amount.$model = Number.parseInt($event); $emit('update:modelValue', modelValue)"
     />
     <div class="row">
       <div class="col-6">
         <q-checkbox
-          label="Scale with volume"
+          :label="$t('component.prod_step_editor_ingredient.scale_label')"
           :model-value="modelValue.scale"
           @update:model-value="v.modelValue.scale.$model = $event; $emit('update:modelValue', modelValue)"
         />
@@ -27,7 +27,7 @@
       <div class="col-6">
         <q-checkbox
           class="col-6"
-          label="Boostable"
+          :label="$t('component.prod_step_editor_ingredient.boostable_label')"
           :model-value="modelValue.boostable"
           @update:model-value="v.modelValue.boostable.$model = $event; $emit('update:modelValue', modelValue)"
         />
@@ -91,9 +91,16 @@ export default {
   computed: {
     amountLabel () {
       if (this.modelValue.ingredient) {
-        return 'Amount (in ' + this.modelValue.ingredient.unit + ')'
+        return this.$t('component.prod_step_editor_ingredient.amount_in',
+          { metric: this.modelValue.ingredient.unit })
       }
-      return 'Amount'
+      return this.$t('component.prod_step_editor_ingredient.amount')
+    },
+    printMetric () {
+      if (this.modelValue.ingredient) {
+        return this.modelValue.ingredient.unit
+      }
+      return ''
     }
   },
   watch: {

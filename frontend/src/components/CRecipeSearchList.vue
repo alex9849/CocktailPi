@@ -19,7 +19,7 @@
         >
           <q-card-section class="q-pa-md">
             <q-icon :name="mdiAlert" size="sm"/>
-            Loading...
+            {{ $t('component.recipe_search_list.loading') }}
           </q-card-section>
           <q-inner-loading showing>
             <q-spinner size="40px" color="info"/>
@@ -69,7 +69,6 @@ import RecipeService from 'src/services/recipe.service'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
 import { mapGetters } from 'vuex'
-import SystemService from 'src/services/system.service'
 
 export default {
   name: 'CRecipeSearchList',

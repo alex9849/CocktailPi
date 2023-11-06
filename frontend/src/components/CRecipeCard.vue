@@ -79,7 +79,7 @@
           <div style="flex-grow: 1"/>
           <div class="row justify-end">
             <p class="text-grey">
-              by {{ recipe.ownerName }}
+              {{ $t('component.recipe_card.owner_name', {name: recipe.ownerName}) }}
             </p>
           </div>
         </div>
@@ -125,9 +125,9 @@ export default {
         return ''
       }
       if (ingredient.inBar) {
-        return 'add manually'
+        return this.$t('component.recipe_card.ingredient_add_manually_tooltip')
       }
-      return 'not owned'
+      return this.$t('component.recipe_card.ingredient_not_owned_tooltip')
     }
   }
 }

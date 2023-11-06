@@ -11,7 +11,7 @@
           >
             <q-card-section class="q-pa-none">
               <q-expansion-item
-                label="Expert-Search"
+                :label="$t('component.recipe_search_filter_card.expert_search_label')"
                 v-model="isFilterExpanded"
                 :header-class="isFilterExpanded? 'bg-grey-2' : ''"
               >
@@ -25,29 +25,19 @@
                       bordered
                     >
                       <div class="col-shrink">
-                        <p class="q-px-sm text-grey-7">Fabricable:</p>
+                        <p class="q-px-sm text-grey-7">
+                          {{ $t('component.recipe_search_filter_card.fabricable_box.headline') }}
+                        </p>
                       </div>
                       <div class="col-grow">
                         <div class="row">
                           <q-radio
-                            label="Show all"
+                            v-for="option in fabricable_options"
+                            :key="option.val"
+                            :label="option.label"
                             :model-value="filter.fabricable"
                             @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                            val=""
-                            class="col-12 col-sm-4"
-                          />
-                          <q-radio
-                            label="Fabricable with owned ingredients"
-                            :model-value="filter.fabricable"
-                            @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                            val="manual"
-                            class="col-12 col-sm-4"
-                          />
-                          <q-radio
-                            label="Fabricable fully automatic"
-                            :model-value="filter.fabricable"
-                            @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
-                            val="auto"
+                            :val="option.val"
                             class="col-12 col-sm-4"
                           />
                         </div>
@@ -59,7 +49,7 @@
                     @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
                     class="col-12 col-sm-8"
                     dense
-                    label="Contains ingredients"
+                    :label="$t('component.recipe_search_filter_card.contains_ingredient_field_label')"
                     multiple
                     emit-value
                     map-options
@@ -69,7 +59,7 @@
                     :model-value="filter.orderBy"
                     @update:model-value="$emit('update:filter', {...filter, orderBy: $event})"
                     class="col-12 col-sm-4"
-                    label="Order by"
+                    :label="$t('component.recipe_search_filter_card.order_by_selector_label')"
                     emit-value
                     map-options
                     round
@@ -82,7 +72,7 @@
                   >
                     <q-btn
                       color="red"
-                      label="Reset filters"
+                      :label="$t('component.recipe_search_filter_card.reset_btn_label')"
                       @click="resetFilter()"
                     />
                   </div>
@@ -96,7 +86,7 @@
             :model-value="filter.query"
             @update:model-value="$emit('update:filter', {...filter, query: $event})"
             outlined
-            label="Search"
+            :label="$t('component.recipe_search_filter_card.cocktail_name_field_label')"
             dense
             bg-color="white"
             @keypress.enter="onSearch"
@@ -134,7 +124,17 @@ export default {
   },
   data () {
     return {
-      isFilterExpanded: false
+      isFilterExpanded: false,
+      fabricable_options: [{
+        val: '',
+        label: this.$t('component.recipe_search_filter_card.fabricable_box.show_all')
+      }, {
+        val: 'manual',
+        label: this.$t('component.recipe_search_filter_card.fabricable_box.fabricable_owned')
+      }, {
+        val: 'auto',
+        label: this.$t('component.recipe_search_filter_card.fabricable_box.fabricable_auto')
+      }]
     }
   },
   emits: ['clickSearch', 'update:filter'],

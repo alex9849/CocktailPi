@@ -12,7 +12,7 @@
     :disable="disable"
     hide-dropdown-icon
     :filled="filled"
-    :label="label"
+    :label="formLabel"
     :options="ingredientOptions"
     :emit-value="emitValue"
     option-label="name"
@@ -59,8 +59,7 @@ export default {
       type: [Object, Array]
     },
     label: {
-      type: String,
-      default: 'Ingredient'
+      type: String
     },
     dense: {
       type: Boolean,
@@ -169,6 +168,12 @@ export default {
       }
 
       return optionsCopy
+    },
+    formLabel () {
+      if (this.label) {
+        return this.label
+      }
+      return this.$t('component.ingredient_selector.default_label')
     }
   },
   methods: {
@@ -178,14 +183,17 @@ export default {
           if (!ingredient.minAlcoholContent) {
             return null
           }
-          return ingredient.minAlcoholContent + '% alcohol content'
+          return this.$t('component.ingredient_selector.alc_content',
+            { nr: ingredient.minAlcoholContent })
         }
-        return ingredient.minAlcoholContent + ' - ' + ingredient.maxAlcoholContent + '% alcohol content'
+        return this.$t('component.ingredient_selector.alc_content_range',
+          { min: ingredient.minAlcoholContent, max: ingredient.maxAlcoholContent })
       }
       if (ingredient.alcoholContent === 0) {
         return null
       }
-      return ingredient.alcoholContent + '% alcohol content'
+      return this.$t('component.ingredient_selector.alc_content',
+        { nr: ingredient.alcoholContent })
     },
     filterIngredients (val, update, abort) {
       this.stringInput = val

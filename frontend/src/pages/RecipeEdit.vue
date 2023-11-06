@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>{{ isNew ? 'Add' : 'Edit'}} Recipe</h5>
+    <h5>{{ headline }}</h5>
     <q-banner v-if="error !== ''" rounded dense class="text-white bg-red-5" style="margin-bottom: 20px">
       {{ error }}
     </q-banner>
@@ -30,11 +30,11 @@
                 v-model:model-value="v.editRecipe.recipe.name.$model"
                 :error-message="v.editRecipe.recipe.name.$errors[0]?.$message"
                 :error="v.editRecipe.recipe.name.$errors.length > 0"
-                label="Recipe-Name"
+                :label="$t('page.recipe_edit.form.name')"
               />
               <q-select
                 :disable="disabled"
-                label="Categories"
+                :label="$t('page.recipe_edit.form.categories')"
                 v-model:model-value="v.editRecipe.recipe.categories.$model"
                 :error-message="v.editRecipe.recipe.categories.$errors[0]?.$message"
                 :error="v.editRecipe.recipe.categories.$errors.length > 0"
@@ -54,7 +54,7 @@
                             :disable="disabled"
                             v-model:model-value="v.editRecipe.removeImage.$model"
                             color="red"
-                            label="remove existing image"
+                            :label="$t('page.recipe_edit.form.remove_image')"
                   />
                   <q-file v-if="!editRecipe.removeImage"
                           :disable="disabled"
@@ -63,7 +63,7 @@
                           bottom-slots
                           clearable
                           hide-bottom-space
-                          label="Image"
+                          :label="$t('page.recipe_edit.form.image')"
                           max-file-size="20971520"
                           outlined
                   >
@@ -84,7 +84,7 @@
                 :error-message="v.editRecipe.recipe.description.$errors[0]?.$message"
                 :error="v.editRecipe.recipe.description.$errors.length > 0"
                 type="textarea"
-                label="Description"
+                :label="$t('page.recipe_edit.form.desc')"
                 counter
                 maxlength="2000"
               />
@@ -100,7 +100,7 @@
             >
               <q-select
                 :disable="disabled"
-                label="Default glass"
+                :label="$t('page.recipe_edit.form.default_glass')"
                 v-model:model-value="v.editRecipe.recipe.defaultGlass.$model"
                 :error-message="v.editRecipe.recipe.defaultGlass.$errors[0]?.$message"
                 :error="v.editRecipe.recipe.defaultGlass.$errors.length > 0"
@@ -132,7 +132,7 @@
               type="submit"
               style="width: 100px"
               color="positive"
-              :label="isNew ? 'Create' : 'Update'"
+              :label="saveBtnLabel"
               no-caps
               :disable="v.editRecipe.$invalid"
               :loading="sending"
@@ -140,7 +140,7 @@
             <q-btn
               style="width: 100px"
               color="negative"
-              label="Abort"
+              :label="$t('page.recipe_edit.abort_btn_label')"
               no-caps
               @click="onClickAbort"
             />
@@ -241,6 +241,20 @@ export default {
     }),
     disabled () {
       return this.sending
+    },
+    saveBtnLabel () {
+      if (this.isNew) {
+        return this.$t('page.recipe_edit.save_btn_label')
+      } else {
+        return this.$t('page.recipe_edit.update_btn_label')
+      }
+    },
+    headline () {
+      if (this.isNew) {
+        return this.$t('page.recipe_edit.headline_new')
+      } else {
+        return this.$t('page.recipe_edit.headline_edit')
+      }
     }
   },
   validations () {

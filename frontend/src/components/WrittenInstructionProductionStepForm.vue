@@ -3,11 +3,11 @@
     <q-input
       :model-value="modelValue.message"
       :rules="[
-        val => !v.modelValue.message.required.$invalid || 'Required',
-        val => !v.modelValue.message.maxLength.$invalid || 'Max 500'
+        val => !v.modelValue.message.required.$invalid || $t('errors.field_required'),
+        val => !v.modelValue.message.maxLength.$invalid || $t('errors.max_letters', {nr: 500})
       ]"
       tcype="textarea"
-      label="Instruction"
+      :label="$t('component.prod_step_editor_instruction.instruction_label')"
       counter
       outlined
       autogrow

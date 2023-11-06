@@ -16,13 +16,13 @@
           :to="{name: 'recipeedit', params: {id: recipe.id}}"
           v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
         >
-          Edit
+          {{ $t('page.recipe_details.edit_btn_label') }}
         </q-btn>
         <q-btn
           color="positive"
           @click="showMakeCocktailDialog = true"
         >
-          Make cocktail
+          {{ $t('page.recipe_details.produce_btn_label') }}
         </q-btn>
         <q-btn
           color="red"
@@ -30,7 +30,7 @@
           :loading="deleting"
           v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
         >
-          Delete
+          {{ $t('page.recipe_details.delete_btn_label') }}
         </q-btn>
       </TopButtonArranger>
       <div class="row q-col-gutter-md">
@@ -67,7 +67,7 @@
         <q-card bordered class="bg-grey-3 shadow-1">
           <q-card-section>
             <div style="display: block ruby">
-              <b>Categories: </b>
+              <b>{{ $t('page.recipe_details.categories_headline') }}</b>
               <div
                 v-if="recipe.categories.length !== 0"
               >
@@ -81,10 +81,15 @@
               <div
                 v-else
               >
-                None
+                {{ $t('page.recipe_details.none') }}
               </div>
             </div>
-            <p><b>Default glass:</b> {{ printGlass }}</p>
+            <p>
+              <b>
+                {{ $t('page.recipe_details.default_glass_headline') }}
+              </b>
+              {{ printGlass }}
+            </p>
           </q-card-section>
         </q-card>
       </div>
@@ -95,7 +100,7 @@
         <div class="col">
           <q-card bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
             <q-card-section>
-              <b>Description:</b>
+              <b>{{ $t('page.recipe_details.description_headline') }}</b>
               <div style="min-width: 200px; white-space: pre-line" class="col">
                 {{ recipe.description }}
               </div>
@@ -108,8 +113,9 @@
       v-model:show="deleteDialog"
       :loading="deleting"
       ok-color="red"
-      ok-button-text="Delete"
-      question="Are you sure, that you want to delete this recipe?"
+      :ok-button-text="$t('page.recipe_details.delete_dialog.yes_btn_label')"
+      :abort-button-text="$t('page.recipe_details.delete_dialog.abort_btn_label')"
+      :question="$t('page.recipe_details.delete_dialog.headline')"
       @clickOk="deleteRecipe"
       @clickAbort="deleteDialog = false"
     />
@@ -203,7 +209,7 @@ export default {
           this.deleting = false
           this.$q.notify({
             type: 'positive',
-            message: 'Recipe deleted successfully'
+            message: this.$t('page.recipe_details.notifications.recipe_deleted')
           })
         })
     }

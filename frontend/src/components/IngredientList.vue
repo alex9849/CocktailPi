@@ -136,10 +136,10 @@
         <q-item-section>
           <q-item-label class="text-black" header style="padding: 0">
             <b v-if="big">
-              Production-Steps
+              {{ $t('component.ingredient_list.headline') }}
             </b>
             <div v-else>
-              Production-Steps
+              {{ $t('component.ingredient_list.headline') }}
             </div>
           </q-item-label>
         </q-item-section>
@@ -156,8 +156,10 @@
 
         <c-edit-dialog
           v-model:show="editor.visible"
-          :title="editor.isCreatingNew? 'Add Production-Step':'Edit Production-Step'"
+          :title="editDialogHeadline"
           :valid="editor.valid"
+          :save-btn-label="$t('component.ingredient_list.edit_dialog.save_btn_label')"
+          :abort-btn-label="$t('component.ingredient_list.edit_dialog.abort_btn_label')"
           @clickAbort="closeProductionStepEditor"
           @clickSave="saveEditProductionStep"
         >
@@ -177,7 +179,7 @@
     >
       <q-item>
         <q-item-section class="text-center">
-          No Production-Steps added!
+          {{ $t('component.ingredient_list.no_steps_added') }}
         </q-item-section>
       </q-item>
     </template>
@@ -238,6 +240,13 @@ export default {
     showIngredientDragIcon () {
       return this.editable && this.productionSteps
         .filter(x => x.type === 'addIngredients').length > 1
+    },
+    editDialogHeadline () {
+      if (this.editor.isCreatingNew) {
+        return this.$t('component.ingredient_list.edit_dialog.add_headline')
+      } else {
+        return this.$t('component.ingredient_list.edit_dialog.add_headline')
+      }
     }
   },
   watch: {
@@ -256,22 +265,22 @@ export default {
           if (!ingredient.minAlcoholContent) {
             return null
           }
-          return ingredient.minAlcoholContent + '% alcohol content'
+          return this.$t('component.ingredient_list.alc_content', { nr: ingredient.minAlcoholContent })
         }
-        return ingredient.minAlcoholContent + ' - ' + ingredient.maxAlcoholContent + '% alcohol content'
+        return this.$t('component.ingredient_list.alc_content', { min: ingredient.minAlcoholContent, max: ingredient.maxAlcoholContent })
       }
       if (ingredient.alcoholContent === 0) {
         return null
       }
-      return ingredient.alcoholContent + '% alcohol content'
+      return this.$t('component.ingredient_list.alc_content', { nr: ingredient.alcoholContent })
     },
     getStepIngredientAnnotationString (stepIngredient) {
       const annotations = []
       if (!stepIngredient.scale) {
-        annotations.push('Unscaled')
+        annotations.push(this.$t('component.ingredient_list.tag_unscaled'))
       }
       if (stepIngredient.boostable) {
-        annotations.push('Boostable')
+        annotations.push(this.$t('component.ingredient_list.tag_boostable'))
       }
       if (annotations.length === 0) {
         return ''

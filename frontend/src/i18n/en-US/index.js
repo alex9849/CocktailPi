@@ -3,7 +3,9 @@ export default {
     field_required: 'Required',
     not_valid_url: 'Not a valid URL',
     min_letters: 'Min {nr} letters',
-    max_letters: 'Max {nr} letters'
+    max_letters: 'Max {nr} letters',
+    min_metric: 'Min {nr} {metric}',
+    max_metric: 'Max {nr} {metric}'
   },
   header: {
     machine_name: 'CocktailMaker',
@@ -390,6 +392,38 @@ export default {
       no_cocktail_in_progress: 'No cocktail is being prepared currently!',
       go_back_btn_label: '<< Go back',
       cancel_btn_label: 'Cancel order'
+    },
+    recipe_details: {
+      edit_btn_label: 'Edit',
+      produce_btn_label: 'Make cocktail',
+      delete_btn_label: 'Delete',
+      categories_headline: 'Categories:',
+      none: 'None',
+      default_glass_headline: 'Default glass:',
+      description_headline: 'Description:',
+      notifications: {
+        recipe_deleted: 'Recipe deleted successfully'
+      },
+      delete_dialog: {
+        headline: 'Are you sure, that you want to delete this recipe?',
+        yes_btn_label: 'Delete',
+        abort_btn_label: 'Abort'
+      }
+    },
+    recipe_edit: {
+      headline_new: 'Add Recipe',
+      headline_edit: 'Edit Recipe',
+      form: {
+        name: 'Name',
+        categories: 'Categories',
+        image: 'Image',
+        remove_image: 'Remove existing image',
+        desc: 'Description',
+        default_glass: 'Default glass'
+      },
+      save_btn_label: 'Create',
+      update_btn_label: 'Update',
+      abort_btn_label: 'Abort'
     }
   },
   component: {
@@ -416,6 +450,60 @@ export default {
       nr_cocktails: '{nr} cocktail(s)',
       desc: '{desc}',
       owner: 'by {owner}'
+    },
+    recipe_search_list: {
+      loading: 'Loading...'
+    },
+    recipe_search_filter_card: {
+      headline: 'Search-options',
+      expert_search_label: 'Expert-search',
+      cocktail_name_field_label: 'Search',
+      fabricable_box: {
+        headline: 'Fabricable:',
+        show_all: 'Show all',
+        fabricable_owned: 'Fabricable with owned ingredients',
+        fabricable_auto: 'Fabricable fully automatic'
+      },
+      contains_ingredient_field_label: 'Contains ingredients',
+      order_by_selector_label: 'Order by',
+      reset_btn_label: 'Reset filters'
+    },
+    recipe_card: {
+      owner_name: 'by {name}',
+      ingredient_add_manually_tooltip: 'add manually',
+      ingredient_not_owned_tooltip: 'not owned'
+    },
+    ingredient_list: {
+      headline: 'Production-Steps',
+      no_steps_added: 'No Production-Steps added!',
+      alc_content: '{nr}% alcohol content',
+      alc_content_range: '{min} - {min}% alcohol content',
+      tag_boostable: 'Boostable',
+      tag_unscaled: 'Unscaled',
+      edit_dialog: {
+        edit_headline: 'Edit Production-Step',
+        add_headline: 'Add Production-Step',
+        save_btn_label: 'Save',
+        abort_btn_label: 'Abort'
+      }
+    },
+    prod_step_editor: {
+      tab_ingredient: 'Ingredient',
+      tab_instruction: 'Instruction'
+    },
+    prod_step_editor_ingredient: {
+      amount: 'Amount',
+      amount_in: 'Amount (in {metric})',
+      scale_label: 'Scale with volume',
+      boostable_label: 'Boostable'
+    },
+    prod_step_editor_instruction: {
+      instruction_label: 'Instruction'
+    },
+    ingredient_selector: {
+      default_label: 'Ingredient',
+      alc_content: '{nr}% alcohol content',
+      alc_content_range: '{min} - {min}% alcohol content'
     },
     // Not added yet
     ingredient_mgmt: {

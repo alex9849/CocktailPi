@@ -92,11 +92,15 @@ export class RecipeDtoMapper {
       defaultGlassId: detailed.defaultGlass?.id,
       categoryIds: []
     }
-    for (const category of detailed.categories) {
-      createDto.categoryIds.push(category.id)
+    if (detailed.categories) {
+      for (const category of detailed.categories) {
+        createDto.categoryIds.push(category.id)
+      }
     }
-    for (const prodStep of detailed.productionSteps) {
-      createDto.productionSteps.push(this.toProductionStepCreateDto(prodStep))
+    if (detailed.productionSteps) {
+      for (const prodStep of detailed.productionSteps) {
+        createDto.productionSteps.push(this.toProductionStepCreateDto(prodStep))
+      }
     }
     return createDto
   }

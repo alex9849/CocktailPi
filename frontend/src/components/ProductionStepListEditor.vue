@@ -9,13 +9,13 @@
       <q-tab
         :icon="mdiCupWater"
         name="ingredient"
-        label="Ingredient"
+        :label="$t('component.prod_step_editor.tab_ingredient')"
         v-if="selectedTab === 'ingredient' || newProductionStep"
       />
       <q-tab
         :icon="mdiPencilOutline"
         name="writtenInstruction"
-        label="Instruction"
+        :label="$t('component.prod_step_editor.tab_instruction')"
         v-if="selectedTab === 'writtenInstruction' || newProductionStep"
       />
     </q-tabs>
