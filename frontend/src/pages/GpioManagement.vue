@@ -222,7 +222,7 @@
       </div>
     </div>
     <c-question
-      :question="$t('page.gpio_mgmt.delete_dialog.no_expanders_found', {boardName: deleteDialog.board?.name})"
+      :question="$t('page.gpio_mgmt.delete_dialog.headline', {boardName: deleteDialog.board?.name})"
       :show="deleteDialog.show"
       @update:show="abortDelete"
       ok-color="negative"
