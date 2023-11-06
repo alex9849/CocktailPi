@@ -9,7 +9,7 @@
     >
       <q-card-section>
         <div class="text-center q-mb-lg">
-          <h5>What type of pump do you want to add?</h5>
+          <h5>{{ $t('component.pump_setup_type_selector.headline') }}</h5>
         </div>
         <div class="row justify-center q-col-gutter-lg">
           <div class="col-5">
@@ -21,7 +21,9 @@
               <q-inner-loading :showing="dcLoading" />
               <q-card-section class="text-center">
                 <q-icon size="lg" :name="mdiPump"/>
-                <p class="text-bold">DC-Pump</p>
+                <p class="text-bold">
+                  {{ $t('component.pump_setup_type_selector.dc_pump') }}
+                </p>
               </q-card-section>
             </q-card>
           </div>
@@ -36,7 +38,9 @@
                 <q-icon size="lg">
                   <img src="~assets/icons/stepper-motor.svg" />
                 </q-icon>
-                <p class="text-bold">Stepper-Pump</p>
+                <p class="text-bold">
+                  {{ $t('component.pump_setup_type_selector.stepper_pump') }}
+                </p>
               </q-card-section>
             </q-card>
           </div>

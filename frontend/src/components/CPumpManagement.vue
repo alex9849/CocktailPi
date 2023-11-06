@@ -1,24 +1,24 @@
 <template>
-  <h5>Pump Management</h5>
+  <h5>{{ $t('component.pump_mgmt.headline') }}</h5>
   <div class="q-gutter-sm">
     <TopButtonArranger>
       <q-btn
         color="positive"
-        label="Add"
+        :label="$t('component.pump_mgmt.add_btn_label')"
         @click="showAddDialog = true"
         :icon="mdiPlusCircleOutline"
         no-caps
       />
       <q-btn
         color="positive"
-        label="Start all"
+        :label="$t('component.pump_mgmt.start_all_btn_label')"
         @click="onClickTurnOnAllPumps()"
         :icon="mdiPlay"
         no-caps
       />
       <q-btn
         color="negative"
-        label="Stop all"
+        :label="$t('component.pump_mgmt.stop_all_btn_label')"
         @click="onClickTurnOffAllPumps()"
         :icon="mdiStop"
         no-caps
@@ -44,7 +44,7 @@
       <q-card flat bordered class="bg-card-secondary">
         <div class="row q-pa-md items-center q-gutter-sm">
           <q-icon size="sm" :name="mdiAlert" />
-          <p class="">No pumps found!</p>
+          <p class="">{{ $t('component.pump_mgmt.no_pumps_found') }}</p>
         </div>
       </q-card>
     </div>
@@ -84,7 +84,7 @@ export default {
       PumpService.startPump(null).then(() => {
         vm.$q.notify({
           type: 'positive',
-          message: 'All pumps started!'
+          message: this.$t('component.pump_mgmt.notifications.all_started')
         })
       })
     },
@@ -93,7 +93,7 @@ export default {
       PumpService.stopPump(null).then(() => {
         vm.$q.notify({
           type: 'positive',
-          message: 'All pumps stopped!'
+          message: this.$t('component.pump_mgmt.notifications.all_stopped')
         })
       })
     }

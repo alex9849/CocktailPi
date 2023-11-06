@@ -723,6 +723,73 @@ export default {
     gpio_expander_expansion_item: {
       caption_local: 'Board: Local, Usage: {pinsUsed}/{pinsMax}',
       caption_i2c: 'Address: {addr}, Board: {board}, Usage: {pinsUsed}/{pinsMax}'
+    },
+    pump_mgmt: {
+      headline: 'Pump Management',
+      add_btn_label: 'Add',
+      start_all_btn_label: 'Start all',
+      stop_all_btn_label: 'Stop all',
+      no_pumps_found: 'No pumps found!',
+      notifications: {
+        all_stopped: 'All pumps stopped!',
+        all_started: 'All pumps started!'
+      }
+    },
+    pump_setup_type_selector: {
+      headline: 'What type of pump do you want to add?',
+      dc_pump: 'DC Pump',
+      stepper_pump: 'Stepper Pump'
+    },
+    pump_card: {
+      dc_pump: 'DC Pump',
+      stepper_pump: 'Stepper Pump',
+      option_missing: '-- missing --',
+      no_ingredient_placeholder: 'None',
+      fallack_name: 'Pump #{id}',
+      attr: {
+        ingredient: 'Ingredient',
+        filling_level: 'filling level',
+        time_per_cl: 'Time per Cl',
+        enable_pin: 'Enable pin',
+        running_state: 'Running state',
+        tube_capacity: 'Tube capacity',
+        steps_per_cl: 'Steps per Cl',
+        acceleration: 'Acceleration',
+        max_steps_per_second: 'Max steps per second',
+        step_pin: 'Step pin'
+      },
+      pumpStates: {
+        ready: 'Ready',
+        incomplete: 'Incomplete',
+        running: 'Running'
+      },
+      pumpUpStates: {
+        pumped_up: 'Pumped Up',
+        pumped_down: 'Pumped Down'
+      },
+      notifications: {
+        pump_started: '{name} started!',
+        pump_stopped: '{name} stopped!'
+      }
+    },
+    reverse_pump_settings: {
+      headline: 'Reverse pumping',
+      form: {
+        timer_options: {
+          in_minutes: '{nr} Minutes',
+          never: 'Never'
+        },
+        enable_label: 'Enable reverse pumping',
+        vd_pin_headline: 'Voltage director pin',
+        vd_pin_label: 'Director-Pin',
+        overshoot_label: 'Overshoot',
+        overshoot_hint: 'How strongly should number of ml be overshoot on pump back?',
+        auto_pump_back_timer_label: 'Inactive time till automatic pump back',
+        save_btn_label: 'Save'
+      },
+      notifications: {
+        updated: 'Settings updated!'
+      }
     }
   }
 }

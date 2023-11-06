@@ -1,12 +1,12 @@
 <template>
-  <h5>Reverse pumping</h5>
+  <h5>{{ $t('component.reverse_pump_settings.headline') }}</h5>
   <q-card class="q-pa-md bg-card-primary"
   >
     <q-form class="q-col-gutter-md">
       <div class="row">
         <q-card class="col" flat bordered>
           <q-toggle
-            label="Enable reverse pumping"
+            :label="$t('component.reverse_pump_settings.form.enable_label')"
             color="green"
             :disable="disableForm"
             :model-value="v.form.enable.$model"
@@ -21,15 +21,17 @@
                 flat
                 bordered>
           <q-card-section>
-            <div class="text-subtitle2">Voltage director pin</div>
+            <div class="text-subtitle2">
+              {{ $t('component.reverse_pump_settings.form.vd_pin_headline') }}
+            </div>
           </q-card-section>
-          <q-separator />
+          <q-separator/>
           <q-card-section class="q-gutter-sm">
             <c-gpio-selector
               v-model:model-value="v.form.settings.directorPin.$model"
               :error-message="v.form.settings.directorPin.$errors[0]?.$message"
               :error="v.form.settings.directorPin.$errors.length > 0"
-              label="Director-Pin"
+              :label="$t('component.reverse_pump_settings.form.vd_pin_label')"
               :disable="disableForm"
               clearable
             />
@@ -44,14 +46,16 @@
                 bordered
         >
           <q-card-section class="q-gutter-md">
-            <q-input label="Overshoot"
-                     outlined
-                     type="number"
-                     v-model:model-value="v.form.settings.overshoot.$model"
-                     :error-message="v.form.settings.overshoot.$errors[0]?.$message"
-                     :error="v.form.settings.overshoot.$errors.length > 0"
-                     :disable="disableForm"
-                     hint="How strongly should number of ml be overshoot on pump back?">
+            <q-input
+              :label="$t('component.reverse_pump_settings.form.overshoot_label')"
+              outlined
+              type="number"
+              v-model:model-value="v.form.settings.overshoot.$model"
+              :error-message="v.form.settings.overshoot.$errors[0]?.$message"
+              :error="v.form.settings.overshoot.$errors.length > 0"
+              :disable="disableForm"
+              :hint="$t('component.reverse_pump_settings.form.overshoot_hint')"
+            >
               <template v-slot:append>
                 %
               </template>
@@ -64,14 +68,14 @@
               outlined
               :disable="disableForm"
               hide-bottom-space
-              label="Inactive time till automatic pump back"
+              :label="$t('component.reverse_pump_settings.form.auto_pump_back_timer_label')"
             />
           </q-card-section>
         </q-card>
       </div>
       <div class="row justify-end">
         <q-btn
-          label="Save"
+          :label="$t('component.reverse_pump_settings.form.save_btn_label')"
           :loading="saving"
           :disable="v.form.$invalid"
           color="green"
@@ -87,7 +91,7 @@
 </template>
 
 <script>
-import { maxValue, minValue, required, maxLength, minLength, requiredIf, helpers } from '@vuelidate/validators'
+import { maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import SystemService from 'src/services/system.service'
 import { mapActions } from 'vuex'
@@ -96,7 +100,7 @@ import CGpioSelector from 'components/CGpioSelector.vue'
 export default {
   name: 'CReversePumpingSettings',
   components: { CGpioSelector },
-  data: () => {
+  data () {
     return {
       saving: false,
       loading: true,
@@ -108,13 +112,26 @@ export default {
           autoPumpBackTimer: 0
         }
       },
-      autoPumpBackTimerOptions: [
-        { label: 'Never', value: 0 },
-        { label: '10 Minutes', value: 10 },
-        { label: '20 Minutes', value: 20 },
-        { label: '30 Minutes', value: 30 },
-        { label: '60 Minutes', value: 60 }
-      ]
+      autoPumpBackTimerOptions: [{
+        label: this.$t('component.reverse_pump_settings.form.timer_options.never'),
+        value: 0
+      },
+      {
+        label: this.$t('component.reverse_pump_settings.form.timer_options.in_minutes', { nr: 10 }),
+        value: 10
+      },
+      {
+        label: this.$t('component.reverse_pump_settings.form.timer_options.in_minutes', { nr: 20 }),
+        value: 20
+      },
+      {
+        label: this.$t('component.reverse_pump_settings.form.timer_options.in_minutes', { nr: 30 }),
+        value: 30
+      },
+      {
+        label: this.$t('component.reverse_pump_settings.form.timer_options.in_minutes', { nr: 60 }),
+        value: 60
+      }]
     }
   },
   setup () {
@@ -139,7 +156,7 @@ export default {
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: 'Settings updated!'
+            message: this.$t('component.reverse_pump_settings.notifications.updated')
           })
           this.fetchSettings()
         })

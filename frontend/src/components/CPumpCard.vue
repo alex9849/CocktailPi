@@ -7,7 +7,7 @@
     <q-card-section class="row items-center justify-around bg-card-secondary q-pa-sm">
       <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
-          {{ pump.name ? pump.name : 'Pump #' + String(pump.id) }}</p>
+          {{ displayName }}</p>
         <p
           class="q-ma-none"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
@@ -22,7 +22,7 @@
           >
             <img src="~assets/icons/stepper-motor.svg" />
           </q-icon>
-          {{ pump.type === 'dc' ? 'DC Pump' : 'Stepper Pump' }}
+          {{ printPumpType }}
         </p>
       </div>
       <div class="col-shrink">
@@ -50,17 +50,20 @@
     <q-card-section class="q-py-sm">
       <div class="row">
         <div class="col-6">
-          <p class="text-weight-medium">Ingredient</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.ingredient') }}
+          </p>
         </div>
         <div class="col-6">
-          <p class="text-weight-medium">Filling level</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.filling_level') }}
+          </p>
         </div>
       </div>
       <div class="row">
         <div class="col-6">
-          <p
-          >
-            {{ !!pump.currentIngredient ? pump.currentIngredient.name : 'None' }}
+          <p>
+            {{ printIngredient }}
           </p>
         </div>
         <div class="col-6">
@@ -82,10 +85,14 @@
     >
       <div class="row">
         <div class="col-6">
-          <p class="text-weight-medium">Steps per Cl</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.steps_per_cl') }}
+          </p>
         </div>
         <div class="col-6">
-          <p class="text-weight-medium">Max steps per second</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.max_steps_per_second') }}
+          </p>
         </div>
       </div>
       <div class="row">
@@ -106,10 +113,14 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p class="text-weight-medium">Acceleration</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.acceleration') }}
+          </p>
         </div>
         <div class="col-6">
-          <p class="text-weight-medium">Step pin</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.step_pin') }}
+          </p>
         </div>
       </div>
       <div class="row">
@@ -130,10 +141,14 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <p class="text-weight-medium">Enable pin</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.enable_pin') }}
+          </p>
         </div>
         <div class="col-6">
-          <p class="text-weight-medium">Tube capacity</p>
+          <p class="text-weight-medium">
+            {{ $t('component.pump_card.attr.tube_capacity') }}
+          </p>
         </div>
       </div>
       <div class="row">
@@ -161,10 +176,14 @@
       <div class="col">
         <div class="row">
           <div class="col-6">
-            <p class="text-weight-medium">Time per Cl</p>
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.time_per_cl') }}
+            </p>
           </div>
           <div class="col-6">
-            <p class="text-weight-medium">Enable pin</p>
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.enable_pin') }}
+            </p>
           </div>
         </div>
         <div class="row">
@@ -185,10 +204,14 @@
         </div>
         <div class="row">
           <div class="col-6">
-            <p class="text-weight-medium">Running state</p>
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.running_state') }}
+            </p>
           </div>
           <div class="col-6">
-            <p class="text-weight-medium">Tube capacity</p>
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.tube_capacity') }}
+            </p>
           </div>
         </div>
         <div class="row">
@@ -321,14 +344,14 @@ export default {
         PumpService.stopPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: 'Pump #' + String(this.pump.id) + ' stopped!'
+            message: vm.$t('component.pump_card.notifications.pump_stopped', { name: vm.displayName })
           })
         }).finally(this.runningBtnLoading = false)
       } else {
         PumpService.startPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: 'Pump #' + String(this.pump.id) + ' started!'
+            message: vm.$t('component.pump_card.notifications.pump_started', { name: vm.displayName })
           })
         }).finally(this.runningBtnLoading = false)
       }
@@ -349,7 +372,7 @@ export default {
       if (!attr && attr !== 0) {
         return {
           class: 'text-red',
-          label: '-- missing --'
+          label: this.$t('component.pump_card.option_missing')
         }
       } else {
         return {
@@ -362,7 +385,7 @@ export default {
       if (!pin) {
         return {
           class: 'text-red',
-          label: '-- missing --'
+          label: this.$t('component.pump_card.option_missing')
         }
       } else {
         return {
@@ -386,6 +409,18 @@ export default {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
+    displayName () {
+      if (this.pump.name) {
+        return this.pump.name
+      }
+      return this.$t('component.pump_card.fallack_name', { id: this.pump.id })
+    },
+    printPumpType () {
+      if (this.pump.type === 'dc') {
+        return this.$t('component.pump_card.dc_pump')
+      }
+      return this.$t('component.pump_card.stepper_pump')
+    },
     progressBar () {
       const abortVal = {
         value: this.pump.pumpedUp ? 1 : 0,
@@ -404,6 +439,12 @@ export default {
         reverse: runningState.forward && runningState.runInfinity
       }
     },
+    printIngredient () {
+      if (this.pump.currentIngredient) {
+        return this.pump.currentIngredient.name
+      }
+      return this.$t('component.pump_card.no_ingredient_placeholder')
+    },
     pumpedUpState () {
       const state = {
         color: '',
@@ -411,19 +452,11 @@ export default {
       }
       if (this.pump.pumpedUp) {
         state.color = 'positive'
-        state.label = 'Pumped Up'
+        state.label = this.$t('component.pump_card.pumpUpStates.pumped_up')
       } else {
         state.color = 'negative'
-        state.label = 'Pumped Down'
+        state.label = this.$t('component.pump_card.pumpUpStates.pumped_down')
       }
-      /* if (this.runningState.inPumpUp) {
-        state.color = 'warning'
-        if (this.runningState.forward) {
-          state.label = 'Pumping Up'
-        } else {
-          state.label = 'Pumping Down'
-        }
-      } */
       return state
     },
     pumpState () {
@@ -434,17 +467,17 @@ export default {
       switch (this.pump.state) {
         case 'READY':
           state.color = 'positive'
-          state.label = 'Ready'
+          state.label = this.$t('component.pump_card.pumpStates.ready')
           break
         case 'INCOMPLETE':
         case 'TESTABLE':
           state.color = 'negative'
-          state.label = 'Incomplete'
+          state.label = this.$t('component.pump_card.pumpStates.incomplete')
           break
       }
       if (this.pumpJobState.runningState) {
         state.color = 'positive'
-        state.label = 'Running'
+        state.label = this.$t('component.pump_card.pumpStates.running')
       }
       return state
     }
