@@ -339,8 +339,8 @@
       </q-step>
     </q-stepper>
     <c-question
-      :question="'Delete \'' + pumpName + '\'?'"
-      ok-button-text="Delete"
+      :question="$t('page.pump_setup.delete_dialog.headline', { name: this.pumpName })"
+      :ok-button-text="$t('page.pump_setup.delete_dialog.yes_btn_label')"
       ok-color="negative"
       :loading="deleteDialog.loading"
       @clickAbort="deleteDialog.show = false"
@@ -522,7 +522,7 @@ export default {
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: 'Pump \'' + this.pumpName + '\' deleted!'
+            message: this.$t('page.pump_setup.notifications.pump_deleted', { name: this.pumpName })
           })
           this.$router.push({ name: 'pumpmanagement' })
         })
@@ -573,7 +573,10 @@ export default {
   },
   computed: {
     pumpName () {
-      return this.pump.name ? this.pump.name : ('Pump #' + String(this.pump.id))
+      if (this.pump.name) {
+        return this.pump.name
+      }
+      return this.$t('common.pump_fallback_name', { id: this.pump.id })
     },
     handleComplete () {
       return !!this.pump.name

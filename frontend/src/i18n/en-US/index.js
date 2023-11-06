@@ -547,7 +547,14 @@ export default {
       caption_optional: 'Optional',
       continue_step_btn_label: 'Continue',
       go_back_step_btn_label: 'Back',
-      finish_setup_btn_label: 'Finish'
+      finish_setup_btn_label: 'Finish',
+      delete_dialog: {
+        headline: 'Delete {name}?',
+        yes_btn_label: 'Delete'
+      },
+      notifications: {
+        pump_deleted: '{name} deleted!'
+      }
     }
   },
   component: {
