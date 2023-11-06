@@ -137,9 +137,18 @@ export default {
   computed: {
     caption () {
       if (this.board.type === 'local') {
-        return 'Board: Local, Usage: ' + this.board.usedPinCount + '/' + this.board.pinCount
+        return this.$t('component.gpio_expander_expansion_item.caption_local',
+          { pinsUsed: this.board.usedPinCount, pinsMax: this.board.pinCount }
+        )
       } else if (this.board.type === 'i2c') {
-        return 'Address: 0x27, Board: MCP23017, Usage: ' + this.board.usedPinCount + '/' + this.board.pinCount
+        return this.$t('component.gpio_expander_expansion_item.caption_i2c',
+          {
+            pinsUsed: this.board.usedPinCount,
+            pinsMax: this.board.pinCount,
+            addr: '0x' + this.board.address.toString(16),
+            board: this.board.boardModel
+          }
+        )
       }
       return ''
     }
