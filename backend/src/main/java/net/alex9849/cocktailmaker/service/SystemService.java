@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,7 +103,17 @@ public class SystemService {
         globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
         GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
         donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated")));
-        donationSettings.setShowDisclaimer(!donationSettings.isDonated() && !isDemoMode && !isDevMode);
+        String stringTimeDonationDisclaimerSeen = optionsRepository.getOption("TIMESTAMP_LAST_SAW_DONATION_DISCLAIMER");
+        long timeDonationDisclaimerSeen;
+        if(stringTimeDonationDisclaimerSeen == null) {
+            timeDonationDisclaimerSeen = 0;
+        } else {
+            timeDonationDisclaimerSeen = Long.parseLong(stringTimeDonationDisclaimerSeen);
+        }
+        long timeElapsedDonationDisclaimer = System.currentTimeMillis() - timeDonationDisclaimerSeen;
+        boolean showDonationDisclaimer = timeElapsedDonationDisclaimer > (1000 * 60 * 60 * 2);
+        showDonationDisclaimer &= !donationSettings.isDonated() && !isDemoMode && !isDevMode;
+        donationSettings.setShowDisclaimer(showDonationDisclaimer);
         donationSettings.setDisclaimerDelay(60000);
         globalSettings.setDonation(donationSettings);
         return globalSettings;
@@ -110,6 +121,10 @@ public class SystemService {
 
     public void setDonated(boolean value) {
         optionsRepository.setOption("Donated", Boolean.valueOf(value).toString());
+    }
+
+    public void setOpenedDonationDisclaimer() {
+        optionsRepository.setOption("TIMESTAMP_LAST_SAW_DONATION_DISCLAIMER", String.valueOf(System.currentTimeMillis()));
     }
 
     public I2CSettings fromDto(I2cSettingsDto.Request dto) {

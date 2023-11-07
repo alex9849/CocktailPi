@@ -65,6 +65,12 @@ public class SystemEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(value = "settings/sawdonationdisclaimer", method = RequestMethod.PUT)
+    public ResponseEntity<?> setDonated() {
+        systemService.setOpenedDonationDisclaimer();
+        return ResponseEntity.ok().build();
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/shutdown", method = RequestMethod.PUT)
     public ResponseEntity<?> shutdown() throws IOException {

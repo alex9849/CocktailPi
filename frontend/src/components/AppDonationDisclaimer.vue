@@ -247,6 +247,7 @@ export default {
     show (val) {
       if (val) {
         this.firstOpen = false
+        SystemService.setOpenedDonationDisclaimer()
       }
     },
     donationSettings: {

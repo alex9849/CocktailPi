@@ -74,6 +74,10 @@ class SystemService {
       { headers: { 'Content-Type': 'application/json' } })
   }
 
+  setOpenedDonationDisclaimer () {
+    return axios.put(API_PATH + 'settings/sawdonationdisclaimer')
+  }
+
   getI2CProbe () {
     return axios.get(API_PATH + 'i2cprobe')
       .then(x => x.data)
