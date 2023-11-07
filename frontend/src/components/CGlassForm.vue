@@ -9,7 +9,7 @@
       v-model:model-value="v.modelValue.name.$model"
       :error-message="v.modelValue.name.$errors[0]?.$message"
       :error="v.modelValue.name.$errors.length > 0"
-      label="Name"
+      :label="$t('component.glass_form.name')"
     />
     <q-input
       outlined
@@ -18,18 +18,18 @@
       v-model:model-value.number="v.modelValue.size.$model"
       :error-message="v.modelValue.size.$errors[0]?.$message"
       :error="v.modelValue.size.$errors.length > 0"
-      label="Size"
+      :label="$t('component.glass_form.size')"
       suffix="ml"
       type="number"
     />
     <div class="row justify-evenly">
       <q-checkbox
-        label="Default"
+        :label="$t('component.glass_form.default_checkbox')"
         :disable="disabled"
         v-model:model-value="v.modelValue.default.$model"
       />
       <q-checkbox
-        label="Use for single ingredients"
+        :label="$t('component.glass_form.use_for_single_ingredients_checkbox')"
         :disable="disabled"
         v-model:model-value="v.modelValue.useForSingleIngredients.$model"
       />

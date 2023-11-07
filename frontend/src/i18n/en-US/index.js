@@ -965,6 +965,69 @@ export default {
         '      </ul>',
       steps_per_cl_label: 'Steps per cl',
       steps_per_cl_desc: 'This field determines how many steps the motor must take to pump a cl.'
+    },
+    glass_form: {
+      name: 'Name',
+      size: 'Size',
+      default_checkbox: 'Default',
+      use_for_single_ingredients_checkbox: 'Use for single ingredients'
+    },
+    event_action_editor_form: {
+      comment_label: 'Comment',
+      execution_groups: {
+        label: 'Execution-groups',
+        write_to_create: 'Write to create new group...',
+        create_new: '<b>Create new:</b> {group}'
+      },
+      trigger_label: 'Trigger',
+      action: {
+        label: 'Action',
+        select_action: 'Select action to view options...',
+        options: {
+          call_url: 'Call URL',
+          audio: 'Play audio file',
+          python: 'Execute python script',
+          nothing: 'Do nothing'
+        },
+        call_url: {
+          request_method_label: 'Request method',
+          url_label: 'URL'
+        },
+        audio: {
+          file_label: 'Audio (max. 20 MB)',
+          volume: 'Volume {nr}%',
+          output_device_label: 'Output device',
+          on_repeat_label: 'On repeat'
+        },
+        python: {
+          desc: 'Executes a python file. The docker image uses python 3. ' +
+            'You can also view the console output of your program in real-time.',
+          install_lib_tip: 'Install new libraries by using: <b>pip3 install &#60;library&#62;</b>',
+          fetching_libs: 'Fetching Libraries',
+          lib_list_lib: 'Library',
+          lib_list_version: 'Version',
+          no_libs_found: 'No libraries installed',
+          python_file_label: 'Python (max. 20 MB)'
+        },
+        nothing: {
+          desc: 'This action does nothing. But it will cancel other running actions that don\'t share execution-groups with it.'
+        }
+      }
+    }
+  },
+  constants: {
+    recipe_order_options: {
+      name_asc: 'Name asc',
+      name_desc: 'Name desc',
+      last_update_asc: 'Last update',
+      last_update_desc: 'Least update'
+    },
+    event_action_trigger_display_names: {
+      cocktail_prod_started: 'Cocktail production started',
+      cocktail_prod_manual_interaction_requested: 'Cocktail production manual interaction requested',
+      cocktail_prod_finished: 'Cocktail production finished',
+      cocktail_prod_canceled: 'Cocktail production canceled',
+      application_started: 'Application started'
     }
   }
 }

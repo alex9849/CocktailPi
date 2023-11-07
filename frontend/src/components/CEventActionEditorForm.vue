@@ -9,11 +9,11 @@
       :disable="disable || initializing"
       :model-value="modelValue.comment"
       :rules="[
-                val => !v.modelValue.comment.maxLength.$invalid || 'Max length: 40'
+                val => !v.modelValue.comment.maxLength.$invalid || $t('errors.max_letters', {nr: 40})
               ]"
       filled
       hide-bottom-space
-      label="Comment"
+      :label="$t('component.event_action_editor_form.comment_label')"
       outlined
       @update:model-value="setValue('comment', $event)"
     />
@@ -46,7 +46,7 @@
       filled
       hide-bottom-space
       input-debounce="0"
-      label="Execution-groups"
+      :label="$t('component.event_action_editor_form.execution_groups.label')"
       multiple
       new-value-mode="add-unique"
       use-chips
@@ -70,15 +70,16 @@
             @click="addNewExecGroup(currentExecutionGroupFilter)"
           >
             <q-item-section>
-              <div class="inline-block">
-                <b>Create new:</b> {{ currentExecutionGroupFilter }}
-              </div>
+              <div
+                class="inline-block"
+                v-html="$t('component.event_action_editor_form.execution_groups.create_new', {group: currentExecutionGroupFilter})"
+              />
             </q-item-section>
           </q-item>
           <q-item v-else>
             <q-item-section>
               <div class="text-grey-7 text-italic text-center">
-                Write to create new group...
+                {{ $t('component.event_action_editor_form.execution_groups.write_to_create') }}
               </div>
             </q-item-section>
           </q-item>
@@ -92,15 +93,16 @@
             @click="addNewExecGroup(currentExecutionGroupFilter)"
           >
             <q-item-section>
-              <div class="inline-block">
-                <b>Create new:</b> {{ currentExecutionGroupFilter }}
-              </div>
+              <div
+                class="inline-block"
+                v-html="$t('component.event_action_editor_form.execution_groups.create_new', {group: currentExecutionGroupFilter})"
+              />
             </q-item-section>
           </q-item>
           <q-item v-else>
             <q-item-section>
               <div class="text-grey-7 text-italic text-center">
-                Write to create new group...
+                {{ $t('component.event_action_editor_form.execution_groups.write_to_create') }}
               </div>
             </q-item-section>
           </q-item>
@@ -114,11 +116,11 @@
       emit-value
       hide-bottom-space
       filled
-      label="Trigger*"
+      :label="$t('component.event_action_editor_form.trigger_label')"
       map-options
       @update:model-value="setValue('trigger', $event)"
       :rules="[
-                val => !v.modelValue.trigger.required.$invalid || 'Required'
+                val => !v.modelValue.trigger.required.$invalid || $t('errors.field_required')
               ]"
     />
     <q-select
@@ -128,11 +130,11 @@
       emit-value
       hide-bottom-space
       filled
-      label="Action*"
+      :label="$t('component.event_action_editor_form.action.label')"
       map-options
       @update:model-value="setAction($event)"
       :rules="[
-                val => !v.modelValue.type.required.$invalid || 'Required'
+                val => !v.modelValue.type.required.$invalid || $t('errors.field_required')
               ]"
     />
     <q-separator />
@@ -144,7 +146,7 @@
         v-if="!modelValue.type"
         class="text-italic text-grey-7"
       >
-        Select action to view options...
+        {{ $t('component.event_action_editor_form.action.select_action') }}
       </q-card-section>
       <q-card-section
         v-else
@@ -163,23 +165,23 @@
               :options="urlRequestMethods"
               filled
               hide-bottom-space
-              label="Request method*"
+              :label="$t('component.event_action_editor_form.action.call_url.request_method_label')"
               @update:model-value="setValue('requestMethod', $event)"
               :rules="[
-                val => !v.modelValue.requestMethod.required.$invalid || 'Required'
+                val => !v.modelValue.requestMethod.required.$invalid || $t('errors.field_required')
               ]"
             />
             <q-input
               :model-value="modelValue.url"
               filled
               hide-bottom-space
-              label="URL*"
+              :label="$t('component.event_action_editor_form.action.call_url.url_label')"
               placeholder="https://google.com"
               @update:model-value="setValue('url', $event)"
               :rules="[
-                val => !v.modelValue.url.required.$invalid || 'Required',
-                val => !v.modelValue.url.url.$invalid || 'URL format invalid',
-                val => !v.modelValue.url.maxLength.$invalid || 'Max length: 255'
+                val => !v.modelValue.url.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.url.url.$invalid || $t('errors.not_valid_url'),
+                val => !v.modelValue.url.maxLength.$invalid || $t('errors.max_letters', {nr: 255})
               ]"
             />
           </q-tab-panel>
@@ -194,11 +196,11 @@
                     :clearable="!!previousFileName"
                     :display-value="fileName"
                     hide-bottom-space
-                    label="Audio (max. 20 MB)"
+                    :label="$t('component.event_action_editor_form.action.audio.file_label')"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
                     :rules="[
-                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || 'Required'
+                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || $t('errors.field_required')
                     ]"
             >
               <template v-slot:prepend>
@@ -214,7 +216,7 @@
               </q-item-section>
               <q-item-section>
                 <q-slider
-                  :label-value="'Volume: ' + modelValue.volume + '%'"
+                  :label-value="$t('component.event_action_editor_form.action.audio.volume', {nr: modelValue.volume})"
                   :max="100"
                   :min="0"
                   :model-value="modelValue.volume"
@@ -229,16 +231,16 @@
               :model-value="modelValue.soundDevice"
               :options="audioDevices"
               :rules="[
-                val => !v.modelValue.soundDevice.required.$invalid || 'Required'
+                val => !v.modelValue.soundDevice.required.$invalid || $t('errors.field_required')
               ]"
               filled
               hide-bottom-space
-              label="Output device"
+              :label="$t('component.event_action_editor_form.action.audio.output_device_label')"
               @update:model-value="setValue('soundDevice', $event)"
             />
             <q-checkbox
               :model-value="!!modelValue.onRepeat"
-              label="On repeat"
+              :label="$t('component.event_action_editor_form.action.audio.on_repeat_label')"
               @update:model-value="setValue('onRepeat', $event)"
             />
           </q-tab-panel>
@@ -247,14 +249,12 @@
             class="q-gutter-y-sm q-px-none"
           >
             <p>
-              Executes a python file. The docker image uses python 3.
-              You can also view the console output of your program in real-time.
+              {{ $t('component.event_action_editor_form.action.python.desc') }}
             </p>
             <p
               class="q-pa-sm"
-            >
-              Install new libraries by using: <b>pip3 install &#60;library&#62;</b>
-            </p>
+              v-html="$t('component.event_action_editor_form.action.python.install_lib_tip')"
+            />
             <q-card bordered flat>
               <q-expansion-item
                 v-model="installedPythonLibraries.loaded"
@@ -263,7 +263,7 @@
               >
                 <q-inner-loading
                   :showing="installedPythonLibraries.loading"
-                  label="Fetching Libraries"
+                  :label="$t('component.event_action_editor_form.action.python.fetching_libs')"
                   style="display: contents"
                   transition-hide="none"
                 />
@@ -275,8 +275,12 @@
                   >
                     <thead>
                     <tr>
-                      <th>Library</th>
-                      <th>Version</th>
+                      <th>
+                        {{ $t('component.event_action_editor_form.action.python.lib_list_lib') }}
+                      </th>
+                      <th>
+                        {{ $t('component.event_action_editor_form.action.python.lib_list_version') }}
+                      </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -293,7 +297,7 @@
                     v-else
                     class="q-pa-sm"
                   >
-                    No libraries installed
+                    {{ $t('component.event_action_editor_form.action.python.no_libs_found') }}
                   </p>
                 </div>
               </q-expansion-item>
@@ -305,11 +309,11 @@
                     :clearable="!!previousFileName"
                     :display-value="fileName"
                     hide-bottom-space
-                    label="Python (max. 20 MB)"
+                    :label="$t('component.event_action_editor_form.action.python.python_file_label')"
                     max-file-size="20971520"
                     @update:model-value="setSelectedFile($event)"
                     :rules="[
-                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || 'Required'
+                      val => !v.selectedFile.required || !v.selectedFile.required.$invalid || $t('errors.field_required')
                     ]"
             >
               <template v-slot:prepend>
@@ -323,7 +327,7 @@
           <q-tab-panel
             name="doNothing"
           >
-            This action does nothing. But it will cancel other running actions that don't share execution-groups with it
+            {{ $t('component.event_action_editor_form.action.nothing.desc') }}
           </q-tab-panel>
         </q-tab-panels>
       </q-card-section>
@@ -398,16 +402,16 @@ export default {
       currentExecutionGroupFilter: '',
       urlRequestMethods: ['GET', 'POST', 'PUT', 'DELETE'],
       existingActions: [{
-        label: 'Call URL',
+        label: this.$t('component.event_action_editor_form.action.options.call_url'),
         value: 'callUrl'
       }, {
-        label: 'Play audio file',
+        label: this.$t('component.event_action_editor_form.action.options.audio'),
         value: 'playAudio'
       }, {
-        label: 'Execute python script',
+        label: this.$t('component.event_action_editor_form.action.options.python'),
         value: 'execPy'
       }, {
-        label: 'Do nothing',
+        label: this.$t('component.event_action_editor_form.action.options.nothing'),
         value: 'doNothing'
       }]
     }
