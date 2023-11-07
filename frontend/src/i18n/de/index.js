@@ -510,543 +510,518 @@ export default {
       headline: 'Filter',
       open_btn_label: 'Filter',
       name_field_label: 'Name',
-      contains_ingredients_field_label: 'Contains ingredients',
-      order_by_selector_label: 'Order by',
+      contains_ingredients_field_label: 'Enthält Zutaten',
+      order_by_selector_label: 'Sortieren nach',
       fabricable_box: {
-        headline: 'Fabricable:',
-        show_all: 'Show all',
-        show_all_desc: 'Shows all recipes',
-        fabricable_owned: 'Fabricable with owned ingredients',
-        fabricable_owned_desc: 'Only shows recipes that can be produced with owned ingredients',
-        fabricable_auto: 'Fabricable fully automatic',
-        fabricable_auto_desc: 'Only shows recipes that can be produced fully automatic'
+        headline: 'Herstellbar:',
+        show_all: 'Alle anzeigen',
+        show_all_desc: 'Zeigt alle Rezepte an',
+        fabricable_owned: 'Herstellbar mit vorhandenen Zutaten',
+        fabricable_owned_desc: 'Zeigt nur Rezepte an, die mit vorhandenen Zutaten hergestellt werden können',
+        fabricable_auto: 'Vollautomatisch herstellbar',
+        fabricable_auto_desc: 'Zeigt nur Rezepte an, die vollautomatisch hergestellt werden können'
       },
-      search_btn_label: 'Search',
-      reset_btn_label: 'Reset'
+      search_btn_label: 'Suchen',
+      reset_btn_label: 'Zurücksetzen'
     },
     simple_collection_card: {
       name: '{name}',
-      nr_cocktails: '{nr} cocktail(s)',
+      nr_cocktails: '{nr} Cocktail(s)',
       desc: '{desc}',
-      owner: 'by {owner}'
+      owner: 'von {owner}'
     },
     recipe_search_list: {
-      loading: 'Loading...'
+      loading: 'Laden...'
     },
     recipe_search_filter_card: {
-      headline: 'Search-options',
-      expert_search_label: 'Expert-search',
-      cocktail_name_field_label: 'Search',
+      headline: 'Suchoptionen',
+      expert_search_label: 'Experten-Suche',
+      cocktail_name_field_label: 'Suchen',
       fabricable_box: {
-        headline: 'Fabricable:',
-        show_all: 'Show all',
-        fabricable_owned: 'Fabricable with owned ingredients',
-        fabricable_auto: 'Fabricable fully automatic'
+        headline: 'Herstellbar:',
+        show_all: 'Alle anzeigen',
+        fabricable_owned: 'Herstellbar mit vorhandenen Zutaten',
+        fabricable_auto: 'Vollautomatisch herstellbar'
       },
-      contains_ingredient_field_label: 'Contains ingredients',
-      order_by_selector_label: 'Order by',
-      reset_btn_label: 'Reset filters'
+      contains_ingredient_field_label: 'Enthält Zutaten',
+      order_by_selector_label: 'Sortieren nach',
+      reset_btn_label: 'Filter zurücksetzen'
     },
     recipe_card: {
-      owner_name: 'by {name}',
-      ingredient_add_manually_tooltip: 'add manually',
-      ingredient_not_owned_tooltip: 'not owned'
+      owner_name: 'von {name}',
+      ingredient_add_manually_tooltip: 'Manuell hinzufügen',
+      ingredient_not_owned_tooltip: 'Nicht im Besitz'
     },
     ingredient_list: {
-      headline: 'Production-Steps',
-      no_steps_added: 'No Production-Steps added!',
-      alc_content: '{nr}% alcohol content',
-      alc_content_range: '{min} - {min}% alcohol content',
-      tag_boostable: 'Boostable',
-      tag_unscaled: 'Unscaled',
+      headline: 'Produktionsschritte',
+      no_steps_added: 'Keine Produktionsschritte hinzugefügt!',
+      alc_content: '{nr}% Alkoholgehalt',
+      alc_content_range: '{min} - {min}% Alkoholgehalt',
+      tag_boostable: 'Boostbar',
+      tag_unscaled: 'Unskaliert',
       edit_dialog: {
-        edit_headline: 'Edit Production-Step',
-        add_headline: 'Add Production-Step',
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort'
+        edit_headline: 'Produktionsschritt bearbeiten',
+        add_headline: 'Produktionsschritt hinzufügen',
+        save_btn_label: 'Speichern',
+        abort_btn_label: 'Abbrechen'
       }
     },
     prod_step_editor: {
-      tab_ingredient: 'Ingredient',
-      tab_instruction: 'Instruction'
+      tab_ingredient: 'Zutat',
+      tab_instruction: 'Anleitung'
     },
     prod_step_editor_ingredient: {
-      amount: 'Amount',
-      amount_in: 'Amount (in {metric})',
-      scale_label: 'Scale with volume',
-      boostable_label: 'Boostable'
+      amount: 'Menge',
+      amount_in: 'Menge (in {metric})',
+      scale_label: 'Mit Volumen skalieren',
+      boostable_label: 'Boostbar'
     },
     prod_step_editor_instruction: {
-      instruction_label: 'Instruction'
+      instruction_label: 'Anweisung'
     },
     ingredient_selector: {
-      default_label: 'Ingredient',
-      alc_content: '{nr}% alcohol content',
-      alc_content_range: '{min} - {min}% alcohol content'
+      default_label: 'Zutat',
+      alc_content: '{nr}% Alkoholgehalt',
+      alc_content_range: '{min} - {min}% Alkoholgehalt'
     },
     make_cocktail_dialog: {
-      headline: 'Order Cocktail',
-      order_btn_label: 'MAKE COCKTAIL ({nr} ml)'
+      headline: 'Cocktail bestellen',
+      order_btn_label: 'COCKTAIL HERSTELLEN ({nr} ml)'
     },
     make_cocktail_amount_to_produce: {
-      glass_selector_label: 'Glass',
-      amount_to_produce_label: 'Amount to produce'
+      glass_selector_label: 'Glas',
+      amount_to_produce_label: 'Zu produzierende Menge'
     },
     make_cocktail_group_replacements: {
-      fulfilled_msg: 'All ingredient-groups have been replaced with concrete ingredients!',
-      not_fulfilled_msg: 'The following ingredient-groups have to get real existing ingredients assigned:',
+      fulfilled_msg: 'Alle Zutaten-Gruppen wurden durch konkrete Zutaten ersetzt!',
+      not_fulfilled_msg: 'Die folgenden Zutaten-Gruppen müssen durch echte Zutaten ersetzt werden:',
       card: {
-        prod_step_label: 'Production step',
-        ingredient_group_label: 'Ingredient group',
-        replacement_label: 'Replacement',
+        prod_step_label: 'Produktionsschritt',
+        ingredient_group_label: 'Zutatengruppe',
+        replacement_label: 'Ersatz',
         tags: {
-          in_bar: 'in bar',
-          not_in_bar: 'not in bar',
-          automatically_addable: 'Automatically addable'
+          in_bar: 'in Bar',
+          not_in_bar: 'nicht in Bar',
+          automatically_addable: 'Automatisch hinzufügbar'
         }
       }
     },
     make_cocktail_add_manually: {
-      fulfilled_msg: 'All ingredients assigned to pumps! Cocktail can be produced fully automatic!',
-      not_fulfilled_msg: 'The following ingredients have to get added manually or are not assigned to pumps. ' +
-        'You will be asked to add them during the production progress:',
+      fulfilled_msg: 'Alle Zutaten sind Pumpen zugeordnet! Cocktail kann vollautomatisch hergestellt werden!',
+      not_fulfilled_msg: 'Die folgenden Zutaten müssen manuell hinzugefügt werden oder sind keinen Pumpen zugeordnet. Sie werden während des Herstellungsprozesses aufgefordert, diese hinzuzufügen:',
       tags: {
-        in_bar: 'in bar',
-        not_in_bar: 'not in bar'
+        in_bar: 'in Bar',
+        not_in_bar: 'nicht in Bar'
       }
     },
     make_cocktail_occupied: {
-      fulfilled_msg: 'Machine is not occupied!',
-      occupied_cocktail_msg: 'Machine occupied! A cocktail ist getting prepared currently!',
-      occupied_pumps_msg: 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
+      fulfilled_msg: 'Maschine ist nicht belegt!',
+      occupied_cocktail_msg: 'Maschine belegt! Ein Cocktail wird gerade zubereitet!',
+      occupied_pumps_msg: 'Maschine belegt! Eine oder mehrere Pumpen werden gerade gereinigt/angepumpt!'
     },
     make_cocktail_insufficient_ingredients: {
-      fulfilled_msg: 'The following ingredients will be consumed:',
-      not_fulfilled_msg: 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+      fulfilled_msg: 'Die folgenden Zutaten werden verbraucht:',
+      not_fulfilled_msg: 'Cocktail kann nicht hergestellt werden! Einige Pumpen-Behälter haben nicht mehr genügend Flüssigkeit:'
     },
     make_cocktail_customizer: {
-      headline: 'Order customizer',
+      headline: 'Bestellanpassung',
       headline_boosting: 'Boosting:',
-      boosting_desc: 'Increases (or decreases) the ml of reported boostable ingredients in the base recipe. ' +
-        '(Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid ' +
-        'dispensed remains the same!',
-      headline_additional_ingredients: 'Additional ingredients:',
-      additional_ingredients_desc: 'Ingredients will be added as last production-step. The dispensed amount of ' +
-        'liquid will be increased by the amount of ordered additional ingredients.',
-      add_new_ingredient_btn_label: 'Add new ingredient',
-      add_new_ingredient_headline: 'Add ingredient',
-      recipe_not_boostable: 'Recipe not boostable!'
+      boosting_desc: 'Erhöht (oder verringert) die Menge der im Rezept als boostbar ausgewiesenen Zutaten. (Normalerweise Spirituosen) Nicht boostbare Zutaten werden hernunter- oder hochskaliert. Die Menge der abgegebenen Flüssigkeit bleibt gleich!',
+      headline_additional_ingredients: 'Zusätzliche Zutaten:',
+      additional_ingredients_desc: 'Diese Zutaten werden als weiterer Produktionsschritt hinzugefügt. Die abgegebene Flüssigkeitsmenge wird um die Menge der bestellten zusätzlichen Zutaten erhöht.',
+      add_new_ingredient_btn_label: 'Neue Zutat hinzufügen',
+      add_new_ingredient_headline: 'Zutat hinzufügen',
+      recipe_not_boostable: 'Rezept nicht boostbar!'
     },
     make_cocktail_pump_editor: {
-      headline: 'Pump-Layout',
+      headline: 'Pumpenlayout',
       pump_table: {
-        required_ingredient: 'Required ingredient',
+        required_ingredient: 'Erforderliche Zutat',
         columns: {
           nr: 'Nr',
-          ingredient: 'Current Ingredient',
-          filling_level: 'Remaining filling level',
-          pumped_up: 'Pumped Up',
-          state: 'State',
-          actions: 'actions'
+          ingredient: 'Aktuelle Zutat',
+          filling_level: 'Verbleibender Füllstand',
+          pumped_up: 'Angepumpt',
+          state: 'Status',
+          actions: 'Aktionen'
         },
-        refill_btn_label: 'Fill',
+        refill_btn_label: 'Füllen',
         state_ok: 'OK',
-        state_incomplete: 'Incomplete'
+        state_incomplete: 'Unvollständig'
       }
     },
     pump_up_btn: {
-      tooltip_up: 'Pump up',
-      tooltip_back: 'Pump back'
+      tooltip_up: 'Pumpen',
+      tooltip_back: 'Rückpumpen'
     },
     pump_turn_on_btn: {
-      tooltip_on: 'Turn on',
-      tooltip_off: 'Turn off'
+      tooltip_on: 'Einschalten',
+      tooltip_off: 'Ausschalten'
     },
     deleteWarning: {
-      delete_btn_label: 'Delete',
-      abort_btn_label: 'Abort',
-      success_notification: 'Deleted successfully!',
-      nothing_selected: 'Nothing selected!'
+      delete_btn_label: 'Löschen',
+      abort_btn_label: 'Abbrechen',
+      success_notification: 'Erfolgreich gelöscht!',
+      nothing_selected: 'Nichts ausgewählt!'
     },
     editDialog: {
-      save_btn_label: 'Save',
-      abort_btn_label: 'Abort'
+      save_btn_label: 'Speichern',
+      abort_btn_label: 'Abbrechen'
     },
     ingredientGroupForm: {
       name: 'Name',
-      parent_group: 'Parent group'
+      parent_group: 'Übergeordnete Gruppe'
     },
     ingredient_group_mgmt: {
-      create_btn_label: 'Create group',
-      refresh_btn_label: 'Refresh',
+      create_btn_label: 'Gruppe erstellen',
+      refresh_btn_label: 'Aktualisieren',
       group_table: {
-        search_field_label: 'Search',
+        search_field_label: 'Suche',
         columns: {
-          group: 'Group',
-          alc_content: 'Alcohol content',
-          parent_group: 'Parent group',
-          actions: 'Actions'
+          group: 'Gruppe',
+          alc_content: 'Alkoholgehalt',
+          parent_group: 'Übergeordnete Gruppe',
+          actions: 'Aktionen'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete',
+        edit_btn_tooltip: 'Bearbeiten',
+        delete_btn_tooltip: 'Löschen',
         delete_dialog: {
-          headline: 'Delete group?',
-          warning: 'This also removes the selected group from all associated recipes!'
+          headline: 'Gruppe löschen?',
+          warning: 'Die ausgewählte Gruppe wird auch aus allen zugehörigen Rezepten entfernt!'
         }
       },
-      edit_headline: 'Edit group',
-      create_headline: 'Create group',
+      edit_headline: 'Gruppe bearbeiten',
+      create_headline: 'Gruppe erstellen',
       notifications: {
-        group_created: 'Group created successfully',
-        group_updated: 'Group updated successfully'
+        group_created: 'Gruppe erfolgreich erstellt',
+        group_updated: 'Gruppe erfolgreich aktualisiert'
       }
     },
     ingredient_mgmt: {
-      create_btn_label: 'Create ingredient',
-      refresh_btn_label: 'Refresh',
+      create_btn_label: 'Zutat erstellen',
+      refresh_btn_label: 'Aktualisieren',
       ingredient_table: {
-        search_field_label: 'Search',
+        search_field_label: 'Suche',
         columns: {
-          ingredient: 'Ingredient',
-          type: 'Type',
-          alc_content: 'Alcohol content',
-          bottle_size: 'Bottle size',
-          unit: 'Unit',
-          pump_time_multiplier: 'Pump time multiplier',
-          parent_group: 'Parent Group',
-          actions: 'Actions'
+          ingredient: 'Zutat',
+          type: 'Typ',
+          alc_content: 'Alkoholgehalt',
+          bottle_size: 'Behältergröße',
+          unit: 'Einheit',
+          pump_time_multiplier: 'Pumpenzeitmultiplikator',
+          parent_group: 'Übergeordnete Gruppe',
+          actions: 'Aktionen'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete'
+        edit_btn_tooltip: 'Bearbeiten',
+        delete_btn_tooltip: 'Löschen'
       },
       edit_dialog: {
-        headline_create: 'Create ingredient',
-        headline_edit: 'Edit ingredient'
+        headline_create: 'Zutat erstellen',
+        headline_edit: 'Zutat bearbeiten'
       },
       delete_dialog: {
-        headline: 'Delete Ingredient?',
-        warning: 'This also removes the selected group from all associated recipes!'
+        headline: 'Zutat löschen?',
+        warning: 'Die ausgewählte Zutat wird auch aus allen zugehörigen Rezepten entfernt!'
       },
       notifications: {
-        ingredient_created: 'Ingredient created successfully',
-        ingredient_updated: 'Ingredient updated successfully'
+        ingredient_created: 'Zutat erfolgreich erstellt',
+        ingredient_updated: 'Zutat erfolgreich aktualisiert'
       }
     },
     ingredient_form: {
       name: 'Name',
-      alc_content: 'Alcohol content',
-      tab_automated: 'Automated',
-      tab_manual: 'Manual',
-      parent_group: 'Parent group',
-      bottle_size: 'Bottle size',
-      pump_time_multiplier: 'Pump time multiplier',
-      unit: 'Unit',
+      alc_content: 'Alkoholgehalt',
+      tab_automated: 'Automatisch',
+      tab_manual: 'Manuell',
+      parent_group: 'Übergeordnete Gruppe',
+      bottle_size: 'Flaschengröße',
+      pump_time_multiplier: 'Pumpenzeitmultiplikator',
+      unit: 'Einheit',
       units: {
-        gram: 'gram (g)',
-        milliliter: 'milliliter (ml)',
-        piece: 'piece(s)',
-        teaspoon: 'teaspoon(s)',
-        tablespoon: 'tablespoon(s)'
+        gram: 'Gramm (g)',
+        milliliter: 'Milliliter (ml)',
+        piece: 'Stück(e)',
+        teaspoon: 'Teelöffel',
+        tablespoon: 'Esslöffel'
       }
     },
     gpio_expander_expansion_item: {
-      caption_local: 'Board: Local, Usage: {pinsUsed}/{pinsMax}',
-      caption_i2c: 'Address: {addr}, Board: {board}, Usage: {pinsUsed}/{pinsMax}'
+      caption_local: 'Board: Lokal, Nutzung: {pinsUsed}/{pinsMax}',
+      caption_i2c: 'Adresse: {addr}, Board: {board}, Nutzung: {pinsUsed}/{pinsMax}'
     },
     pump_mgmt: {
-      headline: 'Pump Management',
-      add_btn_label: 'Add',
-      start_all_btn_label: 'Start all',
-      stop_all_btn_label: 'Stop all',
-      no_pumps_found: 'No pumps found!',
+      headline: 'Pumpenverwaltung',
+      add_btn_label: 'Hinzufügen',
+      start_all_btn_label: 'Alle starten',
+      stop_all_btn_label: 'Alle stoppen',
+      no_pumps_found: 'Keine Pumpen gefunden!',
       notifications: {
-        all_stopped: 'All pumps stopped!',
-        all_started: 'All pumps started!'
+        all_stopped: 'Alle Pumpen gestoppt!',
+        all_started: 'Alle Pumpen gestartet!'
       }
     },
     pump_setup_type_selector: {
-      headline: 'What type of pump do you want to add?',
-      dc_pump: 'DC Pump',
-      stepper_pump: 'Stepper Pump'
+      headline: 'Welchen Pumpentyp möchten Sie hinzufügen?',
+      dc_pump: 'Gleichstrompumpe',
+      stepper_pump: 'Schrittmotorpumpe'
     },
     pump_card: {
-      dc_pump: 'DC Pump',
-      stepper_pump: 'Stepper Pump',
-      option_missing: '-- missing --',
-      no_ingredient_placeholder: 'None',
-      fallack_name: 'Pump #{id}',
+      dc_pump: 'Gleichstrompumpe',
+      stepper_pump: 'Schrittmotorpumpe',
+      option_missing: '-- fehlt --',
+      no_ingredient_placeholder: 'Keine',
+      fallack_name: 'Pumpe #{id}',
       attr: {
-        ingredient: 'Ingredient',
-        filling_level: 'filling level',
-        time_per_cl: 'Time per Cl',
-        enable_pin: 'Enable pin',
-        running_state: 'Running state',
-        tube_capacity: 'Tube capacity',
-        steps_per_cl: 'Steps per Cl',
-        acceleration: 'Acceleration',
-        max_steps_per_second: 'Max steps per second',
-        step_pin: 'Step pin'
+        ingredient: 'Zutat',
+        filling_level: 'Füllstand',
+        time_per_cl: 'Zeit pro Cl',
+        enable_pin: 'Aktivierungs-Pin',
+        running_state: 'GPIO-Laufzustand',
+        tube_capacity: 'Schlauchkapazität',
+        steps_per_cl: 'Schritte pro Cl',
+        acceleration: 'Beschleunigung',
+        max_steps_per_second: 'Maximale Schritte pro Sekunde',
+        step_pin: 'Schrittpin'
       },
       pumpStates: {
-        ready: 'Ready',
-        incomplete: 'Incomplete',
-        running: 'Running'
+        ready: 'Bereit',
+        incomplete: 'Unvollständig',
+        running: 'Läuft'
       },
       pumpUpStates: {
-        pumped_up: 'Pumped Up',
-        pumped_down: 'Pumped Down'
+        pumped_up: 'Aufgepumpt',
+        pumped_down: 'Abgepumpt'
       },
       notifications: {
-        pump_started: '{name} started!',
-        pump_stopped: '{name} stopped!'
+        pump_started: '{name} gestartet!',
+        pump_stopped: '{name} gestoppt!'
       }
     },
     reverse_pump_settings: {
-      headline: 'Reverse pumping',
+      headline: 'Rückpumpen',
       form: {
         timer_options: {
-          in_minutes: '{nr} Minutes',
-          never: 'Never'
+          in_minutes: '{nr} Minuten',
+          never: 'Nie'
         },
-        enable_label: 'Enable reverse pumping',
-        vd_pin_headline: 'Voltage director pin',
-        vd_pin_label: 'Director-Pin',
-        overshoot_label: 'Overshoot',
-        overshoot_hint: 'How strongly should number of ml be overshoot on pump back?',
-        auto_pump_back_timer_label: 'Inactive time till automatic pump back',
-        save_btn_label: 'Save'
+        enable_label: 'Rückpumpen aktivieren',
+        vd_pin_headline: 'Spannungsinverter-Pin',
+        vd_pin_label: 'Spannungsinverter-Pin',
+        overshoot_label: 'Überschuss',
+        overshoot_hint: 'Wie stark sollte die Anzahl ml beim Zurückpumpen überschritten werden?',
+        auto_pump_back_timer_label: 'Inaktive Zeit bis zum automatischen Zurückpumpen',
+        save_btn_label: 'Speichern'
       },
       notifications: {
-        updated: 'Settings updated!'
+        updated: 'Einstellungen aktualisiert!'
       }
     },
     pump_tester: {
-      unknown_job_running: 'Unknown job running!',
-      default_disable_reason: 'Disabled!',
-      ref_metric: 'Metric:',
+      unknown_job_running: 'Unbekannter Job läuft!',
+      default_disable_reason: 'Deaktiviert!',
+      ref_metric: 'Metrik:',
       metrics: {
-        liquid: 'Liquid',
-        liquid_pumped: 'Liquid pumped:',
-        liquid_run_val_field: 'Ml to pump',
-        steps: 'Steps',
-        steps_made: 'Steps made:',
-        steps_run_val_field: 'Steps to run',
-        time: 'Time',
-        time_taken: 'Time taken:',
-        time_run_val_field: 'Ms to run',
-        unknown_run_metric: 'Unknown metric'
+        liquid: 'Flüssigkeit',
+        liquid_pumped: 'Gepumpte Flüssigkeit:',
+        liquid_run_val_field: 'Ml zum Pumpen',
+        steps: 'Schritte',
+        steps_made: 'Gemachte Schritte:',
+        steps_run_val_field: 'Zu laufende Schritte',
+        time: 'Zeit',
+        time_taken: 'Verstrichene Zeit:',
+        time_run_val_field: 'Ms zum Laufen',
+        unknown_run_metric: 'Unbekannte Metrik'
       },
-      true_liquid_pumped_field: 'Actual ml pumped',
-      apply_per_cl_metric_value_btn_label: 'Apply',
-      run_btn_label: 'Run',
+      true_liquid_pumped_field: 'Tatsächlich gepumpte ml',
+      apply_per_cl_metric_value_btn_label: 'Anwenden',
+      run_btn_label: 'Start',
       stop_btn_label: 'Stop'
     },
     pump_setup_dc_hw_pins: {
-      control_pin_label: 'Control Pin',
-      control_pin_desc: 'A DC motor can be switched on and off by connecting it to and disconnecting it from a power source. ' +
-        'This is usually done with the aid of a relay. The relay opens and closes the electronic circuit to which the motor is connected. ' +
-        'The "BCM-Pin" field contains the BCM number of the pin that controls the relay.<br><br>' +
-        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
-        'to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
-        'the chip which is used on the Raspberry Pi. ' +
-        'These numbers changed between board versions. This link may help:',
-      power_state_desc: 'Depending on our setup the motor might run either if the GPIO-pin that controls the pump is set to high or low. Please select the pin-state in which your pump would run in your configuration. ',
-      power_state_label: 'Power state',
+      control_pin_label: 'Steuerungs-Pin',
+      control_pin_desc: "Ein Gleichstrommotor kann ein- und ausgeschaltet werden, indem er mit einer Stromquelle verbunden und von dieser getrennt wird. Dies geschieht in der Regel mit Hilfe eines Relais. Das Relais öffnet und schließt den elektronischen Stromkreis, mit dem der Motor verbunden ist. Das Feld 'Steuerungs-Pin' konfiguriert die Pin, mit der das Relais gesteuert wird.<br><br><b>Wichtig:</b> Für die lokelen Pins, welche sich direkt auf ihrem Raspberry Pi befinden, entspricht die Nummer die hier ausgewählt werden muss nicht der GPIO-Nummer. Für das lokale Board, müssen statt den GPIO-Nummern sogenannte BCM-Nummern verwendet werden. BCM steht für 'Broadcom SOC channel', und bezeichnet die Nummer der Pin innerhalb des Chips, der vom Raspberry Pi verwendet wird. Diese Nummern haben sich eventuell zwischen den Board-Versionen geändert. Dieser Link kann helfen:",
+      power_state_desc: 'Je nach Hardware-Aufbau läuft der Motor entweder wenn die Pin, der die Pumpe steuert, auf HIGH oder LOW gesetzt wird. Bitte wählen Sie den Zustand, in welchem Ihre Pumpe in Ihrer Konfiguration eingeschaltet wäre.',
+      power_state_label: 'Pinzustand',
       power_state_options: {
-        high: 'High',
-        low: 'Low'
+        high: 'HIGH',
+        low: 'LOW'
       }
     },
     pump_setup_dc_calibration: {
-      time_per_cl_pin_label: 'Time per cl in ms',
-      time_per_cl_pin_desc: '"Time per cl in ms" determines how many milliseconds (ms) the pump must run to pump one centiliter (cl). ' +
-        'This value is used to determine how long the pump must run to pump the desired amount of liquid from the bottle.'
+      time_per_cl_pin_label: 'Zeit pro cl in ms',
+      time_per_cl_pin_desc: '"Zeit pro cl in ms" bestimmt, wie viele Millisekunden (ms) die Pumpe benötigt, um einen Zentiliter (cl) zu pumpen. Dieser Wert wird verwendet, um festzustellen, wie lange die Pumpe laufen muss, um die gewünschte Menge Flüssigkeit aus der Flasche zu pumpen.'
     },
     pump_setup_stepper_hw_pins: {
-      step_pin_label: '(local) Step Pin',
-      enable_pin_label: 'Enable Pin',
-      pin_desc: 'A stepper motor driver usually has three important pins, that are used to control the motor.' +
+      step_pin_label: '(lokal) Schritt-Pin',
+      enable_pin_label: 'Aktivierungs-Pin',
+      pin_desc: 'Ein Schrittmotortreiber hat normalerweise drei wichtige Pins, die zur Steuerung des Motors verwendet werden.' +
         '<ul>' +
-        '        <li>' +
-        '          The step pin, which receives one pulse for each step the motor is to make.' +
-        '        </li>' +
-        '        <li>' +
-        '          The enable pin. This pin decides whether the motor should be energized and thus actively ' +
-        '          hold its current position or not.' +
-        '        </li>' +
-        '        <li>' +
-        '          The direction pin. It decides on the direction that the motor takes. The direction that' +
-        '          the motor is running to is decided by one single pin, that controls the direction for all motors. ' +
-        '          That pin gets defined globally and is not part of this setup! ' +
-        '          Please build your machine in a way that connects that pin with the direction logic of all ' +
-        '          your motors.' +
-        '        </li>' +
-        '        <li>' +
-        '          Your motor driver very likely also provides more pins (step resolution/sleep/...). Please ' +
-        '          configure these statically in hardware!' +
-        '        </li>' +
-        '      </ul>' +
-        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
-        '        to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
-        '        the chip which is used on the Raspberry Pi. ' +
-        '        These numbers changed between board versions. This link may help:'
+        '  <li>' +
+        '    Der Schrittpin (Step), der für jeden Schritt, den der Motor machen soll, einen Impuls empfängt.' +
+        '  </li>' +
+        '  <li>' +
+        '    Der Aktivierungspin (Enable). Dieser Pin entscheidet, ob der Motor aktiviert sein sollte und somit seine aktuelle Position halten soll oder nicht.' +
+        '  </li>' +
+        '  <li>' +
+        '    Der Richtungspin (Dir). Er entscheidet über die Richtung, die der Motor nimmt. Die Richtung, in die der Motor läuft, wird von einem einzelnen Pin bestimmt, der die Richtung für alle Motoren steuert. Dieser Pin wird in der Pumpenübersicht definiert und ist kein Teil dieses Setups! Bitte konfigurieren Sie Ihre Maschine so, dass diese Pin mit der Richtungslogik aller Ihrer Motoren verbunden ist.' +
+        '  </li>' +
+        '  <li>' +
+        '    Ihr Motortreiber bietet höchstwahrscheinlich auch weitere Pins (Schrittauflösung/Schlaf/...). Bitte konfigurieren Sie diese statisch in der Hardware!' +
+        '  </li>' +
+        '</ul>' +
+        "<b>Wichtig:</b> Für die lokelen Pins, welche sich direkt auf ihrem Raspberry Pi befinden, entspricht die Nummer die hier ausgewählt werden muss nicht der GPIO-Nummer. Für das lokale Board, müssen statt den GPIO-Nummern sogenannte BCM-Nummern verwendet werden. BCM steht für 'Broadcom SOC channel', und bezeichnet die Nummer der Pin innerhalb des Chips, der vom Raspberry Pi verwendet wird. Diese Nummern haben sich eventuell zwischen den Board-Versionen geändert. Dieser Link kann helfen:"
     },
     pump_setup_stepper_calibration: {
-      acceleration_label: 'Acceleration',
-      acceleration_desc: 'The acceleration field determines how fast the motor should accelerate or decelerate. ' +
-        'If the acceleration is too high, the motor may skip steps when accelerating or take too many steps when decelerating. ' +
-        'The acceleration is given in steps per second per second.',
-      max_steps_per_second_label: 'Max steps per second',
+      acceleration_label: 'Beschleunigung',
+      acceleration_desc: 'Das Beschleunigungsfeld bestimmt, wie schnell der Motor beschleunigen oder bremsen soll. Ist die Beschleunigung zu hoch, kann der Motor Schritte überspringen, wenn er beschleunigt, oder zu viele Schritte machen, wenn er bremst. Die Beschleunigung wird in Schritten pro Sekunde zum Quadrat angegeben.',
+      max_steps_per_second_label: 'Maximale Anzahl an Schritten pro Sekunde',
       max_steps_per_second_desc: '<p>' +
-        '        The "max steps per second"-field determines fast the motor should spin at max. ' +
-        '        One revolution is normally divided into 200 steps. This can vary depending on the motor and motor ' +
-        '        driver settings.' +
-        '        If the value is too high, the motor may not be able to keep up and may skip steps or even not run at all. ' +
-        '        If the value is too low, the motor will run slower than necessary.<br>' +
+        "        Das Feld 'Maximale Anzahl an Schritten pro Sekunde' bestimmt, wie schnell der Motor maximal rotieren soll. " +
+        '        Eine Umdrehung wird normalerweise in 200 Schritte unterteilt. Dies kann jedoch je nach Motor und Motortreiber-Einstellungen variieren. ' +
+        '        Ist der Wert zu hoch, kann der Motor nicht mithalten und überspricht eventuell Schritte oder läuft sogar gar nicht. ' +
+        '        Ist der Wert zu niedrig, läuft der Motor langsamer als notwendig.<br>' +
         '      </p>' +
         '      <p>' +
-        '        The rule is:' +
+        '        Die Regel lautet:' +
         '      </p>' +
         '      <ul>' +
-        '        <li>higher = faster motor</li>' +
-        '        <li>lower = slower motor</li>' +
+        '        <li>höher = schnellerer Motor</li>' +
+        '        <li>niedriger = langsamerer Motor</li>' +
         '      </ul>',
-      steps_per_cl_label: 'Steps per cl',
-      steps_per_cl_desc: 'This field determines how many steps the motor must take to pump a cl.'
+      steps_per_cl_label: 'Schritte pro cl',
+      steps_per_cl_desc: 'Dieses Feld bestimmt, wie viele Schritte der Motor machen muss, um einen cl zu pumpen.'
     },
     glass_form: {
       name: 'Name',
-      size: 'Size',
-      default_checkbox: 'Default',
-      use_for_single_ingredients_checkbox: 'Use for single ingredients'
+      size: 'Größe',
+      default_checkbox: 'Standard',
+      use_for_single_ingredients_checkbox: 'Verwenden für einzelne Zutaten'
     },
     event_action_editor_form: {
-      comment_label: 'Comment',
+      comment_label: 'Kommentar',
       execution_groups: {
-        label: 'Execution-groups',
-        write_to_create: 'Write to create new group...',
-        create_new: '<b>Create new:</b> {group}'
+        label: 'Ausführungsgruppen',
+        write_to_create: 'Schreiben, um eine neue Gruppe zu erstellen...',
+        create_new: '<b>Neu:</b> {group}'
       },
-      trigger_label: 'Trigger',
+      trigger_label: 'Auslöser',
       action: {
-        label: 'Action',
-        select_action: 'Select action to view options...',
+        label: 'Aktion',
+        select_action: 'Wählen Sie eine Aktion aus, um Konfiguration anzuzeigen...',
         options: {
-          call_url: 'Call URL',
-          audio: 'Play audio file',
-          python: 'Execute python script',
-          nothing: 'Do nothing'
+          call_url: 'URL aufrufen',
+          audio: 'Audiodatei abspielen',
+          python: 'Python-Skript ausführen',
+          nothing: 'Nichts tun'
         },
         call_url: {
-          request_method_label: 'Request method',
+          request_method_label: 'Methode',
           url_label: 'URL'
         },
         audio: {
           file_label: 'Audio (max. 20 MB)',
-          volume: 'Volume {nr}%',
-          output_device_label: 'Output device',
-          on_repeat_label: 'On repeat'
+          volume: 'Lautstärke {nr}%',
+          output_device_label: 'Ausgabegerät',
+          on_repeat_label: 'Dauerschleife'
         },
         python: {
-          desc: 'Executes a python file. The docker image uses python 3. ' +
-            'You can also view the console output of your program in real-time.',
-          install_lib_tip: 'Install new libraries by using: <b>pip3 install &#60;library&#62;</b>',
-          fetching_libs: 'Fetching Libraries',
-          lib_list_lib: 'Library',
+          desc: 'Führt eine Python-Datei aus. Es wird Python 3 verwendet. ' +
+            'Die Konsolenausgabe Ihres Programms wird in Echtzeit anzeigt.',
+          install_lib_tip: 'Neue Bibliotheken können mit <b>pip3 install &#60;Bibliothek&#62;</b> installiert werden.',
+          fetching_libs: 'Bibliotheken laden',
+          lib_list_lib: 'Bibliothek',
           lib_list_version: 'Version',
-          no_libs_found: 'No libraries installed',
+          no_libs_found: 'Keine Bibliotheken installiert',
           python_file_label: 'Python (max. 20 MB)'
         },
         nothing: {
-          desc: 'This action does nothing. But it will cancel other running actions that don\'t share execution-groups with it.'
+          desc: 'Diese Aktion tut nichts. Aber bricht andere andere laufende Aktionen ab, die keine Ausführungsgruppen mit ihr teilen.'
         }
       }
     },
     circular_cocktail_progress: {
-      headline: 'Currently fabricated cocktail',
-      no_cocktail_msg: 'Currently, no cocktail gets fabricated!<br>' +
-        'Go to "My recipes" or "Public recipes" to put one in order.',
-      close_btn_label: 'Close'
+      headline: 'Derzeit hergestellter Cocktail',
+      no_cocktail_msg: 'Derzeit wird kein Cocktail hergestellt!<br>' +
+        "Gehen Sie zu 'Meine Rezepte' oder 'Cocktails', um einen Cocktail zu bestellen.",
+      close_btn_label: 'Schließen'
     },
     cocktail_production_manual_step_card: {
-      continue_btn_label: 'Continue',
-      add_ingredient_headline: 'Please manually add the following ingredients and click "continue":'
+      continue_btn_label: 'Fortsetzen',
+      add_ingredient_headline: "Bitte fügen Sie die folgenden Zutaten manuell hinzu und klicken Sie auf 'Fortsetzen':"
     },
     donation_disclaimer: {
-      headline: 'Your support is needed!',
-      headline_caption: 'Scroll down to close',
-      donate_paypal_btn_label: 'Donate via PayPal',
-      donate_github_btn_label: 'Donate via GitHub sponsors',
-      headline_2: 'This software is free, but donations are appreciated!',
-      introduction: 'This software is free, but still it took and takes a lot time to develop and maintain it. ' +
-        'The developer of CocktailMaker (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
-        'real income yet.',
-      main_text: '<p>Here are some more reasons why you should donate:</p>' +
+      headline: 'Deine Unterstützung wird benötigt!',
+      headline_caption: 'Zum schließen nach unten scrollen',
+      donate_paypal_btn_label: 'Spenden via PayPal',
+      donate_github_btn_label: 'Spenden via GitHub Sponsors',
+      headline_2: 'Diese Software ist kostenlos, aber Spenden werden gerne gesehen!',
+      introduction: 'Diese Software ist kostenlos, aber ihre Entwicklung und Wartung erfordern viel Zeit. Der Entwickler von CocktailMaker (ich) entwickelt sie in seiner Freizeit. Zur Zeit bin ich Student, und habe noch kein festes Einkommen.',
+      main_text: '<p>Hier sind einige weitere Gründe, warum du spenden solltest:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
-        '                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,\n' +
+        '                Nutzer dieser Software geben normalerweise viel Geld für Hardware aus (einen Raspberry Pi, Pumpen, ein Gehäuse,\n' +
         '                ...).\n' +
-        '                Nevertheless this hardware wouldn\'t function if the CocktailMaker software wouldn\'t exist.\n' +
+        '                Diese Hardware wäre jedoch nutzlos, wenn die CocktailMaker-Software nicht existieren würde. Eine Spende zeigt deine Wertschätzung meiner Arbeit und sollte im Vergleich zu den Hardwarekosten nicht mehr sonderlich stark ins Gewicht fallen.\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                You might think that that someone else will donate, but sadly they think that too. Before adding this\n' +
-        '                disclaimer I got around 50€ of donations in two years\n' +
+        '                Du könntest denken, dass schon jemand anderes spenden wird. Diese ist jedoch leider meistens nicht der Fall. Die anderen denken sich das nämlich auch. Bevor ich diesen\n' +
+        '                Disclaimer hinzugefügt habe, habe ich in zwei Jahren rund 50€ an Spenden erhalten.\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                I usually don\'t get any feedback for the software. It doesn\'t collect any data. I have no idea how many\n' +
-        '                people are out there using it.\n' +
-        '                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on\n' +
-        '                CocktailMaker.\n' +
+        '                Normalerweise erhalte ich kein Feedback für die Software. Sie sammelt keine Daten. Ich habe keine Ahnung, wie viele\n' +
+        "                Menschen sie verwenden. Eine Spende und auch 'Stars' auf GitHub geben mir positives Feedback und motivieren mich, weiter an\n" +
+        '                der CocktailMaker-Software zu arbeiten.\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                Developing this software causes costs. I as a developer often buy hardware, just to test\n' +
-        '                if it would function with the device and make sense.\n' +
+        '                Die Entwicklung dieser Software verursacht Kosten. Ich als Entwickler kaufe oft Hardware, nur um zu testen,\n' +
+        '                ob sie mit dem Gerät funktionieren und sinnvoll ist. Hierdurch mache ich mit der Entwicklung der Software sogar verlust, da ich die Hardware oft selbst garnicht verwende.\n' +
         '              </li>\n' +
         '            </ul>' +
         '            <p>\n' +
-        '              Donating is entirely voluntary. While the software remains free to use, your contribution\n' +
-        '              demonstrates your appreciation for the hard work and dedication, that were required to develop this software.\n' +
-        '              A donation also motivates me to continue refining and expanding the software\'s capabilities.\n' +
+        '              Spenden sind freiwillig. Während die Software weiterhin kostenlos bleibt, zeigt dein Beitrag deine Wertschätzung\n' +
+        '              für die Arbeit und aufgewendete Zeit, die für die Entwicklung dieser Software nötig waren.\n' +
+        '              Eine Spende motiviert mich auch dazu, die Software weiter zu verbessern und auszubauen.\n' +
         '            </p>\n' +
         '            <p>\n' +
-        '              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software\n' +
-        '              is worth to you.\n' +
-        '              You can also do monthly donations if you want to support me and my work over a period of time.\n' +
+        '              Du kannst über GitHub Sponsors oder PayPal spenden. Du kannst einen Betrag wählen, den du für\n' +
+        '              angemessen hältst.\n' +
+        '              Wenn du mich und meine Arbeit über einen längeren Zeitraum unterstützen möchtest, können auch monatliche Spenden getätigt werden.\n' +
         '            </p>',
       action_box: {
         donated: {
-          headline: 'Thank you for your donation. You made a difference!',
-          caption: 'This happens less often then you might think. Thank you very much!',
-          close_btn: 'Great people button (Close disclaimer)',
-          revert_btn: 'I didn\'t donate'
+          headline: 'Vielen Dank für deine Spende! Dein Beitrag macht einen Unterschied!',
+          caption: 'Ernsthaft, vielen Dank! Das passiert echt selten.',
+          close_btn: 'Nette-Menschen-Button (Disclaimer schließen)',
+          revert_btn: 'Ich habe doch nicht gespendet'
         },
         not_donated: {
-          headline: 'Thank you very much!',
-          donated_btn: 'I made a donation',
-          close_btn: 'No, remind me later'
+          headline: 'Vielen Dank!',
+          donated_btn: 'Ich habe gespendet',
+          close_btn: 'Nein, erinnere mich später'
         },
         lying_is_no_nice: {
-          headline: 'Please note that lying is not nice.',
-          confirm_btn: 'Confirm',
-          checkbox: 'I\'m not a liar',
-          go_back: 'Go back'
+          headline: 'Auchtung! Lügen ist nicht nett.',
+          confirm_btn: 'Weiter',
+          checkbox: 'Ich bin kein Lügner',
+          go_back: 'Zurück gehen'
         }
       }
     }
   },
   constants: {
     recipe_order_options: {
-      name_asc: 'Name asc',
-      name_desc: 'Name desc',
-      last_update_asc: 'Last update',
-      last_update_desc: 'Least update'
+      name_asc: 'Name aufsteigend',
+      name_desc: 'Name absteigend',
+      last_update_asc: 'Letztes Update (aufsteigend)',
+      last_update_desc: 'Letztes Update (absteigend)'
     },
     event_action_trigger_display_names: {
-      cocktail_prod_started: 'Cocktail production started',
-      cocktail_prod_manual_interaction_requested: 'Cocktail production manual interaction requested',
-      cocktail_prod_finished: 'Cocktail production finished',
-      cocktail_prod_canceled: 'Cocktail production canceled',
-      application_started: 'Application started'
+      cocktail_prod_started: 'Cocktail-Produktion gestartet',
+      cocktail_prod_manual_interaction_requested: 'Manuelle Interaktion bei Cocktail-Produktion angefordert',
+      cocktail_prod_finished: 'Cocktail-Produktion beendet',
+      cocktail_prod_canceled: 'Cocktail-Produktion abgebrochen',
+      application_started: 'Anwendung gestartet'
     }
   }
+
 }
