@@ -9,7 +9,9 @@
       :class="colorClass"
     >
       <q-card-section>
-        <div>Please manually add the following ingredients and click "continue":</div>
+        <div>
+          {{ $t('component.cocktail_production_manual_step_card.add_ingredient_headline') }}
+        </div>
         <div class="row">
           <div class="col-12 col-sm">
             <ul>
@@ -22,7 +24,9 @@
             <q-btn color="green"
                    :loading="continueProductionClicked"
                    @click="onClickContinueProduction"
-            >Continue</q-btn>
+            >
+              {{ $t('component.cocktail_production_manual_step_card.continue_btn_label') }}
+            </q-btn>
           </div>
         </div>
       </q-card-section>
@@ -38,7 +42,9 @@
           <div class="flex col-12 col-sm-auto justify-center" style="align-self: end;" >
             <q-btn color="green"
                    @click="onClickContinueProduction"
-            >Continue</q-btn>
+            >
+              {{ $t('component.cocktail_production_manual_step_card.continue_btn_label') }}
+            </q-btn>
           </div>
         </div>
       </q-card-section>

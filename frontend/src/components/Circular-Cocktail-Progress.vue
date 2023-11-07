@@ -22,7 +22,9 @@
         <q-card-section
           style="padding-bottom: 0"
         >
-          <h5 style="margin: 0 0 10px 0">Currently fabricated cocktail</h5>
+          <h5 style="margin: 0 0 10px 0">
+            {{ $t('component.circular_cocktail_progress.headline') }}
+          </h5>
           <q-separator class="q-mb-sm" />
           <div v-if="hasCocktailProgress">
             <c-recipe-card
@@ -70,12 +72,7 @@
             </c-recipe-card>
           </div>
           <div v-else>
-            <p>
-              Currently no cocktail gets fabricated!
-            </p>
-            <p style="margin-bottom: 0">
-              Go to "My recipes" or "Public recipes" to put one in order.
-            </p>
+            <p v-html="$t('component.circular_cocktail_progress.no_cocktail_msg')" />
           </div>
         </q-card-section>
         <q-card-actions
@@ -87,7 +84,7 @@
             @click="showDialog = false"
             style="width: 100px"
           >
-            Close
+            {{ $t('component.circular_cocktail_progress.close_btn_label') }}
           </q-btn>
         </q-card-actions>
       </q-card>

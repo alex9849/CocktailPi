@@ -1013,6 +1013,77 @@ export default {
           desc: 'This action does nothing. But it will cancel other running actions that don\'t share execution-groups with it.'
         }
       }
+    },
+    circular_cocktail_progress: {
+      headline: 'Currently fabricated cocktail',
+      no_cocktail_msg: 'Currently, no cocktail gets fabricated!<br>' +
+        'Go to "My recipes" or "Public recipes" to put one in order.',
+      close_btn_label: 'Close'
+    },
+    cocktail_production_manual_step_card: {
+      continue_btn_label: 'Continue',
+      add_ingredient_headline: 'Please manually add the following ingredients and click "continue":'
+    },
+    donation_disclaimer: {
+      headline: 'Your support is needed!',
+      headline_caption: 'Scroll down to close',
+      donate_paypal_btn_label: 'Donate via PayPal',
+      donate_github_btn_label: 'Donate via GitHub sponsors',
+      headline_2: 'This software is free, but donations are appreciated!',
+      introduction: 'This software is free, but still it took and takes a lot time to develop and maintain it. ' +
+        'The developer of CocktailMaker (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
+        'real income yet.',
+      main_text: '<p>Here are some more reasons why you should donate:</p>' +
+        '            <ul>\n' +
+        '              <li>\n' +
+        '                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,\n' +
+        '                ...).\n' +
+        '                Nevertheless this hardware wouldn\'t function if the CocktailMaker software wouldn\'t exist.\n' +
+        '              </li>\n' +
+        '              <li>\n' +
+        '                You might think that that someone else will donate, but sadly they think that too. Before adding this\n' +
+        '                disclaimer I got around 50€ of donations in two years\n' +
+        '              </li>\n' +
+        '              <li>\n' +
+        '                I usually don\'t get any feedback for the software. It doesn\'t collect any data. I have no idea how many\n' +
+        '                people are out there using it.\n' +
+        '                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on\n' +
+        '                CocktailMaker.\n' +
+        '              </li>\n' +
+        '              <li>\n' +
+        '                Developing this software causes costs. I as a developer often buy hardware, just to test\n' +
+        '                if it would function with the device and make sense.\n' +
+        '              </li>\n' +
+        '            </ul>' +
+        '            <p>\n' +
+        '              Donating is entirely voluntary. While the software remains free to use, your contribution\n' +
+        '              demonstrates your appreciation for the hard work and dedication, that were required to develop this software.\n' +
+        '              A donation also motivates me to continue refining and expanding the software\'s capabilities.\n' +
+        '            </p>\n' +
+        '            <p>\n' +
+        '              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software\n' +
+        '              is worth to you.\n' +
+        '              You can also do monthly donations if you want to support me and my work over a period of time.\n' +
+        '            </p>',
+      action_box: {
+        donated: {
+          headline: 'Thank you for your donation. You made a difference!',
+          caption: 'This happens less often then you might think. Thank you very much!',
+          close_btn: 'Great people button (Close disclaimer)',
+          revert_btn: 'I didn\'t donate'
+        },
+        not_donated: {
+          headline: 'Thank you very much!',
+          donated_btn: 'I made a donation',
+          close_btn: 'No, remind me later'
+        },
+        lying_is_no_nice: {
+          headline: 'Please note that lying is not nice.',
+          confirm_btn: 'Confirm',
+          checkbox: 'I\'m not a liar',
+          go_back: 'Go back'
+        }
+      }
     }
   },
   constants: {

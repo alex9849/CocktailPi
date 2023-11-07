@@ -10,8 +10,11 @@
       <q-card-section>
         <q-toolbar>
           <q-toolbar-title class="text-center">
-            <p class="text-h3" style="white-space: initial">Your support is needed!</p>
-            <p class="text-weight-thin">Scroll down to close
+            <p class="text-h3" style="white-space: initial">
+              {{ $t('component.donation_disclaimer.headline') }}
+            </p>
+            <p class="text-weight-thin">
+              {{ $t('component.donation_disclaimer.headline_caption') }}
               <q-icon :name="mdiChevronDoubleDown"/>
             </p>
 
@@ -28,11 +31,11 @@
           :dark="dark"
         >
           <q-card-section>
-            <h6 class="text-center">This software is free, but donations are appreciated!</h6>
+            <h6 class="text-center">
+              {{ $t('component.donation_disclaimer.headline_2') }}
+            </h6>
             <p>
-              This software is free, but still it took and takes a lot time to develop and maintain it.
-              The developer of CocktailMaker (me) develops it in his free time. I'm also a student who doesn't have a
-              real income yet.
+              {{ $t('component.donation_disclaimer.introduction') }}
             </p>
             <div class="q-pa-md q-gutter-sm">
               <div class="row justify-center">
@@ -43,7 +46,7 @@
                   :class="{'text-black': dark}"
                   @click="clickDonateGitHub"
                 >
-                  Donate via GitHub sponsors
+                  {{ $t('component.donation_disclaimer.donate_github_btn_label') }}
                 </q-btn>
               </div>
               <div class="row justify-center">
@@ -53,42 +56,11 @@
                   :icon="mdiPaypal"
                   @click="clickDonatePaypal"
                 >
-                  Donate via PayPal
+                  {{ $t('component.donation_disclaimer.donate_paypal_btn_label') }}
                 </q-btn>
               </div>
             </div>
-            <p>Here are some more reasons why you should donate:</p>
-            <ul>
-              <li>
-                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,
-                ...).
-                Nevertheless this hardware wouldn't function if the CocktailMaker software wouldn't exist.
-              </li>
-              <li>
-                You might think that that someone else will donate, but sadly they think that too. Before adding this
-                disclaimer I got around 50€ of donations in two years
-              </li>
-              <li>
-                I usually don't get any feedback for the software. It doesn't collect any data. I have no idea how many
-                people are out there using it.
-                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on
-                CocktailMaker.
-              </li>
-              <li>
-                Developing this software causes costs. I as a developer often buy hardware, just to test
-                if it would function with the device and make sense.
-              </li>
-            </ul>
-            <p>
-              Donating is entirely voluntary. While the software remains free to use, your contribution
-              demonstrates your appreciation for the hard work and dedication, that were required to develop this software.
-              A donation also motivates me to continue refining and expanding the software's capabilities.
-            </p>
-            <p>
-              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software
-              is worth to you.
-              You can also do monthly donations if you want to support me and my work over a period of time.
-            </p>
+            <div v-html="$t('component.donation_disclaimer.main_text')"/>
           </q-card-section>
           <q-card-section>
             <div class="q-gutter-sm">
@@ -100,7 +72,7 @@
                   :color="dark ? 'white' : 'black'"
                   :class="{'text-black': dark}"
                 >
-                  Donate via GitHub sponsors
+                  {{ $t('component.donation_disclaimer.donate_github_btn_label') }}
                 </q-btn>
               </div>
               <div class="row justify-center">
@@ -110,7 +82,7 @@
                   @click="clickDonatePaypal"
                   :icon="mdiPaypal"
                 >
-                  Donate via PayPal
+                  {{ $t('component.donation_disclaimer.donate_paypal_btn_label') }}
                 </q-btn>
               </div>
             </div>
@@ -124,10 +96,10 @@
             >
               <div class="text-center">
                 <p class="text-h5">
-                  Thank you for your donation. You made a difference!
+                  {{ $t('component.donation_disclaimer.action_box.donated.headline') }}
                 </p>
                 <p class="text-caption">
-                  This happens less often then you might think. Thank you very much!
+                  {{ $t('component.donation_disclaimer.action_box.donated.caption') }}
                 </p>
               </div>
               <q-card-section>
@@ -140,7 +112,7 @@
                       :disable="loadingDonationModify"
                       @click="closeDialog"
                     >
-                      Great people button (Close disclaimer)
+                      {{ $t('component.donation_disclaimer.action_box.donated.close_btn') }}
                     </q-btn>
                   </div>
                   <div class="row justify-center">
@@ -151,7 +123,7 @@
                       :loading="loadingDonationModify"
                       @click="clickUndonate()"
                     >
-                      I didn't donate
+                      {{ $t('component.donation_disclaimer.action_box.donated.revert_btn') }}
                     </q-btn>
                   </div>
                 </div>
@@ -161,7 +133,7 @@
               v-else-if="!clickedDonated"
             >
               <p class="text-center text-h5">
-                Thank you very much!
+                {{ $t('component.donation_disclaimer.action_box.not_donated.headline') }}
               </p>
               <q-card-section>
                 <div class="q-gutter-sm">
@@ -173,7 +145,7 @@
                       :icon-right="mdiEmoticon"
                       @click="clickedDonated = true"
                     >
-                      I made a donation
+                      {{ $t('component.donation_disclaimer.action_box.not_donated.donated_btn') }}
                     </q-btn>
                   </div>
                   <div class="row justify-center">
@@ -183,7 +155,7 @@
                       no-caps
                       @click="closeDialog"
                     >
-                      No, remind me later
+                      {{ $t('component.donation_disclaimer.action_box.not_donated.close_btn') }}
                     </q-btn>
                   </div>
                 </div>
@@ -191,14 +163,14 @@
             </div>
             <div v-else>
               <p class="text-center text-h5">
-                Please note that lying is not nice.
+                {{ $t('component.donation_disclaimer.action_box.lying_is_no_nice.headline') }}
               </p>
               <q-card-section>
                 <div class="q-gutter-sm">
                   <div class="row justify-center">
                     <q-checkbox
                       :dark="dark"
-                      label="I'm not a liar"
+                      :label="$t('component.donation_disclaimer.action_box.lying_is_no_nice.checkbox')"
                       v-model:model-value="notLieCheckBox"
                     />
                   </div>
@@ -212,7 +184,7 @@
                       :icon-right="mdiEmoticonExcited"
                       @click="clickConfirmDonate"
                     >
-                      Confirm
+                      {{ $t('component.donation_disclaimer.action_box.lying_is_no_nice.confirm_btn') }}
                     </q-btn>
                   </div>
                   <div class="row justify-center">
@@ -223,7 +195,7 @@
                       no-caps
                       @click="() => {clickedDonated = false; notLieCheckBox = false;}"
                     >
-                      Go back
+                      {{ $t('component.donation_disclaimer.action_box.lying_is_no_nice.go_back') }}
                     </q-btn>
                   </div>
                 </div>
