@@ -15,14 +15,14 @@
             <q-btn
               :color="abortColor"
               @click="() => {$emit('clickAbort');}"
-              style="width: 100px"
+              style="width: 150px"
             >
               {{ abortButtonText }}
             </q-btn>
             <q-btn
               :loading="loading"
               :color="okColor"
-              style="width: 100px"
+              style="width: 150px"
               @click="$emit('clickOk')"
             >
               {{ okButtonText }}

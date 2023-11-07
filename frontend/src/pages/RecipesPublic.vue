@@ -1,6 +1,6 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>{{ $t('page.recipes.my_recipes_headline') }}</h5>
+    <h5>{{ $t('page.recipes.all_recipes_headline') }}</h5>
     <div>
       <top-button-arranger>
         <q-btn
@@ -14,7 +14,6 @@
           color="info"
           :label="$t('page.recipes.refresh_btn_label')"
           no-caps
-          :disable="refreshing"
           @click="onRefreshButton"
         />
       </top-button-arranger>
@@ -37,11 +36,6 @@ import TopButtonArranger from 'components/TopButtonArranger'
 export default {
   name: 'PublicRecipes',
   components: { TopButtonArranger, CRecipeSearchList },
-  data () {
-    return {
-      refreshing: false
-    }
-  },
   async beforeRouteEnter (to, from, next) {
     to.meta.category = store().getters['category/getCategories']
       .find(x => x.id == to.params.cid)
@@ -55,11 +49,7 @@ export default {
   },
   methods: {
     onRefreshButton () {
-      this.refreshing = true
-      this.$refs.recipeSearchList.updateRecipes()
-        .finally(() => {
-          this.refreshing = false
-        })
+      this.$refs.recipeSearchList.onClickSearch()
     }
   },
   computed: {

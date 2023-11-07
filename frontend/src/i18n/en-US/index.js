@@ -260,7 +260,7 @@ export default {
         i2c_box: {
           headline: 'I2C',
           configure_btn_label: 'Configure',
-          status: 'Status',
+          status: 'Status:',
           sda_pin: 'SDA-Pin:',
           scl_pin: 'SCL-Pin:'
         }

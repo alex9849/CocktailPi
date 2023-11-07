@@ -13,7 +13,6 @@
         color="info"
         :label="$t('page.recipes.refresh_btn_label')"
         no-caps
-        :disable="refreshing"
         @click="onRefreshButton"
       />
     </top-button-arranger>
@@ -39,11 +38,6 @@ export default {
     await store().dispatch('common/fetchDefaultFilter')
     next()
   },
-  data () {
-    return {
-      refreshing: false
-    }
-  },
   computed: {
     ...mapGetters({
       isRecipeCreatorRole: 'auth/isRecipeCreator'
@@ -51,11 +45,7 @@ export default {
   },
   methods: {
     onRefreshButton () {
-      this.refreshing = true
-      this.$refs.recipeSearchList.updateRecipes()
-        .finally(() => {
-          this.refreshing = false
-        })
+      this.$refs.recipeSearchList.onClickSearch()
     }
   }
 }
