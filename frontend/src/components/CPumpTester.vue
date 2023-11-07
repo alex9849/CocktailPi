@@ -6,7 +6,7 @@
         style="background: rgba(244, 152, 54, 0.9) !important;"
       >
         <div v-if="isUnknownJobRunning" class="row justify-center q-gutter-sm">
-          <p>Unknown job running!</p>
+          <p>{{ $t('component.pump_tester.unknown_job_running') }}</p>
           <q-btn
             color="negative"
             label="Cancel job"
@@ -14,14 +14,14 @@
           />
         </div>
         <div v-else class="text-center">
-          {{ disableReason }}
+          {{ printDisableReason }}
         </div>
       </div>
     </div>
     <q-card :class="{disabled: disable || isUnknownJobRunning}">
       <div class="row items-center justify-center bg-teal-3">
         <div class="col-shrink">
-          <p class="text-subtitle2 q-pa-sm">Metric:</p>
+          <p class="text-subtitle2 q-pa-sm">{{ $t('component.pump_tester.ref_metric') }}</p>
         </div>
         <div class="col-grow">
           <q-tabs
@@ -35,21 +35,21 @@
             <q-tab
               name="PUMP_ML"
               :disable="isRunning"
-              label="Liquid"
+              :label="$t('component.pump_tester.metrics.steps')"
               @click="reset()"
             />
             <q-tab
               v-if="pump.type === 'stepper'"
               name="PUMP_STEPS"
               :disable="isRunning"
-              label="Steps"
+              :label="$t('component.pump_tester.metrics.steps')"
               @click="reset()"
             />
             <q-tab
               v-if="pump.type === 'dc'"
               name="PUMP_TIME"
               :disable="isRunning"
-              label="Time"
+              :label="$t('component.pump_tester.metrics.time')"
               @click="reset()"
             />
           </q-tabs>
@@ -81,7 +81,7 @@
             v-if="!isRunning"
             :disable="!isFinite(advice.amount) || advice.amount < 1"
             :icon="mdiPlay"
-            label="Run"
+            :label="$t('component.pump_tester.run_btn_label')"
             no-caps
             class="bg-green text-white"
           />
@@ -89,7 +89,7 @@
             @click="onClickCancel"
             v-else
             :icon="mdiStop"
-            label="Stop"
+            :label="$t('component.pump_tester.stop_btn_label')"
             no-caps
             class="bg-red text-white"
           >
@@ -108,17 +108,17 @@
           <div class="col-shrink">
             <table>
               <tr v-if="pump.type === 'stepper'">
-                <td><b>Steps made:</b></td>
+                <td><b>{{ $t('component.pump_tester.metrics.steps_made') }}</b></td>
                 <td>{{ jobMetrics.stepsMade }}</td>
               </tr>
               <tr>
-                <td><b>Liquid pumped:</b></td>
+                <td><b>{{ $t('component.pump_tester.metrics.liquid_pumped') }}</b></td>
                 <td>
                   <p>{{ jobMetrics.mlPumped }} ml <i>(should-value)</i></p>
                 </td>
               </tr>
               <tr>
-                <td><b>Time taken:</b></td>
+                <td><b>{{ $t('component.pump_tester.metrics.time_taken') }}</b></td>
                 <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
               </tr>
             </table>
@@ -134,7 +134,7 @@
                   dense
                   outlined
                   type="number"
-                  label="Actual ml pumped"
+                  :label="$t('component.pump_tester.true_liquid_pumped_field')"
                   v-model:model-value.number="trueLiquidPumpedField"
                 >
                   <template v-slot:append>
@@ -169,7 +169,7 @@
                       :dense="$q.screen.xs"
                       :disable="!calcedPerClMetricValue.val"
                       class="bg-green text-white"
-                      label="Apply"
+                      :label="$t('component.pump_tester.apply_per_cl_metric_value_btn_label')"
                       :icon="this.applyMlPumpMetricIcon"
                     />
                   </template>
@@ -201,8 +201,7 @@ export default {
       default: false
     },
     disableReason: {
-      type: String,
-      default: () => 'Disabled'
+      type: String
     }
   },
   data: () => {
@@ -347,27 +346,33 @@ export default {
       }
       return ret
     },
+    printDisableReason () {
+      if (this.disableReason) {
+        return this.disableReason
+      }
+      return this.$t('component.pump_tester.default_disable_reason')
+    },
     runValField () {
       switch (this.advice.type) {
         case 'PUMP_ML':
           return {
-            label: 'Ml to pump',
+            label: this.$t('component.pump_tester.metrics.liquidRunValField'),
             suffix: 'ml'
           }
         case 'PUMP_TIME':
           return {
-            label: 'Ms to run',
+            label: this.$t('component.pump_tester.metrics.timeRunValField'),
             suffix: 'ms'
           }
         case 'PUMP_STEPS':
           return {
-            label: 'Steps to run',
+            label: this.$t('component.pump_tester.metrics.stepsRunValField'),
             suffix: 'st'
           }
         default:
           return {
-            label: 'Unknown metric',
-            suffix: 'unknown'
+            label: this.$t('component.pump_tester.metrics.stepsRunValField'),
+            suffix: ''
           }
       }
     }

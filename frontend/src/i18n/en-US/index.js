@@ -871,6 +871,27 @@ export default {
       notifications: {
         updated: 'Settings updated!'
       }
+    },
+    pump_tester: {
+      unknown_job_running: 'Unknown job running!',
+      default_disable_reason: 'Disabled!',
+      ref_metric: 'Metric:',
+      metrics: {
+        liquid: 'Liquid',
+        liquid_pumped: 'Liquid pumped:',
+        liquidRunValField: 'Ml to pump',
+        steps: 'Steps',
+        steps_made: 'Steps made:',
+        stepsRunValField: 'Steps to run',
+        time: 'Time',
+        time_taken: 'Time taken:',
+        timeRunValField: 'Ms to run',
+        unknownRunMetric: 'Unknown metric'
+      },
+      true_liquid_pumped_field: 'Actual ml pumped',
+      apply_per_cl_metric_value_btn_label: 'Apply',
+      run_btn_label: 'Run',
+      stop_btn_label: 'Stop'
     }
   }
 }
