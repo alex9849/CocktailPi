@@ -1,26 +1,16 @@
 <template>
   <c-assistant-container>
     <template v-slot:explanations>
-      <p>
-        A DC motor can be switched on and off by connecting it to and disconnecting it from a power source.
-        This is usually done with the aid of a relay. The relay opens and closes the electronic circuit to which the motor is connected.
-        The "BCM-Pin" field contains the BCM number of the pin that controls the relay.
-      </p>
-      <p>
-        <b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don't necessarily correspond
-        to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside
-        the chip which is used on the Raspberry Pi.
-        These numbers changed between board versions. This link may help:
-        <q-btn
-          class="text-info"
-          dense
-          flat
-          no-caps
-          @click="openExternalLink('https://pi4j.com/getting-started/understanding-the-pins/#overview')"
-        >
-          <u>Pi4J - Understanding the pins</u>
-        </q-btn>
-      </p>
+      <p v-html="$t('component.pump_setup_dc_hw_pins.control_pin_desc')"/>
+      <q-btn
+        class="text-info"
+        dense
+        flat
+        no-caps
+        @click="openExternalLink('https://pi4j.com/getting-started/understanding-the-pins/#overview')"
+      >
+        <u>Pi4J - Understanding the pins</u>
+      </q-btn>
     </template>
     <template v-slot:fields>
       <c-gpio-selector
@@ -29,7 +19,7 @@
         :error-message="pinErrorMsg"
         :error="!!pinErrorMsg"
         :loading="pinLoading"
-        label="Control Pin"
+        :label="$t('component.pump_setup_dc_hw_pins.control_pin_label')"
         clearable
       />
     </template>
@@ -39,21 +29,18 @@
   />
   <c-assistant-container>
     <template v-slot:explanations>
-      <p>
-        Depending on our setup the motor might run either if the GPIO-pin that controls the pump is set to high or low.
-        Please select the pin-state in which your pump would run in your configuration.
-      </p>
+      <p v-html="$t('component.pump_setup_dc_hw_pins.power_state_desc')"/>
     </template>
     <template v-slot:fields>
       <q-select
         :model-value="isPowerStateHigh"
-        :options="[{label: 'High', value: true}, {label:'Low', value: false}]"
+        :options="powerStateOptions"
         map-options
         emit-value
         outlined
         clearable
         hide-bottom-space
-        label="Power State"
+        :label="$t('component.pump_setup_dc_hw_pins.power_state_label')"
         @update:model-value="$emit('update:isPowerStateHigh', $event)"
         :error-message="isPowerStateHighErrorMsg"
         :error="!!isPowerStateHighErrorMsg"
@@ -84,6 +71,17 @@ export default defineComponent({
     ...mapMutations({
       openExternalLink: 'common/openExternalLink'
     })
+  },
+  data () {
+    return {
+      powerStateOptions: [{
+        label: this.$t('component.pump_setup_dc_hw_pins.power_state_options.high'),
+        value: true
+      }, {
+        label: this.$t('component.pump_setup_dc_hw_pins.power_state_options.low'),
+        value: false
+      }]
+    }
   }
 })
 </script>

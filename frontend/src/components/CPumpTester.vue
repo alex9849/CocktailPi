@@ -35,7 +35,7 @@
             <q-tab
               name="PUMP_ML"
               :disable="isRunning"
-              :label="$t('component.pump_tester.metrics.steps')"
+              :label="$t('component.pump_tester.metrics.liquid')"
               @click="reset()"
             />
             <q-tab
@@ -356,22 +356,22 @@ export default {
       switch (this.advice.type) {
         case 'PUMP_ML':
           return {
-            label: this.$t('component.pump_tester.metrics.liquidRunValField'),
+            label: this.$t('component.pump_tester.metrics.liquid_run_val_field'),
             suffix: 'ml'
           }
         case 'PUMP_TIME':
           return {
-            label: this.$t('component.pump_tester.metrics.timeRunValField'),
+            label: this.$t('component.pump_tester.metrics.time_run_val_field'),
             suffix: 'ms'
           }
         case 'PUMP_STEPS':
           return {
-            label: this.$t('component.pump_tester.metrics.stepsRunValField'),
+            label: this.$t('component.pump_tester.metrics.steps_run_val_field'),
             suffix: 'st'
           }
         default:
           return {
-            label: this.$t('component.pump_tester.metrics.stepsRunValField'),
+            label: this.$t('component.pump_tester.metrics.unknown_run_metric'),
             suffix: ''
           }
       }

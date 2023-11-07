@@ -2,8 +2,7 @@
   <c-assistant-container>
     <template v-slot:explanations>
       <p>
-        "Time per cl in ms" determines how many milliseconds (ms) the pump must run to pump one centiliter (cl).
-        This value is used to determine how long the pump must run to pump the desired amount of liquid from the bottle.
+        {{ $t('component.pump_setup_dc_calibration.time_per_cl_pin_desc') }}
       </p>
     </template>
     <template v-slot:fields>
@@ -17,7 +16,7 @@
         outlined
         type="number"
         filled
-        label="Time per cl in ms"
+        :label="$t('component.pump_setup_dc_calibration.time_per_cl_pin_label')"
       >
         <template v-slot:append>
           ms/cl

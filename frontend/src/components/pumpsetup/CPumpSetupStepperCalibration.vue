@@ -2,9 +2,7 @@
   <c-assistant-container>
     <template v-slot:explanations>
       <p>
-        The acceleration field determines how fast the motor should accelerate or decelerate.
-        If the acceleration is too high, the motor may skip steps when accelerating or take too many steps when decelerating.
-        The acceleration is given in steps per second per second.
+        {{ $t('component.pump_setup_stepper_calibration.acceleration_desc') }}
       </p>
     </template>
     <template v-slot:fields>
@@ -18,7 +16,7 @@
         outlined
         type="number"
         filled
-        label="Acceleration"
+        :label="$t('component.pump_setup_stepper_calibration.acceleration_label')"
       >
         <template v-slot:append>
           st/s²
@@ -31,20 +29,7 @@
   />
   <c-assistant-container>
     <template v-slot:explanations>
-      <p>
-        The "max steps per second"-field determines fast the motor should spin at max.
-        One revolution is normally divided into 200 steps. This can vary depending on the motor and motor
-        driver settings.
-        If the value is too high, the motor may not be able to keep up and may skip steps or even not run at all.
-        If the value is too low, the motor will run slower than necessary.<br>
-      </p>
-      <p>
-        The rule is:
-      </p>
-      <ul>
-        <li>higher = faster motor</li>
-        <li>lower = slower motor</li>
-      </ul>
+      <p v-html="$t('component.pump_setup_stepper_calibration.max_steps_per_second_desc')"></p>
     </template>
     <template v-slot:fields>
       <q-input
@@ -57,7 +42,7 @@
         outlined
         type="number"
         filled
-        label="Max steps per second"
+        :label="$t('component.pump_setup_stepper_calibration.max_steps_per_second_label')"
       >
         <template v-slot:append>
           ms
@@ -70,7 +55,7 @@
   />
   <c-assistant-container>
     <template v-slot:explanations>
-      This field determines how many steps the motor must take to pump a cl.
+      {{ $t('component.pump_setup_stepper_calibration.steps_per_cl_desc') }}
     </template>
     <template v-slot:fields>
       <q-input
@@ -83,7 +68,7 @@
         outlined
         type="number"
         filled
-        label="Steps per cl"
+        :label="$t('component.pump_setup_stepper_calibration.steps_per_cl_label')"
       >
         <template v-slot:append>
           st/cl

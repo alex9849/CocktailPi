@@ -879,19 +879,92 @@ export default {
       metrics: {
         liquid: 'Liquid',
         liquid_pumped: 'Liquid pumped:',
-        liquidRunValField: 'Ml to pump',
+        liquid_run_val_field: 'Ml to pump',
         steps: 'Steps',
         steps_made: 'Steps made:',
-        stepsRunValField: 'Steps to run',
+        steps_run_val_field: 'Steps to run',
         time: 'Time',
         time_taken: 'Time taken:',
-        timeRunValField: 'Ms to run',
-        unknownRunMetric: 'Unknown metric'
+        time_run_val_field: 'Ms to run',
+        unknown_run_metric: 'Unknown metric'
       },
       true_liquid_pumped_field: 'Actual ml pumped',
       apply_per_cl_metric_value_btn_label: 'Apply',
       run_btn_label: 'Run',
       stop_btn_label: 'Stop'
+    },
+    pump_setup_dc_hw_pins: {
+      control_pin_label: 'Control Pin',
+      control_pin_desc: 'A DC motor can be switched on and off by connecting it to and disconnecting it from a power source. ' +
+        'This is usually done with the aid of a relay. The relay opens and closes the electronic circuit to which the motor is connected. ' +
+        'The "BCM-Pin" field contains the BCM number of the pin that controls the relay.<br><br>' +
+        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
+        'to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
+        'the chip which is used on the Raspberry Pi. ' +
+        'These numbers changed between board versions. This link may help:',
+      power_state_desc: 'Depending on our setup the motor might run either if the GPIO-pin that controls the pump is set to high or low. Please select the pin-state in which your pump would run in your configuration. ',
+      power_state_label: 'Power state',
+      power_state_options: {
+        high: 'High',
+        low: 'Low'
+      }
+    },
+    pump_setup_dc_calibration: {
+      time_per_cl_pin_label: 'Time per cl in ms',
+      time_per_cl_pin_desc: '"Time per cl in ms" determines how many milliseconds (ms) the pump must run to pump one centiliter (cl). ' +
+        'This value is used to determine how long the pump must run to pump the desired amount of liquid from the bottle.'
+    },
+    pump_setup_stepper_hw_pins: {
+      step_pin_label: '(local) Step Pin',
+      enable_pin_label: 'Enable Pin',
+      pin_desc: 'A stepper motor driver usually has three important pins, that are used to control the motor.' +
+        '<ul>' +
+        '        <li>' +
+        '          The step pin, which receives one pulse for each step the motor is to make.' +
+        '        </li>' +
+        '        <li>' +
+        '          The enable pin. This pin decides whether the motor should be energized and thus actively ' +
+        '          hold its current position or not.' +
+        '        </li>' +
+        '        <li>' +
+        '          The direction pin. It decides on the direction that the motor takes. The direction that' +
+        '          the motor is running to is decided by one single pin, that controls the direction for all motors. ' +
+        '          That pin gets defined globally and is not part of this setup! ' +
+        '          Please build your machine in a way that connects that pin with the direction logic of all ' +
+        '          your motors.' +
+        '        </li>' +
+        '        <li>' +
+        '          Your motor driver very likely also provides more pins (step resolution/sleep/...). Please ' +
+        '          configure these statically in hardware!' +
+        '        </li>' +
+        '      </ul>' +
+        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
+        '        to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
+        '        the chip which is used on the Raspberry Pi. ' +
+        '        These numbers changed between board versions. This link may help:'
+    },
+    pump_setup_stepper_calibration: {
+      acceleration_label: 'Acceleration',
+      acceleration_desc: 'The acceleration field determines how fast the motor should accelerate or decelerate. ' +
+        'If the acceleration is too high, the motor may skip steps when accelerating or take too many steps when decelerating. ' +
+        'The acceleration is given in steps per second per second.',
+      max_steps_per_second_label: 'Max steps per second',
+      max_steps_per_second_desc: '<p>' +
+        '        The "max steps per second"-field determines fast the motor should spin at max. ' +
+        '        One revolution is normally divided into 200 steps. This can vary depending on the motor and motor ' +
+        '        driver settings.' +
+        '        If the value is too high, the motor may not be able to keep up and may skip steps or even not run at all. ' +
+        '        If the value is too low, the motor will run slower than necessary.<br>' +
+        '      </p>' +
+        '      <p>' +
+        '        The rule is:' +
+        '      </p>' +
+        '      <ul>' +
+        '        <li>higher = faster motor</li>' +
+        '        <li>lower = slower motor</li>' +
+        '      </ul>',
+      steps_per_cl_label: 'Steps per cl',
+      steps_per_cl_desc: 'This field determines how many steps the motor must take to pump a cl.'
     }
   }
 }
