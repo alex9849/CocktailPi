@@ -33,7 +33,7 @@ export const eventActionTriggerDisplayNames = {
 }
 
 export const recipeOrderOptions = {
-  data: () => {
+  data () {
     return {
       recipeOrderByOptions: [{
         label: this.$t('constants.recipe_order_options.name_asc'),
