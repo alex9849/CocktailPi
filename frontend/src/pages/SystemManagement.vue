@@ -101,6 +101,8 @@
       :abort-button-text="$t('page.system_mgmt.system.shutdown_dialog.abort_btn_label')"
       :ok-button-text="$t('page.system_mgmt.system.shutdown_dialog.ok_btn_label')"
     />
+    <h5>Appearance</h5>
+    <c-settings-appearance />
   </q-page>
 </template>
 
@@ -111,10 +113,11 @@ import CQuestion from 'components/CQuestion'
 import SystemService from 'src/services/system.service'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
+import CSettingsAppearance from 'components/CSettingsAppearance.vue'
 
 export default {
   name: 'SystemManagement',
-  components: { CQuestion },
+  components: { CSettingsAppearance, CQuestion },
   async beforeRouteEnter (to, from, next) {
     const defaultFilter = await SystemService.getDefaultFilter()
     next(vm => {
