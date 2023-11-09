@@ -247,7 +247,7 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal) {
-        this.form = newVal
+        this.form = JSON.parse(JSON.stringify(newVal))
       }
     }
   },
