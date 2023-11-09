@@ -54,6 +54,7 @@ class SystemService {
 
   setAppearanceSettings (settings) {
     return axios.put(API_PATH + 'settings/appearance', settings)
+      .then(response => response.data)
   }
 
   getLanguages (settings) {

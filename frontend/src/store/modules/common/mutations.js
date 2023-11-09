@@ -6,6 +6,11 @@ export const setGlobalSettings = (state, payload) => {
   state.globalSettings = payload
 }
 
+export const setAppearanceSettings = (state, { payload, i18n }) => {
+  i18n.locale = payload.language.name
+  state.appearanceSettings = payload
+}
+
 export const setShowDonateDialog = (state, payload) => {
   state.showDonateDialog = payload
 }

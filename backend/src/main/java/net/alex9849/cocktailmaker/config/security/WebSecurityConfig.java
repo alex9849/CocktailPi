@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/recipe/*/image").permitAll()
                                 .requestMatchers("/api/collection/*/image").permitAll()
-                                .requestMatchers(HttpMethod.GET, "settings/appearance").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/system/settings/appearance").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/**").permitAll()
                 )

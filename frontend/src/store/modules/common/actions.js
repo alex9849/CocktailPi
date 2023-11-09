@@ -17,3 +17,12 @@ export const fetchDefaultFilter = ({ commit }) => {
     }
   )
 }
+
+export const fetchAppearanceSettings = ({ commit }, i18n) => {
+  return SystemService.getAppearanceSettings().then(
+    x => {
+      commit('setAppearanceSettings', { payload: x, i18n: i18n })
+      return Promise.resolve(x)
+    }
+  )
+}

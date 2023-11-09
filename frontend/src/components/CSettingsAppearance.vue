@@ -178,6 +178,7 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import SystemService from 'src/services/system.service'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'CSettingsAppearance',
@@ -207,9 +208,11 @@ export default {
   },
   created () {
     this.fetchLanguages()
-    this.fetchSettings()
   },
   methods: {
+    ...mapMutations({
+      setAppearanceSettings: 'common/setAppearanceSettings'
+    }),
     fetchLanguages () {
       SystemService.getLanguages()
         .then(data => {
@@ -222,22 +225,30 @@ export default {
       }
       this.saving = true
       SystemService.setAppearanceSettings(this.form)
-        .then(() => {
+        .then((data) => {
           this.$q.notify({
             type: 'positive',
             message: 'Updated'
           })
-          this.fetchSettings()
+          this.setAppearanceSettings({ payload: data, i18n: this.$i18n })
         })
         .finally(() => {
           this.saving = false
         })
-    },
-    fetchSettings () {
-      SystemService.getAppearanceSettings()
-        .then(data => {
-          this.form.language = data.language
-        })
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getAppearanceSettings: 'common/getAppearanceSettings'
+    })
+  },
+  watch: {
+    getAppearanceSettings: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        this.form = newVal
+      }
     }
   },
   validations () {

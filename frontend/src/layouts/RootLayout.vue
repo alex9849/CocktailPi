@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'RootLayout',
@@ -22,10 +22,14 @@ export default {
     if (isMobile) {
       this.$q.platform.is.mobile = true
     }
+    this.fetchAppearance(this.$i18n)
   },
   methods: {
     ...mapMutations({
       setShowExternalLinksAsQrCode: 'common/setShowExternalLinksAsQrCode'
+    }),
+    ...mapActions({
+      fetchAppearance: 'common/fetchAppearanceSettings'
     })
   }
 }

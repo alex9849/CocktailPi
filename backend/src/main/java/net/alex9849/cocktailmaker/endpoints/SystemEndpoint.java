@@ -71,7 +71,7 @@ public class SystemEndpoint {
     @RequestMapping(value = "settings/appearance", method = RequestMethod.PUT)
     public ResponseEntity<?> setAppearance(@RequestBody @Valid AppearanceSettingsDto.Duplex.Detailed settingsDto) {
         systemService.setAppearance(settingsDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(systemService.getAppearance());
     }
 
     @RequestMapping(value = "settings/appearance", method = RequestMethod.GET)
