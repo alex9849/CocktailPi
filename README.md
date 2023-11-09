@@ -26,7 +26,14 @@ The controlling software is designed to enhance your cocktail-making experience 
 - Add and edit recipes within the user interface.
 - Extra user interface for enhanced local touchscreen usage.
 - Virtual stirring functionality.
+- Switch between user interface languages.
+- Support for up to 89 dc pumps using GPIO expanders.(No software limit)
+- Add written production steps to recipes
+- Prompt user to hand add ingredients, that are owned, but no connected to a pump
+- Manual activation of pumps (as a cleaning program)
 - Ingredient substitution for greater flexibility.
+- Put recipes into collections and categories
+- Adjustable default filter
 - Custom recipe adjustments can be made while ordering.
 - Create recipe collections for easy organization.
 - Multiple users with different roles can be added for greater security.
@@ -59,6 +66,10 @@ is that you need to be able to apply that concept to your setup.
 ![Blueprint](./documentation/img/blueprint.png "Blueprint")
 ### ...or with voltage director relays, that allow reverse pumping:
 ![Blueprint with voltage direcor](./documentation/img/blueprint-vd.png "Blueprint with voltage direcor")
+### ...or with GPIO expander, voltage director, stepper and dc pumps:
+![Blueprint with stepper and dc motors](./documentation/img/blueprint-max.jpg "Blueprint with GPIO expander, voltage director, stepper and dc pumps")
+
+
 
 ### This is the hardware that I've used for my machine:
 You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
