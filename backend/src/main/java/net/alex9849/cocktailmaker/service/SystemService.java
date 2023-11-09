@@ -6,6 +6,8 @@ import net.alex9849.cocktailmaker.model.system.I2cAddress;
 import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.system.settings.DefaultFilterSettings;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
+import net.alex9849.cocktailmaker.model.system.settings.Language;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.AppearanceSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
@@ -262,5 +264,20 @@ public class SystemService {
         }
         dfs.setFilter(filter);
         return dfs;
+    }
+
+    public void setAppearance(AppearanceSettingsDto.Duplex.Detailed settingsDto) {
+        optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
+    }
+
+    public Object getAppearance() {
+        String stringLanguage = optionsRepository.getOption("LANGUAGE");
+        Language language = Language.en_US;
+        if(stringLanguage != null) {
+            language = Language.valueOf(stringLanguage);
+        }
+        AppearanceSettingsDto.Duplex.Detailed settingsDto = new AppearanceSettingsDto.Duplex.Detailed();
+        settingsDto.setLanguage(language);
+        return settingsDto;
     }
 }

@@ -3,8 +3,10 @@ package net.alex9849.cocktailmaker.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailmaker.model.system.settings.DefaultFilterSettings;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
+import net.alex9849.cocktailmaker.model.system.settings.Language;
 import net.alex9849.cocktailmaker.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailmaker.payload.dto.system.I2cAddressDto;
+import net.alex9849.cocktailmaker.payload.dto.system.settings.AppearanceSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.ReversePumpSettingsDto;
@@ -65,6 +67,23 @@ public class SystemEndpoint {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "settings/appearance", method = RequestMethod.PUT)
+    public ResponseEntity<?> setAppearance(@RequestBody @Valid AppearanceSettingsDto.Duplex.Detailed settingsDto) {
+        systemService.setAppearance(settingsDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "settings/appearance", method = RequestMethod.GET)
+    public ResponseEntity<?> getAppearance() {
+        return ResponseEntity.ok(systemService.getAppearance());
+    }
+
+    @RequestMapping(value = "settings/appearance/language", method = RequestMethod.GET)
+    public ResponseEntity<?> getLanguages() {
+        return ResponseEntity.ok(Language.values());
+    }
+
     @RequestMapping(value = "settings/sawdonationdisclaimer", method = RequestMethod.PUT)
     public ResponseEntity<?> setDonated() {
         systemService.setOpenedDonationDisclaimer();
@@ -88,7 +107,7 @@ public class SystemEndpoint {
     public ResponseEntity<?> setI2C(@RequestBody @Valid I2cSettingsDto.Request dto) throws IOException {
         I2CSettings i2CSettings = systemService.fromDto(dto);
         systemService.setI2cSettings(i2CSettings);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(systemService.getI2cSettings());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -47,6 +47,20 @@ class SystemService {
       .then(response => response.data)
   }
 
+  getAppearanceSettings () {
+    return axios.get(API_PATH + 'settings/appearance')
+      .then(response => response.data)
+  }
+
+  setAppearanceSettings (settings) {
+    return axios.put(API_PATH + 'settings/appearance', settings)
+  }
+
+  getLanguages (settings) {
+    return axios.get(API_PATH + 'settings/appearance/language')
+      .then(response => response.data)
+  }
+
   setI2cSettings (settings) {
     const dto = {
       enable: settings.enable
