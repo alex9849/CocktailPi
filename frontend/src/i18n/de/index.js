@@ -118,6 +118,25 @@ export default {
         create_btn_label: 'Erstellen'
       }
     },
+    collection: {
+      modify_recipes: 'Rezepte bearbeiten',
+      stop_modify_recipes: 'Rezepte bearbeiten beenden',
+      delete: 'Liste löschen',
+      add_recipe: 'Rezept hinzufügen',
+      delete_dialog: {
+        ok_btn_label: 'Löschen',
+        headline: 'Liste \'{name}\' löschen?'
+      },
+      form: {
+        name: 'Name',
+        image: 'Bild',
+        remove_img: 'Vorhandenes Bild entfernen',
+        desc: 'Beschreibung',
+        edit_btn_label: 'Bearbeiten',
+        save_btn_label: 'Speichern',
+        abort_btn_label: 'Abbrechen'
+      }
+    },
     recipes: {
       my_recipes_headline: 'Meine Rezepte',
       all_recipes_headline: 'Rezepte',
@@ -348,6 +367,9 @@ export default {
         notifications: {
           settings_updated: 'Einstellungen aktualisiert!'
         }
+      },
+      appearance: {
+        headline: 'Darstellung'
       }
     },
     simple_collections: {
@@ -533,6 +555,9 @@ export default {
     recipe_search_list: {
       loading: 'Laden...'
     },
+    recipe_list: {
+      no_recipes_found: 'Keine Rezepte gefunden!'
+    },
     recipe_search_filter_card: {
       headline: 'Suchoptionen',
       expert_search_label: 'Experten-Suche',
@@ -594,7 +619,7 @@ export default {
     },
     make_cocktail_group_replacements: {
       fulfilled_msg: 'Alle Zutaten-Gruppen wurden durch konkrete Zutaten ersetzt!',
-      not_fulfilled_msg: 'Die folgenden Zutaten-Gruppen müssen durch echte Zutaten ersetzt werden:',
+      not_fulfilled_msg: 'Die folgenden Zutaten-Gruppen müssen durch konkrete Zutaten ersetzt werden:',
       card: {
         prod_step_label: 'Produktionsschritt',
         ingredient_group_label: 'Zutatengruppe',
@@ -645,7 +670,7 @@ export default {
           state: 'Status',
           actions: 'Aktionen'
         },
-        refill_btn_label: 'Füllen',
+        refill_btn_label: 'Auffüllen',
         state_ok: 'OK',
         state_incomplete: 'Unvollständig'
       }
@@ -1005,6 +1030,13 @@ export default {
           checkbox: 'Ich bin kein Lügner',
           go_back: 'Zurück gehen'
         }
+      }
+    },
+    settings_appearance: {
+      language: 'Sprache',
+      save_btn_label: 'Speichern',
+      notifications: {
+        settings_updated: 'Einstellungen aktualisiert!'
       }
     }
   },

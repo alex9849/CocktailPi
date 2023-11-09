@@ -3,7 +3,7 @@
     <q-card-section>
       <div class="q-gutter-md">
         <div>
-          <b>Search-options</b>
+          <b>{{ $t('component.recipe_search_filter_card.headline') }}</b>
         </div>
         <div>
           <q-card

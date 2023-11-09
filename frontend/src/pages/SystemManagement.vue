@@ -101,7 +101,7 @@
       :abort-button-text="$t('page.system_mgmt.system.shutdown_dialog.abort_btn_label')"
       :ok-button-text="$t('page.system_mgmt.system.shutdown_dialog.ok_btn_label')"
     />
-    <h5>Appearance</h5>
+    <h5>{{ $t('page.system_mgmt.appearance.headline') }}</h5>
     <c-settings-appearance />
   </q-page>
 </template>

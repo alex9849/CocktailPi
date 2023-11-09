@@ -372,6 +372,9 @@ export default {
         notifications: {
           settings_updated: 'Settings updated!'
         }
+      },
+      appearance: {
+        headline: 'Appearance'
       }
     },
     simple_collections: {
@@ -555,6 +558,30 @@ export default {
       notifications: {
         pump_deleted: '{name} deleted!'
       }
+    },
+    collection: {
+      modify_recipes: 'Modify recipes',
+      stop_modify_recipes: 'Stop modifying recipes',
+      delete: 'Delete collection',
+      add_recipe: 'Add recipe',
+      delete_dialog: {
+        ok_btn_label: 'Delete',
+        headline: 'Delete collection \'{name}\'?'
+      },
+      form: {
+        name: 'Name',
+        image: 'Image',
+        remove_img: 'Remove existing image',
+        desc: 'Description',
+        edit_btn_label: 'Edit',
+        save_btn_label: 'Save',
+        abort_btn_label: 'Abort'
+      }
+    },
+    notifications: {
+      recipe_added: 'Recipe added successfully',
+      recipe_removed: 'Recipe removed successfully',
+      collection_updated: 'Collection updated successfully'
     }
   },
   component: {
@@ -584,6 +611,9 @@ export default {
     },
     recipe_search_list: {
       loading: 'Loading...'
+    },
+    recipe_list: {
+      no_recipes_found: 'No recipes found!'
     },
     recipe_search_filter_card: {
       headline: 'Search-options',
@@ -1083,6 +1113,13 @@ export default {
           checkbox: 'I\'m not a liar',
           go_back: 'Go back'
         }
+      }
+    },
+    settings_appearance: {
+      language: 'Language',
+      save_btn_label: 'Save',
+      notifications: {
+        settings_updated: 'Settings updated!'
       }
     }
   },

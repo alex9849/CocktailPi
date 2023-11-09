@@ -16,7 +16,7 @@
         >
           <q-card-section>
             <q-select
-              label="Language"
+              :label="$t('component.settings_appearance.language')"
               v-model:model-value="v.form.language.$model"
               :options="languageOptions"
               map-options
@@ -162,7 +162,7 @@
       </div-->
       <div class="row justify-end">
         <q-btn
-          label="Save"
+          :label="$t('component.settings_appearance.save_btn_label')"
           :loading="saving"
           :disable="v.form.$invalid"
           color="green"
@@ -228,7 +228,7 @@ export default {
         .then((data) => {
           this.$q.notify({
             type: 'positive',
-            message: 'Updated'
+            message: this.$t('component.settings_appearance.notifications.settings_updated')
           })
           this.setAppearanceSettings({ payload: data, i18n: this.$i18n })
         })

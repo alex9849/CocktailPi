@@ -11,7 +11,7 @@
           dense
         >
           <template v-slot:label>
-            <p class="text-grey-10 text-weight-medium">Production step</p>
+            <p class="text-grey-10 text-weight-medium">{{ $t('component.make_cocktail_group_replacements.card.prod_step_label') }}</p>
           </template>
         </q-input>
         <q-input
@@ -22,7 +22,7 @@
           dense
         >
           <template v-slot:label>
-            <p class="text-grey-10 text-weight-medium">Ingredient group</p>
+            <p class="text-grey-10 text-weight-medium">{{ $t('component.make_cocktail_group_replacements.card.ingredient_group_label') }}</p>
           </template>
         </q-input>
         <c-ingredient-selector

@@ -12,19 +12,19 @@
         v-if="!editRecipeMode.active"
         @click="editRecipeMode.active = true"
         color="grey"
-        label="Modify recipes"
+        :label="$t('page.collection.modify_recipes')"
         no-caps
       />
       <q-btn
         v-if="editRecipeMode.active"
         @click="editRecipeMode.active = false"
         color="warning"
-        label="Stop modifying recipes"
+        :label="$t('page.collection.stop_modify_recipes')"
         no-caps
       />
       <q-btn
         color="negative"
-        label="Delete collection"
+        :label="$t('page.collection.delete')"
         no-caps
         @click="showDeleteCollectionDialog = true"
       />
@@ -42,7 +42,7 @@
             >
               <c-recipe-selector
                 :loading="editRecipeMode.addingRecipe"
-                label="Add recipe"
+                :label="$t('page.collection.add_recipe')"
                 class="bg-grey-2"
                 @update:selection="!!$event ? onAddRecipe($event.id) : ''"
               >
@@ -85,15 +85,15 @@
                        :src="$store.getters['auth/getFormattedServerAddress'] + '/api/collection/' + collection.id + '/image?timestamp=' + collection.lastUpdate.getTime()"
                 />
               </div>
-              <q-input label="Name"
+              <q-input :label="$t('page.collection.form.name')"
                        outlined
                        :disable="!editData.editMode || editData.saving"
                        v-model:model-value="editData.collection.name"
                        hide-bottom-space
                        :rules="[
-                        val => !v.editData.collection.name.required.$invalid || 'Required',
-                        val => !v.editData.collection.name.maxLength.$invalid || 'Maximal length 20',
-                        val => !v.editData.collection.name.minLength.$invalid || 'Minimal length 3']"
+                        val => !v.editData.collection.name.required.$invalid || $t('errors.field_required'),
+                        val => !v.editData.collection.name.maxLength.$invalid || $t('errors.max_letters', {nr: 20}),
+                        val => !v.editData.collection.name.minLength.$invalid || $t('errors.min_letters', {nr: 3})]"
               >
 
               </q-input>
@@ -102,14 +102,14 @@
                    :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': collection.hasImage && !editData.newImage && !editData.removeImage}"
               >
                 <div class="col">
-                  <q-toggle label="remove existing image"
+                  <q-toggle :label="$t('page.collection.form.remove_img')"
                             color="red"
                             :disable="editData.saving"
                             v-if="collection.hasImage && !editData.newImage"
                             v-model:model-value="editData.removeImage"
                             @change="onChangeRemoveImage($event)"
                   />
-                  <q-file label="Image"
+                  <q-file :label="$t('page.collection.form.image')"
                           outlined
                           bottom-slots
                           :disable="editData.saving"
@@ -130,7 +130,7 @@
                   </q-file>
                 </div>
               </div>
-              <q-input label="description"
+              <q-input :label="$t('page.collection.form.desc')"
                        outlined
                        autogrow
                        hide-bottom-space
@@ -138,8 +138,8 @@
                        :disable="!editData.editMode || editData.saving"
                        v-model:model-value="editData.collection.description"
                        :rules="[
-                        val => !v.editData.collection.description.required.$invalid || 'Required',
-                        val => !v.editData.collection.description.maxLength.$invalid || 'Maximal length 2000']"
+                        val => !v.editData.collection.description.required.$invalid || $t('errors.field_required'),
+                        val => !v.editData.collection.description.maxLength.$invalid || $t('errors.max_letters', {nr: 2000})]"
               >
               </q-input>
               <q-card-actions class="q-pa-none">
@@ -148,7 +148,7 @@
                   v-if="!editData.editMode && isCanEdit"
                   @click="editData.editMode = true"
                   color="grey"
-                  label="Edit"
+                  :label="$t('page.collection.form.edit_btn_label')"
                   no-caps
                 />
                 <q-btn
@@ -157,7 +157,7 @@
                   type="submit"
                   color="positive"
                   :loading="editData.saving"
-                  label="Save"
+                  :label="$t('page.collection.form.save_btn_label')"
                   no-caps
                 />
                 <q-btn
@@ -166,7 +166,7 @@
                   :disable="editData.saving"
                   @click="onAbortEdit()"
                   color="negative"
-                  label="Abort"
+                  :label="$t('page.collection.form.abort_btn_label')"
                   no-caps
                 />
               </q-card-actions>
@@ -181,11 +181,11 @@
       ok-color="red"
       @clickAbort="showDeleteCollectionDialog = false"
       @clickOk="onDeleteCollection"
-      :question="'Delete collection \'' + collection.name + '\'?'"
+      :question="$t('page.collection.delete_dialog.headline', {name: collection.name})"
       v-model:show="showDeleteCollectionDialog"
     />
     <c-edit-dialog
-      title="Add recipe"
+      :title="$t('page.collection.add_recipe')"
       v-model:show="editData.showAddRecipeDialog"
     >
       <c-recipe-selector/>
@@ -300,7 +300,7 @@ export default {
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: 'Recipe removed successfully'
+            message: this.$t('page.collection.notifications.recipe_removed')
           })
         })
         .finally(() => {
@@ -314,7 +314,7 @@ export default {
         .then(() => {
           this.$q.notify({
             type: 'positive',
-            message: 'Recipe added successfully'
+            message: this.$t('page.collection.notifications.recipe_added')
           })
         })
         .finally(() => {
@@ -352,7 +352,7 @@ export default {
           this.editData.editMode = false
           this.$q.notify({
             type: 'positive',
-            message: 'Collection updated successfully'
+            message: this.$t('page.collection.notifications.collection_updated')
           })
         }).finally(() => {
           this.editData.saving = false

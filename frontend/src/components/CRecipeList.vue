@@ -11,7 +11,7 @@
           class="bg-grey-1"
         >
           <q-card-section class="text-center">
-            No recipes found!
+            {{ $t('component.recipe_list.no_recipes_found') }}
           </q-card-section>
         </q-card>
       </div>
