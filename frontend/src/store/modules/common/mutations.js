@@ -1,3 +1,5 @@
+import { i18n } from 'boot/i18n'
+
 export const setLastRecipeListRoute = (state, lastRecipeListRoute) => {
   state.lastRecipeListRoute = lastRecipeListRoute
 }
@@ -6,9 +8,8 @@ export const setGlobalSettings = (state, payload) => {
   state.globalSettings = payload
 }
 
-export const setAppearanceSettings = (state, { payload, i18n }) => {
-  i18n.locale = payload.language.name
-  localStorage.setItem('language', i18n.locale)
+export const setAppearanceSettings = (state, payload) => {
+  i18n.global.locale = payload.language.name
   state.appearanceSettings = payload
 }
 

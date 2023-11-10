@@ -230,7 +230,7 @@ export default {
             type: 'positive',
             message: this.$t('component.settings_appearance.notifications.settings_updated')
           })
-          this.setAppearanceSettings({ payload: data, i18n: this.$i18n })
+          this.setAppearanceSettings(data)
         })
         .finally(() => {
           this.saving = false

@@ -7,10 +7,15 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
+import store from '../store'
 
 export default {
   name: 'RootLayout',
+  beforeRouteEnter (to, from, next) {
+    store().dispatch('common/fetchAppearanceSettings')
+      .then(x => next())
+  },
   created () {
     let isKiosk = Object.hasOwn(this.$route.query, 'isKiosk')
     let isMobile = Object.hasOwn(this.$route.query, 'isMobile')
@@ -22,14 +27,10 @@ export default {
     if (isMobile) {
       this.$q.platform.is.mobile = true
     }
-    this.fetchAppearance(this.$i18n)
   },
   methods: {
     ...mapMutations({
       setShowExternalLinksAsQrCode: 'common/setShowExternalLinksAsQrCode'
-    }),
-    ...mapActions({
-      fetchAppearance: 'common/fetchAppearanceSettings'
     })
   }
 }
