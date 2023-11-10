@@ -27,7 +27,7 @@ The controlling software is designed to enhance your cocktail-making experience 
 - Extra user interface for enhanced local touchscreen usage.
 - Virtual stirring functionality.
 - Switch between user interface languages.
-- Support for up to 89 dc pumps using GPIO expanders.(No software limit)
+- Support for up to 153 dc pumps using GPIO expanders.(No software limit)
 - Add written production steps to recipes
 - Prompt user to hand add ingredients, that are owned, but no connected to a pump
 - Manual activation of pumps (as a cleaning program)
