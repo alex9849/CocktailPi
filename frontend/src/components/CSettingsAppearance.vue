@@ -38,128 +38,80 @@
           </q-card-section>
         </q-card>
       </div>
-      <!--div class="row">
-        <q-card
-          class="col"
-          flat
-          bordered
-        >
-          <p class="text-subtitle2 q-pt-sm q-pl-md">Interface colors</p>
-          <q-card-section class="q-pt-sm q-gutter-sm">
-            <q-input
-              outlined
-              label="Primary"
-              readonly
-              :model-value="colors.normal.primary"
-            >
-              <template v-slot:append>
-                <q-btn
-                  icon="colorize"
-                  label="Pick"
-                  no-caps
-                  :style="{backgroundColor: colors.normal.primary}"
-                >
-                  <q-popup-proxy
-                    transition-show="scale"
-                    transition-hide="scale">
-                    <q-color
-                      no-header-tabs
-                      format-model="hex"
-                      v-model:model-value="colors.normal.primary"
-                    />
-                  </q-popup-proxy>
-                </q-btn>
-              </template>
-            </q-input>
-            <q-input
-              outlined
-              label="Secondary"
-              readonly
-              :model-value="colors.normal.secondary"
-            >
-              <template v-slot:append>
-                <q-btn
-                  icon="colorize"
-                  label="Pick"
-                  no-caps
-                  :style="{backgroundColor: colors.normal.secondary}"
-                >
-                  <q-popup-proxy
-                    transition-show="scale"
-                    transition-hide="scale">
-                    <q-color
-                      no-header-tabs
-                      format-model="hex"
-                      v-model:model-value="colors.normal.secondary"
-                    />
-                  </q-popup-proxy>
-                </q-btn>
-              </template>
-            </q-input>
-          </q-card-section>
-        </q-card>
+      <div class="row q-col-gutter-md">
+        <div class="col-12 col-md-6">
+          <q-card
+            flat
+            bordered
+          >
+            <p class="text-subtitle2 q-pt-sm q-pl-md">Interface colors</p>
+            <q-card-section class="q-pt-sm q-gutter-sm">
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.header"
+                label="Header"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.sidebar"
+                label="Sidebar"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.btnPrimary"
+                label="Button / Primary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnNavigation"
+                label="Button / Navigation"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnNavigationActive"
+                label="Button / Navigation active"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.cardPrimary"
+                label="Card / Primary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.cardSecondary"
+                label="Card / Secondary"
+              />
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-md-6">
+          <q-card
+            flat
+            bordered
+          >
+            <p class="text-subtitle2 q-pt-sm q-pl-md">Simple view colors</p>
+            <q-card-section class="q-pt-sm q-gutter-sm">
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.header"
+                label="Header / Footer"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.sidebar"
+                label="Sidebar"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnPrimary"
+                label="Button / Primary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnNavigation"
+                label="Button / Navigation"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnNavigationActive"
+                label="Button / Navigation active"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.cocktailProgress"
+                label="Cocktail progress"
+              />
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
-      <div class="row">
-        <q-card
-          class="col"
-          flat
-          bordered
-        >
-          <p class="text-subtitle2 q-pt-sm q-pl-md">Simple view colors</p>
-          <q-card-section class="q-pt-sm q-gutter-sm">
-            <q-input
-              outlined
-              label="Primary"
-              readonly
-              :model-value="colors.simpleView.primary"
-            >
-              <template v-slot:append>
-                <q-btn
-                  icon="colorize"
-                  label="Pick"
-                  no-caps
-                  :style="{backgroundColor: colors.simpleView.primary}"
-                >
-                  <q-popup-proxy
-                    transition-show="scale"
-                    transition-hide="scale">
-                    <q-color
-                      no-header-tabs
-                      format-model="hex"
-                      v-model:model-value="colors.simpleView.primary"
-                    />
-                  </q-popup-proxy>
-                </q-btn>
-              </template>
-            </q-input>
-            <q-input
-              outlined
-              label="Secondary"
-              readonly
-              :model-value="colors.simpleView.secondary"
-            >
-              <template v-slot:append>
-                <q-btn
-                  icon="colorize"
-                  label="Pick"
-                  no-caps
-                  :style="{backgroundColor: colors.simpleView.secondary}"
-                >
-                  <q-popup-proxy
-                    transition-show="scale"
-                    transition-hide="scale">
-                    <q-color
-                      no-header-tabs
-                      format-model="hex"
-                      v-model:model-value="colors.simpleView.secondary"
-                    />
-                  </q-popup-proxy>
-                </q-btn>
-              </template>
-            </q-input>
-          </q-card-section>
-        </q-card>
-      </div-->
       <div class="row justify-end">
         <q-btn
           :label="$t('component.settings_appearance.save_btn_label')"
@@ -179,9 +131,11 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import SystemService from 'src/services/system.service'
 import { mapGetters, mapMutations } from 'vuex'
+import CColorSelectorField from 'components/CColorSelectorField.vue'
 
 export default {
   name: 'CSettingsAppearance',
+  components: { CColorSelectorField },
   data () {
     return {
       saving: false,
@@ -189,12 +143,21 @@ export default {
         language: '',
         colors: {
           normal: {
-            primary: '#ffcccc',
-            secondary: '#ffcccc'
+            header: '#85452b',
+            sidebar: '#bf947b',
+            btnPrimary: '#85452b',
+            btnNavigation: '#bf947b',
+            btnNavigationActive: '#fddfb1',
+            cardPrimary: '#f3f3f3',
+            cardSecondary: '#fdfdfe'
           },
           simpleView: {
-            primary: '#ffcccc',
-            secondary: '#ffcccc'
+            header: '#1a237e',
+            sidebar: '#616161',
+            btnPrimary: '#616161',
+            btnNavigation: '#616161',
+            btnNavigationActive: '#b968c7',
+            cocktailProgress: '#1b5e20'
           }
         }
       },

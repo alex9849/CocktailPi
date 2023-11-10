@@ -10,6 +10,25 @@ export const setGlobalSettings = (state, payload) => {
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale = payload.language.name
+  payload.colors = {
+    normal: {
+      header: '#85452b',
+      sidebar: '#bf947b',
+      btnPrimary: '#85452b',
+      btnNavigation: '#bf947b',
+      btnNavigationActive: '#fddfb1',
+      cardPrimary: '#f3f3f3',
+      cardSecondary: '#fdfdfe'
+    },
+    simpleView: {
+      header: '#1a237e',
+      sidebar: '#616161',
+      btnPrimary: '#616161',
+      btnNavigation: '#616161',
+      btnNavigationActive: '#b968c7',
+      cocktailProgress: '#1b5e20'
+    }
+  }
   state.appearanceSettings = payload
 }
 
