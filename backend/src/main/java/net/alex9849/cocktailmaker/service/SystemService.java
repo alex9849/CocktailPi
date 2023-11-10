@@ -104,14 +104,9 @@ public class SystemService {
         GlobalSettings globalSettings = new GlobalSettings();
         globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
         GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
-        donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated")));
-        String stringTimeDonationDisclaimerSeen = optionsRepository.getOption("TIMESTAMP_LAST_SAW_DONATION_DISCLAIMER");
-        long timeDonationDisclaimerSeen;
-        if(stringTimeDonationDisclaimerSeen == null) {
-            timeDonationDisclaimerSeen = 0;
-        } else {
-            timeDonationDisclaimerSeen = Long.parseLong(stringTimeDonationDisclaimerSeen);
-        }
+        donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated").orElse(null)));
+        String stringTimeDonationDisclaimerSeen = optionsRepository.getOption("TIMESTAMP_LAST_SAW_DONATION_DISCLAIMER").orElse("0");
+        long timeDonationDisclaimerSeen = Long.parseLong(stringTimeDonationDisclaimerSeen);
         long timeElapsedDonationDisclaimer = System.currentTimeMillis() - timeDonationDisclaimerSeen;
         boolean showDonationDisclaimer = timeElapsedDonationDisclaimer > (1000 * 60 * 60 * 2);
         showDonationDisclaimer &= !donationSettings.isDonated() && !isDemoMode && !isDevMode;
@@ -209,7 +204,7 @@ public class SystemService {
 
     public I2CSettings getI2cSettings() {
         I2CSettings i2CSettings = new I2CSettings();
-        i2CSettings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("I2C_Enable")));
+        i2CSettings.setEnable(Boolean.parseBoolean(optionsRepository.getOption("I2C_Enable").orElse(null)));
         if(i2CSettings.isEnable()) {
             i2CSettings.setSdaPin(optionsRepository.getPinOption(REPO_KEY_I2C_PIN_SDA).orElse(null));
             i2CSettings.setSclPin(optionsRepository.getPinOption(REPO_KEY_I2C_PIN_SCL).orElse(null));
@@ -219,10 +214,10 @@ public class SystemService {
 
     public DefaultFilterSettings getDefaultFilterSettings() {
         DefaultFilterSettings defaultFilter = new DefaultFilterSettings();
-        defaultFilter.setEnable(Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_DF_ENABLE)));
+        defaultFilter.setEnable(Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_DF_ENABLE).orElse(null)));
         if(defaultFilter.isEnable()) {
             DefaultFilterSettings.Filter filter = new DefaultFilterSettings.Filter();
-            String fabricableString = optionsRepository.getOption(REPO_KEY_DF_SETTING_FABRICABLE);
+            String fabricableString = optionsRepository.getOption(REPO_KEY_DF_SETTING_FABRICABLE).orElse(null);
             try {
                 filter.setFabricable(RecipeService.FabricableFilter.valueOf(fabricableString));
             } catch (IllegalArgumentException e) {
@@ -271,16 +266,54 @@ public class SystemService {
             throw new IllegalArgumentException("Updating the language is not allowed in demomode!");
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
+
+        AppearanceSettingsDto.Duplex.NormalColors nc = settingsDto.getColors().getNormal();
+        AppearanceSettingsDto.Duplex.SvColors scv = settingsDto.getColors().getSimpleView();
+        optionsRepository.setOption("COLOR_NORMAL_HEADER", nc.getHeader());
+        optionsRepository.setOption("COLOR_NORMAL_SIDEBAR", nc.getSidebar());
+        optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION", nc.getBtnNavigation());
+        optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE", nc.getBtnNavigationActive());
+        optionsRepository.setOption("COLOR_NORMAL_BTN_PRIMARY", nc.getBtnPrimary());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_PRIMARY", nc.getCardPrimary());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_SECONDARY", nc.getCardSecondary());
+
+        optionsRepository.setOption("COLOR_SV_HEADER", scv.getHeader());
+        optionsRepository.setOption("COLOR_SV_SIDEBAR", scv.getSidebar());
+        optionsRepository.setOption("COLOR_SV_BTN_NAVIGATION", scv.getBtnNavigation());
+        optionsRepository.setOption("COLOR_SV_BTN_NAVIGATION_ACTIVE", scv.getBtnNavigationActive());
+        optionsRepository.setOption("COLOR_SV_BTN_PRIMARY", scv.getBtnPrimary());
+        optionsRepository.setOption("COLOR_SV_CPROGRESS", scv.getCocktailProgress());
     }
 
     public Object getAppearance() {
-        String stringLanguage = optionsRepository.getOption("LANGUAGE");
-        Language language = Language.en_US;
-        if(stringLanguage != null) {
-            language = Language.valueOf(stringLanguage);
-        }
+        String stringLanguage = optionsRepository.getOption("LANGUAGE")
+                .orElse(Language.en_US.name());
+        Language language = Language.valueOf(stringLanguage);
+
         AppearanceSettingsDto.Duplex.Detailed settingsDto = new AppearanceSettingsDto.Duplex.Detailed();
         settingsDto.setLanguage(language);
+
+        AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
+        AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();
+        normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#693F2F"));
+        normalColors.setSidebar(optionsRepository.getOption("COLOR_NORMAL_SIDEBAR").orElse("#BF947B"));
+        normalColors.setBtnNavigation(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION").orElse("#BF947B"));
+        normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#FDDFB1"));
+        normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#85452B"));
+        normalColors.setCardPrimary(optionsRepository.getOption("COLOR_NORMAL_CARD_PRIMARY").orElse("#F3F3F3"));
+        normalColors.setCardSecondary(optionsRepository.getOption("COLOR_NORMAL_CARD_SECONDARY").orElse("#FDFDFE"));
+
+        AppearanceSettingsDto.Duplex.SvColors svColors = new AppearanceSettingsDto.Duplex.SvColors();
+        svColors.setHeader(optionsRepository.getOption("COLOR_SV_HEADER").orElse("#1A237E"));
+        svColors.setSidebar(optionsRepository.getOption("COLOR_SV_SIDEBAR").orElse("#616161"));
+        svColors.setBtnNavigation(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION").orElse("#616161"));
+        svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#B968C7"));
+        svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#616161"));
+        svColors.setCocktailProgress(optionsRepository.getOption("COLOR_SV_CPROGRESS").orElse("#1B5E20"));
+        colors.setNormal(normalColors);
+        colors.setSimpleView(svColors);
+        settingsDto.setColors(colors);
+
         return settingsDto;
     }
 }

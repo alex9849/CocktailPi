@@ -26,17 +26,17 @@ public class OptionsRepository extends JdbcDaoSupport {
         setDataSource(dataSource);
     }
 
-    public String getOption(String key) {
-        return getJdbcTemplate().execute((ConnectionCallback<String>) con -> {
+    public Optional<String> getOption(String key) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<String>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT value FROM options o " +
                     "WHERE o.key = ?");
             pstmt.setString(1, key);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getString("value");
+                return Optional.of(rs.getString("value"));
             }
-            return null;
+            return Optional.empty();
         });
     }
 

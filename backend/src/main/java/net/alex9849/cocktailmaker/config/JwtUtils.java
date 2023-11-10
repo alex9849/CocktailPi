@@ -31,7 +31,7 @@ public class JwtUtils {
 
     private String getSecretKey() {
         if(secretKey == null) {
-            secretKey = optionsRepository.getOption(secretKeyOptionsKey);
+            secretKey = optionsRepository.getOption(secretKeyOptionsKey).orElse(null);
             if(secretKey == null) {
                 secretKey = UUID.randomUUID().toString();
                 secretKey += "-" + UUID.randomUUID().toString();

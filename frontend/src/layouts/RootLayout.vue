@@ -13,7 +13,7 @@ import store from '../store'
 export default {
   name: 'RootLayout',
   beforeRouteEnter (to, from, next) {
-    store().dispatch('common/fetchAppearanceSettings')
+    store().dispatch('appearance/fetchAppearanceSettings')
       .then(x => next())
   },
   created () {

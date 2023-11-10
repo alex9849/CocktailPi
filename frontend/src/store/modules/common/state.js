@@ -15,9 +15,6 @@ export default function () {
         disclaimerDelay: 30000
       }
     },
-    appearanceSettings: {
-      language: 'en_US'
-    },
     defaultFilter: {
       enable: false,
       filter: null

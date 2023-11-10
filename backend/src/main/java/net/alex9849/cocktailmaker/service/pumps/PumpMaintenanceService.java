@@ -297,11 +297,11 @@ public class PumpMaintenanceService {
 
     public synchronized ReversePumpSettings getReversePumpingSettings() {
         ReversePumpSettings rps = new ReversePumpSettings();
-        rps.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPS_Enable")));
+        rps.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPS_Enable").orElse(null)));
         if (rps.isEnable()) {
             ReversePumpSettings.Config cfg = new ReversePumpSettings.Config();
-            cfg.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPS_Overshoot")));
-            cfg.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPS_AutoPumpBackTimer")));
+            cfg.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPS_Overshoot").orElse(null)));
+            cfg.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPS_AutoPumpBackTimer").orElse(null)));
             cfg.setDirectorPin(optionsRepository.getPinOption(REPO_KEY_PUMP_DIRECTION_PIN).orElse(null));
             if(cfg.getDirectorPin() == null) {
                 rps.setEnable(false);

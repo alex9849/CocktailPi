@@ -5,6 +5,7 @@ import pumpLayout from './modules/pumplayout/index'
 import category from './modules/category/index'
 import websocket from './modules/websocket/index'
 import common from './modules/common/index'
+import appearance from 'src/store/modules/appearance'
 
 const store = createStore({
   modules: {
@@ -13,6 +14,7 @@ const store = createStore({
     pumpLayout: pumpLayout,
     category: category,
     websocket: websocket,
+    appearance: appearance,
     common: common
   },
 

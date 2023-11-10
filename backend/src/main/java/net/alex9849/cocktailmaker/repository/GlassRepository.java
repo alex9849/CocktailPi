@@ -36,7 +36,7 @@ public class GlassRepository extends JdbcDaoSupport {
     }
 
     public Long getDefaultGlassId() {
-        String default_glass_id = optionsRepository.getOption(OPTION_DEFAULT_GLASS_ID);
+        String default_glass_id = optionsRepository.getOption(OPTION_DEFAULT_GLASS_ID).orElse(null);
         if(default_glass_id == null) {
             return null;
         }
@@ -44,7 +44,7 @@ public class GlassRepository extends JdbcDaoSupport {
     }
 
     public Long getSingleIngredientGlassId() {
-        String default_glass_id = optionsRepository.getOption(OPTION_SINGLE_INGREDIENT_GLASS_ID);
+        String default_glass_id = optionsRepository.getOption(OPTION_SINGLE_INGREDIENT_GLASS_ID).orElse(null);
         if(default_glass_id == null) {
             return null;
         }

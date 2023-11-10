@@ -10,11 +10,12 @@
         icon="colorize"
         label="Pick"
         no-caps
-        :style="{backgroundColor: modelValue}"
+        :style="{backgroundColor: modelValue, color: textColor}"
       >
         <q-popup-proxy
           transition-show="scale"
-          transition-hide="scale">
+          transition-hide="scale"
+        >
           <q-color
             no-header-tabs
             format-model="hex"
@@ -28,6 +29,8 @@
 </template>
 
 <script>
+import { calcTextColor } from 'src/mixins/utils'
+
 export default {
   name: 'CColorSelectorField',
   props: {
@@ -38,7 +41,12 @@ export default {
       type: String
     }
   },
-  emits: ['update:modelValue']
+  emits: ['update:modelValue'],
+  computed: {
+    textColor () {
+      return calcTextColor(this.modelValue)
+    }
+  }
 }
 </script>
 
