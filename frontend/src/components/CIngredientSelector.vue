@@ -7,6 +7,7 @@
     @update:model-value="$emit('update:selected', $event)"
     :bg-color="bgColor"
     use-input
+    :dark="dark"
     :rounded="rounded"
     :clearable="clearable"
     :disable="disable"
@@ -57,6 +58,10 @@ export default {
   props: {
     selected: {
       type: [Object, Array]
+    },
+    dark: {
+      type: Boolean,
+      default: false
     },
     label: {
       type: String

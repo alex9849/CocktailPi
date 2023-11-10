@@ -5,7 +5,7 @@
     behavior="desktop"
     :width="250"
     v-model="leftDrawerOpen"
-    class="bg-grey-8 shadow-5"
+    class="bg-sv-sidebar text-sv-sidebar shadow-5"
   >
     <div class="absolute" style="top: 25px; right: -17px">
       <q-btn
@@ -13,18 +13,22 @@
         round
         unelevated
         @click="leftDrawerOpen = false"
-        color="accent"
+        color="sv-btn-primary"
+        text-color="sv-btn-primary"
         icon="chevron_left"
       />
     </div>
-    <h6 class="text-center text-white">{{$t('component.simple_recipes_filter_drawer.headline')}}</h6>
-    <q-separator size="1" color="darkgrey" />
+    <h6 class="text-center">{{$t('component.simple_recipes_filter_drawer.headline')}}</h6>
+    <q-separator
+      :dark="colors.sidebarDark"
+      size="1"
+    />
     <q-list padding>
       <q-item dark>
         <q-item-section>
           <q-input
             dense
-            dark
+            :dark="colors.sidebarDark"
             outlined
             :label="$t('component.simple_recipes_filter_drawer.name_field_label')"
             :model-value="filter.query"
@@ -38,11 +42,12 @@
           <c-ingredient-selector
             outlined
             dense
-            dark
+            :dark="colors.sidebarDark"
             multiple
             emit-value
             map-options
             use-chips
+
             hide-bottom-space
             :label="$t('component.simple_recipes_filter_drawer.contains_ingredients_field_label')"
             :model-value="filter.containsIngredients"
@@ -53,24 +58,28 @@
       <q-item>
         <q-card
           flat
+          :dark="colors.sidebarDark"
           bordered
           style="border-color: #c0c0c0"
           class="bg-transparent"
         >
-          <p class="text-grey-4 q-px-sm">{{ $t('component.simple_recipes_filter_drawer.fabricable_box.headline') }}</p>
-          <q-separator dark />
-          <q-list>
+          <p class="q-px-sm">{{ $t('component.simple_recipes_filter_drawer.fabricable_box.headline') }}</p>
+          <q-separator
+            :dark="colors.sidebarDark"
+          />
+          <q-list
+            :dark="colors.sidebarDark"
+          >
             <q-item
               :key="option.val"
               v-for="option in fabricable_options"
               tag="label"
               class="q-px-xs"
-              dark
+              :dark="colors.sidebarDark"
               v-ripple
             >
               <q-item-section side top>
                 <q-radio
-                  color="white"
                   keep-color
                   :model-value="filter.fabricable"
                   @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
@@ -93,7 +102,7 @@
           <q-select
             outlined
             dense
-            dark
+            :dark="colors.sidebarDark"
             emit-value
             map-options
             :label="$t('component.simple_recipes_filter_drawer.order_by_selector_label')"
@@ -136,7 +145,8 @@
         unelevated
         v-if="!leftDrawerOpen"
         @click="leftDrawerOpen = true"
-        color="accent"
+        color="sv-btn-primary"
+        text-color="sv-btn-primary"
         :label="$t('component.simple_recipes_filter_drawer.open_btn_label')"
         icon="chevron_right"
       />
@@ -148,6 +158,7 @@
 import { mdiMagnify } from '@quasar/extras/mdi-v5'
 import { recipeOrderOptions } from 'src/mixins/constants'
 import CIngredientSelector from 'components/CIngredientSelector'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CSimpleRecipesFilterDrawer',
@@ -199,6 +210,11 @@ export default {
     resetFilter () {
       this.$emit('update:filter', this.defaultFilter())
     }
+  },
+  computed: {
+    ...mapGetters({
+      colors: 'appearance/getSvColors'
+    })
   }
 }
 </script>

@@ -12,7 +12,7 @@
           enter-active-class="animated slideInDown"
           leave-active-class="animated slideOutUp"
         >
-          <div v-if="hasCocktailProgress" class="q-px-xl col-grow trapezoid-middle bg-green-10 row q-col-gutter-sm items-center justify-center">
+          <div v-if="hasCocktailProgress" class="q-px-xl col-grow trapezoid-middle bg-sv-cocktailprogress row q-col-gutter-sm items-center justify-center">
             <div
               style="height: 100%"
               class="col-grow q-pl-none row items-center justify-center"
@@ -20,6 +20,7 @@
               <c-cocktail-progress-bar
                 rounded
                 stripe
+                :dark="color.cocktailProgressDark"
                 class="col"
                 size="31px"
               />
@@ -32,9 +33,10 @@
                    v-if="$route.name !== 'simpleorderprogress'"
               >
                 <q-btn
-                  class="bg-green-8"
                   no-caps flat
-                  dense color="white"
+                  dense
+                  :style="{ 'backgroundColor': progressDetailsColor }"
+                  :text-color="progressDetailsTextColor"
                   :label="$t('simple_header.go_to_cocktail_progress_btn_label')"
                   :to="{name: 'simpleorderprogress'}"
                 />
@@ -78,6 +80,8 @@ import CSimpleHeaderProgressStatus from 'components/CSimpleHeaderProgressStatus'
 import { mapGetters } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
 import CQuestion from 'components/CQuestion'
+import { colors } from 'quasar'
+
 export default {
   name: 'SimpleTouchLayout',
   components: { CQuestion, CCocktailProgressBar, CSimpleHeaderProgressStatus, SimpleFooter },
@@ -88,8 +92,23 @@ export default {
   },
   computed: {
     ...mapGetters({
-      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress'
-    })
+      hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
+      color: 'appearance/getSvColors'
+    }),
+    progressDetailsColor () {
+      if (this.color.cocktailProgressDark) {
+        return colors.lighten(this.color.cocktailProgress, 20)
+      } else {
+        return colors.lighten(this.color.cocktailProgress, -20)
+      }
+    },
+    progressDetailsTextColor () {
+      if (this.color.cocktailProgressDark) {
+        return 'white'
+      } else {
+        return 'black'
+      }
+    }
   }
 }
 </script>

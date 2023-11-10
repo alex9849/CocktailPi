@@ -39,5 +39,10 @@ export const setAppearanceSettings = (state, payload) => {
   setCssVar('sv-btn-navigation-text', settings.colors.simpleView.btnNavigationText)
   setCssVar('sv-btn-navigation-active', settings.colors.simpleView.btnNavigationActive)
   setCssVar('sv-btn-navigation-active-text', settings.colors.simpleView.btnNavigationActiveText)
+  setCssVar('sv-btn-primary', settings.colors.simpleView.btnPrimary)
+  setCssVar('sv-btn-primary-text', settings.colors.simpleView.btnPrimaryText)
+  setCssVar('sv-sidebar', settings.colors.simpleView.sidebar)
+  setCssVar('sv-sidebar-text', settings.colors.simpleView.sidebarText)
+  setCssVar('sv-cocktailprogress', settings.colors.simpleView.cocktailProgress)
   state.appearance = settings
 }

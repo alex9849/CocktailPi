@@ -1,7 +1,7 @@
 <template>
   <q-page
     padding
-    class="page-content row justify-center items-center text-white"
+    class="page-content row justify-center items-center"
   >
     <div class="col-12 q-col-gutter-md">
       <div
@@ -35,7 +35,7 @@
           <q-btn
             size="lg"
             dense
-            class="bg-grey-8"
+            color="sv-btn-primary"
             :label="$t('page.simple_cocktail_progress.go_back_btn_label')"
             no-caps
             @click="$router.go(-1)"
@@ -44,7 +44,7 @@
         <div class="col-auto">
           <q-btn
             v-if="hasCocktailProgress"
-            class="bg-negative"
+            class="bg-negative text-white"
             :label="$t('page.simple_cocktail_progress.cancel_btn_label')"
             no-caps
             size="lg"

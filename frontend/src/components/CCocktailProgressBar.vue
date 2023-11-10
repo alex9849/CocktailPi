@@ -6,6 +6,7 @@
     :animation-speed="500"
     :color="loadingBarColor"
     :size="size"
+    :dark="dark"
   >
     <div class="absolute-full flex flex-center">
       <q-badge
@@ -23,6 +24,10 @@ export default {
   name: 'CCocktailProgressBar',
   props: {
     stripe: {
+      type: Boolean,
+      default: false
+    },
+    dark: {
       type: Boolean,
       default: false
     },
