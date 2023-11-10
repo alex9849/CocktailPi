@@ -1,5 +1,9 @@
 <template>
-  <q-header reveal bordered>
+  <q-header
+    reveal
+    bordered
+    class="bg-header text-header"
+  >
     <q-toolbar>
       <slot name="left" />
       <q-toolbar-title>
@@ -59,7 +63,8 @@ export default {
   computed: {
     ...mapGetters({
       user: 'auth/getUser',
-      isLoggedIn: 'auth/isLoggedIn'
+      isLoggedIn: 'auth/isLoggedIn',
+      colors: 'appearance/getNormalColors'
     }),
     username () {
       if (this.isLoggedIn) {

@@ -1,5 +1,6 @@
 import { i18n } from 'boot/i18n'
-import { calcTextColor } from 'src/mixins/utils'
+import { calcTextColor, isDark } from 'src/mixins/utils'
+import { setCssVar, colors } from 'quasar'
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale = payload.language.name
@@ -14,8 +15,16 @@ export const setAppearanceSettings = (state, payload) => {
       const textColor = calcTextColor(color)
       areaColors[colorKey] = color
       areaColors[colorKey + 'Text'] = textColor
+      areaColors[colorKey + 'Dark'] = isDark(color)
     }
     settings.colors[areaKey] = areaColors
   }
+
+  setCssVar('primary', settings.colors.normal.btnPrimary)
+  setCssVar('navigation', settings.colors.normal.btnNavigation)
+  setCssVar('navigation-active', settings.colors.normal.btnNavigationActive)
+  setCssVar('sidebar', settings.colors.normal.sidebar)
+  setCssVar('header', settings.colors.normal.header)
+  setCssVar('header-text', settings.colors.normal.headerText)
   state.appearance = settings
 }

@@ -17,11 +17,15 @@ function rgbToHex (r, g, b) {
   return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
 }
 
-export function calcTextColor (hexBackgroundColor) {
-  const rgb = hexToRgb(hexBackgroundColor)
+export function isDark (hexColor) {
+  const rgb = hexToRgb(hexColor)
   const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255
+  return luminance < 0.5
+}
+
+export function calcTextColor (hexBackgroundColor) {
   let d = 0
-  if (luminance < 0.5) {
+  if (isDark(hexBackgroundColor)) {
     d = 255
   }
   return rgbToHex(d, d, d)

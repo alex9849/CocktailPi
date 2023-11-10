@@ -14,6 +14,7 @@
       </template>
     </AppHeader>
     <q-drawer
+      :dark="colors.sidebarDark"
       :width="250"
       v-model="leftDrawerOpen"
       :behavior="desktopMode? 'desktop':'mobile'"
@@ -22,6 +23,7 @@
     >
       <q-list>
         <q-expansion-item
+          :dark="colors.sidebarDark"
           v-for="(section, index) in permittedSidebarItems"
           :label="section.label"
           :icon="section.icon"
@@ -32,7 +34,8 @@
           <q-item
             v-for="(subsection, subindex) in section.subSections"
             style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
-            active-class="bg-orange-2 text-dark"
+            active-class="bg-navigation-active text-dark"
+            class="bg-navigation"
             :inset-level="0.4"
             :key="subindex"
             clickable
@@ -54,9 +57,9 @@
         </q-expansion-item>
       </q-list>
       <q-card
-        class="bg-sidebar"
         flat
         square
+        :style="sidebarStyle"
       >
         <q-card-section>
           <div class="row justify-center text-h6">CocktailMaker</div>
@@ -168,8 +171,15 @@ export default {
     ...mapGetters({
       getUser: 'auth/getUser',
       getAdminLevel: 'auth/getAdminLevel',
-      recipeCategories: 'category/getCategories'
+      recipeCategories: 'category/getCategories',
+      colors: 'appearance/getNormalColors'
     }),
+    sidebarStyle () {
+      return {
+        backgroundColor: this.colors.sidebar//,
+        // color: this.colors.sidebarText
+      }
+    },
     desktopMode () {
       return this.windowWidth > this.desktopModeBreakPoint
     },

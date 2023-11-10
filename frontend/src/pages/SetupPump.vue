@@ -373,6 +373,7 @@ import CPumpSetupStepperCalibration from 'components/pumpsetup/CPumpSetupStepper
 import CPumpSetupDcHardwarePins from 'components/pumpsetup/CPumpSetupDcHardwarePins.vue'
 import CPumpSetupDcCalibration from 'components/pumpsetup/CPumpSetupDcCalibration.vue'
 import CQuestion from 'components/CQuestion.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SetupPump',
@@ -572,6 +573,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      colors: 'appearance/getNormalColors'
+    }),
     pumpName () {
       if (this.pump.name) {
         return this.pump.name
