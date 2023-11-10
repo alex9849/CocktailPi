@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content column flex">
-    <h4 class="text-white text-center">{{ $t('page.simple_ingredient_recipes.headline') }}</h4>
+    <h4 class="text-center">{{ $t('page.simple_ingredient_recipes.headline') }}</h4>
     <div class="row">
       <div class="col-12 justify-center">
         <div>

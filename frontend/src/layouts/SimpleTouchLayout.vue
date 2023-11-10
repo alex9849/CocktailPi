@@ -76,7 +76,6 @@
 <script>
 
 import SimpleFooter from 'pages/SimpleFooter'
-import CSimpleHeaderProgressStatus from 'components/CSimpleHeaderProgressStatus'
 import { mapGetters } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
 import CQuestion from 'components/CQuestion'
@@ -84,7 +83,7 @@ import { colors } from 'quasar'
 
 export default {
   name: 'SimpleTouchLayout',
-  components: { CQuestion, CCocktailProgressBar, CSimpleHeaderProgressStatus, SimpleFooter },
+  components: { CQuestion, CCocktailProgressBar, SimpleFooter },
   data: () => {
     return {
       showLeaveDialog: false
@@ -99,7 +98,7 @@ export default {
       if (this.color.cocktailProgressDark) {
         return colors.lighten(this.color.cocktailProgress, 20)
       } else {
-        return colors.lighten(this.color.cocktailProgress, -20)
+        return colors.lighten(this.color.cocktailProgress, -10)
       }
     },
     progressDetailsTextColor () {

@@ -7,12 +7,11 @@
   </div>
   <q-card
     v-else
-    class="row items-end"
+    class="row items-end shadow-5"
     :class="bgColor"
-    flat
     bordered
   >
-    <q-inner-loading :showing="loading" style="z-index: 1" />
+    <q-inner-loading :showing="loading" style="z-index: 1"/>
     <q-card-section class="q-pa-none col-12">
       <div class="text-h6 text-center text-black">{{ recipe.name }}</div>
     </q-card-section>
@@ -53,7 +52,7 @@ export default {
     }
   },
   computed: {
-    bgColor () {
+    bgColor() {
       if (this.allIngredientsOnPump) {
         return 'bg-green'
       }
@@ -62,7 +61,7 @@ export default {
       }
       return 'bg-grey'
     },
-    allIngredientsOwned () {
+    allIngredientsOwned() {
       for (const ingredient of this.recipe.ingredients) {
         if (!ingredient.inBar && !ingredient.onPump) {
           return false
@@ -70,7 +69,7 @@ export default {
       }
       return true
     },
-    allIngredientsOnPump () {
+    allIngredientsOnPump() {
       for (const ingredient of this.recipe.ingredients) {
         if (!ingredient.onPump) {
           return false

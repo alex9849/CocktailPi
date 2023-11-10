@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content column flex">
-    <h4 class="text-white text-center">{{ $t('page.simple_recipes.headline') }}</h4>
+    <h4 class="text-center">{{ $t('page.simple_recipes.headline') }}</h4>
     <simple-recipes-search-list
       @empty="showNoData = $event"
     />

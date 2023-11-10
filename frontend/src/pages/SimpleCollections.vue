@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content column flex">
-    <h4 class="text-white text-center">{{ $t('page.simple_collections.headline') }}</h4>
+    <h4 class="text-center">{{ $t('page.simple_collections.headline') }}</h4>
     <div class="row q-col-gutter-md justify-evenly">
       <q-inner-loading size="80px" :showing="isLoading" dark class="text-white"/>
       <div class="col-12 col-sm-6 col-lg-4"

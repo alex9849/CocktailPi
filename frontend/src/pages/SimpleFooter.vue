@@ -18,7 +18,7 @@
             outline
             dense
             :icon="mdiPiggyBank"
-            color="orange-5"
+            :style="{color: donateBtnTextColor}"
             @click="setShowDonateDialog(true)"
           >
             $
@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="col-shrink row justify-end">
-          <q-btn round flat class="bg-indigo-5"
+          <q-btn round flat class="bg-sv-navigation text-sv-navigation"
                  dense icon="keyboard_arrow_down"
                  @click="showFooter = false"
           />
@@ -55,7 +55,7 @@
     leave-active-class="animated fadeOutDown"
   >
     <q-page-sticky v-if="!showFooter" position="bottom-right" :offset="[3, 3]">
-      <q-btn round flat class="bg-indigo-5 text-white"
+      <q-btn round flat class="bg-sv-navigation text-sv-navigation"
              dense icon="keyboard_arrow_up"
              @click="showFooter = true"
       />
@@ -65,7 +65,7 @@
 
 <script>
 import { mdiPiggyBank } from '@quasar/extras/mdi-v5'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'SimpleFooter',
@@ -97,6 +97,18 @@ export default {
     ...mapMutations({
       setShowDonateDialog: 'common/setShowDonateDialog'
     })
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getSvColors'
+    }),
+    donateBtnTextColor () {
+      if (this.color.headerDark) {
+        return '#fda626'
+      } else {
+        return '#d58100'
+      }
+    }
   }
 }
 </script>
