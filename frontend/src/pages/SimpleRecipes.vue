@@ -9,10 +9,10 @@
          v-if="showNoData"
     >
       <div
-        class="col-12 text-h5 text-white"
+        class="col-12 text-h5"
       >
         <div class="row items-center justify-center">
-          <q-icon :name="mdiAlert" color="white" size="lg"/>
+          <q-icon :name="mdiAlert" size="lg"/>
           <p>
             {{ $t('page.simple_recipes.no_data_msg') }}
           </p>

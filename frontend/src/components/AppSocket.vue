@@ -1,10 +1,13 @@
 <template>
-  <q-dialog v-model="showReconnectDialog" position="top" seamless>
+  <q-dialog
+    v-model:model-value="showReconnectDialog"
+    position="top"
+    seamless
+  >
     <q-banner class="bg-orange text-white" inline-actions rounded>
       Connection lost! Reconnecting in: {{ secondsTillWebsocketReconnect }}
       <template v-slot:avatar>
         <q-icon :name="mdiAlert"
-                color="primary"
         />
       </template>
       <template v-slot:action>

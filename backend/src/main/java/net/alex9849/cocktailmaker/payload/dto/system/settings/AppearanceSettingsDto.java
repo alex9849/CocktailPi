@@ -44,7 +44,7 @@ public class AppearanceSettingsDto {
             String sidebar;
             @NotNull
             @Pattern(regexp = hexColorPatten)
-            String btnNavigation;
+            String background;
             @NotNull
             @Pattern(regexp = hexColorPatten)
             String btnNavigationActive;
@@ -68,6 +68,9 @@ public class AppearanceSettingsDto {
             @NotNull
             @Pattern(regexp = hexColorPatten)
             String sidebar;
+            @NotNull
+            @Pattern(regexp = hexColorPatten)
+            String background;
             @NotNull
             @Pattern(regexp = hexColorPatten)
             String btnNavigation;

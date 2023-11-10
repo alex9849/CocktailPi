@@ -271,7 +271,7 @@ public class SystemService {
         AppearanceSettingsDto.Duplex.SvColors scv = settingsDto.getColors().getSimpleView();
         optionsRepository.setOption("COLOR_NORMAL_HEADER", nc.getHeader());
         optionsRepository.setOption("COLOR_NORMAL_SIDEBAR", nc.getSidebar());
-        optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION", nc.getBtnNavigation());
+        optionsRepository.setOption("COLOR_NORMAL_BACKGROUND", nc.getBackground());
         optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE", nc.getBtnNavigationActive());
         optionsRepository.setOption("COLOR_NORMAL_BTN_PRIMARY", nc.getBtnPrimary());
         optionsRepository.setOption("COLOR_NORMAL_CARD_PRIMARY", nc.getCardPrimary());
@@ -279,6 +279,7 @@ public class SystemService {
 
         optionsRepository.setOption("COLOR_SV_HEADER", scv.getHeader());
         optionsRepository.setOption("COLOR_SV_SIDEBAR", scv.getSidebar());
+        optionsRepository.setOption("COLOR_SV_BACKGROUND", scv.getBackground());
         optionsRepository.setOption("COLOR_SV_BTN_NAVIGATION", scv.getBtnNavigation());
         optionsRepository.setOption("COLOR_SV_BTN_NAVIGATION_ACTIVE", scv.getBtnNavigationActive());
         optionsRepository.setOption("COLOR_SV_BTN_PRIMARY", scv.getBtnPrimary());
@@ -297,7 +298,7 @@ public class SystemService {
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();
         normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#693F2F"));
         normalColors.setSidebar(optionsRepository.getOption("COLOR_NORMAL_SIDEBAR").orElse("#BF947B"));
-        normalColors.setBtnNavigation(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION").orElse("#BF947B"));
+        normalColors.setBackground(optionsRepository.getOption("COLOR_NORMAL_BACKGROUND").orElse("#FFFFFF"));
         normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#FDDFB1"));
         normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#85452B"));
         normalColors.setCardPrimary(optionsRepository.getOption("COLOR_NORMAL_CARD_PRIMARY").orElse("#F3F3F3"));
@@ -306,6 +307,7 @@ public class SystemService {
         AppearanceSettingsDto.Duplex.SvColors svColors = new AppearanceSettingsDto.Duplex.SvColors();
         svColors.setHeader(optionsRepository.getOption("COLOR_SV_HEADER").orElse("#1A237E"));
         svColors.setSidebar(optionsRepository.getOption("COLOR_SV_SIDEBAR").orElse("#616161"));
+        svColors.setBackground(optionsRepository.getOption("COLOR_SV_BACKGROUND").orElse("#000000"));
         svColors.setBtnNavigation(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION").orElse("#616161"));
         svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#B968C7"));
         svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#616161"));

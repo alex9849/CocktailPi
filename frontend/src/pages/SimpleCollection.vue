@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-content column flex">
-    <h4 class="text-white text-center">{{ $t('page.simple_collection.headline', { name: collection.name }) }}</h4>
+    <h4 class="text-center">{{ $t('page.simple_collection.headline', { name: collection.name }) }}</h4>
     <simple-recipes-search-list
       v-if="collectionLoaded"
       :collection-id="collection.id"
@@ -11,10 +11,10 @@
          v-if="showNoData"
     >
       <div
-        class="col-12 text-h5 text-white"
+        class="col-12 text-h5"
       >
         <div class="row items-center justify-center">
-          <q-icon :name="mdiAlert" color="white" size="lg"/>
+          <q-icon :name="mdiAlert" size="lg"/>
           <p>
             {{ $t('page.simple_collection.no_data_msg') }}
           </p>

@@ -10,7 +10,7 @@
     >
       <div class="row">
         <q-card
-          class="col"
+          class="col bg-card-secondary"
           flat
           bordered
         >
@@ -55,12 +55,12 @@
                 label="Sidebar"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.normal.btnPrimary"
-                label="Button / Primary"
+                v-model:model-value="form.colors.normal.background"
+                label="Background"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.normal.btnNavigation"
-                label="Button / Navigation"
+                v-model:model-value="form.colors.normal.btnPrimary"
+                label="Button / Primary"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.btnNavigationActive"
@@ -91,6 +91,10 @@
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.sidebar"
                 label="Sidebar"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.background"
+                label="Background"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnPrimary"

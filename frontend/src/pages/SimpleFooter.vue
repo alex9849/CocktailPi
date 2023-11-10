@@ -3,7 +3,7 @@
     enter-active-class="animated fadeInUp"
     leave-active-class="animated fadeOutDown"
   >
-    <q-footer v-if="showFooter" class="bg-indigo-10" bordered>
+    <q-footer v-if="showFooter" class="bg-sv-header text-sv-header shadow-3" bordered>
       <div class="row justify-around items-center q-ma-xs">
         <div
           class="col-shrink row justify-start items-center"
@@ -33,8 +33,10 @@
                    no-caps dense
                    class="col-2"
                    :class="{
-                       'bg-purple-4': $route.name === link.to.name,
-                       'bg-grey-8': $route.name !== link.to.name
+                       'bg-sv-navigation-active': $route.name === link.to.name,
+                       'text-sv-navigation-active': $route.name === link.to.name,
+                       'bg-sv-navigation': $route.name !== link.to.name,
+                       'text-sv-navigation': $route.name !== link.to.name
                      }"
             />
           </div>

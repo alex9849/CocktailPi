@@ -1,8 +1,8 @@
 <template>
   <q-layout view="hHh LpR fFf" class="bg-black">
-    <q-header class="bg-indigo-10">
+    <q-header class="bg-sv-header text-sv-header shadow-3">
       <div class="row justify-between">
-        <div class="col-shrink bg-indigo-10 flex items-center">
+        <div class="col-shrink flex items-center">
           <q-toolbar-title class="q-ma-sm">
             {{ $t('simple_header.machine_name') }}
           </q-toolbar-title>
@@ -42,8 +42,8 @@
             </transition>
           </div>
         </transition>
-        <div class="col-shrink bg-indigo-10 flex items-center">
-          <q-btn no-caps dense class="bg-red q-ma-sm" @click="showLeaveDialog = true">
+        <div class="col-shrink flex items-center">
+          <q-btn no-caps dense color="red" class="q-ma-sm" @click="showLeaveDialog = true">
             {{ $t('simple_header.leave_sv_btn_label') }}
           </q-btn>
         </div>
@@ -58,7 +58,7 @@
       v-model:show="showLeaveDialog"
       :question="$t('simple_header.leave_sv_dialog.headline')"
     />
-    <q-page-container>
+    <q-page-container class="bg-sv-background text-sv-background">
       <router-view />
     </q-page-container>
     <simple-footer />

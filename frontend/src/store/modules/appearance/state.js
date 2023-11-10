@@ -8,6 +8,8 @@ export default function () {
           headerText: '#000000',
           sidebar: '#bf947b',
           sidebarText: '#000000',
+          background: '#ffffff',
+          backgroundText: '#000000',
           btnPrimary: '#85452b',
           btnPrimaryText: '#000000',
           btnNavigation: '#bf947b',

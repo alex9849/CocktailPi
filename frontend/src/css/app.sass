@@ -1,9 +1,4 @@
 // app global css in Sass form
-.bg-card-secondary
-  background: $card-secondary !important
-
-.bg-card-primary
-  background: $card-primary !important
 
 .innerpadding > *
   padding: 10px
@@ -53,7 +48,7 @@ p
   background: var(--q-navigation) !important
 
 .text-navigation-active
-  color: var(--q-navigation-active) !important
+  color: var(--q-navigation-active-text) !important
 
 .bg-navigation-active
   background: var(--q-navigation-active) !important
@@ -70,9 +65,58 @@ p
 .text-header
   color: var(--q-header-text) !important
 
+.bg-background
+  background: var(--q-background) !important
+
+.text-background
+  color: var(--q-background-text) !important
+
+.bg-sv-background
+  background: var(--q-sv-background) !important
+
+.text-sv-background
+  color: var(--q-sv-background-text) !important
+
+.bg-card-primary
+  background: var(--q-card-primary) !important
+
+.bg-card-secondary
+  background: var(--q-card-secondary) !important
+
+.bg-sv-header
+  background: var(--q-sv-header) !important
+
+.text-sv-header
+  color: var(--q-sv-header-text) !important
+
+.bg-sv-navigation
+  background: var(--q-sv-btn-navigation) !important
+
+.text-sv-navigation
+  color: var(--q-sv-btn-navigation-text) !important
+
+.bg-sv-navigation-active
+  background: var(--q-sv-btn-navigation-active) !important
+
+.text-sv-navigation-active
+  color: var(--q-sv-btn-navigation-active-text) !important
+
 \:root
   --q-navigation-active: #be937b
   --q-navigation: #fbdeb0
+  --q-navigation-active-text: #ffffff
   --q-sidebar: #bf947b
   --q-header: #693f2f
   --q-header-text: #ffffff
+  --q-card-primary: #f4f4f4ff
+  --q-card-secondary: #dff6f9ff
+  --q-background: #ffffff
+  --q-background-text: #000000
+  --q-sv-background: #000000
+  --q-sv-background-text: #ffffff
+  --q-sv-header: #1a237e
+  --q-sv-header-text: #ffffff
+  --q-sv-btn-navigation: #616161
+  --q-sv-btn-navigation-text: #ffffff
+  --q-sv-btn-navigation-active: #b868c6
+  --q-sv-btn-navigation-active-text: #000000

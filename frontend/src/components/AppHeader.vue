@@ -2,7 +2,7 @@
   <q-header
     reveal
     bordered
-    class="bg-header text-header"
+    class="bg-header text-header shadow-3"
   >
     <q-toolbar>
       <slot name="left" />

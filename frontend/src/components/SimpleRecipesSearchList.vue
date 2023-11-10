@@ -14,7 +14,7 @@
       text-color="yellow"
       active-text-color="black"
       :boundary-numbers="true"
-      size="md"
+      size="17px"
       outline
       direction-links
     />

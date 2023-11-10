@@ -34,8 +34,7 @@
           <q-item
             v-for="(subsection, subindex) in section.subSections"
             style="padding-top: 5px; padding-bottom: 5px; min-height: 30px;"
-            active-class="bg-navigation-active text-dark"
-            class="bg-navigation"
+            active-class="bg-navigation-active text-navigation-active"
             :inset-level="0.4"
             :key="subindex"
             clickable
@@ -91,7 +90,7 @@
 
     </q-drawer>
 
-    <q-page-container class="justify-center">
+    <q-page-container class="justify-center bg-background text-background">
       <router-view/>
     </q-page-container>
   </q-layout>
