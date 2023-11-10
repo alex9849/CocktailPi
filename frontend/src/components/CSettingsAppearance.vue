@@ -59,11 +59,11 @@
                 label="Button / Primary"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.simpleView.btnNavigation"
+                v-model:model-value="form.colors.normal.btnNavigation"
                 label="Button / Navigation"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.simpleView.btnNavigationActive"
+                v-model:model-value="form.colors.normal.btnNavigationActive"
                 label="Button / Navigation active"
               />
               <c-color-selector-field
