@@ -4,6 +4,7 @@
     persistent
     behavior="desktop"
     :width="250"
+    :dark="colors.sidebarDark"
     v-model="leftDrawerOpen"
     class="bg-sv-sidebar text-sv-sidebar shadow-5"
   >
@@ -12,6 +13,7 @@
         dense
         round
         unelevated
+        class="q-card--bordered"
         @click="leftDrawerOpen = false"
         color="sv-btn-primary"
         text-color="sv-btn-primary"
@@ -24,7 +26,9 @@
       size="1"
     />
     <q-list padding>
-      <q-item dark>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-item-section>
           <q-input
             dense
@@ -37,7 +41,9 @@
           />
         </q-item-section>
       </q-item>
-      <q-item>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-item-section>
           <c-ingredient-selector
             outlined
@@ -55,7 +61,9 @@
           />
         </q-item-section>
       </q-item>
-      <q-item>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-card
           flat
           :dark="colors.sidebarDark"
@@ -80,7 +88,7 @@
             >
               <q-item-section side top>
                 <q-radio
-                  keep-color
+                  :dark="colors.sidebarDark"
                   :model-value="filter.fabricable"
                   @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
                   :val="option.val"
@@ -97,7 +105,9 @@
           </q-list>
         </q-card>
       </q-item>
-      <q-item>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-item-section>
           <q-select
             outlined
@@ -112,7 +122,9 @@
           />
         </q-item-section>
       </q-item>
-      <q-item>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-item-section>
           <q-btn
             :label="$t('component.simple_recipes_filter_drawer.search_btn_label')"
@@ -122,7 +134,9 @@
           />
         </q-item-section>
       </q-item>
-      <q-item>
+      <q-item
+        :dark="colors.sidebarDark"
+      >
         <q-item-section>
           <q-btn
             :label="$t('component.simple_recipes_filter_drawer.reset_btn_label')"
@@ -143,6 +157,7 @@
         dense
         no-caps
         unelevated
+        class="q-card--bordered"
         v-if="!leftDrawerOpen"
         @click="leftDrawerOpen = true"
         color="sv-btn-primary"

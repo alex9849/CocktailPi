@@ -10,7 +10,7 @@
         <router-link
           :to="{name: 'simplecollection', params: {collectionId: collection.id}}"
         >
-          <c-collection-card
+          <c-simple-collection-card
             :model-value="collection"
             class="full-height"
             style="max-height: 300px"
@@ -41,10 +41,11 @@ import CollectionService from 'src/services/collection.service'
 import { mapGetters } from 'vuex'
 import CCollectionCard from 'components/CCollectionCard'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
+import CSimpleCollectionCard from 'components/CSimpleCollectionCard.vue'
 
 export default {
   name: 'SimpleCollections',
-  components: { CCollectionCard },
+  components: { CSimpleCollectionCard, CCollectionCard },
   data: () => {
     return {
       collections: [],

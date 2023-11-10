@@ -10,9 +10,9 @@
       @update:model-value="onPageClick($event - 1)"
       :max="pagination.totalPages"
       :max-pages="9"
-      active-color="yellow"
-      text-color="yellow"
-      active-text-color="black"
+      :active-color="paginationColors.active"
+      :text-color="paginationColors.text"
+      :active-text-color="paginationColors.activeText"
       :boundary-numbers="true"
       size="17px"
       outline
@@ -34,6 +34,7 @@
 import CSimpleRecipeList from 'components/CSimpleRecipeList'
 import CSimpleRecipesFilterDrawer from 'components/CSimpleRecipesFilterDrawer'
 import { recipeSearchListLogic } from 'src/mixins/recipeSearchListLogic'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SimpleRecipesSearchList',
@@ -49,6 +50,26 @@ export default {
         this.$emit('empty', true)
       } else {
         this.$emit('empty', false)
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getSvColors'
+    }),
+    paginationColors () {
+      if (this.color.backgroundDark) {
+        return {
+          active: 'yellow',
+          text: 'yellow',
+          activeText: 'black'
+        }
+      } else {
+        return {
+          active: 'deep-orange-9',
+          text: 'deep-orange-9',
+          activeText: 'white'
+        }
       }
     }
   }

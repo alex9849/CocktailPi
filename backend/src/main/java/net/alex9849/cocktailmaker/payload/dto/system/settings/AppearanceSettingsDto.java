@@ -83,6 +83,9 @@ public class AppearanceSettingsDto {
             @NotNull
             @Pattern(regexp = hexColorPatten)
             String cocktailProgress;
+            @NotNull
+            @Pattern(regexp = hexColorPatten)
+            String cardPrimary;
         }
 
     }

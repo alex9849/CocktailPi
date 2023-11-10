@@ -44,5 +44,7 @@ export const setAppearanceSettings = (state, payload) => {
   setCssVar('sv-sidebar', settings.colors.simpleView.sidebar)
   setCssVar('sv-sidebar-text', settings.colors.simpleView.sidebarText)
   setCssVar('sv-cocktailprogress', settings.colors.simpleView.cocktailProgress)
+  setCssVar('sv-card-primary', settings.colors.simpleView.cardPrimary)
+  setCssVar('sv-card-primary-text', settings.colors.simpleView.cardPrimaryText)
   state.appearance = settings
 }

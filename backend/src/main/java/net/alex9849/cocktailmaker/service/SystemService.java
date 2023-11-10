@@ -284,6 +284,7 @@ public class SystemService {
         optionsRepository.setOption("COLOR_SV_BTN_NAVIGATION_ACTIVE", scv.getBtnNavigationActive());
         optionsRepository.setOption("COLOR_SV_BTN_PRIMARY", scv.getBtnPrimary());
         optionsRepository.setOption("COLOR_SV_CPROGRESS", scv.getCocktailProgress());
+        optionsRepository.setOption("COLOR_SV_CARD_PRIMARY", scv.getCardPrimary());
     }
 
     public Object getAppearance() {
@@ -312,6 +313,7 @@ public class SystemService {
         svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#B968C7"));
         svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#616161"));
         svColors.setCocktailProgress(optionsRepository.getOption("COLOR_SV_CPROGRESS").orElse("#1B5E20"));
+        svColors.setCardPrimary(optionsRepository.getOption("COLOR_SV_CARD_PRIMARY").orElse("#787878"));
         colors.setNormal(normalColors);
         colors.setSimpleView(svColors);
         settingsDto.setColors(colors);

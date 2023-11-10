@@ -112,6 +112,10 @@
                 v-model:model-value="form.colors.simpleView.cocktailProgress"
                 label="Cocktail progress"
               />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.cardPrimary"
+                label="Card"
+              />
             </q-card-section>
           </q-card>
         </div>
