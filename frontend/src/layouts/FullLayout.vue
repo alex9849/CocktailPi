@@ -118,7 +118,74 @@ export default {
       desktopModeBreakPoint: 1024,
       leftDrawerOpen: false,
       windowWidth: 0,
-      sidebarItems: [
+      categories: [],
+      projectLinks: [{
+        icon: mdiGithub,
+        link: 'https://github.com/alex9849/pi-cocktail-maker/'
+      }, {
+        icon: mdiLinkedin,
+        link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'
+      }, {
+        icon: mdiWeb,
+        link: 'https://alexander.liggesmeyer.net/'
+      }
+      ]
+    }
+  },
+  created () {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
+    this.mdiChevronRight = mdiChevronRight
+    this.mdiPiggyBank = mdiPiggyBank
+  },
+  unmounted () {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  watch: {
+    recipeCategories: {
+      immediate: true,
+      handler (newValue) {
+        this.categories = newValue
+      }
+    }
+  },
+  methods: {
+    ...mapMutations({
+      setShowDonateDialog: 'common/setShowDonateDialog',
+      openExternalLink: 'common/openExternalLink'
+    }),
+    clickDonate () {
+      this.setShowDonateDialog(true)
+    },
+    handleResize () {
+      this.windowWidth = window.innerWidth
+      if (this.windowWidth > this.desktopModeBreakPoint) {
+        this.leftDrawerOpen = true
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getUser: 'auth/getUser',
+      getAdminLevel: 'auth/getAdminLevel',
+      recipeCategories: 'category/getCategories'
+    }),
+    desktopMode () {
+      return this.windowWidth > this.desktopModeBreakPoint
+    },
+    permittedSidebarItems () {
+      const sidebarItems = []
+      for (const item of this.sidebarItems) {
+        if (item.reqLevel <= this.getAdminLevel) {
+          sidebarItems.push(item)
+        }
+        item.subSections = item.subSections
+          .filter(x => x.reqLevel <= this.getAdminLevel)
+      }
+      return sidebarItems
+    },
+    sidebarItems () {
+      const sidebarItems = [
         {
           label: this.$t('layout.full_layout.sidebar.me.label').toUpperCase(),
           icon: mdiAccount,
@@ -216,74 +283,9 @@ export default {
             }
           ]
         }
-      ],
-      projectLinks: [{
-        icon: mdiGithub,
-        link: 'https://github.com/alex9849/pi-cocktail-maker/'
-      }, {
-        icon: mdiLinkedin,
-        link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'
-      }, {
-        icon: mdiWeb,
-        link: 'https://alexander.liggesmeyer.net/'
-      }
       ]
-    }
-  },
-  created () {
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize()
-    this.mdiChevronRight = mdiChevronRight
-    this.mdiPiggyBank = mdiPiggyBank
-  },
-  unmounted () {
-    window.removeEventListener('resize', this.handleResize)
-  },
-  computed: {
-    ...mapGetters({
-      getUser: 'auth/getUser',
-      getAdminLevel: 'auth/getAdminLevel',
-      recipeCategories: 'category/getCategories'
-    }),
-    desktopMode () {
-      return this.windowWidth > this.desktopModeBreakPoint
-    },
-    permittedSidebarItems () {
-      const sidebarItems = []
-      for (const item of this.sidebarItems) {
-        if (item.reqLevel <= this.getAdminLevel) {
-          sidebarItems.push(item)
-        }
-        item.subSections = item.subSections
-          .filter(x => x.reqLevel <= this.getAdminLevel)
-      }
-      return sidebarItems
-    }
-  },
-  watch: {
-    recipeCategories: {
-      immediate: true,
-      handler (newValue) {
-        this.setCategories(newValue)
-      }
-    }
-  },
-  methods: {
-    ...mapMutations({
-      setShowDonateDialog: 'common/setShowDonateDialog',
-      openExternalLink: 'common/openExternalLink'
-    }),
-    clickDonate () {
-      this.setShowDonateDialog(true)
-    },
-    handleResize () {
-      this.windowWidth = window.innerWidth
-      if (this.windowWidth > this.desktopModeBreakPoint) {
-        this.leftDrawerOpen = true
-      }
-    },
-    setCategories (categories) {
-      this.sidebarItems[1].subSections = [
+
+      sidebarItems[1].subSections = [
         {
           label: this.$t('layout.full_layout.sidebar.cocktails.category_all'),
           to: { name: 'publicrecipes' },
@@ -291,20 +293,22 @@ export default {
           reqLevel: 0
         }
       ]
-      for (const category of categories) {
-        this.sidebarItems[1].subSections.push({
+      for (const category of this.categories) {
+        sidebarItems[1].subSections.push({
           label: category.name,
           reqLevel: 0,
           to: { name: 'publiccategoryrecipes', params: { cid: category.id } },
           exact: true
         })
       }
-      this.sidebarItems[1].subSections.push({
+      sidebarItems[1].subSections.push({
         label: this.$t('layout.full_layout.sidebar.cocktails.ingredients'),
         to: { name: 'ingredientrecipes' },
         exact: true,
         reqLevel: 0
       })
+
+      return sidebarItems
     }
   }
 }

@@ -8,6 +8,7 @@ export const setGlobalSettings = (state, payload) => {
 
 export const setAppearanceSettings = (state, { payload, i18n }) => {
   i18n.locale = payload.language.name
+  localStorage.setItem('language', i18n.locale)
   state.appearanceSettings = payload
 }
 

@@ -1,4 +1,8 @@
 export default function () {
+  let storedLanguage = localStorage.getItem('language')
+  if (!storedLanguage) {
+    storedLanguage = 'en_US'
+  }
   return {
     lastRecipeListRoute: null,
     showDonateDialog: false,
@@ -16,7 +20,7 @@ export default function () {
       }
     },
     appearanceSettings: {
-      language: 'en'
+      language: storedLanguage
     },
     defaultFilter: {
       enable: false,
