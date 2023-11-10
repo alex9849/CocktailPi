@@ -51,12 +51,24 @@
                 label="Header"
               />
               <c-color-selector-field
+                v-model:model-value="form.colors.normal.header"
+                label="Header / Text"
+              />
+              <c-color-selector-field
                 v-model:model-value="form.colors.normal.sidebar"
                 label="Sidebar"
               />
               <c-color-selector-field
+                v-model:model-value="form.colors.normal.header"
+                label="Sidebar / Text"
+              />
+              <c-color-selector-field
                 v-model:model-value="form.colors.normal.btnPrimary"
                 label="Button / Primary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.btnPrimary"
+                label="Button / Primary / Text"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.btnNavigation"
@@ -67,12 +79,24 @@
                 label="Button / Navigation active"
               />
               <c-color-selector-field
+                v-model:model-value="form.colors.normal.btnNavigation"
+                label="Button / Navigation / Text"
+              />
+              <c-color-selector-field
                 v-model:model-value="form.colors.normal.cardPrimary"
                 label="Card / Primary"
               />
               <c-color-selector-field
+                v-model:model-value="form.colors.normal.cardPrimary"
+                label="Card / Primary /Text"
+              />
+              <c-color-selector-field
                 v-model:model-value="form.colors.normal.cardSecondary"
                 label="Card / Secondary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.cardSecondary"
+                label="Card / Secondary / Text"
               />
             </q-card-section>
           </q-card>
@@ -86,15 +110,27 @@
             <q-card-section class="q-pt-sm q-gutter-sm">
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.header"
-                label="Header / Footer"
+                label="Header + Footer"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.header"
+                label="Header + Footer / Text"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.sidebar"
                 label="Sidebar"
               />
               <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.sidebar"
+                label="Sidebar / Text"
+              />
+              <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnPrimary"
                 label="Button / Primary"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnPrimary"
+                label="Button / Primary / Text"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnNavigation"
@@ -103,6 +139,10 @@
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnNavigationActive"
                 label="Button / Navigation active"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.simpleView.btnNavigation"
+                label="Button / Navigation / Text"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.cocktailProgress"
