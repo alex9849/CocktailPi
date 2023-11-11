@@ -18,7 +18,7 @@
       </div>
       <q-separator vertical />
       <div class="col flex justify-center items-center">
-        <div class="col">
+        <div class="col text-black">
           <div class="row flex justify-center items-center self-center">
             <p class="q-pa-sm">{{ headline }}</p>
           </div>

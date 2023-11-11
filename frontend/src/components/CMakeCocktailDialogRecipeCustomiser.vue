@@ -1,8 +1,13 @@
 <template>
-  <q-card flat bordered>
+  <q-card
+    flat
+    bordered
+    class="bg-card-body text-card-body"
+  >
     <q-card-section class="q-pa-none">
       <q-expansion-item
-        class="text-left bg-grey-2"
+        class="text-left"
+        header-class="bg-card-header text-card-header"
         v-model:model-value="expanded"
       >
         <template v-slot:header>
@@ -12,7 +17,9 @@
             </q-item-label>
           </q-item-section>
         </template>
-        <q-card class="">
+        <q-card
+          class="bg-card-item-group text-card-item-group"
+        >
           <q-card-section>
             <p class="text-bold">
               {{ $t('component.make_cocktail_customizer.headline_boosting') }}
@@ -58,7 +65,11 @@
                 />
               </div>
               <div class="col-12 col-sm-6 col-md-3">
-                <q-card class="bg-grey-2 text-center full-height row items-center content-center" flat bordered>
+                <q-card
+                  class="text-center full-height row items-center content-center bg-card-body text-card-body"
+                  flat
+                  bordered
+                >
                   <q-card-section
                     v-if="addIngredient.clicked"
                     class="q-gutter-sm col-12"
@@ -68,6 +79,7 @@
                     </p>
                     <c-ingredient-selector
                       rounded
+                      :dark="color.cardBodyDark"
                       filter-manual-ingredients
                       filter-ingredient-groups
                       :selected="addIngredient.selected"
@@ -77,7 +89,7 @@
                   <q-btn
                     v-else
                     unelevated
-                    class="text-grey-8 full-height col-12"
+                    class="full-height col-12"
                     no-caps
                     @click="onClickAddIngredient"
                   >
@@ -103,6 +115,7 @@
 import { mdiPlusCircleOutline } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
 import CIngredientAdditionalMlCard from 'components/CIngredientAdditionalMlCard'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CMakeCocktailDialogRecipeCustomiser',
@@ -143,6 +156,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     boostingSliderLabel () {
       if (this.disableBoosting) {
         return this.$t('component.make_cocktail_customizer.recipe_not_boostable')

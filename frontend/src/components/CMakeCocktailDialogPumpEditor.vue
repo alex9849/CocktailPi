@@ -1,9 +1,13 @@
 <template>
-  <q-card flat bordered>
+  <q-card
+    flat
+    bordered
+    class="bg-card-body text-card-body"
+  >
     <q-card-section class="q-pa-none">
       <q-expansion-item
         v-model:model-value="pumpEditorExpanded"
-        class="bg-grey-2"
+        class="bg-card-header text-card-header"
       >
         <template v-slot:header>
           <q-item-section class="text-left">
@@ -34,7 +38,10 @@
                 <q-icon
                   v-else
                 >
-                  <img src="~assets/icons/stepper-motor.svg"/>
+                  <img
+                    src="~assets/icons/stepper-motor.svg"
+                    :style="stepperFilter(props.rowIndex + 1)"
+                  />
                 </q-icon>
                 {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
               </p>
@@ -61,6 +68,7 @@
               :props="props"
             >
               <c-ingredient-selector
+                :dark="markPump(props.row) ? false : color.cardBodyDark"
                 :selected="props.row.currentIngredient"
                 @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, attrState.currentIngredient, !$event)"
                 :disable="getPumpState(props.row.id).occupied"
@@ -94,6 +102,7 @@
             >
               <q-input
                 style="min-width: 200px"
+                :dark="color.cardBodyDark"
                 :model-value="props.row.fillingLevelInMl"
                 @update:model-value="setPumpAttr('fillingLevelInMl', props.row.id, props.row.type, $event === '' ? 0 : Number($event), attrState.fillingLevelInMl)"
                 debounce="500"
@@ -184,6 +193,8 @@ import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
 import WebsocketService from 'src/services/websocket.service'
 import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
+import { colors } from 'quasar'
+import { isDark } from 'src/mixins/utils'
 
 export default {
   name: 'CMakeCocktailDialogPumpEditor',
@@ -254,6 +265,22 @@ export default {
     }
   },
   methods: {
+    stepperFilter (rowNr) {
+      let color
+      if (rowNr % 2 === 0) {
+        color = colors.getPaletteColor('card-body')
+      } else {
+        color = colors.getPaletteColor('card-body-table-odd-text')
+      }
+      if (isDark(color)) {
+        return {}
+      } else {
+        return {
+          '-webkit-filter': 'invert(100%)',
+          filter: 'invert(100%)'
+        }
+      }
+    },
     markPump (pump) {
       if (!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
         return false
@@ -333,7 +360,8 @@ export default {
     ...mapGetters({
       getPumpLayout: 'pumpLayout/getLayout',
       getReadyPumpIngredients: 'pumpLayout/getReadyPumpIngredients',
-      isAllowReversePumping: 'common/isAllowReversePumping'
+      isAllowReversePumping: 'common/isAllowReversePumping',
+      color: 'appearance/getNormalColors'
     }),
     allPumpIds () {
       return this.getPumpLayout.map(x => x.id)
@@ -354,4 +382,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

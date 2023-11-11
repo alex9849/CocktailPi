@@ -10,7 +10,7 @@
     @update:model-value="$emit('update:show', $event)"
   >
     <q-card
-      class="text-center q-pb-lg"
+      class="text-center q-pb-lg bg-background text-background"
     >
       <q-card-section class="q-gutter-md">
         <q-toolbar>
@@ -297,7 +297,8 @@ export default {
       isUserPumpIngredientEditor: 'auth/isPumpIngredientEditor',
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       getPumpLayout: 'pumpLayout/getLayout',
-      getPumpIngredients: 'pumpLayout/getPumpIngredients'
+      getPumpIngredients: 'pumpLayout/getPumpIngredients',
+      color: 'appearance/getNormalColors'
     }),
     allPumpIds () {
       return this.getPumpLayout.map(x => x.id)

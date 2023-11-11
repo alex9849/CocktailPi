@@ -20,6 +20,7 @@
       class="flex justify-center q-gutter-sm"
     >
       <q-select
+        :dark="color.backgroundDark"
         v-if="showGlassSelector"
         :model-value="selectedGlass"
         @update:modelValue="onGlassSelect($event)"
@@ -28,7 +29,6 @@
         style="width: 400px"
         rounded
         outlined
-        bg-color="grey-2"
         :options="availableGlasses"
         :option-label="x => x.name + ' (' + x.size + 'ml)'"
         :error="!selectedGlass"
@@ -37,13 +37,13 @@
       />
       <q-input
         v-else
+        :dark="color.backgroundDark"
         :model-value="modelValue"
         @update:modelValue="emitAmountToProduce(Number($event))"
         :label="$t('component.make_cocktail_amount_to_produce.amount_to_produce_label')"
         type="number"
         outlined
         hide-bottom-space
-        bg-color="grey-2"
         input-class="text-center text-weight-medium"
         style="width: 400px"
         debounce="500"
@@ -61,6 +61,8 @@
             class="q-mx-xs"
             :icon="mdiMinusThick"
             dense round
+            :style="plusMinusColorStyle"
+            text-color="background"
             @click="emitAmountToProduce(modelValue - 50)"
           />
           <q-btn
@@ -68,6 +70,8 @@
             class="q-mx-xs"
             :icon="mdiMinus"
             round
+            :style="plusMinusColorStyle"
+            text-color="background"
             @click="emitAmountToProduce(modelValue - 10)"
           />
         </template>
@@ -77,6 +81,8 @@
             :icon="mdiPlus"
             class="q-mx-xs"
             round
+            :style="plusMinusColorStyle"
+            text-color="background"
             @click="emitAmountToProduce(modelValue + 10)"
           />
           <q-btn
@@ -84,6 +90,8 @@
             :icon="mdiPlusThick"
             class="q-mx-xs"
             dense round
+            :style="plusMinusColorStyle"
+            text-color="background"
             @click="emitAmountToProduce(modelValue + 50)"
           />
         </template>
@@ -95,7 +103,6 @@
           round
           outline
           size="19px"
-          text-color="grey-7"
           @click="toggleShowGlassSelect"
         >
           <q-icon
@@ -111,6 +118,8 @@
 
 import GlassService from 'src/services/glass.service'
 import { mdiMinus, mdiMinusThick, mdiPlus, mdiPlusThick, mdiSwapHorizontalBold } from '@quasar/extras/mdi-v5'
+import { mapGetters } from 'vuex'
+import { calcTextColor, complementColor } from 'src/mixins/utils'
 
 export default {
   name: 'CMakeCocktailDialogAmountToProduce',
@@ -188,6 +197,22 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
+    plusMinusBtnColor () {
+      const background = complementColor(this.color.background, 20)
+      return {
+        bg: background,
+        text: calcTextColor(background)
+      }
+    },
+    plusMinusColorStyle () {
+      return {
+        backgroundColor: this.plusMinusBtnColor.bg,
+        color: this.plusMinusBtnColor.text
+      }
+    },
     showGlassSelector () {
       return this.isGlassSelect && this.availableGlasses.length !== 0
     }

@@ -1,8 +1,13 @@
 <template>
-  <q-card class="bg-grey-2 text-center full-height" flat bordered>
+  <q-card
+    class="text-center full-height bg-card-body text-card-body"
+    flat
+    bordered
+  >
     <q-card-section class="q-gutter-sm">
       <p class="text-subtitle2">{{ ingredientName }}</p>
       <q-input :model-value="amountCopy"
+               :dark="color.cardBodyDark"
                @update:modelValue="updateAmount(Number($event) - amountCopy)"
                type="number"
                debounce="500"
@@ -13,6 +18,7 @@
       >
         <template v-slot:prepend >
           <q-btn
+            :style="plusMinusBtnStyle"
             :disable="amountCopy <= 0"
             :icon="mdiMinus"
             round
@@ -20,7 +26,12 @@
           />
         </template>
         <template v-slot:append >
-          <q-btn :icon="mdiPlus" round @click="updateAmount(10)" />
+          <q-btn
+            :style="plusMinusBtnStyle"
+            :icon="mdiPlus"
+            round
+            @click="updateAmount(10)"
+          />
         </template>
       </q-input>
     </q-card-section>
@@ -31,6 +42,8 @@
 
 import { mdiPlus, mdiMinus } from '@quasar/extras/mdi-v5'
 import { isNumber } from 'lodash'
+import { mapGetters } from 'vuex'
+import { calcTextColor, complementColor } from 'src/mixins/utils'
 
 export default {
   name: 'CIngredientAdditionalMlCard',
@@ -67,6 +80,18 @@ export default {
   created () {
     this.mdiPlus = mdiPlus
     this.mdiMinus = mdiMinus
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
+    plusMinusBtnStyle () {
+      const background = complementColor(this.color.cardBody, 30)
+      return {
+        backgroundColor: background,
+        color: calcTextColor(background)
+      }
+    }
   },
   methods: {
     isNumber,
