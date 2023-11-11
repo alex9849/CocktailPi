@@ -98,11 +98,13 @@
             outlined
             :label="$t('component.recipe_search_filter_card.cocktail_name_field_label')"
             dense
+            bg-color="card-item-group"
             @keypress.enter="onSearch"
           >
             <template v-slot:after>
               <q-btn
-                color="primary"
+                text-color="card-item-group"
+                color="card-item-group"
                 :icon="mdiMagnify"
                 @click="onSearch"
               />
