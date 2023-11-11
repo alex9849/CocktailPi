@@ -305,7 +305,7 @@ public class SystemService {
         normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#FDDFB1"));
         normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#85452B"));
         normalColors.setCardHeader(optionsRepository.getOption("COLOR_NORMAL_CARD_HEADER").orElse("#DEF5F8"));
-        normalColors.setCardBody(optionsRepository.getOption("COLOR_NORMAL_CARD_BODY").orElse("#F3F3F3"));
+        normalColors.setCardBody(optionsRepository.getOption("COLOR_NORMAL_CARD_BODY").orElse("#F9F9F9"));
         normalColors.setCardItemGroup(optionsRepository.getOption("COLOR_NORMAL_CARD_ITEM_GROUP").orElse("#FFFFFF"));
 
 
