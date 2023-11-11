@@ -6,7 +6,7 @@
         dense
         flat
         round
-        color="grey"
+        color="background-info-icon"
         @click="showHelp = true"
       >
       </q-btn>
