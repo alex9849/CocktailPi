@@ -12,7 +12,7 @@
     >
       <template v-slot:loading>
         <q-card
-          class="q-my-md bg-card-body text-card-body"
+          class="q-my-md bg-card-header text-card-header"
           flat
           bordered
         >

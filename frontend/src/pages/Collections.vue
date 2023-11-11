@@ -39,7 +39,7 @@
     <q-card
       v-if="collections.length === 0"
       flat bordered
-      class="bg-card-secondary"
+      class="bg-card-header text-card-header"
     >
       <div class="row q-pa-md items-center q-gutter-sm">
         <q-icon size="sm" :name="mdiAlert" />

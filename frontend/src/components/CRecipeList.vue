@@ -8,7 +8,7 @@
         <q-card
           flat
           bordered
-          class="bg-card-body text-card-body"
+          class="bg-card-header text-card-header"
         >
           <q-card-section class="text-center">
             {{ $t('component.recipe_list.no_recipes_found') }}

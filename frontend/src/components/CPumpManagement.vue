@@ -41,7 +41,7 @@
       class="col-12"
       v-if="pumps.length === 0"
     >
-      <q-card flat bordered class="bg-card-body text-card-body">
+      <q-card flat bordered class="bg-card-header text-card-header">
         <div class="row q-pa-md items-center q-gutter-sm">
           <q-icon size="sm" :name="mdiAlert" />
           <p class="">{{ $t('component.pump_mgmt.no_pumps_found') }}</p>

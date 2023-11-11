@@ -15,7 +15,6 @@
                 <q-card
                   flat
                   bordered
-                  dark
                   class="bg-card-item-group text-card-item-group"
                 >
                   <q-card-section class="q-py-xs bg-card-header text-card-header">
