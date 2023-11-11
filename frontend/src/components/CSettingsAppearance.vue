@@ -67,12 +67,16 @@
                 label="Button / Navigation active"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.normal.cardPrimary"
-                label="Card / Primary"
+                v-model:model-value="form.colors.normal.cardHeader"
+                label="Card / Header"
               />
               <c-color-selector-field
-                v-model:model-value="form.colors.normal.cardSecondary"
-                label="Card / Secondary"
+                v-model:model-value="form.colors.normal.cardBody"
+                label="Card / Body"
+              />
+              <c-color-selector-field
+                v-model:model-value="form.colors.normal.cardItemGroup"
+                label="Card / Item group"
               />
             </q-card-section>
           </q-card>

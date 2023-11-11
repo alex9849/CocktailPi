@@ -53,10 +53,13 @@ public class AppearanceSettingsDto {
             String btnPrimary;
             @NotNull
             @Pattern(regexp = hexColorPatten)
-            String cardPrimary;
+            String cardHeader;
             @NotNull
             @Pattern(regexp = hexColorPatten)
-            String cardSecondary;
+            String cardBody;
+            @NotNull
+            @Pattern(regexp = hexColorPatten)
+            String cardItemGroup;
         }
 
         @NoArgsConstructor()

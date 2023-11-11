@@ -274,8 +274,10 @@ public class SystemService {
         optionsRepository.setOption("COLOR_NORMAL_BACKGROUND", nc.getBackground());
         optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE", nc.getBtnNavigationActive());
         optionsRepository.setOption("COLOR_NORMAL_BTN_PRIMARY", nc.getBtnPrimary());
-        optionsRepository.setOption("COLOR_NORMAL_CARD_PRIMARY", nc.getCardPrimary());
-        optionsRepository.setOption("COLOR_NORMAL_CARD_SECONDARY", nc.getCardSecondary());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_HEADER", nc.getCardBody());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_BODY", nc.getCardBody());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_ITEM_GROUP", nc.getCardItemGroup());
+
 
         optionsRepository.setOption("COLOR_SV_HEADER", scv.getHeader());
         optionsRepository.setOption("COLOR_SV_SIDEBAR", scv.getSidebar());
@@ -302,8 +304,10 @@ public class SystemService {
         normalColors.setBackground(optionsRepository.getOption("COLOR_NORMAL_BACKGROUND").orElse("#FFFFFF"));
         normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#FDDFB1"));
         normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#85452B"));
-        normalColors.setCardPrimary(optionsRepository.getOption("COLOR_NORMAL_CARD_PRIMARY").orElse("#F3F3F3"));
-        normalColors.setCardSecondary(optionsRepository.getOption("COLOR_NORMAL_CARD_SECONDARY").orElse("#FDFDFE"));
+        normalColors.setCardHeader(optionsRepository.getOption("COLOR_NORMAL_CARD_HEADER").orElse("#DEF5F8"));
+        normalColors.setCardBody(optionsRepository.getOption("COLOR_NORMAL_CARD_BODY").orElse("#F3F3F3"));
+        normalColors.setCardItemGroup(optionsRepository.getOption("COLOR_NORMAL_CARD_ITEM_GROUP").orElse("#FFFFFF"));
+
 
         AppearanceSettingsDto.Duplex.SvColors svColors = new AppearanceSettingsDto.Duplex.SvColors();
         svColors.setHeader(optionsRepository.getOption("COLOR_SV_HEADER").orElse("#1A237E"));
