@@ -4,8 +4,8 @@
 
     <div class="row q-col-gutter-md reverse">
       <div class="col-12 col-md-4 col-lg-3">
-        <q-card class="bg-card-primary">
-          <q-card-section class="q-py-sm bg-card-secondary">
+        <q-card class="bg-card-body text-card-body">
+          <q-card-section class="q-py-sm bg-card-header text-card-header">
             <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.headline') }}</p>
           </q-card-section>
           <q-separator />
@@ -13,9 +13,12 @@
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
                 <q-card
-                  flat bordered class="bg-grey-2"
+                  flat
+                  bordered
+                  dark
+                  class="bg-card-item-group text-card-item-group"
                 >
-                  <q-card-section class="q-py-xs bg-cyan-1">
+                  <q-card-section class="q-py-xs bg-card-header text-card-header">
                     <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.pin_box.headline') }}</p>
                   </q-card-section>
                   <q-separator />
@@ -30,14 +33,30 @@
                     v-else
                     class="row q-py-sm q-col-gutter-xs"
                   >
-                    <p class="col-12 col-sm-6 col-md-12">{{ $t('page.gpio_mgmt.status_box.pin_box.pin_usage') }} <q-badge>{{ gpioStatus.data.pinsUsed }}/{{gpioStatus.data.pinsAvailable}}</q-badge></p>
-                    <p class="col-12 col-sm-6 col-md-12">{{ $t('page.gpio_mgmt.status_box.pin_box.gpio_boards') }} <q-badge>{{ gpioStatus.data.boardsAvailable}}</q-badge></p>
+                    <p class="col-12 col-sm-6 col-md-12">
+                      {{ $t('page.gpio_mgmt.status_box.pin_box.pin_usage') }}
+                      <q-badge>
+                        {{ gpioStatus.data.pinsUsed }}/{{gpioStatus.data.pinsAvailable}}
+                      </q-badge>
+                    </p>
+                    <p class="col-12 col-sm-6 col-md-12">
+                      {{ $t('page.gpio_mgmt.status_box.pin_box.gpio_boards') }}
+                      <q-badge>
+                        {{ gpioStatus.data.boardsAvailable}}
+                      </q-badge>
+                    </p>
                   </q-card-section>
                 </q-card>
               </div>
               <div class="col-12 col-sm-6 col-md-12">
-                <q-card flat bordered class="bg-grey-2">
-                  <q-card-section class="q-py-xs q-pr-xs bg-cyan-1 row items-center">
+                <q-card
+                  flat
+                  bordered
+                  class="bg-card-item-group text-card-item-group"
+                >
+                  <q-card-section
+                    class="q-py-xs q-pr-xs bg-cyan-1 row items-center bg-card-header text-card-header"
+                  >
                     <div class="col">
                       <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.i2c_box.headline') }}</p>
                     </div>
@@ -92,8 +111,8 @@
       <div class="col-12 col-md-8 col-lg-9 q-gutter-y-md">
         <div class="row">
           <div class="col-12">
-            <q-card class="bg-card-primary">
-              <q-card-section class="q-py-sm bg-card-secondary">
+            <q-card class="bg-card-body text-card-body">
+              <q-card-section class="q-py-sm bg-card-header text-card-header">
                 <p class="text-weight-medium">{{ $t('page.gpio_mgmt.local_gpio_box.headline') }}</p>
               </q-card-section>
               <q-separator />
@@ -143,8 +162,8 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <q-card class="bg-card-primary">
-              <q-card-section class="q-py-sm bg-card-secondary">
+            <q-card class="bg-card-body text-card-body">
+              <q-card-section class="q-py-sm bg-card-header text-card-header">
                 <div class="row items-center">
                   <p class="col text-weight-medium">{{ $t('page.gpio_mgmt.i2c_expander_box.headline') }}</p>
                   <div class="col-shrink">
@@ -176,6 +195,7 @@
                     <q-card
                       flat
                       bordered
+                      class="bg-card-item-group text-card-item-group"
                     >
                       <q-card-section>
                         <p>
@@ -193,6 +213,7 @@
                     <q-card
                       flat
                       bordered
+                      class="bg-card-item-group text-card-item-group"
                     >
                       <q-card-section>
                         <p>

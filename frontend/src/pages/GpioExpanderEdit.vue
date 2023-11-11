@@ -4,7 +4,7 @@
     <q-card
       flat
       bordered
-      class="q-pa-md bg-card-primary"
+      class="q-pa-md bg-card-body text-card-body"
     >
       <q-form
         class="q-col-gutter-md"
@@ -14,11 +14,12 @@
           <q-card
             flat
             bordered
-            class="q-pa-md"
+            class="q-pa-md bg-card-item-group text-card-item-group"
           >
             <c-assistant-container>
               <template v-slot:fields>
                 <q-input
+                  :dark="color.cardItemGroupDark"
                   label="Board Name"
                   outlined
                   hide-bottom-space
@@ -26,6 +27,7 @@
                   :disable="saving"
                 />
                 <q-select
+                  :dark="color.cardItemGroupDark"
                   :disable="!isNew || saving"
                   label="Select board type"
                   v-model:model-value="v.expander.boardModel.$model"
@@ -43,11 +45,16 @@
           <q-card
             flat
             bordered
-            class="q-pa-md"
+            class="q-pa-md bg-card-item-group text-card-item-group"
           >
             <c-assistant-container>
               <template v-slot:fields>
-                <q-card bordered flat>
+                <q-card
+                  :dark="color.cardItemGroupDark"
+                  class="bg-card-item-group text-card-item-group"
+                  bordered
+                  flat
+                >
                   <q-card-section class="q-gutter-sm">
                     <div
                       class="row justify-end items-center"
@@ -71,7 +78,8 @@
                       v-if="i2cProber.loading"
                       flat
                       bordered
-                      class="bg-grey-1"
+                      :dark="color.cardItemGroupDark"
+                      class="bg-card-item-group text-card-item-group"
                     >
                       <q-card-section class="q-gutter-md">
                         <div class="row justify-center">
@@ -83,12 +91,14 @@
                       </q-card-section>
                     </q-card>
                     <q-list
+                      :dark="color.cardItemGroupDark"
                       v-if="!i2cProber.loading && i2cProber.probe.length !== 0"
                       bordered
                       separator
                       class="rounded-borders"
                     >
                       <q-item
+                        :dark="color.cardItemGroupDark"
                         v-for="i2cDevice in i2cProber.probe"
                         :key="i2cDevice.address"
                         clickable
@@ -98,6 +108,7 @@
                       >
                         <q-item-section avatar>
                           <q-radio
+                            :dark="color.cardItemGroupDark"
                             :model-value="v.expander.address.$model"
                             @update:modelValue="v.expander.address.$model = $event"
                             :val="i2cDevice.address"
@@ -128,7 +139,9 @@
                       v-if="!i2cProber.loading && i2cProber.probe.length === 0"
                       flat
                       bordered
-                      class="bg-grey-1"
+                      dark
+                      :dark="color.cardItemGroupDark"
+                      class="bg-card-item-group text-card-item-group"
                     >
                       <q-card-section
                         class="flex justify-center items-center"
@@ -182,6 +195,7 @@ import GpioService, { gpioBoardDtoMapper } from 'src/services/gpio.service'
 import { required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import UserService from 'src/services/user.service'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'GpioExpanderEdit',
@@ -264,7 +278,10 @@ export default {
   computed: {
     isNew () {
       return this.$route.name === 'gpioexpanderadd'
-    }
+    },
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   },
   validations () {
     return {

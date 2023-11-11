@@ -4,7 +4,7 @@
     <q-card
       flat
       bordered
-      class="q-pa-md bg-card-primary"
+      class="q-pa-md bg-card-body text-card-body"
     >
       <q-form
         class="q-col-gutter-md"
@@ -16,8 +16,10 @@
           <q-card
             flat
             bordered
+            class="bg-card-item-group text-card-item-group"
           >
             <q-toggle
+              :dark="color.cardItemGroupDark"
               v-model:model-value="v.config.enable.$model"
               :disable="submitting"
               :label="$t('page.i2c_mgmt.form.enable_label')"
@@ -32,17 +34,23 @@
           <q-card
             flat
             bordered
-            class="q-pa-md"
+            class="q-pa-md bg-card-item-group text-card-item-group"
           >
             <c-assistant-container>
               <template v-slot:explanations>
                 <p v-html="$t('page.i2c_mgmt.tutorial')"/>
-                <q-card flat bordered style="border-color: #f12d36; border-width: 2px" class="q-pa-sm">
+                <q-card
+                  flat
+                  bordered
+                  style="border-color: #f12d36; border-width: 2px"
+                  class="q-pa-sm bg-card-item-group text-card-item-group"
+                >
                   <p v-html="$t('page.i2c_mgmt.configuration_warning')"/>
                 </q-card>
               </template>
               <template v-slot:fields>
                 <c-gpio-selector
+                  :dark="color.cardItemGroupDark"
                   disallow-expander-pins
                   v-model:model-value="v.config.sdaPin.$model"
                   :error-message="v.config.sdaPin.$errors[0]?.$message"
@@ -51,6 +59,7 @@
                   :disable="submitting"
                 />
                 <c-gpio-selector
+                  :dark="color.cardItemGroupDark"
                   disallow-expander-pins
                   v-model:model-value="v.config.sclPin.$model"
                   :disable="submitting"
@@ -89,14 +98,15 @@
 
 <script>
 import CAssistantContainer from 'components/CAssistantContainer.vue'
-import {required, requiredIf} from '@vuelidate/validators'
+import { required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CGpioSelector from 'components/CGpioSelector.vue'
 import SystemService from 'src/services/system.service'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'I2CManagement',
-  components: {CGpioSelector, CAssistantContainer},
+  components: { CGpioSelector, CAssistantContainer },
   data: () => {
     return {
       config: {
@@ -107,31 +117,36 @@ export default {
       submitting: false
     }
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     const cfg = await SystemService.getI2cSettings()
     next(vm => {
       vm.config = cfg
     })
   },
-  setup() {
+  setup () {
     return {
       v: useVuelidate()
     }
   },
   methods: {
-    submit() {
+    submit () {
       if (this.v.config.$invalid) {
         return
       }
       this.submitting = true
       SystemService.setI2cSettings(this.config)
-        .then(() => this.$router.push({name: 'gpiomanagement'}))
+        .then(() => this.$router.push({ name: 'gpiomanagement' }))
         .finally(() => {
           this.submitting = false
         })
     }
   },
-  validations() {
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
+  },
+  validations () {
     return {
       config: {
         enable: {

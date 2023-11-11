@@ -22,6 +22,7 @@
       class="q-py-md"
     >
       <q-table
+        :dark="color.cardBodyDark"
         :rows="data"
         :columns="colums"
         hide-bottom
@@ -164,7 +165,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getUser: 'auth/getUser'
+      getUser: 'auth/getUser',
+      color: 'appearance/getNormalColors'
     })
   },
   methods: {

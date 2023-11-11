@@ -2,6 +2,7 @@
   <q-card
     flat
     bordered
+    class="bg-card-item-group text-card-item-group"
   >
     <q-expansion-item
       header-class="q-pa-sm"
@@ -15,7 +16,10 @@
             >
               {{ board.name }}
             </q-item-label>
-            <q-item-label caption>
+            <q-item-label
+              :style="{'color': captionColor}"
+              caption
+            >
               {{ caption }}
             </q-item-label>
           </q-item-section>
@@ -93,6 +97,8 @@
 <script>
 import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import GpioService from 'src/services/gpio.service'
+import { mapGetters } from 'vuex'
+import { complementColor } from 'src/mixins/utils'
 export default {
   name: 'CGpioExpanderExpansionItem',
   props: {
@@ -135,6 +141,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
+    captionColor () {
+      return complementColor(this.color.cardItemGroup, 70)
+    },
     caption () {
       if (this.board.type === 'local') {
         return this.$t('component.gpio_expander_expansion_item.caption_local',

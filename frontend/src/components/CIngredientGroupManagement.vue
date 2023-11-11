@@ -18,6 +18,7 @@
   </TopButtonArranger>
   <div class="q-py-md">
     <q-table
+      :dark="color.cardBodyDark"
       :columns="columns"
       :loading="loading"
       :pagination="{rowsPerPage: 10, sortBy: 'name'}"
@@ -27,6 +28,7 @@
     >
       <template v-slot:top-right>
         <q-input
+          :dark="color.cardBodyDark"
           outlined
           dense
           debounce="300"
@@ -121,6 +123,7 @@ import IngredientService, { ingredientDtoMapper } from 'src/services/ingredient.
 import CDeleteWarning from 'components/CDeleteWarning'
 import CEditDialog from 'components/CEditDialog'
 import CIngredientGroupForm from 'components/CIngredientGroupForm'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CIngredientGroupManagement',
@@ -254,6 +257,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     isEditGroupNew () {
       return this.editOptions.editGroup.id === -1
     },
