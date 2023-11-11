@@ -1,5 +1,5 @@
 import { i18n } from 'boot/i18n'
-import { calcTextColor, isDark } from 'src/mixins/utils'
+import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
 import { setCssVar } from 'quasar'
 
 export const setAppearanceSettings = (state, payload) => {
@@ -8,6 +8,8 @@ export const setAppearanceSettings = (state, payload) => {
     language: payload.language,
     colors: {}
   }
+  payload.colors.normal.cardBodyTableOdd = complementColor(payload.colors.normal.cardBody, 20)
+  payload.colors.normal.cardBackgroundInfoIcon = complementColor(payload.colors.normal.background, 50)
   for (const areaKey in payload.colors) {
     const areaColors = {}
     for (const colorKey in payload.colors[areaKey]) {
@@ -28,10 +30,13 @@ export const setAppearanceSettings = (state, payload) => {
   setCssVar('header-text', settings.colors.normal.headerText)
   setCssVar('background', settings.colors.normal.background)
   setCssVar('background-text', settings.colors.normal.backgroundText)
+  setCssVar('background-info-icon', settings.colors.normal.cardBackgroundInfoIcon)
   setCssVar('card-header', settings.colors.normal.cardHeader)
   setCssVar('card-header-text', settings.colors.normal.cardHeaderText)
   setCssVar('card-body', settings.colors.normal.cardBody)
   setCssVar('card-body-text', settings.colors.normal.cardBodyText)
+  setCssVar('card-body-table-odd', settings.colors.normal.cardBodyTableOdd)
+  setCssVar('card-body-table-odd-text', settings.colors.normal.cardBodyTableOddText)
   setCssVar('card-item-group', settings.colors.normal.cardItemGroup)
   setCssVar('card-item-group-text', settings.colors.normal.cardItemGroupText)
 

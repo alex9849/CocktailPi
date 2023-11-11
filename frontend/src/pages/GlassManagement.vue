@@ -9,7 +9,7 @@
         dense
         flat
         round
-        color="grey"
+        color="background-info-icon"
         @click="showHelp = true"
       >
       </q-btn>
@@ -120,9 +120,7 @@
         <template
           v-slot:bottom-row
         >
-          <td
-            style="color: #b5b5b5"
-          >
+          <td>
             {{ $t('page.glass_mgmt.glass_table.nr_glasses', {nr: glasses.length}) }}
           </td>
           <td rowspan="5"/>
@@ -185,6 +183,7 @@ import CDeleteWarning from 'components/CDeleteWarning.vue'
 import GlassService from 'src/services/glass.service'
 import CEditDialog from 'components/CEditDialog.vue'
 import CGlassForm from 'components/CGlassForm.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'GlassManagement',

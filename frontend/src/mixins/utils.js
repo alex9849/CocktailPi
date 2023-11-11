@@ -1,3 +1,5 @@
+import { colors } from 'quasar'
+
 function hexToRgb (hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
@@ -29,4 +31,12 @@ export function calcTextColor (hexBackgroundColor) {
     d = 255
   }
   return rgbToHex(d, d, d)
+}
+
+export function complementColor (hexColor, percent) {
+  if (isDark(hexColor)) {
+    return colors.lighten(hexColor, percent)
+  } else {
+    return colors.lighten(hexColor, -1 * percent)
+  }
 }

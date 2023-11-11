@@ -7,13 +7,16 @@ h5
   margin-block: 10px
 
 tbody tr
-  background-color: #f3f3fa
+  background-color: var(--q-card-body)
+  color: var(--q-card-body-text)
 
 .q-table__container
-  background-color: #f3f3fa
+  background-color: var(--q-card-body)
+  color: var(--q-card-body-text)
 
 tbody tr:nth-child(odd)
-  background-color: #fafafa
+  background-color: var(--q-card-body-table-odd)
+  color: var(--q-card-body-table-odd-text)
 
 .alternateGrey
   background-color: #f3f3fa
@@ -68,6 +71,9 @@ p
 .bg-background
   background: var(--q-background) !important
 
+.text-background-info-icon
+  color: var(--q-background-info-icon) !important
+
 .text-background
   color: var(--q-background-text) !important
 
@@ -81,19 +87,19 @@ p
   background: var(--q-card-header) !important
 
 .text-card-header
-  background: var(--q-card-header-text) !important
+  color: var(--q-card-header-text) !important
 
 .bg-card-body
   background: var(--q-card-body) !important
 
 .text-card-body
-  background: var(--q-card-body-text) !important
+  color: var(--q-card-body-text) !important
 
 .bg-card-item-group
   background: var(--q-card-item-group) !important
 
 .text-card-item-group
-  background: var(--q-card-item-group-text) !important
+  color: var(--q-card-item-group-text) !important
 
 .bg-sv-header
   background: var(--q-sv-header) !important
@@ -144,11 +150,14 @@ p
   --q-card-header: #def5f8
   --q-card-header-text: #000000
   --q-card-body: #f3f3f3
+  --q-card-body-table-odd: #fafafa
+  --q-card-body-table-odd-text: #000000
   --q-card-body-text: #000000
   --q-card-item-group: #ffffff
   --q-card-item-group-text: #000000
   --q-background: #ffffff
   --q-background-text: #000000
+  --q-background-info-icon: #9d9d9d
   --q-sv-background: #000000
   --q-sv-background-text: #ffffff
   --q-sv-header: #1a237e

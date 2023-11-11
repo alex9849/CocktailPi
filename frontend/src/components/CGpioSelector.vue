@@ -1,11 +1,15 @@
 <template>
   <div>
-    <q-card class="overflow-hidden" flat bordered>
+    <q-card
+      class="overflow-hidden bg-transparent"
+      flat
+      bordered
+    >
       <div class="row">
         <q-select
+          :dark="dark"
           class="col-6"
           label="Board"
-          bg-color="white"
           :model-value="selection.board"
           @update:modelValue="onSelectBoard"
           :options="boards"
@@ -37,8 +41,8 @@
         </q-select>
         <q-select
           style="border-left: solid #D5D5D5FF 1px"
+          :dark="dark"
           class="col-6"
-          bg-color="white"
           :label="label ? label : 'SCL-Pin'"
           :model-value="selection.pin"
           ref="pinSelect"
@@ -56,19 +60,26 @@
           <template
             v-slot:no-option
           >
-            <q-item v-if="!selection.board">
+            <q-item
+              v-if="!selection.board"
+              :dark="dark"
+            >
               <q-item-section>
                 <i>Select a board first.</i>
               </q-item-section>
             </q-item>
             <q-linear-progress
+              :dark="dark"
               v-if="loadingPins"
               query
               reverse
               size="xs"
               color="info"
             />
-            <q-item v-if="loadingPins">
+            <q-item
+              :dark="dark"
+              v-if="loadingPins"
+            >
               <q-item-section>
                 <i>Loading Pins...</i>
               </q-item-section>
@@ -87,6 +98,7 @@
           </template>
           <template v-slot:option="{opt, toggleOption}">
             <q-item
+              :dark="dark"
               clickable
               @click="toggleOption(opt)"
             >
@@ -157,6 +169,10 @@ export default {
       default: false
     },
     disable: {
+      type: Boolean,
+      default: false
+    },
+    dark: {
       type: Boolean,
       default: false
     }

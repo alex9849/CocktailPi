@@ -1,10 +1,15 @@
 <template>
   <h5>{{ $t('component.reverse_pump_settings.headline') }}</h5>
-  <q-card class="q-pa-md bg-card-primary"
+  <q-card
+    class="q-pa-md bg-card-body text-card-body"
   >
     <q-form class="q-col-gutter-md">
       <div class="row">
-        <q-card class="col" flat bordered>
+        <q-card
+          class="col bg-card-item-group text-card-item-group"
+          flat
+          bordered
+        >
           <q-toggle
             :label="$t('component.reverse_pump_settings.form.enable_label')"
             color="green"
@@ -17,7 +22,7 @@
       <div class="row"
            v-if="v.form.enable.$model"
       >
-        <q-card class="col"
+        <q-card class="col bg-card-item-group text-card-item-group"
                 flat
                 bordered>
           <q-card-section>
@@ -28,6 +33,7 @@
           <q-separator/>
           <q-card-section class="q-gutter-sm">
             <c-gpio-selector
+              :dark="color.cardItemGroupDark"
               v-model:model-value="v.form.settings.directorPin.$model"
               :error-message="v.form.settings.directorPin.$errors[0]?.$message"
               :error="v.form.settings.directorPin.$errors.length > 0"
@@ -41,12 +47,13 @@
       <div class="row"
            v-if="v.form.enable.$model"
       >
-        <q-card class="col"
+        <q-card class="col bg-card-item-group text-card-item-group"
                 flat
                 bordered
         >
           <q-card-section class="q-gutter-md">
             <q-input
+              :dark="color.cardItemGroupDark"
               :label="$t('component.reverse_pump_settings.form.overshoot_label')"
               outlined
               type="number"
@@ -61,6 +68,7 @@
               </template>
             </q-input>
             <q-select
+              :dark="color.cardItemGroupDark"
               v-model:model-value="v.form.settings.autoPumpBackTimer.$model"
               :options="autoPumpBackTimerOptions"
               map-options
@@ -94,7 +102,7 @@
 import { maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import SystemService from 'src/services/system.service'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import CGpioSelector from 'components/CGpioSelector.vue'
 
 export default {
@@ -177,6 +185,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     disableForm () {
       return this.saving
     }

@@ -3,6 +3,7 @@
     outlined
     :label="label"
     readonly
+    :dark="dark"
     :model-value="modelValue"
   >
     <template v-slot:append>
@@ -39,6 +40,10 @@ export default {
     },
     label: {
       type: String
+    },
+    dark: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue'],

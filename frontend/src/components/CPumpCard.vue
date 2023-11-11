@@ -1,10 +1,12 @@
 <template>
   <q-card
     bordered
-    class="bg-card-primary"
+    class="bg-card-body text-card-body"
     style="display: flex; flex-direction: column"
   >
-    <q-card-section class="row items-center justify-around bg-card-secondary q-pa-sm">
+    <q-card-section
+      class="row items-center justify-around bg-card-header text-card-header q-pa-sm"
+    >
       <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
           {{ displayName }}</p>
@@ -20,7 +22,10 @@
           <q-icon
             v-else
           >
-            <img src="~assets/icons/stepper-motor.svg" />
+            <img
+              src="~assets/icons/stepper-motor.svg"
+              :style="{'-webkit-filter': color.cardBodyDark ? 'invert(100%)' : 'none', 'filter': color.cardBodyDark ? 'invert(100%)' : 'none'}"
+            />
           </q-icon>
           {{ printPumpType }}
         </p>
@@ -297,6 +302,7 @@ import {
 } from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
 import PumpService from 'src/services/pump.service'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CPumpCard',
@@ -376,7 +382,7 @@ export default {
         }
       } else {
         return {
-          class: 'text-black',
+          class: 'text-card-body',
           label: String(attr) + suffix
         }
       }
@@ -389,7 +395,7 @@ export default {
         }
       } else {
         return {
-          class: 'text-black',
+          class: 'text-card-body',
           label: pin.boardName + ' / ' + pin.pinName
         }
       }
@@ -409,6 +415,9 @@ export default {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     displayName () {
       if (this.pump.name) {
         return this.pump.name

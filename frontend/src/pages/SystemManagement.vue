@@ -2,9 +2,8 @@
   <q-page class="page-content" padding>
     <h5>{{ $t('page.system_mgmt.system.headline') }}</h5>
     <q-card
-      flat
       bordered
-      class="bg-card-primary"
+      class="bg-card-body text-card-body"
     >
       <q-card-section>
         <div class="row justify-center">
@@ -25,14 +24,21 @@
     </q-card>
     <h5>{{ $t('page.system_mgmt.default_filter.headline') }}</h5>
     <q-card
-      flat
       bordered
-      class="bg-card-primary q-pa-md"
+      class="bg-card-body text-card-body q-pa-md"
     >
-      <q-form class="q-col-gutter-md">
+      <q-form
+        class="q-col-gutter-md"
+      >
         <div class="row">
-          <q-card class="col" flat bordered>
+          <q-card
+            class="col bg-card-item-group text-card-item-group"
+            :dark="color.cardItemGroupDark"
+            flat
+            bordered
+          >
             <q-toggle
+              :dark="color.cardItemGroupDark"
               :label="$t('page.system_mgmt.default_filter.enable_btn_label')"
               color="green"
               :disable="defaultFilter.saving"
@@ -46,7 +52,8 @@
         >
           <div class="col-12">
             <q-card
-              class="row items-center justify-start"
+              :dark="color.cardItemGroupDark"
+              class="row items-center justify-start bg-card-item-group text-card-item-group"
               flat
               bordered
             >
@@ -56,6 +63,7 @@
               <div class="col-grow">
                 <div class="row">
                   <q-radio
+                    :dark="color.cardItemGroupDark"
                     :disable="defaultFilter.saving"
                     :label="$t('page.system_mgmt.default_filter.fabricable.show_all')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
@@ -63,6 +71,7 @@
                     class="col-12 col-sm-4"
                   />
                   <q-radio
+                    :dark="color.cardItemGroupDark"
                     :disable="defaultFilter.saving"
                     :label="$t('page.system_mgmt.default_filter.fabricable.fabricable_owned')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
@@ -70,6 +79,7 @@
                     class="col-12 col-sm-4"
                   />
                   <q-radio
+                    :dark="color.cardItemGroupDark"
                     :disable="defaultFilter.saving"
                     :label="$t('page.system_mgmt.default_filter.fabricable.fabricable_auto')"
                     v-model:model-value="v.defaultFilter.data.filter.fabricable.$model"
@@ -114,10 +124,12 @@ import SystemService from 'src/services/system.service'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CSettingsAppearance from 'components/CSettingsAppearance.vue'
+import CColorSelectorField from 'components/CColorSelectorField.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SystemManagement',
-  components: { CSettingsAppearance, CQuestion },
+  components: { CColorSelectorField, CSettingsAppearance, CQuestion },
   async beforeRouteEnter (to, from, next) {
     const defaultFilter = await SystemService.getDefaultFilter()
     next(vm => {
@@ -147,6 +159,11 @@ export default {
   },
   created () {
     this.mdiPower = mdiPower
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   },
   methods: {
     doShutdown () {
