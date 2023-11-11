@@ -1,12 +1,14 @@
 <template>
   <q-card
     :style="'background-color: ' + backgroundColor"
+    class="full-height"
   >
     <q-card-section
       style="padding: 10px"
+      class="full-height"
     >
       <div
-        class="row q-col-gutter-md"
+        class="row q-col-gutter-md full-height"
       >
         <div class="col-12 col-sm-4 col-md-4 col-lg-3 flex">
           <q-img
@@ -26,8 +28,8 @@
             src="~assets/cocktail-solid.png"
           />
         </div>
-        <div class="col-12 col-sm-8 col-md-8 col-lg-9" style="display: flex; flex-direction: column">
-          <div class="row">
+        <div class="col-12 col-sm-8 col-md-8 col-lg-9 full-height" style="flex-grow: 2">
+          <div class="row justify-around q-col-gutter-sm">
             <div class="col">
               <p class="text-h5">
                 <slot name="headline">
@@ -35,18 +37,13 @@
                 </slot>
               </p>
             </div>
-            <div class="col/"/>
-            <div class="row">
-              <div class="col"/>
-              <div
-                class="col"
-                style="display: contents; max-width: max-content;">
-                <slot name="topRight">
-                  <c-recipe-fabricable-icon
-                    :ingredients="recipe.ingredients"
-                  />
-                </slot>
-              </div>
+            <div class="col-grow" />
+            <div class="col-shrink">
+              <slot name="topRight">
+                <c-recipe-fabricable-icon
+                  :ingredients="recipe.ingredients"
+                />
+              </slot>
             </div>
           </div>
           <div class="row" v-if="recipe.description">

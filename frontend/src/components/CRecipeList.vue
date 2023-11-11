@@ -18,7 +18,7 @@
       <div
         v-for="recipe of recipes"
         :key="recipe.id"
-        class="col-12"
+        class="col-12 col-md-6"
       >
         <router-link
           class="no-link-format"
@@ -27,6 +27,7 @@
           <c-recipe-card
             :recipe="recipe"
             show-ingredients
+            style="height: 160px"
             class="bg-grey-2 q-card--bordered q-card--flat no-shadow"
           >
             <template v-slot:headline>
