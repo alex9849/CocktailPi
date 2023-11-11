@@ -59,7 +59,7 @@
                   dense
                   style="margin-left: 0; margin-right: 5px"
                   square
-                  outline
+                  text-color="white"
                   :ripple="false"
                   :color="ingredientChipColor(ingredient)"
                 >
@@ -92,7 +92,7 @@
 <script>
 
 import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
-import { calcTextColor, complementColor } from 'src/mixins/utils'
+import { calcTextColor, complementColor, isDark } from 'src/mixins/utils'
 
 export default {
   name: 'CRecipeCard',
@@ -114,12 +114,12 @@ export default {
   methods: {
     ingredientChipColor (ingredient) {
       if (ingredient.onPump) {
-        return 'green'
+        return 'positive'
       }
       if (ingredient.inBar) {
         return 'orange-6'
       }
-      return 'red'
+      return 'negative'
     },
     ingredientChipTooltip (ingredient) {
       if (ingredient.onPump) {
@@ -132,6 +132,9 @@ export default {
     }
   },
   computed: {
+    isDark () {
+      return isDark(this.backgroundColor)
+    },
     textColor () {
       return calcTextColor(this.backgroundColor)
     },

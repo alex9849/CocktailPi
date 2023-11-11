@@ -16,7 +16,9 @@
           flat
           bordered
         >
-          <q-card-section class="q-pa-md">
+          <q-card-section
+            class="q-pa-md"
+          >
             <q-icon :name="mdiAlert" size="sm"/>
             {{ $t('component.recipe_search_list.loading') }}
           </q-card-section>
@@ -35,7 +37,6 @@
         <c-recipe-list
           :recipes="recipes"
           :showNoData="recipes.length === 0 && !loading"
-          :two-col-threshold="twoColThreshold"
         >
           <template v-slot:firstItem>
             <div class="col-12 q-col-gutter-y-md"

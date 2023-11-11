@@ -1,6 +1,6 @@
 import { i18n } from 'boot/i18n'
 import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
-import { setCssVar } from 'quasar'
+import { setCssVar, colors } from 'quasar'
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale = payload.language.name
@@ -8,7 +8,7 @@ export const setAppearanceSettings = (state, payload) => {
     language: payload.language,
     colors: {}
   }
-  payload.colors.normal.cardBodyTableOdd = complementColor(payload.colors.normal.cardBody, 20)
+  payload.colors.normal.cardBodyTableOdd = colors.lighten(payload.colors.normal.cardBody, 3)
   payload.colors.normal.cardBackgroundInfoIcon = complementColor(payload.colors.normal.background, 50)
   for (const areaKey in payload.colors) {
     const areaColors = {}

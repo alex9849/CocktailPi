@@ -17,8 +17,9 @@
               <q-expansion-item
                 :label="$t('component.recipe_search_filter_card.expert_search_label')"
                 v-model="isFilterExpanded"
-                header-class="bg-card-header text-card-header"
-                :style="{'backgroundColor': expertSearchBoxColors.color, 'color': expertSearchBoxColors.textColor}"
+                :header-class="{'bg-card-header': isFilterExpanded, 'text-card-header': isFilterExpanded,
+                 'bg-card-item-group': !isFilterExpanded, 'text-card-item-group': !isFilterExpanded}"
+                class="bg-card-item-group text-card-item-group"
               >
                 <div
                   class="row justify-evenly q-col-gutter-sm q-pa-sm"
