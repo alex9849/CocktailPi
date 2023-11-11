@@ -69,6 +69,7 @@
           v-slot:loading
         >
           <q-inner-loading
+            :dark="color.cardBodyDark"
             showing
             color="info"
           />
@@ -138,7 +139,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getAdminLevel: 'auth/getAdminLevel'
+      getAdminLevel: 'auth/getAdminLevel',
+      color: 'appearance/getNormalColors'
     }),
     columns () {
       const columns = [

@@ -82,6 +82,7 @@
           v-slot:loading
         >
           <q-inner-loading
+            :dark="color.cardBodyDark"
             showing
             color="info"
           />
@@ -325,7 +326,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      categories: 'category/getCategories'
+      categories: 'category/getCategories',
+      color: 'appearance/getNormalColors'
     }),
     iseditCategoryNew () {
       return this.editOptions.editCategory.id === -1

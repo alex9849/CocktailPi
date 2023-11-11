@@ -8,7 +8,7 @@
       <q-card
         flat
         bordered
-        class="q-pa-md bg-card-primary"
+        class="q-pa-md bg-card-body text-card-body"
       >
         <q-form
           class="q-col-gutter-md"
@@ -18,13 +18,14 @@
             <q-card
               flat
               bordered
-              class="bg-white"
+              class="bg-card-item-group text-card-item-group"
             >
               <q-card-section
                 class="q-gutter-y-md"
               >
                 <q-input
                   outlined
+                  :dark="color.cardItemGroupDark"
                   v-model:model-value="v.editUser.username.$model"
                   :disable="form.loading || form.disable"
                   hide-bottom-space
@@ -32,6 +33,7 @@
                 />
                 <q-input
                   outlined
+                  :dark="color.cardItemGroupDark"
                   v-model:model-value="v.editUser.password.$model"
                   :disable="form.loading || form.disable"
                   hide-bottom-space
@@ -45,6 +47,7 @@
                 </q-input>
                 <q-select
                   outlined
+                  :dark="color.cardItemGroupDark"
                   v-model:model-value="v.editUser.adminLevel.$model"
                   map-options
                   emit-value
@@ -55,6 +58,7 @@
                   :label="$t('page.user_editor.form.columns.role')"
                 />
                 <q-checkbox
+                  :dark="color.cardItemGroupDark"
                   v-if="!isSelfUser"
                   :model-value="!v.editUser.accountNonLocked.$model"
                   @update:model-value="e => v.editUser.accountNonLocked.$model = !e"
@@ -192,7 +196,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getUser: 'auth/getUser'
+      getUser: 'auth/getUser',
+      color: 'appearance/getNormalColors'
     }),
     isNewUser () {
       return this.$route.name === 'usercreator'

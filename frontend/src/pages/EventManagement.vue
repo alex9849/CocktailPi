@@ -37,6 +37,7 @@
           v-slot:loading
         >
           <q-inner-loading
+            :dark="color.cardBodyDark"
             color="info"
             showing
           />
@@ -208,6 +209,7 @@ import EventActionService, { eventActionDtoMapper } from '../services/eventactio
 import CEventActionEditorForm from 'components/CEventActionEditorForm'
 import { eventActionTriggerDisplayNames } from '../mixins/constants'
 import CDeleteWarning from 'components/CDeleteWarning'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'EventManagement',
@@ -373,6 +375,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     isNewEditEventAction () {
       return this.editOptions.editEventAction.id === -1
     },

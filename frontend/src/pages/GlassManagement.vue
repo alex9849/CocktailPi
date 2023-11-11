@@ -43,6 +43,7 @@
           v-slot:loading
         >
           <q-inner-loading
+            :dark="color.cardBodyDark"
             showing
             color="info"
           />
@@ -234,6 +235,11 @@ export default {
     this.mdiCheckboxBlankCircleOutline = mdiCheckboxBlankCircleOutline
     this.mdiCheckCircle = mdiCheckCircle
     this.mdiInformation = mdiInformation
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   },
   methods: {
     showEditDialog (glass) {

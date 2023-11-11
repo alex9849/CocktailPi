@@ -93,6 +93,7 @@
         v-slot:loading
       >
         <q-inner-loading
+          :dark="color.cardBodyDark"
           color="info"
           showing
         />
