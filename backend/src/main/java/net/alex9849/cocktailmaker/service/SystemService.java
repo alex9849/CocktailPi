@@ -274,7 +274,7 @@ public class SystemService {
         optionsRepository.setOption("COLOR_NORMAL_BACKGROUND", nc.getBackground());
         optionsRepository.setOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE", nc.getBtnNavigationActive());
         optionsRepository.setOption("COLOR_NORMAL_BTN_PRIMARY", nc.getBtnPrimary());
-        optionsRepository.setOption("COLOR_NORMAL_CARD_HEADER", nc.getCardBody());
+        optionsRepository.setOption("COLOR_NORMAL_CARD_HEADER", nc.getCardHeader());
         optionsRepository.setOption("COLOR_NORMAL_CARD_BODY", nc.getCardBody());
         optionsRepository.setOption("COLOR_NORMAL_CARD_ITEM_GROUP", nc.getCardItemGroup());
 
