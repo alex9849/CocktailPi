@@ -8,7 +8,11 @@ export const setAppearanceSettings = (state, payload) => {
     language: payload.language,
     colors: {}
   }
-  payload.colors.normal.cardBodyTableOdd = colors.lighten(payload.colors.normal.cardBody, 3)
+  if (colors.brightness(payload.colors.normal.cardBody) > 240) {
+    payload.colors.normal.cardBodyTableOdd = '#FFFFFF'
+  } else {
+    payload.colors.normal.cardBodyTableOdd = colors.lighten(payload.colors.normal.cardBody, 3)
+  }
   payload.colors.normal.cardBackgroundInfoIcon = complementColor(payload.colors.normal.background, 50)
   for (const areaKey in payload.colors) {
     const areaColors = {}
