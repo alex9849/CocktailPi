@@ -582,6 +582,7 @@ export default {
       no_steps_added: 'Keine Produktionsschritte hinzugefügt!',
       alc_content: '{nr}% Alkoholgehalt',
       alc_content_range: '{min} - {min}% Alkoholgehalt',
+      manual_instruction: 'Manueller Schritt:',
       tag_boostable: 'Boostbar',
       tag_unscaled: 'Unskaliert',
       edit_dialog: {

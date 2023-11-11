@@ -639,6 +639,7 @@ export default {
       no_steps_added: 'No Production-Steps added!',
       alc_content: '{nr}% alcohol content',
       alc_content_range: '{min} - {max}% alcohol content',
+      manual_instruction: 'Manual instruction:',
       tag_boostable: 'Boostable',
       tag_unscaled: 'Unscaled',
       edit_dialog: {

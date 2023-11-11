@@ -26,7 +26,7 @@
         >
           <q-icon
             style="cursor: grab"
-            :color="compColors.icon"
+            :style="{'color': compColors.icon}"
             :name="mdiDrag"
           />
         </q-item-section>
@@ -51,7 +51,7 @@
                   :style="{'color': compColors.caption}"
                   caption
                 >
-                  Manual instruction:
+                  {{ $t('component.ingredient_list.manual_instruction') }}
                 </q-item-label>
                 {{ element.message }}
               </q-item-section>
@@ -61,7 +61,7 @@
                   dense
                   flat
                   rounded
-                  :color="compColors.icon"
+                  :style="{'color': compColors.icon}"
                   @click="showManualInstructionEditor(element)"
                 />
               </q-item-section>
@@ -71,7 +71,7 @@
                   dense
                   flat
                   rounded
-                  :color="compColors.icon"
+                  :style="{'color': compColors.icon}"
                   @click="removeManualInstruction(element)"
                 />
               </q-item-section>
@@ -96,7 +96,6 @@
             <template #item="sublist">
               <q-item
                 class="dragItem"
-                :dark="compColors.dark"
               >
                 <q-item-section
                   v-if="showIngredientDragIcon"
@@ -105,7 +104,7 @@
                   <q-icon
                     style="cursor: grab"
                     :name="mdiDrag"
-                    :color="compColors.icon"
+                    :style="{'color': compColors.icon}"
                   />
                 </q-item-section>
                 <q-item-section>
@@ -134,7 +133,7 @@
                     dense
                     flat
                     rounded
-                    :color="compColors.icon"
+                    :style="{'color': compColors.icon}"
                     @click="splitUpStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
@@ -144,7 +143,7 @@
                     dense
                     flat
                     rounded
-                    :color="compColors.icon"
+                    :style="{'color': compColors.icon}"
                     @click="showStepIngredientEditor(element, sublist.element)"
                   />
                 </q-item-section>
@@ -154,7 +153,7 @@
                     dense
                     flat
                     rounded
-                    :color="compColors.icon"
+                    :style="{'color': compColors.icon}"
                     @click="removeStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
@@ -189,7 +188,7 @@
             dense
             flat
             rounded
-            :color="compColors.icon"
+            :style="{'color': compColors.icon}"
             @click="showAddProductionStepEditor()"
           />
         </q-item-section>
@@ -293,7 +292,7 @@ export default {
         caption: complementColor(this.backgroundColor, 60),
         pstep: pstep,
         pstepText: calcTextColor(pstep),
-        icon: dark ? 'white' : 'black'
+        icon: complementColor(this.backgroundColor, 60)
       }
     },
     showPStepDragIcon () {
