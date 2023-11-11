@@ -314,8 +314,8 @@ public class SystemService {
         svColors.setSidebar(optionsRepository.getOption("COLOR_SV_SIDEBAR").orElse("#616161"));
         svColors.setBackground(optionsRepository.getOption("COLOR_SV_BACKGROUND").orElse("#000000"));
         svColors.setBtnNavigation(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION").orElse("#616161"));
-        svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#B968C7"));
-        svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#616161"));
+        svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#9336A3"));
+        svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#9336A3"));
         svColors.setCocktailProgress(optionsRepository.getOption("COLOR_SV_CPROGRESS").orElse("#1B5E20"));
         svColors.setCardPrimary(optionsRepository.getOption("COLOR_SV_CARD_PRIMARY").orElse("#787878"));
         colors.setNormal(normalColors);
