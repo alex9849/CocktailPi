@@ -57,14 +57,18 @@
             <ingredient-list
               big
               alternateRowColors
-              class="bg-grey-3 shadow-2"
+              class="shadow-5"
+              :background-color="color.cardBody"
               v-model:model-value="recipe.productionSteps"
             />
           </div>
         </div>
       </div>
       <div>
-        <q-card bordered class="bg-grey-3 shadow-1">
+        <q-card
+          bordered
+          class="shadow-5 bg-card-body text-card-body"
+        >
           <q-card-section>
             <div style="display: block ruby">
               <b>{{ $t('page.recipe_details.categories_headline') }}</b>
@@ -98,7 +102,11 @@
         class="row"
       >
         <div class="col">
-          <q-card bordered class="bg-grey-3 shadow-1" style="min-height: 100px">
+          <q-card
+            bordered
+            class="shadow-5 bg-card-body text-card-body"
+            style="min-height: 100px"
+          >
             <q-card-section>
               <b>{{ $t('page.recipe_details.description_headline') }}</b>
               <div style="min-width: 200px; white-space: pre-line" class="col">
@@ -223,7 +231,8 @@ export default {
       isAdminRole: 'auth/isAdmin',
       isRecipeCreatorRole: 'auth/isRecipeCreator',
       isPumpIngredientEditorRole: 'auth/isPumpIngredientEditor',
-      lastRecipeListRoute: 'common/getLastRecipeListRoute'
+      lastRecipeListRoute: 'common/getLastRecipeListRoute',
+      color: 'appearance/getNormalColors'
     }),
     showMakeCocktailDialog: {
       get () {

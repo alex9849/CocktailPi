@@ -8,7 +8,7 @@
         <q-card
           flat
           bordered
-          class="bg-grey-1"
+          class="bg-card-body text-card-body"
         >
           <q-card-section class="text-center">
             {{ $t('component.recipe_list.no_recipes_found') }}
@@ -28,7 +28,8 @@
             :recipe="recipe"
             show-ingredients
             style="height: 160px"
-            class="bg-grey-2 q-card--bordered q-card--flat no-shadow"
+            class="q-card--bordered q-card--flat no-shadow"
+            :background-color="color.cardBody"
           >
             <template v-slot:headline>
               <slot
@@ -54,7 +55,7 @@
 
 <script>
 import CRecipeCard from 'components/CRecipeCard'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'CRecipeList',
@@ -75,6 +76,11 @@ export default {
   methods: {
     ...mapMutations({
       setLastRecipeListRoute: 'common/setLastRecipeListRoute'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
     })
   },
   watch: {

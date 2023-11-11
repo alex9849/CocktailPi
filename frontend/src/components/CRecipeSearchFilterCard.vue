@@ -1,5 +1,7 @@
 <template>
-  <q-card>
+  <q-card
+    class="bg-card-body text-card-body"
+  >
     <q-card-section>
       <div class="q-gutter-md">
         <div>
@@ -7,31 +9,35 @@
         </div>
         <div>
           <q-card
-            flat bordered
+            flat
+            bordered
+            class="bg-card-header text-card-header"
           >
             <q-card-section class="q-pa-none">
               <q-expansion-item
                 :label="$t('component.recipe_search_filter_card.expert_search_label')"
                 v-model="isFilterExpanded"
-                :header-class="isFilterExpanded? 'bg-grey-2' : ''"
+                header-class="bg-card-header text-card-header"
+                :style="{'backgroundColor': expertSearchBoxColors.color, 'color': expertSearchBoxColors.textColor}"
               >
                 <div
                   class="row justify-evenly q-col-gutter-sm q-pa-sm"
                 >
                   <div class="col-12">
                     <q-card
-                      class="row items-center justify-start"
+                      class="row items-center bg-transparent justify-start"
                       flat
                       bordered
                     >
                       <div class="col-shrink">
-                        <p class="q-px-sm text-grey-7">
+                        <p class="q-px-sm" :style="{'color': fabricableLabelColor}">
                           {{ $t('component.recipe_search_filter_card.fabricable_box.headline') }}
                         </p>
                       </div>
                       <div class="col-grow">
                         <div class="row">
                           <q-radio
+                            :dark="expertSearchBoxColors.dark"
                             v-for="option in fabricable_options"
                             :key="option.val"
                             :label="option.label"
@@ -45,6 +51,7 @@
                     </q-card>
                   </div>
                   <c-ingredient-selector
+                    :dark="expertSearchBoxColors.dark"
                     :model-value="filter.containsIngredients"
                     @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
                     class="col-12 col-sm-8"
@@ -56,6 +63,7 @@
                     use-chips
                   />
                   <q-select
+                    :dark="expertSearchBoxColors.dark"
                     :model-value="filter.orderBy"
                     @update:model-value="$emit('update:filter', {...filter, orderBy: $event})"
                     class="col-12 col-sm-4"
@@ -83,18 +91,17 @@
         </div>
         <div class="block">
           <q-input
+            :dark="color.cardItemGroupDark"
             :model-value="filter.query"
             @update:model-value="$emit('update:filter', {...filter, query: $event})"
             outlined
             :label="$t('component.recipe_search_filter_card.cocktail_name_field_label')"
             dense
-            bg-color="white"
             @keypress.enter="onSearch"
           >
             <template v-slot:after>
               <q-btn
-                text-color="black"
-                color="white"
+                color="primary"
                 :icon="mdiMagnify"
                 @click="onSearch"
               />
@@ -111,6 +118,8 @@
 import { mdiMagnify } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
 import { recipeOrderOptions } from '../mixins/constants'
+import { mapGetters } from 'vuex'
+import { calcTextColor, complementColor, isDark } from 'src/mixins/utils'
 
 export default {
   name: 'CRecipeSearchFilterCard',
@@ -142,6 +151,22 @@ export default {
     return {
       mdiMagnify: mdiMagnify
     }
+  },
+  computed: {
+    expertSearchBoxColors () {
+      const color = complementColor(this.color.cardBody, 10)
+      return {
+        color: color,
+        textColor: calcTextColor(color),
+        dark: isDark(color)
+      }
+    },
+    fabricableLabelColor () {
+      return complementColor(this.expertSearchBoxColors.color, 70)
+    },
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   },
   methods: {
     defaultFilter () {

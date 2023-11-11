@@ -7,7 +7,7 @@
     <q-card
       flat
       bordered
-      class="bg-card-primary"
+      class="bg-card-body text-card-body"
     >
       <q-card-section>
         <q-form
@@ -18,12 +18,13 @@
           <q-card
             flat
             bordered
-            class="bg-white"
+            class="bg-card-item-group text-card-item-group"
           >
             <q-card-section
               class="q-gutter-y-md"
             >
               <q-input
+                :dark="color.cardItemGroupDark"
                 outlined
                 :disable="disabled"
                 hide-bottom-space
@@ -33,6 +34,7 @@
                 :label="$t('page.recipe_edit.form.name')"
               />
               <q-select
+                :dark="color.cardItemGroupDark"
                 :disable="disabled"
                 :label="$t('page.recipe_edit.form.categories')"
                 v-model:model-value="v.editRecipe.recipe.categories.$model"
@@ -51,12 +53,14 @@
               >
                 <div class="col">
                   <q-toggle v-if="editRecipe.recipe.hasImage && !editRecipe.image"
+                            :dark="color.cardItemGroupDark"
                             :disable="disabled"
                             v-model:model-value="v.editRecipe.removeImage.$model"
                             color="red"
                             :label="$t('page.recipe_edit.form.remove_image')"
                   />
                   <q-file v-if="!editRecipe.removeImage"
+                          :dark="color.cardItemGroupDark"
                           :disable="disabled"
                           v-model:model-value="v.editRecipe.image.$model"
                           accept="image/*"
@@ -80,6 +84,7 @@
                 outlined
                 hide-bottom-space
                 :disable="disabled"
+                :dark="color.cardItemGroupDark"
                 v-model:model-value="v.editRecipe.recipe.description.$model"
                 :error-message="v.editRecipe.recipe.description.$errors[0]?.$message"
                 :error="v.editRecipe.recipe.description.$errors.length > 0"
@@ -93,13 +98,14 @@
           <q-card
             flat
             bordered
-            class="bg-white"
+            class="bg-card-item-group text-card-item-group"
           >
             <q-card-section
               class="q-gutter-y-md"
             >
               <q-select
                 :disable="disabled"
+                :dark="color.cardItemGroupDark"
                 :label="$t('page.recipe_edit.form.default_glass')"
                 v-model:model-value="v.editRecipe.recipe.defaultGlass.$model"
                 :error-message="v.editRecipe.recipe.defaultGlass.$errors[0]?.$message"
@@ -115,7 +121,7 @@
           <q-card
             flat
             bordered
-            class="bg-white"
+            class="bg-card-item-group text-card-item-group"
           >
             <q-card-section
               class="q-gutter-y-md"
@@ -123,6 +129,7 @@
               <IngredientList
                 v-model:model-value="v.editRecipe.recipe.productionSteps.$model"
                 editable
+                :background-color="color.cardItemGroup"
                 :disable="disabled"
               />
             </q-card-section>
@@ -237,7 +244,8 @@ export default {
     ...mapGetters({
       categories: 'category/getCategories',
       lastRecipeListRoute: 'common/getLastRecipeListRoute',
-      user: 'auth/getUser'
+      user: 'auth/getUser',
+      color: 'appearance/getNormalColors'
     }),
     disabled () {
       return this.sending

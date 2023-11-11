@@ -13,7 +13,7 @@
         <q-card
           flat
           bordered
-          class="bg-grey-1 clickable"
+          class="clickable bg-card-body text-card-body"
           :class="{'disabled': orderDialog.loadingId !== null}"
           @click="openOrderDialog(iRecipe)"
         >
@@ -30,7 +30,10 @@
             </q-card-section>
             <q-card-section class="col-8 q-pa-sm flex column">
               <div class="text-h5" style="margin-bottom: 0">{{ iRecipe.name }}</div>
-              <div class="text-caption text-grey">
+              <div
+                class="text-caption"
+                :style="{'color': captionColor}"
+              >
                 <p>{{ $t('page.ingredient_recipes.recipe.ml_left', {nr: iRecipe.ingredient.alcoholContent})}}</p>
                 <p>{{ $t('page.ingredient_recipes.recipe.alc_content', {nr: iRecipe.mlLeft})}}</p>
               </div>
@@ -44,7 +47,7 @@
       >
         <q-card
           flat bordered
-          class="bg-card-secondary"
+          class="bg-card-header text-card-header"
         >
           <div class="row q-pa-md items-center q-gutter-sm">
             <q-icon size="sm" :name="mdiAlert" />
@@ -69,6 +72,7 @@ import RecipeService from 'src/services/recipe.service'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import CMakeCocktailDialog from 'components/CMakeCocktailDialog.vue'
 import { mapGetters } from 'vuex'
+import { complementColor } from 'src/mixins/utils'
 
 export default {
   name: 'IngredientRecipes',
@@ -134,8 +138,12 @@ export default {
     }
   },
   computed: {
+    captionColor () {
+      return complementColor(this.color.cardBody, 60)
+    },
     ...mapGetters({
-      cocktailProgress: 'cocktailProgress/hasCocktailProgress'
+      cocktailProgress: 'cocktailProgress/hasCocktailProgress',
+      color: 'appearance/getNormalColors'
     })
   }
 }

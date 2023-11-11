@@ -1,6 +1,6 @@
 <template>
   <q-card
-    :style="'background-color: ' + backgroundColor"
+    :style="{'backgroundColor': backgroundColor, 'color': textColor}"
     class="full-height"
   >
     <q-card-section
@@ -28,7 +28,7 @@
           </div>
           <div class="col-12 col-sm-8 col-md-8 col-lg-9 q-pl-sm-sm q-pt-sm-none q-pt-sm flex column">
             <div class="row">
-              <div class="col-12 row justify-around q-col-gutter-sm">
+              <div class="col-12 row justify-around">
                 <div class="col">
                   <p class="text-h5">
                     <slot name="headline">
@@ -75,7 +75,9 @@
 
             <div style="flex-grow: 1"/>
             <div class="row justify-end">
-              <p class="text-grey">
+              <p
+                :style="{'color': ownerColor}"
+              >
                 {{ $t('component.recipe_card.owner_name', {name: recipe.ownerName}) }}
               </p>
             </div>
@@ -90,6 +92,7 @@
 <script>
 
 import CRecipeFabricableIcon from 'components/CRecipeFabricableIcon'
+import { calcTextColor, complementColor } from 'src/mixins/utils'
 
 export default {
   name: 'CRecipeCard',
@@ -126,6 +129,14 @@ export default {
         return this.$t('component.recipe_card.ingredient_add_manually_tooltip')
       }
       return this.$t('component.recipe_card.ingredient_not_owned_tooltip')
+    }
+  },
+  computed: {
+    textColor () {
+      return calcTextColor(this.backgroundColor)
+    },
+    ownerColor () {
+      return complementColor(this.backgroundColor, 50)
     }
   }
 }

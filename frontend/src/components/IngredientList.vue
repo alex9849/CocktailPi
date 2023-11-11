@@ -11,11 +11,13 @@
     group="productionSteps"
     tag="div"
     class="rounded-borders q-list q-list--bordered q-list--separator"
+    :style="{'backgroundColor': backgroundColor, 'color': compColors.text}"
     :animation="200"
   >
     <template #item="{element, index}">
       <q-item
         :class="{'alternateGrey': alternateRowColors}"
+        :dark="compColors.dark"
         class="dragItem"
       >
         <q-item-section
@@ -24,17 +26,31 @@
         >
           <q-icon
             style="cursor: grab"
+            :color="compColors.icon"
             :name="mdiDrag"
           />
         </q-item-section>
-        <q-item-section avatar>
-          <q-avatar color="grey">{{ index + 1}}.</q-avatar>
+        <q-item-section
+          avatar
+        >
+          <q-avatar
+            :style="{'backgroundColor': compColors.pstep, 'color': compColors.pstepText}"
+          >
+            {{ index + 1}}.
+          </q-avatar>
         </q-item-section>
         <q-item-section v-if="element.type === 'writtenInstruction'">
-          <q-list>
-            <q-item>
+          <q-list
+            :dark="compColors.dark"
+          >
+            <q-item
+              :dark="compColors.dark"
+            >
               <q-item-section>
-                <q-item-label caption>
+                <q-item-label
+                  :style="{'color': compColors.caption}"
+                  caption
+                >
                   Manual instruction:
                 </q-item-label>
                 {{ element.message }}
@@ -45,6 +61,7 @@
                   dense
                   flat
                   rounded
+                  :color="compColors.icon"
                   @click="showManualInstructionEditor(element)"
                 />
               </q-item-section>
@@ -54,6 +71,7 @@
                   dense
                   flat
                   rounded
+                  :color="compColors.icon"
                   @click="removeManualInstruction(element)"
                 />
               </q-item-section>
@@ -76,7 +94,10 @@
             @update:model-value="onStepIngredientsListDrag(element, $event)"
           >
             <template #item="sublist">
-              <q-item class="dragItem">
+              <q-item
+                class="dragItem"
+                :dark="compColors.dark"
+              >
                 <q-item-section
                   v-if="showIngredientDragIcon"
                   side
@@ -84,16 +105,25 @@
                   <q-icon
                     style="cursor: grab"
                     :name="mdiDrag"
+                    :color="compColors.icon"
                   />
                 </q-item-section>
                 <q-item-section>
                   <div style="display: ruby">
                     {{ sublist.element.amount }} {{ sublist.element.ingredient.unit }} {{ sublist.element.ingredient.name }}
-                    <q-item-label v-if="getStepIngredientAnnotationString(sublist.element)" caption>
+                    <q-item-label
+                      v-if="getStepIngredientAnnotationString(sublist.element)"
+                      :style="{'color': compColors.caption}"
+                      caption
+                    >
                       {{ getStepIngredientAnnotationString(sublist.element) }}
                     </q-item-label>
                   </div>
-                  <q-item-label v-if="getAlcoholContentString(sublist.element.ingredient)" caption>
+                  <q-item-label
+                    v-if="getAlcoholContentString(sublist.element.ingredient)"
+                    :style="{'color': compColors.caption}"
+                    caption
+                  >
                     {{ getAlcoholContentString(sublist.element.ingredient) }}
                   </q-item-label>
                 </q-item-section>
@@ -104,6 +134,7 @@
                     dense
                     flat
                     rounded
+                    :color="compColors.icon"
                     @click="splitUpStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
@@ -113,6 +144,7 @@
                     dense
                     flat
                     rounded
+                    :color="compColors.icon"
                     @click="showStepIngredientEditor(element, sublist.element)"
                   />
                 </q-item-section>
@@ -122,6 +154,7 @@
                     dense
                     flat
                     rounded
+                    :color="compColors.icon"
                     @click="removeStepIngredient(element, sublist.element)"
                   />
                 </q-item-section>
@@ -132,9 +165,15 @@
       </q-item>
     </template>
     <template #header>
-      <q-item>
+      <q-item
+        :dark="compColors.dark"
+      >
         <q-item-section>
-          <q-item-label class="text-black" header style="padding: 0">
+          <q-item-label
+            header
+            style="padding: 0"
+            :style="{'color': compColors.text}"
+          >
             <b v-if="big">
               {{ $t('component.ingredient_list.headline') }}
             </b>
@@ -150,6 +189,7 @@
             dense
             flat
             rounded
+            :color="compColors.icon"
             @click="showAddProductionStepEditor()"
           />
         </q-item-section>
@@ -163,7 +203,9 @@
           @clickAbort="closeProductionStepEditor"
           @clickSave="saveEditProductionStep"
         >
-          <q-separator />
+          <q-separator
+            :dark="compColors.dark"
+          />
           <production-step-list-editor
             v-model:model-value="editor.editingObject"
             :new-production-step="editor.isCreatingNew"
@@ -177,7 +219,9 @@
     <template v-if="productionSteps.length === 0"
               #footer
     >
-      <q-item>
+      <q-item
+        :dark="compColors.dark"
+      >
         <q-item-section class="text-center">
           {{ $t('component.ingredient_list.no_steps_added') }}
         </q-item-section>
@@ -192,6 +236,7 @@ import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep'
 import CEditDialog from 'components/CEditDialog'
 import ProductionStepListEditor from 'components/ProductionStepListEditor'
+import { calcTextColor, complementColor, isDark } from 'src/mixins/utils'
 
 export default {
   name: 'IngredientList',
@@ -217,6 +262,10 @@ export default {
     alternateRowColors: {
       type: Boolean,
       default: false
+    },
+    backgroundColor: {
+      type: String,
+      default: '#FFFFFF'
     }
   },
   emits: ['update:modelValue'],
@@ -234,6 +283,19 @@ export default {
     }
   },
   computed: {
+    compColors () {
+      const pstep = complementColor(this.backgroundColor, 30)
+      const dark = isDark(this.backgroundColor)
+      return {
+        bg: this.backgroundColor,
+        dark: dark,
+        text: calcTextColor(this.backgroundColor),
+        caption: complementColor(this.backgroundColor, 60),
+        pstep: pstep,
+        pstepText: calcTextColor(pstep),
+        icon: dark ? 'white' : 'black'
+      }
+    },
     showPStepDragIcon () {
       return this.editable && this.productionSteps.length > 1
     },
@@ -267,7 +329,7 @@ export default {
           }
           return this.$t('component.ingredient_list.alc_content', { nr: ingredient.minAlcoholContent })
         }
-        return this.$t('component.ingredient_list.alc_content', { min: ingredient.minAlcoholContent, max: ingredient.maxAlcoholContent })
+        return this.$t('component.ingredient_list.alc_content_range', { min: ingredient.minAlcoholContent, max: ingredient.maxAlcoholContent })
       }
       if (ingredient.alcoholContent === 0) {
         return null

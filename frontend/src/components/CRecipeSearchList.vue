@@ -3,7 +3,6 @@
     <c-recipe-search-filter-card
       v-model:filter="filter"
       ref="filter"
-      class="bg-grey-1"
       @clickSearch="onClickSearch"
     />
     <q-infinite-scroll
@@ -13,7 +12,7 @@
     >
       <template v-slot:loading>
         <q-card
-          class="q-my-md"
+          class="q-my-md bg-card-body text-card-body"
           flat
           bordered
         >
@@ -21,8 +20,14 @@
             <q-icon :name="mdiAlert" size="sm"/>
             {{ $t('component.recipe_search_list.loading') }}
           </q-card-section>
-          <q-inner-loading showing>
-            <q-spinner size="40px" color="info"/>
+          <q-inner-loading
+            :dark="color.cardBodyDark"
+            showing
+          >
+            <q-spinner
+              size="40px"
+              color="info"
+            />
           </q-inner-loading>
         </q-card>
       </template>
@@ -189,7 +194,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'auth/getUser'
+      user: 'auth/getUser',
+      color: 'appearance/getNormalColors'
     })
   }
 }
