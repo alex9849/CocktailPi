@@ -24,7 +24,7 @@
           >
             <img
               src="~assets/icons/stepper-motor.svg"
-              :style="{'-webkit-filter': color.cardBodyDark ? 'invert(100%)' : 'none', 'filter': color.cardBodyDark ? 'invert(100%)' : 'none'}"
+              :style="{'-webkit-filter': color.cardHeaderDark ? 'invert(100%)' : 'none', 'filter': color.cardHeaderDark ? 'invert(100%)' : 'none'}"
             />
           </q-icon>
           {{ printPumpType }}
