@@ -18,16 +18,17 @@
       outline
       direction-links
     />
-    <q-inner-loading
-      dark class="text-white"
-      :showing="loading"
-      size="80px"
-    />
     <c-simple-recipe-list
       class="col-12"
       :recipes="recipes"
     />
   </div>
+  <q-inner-loading
+    dark class="text-white"
+    style="position: fixed"
+    size="80px"
+    :showing="loading"
+  />
 </template>
 
 <script>
