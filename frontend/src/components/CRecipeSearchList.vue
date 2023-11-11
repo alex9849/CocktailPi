@@ -30,6 +30,7 @@
         <c-recipe-list
           :recipes="recipes"
           :showNoData="recipes.length === 0 && !loading"
+          :two-col-threshold="twoColThreshold"
         >
           <template v-slot:firstItem>
             <div class="col-12 q-col-gutter-y-md"
