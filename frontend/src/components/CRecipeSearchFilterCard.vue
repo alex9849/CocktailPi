@@ -91,7 +91,7 @@
         </div>
         <div class="block">
           <q-input
-            :dark="color.cardItemGroupDark"
+            :dark="color.cardBodyDark"
             :model-value="filter.query"
             @update:model-value="$emit('update:filter', {...filter, query: $event})"
             outlined
