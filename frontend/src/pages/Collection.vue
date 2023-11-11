@@ -71,8 +71,9 @@
         </c-recipe-search-list>
       </div>
       <div class="col-12 col-md-4 col-lg-3">
-        <q-card class="rounded-borders"
-                bordered style="background-color: #f3f3fa"
+        <q-card
+          class="rounded-borders bg-card-body text-card-body"
+          bordered
         >
           <q-card-section class="col">
             <q-form @submit.prevent="onClickSafe"
@@ -86,6 +87,7 @@
                 />
               </div>
               <q-input :label="$t('page.collection.form.name')"
+                       :dark="color.cardBodyDark"
                        outlined
                        :disable="!editData.editMode || editData.saving"
                        v-model:model-value="editData.collection.name"
@@ -99,11 +101,13 @@
               </q-input>
               <div class="row"
                    v-if="editData.editMode"
+                   :style="{borderColor: color.cardBodyDark ? 'lightgrey' : 'grey'}"
                    :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': collection.hasImage && !editData.newImage && !editData.removeImage}"
               >
                 <div class="col">
                   <q-toggle :label="$t('page.collection.form.remove_img')"
                             color="red"
+                            :dark="color.cardBodyDark"
                             :disable="editData.saving"
                             v-if="collection.hasImage && !editData.newImage"
                             v-model:model-value="editData.removeImage"
@@ -111,6 +115,7 @@
                   />
                   <q-file :label="$t('page.collection.form.image')"
                           outlined
+                          :dark="color.cardBodyDark"
                           bottom-slots
                           :disable="editData.saving"
                           v-if="!editData.removeImage"
@@ -132,6 +137,7 @@
               </div>
               <q-input :label="$t('page.collection.form.desc')"
                        outlined
+                       :dark="color.cardBodyDark"
                        autogrow
                        hide-bottom-space
                        type="textarea"
@@ -277,7 +283,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getUser: 'auth/getUser'
+      getUser: 'auth/getUser',
+      color: 'appearance/getNormalColors'
     }),
     isCanEdit () {
       return this.getUser.adminLevel >= 3 || this.getUser.id === this.collection.ownerId
