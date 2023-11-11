@@ -201,7 +201,7 @@ export default {
       color: 'appearance/getNormalColors'
     }),
     plusMinusBtnColor () {
-      const background = complementColor(this.color.background, 20)
+      const background = complementColor(this.color.background, 15)
       return {
         bg: background,
         text: calcTextColor(background)

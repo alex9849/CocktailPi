@@ -38,7 +38,7 @@
                       <div class="col-grow">
                         <div class="row">
                           <q-radio
-                            :dark="expertSearchBoxColors.dark"
+                            :dark="color.cardItemGroupDark"
                             v-for="option in fabricable_options"
                             :key="option.val"
                             :label="option.label"
@@ -52,7 +52,7 @@
                     </q-card>
                   </div>
                   <c-ingredient-selector
-                    :dark="expertSearchBoxColors.dark"
+                    :dark="color.cardItemGroupDark"
                     :model-value="filter.containsIngredients"
                     @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"
                     class="col-12 col-sm-8"
@@ -64,7 +64,7 @@
                     use-chips
                   />
                   <q-select
-                    :dark="expertSearchBoxColors.dark"
+                    :dark="color.cardItemGroupDark"
                     :model-value="filter.orderBy"
                     @update:model-value="$emit('update:filter', {...filter, orderBy: $event})"
                     class="col-12 col-sm-4"
@@ -92,7 +92,7 @@
         </div>
         <div class="block">
           <q-input
-            :dark="color.cardBodyDark"
+            :dark="color.cardItemGroupDark"
             :model-value="filter.query"
             @update:model-value="$emit('update:filter', {...filter, query: $event})"
             outlined
@@ -156,16 +156,8 @@ export default {
     }
   },
   computed: {
-    expertSearchBoxColors () {
-      const color = complementColor(this.color.cardBody, 10)
-      return {
-        color: color,
-        textColor: calcTextColor(color),
-        dark: isDark(color)
-      }
-    },
     fabricableLabelColor () {
-      return complementColor(this.expertSearchBoxColors.color, 70)
+      return complementColor(this.color.cardItemGroup, 70)
     },
     ...mapGetters({
       color: 'appearance/getNormalColors'

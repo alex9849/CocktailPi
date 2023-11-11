@@ -40,7 +40,7 @@
               v-if="recipe.hasImage"
               :ratio="16/9"
               :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getTime()"
-              class="rounded-borders shadow-1"
+              class="rounded-borders shadow-2"
               placeholder-src="~assets/cocktail-solid.png"
             />
             <q-img
@@ -48,7 +48,7 @@
               placeholder-src="~assets/cocktail-solid.png"
               src="~assets/cocktail-solid.png"
               :ratio="16/9"
-              class="rounded-borders shadow-1"
+              class="rounded-borders shadow-2"
             />
           </div>
         </div>
@@ -57,7 +57,7 @@
             <ingredient-list
               big
               alternateRowColors
-              class="shadow-5"
+              class="shadow-2"
               :background-color="color.cardBody"
               v-model:model-value="recipe.productionSteps"
             />
@@ -67,7 +67,7 @@
       <div>
         <q-card
           bordered
-          class="shadow-5 bg-card-body text-card-body"
+          class="shadow-2 bg-card-body text-card-body"
         >
           <q-card-section>
             <div style="display: block ruby">
@@ -104,7 +104,7 @@
         <div class="col">
           <q-card
             bordered
-            class="shadow-5 bg-card-body text-card-body"
+            class="shadow-2 bg-card-body text-card-body"
             style="min-height: 100px"
           >
             <q-card-section>

@@ -2,7 +2,6 @@
   <q-card
     flat
     bordered
-    class="bg-card-body text-card-body"
   >
     <q-card-section class="q-pa-none">
       <q-expansion-item
