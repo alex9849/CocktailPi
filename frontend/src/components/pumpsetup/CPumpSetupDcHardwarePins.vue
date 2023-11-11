@@ -14,6 +14,7 @@
     </template>
     <template v-slot:fields>
       <c-gpio-selector
+        :dark="color.cardBodyDark"
         :model-value="pin"
         @update:model-value="$emit('update:pin', $event)"
         :error-message="pinErrorMsg"
@@ -33,6 +34,7 @@
     </template>
     <template v-slot:fields>
       <q-select
+        :dark="color.cardBodyDark"
         :model-value="isPowerStateHigh"
         :options="powerStateOptions"
         map-options
@@ -54,7 +56,7 @@
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
 import CGpioSelector from 'components/CGpioSelector.vue'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default defineComponent({
   name: 'CPumpSetupDcHardwarePins',
@@ -70,6 +72,11 @@ export default defineComponent({
   methods: {
     ...mapMutations({
       openExternalLink: 'common/openExternalLink'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
     })
   },
   data () {

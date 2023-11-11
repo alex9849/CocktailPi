@@ -14,6 +14,7 @@
     </template>
     <template v-slot:fields>
       <c-gpio-selector
+        :dark="color.cardBodyDark"
         :model-value="stepPin"
         @update:model-value="$emit('update:stepPin', $event)"
         :error-message="stepPinErrorMsg"
@@ -24,6 +25,7 @@
         clearable
       />
       <c-gpio-selector
+        :dark="color.cardBodyDark"
         :model-value="enablePin"
         @update:model-value="$emit('update:enablePin', $event)"
         :error-message="enablePinErrorMsg"
@@ -40,7 +42,7 @@
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
 import CGpioSelector from 'components/CGpioSelector.vue'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default defineComponent({
   name: 'CPumpSetupStepperHardwarePins',
@@ -56,6 +58,11 @@ export default defineComponent({
   methods: {
     ...mapMutations({
       openExternalLink: 'common/openExternalLink'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
     })
   }
 })

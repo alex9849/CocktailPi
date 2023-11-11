@@ -7,6 +7,7 @@
     </template>
     <template v-slot:fields>
       <q-input
+        :dark="color.cardBodyDark"
         :model-value="acceleration"
         @update:model-value="$emit('update:acceleration', $event)"
         :error-message="accelerationErrorMsg"
@@ -33,6 +34,7 @@
     </template>
     <template v-slot:fields>
       <q-input
+        :dark="color.cardBodyDark"
         :model-value="maxStepsPerSecond"
         @update:model-value="$emit('update:maxStepsPerSecond', $event)"
         :error-message="maxStepsPerSecondErrorMsg"
@@ -59,6 +61,7 @@
     </template>
     <template v-slot:fields>
       <q-input
+        :dark="color.cardBodyDark"
         :model-value="stepsPerCl"
         @update:model-value="$emit('update:stepsPerCl', $event)"
         :error-message="stepsPerClErrorMsg"
@@ -81,6 +84,7 @@
 <script>
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
+import { mapGetters } from 'vuex'
 
 export default defineComponent({
   name: 'CPumpSetupStepperCalibration',
@@ -95,6 +99,11 @@ export default defineComponent({
     stepsPerCl: {},
     stepsPerClErrorMsg: {},
     stepsPerClLoading: {}
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   }
 })
 </script>

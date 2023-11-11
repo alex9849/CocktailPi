@@ -7,6 +7,7 @@
     </template>
     <template v-slot:fields>
       <q-input
+        :dark="color.cardBodyDark"
         :model-value="timePerClInMs"
         @update:model-value="$emit('update:timePerClInMs', $event)"
         :error-message="timePerClInMsErrorMsg"
@@ -29,6 +30,7 @@
 <script>
 import { defineComponent } from 'vue'
 import CAssistantContainer from 'components/CAssistantContainer.vue'
+import { mapGetters } from 'vuex'
 
 export default defineComponent({
   name: 'CPumpSetupDcCalibration',
@@ -37,6 +39,11 @@ export default defineComponent({
     timePerClInMs: {},
     timePerClInMsErrorMsg: {},
     timePerClInMsLoading: {}
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   }
 })
 </script>

@@ -13,6 +13,7 @@
     <q-stepper
       v-model:model-value="stepper"
       active-color="cyan"
+      class="bg-card-body text-card-body"
       animated
       flat
       bordered
@@ -34,6 +35,7 @@
           <div class="row justify-center">
             <div class="col-12 col-sm-10 col-md-7 col-lg-6 q-gutter-md">
               <q-input
+                :dark="color.cardBodyDark"
                 :model-value="pump.name"
                 @update:model-value="setPumpAttr('name', pump.name, $event, $event === '')"
                 :error-message="attrState.name.errorMsg"
@@ -177,6 +179,7 @@
               </p>
               <c-pump-tester
                 :pump="pump"
+                class="text-black"
                 :disable="pump.state === 'INCOMPLETE'"
                 :disable-reason="$t('page.pump_setup.calibration.motor_tester.disable_reason_parameter_missing')"
                 @update:perClMetric="setPerClMetric($event)"
@@ -192,6 +195,7 @@
             </template>
             <template v-slot:fields>
               <q-input
+                :dark="color.cardBodyDark"
                 :model-value="pump.tubeCapacityInMl"
                 @update:model-value="setPumpAttr('tubeCapacityInMl', pump.tubeCapacityInMl, $event, $event === '')"
                 :error-message="attrState.tubeCapacityInMl.errorMsg"
@@ -249,6 +253,7 @@
           <c-assistant-container>
             <template v-slot:fields>
               <c-ingredient-selector
+                :dark="color.cardBodyDark"
                 :model-value="pump.currentIngredient"
                 @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event, !$event)"
                 :error-message="attrState.currentIngredient.errorMsg"
@@ -272,6 +277,7 @@
           <c-assistant-container>
             <template v-slot:fields>
               <q-input
+                :dark="color.cardBodyDark"
                 :model-value="pump.fillingLevelInMl"
                 @update:model-value="setPumpAttr('fillingLevelInMl', pump.fillingLevelInMl, $event === '' ? 0 : Number($event))"
                 :error-message="attrState.fillingLevelInMl.errorMsg"
@@ -301,6 +307,7 @@
               <div class="row justify-center">
                 <div class="col-auto">
                   <q-checkbox
+                    :dark="color.cardBodyDark"
                     :model-value="pump.pumpedUp"
                     @update:model-value="setPumpAttr('pumpedUp', pump.pumpedUp, $event)"
                     :error-message="attrState.pumpedUp.errorMsg"
@@ -574,7 +581,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      colors: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors'
     }),
     pumpName () {
       if (this.pump.name) {
