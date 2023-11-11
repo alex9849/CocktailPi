@@ -1,5 +1,6 @@
 package net.alex9849.cocktailmaker.config.websocket;
 
+import lombok.SneakyThrows;
 import net.alex9849.cocktailmaker.service.EventService;
 import net.alex9849.cocktailmaker.service.WebSocketService;
 import net.alex9849.cocktailmaker.service.pumps.CocktailOrderService;
@@ -30,12 +31,20 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
     @Autowired
     private CocktailOrderService cocktailOrderService;
 
+    @SneakyThrows
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {
         final String simpDestination = (String) event.getMessage().getHeaders().get("simpDestination");
         if (simpDestination == null) {
             return;
         }
+
+        /*
+                Sleep for a few milliseconds. When I don't do this, the client sometimes looses messages
+                that are sent on message subscribe. I don't know why this happens. Maybe the client isn't
+                ready yet and misses the message? I hate this solution.
+            */
+        Thread.sleep(10);
         if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_COCKTAIL_DESTINATION)) {
             webSocketService.sendCurrentCocktailProgessToUser(cocktailOrderService.getCurrentCocktailProgress(), event.getUser().getName());
         }
@@ -67,7 +76,6 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
             } catch (NumberFormatException e) {
                 actionId = -1L;
             }
-
             webSocketService.sendEventActionLogToUser(actionId, eventService.getEventActionLog(actionId), event.getUser().getName());
         }
     }
