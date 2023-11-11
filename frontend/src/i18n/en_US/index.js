@@ -1121,6 +1121,30 @@ export default {
       save_btn_label: 'Save',
       notifications: {
         settings_updated: 'Settings updated!'
+      },
+      colors: {
+        interface: {
+          headline: 'Interface colors',
+          header: 'Header',
+          sidebar: 'Sidebar',
+          background: 'Background',
+          btn_primary: 'Button / Primary',
+          btn_navigation_active: 'Button / Navigation active',
+          card_header: 'Card / Header',
+          card_body: 'Card / Body',
+          card_item_group: 'Card / Item group'
+        },
+        simple_view: {
+          headline: 'Simple view colors',
+          header: 'Header + Footer',
+          sidebar: 'Sidebar',
+          background: 'Background',
+          btn_primary: 'Button / Primary',
+          btn_navigation: 'Button / Navigation',
+          btn_navigation_active: 'Button / Navigation active',
+          cocktail_progress: 'Cocktail progress banner',
+          card: 'Card'
+        }
       }
     }
   },

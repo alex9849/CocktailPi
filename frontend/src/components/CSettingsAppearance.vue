@@ -50,47 +50,49 @@
             :dark="color.cardItemGroupDark"
             class="bg-card-item-group text-card-item-group"
           >
-            <p class="text-subtitle2 q-pt-sm q-pl-md">Interface colors</p>
+            <p class="text-subtitle2 q-pt-sm q-pl-md">
+              {{ $t('component.settings_appearance.colors.interface.headline') }}
+            </p>
             <q-card-section class="q-pt-sm q-gutter-sm">
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.header"
                 :dark="color.cardItemGroupDark"
-                label="Header"
+                :label="$t('component.settings_appearance.colors.interface.header')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.sidebar"
                 :dark="color.cardItemGroupDark"
-                label="Sidebar"
+                :label="$t('component.settings_appearance.colors.interface.sidebar')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.background"
                 :dark="color.cardItemGroupDark"
-                label="Background"
+                :label="$t('component.settings_appearance.colors.interface.background')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.btnPrimary"
                 :dark="color.cardItemGroupDark"
-                label="Button / Primary"
+                :label="$t('component.settings_appearance.colors.interface.btn_primary')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.btnNavigationActive"
                 :dark="color.cardItemGroupDark"
-                label="Button / Navigation active"
+                :label="$t('component.settings_appearance.colors.interface.btn_navigation_active')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.cardHeader"
                 :dark="color.cardItemGroupDark"
-                label="Card / Header"
+                :label="$t('component.settings_appearance.colors.interface.card_header')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.cardBody"
                 :dark="color.cardItemGroupDark"
-                label="Card / Body"
+                :label="$t('component.settings_appearance.colors.interface.card_body')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.cardItemGroup"
                 :dark="color.cardItemGroupDark"
-                label="Card / Item group"
+                :label="$t('component.settings_appearance.colors.interface.card_item_group')"
               />
             </q-card-section>
           </q-card>
@@ -101,47 +103,49 @@
             bordered
             class="bg-card-item-group text-card-item-group"
           >
-            <p class="text-subtitle2 q-pt-sm q-pl-md">Simple view colors</p>
+            <p class="text-subtitle2 q-pt-sm q-pl-md">
+              {{ $t('component.settings_appearance.colors.simple_view.headline') }}
+            </p>
             <q-card-section class="q-pt-sm q-gutter-sm">
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.header"
                 :dark="color.cardItemGroupDark"
-                label="Header + Footer"
+                :label="$t('component.settings_appearance.colors.simple_view.header')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.sidebar"
                 :dark="color.cardItemGroupDark"
-                label="Sidebar"
+                :label="$t('component.settings_appearance.colors.simple_view.sidebar')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.background"
                 :dark="color.cardItemGroupDark"
-                label="Background"
+                :label="$t('component.settings_appearance.colors.simple_view.background')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnPrimary"
                 :dark="color.cardItemGroupDark"
-                label="Button / Primary"
+                :label="$t('component.settings_appearance.colors.simple_view.btn_primary')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnNavigation"
                 :dark="color.cardItemGroupDark"
-                label="Button / Navigation"
+                :label="$t('component.settings_appearance.colors.simple_view.btn_navigation')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.btnNavigationActive"
                 :dark="color.cardItemGroupDark"
-                label="Button / Navigation active"
+                :label="$t('component.settings_appearance.colors.simple_view.btn_navigation_active')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.cocktailProgress"
                 :dark="color.cardItemGroupDark"
-                label="Cocktail progress"
+                :label="$t('component.settings_appearance.colors.simple_view.cocktail_progress')"
               />
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.cardPrimary"
                 :dark="color.cardItemGroupDark"
-                label="Card"
+                :label="$t('component.settings_appearance.colors.simple_view.card')"
               />
             </q-card-section>
           </q-card>

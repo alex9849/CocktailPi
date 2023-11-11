@@ -1038,6 +1038,30 @@ export default {
       save_btn_label: 'Speichern',
       notifications: {
         settings_updated: 'Einstellungen aktualisiert!'
+      },
+      colors: {
+        interface: {
+          headline: 'Interface',
+          header: 'Kopfzeile',
+          sidebar: 'Seitenleiste',
+          background: 'Hintergrund',
+          btn_primary: 'Button / Primär',
+          btn_navigation_active: 'Seitenleiste / Navigation aktiv',
+          card_header: 'Karte / Kopfzeile',
+          card_body: 'Karte / Inhalt',
+          card_item_group: 'Karte / Elementgruppe'
+        },
+        simple_view: {
+          headline: 'Farben für einfache Ansicht',
+          header: 'Kopfzeile + Fußzeile',
+          sidebar: 'Seitenleiste',
+          background: 'Hintergrund',
+          btn_primary: 'Button / Primär',
+          btn_navigation: 'Button / Navigation',
+          btn_navigation_active: 'Button / Navigation aktiv',
+          cocktail_progress: 'Banner für Cocktail-Fortschritt',
+          card: 'Karte'
+        }
       }
     }
   },
