@@ -355,8 +355,8 @@ public class SystemService {
             Iterator<JsonNode> releases = mapper.readTree(releasesUrl).elements();
 
             String newestCandidateTag = null;
-            boolean ownTagFound = true; // TODO: Set to false before deploy
-            boolean updateAvailable = true; // TODO: Set to false before deploy
+            boolean ownTagFound = false;
+            boolean updateAvailable = false;
             while (releases.hasNext()) {
                 JsonNode release = releases.next();
                 String tagText = release.get("tag_name").asText();
