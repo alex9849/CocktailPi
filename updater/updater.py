@@ -1,7 +1,21 @@
 import argparse
-import requests
+import contextlib
+import urllib.request
+import json
 import os
 import stat
+
+
+def download_file(url, filename):
+    with open(filename, 'wb') as out_file:
+        with contextlib.closing(urllib.request.urlopen(url)) as fp:
+            block_size = 1024 * 8
+            while True:
+                block = fp.read(block_size)
+                if not block:
+                    break
+                out_file.write(block)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CocktailMaker updater")
@@ -20,7 +34,10 @@ if __name__ == "__main__":
         print("specified file doesn't exist!")
         exit(1)
 
-    releases = requests.get("https://api.github.com/repos/alex9849/pi-cocktail-maker/releases").json()
+    releases = None
+    with urllib.request.urlopen("https://api.github.com/repos/alex9849/pi-cocktail-maker/releases") as request:
+        releases = json.loads(request.read().decode())
+
     os.system("service cocktailmaker stop")
 
 
@@ -59,28 +76,23 @@ if __name__ == "__main__":
         exit(1)
 
     if installation_candidate_url == None:
-        print("Couldn't download updated file!")
+        print("Couldn't find installation candidate!")
         exit(1)
-
-    # Download current server.jar and store it in cocktailmaker_update.jar
-    update_jar_request = requests.get(installation_candidate_url)
 
     for release in relevant_releases:
         for asset in release["assets"]:
             if asset["name"] != "update_linux_delta.sh":
                 continue
 
-            update_delta_sh_request = requests.get(asset["browser_download_url"])
-            with open('update_linux_delta.sh', 'wb') as f:
-                f.write(update_delta_sh_request.content)
+            download_file(asset["browser_download_url"], 'update_linux_delta.sh')
             st = os.stat('update_linux_delta.sh')
             os.chmod('update_linux_delta.sh', st.st_mode | stat.S_IEXEC)
             os.system('./update_linux_delta.sh')
             os.remove('update_linux_delta.sh')
 
+    # Download current server.jar and store it in cocktailmaker_update.jar
+    download_file(installation_candidate_url, 'cocktailmaker_update.jar')
 
-    with open('cocktailmaker_update.jar', 'wb') as f:
-        f.write(update_jar_request.content)
 
     if os.path.exists(args.file_name):
         os.remove(args.file_name)
