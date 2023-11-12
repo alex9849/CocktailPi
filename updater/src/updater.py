@@ -85,10 +85,12 @@ if __name__ == "__main__":
                 break
 
     if not current_version_found:
+        os.system("service cocktailmaker start")
         print("Current version not found!")
         exit(1)
 
     if installation_candidate_url == None:
+        os.system("service cocktailmaker start")
         print("Couldn't find installation candidate!")
         exit(1)
 
