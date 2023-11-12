@@ -24,26 +24,20 @@ if __name__ == "__main__":
     os.system("service cocktailmaker stop")
 
 
-    # Download current server.jar and store it in cocktailmaker_update.jar
-    file_url = None
-    for asset in releases[0]["assets"]:
-        if asset["name"] == "server.jar":
-            file_url = asset["browser_download_url"]
-            break
-
-    if file_url == None:
-        print("Couldn't download updated file!")
-        exit(1)
-
+    # Free required paths
     if os.path.exists("cocktailmaker_update.jar"):
         os.remove("cocktailmaker_update.jar")
 
     if os.path.exists("update_linux_delta.sh"):
         os.remove("update_linux_delta.sh")
 
-    update_jar_request = requests.get(file_url)
-
-    # Execute update scripts for all versions from current till recent
+    # Filter irrelevant releases find installation candidate
+    # Irrelevant are:
+    # - all releases before and including current_version
+    # - pre releases
+    # - drafts
+    relevant_releases = []
+    installation_candidate_url = None
     current_version_found = False
     for release in reversed(releases):
         if not current_version_found and args.current_version != release["tag_name"]:
@@ -52,7 +46,26 @@ if __name__ == "__main__":
             current_version_found = True
             continue
 
+        if release['prerelease'] or release['draft']:
+            continue
+        relevant_releases.append(release)
+        for asset in release["assets"]:
+            if asset["name"] == "server.jar":
+                installation_candidate_url = asset["browser_download_url"]
+                break
 
+    if not current_version_found:
+        print("Current version not found!")
+        exit(1)
+
+    if installation_candidate_url == None:
+        print("Couldn't download updated file!")
+        exit(1)
+
+    # Download current server.jar and store it in cocktailmaker_update.jar
+    update_jar_request = requests.get(installation_candidate_url)
+
+    for release in relevant_releases:
         for asset in release["assets"]:
             if asset["name"] != "update_linux_delta.sh":
                 continue
@@ -65,11 +78,6 @@ if __name__ == "__main__":
             os.system('./update_linux_delta.sh')
             os.remove('update_linux_delta.sh')
 
-
-
-    if not current_version_found:
-        print("Current version not found!")
-        exit(1)
 
     with open('cocktailmaker_update.jar', 'wb') as f:
         f.write(update_jar_request.content)
