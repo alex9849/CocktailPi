@@ -11,6 +11,7 @@ import net.alex9849.cocktailmaker.payload.dto.system.settings.AppearanceSettings
 import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
 import net.alex9849.cocktailmaker.payload.response.GlobalSettings;
+import net.alex9849.cocktailmaker.payload.response.VersionResponse;
 import net.alex9849.cocktailmaker.repository.OptionsRepository;
 import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailmaker.utils.PinUtils;
@@ -26,6 +27,8 @@ import javax.sound.sampled.SourceDataLine;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +48,9 @@ public class SystemService {
 
     @Value("${alex9849.app.devMode}")
     private boolean isDevMode;
+
+    @Value("${alex9849.app.build.version}")
+    private String appVersion;
 
     @Autowired
     private PumpMaintenanceService pumpUpService;
@@ -323,5 +329,11 @@ public class SystemService {
         settingsDto.setColors(colors);
 
         return settingsDto;
+    }
+
+    public VersionResponse getVersion() {
+        VersionResponse version = new VersionResponse();
+        version.setVersion(this.appVersion);
+        return version;
     }
 }

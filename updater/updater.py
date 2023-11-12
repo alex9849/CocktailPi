@@ -5,10 +5,10 @@ import stat
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CocktailMaker updater")
-    parser.add_argument("-s", "--starting_version", help="The software's current version to update from.")
+    parser.add_argument("-c", "--current_version", help="The software's current version to update from.")
     parser.add_argument("-f", "--file_name", help="The software's file name.")
     args = parser.parse_args()
-    if args.starting_version is None:
+    if args.current_version is None:
         print("No starting version given!")
         exit(1)
 
@@ -44,11 +44,15 @@ if __name__ == "__main__":
     update_jar_request = requests.get(file_url)
 
     # Execute update scripts for all versions from current till recent
-    starting_version_found = False
+    current_version_found = False
     for release in reversed(releases):
-        if not starting_version_found and args.starting_version != release["tag_name"]:
+        if not current_version_found and args.current_version != release["tag_name"]:
             continue
-        starting_version_found = True
+        elif not current_version_found:
+            current_version_found = True
+            continue
+
+
         for asset in release["assets"]:
             if asset["name"] != "update_linux_delta.sh":
                 continue
@@ -63,8 +67,8 @@ if __name__ == "__main__":
 
 
 
-    if not starting_version_found:
-        print("Starting version not found!")
+    if not current_version_found:
+        print("Current version not found!")
         exit(1)
 
     with open('cocktailmaker_update.jar', 'wb') as f:

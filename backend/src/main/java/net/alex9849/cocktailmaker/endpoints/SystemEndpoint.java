@@ -134,4 +134,9 @@ public class SystemEndpoint {
         dfs = systemService.setDefaultFilterSettings(dfs);
         return ResponseEntity.ok(new DefaultFilterDto.Duplex.Detailed(dfs));
     }
+
+    @RequestMapping(value = "version", method = RequestMethod.GET)
+    public ResponseEntity<?> getVersion() {
+        return ResponseEntity.ok(systemService.getVersion());
+    }
 }

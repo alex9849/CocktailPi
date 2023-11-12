@@ -123,6 +123,11 @@ class SystemService {
         return x
       })
   }
+
+  getVersion () {
+    return axios.get(API_PATH + 'version')
+      .then(x => x.data)
+  }
 }
 
 export default new SystemService()
