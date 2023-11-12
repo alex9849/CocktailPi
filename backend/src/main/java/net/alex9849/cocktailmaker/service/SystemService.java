@@ -21,6 +21,7 @@ import net.alex9849.cocktailmaker.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailmaker.utils.PinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
@@ -394,7 +397,11 @@ public class SystemService {
         if(!cuResult.isUpdateAvailable()) {
             throw new IllegalStateException("No update available!");
         }
-        File ownFile = new File(SystemService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        String stringPath = SystemService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        stringPath = URLDecoder.decode(stringPath, StandardCharsets.UTF_8);
+        stringPath = stringPath.substring(0, stringPath.lastIndexOf(".jar") + 4);
+        stringPath = stringPath.substring(6);
+        File ownFile = new File(stringPath);
         File parentFile = ownFile.getParentFile();
         File updaterFile = new File(parentFile.getAbsolutePath() + File.separator + "updater.py");
         Files.copy(SystemService.class.getResourceAsStream("/updater/updater.py"), updaterFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
