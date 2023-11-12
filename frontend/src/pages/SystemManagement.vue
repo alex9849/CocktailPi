@@ -22,6 +22,8 @@
         </div>
       </q-card-section>
     </q-card>
+    <h5>Update</h5>
+    <c-settings-updater/>
     <h5>{{ $t('page.system_mgmt.default_filter.headline') }}</h5>
     <q-card
       bordered
@@ -126,10 +128,11 @@ import { required } from '@vuelidate/validators'
 import CSettingsAppearance from 'components/CSettingsAppearance.vue'
 import CColorSelectorField from 'components/CColorSelectorField.vue'
 import { mapGetters } from 'vuex'
+import CSettingsUpdater from 'components/CSettingsUpdater.vue'
 
 export default {
   name: 'SystemManagement',
-  components: { CColorSelectorField, CSettingsAppearance, CQuestion },
+  components: { CSettingsUpdater, CColorSelectorField, CSettingsAppearance, CQuestion },
   async beforeRouteEnter (to, from, next) {
     const defaultFilter = await SystemService.getDefaultFilter()
     next(vm => {
