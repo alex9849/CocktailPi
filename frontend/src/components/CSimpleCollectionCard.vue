@@ -20,12 +20,12 @@
                src="~assets/cocktail-solid.png"
         />
       </q-card-section>
-      <q-card-section class="col-grow q-pa-sm flex column" :style="{color: captionColor}">
+      <q-card-section class="col-8 q-pa-sm flex column" :style="{color: captionColor}">
         <div class="text-h5 text-sv-card-primary" style="margin-bottom: 0">{{ $t('component.simple_collection_card.name', { name: modelValue.name }) }}</div>
         <div class="text-caption">
           {{ $t('component.simple_collection_card.nr_cocktails', { nr: modelValue.size }) }}
         </div>
-        <div class="text-caption dotted-overflow" style="">
+        <div class="text-caption dotted-overflow-2" style="">
           {{ $t('component.simple_collection_card.desc', { desc: modelValue.description }) }}
         </div>
         <div style="flex-grow: 1" />
@@ -68,10 +68,4 @@ export default {
 </script>
 
 <style scoped>
-.dotted-overflow {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 </style>

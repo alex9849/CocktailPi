@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecipeDto {
     private interface Id { long getId(); }
-    private interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
+    private interface Name { @NotNull @Size(min = 1, max = 50) String getName(); }
     private interface Description { @Size(max = 3000) String getDescription(); }
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }

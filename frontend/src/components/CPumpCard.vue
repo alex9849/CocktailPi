@@ -8,7 +8,7 @@
       class="row items-center justify-around bg-card-header text-card-header q-pa-sm"
     >
       <div class="col q-px-sm">
-        <p class="text-h5 q-ma-none dotted-overflow" style="line-height: 1.5rem">
+        <p class="text-h5 q-ma-none dotted-overflow-2" style="line-height: 1.5rem">
           {{ displayName }}</p>
         <p
           class="q-ma-none"

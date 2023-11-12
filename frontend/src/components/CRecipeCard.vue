@@ -30,7 +30,7 @@
             <div class="row">
               <div class="col-12 row justify-around">
                 <div class="col">
-                  <p class="text-h5">
+                  <p class="text-h5 dotted-overflow-2">
                     <slot name="headline">
                       <b>{{ recipe.name }}</b>
                     </slot>
@@ -46,11 +46,11 @@
                 </div>
               </div>
               <div class="col-12 row" v-if="recipe.description">
-                <div class="col dotted-overflow">
+                <div class="col dotted-overflow-2">
                   {{ recipe.description }}
                 </div>
               </div>
-              <div class="col-12 row" v-if="showIngredients"
+              <div class="col-12 dotted-overflow-2 row" v-if="showIngredients"
                    style="margin-top: 10px"
               >
                 <q-chip

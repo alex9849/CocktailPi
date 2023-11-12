@@ -13,7 +13,7 @@
   >
     <q-inner-loading :showing="loading" style="z-index: 1"/>
     <q-card-section class="q-pa-none col-12">
-      <div class="text-h6 text-center text-black">{{ recipe.name }}</div>
+      <div class="text-h6 text-center text-black dotted-overflow-2">{{ recipe.name }}</div>
     </q-card-section>
     <q-card-section class="q-pa-none col-12">
       <q-img
@@ -52,7 +52,7 @@ export default {
     }
   },
   computed: {
-    bgColor() {
+    bgColor () {
       if (this.allIngredientsOnPump) {
         return 'bg-green'
       }
@@ -61,7 +61,7 @@ export default {
       }
       return 'bg-grey'
     },
-    allIngredientsOwned() {
+    allIngredientsOwned () {
       for (const ingredient of this.recipe.ingredients) {
         if (!ingredient.inBar && !ingredient.onPump) {
           return false
@@ -69,7 +69,7 @@ export default {
       }
       return true
     },
-    allIngredientsOnPump() {
+    allIngredientsOnPump () {
       for (const ingredient of this.recipe.ingredients) {
         if (!ingredient.onPump) {
           return false
