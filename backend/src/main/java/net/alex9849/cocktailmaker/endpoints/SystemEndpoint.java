@@ -147,7 +147,7 @@ public class SystemEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "performupdate", method = RequestMethod.PUT)
+    @RequestMapping(value = "performupdate", method = RequestMethod.POST)
     public ResponseEntity<?> performUpdate() {
         systemService.performUpdate();
         return ResponseEntity.ok().build();

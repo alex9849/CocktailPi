@@ -2,6 +2,7 @@ package net.alex9849.cocktailmaker.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.I2cAddress;
@@ -352,7 +353,7 @@ public class SystemService {
 
             String newestCandidateTag = null;
             boolean ownTagFound = true; // TODO: Set to false before deploy
-            boolean updateAvailable = false;
+            boolean updateAvailable = true; // TODO: Set to false before deploy
             while (releases.hasNext()) {
                 JsonNode release = releases.next();
                 String tagText = release.get("tag_name").asText();
@@ -387,21 +388,22 @@ public class SystemService {
         return cuResult;
     }
 
+    @SneakyThrows
     public void performUpdate() {
         CheckUpdateResult cuResult = checkUpdate();
         if(!cuResult.isUpdateAvailable()) {
             throw new IllegalStateException("No update available!");
         }
-        File ownFile = new File(SystemService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+        File ownFile = new File(SystemService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         File parentFile = ownFile.getParentFile();
-        File updaterFile = new File(parentFile.getAbsolutePath() + File.pathSeparator + "updater.py");
-        Files.copy(SystemService.class.getResourceAsStream("updater/updater.py"), updaterFile, StandardCopyOption.REPLACE_EXISTING);
+        File updaterFile = new File(parentFile.getAbsolutePath() + File.separator + "updater.py");
+        Files.copy(SystemService.class.getResourceAsStream("/updater/updater.py"), updaterFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         Set<PosixFilePermission> filePermissions = new HashSet<>();
         filePermissions.add(PosixFilePermission.OWNER_READ);
         filePermissions.add(PosixFilePermission.OWNER_WRITE);
         filePermissions.add(PosixFilePermission.OWNER_EXECUTE);
-        Files.setPosixFilePermissions(Paths.get(updaterFile.toURI()), filePermissions);
+        Files.setPosixFilePermissions(updaterFile.toPath(), filePermissions);
         Process process = Runtime.getRuntime().exec("python3 updater.py -c " + this.appVersion + " -f " + ownFile.getName());
 
     }
