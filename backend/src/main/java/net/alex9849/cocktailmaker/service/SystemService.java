@@ -400,7 +400,7 @@ public class SystemService {
         String stringPath = SystemService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         stringPath = URLDecoder.decode(stringPath, StandardCharsets.UTF_8);
         stringPath = stringPath.substring(0, stringPath.lastIndexOf(".jar") + 4);
-        stringPath = stringPath.substring(6);
+        stringPath = stringPath.replaceAll("^.*file:", "");
         File ownFile = new File(stringPath);
         File parentFile = ownFile.getParentFile();
         File updaterFile = new File(parentFile.getAbsolutePath() + File.separator + "updater.py");
