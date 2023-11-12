@@ -4,10 +4,12 @@ import urllib.request
 import json
 import os
 import stat
+import shutil
 
 releases_url = "https://api.github.com/repos/alex9849/pi-cocktail-maker/releases"
 installation_candidate_intermediate_name = "cocktailmaker_update.jar"
 update_delta_script_name = "update_linux_delta.sh"
+database_file_name = "cocktailmaker-data.db"
 
 def download_file(url, filename):
     with open(filename, 'wb') as out_file:
@@ -43,6 +45,14 @@ if __name__ == "__main__":
 
     os.system("service cocktailmaker stop")
 
+    # Backup database
+    if os.path.exists(f"./db-backup/{args.current_version}"):
+        os.remove(f"./db-backup/{args.current_version}")
+    os.makedirs(f"./db-backup/{args.current_version}")
+
+    for x in os.listdir():
+        if x.startswith(database_file_name):
+            shutil.copy(x, f"./db-backup/{args.current_version}")
 
     # Free required paths
     if os.path.exists(installation_candidate_intermediate_name):
@@ -84,7 +94,7 @@ if __name__ == "__main__":
 
     for release in relevant_releases:
         for asset in release["assets"]:
-            if asset["name"] != "update_linux_delta.sh":
+            if asset["name"] != update_delta_script_name:
                 continue
 
             download_file(asset["browser_download_url"], update_delta_script_name)
