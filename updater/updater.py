@@ -5,6 +5,9 @@ import json
 import os
 import stat
 
+releases_url = "https://api.github.com/repos/alex9849/pi-cocktail-maker/releases"
+installation_candidate_intermediate_name = "cocktailmaker_update.jar"
+update_delta_script_name = "update_linux_delta.sh"
 
 def download_file(url, filename):
     with open(filename, 'wb') as out_file:
@@ -35,18 +38,18 @@ if __name__ == "__main__":
         exit(1)
 
     releases = None
-    with urllib.request.urlopen("https://api.github.com/repos/alex9849/pi-cocktail-maker/releases") as request:
+    with urllib.request.urlopen(releases_url) as request:
         releases = json.loads(request.read().decode())
 
     os.system("service cocktailmaker stop")
 
 
     # Free required paths
-    if os.path.exists("cocktailmaker_update.jar"):
-        os.remove("cocktailmaker_update.jar")
+    if os.path.exists(installation_candidate_intermediate_name):
+        os.remove(installation_candidate_intermediate_name)
 
-    if os.path.exists("update_linux_delta.sh"):
-        os.remove("update_linux_delta.sh")
+    if os.path.exists(update_delta_script_name):
+        os.remove(update_delta_script_name)
 
     # Filter irrelevant releases find installation candidate
     # Irrelevant are:
@@ -84,20 +87,20 @@ if __name__ == "__main__":
             if asset["name"] != "update_linux_delta.sh":
                 continue
 
-            download_file(asset["browser_download_url"], 'update_linux_delta.sh')
-            st = os.stat('update_linux_delta.sh')
-            os.chmod('update_linux_delta.sh', st.st_mode | stat.S_IEXEC)
-            os.system('./update_linux_delta.sh')
-            os.remove('update_linux_delta.sh')
+            download_file(asset["browser_download_url"], update_delta_script_name)
+            st = os.stat(update_delta_script_name)
+            os.chmod(update_delta_script_name, st.st_mode | stat.S_IEXEC)
+            os.system(f'./{update_delta_script_name}')
+            os.remove(update_delta_script_name)
 
     # Download current server.jar and store it in cocktailmaker_update.jar
-    download_file(installation_candidate_url, 'cocktailmaker_update.jar')
+    download_file(installation_candidate_url, installation_candidate_intermediate_name)
 
 
     if os.path.exists(args.file_name):
         os.remove(args.file_name)
 
-    os.rename("cocktailmaker_update.jar", args.file_name)
+    os.rename(installation_candidate_intermediate_name, args.file_name)
     st = os.stat(args.file_name)
     os.chmod(args.file_name, st.st_mode | stat.S_IEXEC)
     os.system("systemctl daemon-reload")
