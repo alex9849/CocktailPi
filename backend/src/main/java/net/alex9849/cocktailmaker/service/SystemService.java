@@ -1,5 +1,7 @@
 package net.alex9849.cocktailmaker.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.alex9849.cocktailmaker.model.gpio.GpioBoard;
 import net.alex9849.cocktailmaker.model.gpio.PinResource;
 import net.alex9849.cocktailmaker.model.system.I2cAddress;
@@ -7,6 +9,7 @@ import net.alex9849.cocktailmaker.model.system.PythonLibraryInfo;
 import net.alex9849.cocktailmaker.model.system.settings.DefaultFilterSettings;
 import net.alex9849.cocktailmaker.model.system.settings.I2CSettings;
 import net.alex9849.cocktailmaker.model.system.settings.Language;
+import net.alex9849.cocktailmaker.model.system.update.CheckUpdateResult;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.AppearanceSettingsDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.DefaultFilterDto;
 import net.alex9849.cocktailmaker.payload.dto.system.settings.I2cSettingsDto;
@@ -25,13 +28,14 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.*;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -335,5 +339,70 @@ public class SystemService {
         VersionResponse version = new VersionResponse();
         version.setVersion(this.appVersion);
         return version;
+    }
+
+    public CheckUpdateResult checkUpdate() {
+        ObjectMapper mapper = new ObjectMapper();
+        CheckUpdateResult cuResult = new CheckUpdateResult();
+        cuResult.setCurrentVersion(this.appVersion);
+
+        try {
+            URL releasesUrl = new URL("https://api.github.com/repos/alex9849/pi-cocktail-maker/releases");
+            Iterator<JsonNode> releases = mapper.readTree(releasesUrl).elements();
+
+            String newestCandidateTag = null;
+            boolean ownTagFound = true; // TODO: Set to false before deploy
+            boolean updateAvailable = false;
+            while (releases.hasNext()) {
+                JsonNode release = releases.next();
+                String tagText = release.get("tag_name").asText();
+
+                if(Objects.equals(tagText, appVersion)) {
+                    ownTagFound = true;
+                    updateAvailable = !Objects.equals(tagText, newestCandidateTag);
+                }
+                if(release.get("draft").asBoolean()) {
+                    continue;
+                }
+                if(release.get("prerelease").asBoolean()) {
+                    continue;
+                }
+                if(newestCandidateTag == null) {
+                    newestCandidateTag = tagText;
+                }
+            }
+
+            if(!ownTagFound) {
+                throw new IllegalStateException("Couldn't find own version. Update path unclear!");
+            }
+
+            cuResult.setUpdateAvailable(updateAvailable);
+            cuResult.setNewestVersion(newestCandidateTag);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't contact update server! ", e);
+        }
+
+        return cuResult;
+    }
+
+    public void performUpdate() {
+        CheckUpdateResult cuResult = checkUpdate();
+        if(!cuResult.isUpdateAvailable()) {
+            throw new IllegalStateException("No update available!");
+        }
+        File ownFile = new File(SystemService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+        File parentFile = ownFile.getParentFile();
+        File updaterFile = new File(parentFile.getAbsolutePath() + File.pathSeparator + "updater.py");
+        Files.copy(SystemService.class.getResourceAsStream("updater/updater.py"), updaterFile, StandardCopyOption.REPLACE_EXISTING);
+
+        Set<PosixFilePermission> filePermissions = new HashSet<>();
+        filePermissions.add(PosixFilePermission.OWNER_READ);
+        filePermissions.add(PosixFilePermission.OWNER_WRITE);
+        filePermissions.add(PosixFilePermission.OWNER_EXECUTE);
+        Files.setPosixFilePermissions(Paths.get(updaterFile.toURI()), filePermissions);
+        Process process = Runtime.getRuntime().exec("python3 updater.py -c " + this.appVersion + " -f " + ownFile.getName());
+
     }
 }

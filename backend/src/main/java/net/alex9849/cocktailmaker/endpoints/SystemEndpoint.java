@@ -139,4 +139,17 @@ public class SystemEndpoint {
     public ResponseEntity<?> getVersion() {
         return ResponseEntity.ok(systemService.getVersion());
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "checkupdate", method = RequestMethod.GET)
+    public ResponseEntity<?> checkUpdate() {
+        return ResponseEntity.ok(systemService.checkUpdate());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "performupdate", method = RequestMethod.PUT)
+    public ResponseEntity<?> performUpdate() {
+        systemService.performUpdate();
+        return ResponseEntity.ok().build();
+    }
 }
