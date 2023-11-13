@@ -128,6 +128,11 @@ class SystemService {
     return axios.get(API_PATH + 'version')
       .then(x => x.data)
   }
+
+  getCheckUpdate (onErrorNotify = false) {
+    return axios.get(API_PATH + 'checkupdate', { onErrorNotify })
+      .then(x => x.data)
+  }
 }
 
 export default new SystemService()

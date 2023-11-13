@@ -4,7 +4,8 @@
     class="bg-card-body text-card-body"
   >
     <q-card-section
-      v-if="!foundUpdate"
+      class="q-col-gutter-md"
+      v-if="!updateCandidate"
     >
       <div class="row justify-center">
         <div class="col-auto">
@@ -16,23 +17,34 @@
             :icon="mdiUpdate()"
             label="Check for update"
             @click="checkUpdate"
-            :loading="checking"
-          >
-          </q-btn>
+            :loading="searchUpdate"
+          />
         </div>
+      </div>
+      <div
+        v-if="errorMsg"
+        class="row justify-center"
+      >
+        <q-banner
+          rounded
+          class="bg-negative text-white text-weight-bold"
+        >
+          {{ errorMsg }}
+        </q-banner>
       </div>
     </q-card-section>
     <q-card-section
-      v-else
+      v-if="updateCandidate"
     >
       <q-card
-        class="bg-card-item-group text-card-item-group full-height"
+        class="bg-card-item-group text-card-item-group full-height text-center"
         :dark="color.cardItemGroupDark"
         flat
         bordered
       >
         <q-card-section
-          class="text-center row justify-center"
+          v-if="updateCandidate.updateAvailable"
+          class="row justify-center"
         >
           <div class="col-12 col-sm-10 col-md-8 col-lg-6">
             <div class="row items-center justify-center q-col-gutter-md">
@@ -41,7 +53,7 @@
                 <p
                   class="text-subtitle2"
                 >
-                  v1.0.0 -> v1.2.0
+                  v{{ updateCandidate.currentVersion }} -> v{{ updateCandidate.newestVersion }}
                 </p>
               </div>
               <div class="col-12 col-md-6">
@@ -57,6 +69,15 @@
               </div>
             </div>
           </div>
+        </q-card-section>
+        <q-card-section
+          v-else
+        >
+          <p
+            class="text-weight-medium"
+          >
+            No update available! You are using the newest version. :)
+          </p>
         </q-card-section>
       </q-card>
     </q-card-section>
@@ -107,30 +128,35 @@
 
 import { mapGetters } from 'vuex'
 import { mdiUpdate } from '@mdi/js'
+import SystemService from 'src/services/system.service'
 
 export default {
   name: 'CSettingsUpdater',
   data () {
     return {
-      checking: false,
-      foundUpdate: null
+      searchUpdate: false,
+      updateCandidate: '',
+      errorMsg: ''
     }
   },
   methods: {
     mdiUpdate () {
       return mdiUpdate
     },
-    reset () {
-      this.foundUpdate = null
-    },
     checkUpdate () {
-      this.checkComplete = true
-      this.foundUpdate = {
-        currentVersion: '1.0.0',
-        update: {
-          version: '1.5.1'
-        }
-      }
+      this.searchUpdate = true
+      this.errorMsg = ''
+      this.updateCandidate = ''
+      SystemService.getCheckUpdate()
+        .then(data => {
+          this.updateCandidate = data
+        })
+        .catch(err => {
+          this.errorMsg = err?.response?.data?.message
+        })
+        .finally(() => {
+          this.searchUpdate = false
+        })
     }
   },
   computed: {
