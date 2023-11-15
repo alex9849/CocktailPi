@@ -5,7 +5,7 @@
   >
     <q-card-section
       class="q-col-gutter-md"
-      v-if="!updateCandidate"
+      v-if="!isUpdateRunning && !updateCandidate"
     >
       <div class="row justify-center">
         <div class="col-auto">
@@ -34,7 +34,7 @@
       </div>
     </q-card-section>
     <q-card-section
-      v-if="updateCandidate"
+      v-if="!isUpdateRunning && updateCandidate"
     >
       <q-card
         class="bg-card-item-group text-card-item-group full-height text-center"
@@ -64,7 +64,7 @@
                   color="info"
                   :icon="mdiUpdate()"
                   label="Perform update"
-                  @click="reset"
+                  @click="onPerformUpdate"
                 />
               </div>
             </div>
@@ -82,6 +82,7 @@
       </q-card>
     </q-card-section>
     <q-card-section
+      v-if="isUpdateRunning"
     >
       <q-card
         class="bg-card-item-group text-card-item-group full-height"
@@ -103,9 +104,6 @@
             >
               Do not power down your system!
             </q-badge>
-            <p class="text-body1 text-italic">
-              Resources locked! UI reloads automatically!
-            </p>
           </div>
           <div class="col-all">
             <q-linear-progress
@@ -126,7 +124,7 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { mdiUpdate } from '@mdi/js'
 import SystemService from 'src/services/system.service'
 
@@ -157,11 +155,18 @@ export default {
         .finally(() => {
           this.searchUpdate = false
         })
-    }
+    },
+    onPerformUpdate () {
+      this.performUpdate()
+    },
+    ...mapActions({
+      performUpdate: 'updater/performUpdate'
+    })
   },
   computed: {
     ...mapGetters({
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      isUpdateRunning: 'updater/isUpdateRunning'
     })
   }
 }

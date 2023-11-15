@@ -133,6 +133,10 @@ class SystemService {
     return axios.get(API_PATH + 'checkupdate', { onErrorNotify })
       .then(x => x.data)
   }
+
+  performUpdate () {
+    return axios.post(API_PATH + 'performupdate')
+  }
 }
 
 export default new SystemService()

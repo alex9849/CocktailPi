@@ -116,5 +116,5 @@ if __name__ == "__main__":
     st = os.stat(args.file_name)
     os.chmod(args.file_name, st.st_mode | stat.S_IEXEC)
     os.system("systemctl daemon-reload")
-    os.system("service cocktailmaker start")
+    os.system("sudo reboot")
 

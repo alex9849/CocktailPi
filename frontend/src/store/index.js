@@ -6,6 +6,7 @@ import category from './modules/category/index'
 import websocket from './modules/websocket/index'
 import common from './modules/common/index'
 import appearance from 'src/store/modules/appearance'
+import updater from 'src/store/modules/updater'
 
 const store = createStore({
   modules: {
@@ -15,6 +16,7 @@ const store = createStore({
     category: category,
     websocket: websocket,
     appearance: appearance,
+    updater: updater,
     common: common
   },
 

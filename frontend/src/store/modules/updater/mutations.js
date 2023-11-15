@@ -1,4 +1,4 @@
 
-export const setAppearanceSettings = (state, payload) => {
-
+export const setIsUpdateRunning = (state, payload) => {
+  state.isUpdateRunning = payload
 }
