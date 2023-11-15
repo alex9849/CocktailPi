@@ -57,8 +57,8 @@ public class SystemService {
     @Value("${alex9849.app.devMode}")
     private boolean isDevMode;
 
-    @Value("${alex9849.app.build.version}")
-    private String appVersion; // = "1.0.0";
+    //@Value("${alex9849.app.build.version}")
+    private String appVersion = "1.0.0";
 
     @Autowired
     private PumpMaintenanceService pumpUpService;
