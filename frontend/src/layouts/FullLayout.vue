@@ -61,7 +61,13 @@
         :style="sidebarStyle"
       >
         <q-card-section>
-          <div class="row justify-center text-h6">CocktailPi</div>
+          <div class="row justify-center text-h6 items-center">
+            <q-icon
+              size="md"
+              :name="mdiGlassCocktail"
+            />
+            CocktailPi
+          </div>
           <div class="row justify-center text-subtitle1">
             v%MAVEN_PROJECT_VERSION%
           </div>
@@ -106,7 +112,8 @@ import {
   mdiGithub,
   mdiLinkedin,
   mdiPiggyBank,
-  mdiWeb
+  mdiWeb,
+  mdiGlassCocktail
 } from '@quasar/extras/mdi-v5'
 import { mapGetters, mapMutations } from 'vuex'
 
@@ -139,6 +146,7 @@ export default {
     this.handleResize()
     this.mdiChevronRight = mdiChevronRight
     this.mdiPiggyBank = mdiPiggyBank
+    this.mdiGlassCocktail = mdiGlassCocktail
   },
   unmounted () {
     window.removeEventListener('resize', this.handleResize)

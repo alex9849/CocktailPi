@@ -3,7 +3,11 @@
     <q-header class="bg-sv-header text-sv-header shadow-3">
       <div class="row justify-between">
         <div class="col-shrink flex items-center">
-          <q-toolbar-title class="q-ma-sm">
+          <q-toolbar-title class="q-ma-sm items-center flex">
+            <q-icon
+              size="md"
+              :name="mdiGlassCocktail"
+            />
             {{ $t('simple_header.machine_name') }}
           </q-toolbar-title>
         </div>
@@ -80,6 +84,7 @@ import { mapGetters } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
 import CQuestion from 'components/CQuestion'
 import { colors } from 'quasar'
+import { mdiGlassCocktail } from '@quasar/extras/mdi-v5'
 
 export default {
   name: 'SimpleTouchLayout',
@@ -88,6 +93,9 @@ export default {
     return {
       showLeaveDialog: false
     }
+  },
+  created () {
+    this.mdiGlassCocktail = mdiGlassCocktail
   },
   computed: {
     ...mapGetters({

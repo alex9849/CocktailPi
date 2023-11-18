@@ -6,7 +6,11 @@
   >
     <q-toolbar>
       <slot name="left" />
-      <q-toolbar-title>
+      <q-toolbar-title class="items-center flex">
+        <q-icon
+          size="md"
+          :name="mdiGlassCocktail"
+        />
         {{ $t('header.machine_name') }}
       </q-toolbar-title>
 
@@ -45,7 +49,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { mdiAccountBox, mdiAlert, mdiPower } from '@quasar/extras/mdi-v5'
+import { mdiAccountBox, mdiAlert, mdiPower, mdiGlassCocktail } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
 
 export default {
@@ -77,7 +81,8 @@ export default {
     return {
       mdiAccountBox: mdiAccountBox,
       mdiPower: mdiPower,
-      mdiAlert: mdiAlert
+      mdiAlert: mdiAlert,
+      mdiGlassCocktail: mdiGlassCocktail
     }
   }
 }
