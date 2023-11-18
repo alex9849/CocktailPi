@@ -1,8 +1,6 @@
 import SystemService from 'src/services/system.service'
 
 export const performUpdate = async ({ commit }) => {
-  const currentVersion = (await SystemService.getVersion()).version
-
   await SystemService.getCheckUpdate(true)
   try {
     SystemService.performUpdate()
@@ -14,11 +12,21 @@ export const performUpdate = async ({ commit }) => {
 
   commit('setIsUpdateRunning', true)
 
-  let version = currentVersion
-  while (version === currentVersion) {
+  let connectionLost = false
+  while (!connectionLost) {
     await new Promise(resolve => setTimeout(resolve, 1000))
     try {
-      version = (await SystemService.getVersion()).version
+      await SystemService.getVersion()
+    } catch (e) {
+      connectionLost = true
+    }
+  }
+  await new Promise(resolve => setTimeout(resolve, 9000))
+  while (connectionLost) {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      await SystemService.getVersion()
+      connectionLost = false
     } catch (e) {
     }
   }
