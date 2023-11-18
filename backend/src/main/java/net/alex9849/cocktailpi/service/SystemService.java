@@ -362,7 +362,7 @@ public class SystemService {
 
                 if(Objects.equals(tagText, appVersion)) {
                     ownTagFound = true;
-                    updateAvailable = !Objects.equals(tagText, newestCandidateTag);
+                    updateAvailable = newestCandidateTag != null;
                 }
                 if(release.get("draft").asBoolean()) {
                     continue;
