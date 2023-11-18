@@ -32,6 +32,7 @@
         <q-item-section>
           <q-input
             dense
+            color="sv-btn-primary"
             :dark="colors.sidebarDark"
             outlined
             :label="$t('component.simple_recipes_filter_drawer.name_field_label')"
@@ -48,6 +49,7 @@
           <c-ingredient-selector
             outlined
             dense
+            color="sv-btn-primary"
             :dark="colors.sidebarDark"
             multiple
             emit-value
@@ -88,6 +90,7 @@
             >
               <q-item-section side top>
                 <q-radio
+                  color="sv-btn-primary"
                   :dark="colors.sidebarDark"
                   :model-value="filter.fabricable"
                   @update:model-value="$emit('update:filter', {...filter, fabricable: $event})"
@@ -110,6 +113,7 @@
       >
         <q-item-section>
           <q-select
+            color="sv-btn-primary"
             outlined
             dense
             :dark="colors.sidebarDark"

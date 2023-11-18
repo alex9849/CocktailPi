@@ -1,8 +1,8 @@
 {
   "name": "frontend",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Cocktail-Maker",
+  "description": "A RaspberryPi based cocktail machine",
+  "productName": "CocktailPi",
   "author": "alex9849 <alexander@liggesmeyer.de>",
   "private": true,
   "scripts": {

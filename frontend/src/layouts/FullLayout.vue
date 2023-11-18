@@ -130,7 +130,7 @@ export default {
       categories: [],
       projectLinks: [{
         icon: mdiGithub,
-        link: 'https://github.com/alex9849/pi-cocktail-maker/'
+        link: 'https://github.com/alex9849/CocktailPi/'
       }, {
         icon: mdiLinkedin,
         link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'

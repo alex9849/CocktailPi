@@ -7,6 +7,7 @@
     @update:model-value="$emit('update:selected', $event)"
     :bg-color="bgColor"
     use-input
+    :color="color"
     :dark="dark"
     :rounded="rounded"
     :clearable="clearable"
@@ -115,6 +116,10 @@ export default {
       default: () => []
     },
     bgColor: {
+      type: String,
+      default: undefined
+    },
+    color: {
       type: String,
       default: undefined
     },

@@ -140,9 +140,9 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Cocktail-Maker',
-        short_name: 'Cocktail-Maker',
-        description: 'A Quasar Framework app',
+        name: 'CocktailPi',
+        short_name: 'CocktailPi',
+        description: 'A RaspberryPi based cocktail machine',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
