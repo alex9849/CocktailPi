@@ -16,7 +16,7 @@
             color="info"
             :icon="mdiUpdate()"
             label="Check for update"
-            @click="checkUpdate"
+            @click="onCheckUpdate"
             :loading="searchUpdate"
           />
         </div>
@@ -143,7 +143,7 @@ export default {
     mdiUpdate () {
       return mdiUpdate
     },
-    checkUpdate () {
+    onCheckUpdate () {
       this.searchUpdate = true
       this.errorMsg = ''
       this.updateCandidate = ''

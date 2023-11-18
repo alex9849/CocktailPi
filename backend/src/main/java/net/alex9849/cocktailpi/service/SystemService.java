@@ -396,6 +396,9 @@ public class SystemService {
         if(!cuResult.isUpdateAvailable()) {
             throw new IllegalStateException("No update available!");
         }
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Can't update in demomode!");
+        }
         String stringPath = SystemService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         stringPath = URLDecoder.decode(stringPath, StandardCharsets.UTF_8);
         stringPath = stringPath.substring(0, stringPath.lastIndexOf(".jar") + 4);

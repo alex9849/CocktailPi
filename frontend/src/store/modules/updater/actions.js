@@ -1,9 +1,8 @@
 import SystemService from 'src/services/system.service'
 
 export const performUpdate = async ({ commit }) => {
-  await SystemService.getCheckUpdate(true)
   try {
-    SystemService.performUpdate()
+    await SystemService.performUpdate()
   } catch (e) {
     if (e.response.status !== 504) {
       throw e
