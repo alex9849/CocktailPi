@@ -58,6 +58,7 @@
               </div>
               <div class="col-12 col-md-6">
                 <q-btn
+                  :loading="requestPerformUpdate"
                   size="xl"
                   no-caps
                   dense
@@ -132,6 +133,7 @@ export default {
   name: 'CSettingsUpdater',
   data () {
     return {
+      requestPerformUpdate: false,
       searchUpdate: false,
       updateCandidate: '',
       errorMsg: ''
@@ -157,7 +159,11 @@ export default {
         })
     },
     onPerformUpdate () {
+      this.requestPerformUpdate = true
       this.performUpdate()
+        .finally(() => {
+          this.requestPerformUpdate = false
+        })
     },
     ...mapActions({
       performUpdate: 'updater/performUpdate'

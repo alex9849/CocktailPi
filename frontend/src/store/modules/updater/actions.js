@@ -2,10 +2,17 @@ import SystemService from 'src/services/system.service'
 
 export const performUpdate = async ({ commit }) => {
   const currentVersion = (await SystemService.getVersion()).version
-  commit('setIsUpdateRunning', true)
 
   await SystemService.getCheckUpdate(true)
-  SystemService.performUpdate()
+  try {
+    SystemService.performUpdate()
+  } catch (e) {
+    if (e.response.status !== 504) {
+      throw e
+    }
+  }
+
+  commit('setIsUpdateRunning', true)
 
   let version = currentVersion
   while (version === currentVersion) {
