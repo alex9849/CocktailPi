@@ -277,17 +277,23 @@ public class RecipeRepository extends JdbcDaoSupport {
                             "FROM recipes r\n" +
                             "         left join production_steps ps on ps.recipe_id = r.id\n" +
                             "         left join production_step_ingredients psi on psi.recipe_id = ps.recipe_id and psi.\"order\" = ps.\"order\"\n" +
-                            "         left join ingredients i on i.id = psi.ingredient_id\n" +
+                            "         left join ingredients i\n" +
+                            "                   on i.id = psi.ingredient_id\n" +
                             "group by r.id\n" +
                             "having count(i.id) == sum(\n" +
-                            "            i.in_bar OR EXISTS(\n" +
-                            "                SELECT ide.leaf\n" +
-                            "                FROM concrete_ingredient_dependencies ide\n" +
-                            "                         JOIN ingredients i_sub ON i_sub.id = ide.leaf\n" +
-                            "                         JOIN pumps p ON i_sub.id = p.current_ingredient_id AND i_sub.dtype = 'AutomatedIngredient'\n" +
-                            "                WHERE ide.is_a = i.id\n" +
-                            "            )\n" +
-                            "    )\n");
+                            "            EXISTS (SELECT ide.leaf\n" +
+                            "                    FROM concrete_ingredient_dependencies ide\n" +
+                            "                             JOIN ingredients i_sub ON i_sub.id = ide.leaf\n" +
+                            "                    WHERE ide.is_a = i.id\n" +
+                            "                      AND i_sub.dtype != 'IngredientGroup'\n" +
+                            "                      AND i_sub.in_bar)\n" +
+                            "            OR EXISTS (SELECT ide.leaf\n" +
+                            "                       FROM concrete_ingredient_dependencies ide\n" +
+                            "                                JOIN ingredients i_sub ON i_sub.id = ide.leaf\n" +
+                            "                                JOIN pumps p ON i_sub.id = p.current_ingredient_id\n" +
+                            "                           AND i_sub.dtype = 'AutomatedIngredient'\n" +
+                            "                       WHERE ide.is_a = i.id)\n" +
+                            "    )");
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
