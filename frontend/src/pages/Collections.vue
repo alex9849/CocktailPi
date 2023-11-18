@@ -27,8 +27,6 @@
         >
           <c-collection-card
             :model-value="collection"
-            class="full-height"
-            style="max-height: 300px"
           />
         </router-link>
       </div>
