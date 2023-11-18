@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     # Backup database
     if os.path.exists(f"./db-backup/{args.current_version}"):
-        os.remove(f"./db-backup/{args.current_version}")
+        shutil.rmtree(f"./db-backup/{args.current_version}")
     os.makedirs(f"./db-backup/{args.current_version}")
 
     for x in os.listdir():
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         print("Current version not found!")
         exit(1)
 
-    if installation_candidate_url == "None":
+    if installation_candidate_url == None:
         os.system("service cocktailpi start")
         print("Couldn't find installation candidate!")
         exit(1)
