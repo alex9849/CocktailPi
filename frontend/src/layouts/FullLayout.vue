@@ -132,10 +132,13 @@ export default {
         icon: mdiGithub,
         link: 'https://github.com/alex9849/CocktailPi/'
       }, {
+        icon: mdiWeb,
+        link: 'https://cocktailpi.org/'
+      }, {
         icon: mdiLinkedin,
         link: 'https://www.linkedin.com/in/alexander-liggesmeyer/'
       }, {
-        icon: mdiWeb,
+        icon: mdiAccount,
         link: 'https://alexander.liggesmeyer.net/'
       }
       ]
