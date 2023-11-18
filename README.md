@@ -1,4 +1,4 @@
-# CocktailMaker
+# CocktailPi
 
 **Main Project Website:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)  
 **Parts list for reproduction:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)  

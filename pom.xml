@@ -9,7 +9,7 @@
         <version>3.1.3</version>
         <relativePath/>
     </parent>
-    <groupId>net.alex9849.cocktailmaker</groupId>
+    <groupId>net.alex9849.cocktailpi</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>

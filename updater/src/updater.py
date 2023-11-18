@@ -6,10 +6,10 @@ import os
 import stat
 import shutil
 
-releases_url = "https://api.github.com/repos/alex9849/pi-cocktail-maker/releases"
-installation_candidate_intermediate_name = "cocktailmaker_update.jar"
+releases_url = "https://api.github.com/repos/alex9849/CocktailPi/releases"
+installation_candidate_intermediate_name = "cocktailpi_update.jar"
 update_delta_script_name = "update_linux_delta.sh"
-database_file_name = "cocktailmaker-data.db"
+database_file_name = "cocktailpi-data.db"
 
 def download_file(url, filename):
     with open(filename, 'wb') as out_file:
@@ -23,7 +23,7 @@ def download_file(url, filename):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CocktailMaker updater")
+    parser = argparse.ArgumentParser(description="CocktailPi updater")
     parser.add_argument("-c", "--current_version", help="The software's current version to update from.")
     parser.add_argument("-f", "--file_name", help="The software's file name.")
     args = parser.parse_args()
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     with urllib.request.urlopen(releases_url) as request:
         releases = json.loads(request.read().decode())
 
-    os.system("service cocktailmaker stop")
+    os.system("service cocktailpi stop")
 
     # Backup database
     if os.path.exists(f"./db-backup/{args.current_version}"):
@@ -85,12 +85,12 @@ if __name__ == "__main__":
                 break
 
     if not current_version_found:
-        os.system("service cocktailmaker start")
+        os.system("service cocktailpi start")
         print("Current version not found!")
         exit(1)
 
     if installation_candidate_url == "None":
-        os.system("service cocktailmaker start")
+        os.system("service cocktailpi start")
         print("Couldn't find installation candidate!")
         exit(1)
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             os.system(f'./{update_delta_script_name}')
             os.remove(update_delta_script_name)
 
-    # Download current server.jar and store it in cocktailmaker_update.jar
+    # Download current server.jar and store it in cocktailpi_update.jar
     download_file(installation_candidate_url, installation_candidate_intermediate_name)
 
 

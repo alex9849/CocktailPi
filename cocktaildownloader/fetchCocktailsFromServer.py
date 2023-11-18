@@ -8,7 +8,7 @@ ingredientsFilePath = 'data/ingredients.json'
 categoriesFilePath = 'data/categories.json'
 glassFilePath = 'data/glasses.json'
 headers = {'Content-type': 'application/json'}
-cocktailMakerUrl = "http://localhost:8080"
+cocktailPiUrl = "http://localhost:8080"
 user = 'admin'
 password = '123456'
 
@@ -21,20 +21,20 @@ login_data = {
 def fetchRecipesFromServer():
     recipeIds = []
     recipes = []
-    token = provideAuthToken(cocktailMakerUrl, user, password)
+    token = provideAuthToken(cocktailPiUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/recipe/", {'inPublic': True}, headers=headers)
+    response = requests.get(cocktailPiUrl + "/api/recipe/", {'inPublic': True}, headers=headers)
     totalPages = response.json()['totalPages']
     for recipe in response.json()['content']:
         recipeIds.append(recipe['id'])
 
     for page in range(1, totalPages):
-        response = requests.get(cocktailMakerUrl + "/api/recipe/", {'inPublic': True, 'page': page}, headers=headers)
+        response = requests.get(cocktailPiUrl + "/api/recipe/", {'inPublic': True, 'page': page}, headers=headers)
         for recipe in response.json()['content']:
             recipeIds.append(recipe['id'])
 
     for id in recipeIds:
-        response = requests.get(cocktailMakerUrl + "/api/recipe/" + str(id), headers=headers)
+        response = requests.get(cocktailPiUrl + "/api/recipe/" + str(id), headers=headers)
         recipes.append(response.json())
 
     with open(cocktailsFilePath, 'w') as outfile:
@@ -42,15 +42,15 @@ def fetchRecipesFromServer():
 
     for recipe in recipes:
         if recipe['hasImage']:
-            urllib.request.urlretrieve(cocktailMakerUrl + "/api/recipe/" + str(recipe['id']) + "/image",
+            urllib.request.urlretrieve(cocktailPiUrl + "/api/recipe/" + str(recipe['id']) + "/image",
                                        "data/images/" + str(recipe['name']) + ".jpg")
 
 
 def fetchIngredientsFromServer():
     ingredients = []
-    token = provideAuthToken(cocktailMakerUrl, user, password)
+    token = provideAuthToken(cocktailPiUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/ingredient/export", headers=headers)
+    response = requests.get(cocktailPiUrl + "/api/ingredient/export", headers=headers)
     if (response.json() != None):
         ingredients.extend(response.json())
 
@@ -59,9 +59,9 @@ def fetchIngredientsFromServer():
 
 def fetchGlassesFromServer():
     glasses = []
-    token = provideAuthToken(cocktailMakerUrl, user, password)
+    token = provideAuthToken(cocktailPiUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/glass/", headers=headers)
+    response = requests.get(cocktailPiUrl + "/api/glass/", headers=headers)
     if (response.json() != None):
         glasses.extend(response.json())
 
@@ -71,9 +71,9 @@ def fetchGlassesFromServer():
 
 def fetchCategoriesFromServer():
     categories = []
-    token = provideAuthToken(cocktailMakerUrl, user, password)
+    token = provideAuthToken(cocktailPiUrl, user, password)
     headers['Authorization'] = token
-    response = requests.get(cocktailMakerUrl + "/api/category/", headers=headers)
+    response = requests.get(cocktailPiUrl + "/api/category/", headers=headers)
     if (response.json() != None):
         categories.extend(response.json())
 

@@ -9,14 +9,14 @@ export default {
     positive: 'Must be positive'
   },
   header: {
-    machine_name: 'CocktailMaker',
+    machine_name: 'CocktailPi',
     profile: {
       profile_btn_label: 'Profile',
       logout_btn_label: 'Logout'
     }
   },
   simple_header: {
-    machine_name: 'CocktailMaker',
+    machine_name: 'CocktailPi',
     leave_sv_btn_label: 'Leave simple-view',
     go_to_cocktail_progress_btn_label: 'Go to details >>',
     leave_sv_dialog: {
@@ -172,7 +172,7 @@ export default {
             '\'Whisky\'. There is an additional child ingredient group related to \'Whisky\' known as \'Scotch\'.\n' +
             '\n' +
             'You\'ve included \'Whisky 08/15\' in your bar\'s inventory. Due to the hierarchical structure, ' +
-            'CocktailMaker now recognizes that \'Whisky 08/15\' can be utilized not only in recipes that ' +
+            'CocktailPi now recognizes that \'Whisky 08/15\' can be utilized not only in recipes that ' +
             'specifically require this ingredient, but also in various recipes that call for any type of \'Bourbon\' ' +
             'or \'Whisky\'. However, it\'s important to note that \'Whisky 08/15\' cannot substitute for recipes that ' +
             'specifically demand \'Scotch\' or other distinct ingredients. '
@@ -469,7 +469,7 @@ export default {
         abort_btn_label: 'Abort'
       },
       tutorial: 'When enabling I2C two GPIO-pins on the local board get used up for the SDA and SCL pin of the I2C-bus. ' +
-        'Some boards provide more then one I2C bus. The cocktailmaker software only supports one I2C bus a the time.\n' +
+        'Some boards provide more then one I2C bus. The CocktailPi software only supports one I2C bus a the time.\n' +
         'This supported bus is the device at ' +
         '<div class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--outline text-black" role="status">/sys/bus/i2c/devices/i2c-1</div> ' +
         'on the underlying linux filesystem.\n' +
@@ -1062,14 +1062,14 @@ export default {
       donate_github_btn_label: 'Donate via GitHub sponsors',
       headline_2: 'This software is free, but donations are appreciated!',
       introduction: 'This software is free, but still it took and takes a lot time to develop and maintain it. ' +
-        'The developer of CocktailMaker (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
+        'The developer of CocktailPi (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
         'real income yet.',
       main_text: '<p>Here are some more reasons why you should donate:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
         '                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,\n' +
         '                ...).\n' +
-        '                Nevertheless this hardware wouldn\'t function if the CocktailMaker software wouldn\'t exist.\n' +
+        '                Nevertheless this hardware wouldn\'t function if the CocktailPi software wouldn\'t exist.\n' +
         '              </li>\n' +
         '              <li>\n' +
         '                You might think that that someone else will donate, but sadly they think that too. Before adding this\n' +
@@ -1079,7 +1079,7 @@ export default {
         '                I usually don\'t get any feedback for the software. It doesn\'t collect any data. I have no idea how many\n' +
         '                people are out there using it.\n' +
         '                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on\n' +
-        '                CocktailMaker.\n' +
+        '                CocktailPi.\n' +
         '              </li>\n' +
         '              <li>\n' +
         '                Developing this software causes costs. I as a developer often buy hardware, just to test\n' +

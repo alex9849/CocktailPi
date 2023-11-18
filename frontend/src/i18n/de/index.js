@@ -9,14 +9,14 @@ export default {
     positive: 'Muss positiv sein'
   },
   header: {
-    machine_name: 'CocktailMaker',
+    machine_name: 'CocktailPi',
     profile: {
       profile_btn_label: 'Profil',
       logout_btn_label: 'Abmelden'
     }
   },
   simple_header: {
-    machine_name: 'CocktailMaker',
+    machine_name: 'CocktailPi',
     leave_sv_btn_label: 'Touchansicht verlassen',
     go_to_cocktail_progress_btn_label: 'Details >>',
     leave_sv_dialog: {
@@ -179,7 +179,7 @@ export default {
         },
         groups: {
           headline: 'Zutatengruppen:',
-          text: "Zutatengruppen sind abstrakte Gruppen, die aus mehreren Zutaten oder anderen Zutatengruppen bestehen können. Rezepte können Zutatengruppen enthalten. Bevor ein solches Rezept bestellt werden kann, muss der Benutzer diese Zutatengruppe durch eine konkrete Zutat ersetzen, die zu dieser Gruppe gehört. Die Software erledigt dies automatisch für den Benutzer, wenn eine solche Zutat einer Pumpe zugeordnet wurde oder als 'Bar'-Zutat markiert ist. Zutaten auf Pumpen haben Vorrang.\n\nBeispiel: Sie haben eine spezifische Zutat namens 'Whisky 08/15'. Dieser Whisky ist in der Zutatengruppe 'Bourbon' kategorisiert. Die Gruppe 'Bourbon' wiederum fällt unter die allgemeinere Kategorie 'Whisky'. Es gibt eine zusätzliche Kindzutatengruppe, die mit 'Whisky' verbunden ist, bekannt als 'Scotch'.\n\nSie haben 'Whisky 08/15' in Ihrem Bar-Inventar. Aufgrund der hierarchischen Struktur erkennt CocktailMaker nun, dass 'Whisky 08/15' nicht nur in Rezepten verwendet werden kann, die diese spezielle Zutat erfordern, sondern auch in verschiedenen Rezepten, die nach einen beliebigen 'Bourbon' oder 'Whisky' verlangen. Es ist jedoch wichtig zu beachten, dass 'Whisky 08/15' nicht als Ersatz für Rezepte dienen kann, die explizit 'Scotch' oder andere spezifische Zutaten beinhalten."
+          text: "Zutatengruppen sind abstrakte Gruppen, die aus mehreren Zutaten oder anderen Zutatengruppen bestehen können. Rezepte können Zutatengruppen enthalten. Bevor ein solches Rezept bestellt werden kann, muss der Benutzer diese Zutatengruppe durch eine konkrete Zutat ersetzen, die zu dieser Gruppe gehört. Die Software erledigt dies automatisch für den Benutzer, wenn eine solche Zutat einer Pumpe zugeordnet wurde oder als 'Bar'-Zutat markiert ist. Zutaten auf Pumpen haben Vorrang.\n\nBeispiel: Sie haben eine spezifische Zutat namens 'Whisky 08/15'. Dieser Whisky ist in der Zutatengruppe 'Bourbon' kategorisiert. Die Gruppe 'Bourbon' wiederum fällt unter die allgemeinere Kategorie 'Whisky'. Es gibt eine zusätzliche Kindzutatengruppe, die mit 'Whisky' verbunden ist, bekannt als 'Scotch'.\n\nSie haben 'Whisky 08/15' in Ihrem Bar-Inventar. Aufgrund der hierarchischen Struktur erkennt CocktailPi nun, dass 'Whisky 08/15' nicht nur in Rezepten verwendet werden kann, die diese spezielle Zutat erfordern, sondern auch in verschiedenen Rezepten, die nach einen beliebigen 'Bourbon' oder 'Whisky' verlangen. Es ist jedoch wichtig zu beachten, dass 'Whisky 08/15' nicht als Ersatz für Rezepte dienen kann, die explizit 'Scotch' oder andere spezifische Zutaten beinhalten."
         },
         close_btn_label: 'Schließen'
       },
@@ -463,7 +463,7 @@ export default {
         save_btn_label: 'Speichern',
         abort_btn_label: 'Abbrechen'
       },
-      tutorial: 'Wenn I2C aktiviert wird, werden zwei GPIO-Pins auf dem lokalen Board für den SDA- und SCL-Pin des I2C-Busses verwendet. Einige Boards bieten mehr als einen I2C-Bus. Die Cocktailmaker-Software unterstützt jeweils nur einen I2C-Bus. Der unterstützte Bus ist das Gerät unter <div class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--outline" role="status">/sys/bus/i2c/devices/i2c-1</div> im zugrundeliegenden Linux-Dateisystem. Auf normalen Raspberry Pi sind die Pins für SDL und SCL normalerweise <b>2 für SDA</b> und <b>3 für SDL</b>. Wenn Sie die Pins, die Sie verwenden möchten, hier nicht sehen können, stellen Sie sicher, dass sie nicht bereits etwas anderem zugewiesen sind.<br><br><b>Die Felder für den SDL- und SCL-Pin beeinflussen nicht den ausgewählten Bus.</b>',
+      tutorial: 'Wenn I2C aktiviert wird, werden zwei GPIO-Pins auf dem lokalen Board für den SDA- und SCL-Pin des I2C-Busses verwendet. Einige Boards bieten mehr als einen I2C-Bus. Die CocktailPi-Software unterstützt jeweils nur einen I2C-Bus. Der unterstützte Bus ist das Gerät unter <div class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--outline" role="status">/sys/bus/i2c/devices/i2c-1</div> im zugrundeliegenden Linux-Dateisystem. Auf normalen Raspberry Pi sind die Pins für SDL und SCL normalerweise <b>2 für SDA</b> und <b>3 für SDL</b>. Wenn Sie die Pins, die Sie verwenden möchten, hier nicht sehen können, stellen Sie sicher, dass sie nicht bereits etwas anderem zugewiesen sind.<br><br><b>Die Felder für den SDL- und SCL-Pin beeinflussen nicht den ausgewählten Bus.</b>',
       configuration_warning: '<b><u>WARNUNG!!!:</b></u> Das Aktivieren und Deaktivieren des I2C-Busses löst Unix-Befehle aus, die den I2C-Bus konfigurieren. Stellen Sie sicher, dass SDA und SCL richtig ausgewählt sind. Andernfalls kann es passieren, dass Pins gleichzeitig als normale Pins und I2C-Pins verwendet werden. Dies führt zum Absturz der Anwendung!'
     },
     pump_setup: {
@@ -981,13 +981,13 @@ export default {
       donate_paypal_btn_label: 'Spenden via PayPal',
       donate_github_btn_label: 'Spenden via GitHub Sponsors',
       headline_2: 'Diese Software ist kostenlos, aber Spenden werden gerne gesehen!',
-      introduction: 'Diese Software ist kostenlos, aber ihre Entwicklung und Wartung erfordern viel Zeit. Der Entwickler von CocktailMaker (ich) entwickelt sie in seiner Freizeit. Zur Zeit bin ich Student, und habe noch kein festes Einkommen.',
+      introduction: 'Diese Software ist kostenlos, aber ihre Entwicklung und Wartung erfordern viel Zeit. Der Entwickler von CocktailPi (ich) entwickelt sie in seiner Freizeit. Zur Zeit bin ich Student, und habe noch kein festes Einkommen.',
       main_text: '<p>Hier sind einige weitere Gründe, warum du spenden solltest:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
         '                Nutzer dieser Software geben normalerweise viel Geld für Hardware aus (einen Raspberry Pi, Pumpen, ein Gehäuse,\n' +
         '                ...).\n' +
-        '                Diese Hardware wäre jedoch nutzlos, wenn die CocktailMaker-Software nicht existieren würde. Eine Spende zeigt deine Wertschätzung meiner Arbeit und sollte im Vergleich zu den Hardwarekosten nicht mehr sonderlich stark ins Gewicht fallen.\n' +
+        '                Diese Hardware wäre jedoch nutzlos, wenn die CocktailPi-Software nicht existieren würde. Eine Spende zeigt deine Wertschätzung meiner Arbeit und sollte im Vergleich zu den Hardwarekosten nicht mehr sonderlich stark ins Gewicht fallen.\n' +
         '              </li>\n' +
         '              <li>\n' +
         '                Du könntest denken, dass schon jemand anderes spenden wird. Diese ist jedoch leider meistens nicht der Fall. Die anderen denken sich das nämlich auch. Bevor ich diesen\n' +
@@ -996,7 +996,7 @@ export default {
         '              <li>\n' +
         '                Normalerweise erhalte ich kein Feedback für die Software. Sie sammelt keine Daten. Ich habe keine Ahnung, wie viele\n' +
         "                Menschen sie verwenden. Eine Spende und auch 'Stars' auf GitHub geben mir positives Feedback und motivieren mich, weiter an\n" +
-        '                der CocktailMaker-Software zu arbeiten.\n' +
+        '                der CocktailPi-Software zu arbeiten.\n' +
         '              </li>\n' +
         '              <li>\n' +
         '                Die Entwicklung dieser Software verursacht Kosten. Ich als Entwickler kaufe oft Hardware, nur um zu testen,\n' +

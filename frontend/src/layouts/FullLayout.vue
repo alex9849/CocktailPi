@@ -61,7 +61,7 @@
         :style="sidebarStyle"
       >
         <q-card-section>
-          <div class="row justify-center text-h6">CocktailMaker</div>
+          <div class="row justify-center text-h6">CocktailPi</div>
           <div class="row justify-center text-subtitle1">
             v%MAVEN_PROJECT_VERSION%
           </div>
