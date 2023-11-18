@@ -44,3 +44,4 @@ local.properties
 *.launch
 dependency-reduced-pom.xml
 desktop.ini
+cocktailpi-data.db*
