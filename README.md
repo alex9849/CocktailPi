@@ -1,17 +1,16 @@
 # CocktailPi
 
-**Main Project Website:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/)  
-**Parts list for reproduction:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware)  
-**Software setup Instructions:** [Click me](https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install)  
+**Main Project Website:** [Click me](https://cocktailpi.org/)  
+**Parts list for reproduction:** [Click me](https://cocktailpi.org/building-instructions/)  
+**Software setup Instructions:** [Click me](https://cocktailpi.org/install/)  
 **Community & Support:** [Discord - Click me](https://discord.gg/kGy7Up4b6S)  
 
-The “Cocktail-Maker” is not only a piece of software. 
+CocktailPi is not only a piece of software. 
 It’s a cocktail-mixing-machine, that works with a Raspberry-Pi, 
 that controls multiple pumps, which have different ingredients assigned. 
-The Cocktail-Maker provides a UI, that can be accessed via web browser. 
+CocktailPi provides a UI, that can be accessed via web browser. 
 Admins can create other users and assign them to multiple roles with 
-different permissions. Users can create own cocktails and if the 
-Cocktail-Maker has all the needed ingredients, they can order them. 
+different permissions. Users can create own cocktails and if CocktailPi has all the needed ingredients, they can order them. 
 Cocktails can be categorized and shared with other users.
 
 New recipes can be created in the UI. The user can add ingredients to 
@@ -45,19 +44,20 @@ The controlling software is designed to enhance your cocktail-making experience 
 # Demo
 A demo can be found here: https://cocktailmaker-demo.liggesmeyer.net/
 User: Admin  
-Password: 123456  
+Password: 123456
+
+# Installation
+An installation tutorial can be found here: https://cocktailpi.org/install/
 
 # Call to action
 Developing the software for this cocktail machine took a lot of time, and I still have features in mind that I want to implement. The cocktail maker software doesn’t send any data to me or other third parties, so I don’t get any feedback when someone is using the software. If you like the project, please consider giving it a „star“ on GitHub so that I can see that people are using it. Alternatively, I would also appreciate donations. The latter can be done here: https://github.com/sponsors/alex9849
 
 # Build the hardware
-
-You can find a more detailed instruction with an example list of building parts on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
+You can find a more detailed instruction with an example list of building parts on the project website: https://cocktailpi.org/building-instructions/
 
 In order to use this machine in a useful way, you need to build your own hardware.
-In simple words produces the Cocktail-Maker-Software different recipes by 
-controlling a relay board, that opens or closes the electronic circuit 
-for multiple pumps, which pump the different liquids into the glass.
+CocktailPi produces recipes by controlling a relay board, that opens or closes the electronic circuit 
+for multiple pumps, which pump the different liquids into the glass. It is also possible to use stepper motors instead or dc motors.
 The user can add new pumps in the webinterface, where he has to specify a GPIO-Pin
 for every pump and how long that pumps needs to pump exactly one centiliter in 
 milliseconds. You can build your machine as you like. The only important thing
@@ -72,12 +72,7 @@ is that you need to be able to apply that concept to your setup.
 
 
 ### This is the hardware that I've used for my machine:
-You can find the list and an installation tutorial on my website: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/#build-the-hardware
-
-# Installation
-
-An installation tutorial can be found here: https://alexander.liggesmeyer.net/portfolio/cocktailmaker/install
+You can find the list and an installation tutorial on my website: https://cocktailpi.org/building-instructions/
 
 # Community & Support
-
 If you have questions, want to share your setup or just want to talk about cocktail machines, feel free to join our discord server: [Click me](https://discord.gg/kGy7Up4b6S)

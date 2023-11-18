@@ -1,4 +1,4 @@
-# Cocktail-Maker (frontend)
+# CocktailPi (frontend)
 
 A Quasar Framework app
 
