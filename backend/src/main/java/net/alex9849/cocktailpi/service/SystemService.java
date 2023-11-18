@@ -275,8 +275,8 @@ public class SystemService {
     }
 
     public void setAppearance(AppearanceSettingsDto.Duplex.Detailed settingsDto) {
-        if(isDemoMode && settingsDto.getLanguage() != Language.en_US) {
-            throw new IllegalArgumentException("Updating the language is not allowed in demomode!");
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Appearance can't be updated in demomode!");
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
 
