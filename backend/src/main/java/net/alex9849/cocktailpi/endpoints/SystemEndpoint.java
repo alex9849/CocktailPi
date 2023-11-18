@@ -107,7 +107,7 @@ public class SystemEndpoint {
     public ResponseEntity<?> setI2C(@RequestBody @Valid I2cSettingsDto.Request dto) throws IOException {
         I2CSettings i2CSettings = systemService.fromDto(dto);
         systemService.setI2cSettings(i2CSettings);
-        return ResponseEntity.ok(systemService.getI2cSettings());
+        return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
