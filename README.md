@@ -42,7 +42,7 @@ The controlling software is designed to enhance your cocktail-making experience 
 - _And much more …._
 
 # Demo
-A demo can be found here: https://cocktailmaker-demo.liggesmeyer.net/
+A demo can be found here: https://demo.cocktailpi.org/
 User: Admin  
 Password: 123456
 
