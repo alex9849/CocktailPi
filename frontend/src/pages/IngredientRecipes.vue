@@ -34,8 +34,8 @@
                 class="text-caption"
                 :style="{'color': captionColor}"
               >
-                <p>{{ $t('page.ingredient_recipes.recipe.ml_left', {nr: iRecipe.ingredient.alcoholContent})}}</p>
-                <p>{{ $t('page.ingredient_recipes.recipe.alc_content', {nr: iRecipe.mlLeft})}}</p>
+                <p>{{ $t('page.ingredient_recipes.recipe.alc_content', {nr: iRecipe.ingredient.alcoholContent})}}</p>
+                <p>{{ $t('page.ingredient_recipes.recipe.ml_left', {nr: iRecipe.mlLeft})}}</p>
               </div>
             </q-card-section>
           </q-card-section>
