@@ -30,6 +30,41 @@
               ]"
       @update:model-value="e => setValue('alcoholContent', e)"
     />
+    <div class="row"
+         :style="{borderColor: color.cardBodyDark ? 'lightgrey' : 'grey'}"
+         :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.hasImage && !newImage && !removeImage}"
+    >
+      <div class="col">
+        <q-toggle :label="$t('page.collection.form.remove_img')"
+                  color="red"
+                  :dark="color.cardBodyDark"
+                  :disable="disable"
+                  v-if="modelValue.hasImage && !newImage"
+                  :model-value="removeImage"
+                  @change="onChangeRemoveImage($event)"
+        />
+        <q-file :label="$t('page.collection.form.image')"
+                outlined
+                :dark="color.cardBodyDark"
+                bottom-slots
+                :disable="disable"
+                v-if="!removeImage"
+                :model-value="newImage"
+                @update:modelValue="onImageSelect($event)"
+                max-file-size="20971520"
+                accept="image/*"
+                clearable
+                hide-bottom-space
+        >
+          <template v-slot:prepend>
+            <q-icon
+              name="cloud_upload"
+              @click.stop
+            />
+          </template>
+        </q-file>
+      </div>
+    </div>
     <q-separator/>
     <q-tabs
       class="text-teal"
@@ -133,6 +168,7 @@ import { mdiCogs, mdiHandRight, mdiInformation } from '@quasar/extras/mdi-v5'
 import { maxLength, maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CIngredientSelector from 'components/CIngredientSelector'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IngredientForm',
@@ -142,12 +178,19 @@ export default {
       type: Object,
       required: true
     },
+    newImage: {
+      type: Object
+    },
+    removeImage: {
+      type: Boolean,
+      required: true
+    },
     disable: {
       type: Boolean,
       default: false
     }
   },
-  emits: ['update:modelValue', 'invalid', 'valid'],
+  emits: ['update:modelValue', 'update:removeImage', 'update:newImage', 'invalid', 'valid'],
   data () {
     return {
       units: [
@@ -168,6 +211,18 @@ export default {
       this.v.modelValue.parentGroupId.$model = parentGroup?.id
       this.v.modelValue.parentGroupName.$model = parentGroup?.name
       this.$emit('update:modelValue', this.modelValue)
+    },
+    onImageSelect (img) {
+      this.$emit('update:newImage', img)
+      if (img) {
+        this.onChangeRemoveImage(false)
+      }
+    },
+    onChangeRemoveImage (isRemoveImage) {
+      this.$emit('update:removeImage', isRemoveImage)
+      if (isRemoveImage) {
+        this.onImageSelect(null)
+      }
     }
   },
   setup () {
@@ -209,6 +264,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     currentIngredientMultiplierString: {
       get: function () {
         const multiplier = this.modelValue.pumpTimeMultiplier
@@ -221,13 +279,6 @@ export default {
           stringVal += '.0'
         }
         return stringVal
-      },
-      set: function (value) {
-        if (!value) {
-          this.modelValue.pumpTimeMultiplier = null
-        } else {
-          this.modelValue.pumpTimeMultiplier = parseFloat(value)
-        }
       }
     },
     parentGroup () {

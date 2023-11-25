@@ -121,6 +121,8 @@
     <ingredient-form
       v-model:model-value="editOptions.editIngredient"
       :disable="editOptions.editIngredientSaving"
+      v-model:new-image="editOptions.newImage"
+      v-model:remove-image="editOptions.removeImage"
       @invalid="editOptions.valid = false"
       @valid="editOptions.valid = true"
     />
@@ -199,11 +201,14 @@ export default {
         editIngredientSaving: false,
         editDialog: false,
         valid: false,
+        removeImage: false,
+        newImage: null,
         editIngredient: {
           id: -1,
           name: '',
           pumpTimeMultiplier: 1.0,
           alcoholContent: 0,
+          hasImage: false,
           type: 'automated',
           unit: null
         },
@@ -212,6 +217,7 @@ export default {
           name: '',
           pumpTimeMultiplier: 1.0,
           alcoholContent: 0,
+          hasImage: false,
           type: 'automated',
           unit: null
         }
