@@ -1087,6 +1087,7 @@ export default {
     event_action_trigger_display_names: {
       cocktail_prod_started: 'Cocktail-Produktion gestartet',
       cocktail_prod_manual_interaction_requested: 'Manuelle Interaktion bei Cocktail-Produktion angefordert',
+      cocktail_prod_manual_interaction_completed: 'Manuelle Interaktion bei Cocktail-Produktion abgeschlossen',
       cocktail_prod_finished: 'Cocktail-Produktion beendet',
       cocktail_prod_canceled: 'Cocktail-Produktion abgebrochen',
       application_started: 'Anwendung gestartet'

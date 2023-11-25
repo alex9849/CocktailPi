@@ -9,6 +9,9 @@ export const eventActionTriggerDisplayNames = {
         label: this.$t('constants.event_action_trigger_display_names.cocktail_prod_manual_interaction_requested'),
         value: 'COCKTAIL_PRODUCTION_MANUAL_INTERACTION_REQUESTED'
       }, {
+        label: this.$t('constants.event_action_trigger_display_names.cocktail_prod_manual_interaction_completed'),
+        value: 'COCKTAIL_PRODUCTION_MANUAL_INTERACTION_COMPLETED'
+      }, {
         label: this.$t('constants.event_action_trigger_display_names.cocktail_prod_finished'),
         value: 'COCKTAIL_PRODUCTION_FINISHED'
       }, {

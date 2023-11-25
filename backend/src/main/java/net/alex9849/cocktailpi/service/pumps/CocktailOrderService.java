@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class CocktailOrderService {
     private CocktailFactory cocktailFactory;
+    private CocktailProgress prevCocktailProgress;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -84,6 +85,7 @@ public class CocktailOrderService {
         if(progress.getState() == CocktailProgress.State.CANCELLED || progress.getState() == CocktailProgress.State.FINISHED) {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
+                this.prevCocktailProgress = null;
                 this.webSocketService.broadcastCurrentCocktailProgress(null);
                 this.pumpUpService.reschedulePumpBack();
             }, 5000, TimeUnit.MILLISECONDS);
@@ -107,6 +109,15 @@ public class CocktailOrderService {
                 eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_FINISHED);
                 break;
         }
+        if(prevCocktailProgress != null) {
+            if(prevCocktailProgress.getState() == CocktailProgress.State.MANUAL_ACTION_REQUIRED
+                    || prevCocktailProgress.getState() == CocktailProgress.State.MANUAL_INGREDIENT_ADD) {
+                if(progress.getState() == CocktailProgress.State.RUNNING) {
+                    eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_MANUAL_INTERACTION_COMPLETED);
+                }
+            }
+        }
+        prevCocktailProgress = progress;
     }
 
     public FeasibilityFactory checkFeasibility(Recipe recipe, CocktailOrderConfiguration orderConfig) {

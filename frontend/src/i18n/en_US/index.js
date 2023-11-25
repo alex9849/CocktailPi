@@ -1170,6 +1170,7 @@ export default {
     event_action_trigger_display_names: {
       cocktail_prod_started: 'Cocktail production started',
       cocktail_prod_manual_interaction_requested: 'Cocktail production manual interaction requested',
+      cocktail_prod_manual_interaction_completed: 'Cocktail production manual interaction completed',
       cocktail_prod_finished: 'Cocktail production finished',
       cocktail_prod_canceled: 'Cocktail production canceled',
       application_started: 'Application started'
