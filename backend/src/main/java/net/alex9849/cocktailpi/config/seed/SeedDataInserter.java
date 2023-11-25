@@ -130,6 +130,15 @@ public class SeedDataInserter {
             }
             Ingredient createdIngredient = ingredientService.createIngredient(ingredientService.fromDto(createDto));
             oldToNewIdMap.put(ingredientDto.getId(), createdIngredient.getId());
+
+            InputStream ingredientImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/ingredients/" + createdIngredient.getName() + ".jpg");
+            if (ingredientImageStream != null) {
+                BufferedImage image = ImageIO.read(ingredientImageStream);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(image, "jpg", out);
+                ingredientService.setImage(createdIngredient.getId(), out.toByteArray());
+            }
+
         }
         for (Map.Entry<Long, Long> entry : childParentRelation.entrySet()) {
             Long child = oldToNewIdMap.get(entry.getKey());
@@ -211,7 +220,7 @@ public class SeedDataInserter {
             }
             Recipe recipe = recipeService.createRecipe(recipeService.fromDto(createDto));
 
-            InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/" + recipeDto.getName() + ".jpg");
+            InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/recipes/" + recipeDto.getName() + ".jpg");
             if (recipeImageStream != null) {
                 BufferedImage image = ImageIO.read(recipeImageStream);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();

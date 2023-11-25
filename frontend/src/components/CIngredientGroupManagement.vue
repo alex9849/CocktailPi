@@ -202,7 +202,7 @@ export default {
         vm.editOptions.saving = false
         vm.editOptions.editErrorMessage = ''
         let msg
-        if (vm.isEditGroupNew()) {
+        if (vm.isEditGroupNew) {
           msg = vm.$t('component.ingredient_group_mgmt.notifications.group_created')
         } else {
           msg = vm.$t('component.ingredient_group_mgmt.notifications.group_updated')
