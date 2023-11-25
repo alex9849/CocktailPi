@@ -9,8 +9,8 @@ class SystemService {
       .then(response => response.data)
   }
 
-  doShutdown () {
-    return axios.put(API_PATH + 'shutdown')
+  doShutdown (isReboot = false) {
+    return axios.put(API_PATH + 'shutdown', null, { params: { isReboot } })
   }
 
   getAudioDevices () {

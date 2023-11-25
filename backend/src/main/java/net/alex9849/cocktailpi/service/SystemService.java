@@ -71,11 +71,15 @@ public class SystemService {
     @Autowired
     private PinUtils pinUtils;
 
-    public void shutdown() throws IOException {
+    public void shutdown(boolean isRestart) throws IOException {
         if(isDemoMode) {
             throw new IllegalArgumentException("System can't be shutdown in demomode!");
         }
-        Process process = Runtime.getRuntime().exec("sudo shutdown -h now");
+        if(isRestart) {
+            Process process = Runtime.getRuntime().exec("sudo reboot");
+        } else {
+            Process process = Runtime.getRuntime().exec("sudo shutdown -h now");
+        }
     }
 
     public List<PythonLibraryInfo> getInstalledPythonLibraries() throws IOException {

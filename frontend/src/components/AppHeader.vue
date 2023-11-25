@@ -31,6 +31,14 @@
                 {{ $t('header.profile.profile_btn_label') }}
               </q-item-section>
             </q-item>
+            <q-item clickable @click="reload()">
+              <q-item-section avatar>
+                <q-icon :name="mdiReload"/>
+              </q-item-section>
+              <q-item-section>
+                {{ $t('header.profile.reload_btn_label') }}
+              </q-item-section>
+            </q-item>
             <q-item clickable @click="logout()">
               <q-item-section avatar>
                 <q-icon :name="mdiPower"/>
@@ -49,7 +57,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { mdiAccountBox, mdiAlert, mdiPower, mdiGlassCocktail } from '@quasar/extras/mdi-v5'
+import { mdiAccountBox, mdiReload, mdiAlert, mdiPower, mdiGlassCocktail } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
 
 export default {
@@ -62,6 +70,9 @@ export default {
     logout () {
       this.$router.push({ name: 'login' })
       this.storeLogout()
+    },
+    reload () {
+      location.reload()
     }
   },
   computed: {
@@ -82,7 +93,8 @@ export default {
       mdiAccountBox: mdiAccountBox,
       mdiPower: mdiPower,
       mdiAlert: mdiAlert,
-      mdiGlassCocktail: mdiGlassCocktail
+      mdiGlassCocktail: mdiGlassCocktail,
+      mdiReload: mdiReload
     }
   }
 }

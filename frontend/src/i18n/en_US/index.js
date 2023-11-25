@@ -12,6 +12,7 @@ export default {
     machine_name: 'CocktailPi',
     profile: {
       profile_btn_label: 'Profile',
+      reload_btn_label: 'Reload',
       logout_btn_label: 'Logout'
     }
   },
@@ -355,7 +356,8 @@ export default {
         shutdown_btn_label: 'Shutdown system',
         shutdown_dialog: {
           headline: 'Shut down?',
-          ok_btn_label: 'Shutdown',
+          reboot_btn_label: 'Neu starten',
+          shutdown_btn_label: 'Herunterfahren',
           abort_btn_label: 'Abort'
         }
       },

@@ -111,8 +111,32 @@
       @clickOk="doShutdown"
       ok-color="red"
       :abort-button-text="$t('page.system_mgmt.system.shutdown_dialog.abort_btn_label')"
-      :ok-button-text="$t('page.system_mgmt.system.shutdown_dialog.ok_btn_label')"
-    />
+      :ok-button-text="$t('page.system_mgmt.system.shutdown_dialog.shutdown_btn_label')"
+    >
+      <template v-slot:buttons>
+        <q-btn
+          color="grey"
+          @click="() => shutdown.dialog = false"
+          style="width: 150px"
+        >
+          {{ $t('page.system_mgmt.system.shutdown_dialog.abort_btn_label') }}
+        </q-btn>
+        <q-btn
+          color="warning"
+          style="width: 150px"
+          @click="doReboot"
+        >
+          {{ $t('page.system_mgmt.system.shutdown_dialog.reboot_btn_label') }}
+        </q-btn>
+        <q-btn
+          color="red"
+          style="width: 150px"
+          @click="doShutdown"
+        >
+          {{ $t('page.system_mgmt.system.shutdown_dialog.shutdown_btn_label') }}
+        </q-btn>
+      </template>
+    </c-question>
     <h5>{{ $t('page.system_mgmt.appearance.headline') }}</h5>
     <c-settings-appearance />
   </q-page>
@@ -169,8 +193,14 @@ export default {
     })
   },
   methods: {
+    doReboot () {
+      SystemService.doShutdown(true)
+        .finally(() => {
+          this.shutdown.dialog = false
+        })
+    },
     doShutdown () {
-      SystemService.doShutdown()
+      SystemService.doShutdown(false)
         .finally(() => {
           this.shutdown.dialog = false
         })

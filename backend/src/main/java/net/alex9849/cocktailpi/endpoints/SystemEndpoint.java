@@ -15,10 +15,7 @@ import net.alex9849.cocktailpi.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -92,8 +89,8 @@ public class SystemEndpoint {
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/shutdown", method = RequestMethod.PUT)
-    public ResponseEntity<?> shutdown() throws IOException {
-        systemService.shutdown();
+    public ResponseEntity<?> shutdown(@RequestParam(value = "isReboot", defaultValue = "false") boolean isReboot) throws IOException {
+        systemService.shutdown(isReboot);
         return ResponseEntity.ok().build();
     }
 
