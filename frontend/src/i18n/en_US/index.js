@@ -797,6 +797,7 @@ export default {
           unit: 'Unit',
           pump_time_multiplier: 'Pump time multiplier',
           parent_group: 'Parent Group',
+          has_image: 'Image',
           actions: 'Actions'
         },
         edit_btn_tooltip: 'Edit',
@@ -821,6 +822,8 @@ export default {
       tab_automated: 'Automated',
       tab_manual: 'Manual',
       parent_group: 'Parent group',
+      image: 'Image',
+      remove_img: 'Remove existing image',
       bottle_size: 'Bottle size',
       pump_time_multiplier: 'Pump time multiplier',
       unit: 'Unit',

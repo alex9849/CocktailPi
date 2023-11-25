@@ -46,7 +46,10 @@ class RecipeService {
 
   getIngredientRecipes () {
     return axios.get(API_PATH + 'ingredient')
-      .then(response => response.data)
+      .then(response => {
+        response.data = response.data.map(x => this.afterRecipeLoad(x))
+        return response.data
+      })
   }
 
   getRecipe (id, isIngredient = false) {

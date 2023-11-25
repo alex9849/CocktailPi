@@ -736,6 +736,7 @@ export default {
           unit: 'Einheit',
           pump_time_multiplier: 'Pumpenzeitmultiplikator',
           parent_group: 'Übergeordnete Gruppe',
+          has_image: 'Bild',
           actions: 'Aktionen'
         },
         edit_btn_tooltip: 'Bearbeiten',
@@ -761,6 +762,8 @@ export default {
       tab_manual: 'Manuell',
       parent_group: 'Übergeordnete Gruppe',
       bottle_size: 'Flaschengröße',
+      image: 'Bild',
+      remove_img: 'Vorhandenes Bild entfernen',
       pump_time_multiplier: 'Pumpenzeitmultiplikator',
       unit: 'Einheit',
       units: {

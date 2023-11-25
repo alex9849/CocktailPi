@@ -178,8 +178,14 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
-        byte[] image = recipeService.getImage(id);
+    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id,
+                                     @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {
+        byte[] image;
+        if(isIngredient) {
+            image = ingredientService.getImage(id);
+        } else {
+            image = recipeService.getImage(id);
+        }
         if(image == null) {
             return ResponseEntity.notFound().build();
         }

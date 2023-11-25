@@ -23,6 +23,13 @@
           <q-card-section horizontal>
             <q-card-section class="col-4 q-pa-sm">
               <q-img :ratio="1"
+                     v-if="iRecipe.hasImage"
+                     class="rounded-borders"
+                     :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + iRecipe.id + '/image?timestamp=' + iRecipe.lastUpdate.getTime() + '&isIngredient=true'"
+                     placeholder-src="~assets/cocktail-solid.png"
+              />
+              <q-img :ratio="1"
+                     v-else
                      class="rounded-borders"
                      placeholder-src="~assets/cocktail-solid.png"
                      src="~assets/cocktail-solid.png"

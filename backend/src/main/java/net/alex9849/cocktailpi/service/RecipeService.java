@@ -5,6 +5,7 @@ import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailpi.model.recipe.Recipe;
+import net.alex9849.cocktailpi.model.recipe.ingredient.AddableIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
@@ -140,11 +141,13 @@ public class RecipeService {
         recipe.setId(ingredient.getId());
         recipe.setName(ingredient.getName());
         recipe.setOwner(userService.getSystemUser());
-        recipe.setHasImage(false);
         recipe.setCategories(new ArrayList<>());
         recipe.setDescription(ingredient.getName());
-        recipe.setLastUpdate(new Date());
+        recipe.setLastUpdate(ingredient.getLastUpdate());
         recipe.setDefaultGlass(defaultGlass);
+        if(ingredient instanceof AddableIngredient addableIngredient) {
+            recipe.setHasImage(addableIngredient.isHasImage());
+        }
         ProductionStepIngredient psIngredient = new ProductionStepIngredient();
         psIngredient.setIngredient(ingredient);
         psIngredient.setScale(true);

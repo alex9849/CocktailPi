@@ -35,7 +35,7 @@
          :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.hasImage && !newImage && !removeImage}"
     >
       <div class="col">
-        <q-toggle :label="$t('page.collection.form.remove_img')"
+        <q-toggle :label="$t('component.ingredient_form.remove_img')"
                   color="red"
                   :dark="color.cardBodyDark"
                   :disable="disable"
@@ -43,7 +43,7 @@
                   :model-value="removeImage"
                   @update:modelValue="onChangeRemoveImage($event)"
         />
-        <q-file :label="$t('page.collection.form.image')"
+        <q-file :label="$t('component.ingredient_form.image')"
                 outlined
                 :dark="color.cardBodyDark"
                 bottom-slots

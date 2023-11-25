@@ -188,6 +188,12 @@ export default {
           align: 'center'
         },
         {
+          name: 'hasImage',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.has_image'),
+          field: 'hasImage',
+          align: 'center'
+        },
+        {
           name: 'actions',
           label: this.$t('component.ingredient_mgmt.ingredient_table.columns.actions'),
           field: '',
