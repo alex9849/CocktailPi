@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/recipe/*/image").permitAll()
                                 .requestMatchers("/api/collection/*/image").permitAll()
+                                .requestMatchers("/api/ingredient/*/image").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/system/settings/appearance").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/system/version").permitAll()
                                 .requestMatchers("/api/**").authenticated()

@@ -225,7 +225,7 @@ export default {
         IngredientService.createIngredient(dto)
           .then(onSuccess, error => onError(error))
       } else {
-        IngredientService.updateIngredient(this.editOptions.editGroup.id, dto)
+        IngredientService.updateIngredient(this.editOptions.editGroup.id, dto, null)
           .then(onSuccess, error => onError(error))
       }
     },

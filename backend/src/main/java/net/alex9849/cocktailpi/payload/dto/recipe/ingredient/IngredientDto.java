@@ -10,6 +10,8 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Date;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IngredientDto {
     protected interface Id { long getId(); }
@@ -20,6 +22,7 @@ public class IngredientDto {
     protected interface InBar { boolean isInBar(); }
     protected interface OnPump { boolean isOnPump(); }
     protected interface Unit { Ingredient.Unit getUnit(); }
+    protected interface LastUpdate { Date getLastUpdate(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
@@ -65,11 +68,12 @@ public class IngredientDto {
                 @JsonSubTypes.Type(value = AutomatedIngredientDto.Response.Detailed.class, name = "automated"),
                 @JsonSubTypes.Type(value = IngredientGroupDto.Response.Detailed.class, name = "group")
         })
-        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump {
+        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump, LastUpdate {
             long id;
             String name;
             Long parentGroupId;
             String parentGroupName;
+            Date lastUpdate;
 
             protected Detailed() {}
 

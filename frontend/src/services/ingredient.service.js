@@ -24,12 +24,30 @@ class IngredientService {
       .then(response => response.data)
   }
 
-  updateIngredient (id, createIngredient) {
-    return axios.put(API_PATH + String(id), createIngredient)
+  updateIngredient (id, updateIngredient, image, removeImage = false) {
+    const uploadData = new FormData()
+    const stringIngredient = JSON.stringify(updateIngredient)
+    const blobIngredient = new Blob([stringIngredient], {
+      type: 'application/json'
+    })
+    uploadData.append('ingredient', blobIngredient)
+    if (image) {
+      uploadData.append('image', image)
+    }
+    return axios.put(API_PATH + String(id) + '?removeImage=' + String(removeImage), uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
-  createIngredient (createIngredient) {
-    return axios.post(API_PATH, createIngredient)
+  createIngredient (createIngredient, image) {
+    const uploadData = new FormData()
+    const stringIngredient = JSON.stringify(createIngredient)
+    const blobIngredient = new Blob([stringIngredient], {
+      type: 'application/json'
+    })
+    uploadData.append('ingredient', blobIngredient)
+    if (image) {
+      uploadData.append('image', image)
+    }
+    return axios.post(API_PATH, uploadData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 
   deleteIngredient (id) {

@@ -11,6 +11,7 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.ManualIngredient;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class AddableIngredientDto {
     private interface AlcoholContent { @Min(0) @Max(100) int getAlcoholContent(); }
+    private interface HasImage { boolean isHasImage(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
@@ -44,9 +45,10 @@ public abstract class AddableIngredientDto {
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent {
+        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent, HasImage {
             int alcoholContent;
             boolean inBar;
+            boolean hasImage;
 
             protected Detailed() {}
 

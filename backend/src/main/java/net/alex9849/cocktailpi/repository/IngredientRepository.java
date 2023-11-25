@@ -29,7 +29,8 @@ public class IngredientRepository extends JdbcDaoSupport {
         }
 
         return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
-            String stmt = "SELECT * FROM ingredients i WHERE i.id IN (";
+            String stmt = "SELECT id, name, dType, unit, alcohol_content, in_bar, pump_time_multiplier, bottle_size, " +
+                    "parent_group_id, last_update, image IS NOT NULL AS has_image FROM ingredients i WHERE i.id IN (";
             stmt += String.join(",", Arrays.stream(ids).map(x -> "?").collect(Collectors.toList()));
             stmt += ") order by i.name";
 
@@ -54,17 +55,12 @@ public class IngredientRepository extends JdbcDaoSupport {
         return Optional.of(foundList.get(0));
     }
 
-    public Set<Ingredient> findGroupChildren(long id) {
-        return getJdbcTemplate().execute((ConnectionCallback<Set<Ingredient>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE i.parent_group_id = ?");
+    public Set<Long> findDirectGroupChildrenIds(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE i.parent_group_id = ?");
             pstmt.setLong(1, id);
 
-            ResultSet rs = pstmt.executeQuery();
-            Set<Ingredient> results = new HashSet<>();
-            while (rs.next()) {
-                results.add(parseRs(rs));
-            }
-            return results;
+            return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
 
@@ -144,7 +140,7 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findGroupChildrenIds(long groupChildrenGroupId) {
+    public Set<Long> findAllGroupChildrenIds(long groupChildrenGroupId) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT aid.child as id FROM all_ingredient_dependencies aid WHERE aid.is_a = ?");
             pstmt.setLong(1, groupChildrenGroupId);
@@ -152,23 +148,18 @@ public class IngredientRepository extends JdbcDaoSupport {
         });
     }
 
-    public Optional<Ingredient> findByNameIgnoringCase(String name) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<Ingredient>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
+    public Set<Long> findIdsByNameIgnoringCase(String name) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
             pstmt.setString(1, name);
-            pstmt.execute();
-            ResultSet rs = pstmt.getResultSet();
-            while (rs.next()) {
-                return Optional.of(parseRs(rs));
-            }
-            return Optional.empty();
+            return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
 
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size, last_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", Statement.RETURN_GENERATED_KEYS);
             setParameters(ingredient, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -182,7 +173,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ? WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             setParameters(ingredient, pstmt);
             pstmt.setLong(9, ingredient.getId());
             return pstmt.executeUpdate() != 0;
@@ -206,6 +197,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             mIngredient.setUnit(Ingredient.Unit.valueOf(resultSet.getString("unit")));
             mIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             mIngredient.setInBar(resultSet.getBoolean("in_bar"));
+            mIngredient.setHasImage(resultSet.getBoolean("has_image"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();
@@ -213,6 +205,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             aIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             aIngredient.setInBar(resultSet.getBoolean("in_bar"));
             aIngredient.setBottleSize(resultSet.getInt("bottle_size"));
+            aIngredient.setHasImage(resultSet.getBoolean("has_image"));
             ingredient = aIngredient;
         } else if (Objects.equals(dType, "IngredientGroup")) {
             ingredient = new IngredientGroup();
@@ -224,19 +217,43 @@ public class IngredientRepository extends JdbcDaoSupport {
         if(resultSet.wasNull()) {
             ingredient.setParentGroupId(null);
         }
+        ingredient.setLastUpdate(resultSet.getTimestamp("last_update"));
         ingredient.setName(resultSet.getString("name"));
         return ingredient;
     }
 
-    public List<Ingredient> findAll() {
-        return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM ingredients order by name");
-            ResultSet rs = pstmt.executeQuery();
-            List<Ingredient> results = new ArrayList<>();
-            while (rs.next()) {
-                results.add(parseRs(rs));
+    public Set<Long> findAllIds() {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients order by name");
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
+    public void setImage(long ingredientId, byte[] image) {
+        getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
+            if (image == null) {
+                PreparedStatement deleteImagePstmt = con.prepareStatement("UPDATE ingredients SET image = NULL, last_update = CURRENT_TIMESTAMP where id = ?");
+                deleteImagePstmt.setLong(1, ingredientId);
+                deleteImagePstmt.executeUpdate();
+                return null;
             }
-            return results;
+            PreparedStatement updateLobOidPstmt = con.prepareStatement("UPDATE ingredients SET image = ?, last_update = CURRENT_TIMESTAMP where id = ?");
+            updateLobOidPstmt.setBytes(1, image);
+            updateLobOidPstmt.setLong(2, ingredientId);
+            updateLobOidPstmt.executeUpdate();
+            return null;
+        });
+    }
+
+    public Optional<byte[]> getImage(long id) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<byte[]>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT image FROM ingredients where id = ?");
+            pstmt.setLong(1, id);
+            ResultSet resultSet = pstmt.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(resultSet.getBytes("image"));
+            }
+            return Optional.empty();
         });
     }
 }

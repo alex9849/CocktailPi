@@ -242,6 +242,8 @@ export default {
     },
     closeEditDialog () {
       this.editOptions.editIngredient = Object.assign({}, this.editOptions.newIngredient)
+      this.editOptions.newImage = null
+      this.editOptions.removeImage = false
       this.editOptions.editDialog = false
       this.editOptions.editErrorMessage = ''
     },
@@ -271,10 +273,10 @@ export default {
       }
       const dtoIngredient = ingredientDtoMapper.toIngredientCreateDto(this.editOptions.editIngredient)
       if (this.isEditIngredientNew) {
-        IngredientService.createIngredient(dtoIngredient)
+        IngredientService.createIngredient(dtoIngredient, this.editOptions.newImage)
           .then(onSuccess, error => onError(error))
       } else {
-        IngredientService.updateIngredient(this.editOptions.editIngredient.id, dtoIngredient)
+        IngredientService.updateIngredient(this.editOptions.editIngredient.id, dtoIngredient, this.editOptions.newImage, this.editOptions.removeImage)
           .then(onSuccess, error => onError(error))
       }
     },

@@ -19,7 +19,7 @@ public class IngredientGroup extends Ingredient {
         if(children == null) {
             //Lazy load
             IngredientService iService = SpringUtility.getBean(IngredientService.class);
-            this.children = iService.getGroupChildren(this.getId());
+            this.children = new HashSet<>(iService.getGroupChildren(this.getId()));
         }
         return children;
     }

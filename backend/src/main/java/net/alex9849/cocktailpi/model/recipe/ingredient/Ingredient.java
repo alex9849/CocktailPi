@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import net.alex9849.cocktailpi.service.IngredientService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 
+import java.util.Date;
 import java.util.Objects;
 
 public abstract class Ingredient {
@@ -11,6 +12,8 @@ public abstract class Ingredient {
     private String name;
     private Long parentGroupId;
     private IngredientGroup parentGroup;
+
+    private Date lastUpdate;
 
     public long getId() {
         return id;
@@ -55,6 +58,14 @@ public abstract class Ingredient {
 
     public Long getParentGroupId() {
         return parentGroupId;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     public abstract boolean isInBar();

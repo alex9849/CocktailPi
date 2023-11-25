@@ -41,7 +41,7 @@
                   :disable="disable"
                   v-if="modelValue.hasImage && !newImage"
                   :model-value="removeImage"
-                  @change="onChangeRemoveImage($event)"
+                  @update:modelValue="onChangeRemoveImage($event)"
         />
         <q-file :label="$t('page.collection.form.image')"
                 outlined

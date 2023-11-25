@@ -81,7 +81,7 @@ public class IngredientService {
             idsToFindSetList.add(ingredientRepository.findIdsNotGroup());
         }
         if(groupChildrenGroupId != null) {
-            idsToFindSetList.add(ingredientRepository.findGroupChildrenIds(groupChildrenGroupId));
+            idsToFindSetList.add(ingredientRepository.findAllGroupChildrenIds(groupChildrenGroupId));
         }
         if(onPump) {
             idsToFindSetList.add(pumpService.findIngredientIdsOnPump());
@@ -99,7 +99,7 @@ public class IngredientService {
         }
 
         if(idsToFindSetList.isEmpty()) {
-            return ingredientRepository.findAll();
+            return ingredientRepository.findByIds(ingredientRepository.findAllIds().toArray(new Long[0]));
         }
 
         Set<Long> retained = null;
@@ -113,7 +113,7 @@ public class IngredientService {
         if(retained.isEmpty()) {
             return Collections.emptyList();
         }
-        return ingredientRepository.findByIds(retained.toArray(new Long[1]));
+        return ingredientRepository.findByIds(retained.toArray(new Long[0]));
     }
 
     public List<Ingredient> getIngredientsInExportOrder() {
@@ -144,17 +144,22 @@ public class IngredientService {
         ingredientRepository.update(aIngredient);
     }
 
+    public void setImage(long ingredientId, byte[] image) {
+        ingredientRepository.setImage(ingredientId, image);
+    }
+
     public Ingredient updateIngredient(Ingredient ingredient) {
         if(ingredientRepository.findById(ingredient.getId()).isEmpty()) {
             throw new IllegalArgumentException("Ingredient doesn't exist!");
         }
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
-        if(optionalIngredient.isPresent()) {
-            if(!Objects.equals(optionalIngredient.get().getId(), ingredient.getId())) {
+        List<Ingredient> withSameName = ingredientRepository.findByIds(ingredientRepository.findIdsByNameIgnoringCase(ingredient.getName()).toArray(new Long[0]));
+        if(!withSameName.isEmpty()) {
+            Ingredient iWithSameName = withSameName.get(0);
+            if(!Objects.equals(iWithSameName.getId(), ingredient.getId())) {
                 throw new IllegalArgumentException("An ingredient with this name already exists!");
             }
             if(ingredient instanceof AddableIngredient) {
-                ((AddableIngredient) ingredient).setInBar(optionalIngredient.get().isInBar());
+                ((AddableIngredient) ingredient).setInBar(iWithSameName.isInBar());
             }
         }
         try {
@@ -169,8 +174,8 @@ public class IngredientService {
     }
 
     public Ingredient createIngredient(Ingredient ingredient) {
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findByNameIgnoringCase(ingredient.getName());
-        if(optionalIngredient.isPresent()) {
+        Set<Long> foundWithName = ingredientRepository.findIdsByNameIgnoringCase(ingredient.getName());
+        if(!foundWithName.isEmpty()) {
             throw new IllegalArgumentException("An ingredient with this name already exists!");
         }
         if(ingredient instanceof AddableIngredient) {
@@ -183,7 +188,11 @@ public class IngredientService {
         return ingredientRepository.delete(id);
     }
 
-    public Set<Ingredient> getGroupChildren(long id) {
-        return ingredientRepository.findGroupChildren(id);
+    public List<Ingredient> getGroupChildren(long id) {
+        return ingredientRepository.findByIds(ingredientRepository.findDirectGroupChildrenIds(id).toArray(new Long[0]));
+    }
+
+    public byte[] getImage(long id) {
+        return ingredientRepository.getImage(id).orElse(null);
     }
 }
