@@ -91,7 +91,7 @@ public class CollectionEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+            image = ImageUtils.resizeImage(image, 1500, 16d / 9);
         }
         collectionService.updateCollection(updateCollection, image, removeImage);
         return ResponseEntity.ok().build();

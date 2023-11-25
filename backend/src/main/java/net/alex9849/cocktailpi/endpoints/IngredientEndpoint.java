@@ -76,7 +76,7 @@ public class IngredientEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+            image = ImageUtils.resizeImage(image, 1500, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             ingredientService.setImage(ingredient.getId(), out.toByteArray());
@@ -106,7 +106,7 @@ public class IngredientEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+            image = ImageUtils.resizeImage(image, 1500, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             ingredientService.setImage(ingredient.getId(), out.toByteArray());
