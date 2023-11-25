@@ -58,6 +58,25 @@
           </p>
         </q-td>
       </template>
+      <template v-slot:body-cell-hasImage="props">
+        <q-td
+          key="hasImage"
+          :props="props"
+        >
+          <q-btn
+            v-if="props.row.hasImage"
+            @click="onClickShowImgDialog(props.row)"
+            dense
+            outline
+            no-caps
+          >
+            Yes / Show
+          </q-btn>
+          <p v-else>
+            No
+          </p>
+        </q-td>
+      </template>
       <template v-slot:body-cell-actions="props">
         <q-td
           key="actions"
@@ -127,6 +146,27 @@
       @valid="editOptions.valid = true"
     />
   </c-edit-dialog>
+  <q-dialog
+    :model-value="showImgDialog.show"
+    @update:modelValue="closeShowImgDialog()"
+  >
+    <q-card
+      style="width: 500px; max-width: 1000px"
+    >
+      <q-card-section>
+        <q-img
+          :src="this.$store.getters['auth/getFormattedServerAddress'] + '/api/ingredient/' + showImgDialog.ingredient.id + '/image?timestamp=' + showImgDialog.ingredient.lastUpdate.getTime()"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          @click="closeShowImgDialog"
+        >
+          Close
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -200,6 +240,13 @@ export default {
           align: 'center'
         }
       ],
+      showImgDialog: {
+        show: false,
+        ingredient: {
+          id: '',
+          lastUpdate: ''
+        }
+      },
       ingredients: [],
       loading: false,
       editOptions: {
@@ -297,6 +344,15 @@ export default {
           this.loading = false
           this.ingredients = ingredients
         })
+    },
+    onClickShowImgDialog (ingredient) {
+      this.showImgDialog.show = true
+      if (ingredient.hasImage) {
+        this.showImgDialog.ingredient = ingredient
+      }
+    },
+    closeShowImgDialog () {
+      this.showImgDialog.show = false
     }
   },
   setup () {

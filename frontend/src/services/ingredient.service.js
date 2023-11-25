@@ -4,7 +4,10 @@ import axios from 'axios'
 class IngredientService {
   getIngredients () {
     return axios.get(API_PATH)
-      .then(response => response.data)
+      .then(response => {
+        response.data = response.data.map(x => this.afterIngredientLoad(x))
+        return response.data
+      })
   }
 
   getIngredientsFilter (autocomplete, filterManualIngredients, filterAutomaticIngredients,
@@ -21,7 +24,10 @@ class IngredientService {
         inBarOrOnPump: inBarOrOnPump
       }
     })
-      .then(response => response.data)
+      .then(response => {
+        response.data = response.data.map(x => this.afterIngredientLoad(x))
+        return response.data
+      })
   }
 
   updateIngredient (id, updateIngredient, image, removeImage = false) {
@@ -60,6 +66,11 @@ class IngredientService {
 
   removeFromBar (ingredientId) {
     return axios.delete(API_PATH + String(ingredientId) + '/bar')
+  }
+
+  afterIngredientLoad (ingredient) {
+    ingredient.lastUpdate = new Date(ingredient.lastUpdate)
+    return ingredient
   }
 }
 
