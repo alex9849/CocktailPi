@@ -17,7 +17,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none col-12">
       <q-img
-        :src="$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + recipe.id + '/image?timestamp=' + recipe.lastUpdate.getTime()"
+        :src="imageLink"
         v-if="recipe.hasImage"
         placeholder-src="~assets/cocktail-solid.png"
         :ratio="16/9"
@@ -38,6 +38,10 @@
 export default {
   name: 'CSimpleRecipeCard',
   props: {
+    isIngredientRecipe: {
+      type: Boolean,
+      default: false
+    },
     recipe: {
       type: Object,
       required: true
@@ -60,6 +64,13 @@ export default {
         return 'bg-warning'
       }
       return 'bg-grey'
+    },
+    imageLink () {
+      if (this.isIngredientRecipe) {
+        return this.$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + this.recipe.id + '/image?timestamp=' + this.recipe.lastUpdate.getTime() + '&isIngredient=true'
+      } else {
+        return this.$store.getters['auth/getFormattedServerAddress'] + '/api/recipe/' + this.recipe.id + '/image?timestamp=' + this.recipe.lastUpdate.getTime()
+      }
     },
     allIngredientsOwned () {
       for (const ingredient of this.recipe.ingredients) {

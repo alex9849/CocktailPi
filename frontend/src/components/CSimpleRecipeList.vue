@@ -17,6 +17,7 @@
         <c-simple-recipe-card
           style="height: 100%"
           :recipe="recipe"
+          :is-ingredient-recipe="isIngredientRecipe"
           :dense="dense"
           :loading="orderDialog.loadingId === recipe.id"
           :class="{'disabled': orderDialog.loadingId !== null}"
@@ -36,6 +37,10 @@ export default {
   name: 'CSimpleRecipeList',
   components: { CMakeCocktailDialog, CSimpleRecipeCard },
   props: {
+    isIngredientRecipe: {
+      type: Boolean,
+      default: false
+    },
     recipes: {
       type: Array,
       required: true

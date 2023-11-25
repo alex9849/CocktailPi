@@ -5,6 +5,7 @@
       <div class="col-12 justify-center">
         <div>
           <c-simple-recipe-list
+            is-ingredient-recipe
             :recipes="recipes"
           />
           <q-inner-loading
