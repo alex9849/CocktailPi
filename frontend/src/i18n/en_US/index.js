@@ -356,8 +356,8 @@ export default {
         shutdown_btn_label: 'Shutdown system',
         shutdown_dialog: {
           headline: 'Shut down?',
-          reboot_btn_label: 'Neu starten',
-          shutdown_btn_label: 'Herunterfahren',
+          reboot_btn_label: 'Reboot',
+          shutdown_btn_label: 'Shutdown',
           abort_btn_label: 'Abort'
         }
       },
