@@ -2,6 +2,8 @@ import json
 
 import requests
 import urllib
+import shutil
+import os
 
 cocktailsFilePath = 'data/recipes.json'
 ingredientsFilePath = 'data/ingredients.json'
@@ -43,7 +45,7 @@ def fetchRecipesFromServer():
     for recipe in recipes:
         if recipe['hasImage']:
             urllib.request.urlretrieve(cocktailPiUrl + "/api/recipe/" + str(recipe['id']) + "/image",
-                                       "data/images/" + str(recipe['name']) + ".jpg")
+                                       "data/images/recipes/" + str(recipe['name']) + ".jpg")
 
 
 def fetchIngredientsFromServer():
@@ -56,6 +58,11 @@ def fetchIngredientsFromServer():
 
     with open(ingredientsFilePath, 'w') as outfile:
         json.dump(ingredients, outfile)
+
+    for ingredient in ingredients:
+        if 'hasImage' in ingredient and ingredient['hasImage']:
+            urllib.request.urlretrieve(cocktailPiUrl + "/api/ingredient/" + str(ingredient['id']) + "/image",
+                                       "data/images/ingredients/" + str(ingredient['name']) + ".jpg")
 
 def fetchGlassesFromServer():
     glasses = []
@@ -87,6 +94,12 @@ def provideAuthToken(url, username, password):
 
 
 if __name__ == "__main__":
+    if os.path.exists("data"):
+        shutil.rmtree("data")
+    os.mkdir("data")
+    os.mkdir("data/images")
+    os.mkdir("data/images/recipes")
+    os.mkdir("data/images/ingredients")
     fetchCategoriesFromServer()
     fetchGlassesFromServer()
     fetchIngredientsFromServer()
