@@ -72,7 +72,30 @@ export default {
       this.storeLogout()
     },
     reload () {
-      location.reload()
+      let search = location.search
+      const addParams = new Set()
+      if (this.$q.platform.is.mobile) {
+        addParams.add('isMobile')
+      }
+      if (this.$store.getters['common/showExternalLinksAsQrCode']) {
+        addParams.add('isKiosk')
+      }
+      if (addParams.size > 0) {
+        if (!search) {
+          search += '?'
+        } else {
+          search += '&'
+        }
+        let first = true
+        for (const val of addParams) {
+          if (!first) {
+            search += '&'
+          }
+          search += val
+          first = false
+        }
+      }
+      window.open(location.origin + location.pathname + search, '_self')
     }
   },
   computed: {
