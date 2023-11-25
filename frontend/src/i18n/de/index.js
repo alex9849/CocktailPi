@@ -528,6 +528,9 @@ export default {
 
   },
   component: {
+    show_img_dialog: {
+      close_btn_label: 'Schließen'
+    },
     simple_recipes_filter_drawer: {
       headline: 'Filter',
       open_btn_label: 'Filter',
@@ -738,6 +741,10 @@ export default {
           parent_group: 'Übergeordnete Gruppe',
           has_image: 'Bild',
           actions: 'Aktionen'
+        },
+        has_img_col: {
+          no_label: 'Nein',
+          yes_btn_label: 'Ja / Anzeigen'
         },
         edit_btn_tooltip: 'Bearbeiten',
         delete_btn_tooltip: 'Löschen'

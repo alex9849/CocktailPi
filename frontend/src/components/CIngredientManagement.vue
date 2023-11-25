@@ -70,10 +70,10 @@
             outline
             no-caps
           >
-            Yes / Show
+            {{ $t('component.ingredient_mgmt.ingredient_table.has_img_col.yes_btn_label') }}
           </q-btn>
           <p v-else>
-            No
+            {{ $t('component.ingredient_mgmt.ingredient_table.has_img_col.no_label') }}
           </p>
         </q-td>
       </template>
@@ -162,7 +162,7 @@
         <q-btn
           @click="closeShowImgDialog"
         >
-          Close
+          {{ $t('component.show_img_dialog.close_btn_label') }}
         </q-btn>
       </q-card-actions>
     </q-card>
