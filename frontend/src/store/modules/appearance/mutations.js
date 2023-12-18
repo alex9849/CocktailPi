@@ -1,6 +1,6 @@
 import { i18n } from 'boot/i18n'
 import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
-import { setCssVar, colors } from 'quasar'
+import { colors } from 'quasar'
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale = payload.language.name
@@ -26,38 +26,39 @@ export const setAppearanceSettings = (state, payload) => {
     settings.colors[areaKey] = areaColors
   }
 
-  setCssVar('primary', settings.colors.normal.btnPrimary)
-  setCssVar('navigation-active', settings.colors.normal.btnNavigationActive)
-  setCssVar('navigation-active-text', settings.colors.normal.btnNavigationActiveText)
-  setCssVar('sidebar', settings.colors.normal.sidebar)
-  setCssVar('header', settings.colors.normal.header)
-  setCssVar('header-text', settings.colors.normal.headerText)
-  setCssVar('background', settings.colors.normal.background)
-  setCssVar('background-text', settings.colors.normal.backgroundText)
-  setCssVar('background-info-icon', settings.colors.normal.cardBackgroundInfoIcon)
-  setCssVar('card-header', settings.colors.normal.cardHeader)
-  setCssVar('card-header-text', settings.colors.normal.cardHeaderText)
-  setCssVar('card-body', settings.colors.normal.cardBody)
-  setCssVar('card-body-text', settings.colors.normal.cardBodyText)
-  setCssVar('card-body-table-odd', settings.colors.normal.cardBodyTableOdd)
-  setCssVar('card-body-table-odd-text', settings.colors.normal.cardBodyTableOddText)
-  setCssVar('card-item-group', settings.colors.normal.cardItemGroup)
-  setCssVar('card-item-group-text', settings.colors.normal.cardItemGroupText)
+  const style = document.documentElement.style
+  style.setProperty('--q-primary', settings.colors.normal.btnPrimary)
+  style.setProperty('--q-navigation-active', settings.colors.normal.btnNavigationActive)
+  style.setProperty('--q-navigation-active-text', settings.colors.normal.btnNavigationActiveText)
+  style.setProperty('--q-sidebar', settings.colors.normal.sidebar)
+  style.setProperty('--q-header', settings.colors.normal.header)
+  style.setProperty('--q-header-text', settings.colors.normal.headerText)
+  style.setProperty('--q-background', settings.colors.normal.background)
+  style.setProperty('--q-background-text', settings.colors.normal.backgroundText)
+  style.setProperty('--q-background-info-icon', settings.colors.normal.cardBackgroundInfoIcon)
+  style.setProperty('--q-card-header', settings.colors.normal.cardHeader)
+  style.setProperty('--q-card-header-text', settings.colors.normal.cardHeaderText)
+  style.setProperty('--q-card-body', settings.colors.normal.cardBody)
+  style.setProperty('--q-card-body-text', settings.colors.normal.cardBodyText)
+  style.setProperty('--q-card-body-table-odd', settings.colors.normal.cardBodyTableOdd)
+  style.setProperty('--q-card-body-table-odd-text', settings.colors.normal.cardBodyTableOddText)
+  style.setProperty('--q-card-item-group', settings.colors.normal.cardItemGroup)
+  style.setProperty('--q-card-item-group-text', settings.colors.normal.cardItemGroupText)
 
-  setCssVar('sv-background', settings.colors.simpleView.background)
-  setCssVar('sv-background-text', settings.colors.simpleView.backgroundText)
-  setCssVar('sv-header', settings.colors.simpleView.header)
-  setCssVar('sv-header-text', settings.colors.simpleView.headerText)
-  setCssVar('sv-btn-navigation', settings.colors.simpleView.btnNavigation)
-  setCssVar('sv-btn-navigation-text', settings.colors.simpleView.btnNavigationText)
-  setCssVar('sv-btn-navigation-active', settings.colors.simpleView.btnNavigationActive)
-  setCssVar('sv-btn-navigation-active-text', settings.colors.simpleView.btnNavigationActiveText)
-  setCssVar('sv-btn-primary', settings.colors.simpleView.btnPrimary)
-  setCssVar('sv-btn-primary-text', settings.colors.simpleView.btnPrimaryText)
-  setCssVar('sv-sidebar', settings.colors.simpleView.sidebar)
-  setCssVar('sv-sidebar-text', settings.colors.simpleView.sidebarText)
-  setCssVar('sv-cocktailprogress', settings.colors.simpleView.cocktailProgress)
-  setCssVar('sv-card-primary', settings.colors.simpleView.cardPrimary)
-  setCssVar('sv-card-primary-text', settings.colors.simpleView.cardPrimaryText)
+  style.setProperty('--q-sv-background', settings.colors.simpleView.background)
+  style.setProperty('--q-sv-background-text', settings.colors.simpleView.backgroundText)
+  style.setProperty('--q-sv-header', settings.colors.simpleView.header)
+  style.setProperty('--q-sv-header-text', settings.colors.simpleView.headerText)
+  style.setProperty('--q-sv-btn-navigation', settings.colors.simpleView.btnNavigation)
+  style.setProperty('--q-sv-btn-navigation-text', settings.colors.simpleView.btnNavigationText)
+  style.setProperty('--q-sv-btn-navigation-active', settings.colors.simpleView.btnNavigationActive)
+  style.setProperty('--q-sv-btn-navigation-active-text', settings.colors.simpleView.btnNavigationActiveText)
+  style.setProperty('--q-sv-btn-primary', settings.colors.simpleView.btnPrimary)
+  style.setProperty('--q-sv-btn-primary-text', settings.colors.simpleView.btnPrimaryText)
+  style.setProperty('--q-sv-sidebar', settings.colors.simpleView.sidebar)
+  style.setProperty('--q-sv-sidebar-text', settings.colors.simpleView.sidebarText)
+  style.setProperty('--q-sv-cocktailprogress', settings.colors.simpleView.cocktailProgress)
+  style.setProperty('--q-sv-card-primary', settings.colors.simpleView.cardPrimary)
+  style.setProperty('--q-sv-card-primary-text', settings.colors.simpleView.cardPrimaryText)
   state.appearance = settings
 }
