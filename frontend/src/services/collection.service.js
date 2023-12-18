@@ -6,7 +6,7 @@ const API_PATH = 'api/collection/'
 class CollectionService {
   createCollection (name) {
     return axios.post(API_PATH, {
-      name: name,
+      name,
       description: 'My cool collection',
       completed: false
     })

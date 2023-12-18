@@ -44,7 +44,7 @@ export const recipeSearchListLogic = {
       const filter = {
         query: queryParams.query ? queryParams.query : '',
         fabricable: queryParams.fabricable ? queryParams.fabricable : '',
-        containsIngredients: containsIngredients,
+        containsIngredients,
         orderBy: queryParams.orderBy
       }
       const filterSet = filter.query || filter.fabricable || filter.containsIngredients.length !== 0 || filter.orderBy
@@ -95,7 +95,7 @@ export const recipeSearchListLogic = {
       }
       query = Object.assign(query, filter)
       query = JsUtils.cleanObject(query)
-      this.$router.replace({ name: this.$route.name, query: query }).catch(() => {})
+      this.$router.replace({ name: this.$route.name, query }).catch(() => {})
     },
     onPageClick (page) {
       if (this.pagination.page !== page) {

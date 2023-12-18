@@ -16,7 +16,7 @@
   "dependencies": {
     "@mdi/js": "^4.9.95",
     "@quasar/cli": "^2.3.0",
-    "@quasar/extras": "^1.16.8",
+    "@quasar/extras": "^1.16.9",
     "@stomp/stompjs": "6.1.2",
     "@vuelidate/core": "^2.0.0-alpha.32",
     "@vuelidate/validators": "^2.0.0-alpha.25",
@@ -25,7 +25,7 @@
     "lodash": "~4.17.19",
     "net": "^1.0.2",
     "qrcode": "^1.5.3",
-    "quasar": "2.13.1",
+    "quasar": "^2.14.2",
     "querystring": "^0.2.1",
     "sockjs-client": "1.5.2",
     "vue": "^3.3.4",
@@ -36,17 +36,15 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.0.0",
-    "@mdi/font": "^4.9.95",
-    "@quasar/app": "^3.2.2",
-    "eslint": "^7.14.0",
-    "eslint-config-standard": "^16.0.2",
+    "@babel/eslint-parser": "^7.13.14",
+    "eslint": "^8.10.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "eslint-webpack-plugin": "^3.1.1",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-quasar": "^1.1.0",
-    "eslint-plugin-vue": "^7.0.0",
-    "eslint-webpack-plugin": "^2.4.0"
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "@quasar/app-webpack": "^3.0.0"
   },
   "browserslist": [
     "last 10 Chrome versions",
@@ -60,7 +58,7 @@
     "last 5 Opera versions"
   ],
   "engines": {
-    "node": ">= 10.18.1",
+    "node": ">= 12.22.1",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
   }

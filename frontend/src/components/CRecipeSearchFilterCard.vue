@@ -122,7 +122,7 @@ import { mdiMagnify } from '@quasar/extras/mdi-v5'
 import CIngredientSelector from 'components/CIngredientSelector'
 import { recipeOrderOptions } from '../mixins/constants'
 import { mapGetters } from 'vuex'
-import { calcTextColor, complementColor, isDark } from 'src/mixins/utils'
+import { complementColor } from 'src/mixins/utils'
 
 export default {
   name: 'CRecipeSearchFilterCard',
@@ -152,7 +152,7 @@ export default {
   emits: ['clickSearch', 'update:filter'],
   setup () {
     return {
-      mdiMagnify: mdiMagnify
+      mdiMagnify
     }
   },
   computed: {

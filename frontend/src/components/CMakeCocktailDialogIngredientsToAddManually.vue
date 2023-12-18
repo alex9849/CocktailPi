@@ -44,8 +44,8 @@ export default {
   },
   setup () {
     return {
-      mdiAlertOutline: mdiAlertOutline,
-      mdiCheck: mdiCheck
+      mdiAlertOutline,
+      mdiCheck
     }
   },
   computed: {

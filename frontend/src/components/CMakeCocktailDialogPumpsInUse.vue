@@ -26,8 +26,8 @@ export default {
   },
   setup () {
     return {
-      mdiClose: mdiClose,
-      mdiCheck: mdiCheck
+      mdiClose,
+      mdiCheck
     }
   },
   computed: {

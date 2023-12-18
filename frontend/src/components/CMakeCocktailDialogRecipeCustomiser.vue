@@ -178,7 +178,7 @@ export default {
         return
       }
       this.customisationsCopy.additionalIngredients.push({
-        ingredient: ingredient,
+        ingredient,
         amount: 0,
         manualAdd: true
       })

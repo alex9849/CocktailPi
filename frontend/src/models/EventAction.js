@@ -1,4 +1,3 @@
-
 export default class EventAction {
   constructor (id, trigger, executionGroups) {
     this.id = id

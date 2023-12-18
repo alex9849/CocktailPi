@@ -138,13 +138,13 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiPlay: mdiPlay,
-      mdiPlusThick: mdiPlusThick,
-      mdiPlus: mdiPlus,
-      mdiMinusThick: mdiMinusThick,
-      mdiMinus: mdiMinus,
-      mdiAlertOutline: mdiAlertOutline,
-      mdiClose: mdiClose
+      mdiPlay,
+      mdiPlusThick,
+      mdiPlus,
+      mdiMinusThick,
+      mdiMinus,
+      mdiAlertOutline,
+      mdiClose
     }
   },
   unmounted () {
@@ -275,7 +275,7 @@ export default {
               continue
             }
             this.customisations.additionalIngredients.push({
-              ingredient: ingredient,
+              ingredient,
               amount: 0,
               manualAdd: false
             })

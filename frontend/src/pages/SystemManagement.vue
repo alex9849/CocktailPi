@@ -150,13 +150,12 @@ import SystemService from 'src/services/system.service'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CSettingsAppearance from 'components/CSettingsAppearance.vue'
-import CColorSelectorField from 'components/CColorSelectorField.vue'
 import { mapGetters } from 'vuex'
 import CSettingsUpdater from 'components/CSettingsUpdater.vue'
 
 export default {
   name: 'SystemManagement',
-  components: { CSettingsUpdater, CColorSelectorField, CSettingsAppearance, CQuestion },
+  components: { CSettingsUpdater, CSettingsAppearance, CQuestion },
   async beforeRouteEnter (to, from, next) {
     const defaultFilter = await SystemService.getDefaultFilter()
     next(vm => {

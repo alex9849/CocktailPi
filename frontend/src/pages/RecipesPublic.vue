@@ -38,13 +38,13 @@ export default {
   components: { TopButtonArranger, CRecipeSearchList },
   async beforeRouteEnter (to, from, next) {
     to.meta.category = store().getters['category/getCategories']
-      .find(x => x.id == to.params.cid)
+      .find(x => String(x.id) === String(to.params.cid))
     await store().dispatch('common/fetchDefaultFilter')
     next()
   },
   beforeRouteUpdate (to, from, next) {
     to.meta.category = store().getters['category/getCategories']
-      .find(x => x.id == to.params.cid)
+      .find(x => String(x.id) === String(to.params.cid))
     next()
   },
   methods: {

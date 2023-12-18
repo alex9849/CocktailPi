@@ -134,7 +134,7 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiDelete: mdiDelete
+      mdiDelete
     }
   },
   computed: {

@@ -84,7 +84,8 @@
       />
     </q-tabs>
     <q-tab-panels
-      v-model:model-value="modelValue.type"
+      :model-value="modelValue.type"
+      @update:modelValue="$emit('update:modelValue', $event)"
       animated
     >
       <q-tab-panel
@@ -228,9 +229,9 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiInformation: mdiInformation,
-      mdiCogs: mdiCogs,
-      mdiHandRight: mdiHandRight
+      mdiInformation,
+      mdiCogs,
+      mdiHandRight
     }
   },
   validations () {

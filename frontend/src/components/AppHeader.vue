@@ -113,11 +113,11 @@ export default {
   },
   setup () {
     return {
-      mdiAccountBox: mdiAccountBox,
-      mdiPower: mdiPower,
-      mdiAlert: mdiAlert,
-      mdiGlassCocktail: mdiGlassCocktail,
-      mdiReload: mdiReload
+      mdiAccountBox,
+      mdiPower,
+      mdiAlert,
+      mdiGlassCocktail,
+      mdiReload
     }
   }
 }

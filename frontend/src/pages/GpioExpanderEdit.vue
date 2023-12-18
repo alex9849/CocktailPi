@@ -139,7 +139,6 @@
                       v-if="!i2cProber.loading && i2cProber.probe.length === 0"
                       flat
                       bordered
-                      dark
                       :dark="color.cardItemGroupDark"
                       class="bg-card-item-group text-card-item-group"
                     >
@@ -192,9 +191,8 @@ import { mdiAlert, mdiSync } from '@quasar/extras/mdi-v5'
 import SystemService from 'src/services/system.service'
 import { i2cExpanderBoardTypes } from 'src/mixins/constants'
 import GpioService, { gpioBoardDtoMapper } from 'src/services/gpio.service'
-import { required, requiredIf } from '@vuelidate/validators'
+import { required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import UserService from 'src/services/user.service'
 import { mapGetters } from 'vuex'
 
 export default {

@@ -29,7 +29,7 @@ export default {
   name: 'AppSocket',
   setup () {
     return {
-      mdiAlert: mdiAlert
+      mdiAlert
     }
   },
   mounted () {

@@ -2,7 +2,6 @@ import { Stomp } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import authHeader from './auth-header'
 import store from '../store'
-import axios from 'axios'
 
 class WebsocketService {
   subscriptions = new Map()

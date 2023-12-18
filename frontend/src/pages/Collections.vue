@@ -101,7 +101,7 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiPlusCircleOutline: mdiPlusCircleOutline
+      mdiPlusCircleOutline
     }
   },
   created () {

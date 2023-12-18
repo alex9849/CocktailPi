@@ -273,8 +273,8 @@ export default {
   },
   setup () {
     return {
-      mdiDelete: mdiDelete,
-      mdiPencilOutline: mdiPencilOutline
+      mdiDelete,
+      mdiPencilOutline
     }
   },
   created () {

@@ -84,7 +84,7 @@ export default defineComponent({
         this.stepperLoading = true
       }
       const newPump = {
-        type: type
+        type
       }
       PumpService.createPump(newPump)
         .then(response => {

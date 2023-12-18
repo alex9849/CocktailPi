@@ -120,7 +120,7 @@ export default {
     }
   },
   validations () {
-    const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w\.-]+)+))(:([1-9]\d{3,4}))?$/gi)
+    const isURL = helpers.regex('isURL', /^(?:http(s)?:\/\/)?((localhost)|([\w.-]+(?:\.[\w.-]+)+))(:([1-9]\d{3,4}))?$/gi)
     const serverAddress = {
       required,
       isURL

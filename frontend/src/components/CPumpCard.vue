@@ -443,7 +443,7 @@ export default {
       let value = runningState.forward ? runningState.percentage : (100 - runningState.percentage)
       value = value / 100
       return {
-        value: value,
+        value,
         query: runningState.runInfinity,
         reverse: runningState.forward && runningState.runInfinity
       }

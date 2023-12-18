@@ -289,10 +289,10 @@ export default {
       const dark = isDark(this.backgroundColor)
       return {
         bg: this.backgroundColor,
-        dark: dark,
+        dark,
         text: calcTextColor(this.backgroundColor),
         caption: complementColor(this.backgroundColor, 60),
-        pstep: pstep,
+        pstep,
         pstepText: calcTextColor(pstep),
         icon: complementColor(this.backgroundColor, 60)
       }
@@ -469,11 +469,11 @@ export default {
   },
   setup () {
     return {
-      mdiPlusCircleOutline: mdiPlusCircleOutline,
-      mdiPencilOutline: mdiPencilOutline,
-      mdiDelete: mdiDelete,
-      mdiCallSplit: mdiCallSplit,
-      mdiDrag: mdiDrag
+      mdiPlusCircleOutline,
+      mdiPencilOutline,
+      mdiDelete,
+      mdiCallSplit,
+      mdiDrag
     }
   }
 }

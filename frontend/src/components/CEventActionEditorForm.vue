@@ -350,7 +350,7 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiInformation: mdiInformation
+      mdiInformation
     }
   },
   props: {

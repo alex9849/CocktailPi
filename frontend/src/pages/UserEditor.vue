@@ -112,7 +112,6 @@
 
 <script>
 import UserService from '../services/user.service'
-import store from '../store'
 import { mapActions, mapGetters } from 'vuex'
 import useVuelidate from '@vuelidate/core'
 import { mdiEye, mdiEyeOff } from '@quasar/extras/mdi-v5'
@@ -190,8 +189,8 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiEye: mdiEye,
-      mdiEyeOff: mdiEyeOff
+      mdiEye,
+      mdiEyeOff
     }
   },
   computed: {

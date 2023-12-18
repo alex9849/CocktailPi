@@ -1,5 +1,3 @@
-import { PumpDtoMapper } from 'src/services/pump.service'
-
 const API_PATH = 'api/gpio/'
 import axios from 'axios'
 

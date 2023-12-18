@@ -357,10 +357,10 @@ export default {
   },
   setup () {
     return {
-      mdiDelete: mdiDelete,
-      mdiPencilOutline: mdiPencilOutline,
-      mdiCheckCircle: mdiCheckCircle,
-      mdiCheckboxBlankCircleOutline: mdiCheckboxBlankCircleOutline
+      mdiDelete,
+      mdiPencilOutline,
+      mdiCheckCircle,
+      mdiCheckboxBlankCircleOutline
     }
   },
   created () {

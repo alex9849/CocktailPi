@@ -145,7 +145,6 @@ import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
 import TopButtonArranger from 'components/TopButtonArranger'
 import category from 'src/store/modules/category'
-import CollectionService from 'src/services/collection.service'
 
 export default {
   name: 'RecipeDetails',

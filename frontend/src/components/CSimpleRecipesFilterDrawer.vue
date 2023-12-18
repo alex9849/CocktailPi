@@ -192,7 +192,7 @@ export default {
   emits: ['clickSearch', 'update:filter'],
   setup () {
     return {
-      mdiMagnify: mdiMagnify
+      mdiMagnify
     }
   },
   data () {

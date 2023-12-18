@@ -1,4 +1,4 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
   <q-page padding class="page-content">
     <div class="row q-gutter-sm justify-around items-center q-ma-sm">
       <p class="col-grow text-h5">{{ $t('page.pump_setup.headline') }}</p>

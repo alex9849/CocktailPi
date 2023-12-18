@@ -1,7 +1,7 @@
 class JsUtils {
   cleanObject (obj) {
     for (const propName in obj) {
-      if (obj.hasOwnProperty(propName) && !obj[propName]) {
+      if (Object.hasOwn(obj, propName) && !obj[propName]) {
         delete obj[propName]
       }
     }

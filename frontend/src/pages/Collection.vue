@@ -270,8 +270,8 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiDelete: mdiDelete,
-      mdiPlusCircleOutline: mdiPlusCircleOutline
+      mdiDelete,
+      mdiPlusCircleOutline
     }
   },
   watch: {

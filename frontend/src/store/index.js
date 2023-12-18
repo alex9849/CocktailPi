@@ -10,14 +10,14 @@ import updater from 'src/store/modules/updater'
 
 const store = createStore({
   modules: {
-    auth: auth,
-    cocktailProgress: cocktailProgress,
-    pumpLayout: pumpLayout,
-    category: category,
-    websocket: websocket,
-    appearance: appearance,
-    updater: updater,
-    common: common
+    auth,
+    cocktailProgress,
+    pumpLayout,
+    category,
+    websocket,
+    appearance,
+    updater,
+    common
   },
 
   // enable strict mode (adds overhead!)

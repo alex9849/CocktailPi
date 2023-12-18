@@ -116,7 +116,7 @@ export class RecipeDtoMapper {
       }
       return {
         type: prodStep.type,
-        stepIngredients: stepIngredients
+        stepIngredients
       }
     }
 

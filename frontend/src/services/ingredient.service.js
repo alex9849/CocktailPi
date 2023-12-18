@@ -14,14 +14,14 @@ class IngredientService {
     filterIngredientGroups, groupChildrenGroupId, inBar, onPump, inBarOrOnPump) {
     return axios.get(API_PATH, {
       params: {
-        autocomplete: autocomplete,
-        filterManualIngredients: filterManualIngredients,
-        filterAutomaticIngredients: filterAutomaticIngredients,
-        filterIngredientGroups: filterIngredientGroups,
-        groupChildrenGroupId: groupChildrenGroupId,
-        inBar: inBar,
-        onPump: onPump,
-        inBarOrOnPump: inBarOrOnPump
+        autocomplete,
+        filterManualIngredients,
+        filterAutomaticIngredients,
+        filterIngredientGroups,
+        groupChildrenGroupId,
+        inBar,
+        onPump,
+        inBarOrOnPump
       }
     })
       .then(response => {

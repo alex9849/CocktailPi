@@ -37,13 +37,12 @@
 <script>
 import CollectionService from 'src/services/collection.service'
 import { mapGetters } from 'vuex'
-import CCollectionCard from 'components/CCollectionCard'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import CSimpleCollectionCard from 'components/CSimpleCollectionCard.vue'
 
 export default {
   name: 'SimpleCollections',
-  components: { CSimpleCollectionCard, CCollectionCard },
+  components: { CSimpleCollectionCard },
   data: () => {
     return {
       collections: [],

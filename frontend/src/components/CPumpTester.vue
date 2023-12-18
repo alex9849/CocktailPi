@@ -187,7 +187,6 @@
 import { mdiCheck, mdiEqual, mdiPlay, mdiStop, mdiSync } from '@quasar/extras/mdi-v5'
 import WebSocketService from 'src/services/websocket.service'
 import PumpService from 'src/services/pump.service'
-import { isNumber } from 'lodash'
 
 export default {
   name: 'CPumpTester',

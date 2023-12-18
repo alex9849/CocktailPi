@@ -300,8 +300,8 @@ export default {
   setup () {
     return {
       v: useVuelidate(),
-      mdiDelete: mdiDelete,
-      mdiPencilOutline: mdiPencilOutline
+      mdiDelete,
+      mdiPencilOutline
     }
   },
   validations () {
