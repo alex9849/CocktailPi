@@ -827,7 +827,7 @@ export default {
         running: 'Läuft'
       },
       pumpUpStates: {
-        pumped_up: 'Aufgepumpt',
+        pumped_up: 'Angepumpt',
         pumped_down: 'Abgepumpt'
       },
       notifications: {
@@ -1038,7 +1038,7 @@ export default {
           close_btn: 'Nein, erinnere mich später'
         },
         lying_is_no_nice: {
-          headline: 'Auchtung! Lügen ist nicht nett.',
+          headline: 'Achtung! Lügen ist nicht nett.',
           confirm_btn: 'Weiter',
           checkbox: 'Ich bin kein Lügner',
           go_back: 'Zurück gehen'
