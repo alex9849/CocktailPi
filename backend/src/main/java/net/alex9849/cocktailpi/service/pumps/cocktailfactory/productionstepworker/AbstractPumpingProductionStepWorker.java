@@ -6,6 +6,7 @@ import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.MultiStepper;
+import net.openhft.affinity.AffinityLock;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -99,11 +100,13 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                 driver.move(entry.getValue());
                 multiStepper.addStepper(driver);
             }
-            while (multiStepper.runRound()) {
-                if(Thread.interrupted()) {
-                    return;
+            try (AffinityLock al = AffinityLock.acquireCore()) {
+                while (multiStepper.runRound()) {
+                    if(Thread.interrupted()) {
+                        return;
+                    }
+                    //Thread.yield();
                 }
-                Thread.yield();
             }
             try {
                 cl.await();
@@ -113,6 +116,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             onFinish();
         };
         runner = new Thread(runTask);
+        runner.setPriority(Thread.MAX_PRIORITY);
         runner.start();
 
         this.notifySubscribers();

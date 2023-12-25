@@ -48,7 +48,7 @@ public class PumpMaintenanceService {
 
     private final Logger logger = LoggerFactory.getLogger(PumpMaintenanceService.class);
 
-    private final ExecutorService liveTasksExecutor = Executors.newCachedThreadPool();
+    private final ExecutorService liveTasksExecutor;
     private final ScheduledExecutorService scheduledTasksExecutor = Executors.newSingleThreadScheduledExecutor();
     private ReversePumpSettings reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
@@ -58,6 +58,13 @@ public class PumpMaintenanceService {
     private Direction direction = Direction.FORWARD;
     private IOutputPin directionPin;
 
+    public PumpMaintenanceService() {
+        this.liveTasksExecutor = Executors.newCachedThreadPool(r -> {
+            Thread t = new Thread(r);
+            t.setPriority(Thread.MAX_PRIORITY);
+            return t;
+        });
+    }
     public synchronized void postConstruct() {
         configureReversePumpSettings(true);
         this.stopAllPumps();

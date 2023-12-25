@@ -5,6 +5,7 @@ import net.alex9849.cocktailpi.model.pump.PumpJobState;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.Direction;
+import net.openhft.affinity.AffinityLock;
 
 public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;
