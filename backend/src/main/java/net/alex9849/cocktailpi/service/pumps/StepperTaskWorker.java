@@ -5,20 +5,18 @@ import net.openhft.affinity.AffinityLock;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class StepperTaskWorker extends Thread {
     private static StepperTaskWorker instance;
-    private final HashMap<AcceleratingStepper, CompletableFuture<Void>> motorTasks;
+    private final List<Job> motorTasks;
     private final Object nrLockRequestedLock = new Object();
     private Integer nrLockRequested = 0;
 
     private StepperTaskWorker() {
         this.setPriority(MAX_PRIORITY);
         this.setDaemon(true);
-        motorTasks = new HashMap<>();
+        motorTasks = new ArrayList<>();
         this.start();
     }
 
@@ -35,7 +33,7 @@ public class StepperTaskWorker extends Thread {
         }
         synchronized (motorTasks) {
             CompletableFuture<Void> future = new CompletableFuture<>();
-            motorTasks.put(step, future);
+            motorTasks.add(new Job(step, future));
             synchronized (nrLockRequestedLock) {
                 nrLockRequested--;
             }
@@ -49,9 +47,13 @@ public class StepperTaskWorker extends Thread {
             nrLockRequested++;
         }
         synchronized (motorTasks) {
-            CompletableFuture<Void> future = motorTasks.remove(step);
-            if (future != null) {
-                future.complete(null);
+            for(int i = 0; i < motorTasks.size(); i++) {
+                Job job = motorTasks.get(i);
+                if(job.step == step) {
+                    job.future.complete(null);
+                    motorTasks.remove(i);
+                    break;
+                }
             }
             synchronized (nrLockRequestedLock) {
                 nrLockRequested--;
@@ -63,31 +65,37 @@ public class StepperTaskWorker extends Thread {
 
     @Override
     public void run() {
-        Set<AcceleratingStepper> toRemove = new HashSet<>();
         try (AffinityLock al = AffinityLock.acquireCore()) {
             synchronized (motorTasks) {
                 while (true) {
                     while (motorTasks.isEmpty() || nrLockRequested > 0) {
                         try {
                             motorTasks.wait();
-                        } catch (InterruptedException ignored) {
+                        } catch (InterruptedException ignored) {}
+                    }
+                    for(int i = 0; i < motorTasks.size(); i++) {
+                        Job job = motorTasks.get(i);
+                        if (job.step.distanceToGo() != 0) {
+                            job.step.run();
+                        }
+                        if (job.step.distanceToGo() == 0) {
+                            job.future.complete(null);
+                            motorTasks.remove(i--);
                         }
                     }
-                    for (AcceleratingStepper step : motorTasks.keySet()) {
-                        if (step.distanceToGo() != 0) {
-                            step.run();
-                        }
-                        if (step.distanceToGo() == 0) {
-                            toRemove.add(step);
-                        }
-                    }
-                    for (AcceleratingStepper step : toRemove) {
-                        CompletableFuture<Void> future = motorTasks.remove(step);
-                        future.complete(null);
-                    }
-                    toRemove.clear();
                 }
             }
         }
+    }
+
+    private static class Job {
+
+        public Job(AcceleratingStepper step, CompletableFuture<Void> future) {
+            this.step = step;
+            this.future = future;
+        }
+
+        private final AcceleratingStepper step;
+        private final CompletableFuture<Void> future;
     }
 }
