@@ -48,24 +48,22 @@ public class StepperMotorTask extends PumpTask {
     @Override
     protected void pumpRun() {
         this.driver = stepperPump.getMotorDriver();
-        synchronized (driver) {
-            if (isRunInfinity()) {
-                //Pick a very large number
-                stepsToRun = 10000000000L;
-            } else if (stepsToRun == 0) {
-                stepsToRun = 1;
-            }
-            if (getDirection() == Direction.BACKWARD) {
-                driver.move(-stepsToRun);
-            } else {
-                driver.move(stepsToRun);
-            }
-            Future<Void> future = StepperTaskWorker.getInstance().submitTask(driver);
-            while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
-                try {
-                    future.get();
-                } catch (ExecutionException | InterruptedException ignored) {}
-            }
+        if (isRunInfinity()) {
+            //Pick a very large number
+            stepsToRun = 10000000000L;
+        } else if (stepsToRun == 0) {
+            stepsToRun = 1;
+        }
+        if (getDirection() == Direction.BACKWARD) {
+            driver.move(-stepsToRun);
+        } else {
+            driver.move(stepsToRun);
+        }
+        Future<Void> future = StepperTaskWorker.getInstance().submitTask(driver);
+        while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
+            try {
+                future.get();
+            } catch (ExecutionException | InterruptedException ignored) {}
         }
     }
 

@@ -105,7 +105,6 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                     if(Thread.interrupted()) {
                         return;
                     }
-                    //Thread.yield();
                 }
             }
             try {
