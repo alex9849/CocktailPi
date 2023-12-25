@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StepperTaskWorker extends Thread {
     private static StepperTaskWorker instance;
     private final HashMap<AcceleratingStepper, CompletableFuture<Void>> motorTasks;
-    private final AtomicInteger nrLockRequested = new AtomicInteger();
+    private final Object nrLockRequestedLock = new Object();
+    private Integer nrLockRequested = 0;
 
     private StepperTaskWorker() {
         this.setPriority(MAX_PRIORITY);
@@ -29,24 +30,32 @@ public class StepperTaskWorker extends Thread {
     }
 
     public Future<Void> submitTask(AcceleratingStepper step) {
-        nrLockRequested.incrementAndGet();
+        synchronized (nrLockRequestedLock) {
+            nrLockRequested++;
+        }
         synchronized (motorTasks) {
             CompletableFuture<Void> future = new CompletableFuture<>();
             motorTasks.put(step, future);
-            nrLockRequested.decrementAndGet();
+            synchronized (nrLockRequestedLock) {
+                nrLockRequested--;
+            }
             motorTasks.notify();
             return future;
         }
     }
 
     public void cancelTask(AcceleratingStepper step) {
-        nrLockRequested.incrementAndGet();
+        synchronized (nrLockRequestedLock) {
+            nrLockRequested++;
+        }
         synchronized (motorTasks) {
             CompletableFuture<Void> future = motorTasks.remove(step);
             if (future != null) {
                 future.complete(null);
             }
-            nrLockRequested.decrementAndGet();
+            synchronized (nrLockRequestedLock) {
+                nrLockRequested--;
+            }
             motorTasks.notify();
         }
 
@@ -58,7 +67,7 @@ public class StepperTaskWorker extends Thread {
         try (AffinityLock al = AffinityLock.acquireCore()) {
             synchronized (motorTasks) {
                 while (true) {
-                    while (motorTasks.isEmpty() || nrLockRequested.get() > 0) {
+                    while (motorTasks.isEmpty() || nrLockRequested > 0) {
                         try {
                             motorTasks.wait();
                         } catch (InterruptedException ignored) {

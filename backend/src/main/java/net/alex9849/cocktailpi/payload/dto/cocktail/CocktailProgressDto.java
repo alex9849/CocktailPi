@@ -42,7 +42,7 @@ public class CocktailProgressDto {
                     this.writtenInstruction = cocktailprogress.getWrittenInstruction();
                 }
                 if(cocktailprogress.getRecipe() != null) {
-                    this.recipe = new RecipeDto.Response.SearchResult(cocktailprogress.getRecipe());
+                    this.recipe = RecipeDto.Response.SearchResult.toDto(cocktailprogress.getRecipe());
                 }
                 if(cocktailprogress.getUser() != null) {
                     this.userId = cocktailprogress.getUser().getId();
