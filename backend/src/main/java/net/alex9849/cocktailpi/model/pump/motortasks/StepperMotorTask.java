@@ -3,14 +3,21 @@ package net.alex9849.cocktailpi.model.pump.motortasks;
 import net.alex9849.cocktailpi.model.pump.JobMetrics;
 import net.alex9849.cocktailpi.model.pump.PumpJobState;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.service.pumps.StepperTaskWorker;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.Direction;
 import net.openhft.affinity.AffinityLock;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;
     long stepsToRun;
     long stepsMade;
+
+    private AcceleratingStepper driver;
 
 
     /**
@@ -31,33 +38,41 @@ public class StepperMotorTask extends PumpTask {
     }
 
     @Override
+    public void cancel() {
+        super.cancel();
+        if(this.driver != null) {
+            StepperTaskWorker.getInstance().cancelTask(this.driver);
+        }
+    }
+
+    @Override
     protected void pumpRun() {
-        AcceleratingStepper driver = stepperPump.getMotorDriver();
-        if (isRunInfinity()) {
-            //Pick a very large number
-            stepsToRun = 10000000000L;
-        } else if (stepsToRun == 0) {
-            stepsToRun = 1;
-        }
-        if (getDirection() == Direction.BACKWARD) {
-            driver.move(-stepsToRun);
-        } else {
-            driver.move(stepsToRun);
-        }
-        while (driver.distanceToGo() != 0) {
-            if(driver.run()) {
-                stepsMade++;
+        this.driver = stepperPump.getMotorDriver();
+        synchronized (driver) {
+            if (isRunInfinity()) {
+                //Pick a very large number
+                stepsToRun = 10000000000L;
+            } else if (stepsToRun == 0) {
+                stepsToRun = 1;
             }
-            if (isCancelledExecutionThread()) {
-                return;
+            if (getDirection() == Direction.BACKWARD) {
+                driver.move(-stepsToRun);
+            } else {
+                driver.move(stepsToRun);
             }
-            Thread.yield();
+            Future<Void> future = StepperTaskWorker.getInstance().submitTask(driver);
+            while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
+                try {
+                    future.get();
+                } catch (ExecutionException | InterruptedException ignored) {}
+            }
         }
     }
 
     @Override
     protected PumpJobState.RunningState genRunningState() {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
+        long stepsMade = stepsToRun - Math.abs(driver.distanceToGo());
         runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
