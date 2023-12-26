@@ -15,8 +15,6 @@ import java.util.concurrent.Future;
 public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;
     long stepsToRun;
-    long stepsMade;
-
     private AcceleratingStepper driver;
 
 
@@ -30,11 +28,11 @@ public class StepperMotorTask extends PumpTask {
     }
 
     public long getMlPumped() {
-        return (stepsMade * 10) / stepperPump.getStepsPerCl();
+        return (getStepsMade() * 10) / stepperPump.getStepsPerCl();
     }
 
     public long getStepsMade() {
-        return stepsMade;
+        return stepsToRun - Math.abs(driver.distanceToGo());
     }
 
     @Override
@@ -70,8 +68,7 @@ public class StepperMotorTask extends PumpTask {
     @Override
     protected PumpJobState.RunningState genRunningState() {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
-        long stepsMade = stepsToRun - Math.abs(driver.distanceToGo());
-        runningState.setPercentage((int) (stepsMade * 100 / stepsToRun));
+        runningState.setPercentage((int) (getStepsMade() * 100 / stepsToRun));
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
         runningState.setJobId(getJobId());

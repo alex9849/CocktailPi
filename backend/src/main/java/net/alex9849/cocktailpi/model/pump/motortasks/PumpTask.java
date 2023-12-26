@@ -81,11 +81,11 @@ public abstract class PumpTask implements Runnable {
                 pump.setPumpedUp(getDirection() == Direction.FORWARD);
             }
 
-            pump.getMotorDriver().shutdown();
             this.stopTime = System.currentTimeMillis();
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
+            pump.getMotorDriver().shutdown();
             callback.run();
         } catch (InterruptedException e) {
             e.printStackTrace();
