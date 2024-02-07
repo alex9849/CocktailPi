@@ -81,7 +81,7 @@
         </dependency>
         <dependency>
             <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-pigpio</artifactId>
+            <artifactId>pi4j-plugin-gpiod</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
         <dependency>

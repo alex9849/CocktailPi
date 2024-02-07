@@ -3,8 +3,9 @@ package net.alex9849.cocktailpi.config;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.context.ContextBuilder;
-import com.pi4j.library.pigpio.PiGpio;
-import com.pi4j.library.pigpio.impl.PiGpioNativeImpl;
+import com.pi4j.plugin.gpiod.provider.gpio.digital.GpioDDigitalInputProvider;
+import com.pi4j.plugin.gpiod.provider.gpio.digital.GpioDDigitalOutputProvider;
+import com.pi4j.plugin.linuxfs.provider.i2c.LinuxFsI2CProvider;
 import com.pi4j.plugin.mock.provider.gpio.digital.MockDigitalInputProvider;
 import com.pi4j.plugin.mock.provider.gpio.digital.MockDigitalOutputProvider;
 import com.pi4j.plugin.mock.provider.i2c.MockI2CProvider;
@@ -35,14 +36,9 @@ public class Config {
         if(gpioController == null) {
             ContextBuilder ctxBuilder = Pi4J.newContextBuilder();
             if(isRaspberryPi) {
-                //ctxBuilder.add(LinuxFsI2CProvider.newInstance());
-                PiGpio piGpio = PiGpioNativeImpl.newInstance();
-                ctxBuilder.add(PiGpioDigitalInputProvider.newInstance(piGpio));
-                ctxBuilder.add(PiGpioDigitalOutputProvider.newInstance(piGpio));
-                ctxBuilder.add(PiGpioSpiProvider.newInstance(piGpio));
-                ctxBuilder.add(PiGpioSerialProvider.newInstance(piGpio));
-                ctxBuilder.add(PiGpioI2CProvider.newInstance(piGpio));
-                ctxBuilder.add(PiGpioPwmProvider.newInstance(piGpio));
+                ctxBuilder.add(LinuxFsI2CProvider.newInstance());
+                ctxBuilder.add(GpioDDigitalInputProvider.newInstance());
+                ctxBuilder.add(GpioDDigitalOutputProvider.newInstance());
             } else {
                 ctxBuilder.add(MockDigitalInputProvider.newInstance());
                 ctxBuilder.add(MockDigitalOutputProvider.newInstance());
