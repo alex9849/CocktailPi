@@ -1,1179 +1,1080 @@
 export default {
   errors: {
-    field_required: 'Required',
-    not_valid_url: 'Not a valid URL',
-    min_letters: 'Min {nr} letters',
-    max_letters: 'Max {nr} letters',
+    field_required: 'Påkrævet',
+    not_valid_url: 'Ikke en gyldig URL',
+    min_letters: 'Min {nr} bogstaver',
+    max_letters: 'Max {nr} bogstaver',
     min_metric: 'Min {nr} {metric}',
     max_metric: 'Max {nr} {metric}',
-    positive: 'Must be positive'
+    positive: 'Skal være positiv'
   },
   header: {
     machine_name: 'CocktailPi',
     profile: {
-      profile_btn_label: 'Profile',
-      reload_btn_label: 'Reload',
-      logout_btn_label: 'Logout'
+      profile_btn_label: 'Profil',
+      reload_btn_label: 'Genindlæs',
+      logout_btn_label: 'Log ud'
     }
   },
   simple_header: {
     machine_name: 'CocktailPi',
-    leave_sv_btn_label: 'Leave simple-view',
-    go_to_cocktail_progress_btn_label: 'Go to details >>',
+    leave_sv_btn_label: 'Forlad simpel-visning',
+    go_to_cocktail_progress_btn_label: 'Gå til detaljer >>',
     leave_sv_dialog: {
-      headline: 'Leave simple view?',
-      yes_btn_label: 'Yes',
-      no_btn_label: 'No'
+      headline: 'Forlade simpel visning?',
+      yes_btn_label: 'Ja',
+      no_btn_label: 'Nej'
     }
   },
   simple_footer: {
-    collections_btn_label: 'Collections',
-    recipes_btn_label: 'Recipes',
-    ingredients_btn_label: 'Ingredients'
+    collections_btn_label: 'Samlinger',
+    recipes_btn_label: 'Opskrifter',
+    ingredients_btn_label: 'Ingredienser'
   },
   common: {
-    pump_fallback_name: 'Pump #{id}'
+    pump_fallback_name: 'Pumpe #{id}'
   },
   layout: {
     full_layout: {
       sidebar: {
         me: {
-          label: 'Me',
+          label: 'Mig',
           dashboard: 'Dashboard',
-          simple_view: 'Simple view',
+          simple_view: 'Simpel visning',
           bar: 'Bar',
-          collections: 'Collections',
-          my_recipes: 'My recipes'
+          collections: 'Samlinger',
+          my_recipes: 'Mine opskrifter'
         },
         cocktails: {
           label: 'Cocktails',
-          category_all: 'All',
-          ingredients: 'Ingredients'
+          category_all: 'Alle',
+          ingredients: 'Ingredienser'
         },
         administration: {
           label: 'Administration',
-          user_mgmt: 'Users',
-          ingredient_mgmt: 'Ingredients',
-          category_mgmt: 'Categories',
+          user_mgmt: 'Brugere',
+          ingredient_mgmt: 'Ingredienser',
+          category_mgmt: 'Kategorier',
           gpio_mgmt: 'GPIO',
-          pump_mgmt: 'Pumps',
-          glass_mgmt: 'Glasses',
-          event_mgmt: 'Events',
+          pump_mgmt: 'Pumper',
+          glass_mgmt: 'Glas',
+          event_mgmt: 'Begivenheder',
           system_mgmt: 'System'
         }
       },
-      donate_btn_label: 'Donate'
+      donate_btn_label: 'Donér'
     }
   },
   page: {
     login: {
-      login_btn_label: 'Login',
-      headline: 'Login',
-      password_field_label: 'Password',
-      username_field_label: 'Username',
-      remember_me_label: 'Remember me',
+      login_btn_label: 'Log ind',
+      headline: 'Log ind',
+      password_field_label: 'Adgangskode',
+      username_field_label: 'Brugernavn',
+      remember_me_label: 'Husk mig',
       errors: {
-        credentials_invalid: 'Username or password wrong!',
-        server_unreachable: 'Couldn\'t contact server!'
+        credentials_invalid: 'Brugernavn eller adgangskode forkert!',
+        server_unreachable: 'Kunne ikke kontakte serveren!'
       }
     },
     bar: {
-      headline: 'Ingredients owned',
-      add_btn_label: 'Add ingredient',
-      refresh_btn_label: 'Refresh',
+      headline: 'Ingredienser ejet',
+      add_btn_label: 'Tilføj ingrediens',
+      refresh_btn_label: 'Opdater',
       owned_table: {
-        nr_ingredients_owned: '{nrIngredients} ingredient(s) in total',
-        no_data_msg: 'No ingredients added',
+        nr_ingredients_owned: '{nrIngredients} ingrediens(er) i alt',
+        no_data_msg: 'Ingen ingredienser tilføjet',
         columns: {
-          ingredient: 'Ingredient',
-          alc_content: 'Alcohol content',
-          actions: 'Actions'
+          ingredient: 'Ingrediens',
+          alc_content: 'Alkoholindhold',
+          actions: 'Handlinger'
         },
-        delete_btn_tooltip: 'Delete'
+        delete_btn_tooltip: 'Slet'
       },
       add_dialog: {
-        headline: 'Add Ingredient',
-        ingredient_selector_label: 'Ingredient',
-        abort_btn_label: 'Abort',
-        save_btn_label: 'Save',
-        required_error: 'Required'
+        headline: 'Tilføj Ingrediens',
+        ingredient_selector_label: 'Ingrediens',
+        abort_btn_label: 'Afbryd',
+        save_btn_label: 'Gem',
+        required_error: 'Påkrævet'
       },
       notifications: {
-        ingredient_added: 'Ingredient added successfully',
-        ingredient_removed: 'Ingredient removed successfully'
+        ingredient_added: 'Ingrediens tilføjet succesfuldt',
+        ingredient_removed: 'Ingrediens fjernet succesfuldt'
       }
     },
     404: {
-      go_home_btn_label: 'Go Home',
-      message: 'Oops. Nothing here...'
+      go_home_btn_label: 'Gå hjem',
+      message: 'Ups. Intet her...'
     },
     collections: {
-      headline: 'My collections',
-      add_btn_label: 'Create collection',
-      refresh_btn_label: 'Refresh',
-      no_collections_msg: 'No collections found!',
+      headline: 'Mine samlinger',
+      add_btn_label: 'Opret samling',
+      refresh_btn_label: 'Opdater',
+      no_collections_msg: 'Ingen samlinger fundet!',
       create_dialog: {
-        headline: 'Create collection',
-        name_field_label: 'Name',
-        abort_btn_label: 'Abort',
-        create_btn_label: 'Create'
+        headline: 'Opret samling',
+        name_field_label: 'Navn',
+        abort_btn_label: 'Afbryd',
+        create_btn_label: 'Opret'
       }
     },
     recipes: {
-      my_recipes_headline: 'My recipes',
-      all_recipes_headline: 'Public recipes',
-      create_recipe_btn_label: 'Create recipe',
-      refresh_btn_label: 'Refresh'
+      my_recipes_headline: 'Mine opskrifter',
+      all_recipes_headline: 'Offentlige opskrifter',
+      create_recipe_btn_label: 'Opret opskrift',
+      refresh_btn_label: 'Opdater'
     },
     ingredient_recipes: {
-      headline: 'Pumpable ingredients',
-      no_ingredients_available: 'No ingredients assigned to pumps!',
+      headline: 'Pumpbare ingredienser',
+      no_ingredients_available: 'Ingen ingredienser tildelt pumper!',
       recipe: {
-        ml_left: '{nr} ml left',
-        alc_content: '{nr}% alcohol'
+        ml_left: '{nr} ml tilbage',
+        alc_content: '{nr}% alkohol'
       }
     },
     user_mgmt: {
-      headline: 'User Management',
-      create_user_btn_label: 'Create user',
-      refresh_users_btn_label: 'Refresh',
-      edit_user_btn_tooltip: 'Edit',
-      delete_user_btn_tooltip: 'Delete',
+      headline: 'Brugerstyring',
+      create_user_btn_label: 'Opret bruger',
+      refresh_users_btn_label: 'Opdater',
+      edit_user_btn_tooltip: 'Rediger',
+      delete_user_btn_tooltip: 'Slet',
       user_table: {
-        nr_users: '{nr} user(s) in total',
+        nr_users: '{nr} bruger(e) i alt',
         columns: {
-          username: 'Username',
-          active: 'Active',
-          role: 'Role',
-          actions: 'Actions'
+          username: 'Brugernavn',
+          active: 'Aktiv',
+          role: 'Rolle',
+          actions: 'Handlinger'
         }
       },
       delete_dialog: {
-        headline: 'The following user will be deleted:'
+        headline: 'Følgende bruger vil blive slettet:'
       }
     },
     ingredient_mgmt: {
-      headline: 'Ingredient Management',
+      headline: 'Ingrediensstyring',
       help_dialog: {
         ingredients: {
-          headline: 'Ingredients:',
-          text: 'Ingredients are concrete ingredients that can be directly added to a glass and can be bought from the ' +
-            'supermarket. Ingredients can usually be assigned to a pump. '
+          headline: 'Ingredienser:',
+          text: 'Ingredienser er konkrete ingredienser, der kan tilføjes direkte til et glas og kan købes i supermarkedet. Ingredienser kan normalt tildeles en pumpe.'
         },
         groups: {
-          headline: 'Ingredient groups:',
-          text: ' Ingredient groups are groups that consist of multiple "child ingredients" or other ingredient groups. ' +
-            'Recipes can contain ingredient groups. Before ordering such an recipe, the user has to replace that ' +
-            'ingredient group with an ingredient that belongs to that group. The software automatically does that ' +
-            'for the user, if such an ingredient was assigned to a pump or is marked as being in the \'Bar\'. ' +
-            'Ingredients on pumps get preferred.\n' +
-            '\n' +
-            'Example: You have a specific ingredient called \'Whisky 08/15\'. This whisky is categorized under the ' +
-            'ingredient group \'Bourbon\'. The group \'Bourbon\', in turn, falls under the broader category ' +
-            '\'Whisky\'. There is an additional child ingredient group related to \'Whisky\' known as \'Scotch\'.\n' +
-            '\n' +
-            'You\'ve included \'Whisky 08/15\' in your bar\'s inventory. Due to the hierarchical structure, ' +
-            'CocktailPi now recognizes that \'Whisky 08/15\' can be utilized not only in recipes that ' +
-            'specifically require this ingredient, but also in various recipes that call for any type of \'Bourbon\' ' +
-            'or \'Whisky\'. However, it\'s important to note that \'Whisky 08/15\' cannot substitute for recipes that ' +
-            'specifically demand \'Scotch\' or other distinct ingredients. '
+          headline: 'Ingrediensgrupper:',
+          text: 'Ingrediensgrupper er grupper, der består af flere "barn ingredienser" eller andre ingrediensgrupper. Opskrifter kan indeholde ingrediensgrupper. Før bestilling af sådan en opskrift, skal brugeren erstatte den ingrediensgruppe med en ingrediens, der tilhører den gruppe. Softwaren gør automatisk dette for brugeren, hvis en sådan ingrediens er tildelt en pumpe eller er markeret som værende i \'Baren\'. Ingredienser på pumper foretrækkes. \n\nEksempel: Du har en specifik ingrediens kaldet \'Whisky 08/15\'. Denne whisky er kategoriseret under ingrediensgruppen \'Bourbon\', som igen falder under den bredere kategori \'Whisky\'. Der er en yderligere barn ingrediensgruppe relateret til \'Whisky\' kendt som \'Scotch\'.\n\nDu har inkluderet \'Whisky 08/15\' i din bars lager. På grund af den hierarkiske struktur genkender CocktailPi nu, at \'Whisky 08/15\' kan anvendes ikke kun i opskrifter, der specifikt kræver denne ingrediens, men også i forskellige opskrifter, der kræver en hvilken som helst type \'Bourbon\' eller \'Whisky\'. Det er dog vigtigt at bemærke, at \'Whisky 08/15\' ikke kan erstatte opskrifter, der specifikt kræver \'Scotch\' eller andre forskellige ingredienser.'
         },
-        close_btn_label: 'Close'
+        close_btn_label: 'Luk'
       },
       ingredient_groups: {
-        headline: 'Ingredient groups',
-        create_btn_label: 'Create group',
-        refresh_btn_label: 'Refresh',
+        headline: 'Ingrediensgrupper',
+        create_btn_label: 'Opret gruppe',
+        refresh_btn_label: 'Opdater',
         group_table: {
-          search_field_label: 'Search',
+          search_field_label: 'Søg',
           columns: {
-            group: 'Group',
-            alc_content: 'Alcohol content',
-            parent_group: 'Parent group',
-            actions: 'Actions'
+            group: 'Gruppe',
+            alc_content: 'Alkoholindhold',
+            parent_group: 'Forældergruppe',
+            actions: 'Handlinger'
           },
-          edit_btn_tooltip: 'Edit',
-          delete_btn_tooltip: 'Delete'
+          edit_btn_tooltip: 'Rediger',
+          delete_btn_tooltip: 'Slet'
         }
       },
       ingredients: {
-        headline: 'Ingredients',
-        create_btn_label: 'Create ingredient',
-        refresh_btn_label: 'Refresh',
+        headline: 'Ingredienser',
+        create_btn_label: 'Opret ingrediens',
+        refresh_btn_label: 'Opdater',
         ingredient_table: {
-          search_field_label: 'Search',
+          search_field_label: 'Søg',
           columns: {
-            ingredient: 'Ingredient',
+            ingredient: 'Ingrediens',
             type: 'Type',
-            alc_content: 'Alcohol content',
-            bottle_size: 'Bottle size',
-            unit: 'Unit',
-            pump_time_multiplier: 'Pump time multiplier',
-            parent_group: 'Parent Group',
-            actions: 'Actions'
+            alc_content: 'Alkoholindhold',
+            bottle_size: 'Flaskestørrelse',
+            unit: 'Enhed',
+            pump_time_multiplier: 'Pumpe tidsmultiplikator',
+            parent_group: 'Forældergruppe',
+            actions: 'Handlinger'
           },
-          edit_btn_tooltip: 'Edit',
-          delete_btn_tooltip: 'Delete'
+          edit_btn_tooltip: 'Rediger',
+          delete_btn_tooltip: 'Slet'
         }
       }
     },
     category_mgmt: {
-      headline: 'Category Management',
-      create_btn_label: 'Create category',
-      refresh_btn_label: 'Refresh',
-      no_data_msg: 'No categories found!',
+      headline: 'Kategoristyring',
+      create_btn_label: 'Opret kategori',
+      refresh_btn_label: 'Opdater',
+      no_data_msg: 'Ingen kategorier fundet!',
       delete_dialog: {
-        headline: 'The following categorie(s) will be deleted:',
-        ok_btn_label: 'Delete',
-        abort_btn_label: 'Abort'
+        headline: 'Følgende kategori(er) vil blive slettet:',
+        ok_btn_label: 'Slet',
+        abort_btn_label: 'Afbryd'
       },
       category_table: {
         columns: {
-          category: 'Category',
-          actions: 'Actions'
+          category: 'Kategori',
+          actions: 'Handlinger'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete',
-        nr_categories: '{nr} categorie(s) in total'
+        edit_btn_tooltip: 'Rediger',
+        delete_btn_tooltip: 'Slet',
+        nr_categories: '{nr} kategori(er) i alt'
       },
       notifications: {
-        category_updated: 'Category updated successfully',
-        category_created: 'Category created successfully',
-        category_deleted: 'Category deleted successfully'
+        category_updated: 'Kategori opdateret succesfuldt',
+        category_created: 'Kategori oprettet succesfuldt',
+        category_deleted: 'Kategori slettet succesfuldt'
       },
       create_dialog: {
-        headline_edit: 'Edit category',
-        headline_create: 'Create category',
-        name_field_label: 'Name',
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort'
+        headline_edit: 'Rediger kategori',
+        headline_create: 'Opret kategori',
+        name_field_label: 'Navn',
+        save_btn_label: 'Gem',
+        abort_btn_label: 'Afbryd'
       }
     },
     gpio_mgmt: {
-      headline: 'GPIO Management',
+      headline: 'GPIO-styring',
       status_box: {
         headline: 'Status',
         pin_box: {
-          headline: 'Pin usage',
-          pin_usage: 'Pin usage:',
+          headline: 'Pin brug',
+          pin_usage: 'Pin brug:',
           gpio_boards: 'GPIO boards:'
-        },
-        i2c_box: {
-          headline: 'I2C',
-          configure_btn_label: 'Configure',
-          status: 'Status:',
-          sda_pin: 'SDA-Pin:',
-          scl_pin: 'SCL-Pin:'
         }
       },
       local_gpio_box: {
-        headline: 'Local GPIOs:',
-        no_boards_found: 'No boards found!'
+        headline: 'Lokale GPIOs:',
+        no_boards_found: 'Ingen boards fundet!'
       },
       i2c_expander_box: {
-        add_btn_label: 'Add',
-        headline: 'I2C GPIO Expanders:',
-        i2c_disabled: 'I2C disabled!',
-        no_expanders_found: 'No expanders found!'
+        add_btn_label: 'Tilføj',
+        headline: 'I2C GPIO Expandere:',
+        i2c_disabled: 'I2C deaktiveret!',
+        no_expanders_found: 'Ingen expandere fundet!'
       },
       delete_dialog: {
-        headline: 'Delete {boardName}?',
-        ok_btn_label: 'Delete',
-        abort_btn_label: 'Abort'
+        headline: 'Slet {boardName}?',
+        ok_btn_label: 'Slet',
+        abort_btn_label: 'Afbryd'
       }
     },
     glass_mgmt: {
-      headline: 'Glass Management',
-      add_glass_btn_label: 'Create glass',
-      refresh_btn_label: 'Refresh',
+      headline: 'Glasstyring',
+      add_glass_btn_label: 'Opret glas',
+      refresh_btn_label: 'Opdater',
       glass_table: {
         columns: {
-          name: 'Name',
-          size: 'Size',
-          default: 'Default',
-          for_single_ingredients: 'For single ingredients',
-          actions: 'Actions'
+          name: 'Navn',
+          size: 'Størrelse',
+          default: 'Standard',
+          for_single_ingredients: 'Til enkelte ingredienser',
+          actions: 'Handlinger'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete',
-        nr_glasses: '{nr} glasses in total'
+        edit_btn_tooltip: 'Rediger',
+        delete_btn_tooltip: 'Slet',
+        nr_glasses: '{nr} glas i alt'
       },
       notifications: {
-        glass_updated: 'Glass updated successfully',
-        glass_created: 'Glass created successfully'
+        glass_updated: 'Glas opdateret succesfuldt',
+        glass_created: 'Glas oprettet succesfuldt'
       },
       edit_dialog: {
-        headline_create: 'Create glass',
-        headline_edit: 'Edit glass'
+        headline_create: 'Opret glas',
+        headline_edit: 'Rediger glas'
       },
       help_dialog: {
-        headline: 'Glasses:',
-        text: 'Different types of cocktails are typically served in various glass styles, each with its unique size. ' +
-          'When placing a cocktail order, you have two options: you can either specify the desired liquid quantity ' +
-          'for the machine to dispense or choose a specific glass type. If you opt for the latter, the machine will ' +
-          'automatically dispense an amount of liquid that matches the selected glass\'s volume.\n\n' +
-          'The liquid quantity that the machine should produce is always chosen by the ordering user. ' +
-          'However, it is possible to assign each recipe a glass that is selected by default.\n\n' +
-          'If no default glass has been selected for a particular recipe, the software will automatically default to ' +
-          'using the predefined "default" glass.\n\n' +
-          'It is possible to dispense single ingredients. The default glass for these orders can also be selected ' +
-          'here using the "Use for single ingredients"-property.'
+        headline: 'Glas:',
+        text: "Forskellige typer cocktails serveres typisk i forskellige glasstile, hver med sin unikke størrelse. Når du bestiller en cocktail, har du to muligheder: du kan enten specificere den ønskede væskemængde for maskinen at dispensere eller vælge en specifik glastype. Hvis du vælger sidstnævnte, vil maskinen automatisk dispensere en mængde væske, der passer til det valgte glas volumen.\n\nDen væskemængde, som maskinen skal producere, vælges altid af den bestillende bruger. Det er dog muligt at tildele hvert opskrift et glas, der vælges som standard.\n\nHvis der ikke er valgt et standardglas for en bestemt opskrift, vil softwaren automatisk standardisere til at bruge det foruddefinerede 'standard' glas.\n\nDet er muligt at dispensere enkelte ingredienser. Standardglasset for disse ordrer kan også vælges her ved hjælp af egenskaben 'Brug til enkelte ingredienser'."
       }
     },
     event_mgmt: {
-      headline: 'Event Management',
-      add_btn_label: 'Add action',
-      refresh_btn_label: 'Refresh',
-      delete_btn_label: 'Delete selected actions',
+      headline: 'Begivenhedsstyring',
+      add_btn_label: 'Tilføj handling',
+      refresh_btn_label: 'Opdater',
+      delete_btn_label: 'Slet valgte handlinger',
       action_table: {
         columns: {
-          trigger: 'Trigger',
-          description: 'Description',
-          comment: 'Comment',
-          groups: 'Execution-groups',
+          trigger: 'Udløser',
+          description: 'Beskrivelse',
+          comment: 'Kommentar',
+          groups: 'Udførelsesgrupper',
           status: 'Status',
-          actions: 'Actions'
+          actions: 'Handlinger'
         },
-        view_logs_btn_tooltip: 'View logs',
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete'
+        view_logs_btn_tooltip: 'Vis logs',
+        edit_btn_tooltip: 'Rediger',
+        delete_btn_tooltip: 'Slet'
       },
       delete_dialog: {
-        headline: 'Delete Actions?'
+        headline: 'Slet Handlinger?'
       },
       edit_dialog: {
-        headline_create: 'Create new action',
-        headline_edit: 'Edit action'
+        headline_create: 'Opret ny handling',
+        headline_edit: 'Rediger handling'
       },
       notifications: {
-        action_created: 'Action created successfully!',
-        action_updated: 'Action updated successfully!'
+        action_created: 'Handling oprettet succesfuldt!',
+        action_updated: 'Handling opdateret succesfuldt!'
       }
     },
     system_mgmt: {
       system: {
-        headline: 'System Management',
-        shutdown_btn_label: 'Shutdown system',
+        headline: 'Systemstyring',
+        shutdown_btn_label: 'Luk systemet',
         shutdown_dialog: {
-          headline: 'Shut down?',
-          reboot_btn_label: 'Reboot',
-          shutdown_btn_label: 'Shutdown',
-          abort_btn_label: 'Abort'
+          headline: 'Luk ned?',
+          reboot_btn_label: 'Genstart',
+          shutdown_btn_label: 'Luk ned',
+          abort_btn_label: 'Afbryd'
         }
       },
       default_filter: {
-        headline: 'Default filter',
-        enable_btn_label: 'Enable default filter',
+        headline: 'Standardfilter',
+        enable_btn_label: 'Aktivér standardfilter',
         fabricable: {
-          headline: 'Fabricable:',
-          show_all: 'Show all',
-          fabricable_owned: 'Fabricable with owned ingredients',
-          fabricable_auto: 'Fabricable fully automatic'
+          headline: 'Fremstillelig:',
+          show_all: 'Vis alle',
+          fabricable_owned: 'Fremstillelig med ejede ingredienser',
+          fabricable_auto: 'Fremstillelig fuldautomatisk'
         },
-        save_btn_label: 'Save',
+        save_btn_label: 'Gem',
         notifications: {
-          settings_updated: 'Settings updated!'
+          settings_updated: 'Indstillinger opdateret!'
         }
       },
       appearance: {
-        headline: 'Appearance'
+        headline: 'Udseende'
       }
     },
     simple_collections: {
-      headline: 'Collections',
-      no_collections_msg: 'No collections found!'
+      headline: 'Samlinger',
+      no_collections_msg: 'Ingen samlinger fundet!'
     },
     simple_recipes: {
-      headline: 'Recipes',
-      no_data_msg: 'No recipes found!'
+      headline: 'Opskrifter',
+      no_data_msg: 'Ingen opskrifter fundet!'
     },
     simple_ingredient_recipes: {
-      headline: 'Pumpable Ingredients',
-      no_data_msg: 'No ingredients assigned to pumps!'
+      headline: 'Pumpbare Ingredienser',
+      no_data_msg: 'Ingen ingredienser tildelt pumper!'
     },
     simple_collection: {
-      headline: 'Collection: {name}',
-      no_data_msg: 'No recipes found!'
+      headline: 'Samling: {name}',
+      no_data_msg: 'Ingen opskrifter fundet!'
     },
     simple_cocktail_progress: {
-      headline: 'Current order',
-      producing: 'Producing:',
-      no_cocktail_in_progress: 'No cocktail is being prepared currently!',
-      go_back_btn_label: '<< Go back',
-      cancel_btn_label: 'Cancel order'
+      headline: 'Nuværende ordre',
+      producing: 'Producerer:',
+      no_cocktail_in_progress: 'Der forberedes ingen cocktail i øjeblikket!',
+      go_back_btn_label: '<< Gå tilbage',
+      cancel_btn_label: 'Annuller ordre'
     },
     recipe_details: {
-      edit_btn_label: 'Edit',
-      produce_btn_label: 'Make cocktail',
-      delete_btn_label: 'Delete',
-      categories_headline: 'Categories:',
-      none: 'None',
-      default_glass_headline: 'Default glass:',
-      description_headline: 'Description:',
+      edit_btn_label: 'Rediger',
+      produce_btn_label: 'Lav cocktail',
+      delete_btn_label: 'Slet',
+      categories_headline: 'Kategorier:',
+      none: 'Ingen',
+      default_glass_headline: 'Standardglas:',
+      description_headline: 'Beskrivelse:',
       notifications: {
-        recipe_deleted: 'Recipe deleted successfully'
+        recipe_deleted: 'Opskrift slettet succesfuldt'
       },
       delete_dialog: {
-        headline: 'Are you sure, that you want to delete this recipe?',
-        yes_btn_label: 'Delete',
-        abort_btn_label: 'Abort'
+        headline: 'Er du sikker på, at du vil slette denne opskrift?',
+        yes_btn_label: 'Slet',
+        abort_btn_label: 'Afbryd'
       }
     },
     recipe_edit: {
-      headline_new: 'Add Recipe',
-      headline_edit: 'Edit Recipe',
+      headline_new: 'Tilføj Opskrift',
+      headline_edit: 'Rediger Opskrift',
       form: {
-        name: 'Name',
-        categories: 'Categories',
-        image: 'Image',
-        remove_image: 'Remove existing image',
-        desc: 'Description',
-        default_glass: 'Default glass'
+        name: 'Navn',
+        categories: 'Kategorier',
+        image: 'Billede',
+        remove_image: 'Fjern eksisterende billede',
+        desc: 'Beskrivelse',
+        default_glass: 'Standardglas'
       },
-      save_btn_label: 'Create',
-      update_btn_label: 'Update',
-      abort_btn_label: 'Abort'
+      save_btn_label: 'Opret',
+      update_btn_label: 'Opdater',
+      abort_btn_label: 'Afbryd'
     },
     user_editor: {
-      headline_edit: 'Edit user',
-      headline_profile: 'My profile',
-      headline_create: 'Create user',
+      headline_edit: 'Rediger bruger',
+      headline_profile: 'Min profil',
+      headline_create: 'Opret bruger',
       form: {
         columns: {
-          username: 'Username',
-          password: 'Password',
-          role: 'Role',
-          locked: 'Locked'
+          username: 'Brugernavn',
+          password: 'Adgangskode',
+          role: 'Rolle',
+          locked: 'Låst'
         },
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort',
-        edit_btn_label: 'Edit',
+        save_btn_label: 'Gem',
+        abort_btn_label: 'Afbryd',
+        edit_btn_label: 'Rediger',
         roles: {
-          user: 'User',
-          recipe_creator: 'Recipe-Creator',
-          pump_ingredient_editor: 'Pump-Ingredient-Editor',
+          user: 'Bruger',
+          recipe_creator: 'Opskrifts-Opretter',
+          pump_ingredient_editor: 'Pumpe-Ingrediens-Redaktør',
           admin: 'Admin'
         }
       },
       notifications: {
-        user_created: 'User created successfully',
-        user_updated: 'User updated successfully',
-        profile_updated: 'Profile updated'
+        user_created: 'Bruger oprettet succesfuldt',
+        user_updated: 'Bruger opdateret succesfuldt',
+        profile_updated: 'Profil opdateret'
       }
     },
     i2c_mgmt: {
-      headline: 'I2C configuration',
+      headline: 'I2C-konfiguration',
       form: {
-        enable_label: 'Enable I2C',
+        enable_label: 'Aktivér I2C',
         sda_pin_label: 'SDA Pin',
         scl_pin_label: 'SCL Pin',
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort'
+        save_btn_label: 'Gem',
+        abort_btn_label: 'Afbryd'
       },
-      tutorial: 'When enabling I2C two GPIO-pins on the local board get used up for the SDA and SCL pin of the I2C-bus. ' +
-        'Some boards provide more then one I2C bus. The CocktailPi software only supports one I2C bus a the time.\n' +
-        'This supported bus is the device at ' +
-        '<div class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--outline text-black" role="status">/sys/bus/i2c/devices/i2c-1</div> ' +
-        'on the underlying linux filesystem.\n' +
-        'On normal Raspberry PIs the pins used for SDL and SCL are on normally <b>2 for SDA</b> and <b>3 for SDL</b>\n' +
-        '\n' +
-        'If you can\'t see the pins that you want to use here, make sure that you don\'t have them assigned to something already.' +
-        '<br><br>' +
-        '<b>The fields for the SDL and SCL pin don\'t influence the selected bus.</b>',
-      configuration_warning: '<b><u>WARNING!!!:</b></u> Enabling and disabling the I2C-bus will trigger unix commands that configure the I2C ' +
-        'bus. Make sure that SDA and SCL are selected correctly. Otherwise it can happen, that pins are in use as normal pins and I2C pins at the same time. This will crash the application!'
+      tutorial: "Når I2C aktiveres, bruges to GPIO-pins på det lokale board til SDA- og SCL-pinnen på I2C-bussen. Nogle boards tilbyder mere end en I2C-bus. CocktailPi-softwaren understøtter kun en I2C-bus ad gangen.\nDette understøttede bus er enheden på '/sys/bus/i2c/devices/i2c-1' på det underliggende Linux-filsystem.\nPå normale Raspberry PIs er pinsene, der bruges til SDL og SCL, normalt '2 for SDA' og '3 for SDL'\n\nHvis du ikke kan se de pins, du vil bruge her, skal du sørge for, at du ikke allerede har tildelt dem til noget andet.\n\n<b>Felterne for SDL- og SCL-pinnen påvirker ikke den valgte bus.</b>",
+      configuration_warning: '<b><u>ADVARSEL!!!:</b></u> Aktivering og deaktivering af I2C-bussen vil udløse unix-kommandoer, der konfigurerer I2C-bussen. Sørg for, at SDA og SCL er valgt korrekt. Ellers kan det ske, at pins er i brug som normale pins og I2C-pins på samme tid. Dette vil få applikationen til at gå ned!'
     },
     pump_setup: {
-      headline: 'Pump Setup Assistant',
-      delete_btn_label: 'Delete Pump',
+      headline: 'Pumpeopsætningsassistent',
+      delete_btn_label: 'Slet pumpe',
       name: {
-        handle: 'Handle',
-        headline: 'How should your pump be called?',
-        pump_identifier_label: 'Pump identifier'
+        handle: 'Håndtag',
+        headline: 'Hvordan skal din pumpe kaldes?',
+        pump_identifier_label: 'Pumpeidentifikator'
       },
       hw_pins: {
         handle: 'Hardware pins',
-        headline: 'Select the pins that control the pump'
+        headline: 'Vælg de pins, der styrer pumpen'
       },
       calibration: {
-        handle: 'Calibrate',
-        headline: 'Calibrate your pump',
-        tube_capacity_label: 'Tube capacity (in ml)',
-        tube_capacity_desc: 'The tube capacity determines how much liquid is needed to fill the hose that connects ' +
-          'the liquid container with the dispensing part of your cocktail machine. This metric is used to ' +
-          'accurately fill your hoses with liquid before actually producing a new drink. ' +
-          'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
-          'been used for a while.',
+        handle: 'Kalibrer',
+        headline: 'Kalibrer din pumpe',
+        tube_capacity_label: 'Slangekapacitet (i ml)',
+        tube_capacity_desc: 'Slangekapaciteten bestemmer, hvor meget væske der er nødvendigt for at fylde slangen, der forbinder væskebeholderen med uddelerdelen af din cocktailmaskine. Denne metrik bruges til nøjagtigt at fylde dine slanger med væske, før der faktisk produceres en ny drink. Den bruges også til at tømme dine slanger (pumpe væsken tilbage i beholderen), hvis maskinen ikke har været brugt i et stykke tid.',
         motor_tester: {
-          headline: 'Motor tester',
-          disable_reason_parameter_missing: 'Required pump-config parameter missing!',
-          stepper_desc: 'Here you can test your motor and calculate the number of steps the motor needs to make to pump one cl. ' +
-            'You can run the tester in two modes: ' +
-            '<ul>' +
-            '<li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>' +
-            '<li><b>Steps:</b> Tell the motor how many steps he should take.</li>' +
-            '</ul>' +
-            'The tester is used to check and fine-tune your configuration.<br> ' +
-            'You can also let the tester calculate the number of steps that the motor must make to pump one cl. ' +
-            'For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test. ' +
-            'You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester ' +
-            'does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements. ' +
-            'The tester will then correct the configuration according to your measurements.',
-          dc_desc: 'Here you can test your motor and calculate the time it takes the motor to pump one cl.' +
-            'You can run the tester in two modes:' +
-            '<ul>\n' +
-            '  <li><b>Liquid:</b> Tell the motor how much liquid he should pump.</li>' +
-            '  <li><b>Time:</b> Tell the motor how many steps he should take.</li>' +
-            '</ul>\n' +
-            'The tester is used to check and fine-tune your configuration.<br>' +
-            'You can also let the tester calculate the amount of time that the motor must run to pump one cl. ' +
-            'For this, you have to measure the amount of liquid (in ml) that the pump pumped during your test. ' +
-            'You can use a scale for that. Also make sure that your hoses are filled with liquid, as the tester ' +
-            'does not take empty hoses or air bubbles into account! Afterwards a box will open, where you can enter your measurements. ' +
-            'The tester will then correct the configuration according to your measurements!'
+          headline: 'Motortester',
+          disable_reason_parameter_missing: 'Krævet pumpe-konfigurationsparameter mangler!',
+          stepper_desc: "Her kan du teste din motor og beregne antallet af trin, motoren skal tage for at pumpe en cl. Du kan køre testerne i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Trin': Fortæl motoren, hvor mange trin den skal tage. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne antallet af trin, som motoren skal tage for at pumpe en cl. Til dette skal du måle mængden af væske (i ml), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes en boks, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger.",
+          dc_desc: "Her kan du teste din motor og beregne den tid, det tager motoren at pumpe en cl. Du kan køre testeren i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Tid': Fortæl motoren, hvor mange trin den skal tage. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne mængden af tid, som motoren skal køre for at pumpe en cl. Til dette skal du måle mængden af væske (i ml), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes en boks, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger!"
         }
       },
       state: {
-        handle: 'State',
-        headline: 'Pump state',
-        pumped_up_label: 'Pumped up',
-        pumped_up_desc: 'The "Pumped up"-field holds the information about the filling state of the hoses of a pump. ' +
-          'If the hoses are not filled with liquid, the machine will fill them before producing a cocktail. ' +
-          'This field is also used to find out from whose pumps the liquid should be pumped back into the ' +
-          'container, if the machine is not used for a certain time.',
-        filling_level_label: 'Current filling level',
-        filling_level_desc: 'The current filling level of the container that is connected to the pump. ' +
-          'This field is used to check if there is still enough liquid left ' +
-          'to produce a cocktail of a certain size.',
-        ingredient_label: 'Current ingredient',
-        ingredient_desc: 'Optional: The ingredient that is currently connected to the pump.'
+        handle: 'Tilstand',
+        headline: 'Pumpetilstand',
+        pumped_up_label: 'Pumpet op',
+        pumped_up_desc: "'Pumpet op'-feltet indeholder oplysninger om fyldningstilstanden af slangene på en pumpe. Hvis slangene ikke er fyldt med væske, vil maskinen fylde dem, før der produceres en cocktail. Dette felt bruges også til at finde ud af, fra hvilke pumper væsken skal pumpes tilbage i beholderen, hvis maskinen ikke er blevet brugt i et stykke tid.",
+        filling_level_label: 'Nuværende fyldningsniveau',
+        filling_level_desc: 'Det nuværende fyldningsniveau for beholderen, der er forbundet med pumpen. Dette felt bruges til at kontrollere, om der stadig er nok væske tilbage til at producere en cocktail af en bestemt størrelse.',
+        ingredient_label: 'Nuværende ingrediens',
+        ingredient_desc: 'Valgfri: Ingrediensen, der i øjeblikket er forbundet med pumpen.'
       },
-      caption_complete: 'Complete',
-      caption_optional: 'Optional',
-      continue_step_btn_label: 'Continue',
-      go_back_step_btn_label: 'Back',
-      finish_setup_btn_label: 'Finish',
+      caption_complete: 'Komplet',
+      caption_optional: 'Valgfri',
+      continue_step_btn_label: 'Fortsæt',
+      go_back_step_btn_label: 'Tilbage',
+      finish_setup_btn_label: 'Afslut',
       delete_dialog: {
-        headline: 'Delete {name}?',
-        yes_btn_label: 'Delete'
+        headline: 'Slet {name}?',
+        yes_btn_label: 'Slet'
       },
       notifications: {
-        pump_deleted: '{name} deleted!'
+        pump_deleted: '{name} slettet!'
       }
     },
     collection: {
-      modify_recipes: 'Modify recipes',
-      stop_modify_recipes: 'Stop modifying recipes',
-      delete: 'Delete collection',
-      add_recipe: 'Add recipe',
+      modify_recipes: 'Rediger opskrifter',
+      stop_modify_recipes: 'Stop redigering af opskrifter',
+      delete: 'Slet samling',
+      add_recipe: 'Tilføj opskrift',
       delete_dialog: {
-        ok_btn_label: 'Delete',
-        headline: 'Delete collection \'{name}\'?'
+        ok_btn_label: 'Slet',
+        headline: "Slet samling '{name}'?"
       },
       form: {
-        name: 'Name',
-        image: 'Image',
-        remove_img: 'Remove existing image',
-        desc: 'Description',
-        edit_btn_label: 'Edit',
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort'
+        name: 'Navn',
+        image: 'Billede',
+        remove_img: 'Fjern eksisterende billede',
+        desc: 'Beskrivelse',
+        edit_btn_label: 'Rediger',
+        save_btn_label: 'Gem',
+        abort_btn_label: 'Afbryd'
       }
     },
     notifications: {
-      recipe_added: 'Recipe added successfully',
-      recipe_removed: 'Recipe removed successfully',
-      collection_updated: 'Collection updated successfully'
+      recipe_added: 'Opskrift tilføjet succesfuldt',
+      recipe_removed: 'Opskrift fjernet succesfuldt',
+      collection_updated: 'Samling opdateret succesfuldt'
     }
   },
   component: {
     show_img_dialog: {
-      close_btn_label: 'Close'
+      close_btn_label: 'Luk'
     },
     simple_recipes_filter_drawer: {
       headline: 'Filter',
       open_btn_label: 'Filter',
-      name_field_label: 'Name',
-      contains_ingredients_field_label: 'Contains ingredients',
-      order_by_selector_label: 'Order by',
+      name_field_label: 'Navn',
+      contains_ingredients_field_label: 'Indeholder ingredienser',
+      order_by_selector_label: 'Sortér efter',
       fabricable_box: {
-        headline: 'Fabricable:',
-        show_all: 'Show all',
-        show_all_desc: 'Shows all recipes',
-        fabricable_owned: 'Fabricable with owned ingredients',
-        fabricable_owned_desc: 'Only shows recipes that can be produced with owned ingredients',
-        fabricable_auto: 'Fabricable fully automatic',
-        fabricable_auto_desc: 'Only shows recipes that can be produced fully automatic'
+        headline: 'Fremstillelig:',
+        show_all: 'Vis alle',
+        show_all_desc: 'Viser alle opskrifter',
+        fabricable_owned: 'Fremstillelig med ejede ingredienser',
+        fabricable_owned_desc: 'Viser kun opskrifter, der kan produceres med ejede ingredienser',
+        fabricable_auto: 'Fremstillelig fuldautomatisk',
+        fabricable_auto_desc: 'Viser kun opskrifter, der kan produceres fuldautomatisk'
       },
-      search_btn_label: 'Search',
-      reset_btn_label: 'Reset'
+      search_btn_label: 'Søg',
+      reset_btn_label: 'Nulstil'
     },
     simple_collection_card: {
       name: '{name}',
       nr_cocktails: '{nr} cocktail(s)',
       desc: '{desc}',
-      owner: 'by {owner}'
+      owner: 'af {owner}'
     },
     recipe_search_list: {
-      loading: 'Loading...'
+      loading: 'Indlæser...'
     },
     recipe_list: {
-      no_recipes_found: 'No recipes found!'
+      no_recipes_found: 'Ingen opskrifter fundet!'
     },
     recipe_search_filter_card: {
-      headline: 'Search-options',
-      expert_search_label: 'Expert-search',
-      cocktail_name_field_label: 'Search',
+      headline: 'Søgemuligheder',
+      expert_search_label: 'Ekspertsøgning',
+      cocktail_name_field_label: 'Søg',
       fabricable_box: {
-        headline: 'Fabricable:',
-        show_all: 'Show all',
-        fabricable_owned: 'Fabricable with owned ingredients',
-        fabricable_auto: 'Fabricable fully automatic'
+        headline: 'Fremstillelig:',
+        show_all: 'Vis alle',
+        fabricable_owned: 'Fremstillelig med ejede ingredienser',
+        fabricable_auto: 'Fremstillelig fuldautomatisk'
       },
-      contains_ingredient_field_label: 'Contains ingredients',
-      order_by_selector_label: 'Order by',
-      reset_btn_label: 'Reset filters'
+      contains_ingredient_field_label: 'Indeholder ingredienser',
+      order_by_selector_label: 'Sortér efter',
+      reset_btn_label: 'Nulstil filtre'
     },
     recipe_card: {
-      owner_name: 'by {name}',
-      ingredient_add_manually_tooltip: 'add manually',
-      ingredient_not_owned_tooltip: 'not owned'
+      owner_name: 'af {name}',
+      ingredient_add_manually_tooltip: 'tilføj manuelt',
+      ingredient_not_owned_tooltip: 'ejes ikke'
     },
     ingredient_list: {
-      headline: 'Production-Steps',
-      no_steps_added: 'No Production-Steps added!',
-      alc_content: '{nr}% alcohol content',
-      alc_content_range: '{min} - {max}% alcohol content',
-      manual_instruction: 'Manual instruction:',
-      tag_boostable: 'Boostable',
-      tag_unscaled: 'Unscaled',
+      headline: 'Produktionstrin',
+      no_steps_added: 'Ingen produktionstrin tilføjet!',
+      alc_content: '{nr}% alkoholindhold',
+      alc_content_range: '{min} - {max}% alkoholindhold',
+      manual_instruction: 'Manuel instruktion:',
+      tag_boostable: 'Forstærkbar',
+      tag_unscaled: 'Uskaleret',
       edit_dialog: {
-        edit_headline: 'Edit Production-Step',
-        add_headline: 'Add Production-Step',
-        save_btn_label: 'Save',
-        abort_btn_label: 'Abort'
+        edit_headline: 'Rediger Produktionstrin',
+        add_headline: 'Tilføj Produktionstrin',
+        save_btn_label: 'Gem',
+        abort_btn_label: 'Afbryd'
       }
     },
     prod_step_editor: {
-      tab_ingredient: 'Ingredient',
-      tab_instruction: 'Instruction'
+      tab_ingredient: 'Ingrediens',
+      tab_instruction: 'Instruktion'
     },
     prod_step_editor_ingredient: {
-      amount: 'Amount',
-      amount_in: 'Amount (in {metric})',
-      scale_label: 'Scale with volume',
-      boostable_label: 'Boostable'
+      amount: 'Mængde',
+      amount_in: 'Mængde (i {metric})',
+      scale_label: 'Skalér med volumen',
+      boostable_label: 'Forstærkbar'
     },
     prod_step_editor_instruction: {
-      instruction_label: 'Instruction'
+      instruction_label: 'Instruktion'
     },
     ingredient_selector: {
-      default_label: 'Ingredient',
-      alc_content: '{nr}% alcohol content',
-      alc_content_range: '{min} - {min}% alcohol content'
+      default_label: 'Ingrediens',
+      alc_content: '{nr}% alkoholindhold',
+      alc_content_range: '{min} - {min}% alkoholindhold'
     },
     make_cocktail_dialog: {
-      headline: 'Order Cocktail',
-      order_btn_label: 'MAKE COCKTAIL ({nr} ml)'
+      headline: 'Bestil Cocktail',
+      order_btn_label: 'LAV COCKTAIL ({nr} ml)'
     },
     make_cocktail_amount_to_produce: {
-      glass_selector_label: 'Glass',
-      amount_to_produce_label: 'Amount to produce'
+      glass_selector_label: 'Glas',
+      amount_to_produce_label: 'Mængde der skal produceres'
     },
     make_cocktail_group_replacements: {
-      fulfilled_msg: 'All ingredient-groups have been replaced with concrete ingredients!',
-      not_fulfilled_msg: 'The following ingredient-groups have to get real existing ingredients assigned:',
+      fulfilled_msg: 'Alle ingrediensgrupper er erstattet med konkrete ingredienser!',
+      not_fulfilled_msg: 'Følgende ingrediensgrupper skal have tildelt rigtige eksisterende ingredienser:',
       card: {
-        prod_step_label: 'Production step',
-        ingredient_group_label: 'Ingredient group',
-        replacement_label: 'Replacement',
+        prod_step_label: 'Produktionstrin',
+        ingredient_group_label: 'Ingrediensgruppe',
+        replacement_label: 'Erstatning',
         tags: {
-          in_bar: 'in bar',
-          not_in_bar: 'not in bar',
-          automatically_addable: 'Automatically addable'
+          in_bar: 'i baren',
+          not_in_bar: 'ikke i baren',
+          automatically_addable: 'Automatisk tilføjelig'
         }
       }
     },
     make_cocktail_add_manually: {
-      fulfilled_msg: 'All ingredients assigned to pumps! Cocktail can be produced fully automatic!',
-      not_fulfilled_msg: 'The following ingredients have to get added manually or are not assigned to pumps. ' +
-        'You will be asked to add them during the production progress:',
+      fulfilled_msg: 'Alle ingredienser tildelt pumper! Cocktail kan produceres fuldautomatisk!',
+      not_fulfilled_msg: 'Følgende ingredienser skal tilføjes manuelt eller er ikke tildelt pumper. Du vil blive bedt om at tilføje dem under produktionsforløbet:',
       tags: {
-        in_bar: 'in bar',
-        not_in_bar: 'not in bar'
+        in_bar: 'i baren',
+        not_in_bar: 'ikke i baren'
       }
     },
     make_cocktail_occupied: {
-      fulfilled_msg: 'Machine is not occupied!',
-      occupied_cocktail_msg: 'Machine occupied! A cocktail ist getting prepared currently!',
-      occupied_pumps_msg: 'Machine occupied! One or more pumps are getting cleaned/pumping up currently!'
+      fulfilled_msg: 'Maskinen er ikke optaget!',
+      occupied_cocktail_msg: 'Maskinen optaget! En cocktail bliver tilberedt i øjeblikket!',
+      occupied_pumps_msg: 'Maskinen optaget! En eller flere pumper bliver rengjort/pumpet op i øjeblikket!'
     },
     make_cocktail_insufficient_ingredients: {
-      fulfilled_msg: 'The following ingredients will be consumed:',
-      not_fulfilled_msg: 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+      fulfilled_msg: 'Følgende ingredienser vil blive forbrugt:',
+      not_fulfilled_msg: 'Kan ikke lave cocktail! Nogle pumper har ikke nok væske tilbage:'
     },
     make_cocktail_customizer: {
-      headline: 'Order customizer',
-      headline_boosting: 'Boosting:',
-      boosting_desc: 'Increases (or decreases) the ml of reported boostable ingredients in the base recipe. ' +
-        '(Usually spirits) Non-boostable ingredients are decreased (or increased). The amount of liquid ' +
-        'dispensed remains the same!',
-      headline_additional_ingredients: 'Additional ingredients:',
-      additional_ingredients_desc: 'Ingredients will be added as last production-step. The dispensed amount of ' +
-        'liquid will be increased by the amount of ordered additional ingredients.',
-      add_new_ingredient_btn_label: 'Add new ingredient',
-      add_new_ingredient_headline: 'Add ingredient',
-      recipe_not_boostable: 'Recipe not boostable!'
+      headline: 'Bestillingspersonalisering',
+      headline_boosting: 'Forstærkning:',
+      boosting_desc: 'Øger (eller reducerer) ml af rapporterede forstærkbare ingredienser i basisopskriften. (Normalt spiritus) Ikke-forstærkbare ingredienser reduceres (eller øges). Mængden af dispenserede væsker forbliver den samme!',
+      headline_additional_ingredients: 'Yderligere ingredienser:',
+      additional_ingredients_desc: 'Ingredienser vil blive tilføjet som sidste produktionstrin. Mængden af dispenserede væsker øges med mængden af bestilte yderligere ingredienser.',
+      add_new_ingredient_btn_label: 'Tilføj ny ingrediens',
+      add_new_ingredient_headline: 'Tilføj ingrediens',
+      recipe_not_boostable: 'Opskrift ikke forstærkbar!'
     },
     make_cocktail_pump_editor: {
-      headline: 'Pump-Layout',
+      headline: 'Pumpe-Layout',
       pump_table: {
-        required_ingredient: 'Required ingredient',
+        required_ingredient: 'Krævet ingrediens',
         columns: {
           nr: 'Nr',
-          ingredient: 'Current Ingredient',
-          filling_level: 'Remaining filling level',
-          pumped_up: 'Pumped Up',
-          state: 'State',
-          actions: 'actions'
+          ingredient: 'Nuværende Ingrediens',
+          filling_level: 'Resterende fyldningsniveau',
+          pumped_up: 'Pumpet Op',
+          state: 'Tilstand',
+          actions: 'Handlinger'
         },
-        refill_btn_label: 'Fill',
+        refill_btn_label: 'Fyld',
         state_ok: 'OK',
-        state_incomplete: 'Incomplete'
+        state_incomplete: 'Ukomplet'
       }
     },
     pump_up_btn: {
-      tooltip_up: 'Pump up',
-      tooltip_back: 'Pump back'
+      tooltip_up: 'Pump op',
+      tooltip_back: 'Pump tilbage'
     },
     pump_turn_on_btn: {
-      tooltip_on: 'Turn on',
-      tooltip_off: 'Turn off'
+      tooltip_on: 'Tænd',
+      tooltip_off: 'Sluk'
     },
     deleteWarning: {
-      delete_btn_label: 'Delete',
-      abort_btn_label: 'Abort',
-      success_notification: 'Deleted successfully!',
-      nothing_selected: 'Nothing selected!'
+      delete_btn_label: 'Slet',
+      abort_btn_label: 'Afbryd',
+      success_notification: 'Slettet succesfuldt!',
+      nothing_selected: 'Intet valgt!'
     },
     editDialog: {
-      save_btn_label: 'Save',
-      abort_btn_label: 'Abort'
+      save_btn_label: 'Gem',
+      abort_btn_label: 'Afbryd'
     },
     ingredientGroupForm: {
-      name: 'Name',
-      parent_group: 'Parent group'
+      name: 'Navn',
+      parent_group: 'Forældergruppe'
     },
     ingredient_group_mgmt: {
-      create_btn_label: 'Create group',
-      refresh_btn_label: 'Refresh',
+      create_btn_label: 'Opret gruppe',
+      refresh_btn_label: 'Opdater',
       group_table: {
-        search_field_label: 'Search',
+        search_field_label: 'Søg',
         columns: {
-          group: 'Group',
-          alc_content: 'Alcohol content',
-          parent_group: 'Parent group',
-          actions: 'Actions'
+          group: 'Gruppe',
+          alc_content: 'Alkoholindhold',
+          parent_group: 'Forældergruppe',
+          actions: 'Handlinger'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete',
+        edit_btn_tooltip: 'Rediger',
+        delete_btn_tooltip: 'Slet',
         delete_dialog: {
-          headline: 'Delete group?',
-          warning: 'This also removes the selected group from all associated recipes!'
+          headline: 'Slet gruppe?',
+          warning: 'Dette fjerner også den valgte gruppe fra alle tilknyttede opskrifter!'
         }
       },
-      edit_headline: 'Edit group',
-      create_headline: 'Create group',
+      edit_headline: 'Rediger gruppe',
+      create_headline: 'Opret gruppe',
       notifications: {
-        group_created: 'Group created successfully',
-        group_updated: 'Group updated successfully'
+        group_created: 'Gruppe oprettet succesfuldt',
+        group_updated: 'Gruppe opdateret succesfuldt'
       }
     },
     ingredient_mgmt: {
-      create_btn_label: 'Create ingredient',
-      refresh_btn_label: 'Refresh',
+      create_btn_label: 'Opret ingrediens',
+      refresh_btn_label: 'Opdater',
       ingredient_table: {
-        search_field_label: 'Search',
+        search_field_label: 'Søg',
         columns: {
-          ingredient: 'Ingredient',
+          ingredient: 'Ingrediens',
           type: 'Type',
-          alc_content: 'Alcohol content',
-          bottle_size: 'Bottle size',
-          unit: 'Unit',
-          pump_time_multiplier: 'Pump time multiplier',
-          parent_group: 'Parent Group',
-          has_image: 'Image',
-          actions: 'Actions'
+          alc_content: 'Alkoholindhold',
+          bottle_size: 'Flaskestørrelse',
+          unit: 'Enhed',
+          pump_time_multiplier: 'Pumpe tidsmultiplikator',
+          parent_group: 'Forældergruppe',
+          has_image: 'Billede',
+          actions: 'Handlinger'
         },
         has_img_col: {
-          no_label: 'No',
-          yes_btn_label: 'Yes / Show'
+          no_label: 'Nej',
+          yes_btn_label: 'Ja / Vis'
         },
-        edit_btn_tooltip: 'Edit',
-        delete_btn_tooltip: 'Delete'
+        edit_btn_tooltip: 'Rediger',
+        delete_btn_tooltip: 'Slet'
       },
       edit_dialog: {
-        headline_create: 'Create ingredient',
-        headline_edit: 'Edit ingredient'
+        headline_create: 'Opret ingrediens',
+        headline_edit: 'Rediger ingrediens'
       },
       delete_dialog: {
-        headline: 'Delete Ingredient?',
-        warning: 'This also removes the selected group from all associated recipes!'
+        headline: 'Slet Ingrediens?',
+        warning: 'Dette fjerner også den valgte gruppe fra alle tilknyttede opskrifter!'
       },
       notifications: {
-        ingredient_created: 'Ingredient created successfully',
-        ingredient_updated: 'Ingredient updated successfully'
+        ingredient_created: 'Ingrediens oprettet succesfuldt',
+        ingredient_updated: 'Ingrediens opdateret succesfuldt'
       }
     },
     ingredient_form: {
-      name: 'Name',
-      alc_content: 'Alcohol content',
-      tab_automated: 'Automated',
-      tab_manual: 'Manual',
-      parent_group: 'Parent group',
-      image: 'Image',
-      remove_img: 'Remove existing image',
-      bottle_size: 'Bottle size',
-      pump_time_multiplier: 'Pump time multiplier',
-      unit: 'Unit',
+      name: 'Navn',
+      alc_content: 'Alkoholindhold',
+      tab_automated: 'Automatiseret',
+      tab_manual: 'Manuel',
+      parent_group: 'Forældergruppe',
+      image: 'Billede',
+      remove_img: 'Fjern eksisterende billede',
+      bottle_size: 'Flaskestørrelse',
+      pump_time_multiplier: 'Pumpe tidsmultiplikator',
+      unit: 'Enhed',
       units: {
         gram: 'gram (g)',
         milliliter: 'milliliter (ml)',
-        piece: 'piece(s)',
-        teaspoon: 'teaspoon(s)',
-        tablespoon: 'tablespoon(s)'
+        piece: 'stk',
+        teaspoon: 'teskefuld(er)',
+        tablespoon: 'spiseskefuld(er)'
       }
     },
     gpio_expander_expansion_item: {
-      caption_local: 'Board: Local, Usage: {pinsUsed}/{pinsMax}',
-      caption_i2c: 'Address: {addr}, Board: {board}, Usage: {pinsUsed}/{pinsMax}'
+      caption_local: 'Board: Lokal, Anvendelse: {pinsUsed}/{pinsMax}',
+      caption_i2c: 'Adresse: {addr}, Board: {board}, Anvendelse: {pinsUsed}/{pinsMax}'
     },
     pump_mgmt: {
-      headline: 'Pump Management',
-      add_btn_label: 'Add',
-      start_all_btn_label: 'Start all',
-      stop_all_btn_label: 'Stop all',
-      no_pumps_found: 'No pumps found!',
+      headline: 'Pumpestyring',
+      add_btn_label: 'Tilføj',
+      start_all_btn_label: 'Start alle',
+      stop_all_btn_label: 'Stop alle',
+      no_pumps_found: 'Ingen pumper fundet!',
       notifications: {
-        all_stopped: 'All pumps stopped!',
-        all_started: 'All pumps started!'
+        all_stopped: 'Alle pumper stoppet!',
+        all_started: 'Alle pumper startet!'
       }
     },
     pump_setup_type_selector: {
-      headline: 'What type of pump do you want to add?',
-      dc_pump: 'DC Pump',
-      stepper_pump: 'Stepper Pump'
+      headline: 'Hvilken type pumpe vil du tilføje?',
+      dc_pump: 'DC Pumpe',
+      stepper_pump: 'Stepper Pumpe'
     },
     pump_card: {
-      dc_pump: 'DC Pump',
-      stepper_pump: 'Stepper Pump',
-      option_missing: '-- missing --',
-      no_ingredient_placeholder: 'None',
-      fallack_name: 'Pump #{id}',
+      dc_pump: 'DC Pumpe',
+      stepper_pump: 'Stepper Pumpe',
+      option_missing: '-- mangler --',
+      no_ingredient_placeholder: 'Ingen',
+      fallack_name: 'Pumpe #{id}',
       attr: {
-        ingredient: 'Ingredient',
-        filling_level: 'filling level',
-        time_per_cl: 'Time per Cl',
+        ingredient: 'Ingrediens',
+        filling_level: 'fyldningsniveau',
+        time_per_cl: 'Tid pr. cL',
         enable_pin: 'Enable pin',
-        running_state: 'Running state',
-        tube_capacity: 'Tube capacity',
-        steps_per_cl: 'Steps per Cl',
+        running_state: 'Kørende tilstand',
+        tube_capacity: 'Slangekapacitet',
+        steps_per_cl: 'Steps pr. cL',
         acceleration: 'Acceleration',
-        max_steps_per_second: 'Max steps per second',
+        max_steps_per_second: 'Maks. steps pr. sekund',
         step_pin: 'Step pin'
       },
       pumpStates: {
-        ready: 'Ready',
-        incomplete: 'Incomplete',
-        running: 'Running'
+        ready: 'Klar',
+        incomplete: 'Ukomplet',
+        running: 'Kører'
       },
       pumpUpStates: {
-        pumped_up: 'Pumped Up',
-        pumped_down: 'Pumped Down'
+        pumped_up: 'Primet',
+        pumped_down: 'Ikke primet'
       },
       notifications: {
-        pump_started: '{name} started!',
-        pump_stopped: '{name} stopped!'
+        pump_started: '{name} startet!',
+        pump_stopped: '{name} stoppet!'
       }
     },
     reverse_pump_settings: {
-      headline: 'Reverse pumping',
+      headline: 'Omvendt pumpning',
       form: {
         timer_options: {
-          in_minutes: '{nr} Minutes',
-          never: 'Never'
+          in_minutes: '{nr} Minutter',
+          never: 'Aldrig'
         },
-        enable_label: 'Enable reverse pumping',
+        enable_label: 'Aktivér omvendt pumpning',
         vd_pin_headline: 'Voltage director pin',
         vd_pin_label: 'Director-Pin',
         overshoot_label: 'Overshoot',
-        overshoot_hint: 'How strongly should number of ml be overshoot on pump back?',
-        auto_pump_back_timer_label: 'Inactive time till automatic pump back',
-        save_btn_label: 'Save'
+        overshoot_hint: 'Hvor kraftigt skal antallet af mL overskydes ved pumpning tilbage?',
+        auto_pump_back_timer_label: 'Inaktiv tid indtil automatisk pumpning tilbage',
+        save_btn_label: 'Gem'
       },
       notifications: {
-        updated: 'Settings updated!'
+        updated: 'Indstillinger opdateret!'
       }
     },
     pump_tester: {
-      unknown_job_running: 'Unknown job running!',
-      default_disable_reason: 'Disabled!',
-      ref_metric: 'Metric:',
+      unknown_job_running: 'Ukendt job kører!',
+      default_disable_reason: 'Deaktiveret!',
+      ref_metric: 'Metrik:',
       metrics: {
-        liquid: 'Liquid',
-        liquid_pumped: 'Liquid pumped:',
-        liquid_run_val_field: 'Ml to pump',
-        steps: 'Steps',
-        steps_made: 'Steps made:',
-        steps_run_val_field: 'Steps to run',
-        time: 'Time',
-        time_taken: 'Time taken:',
-        time_run_val_field: 'Ms to run',
-        unknown_run_metric: 'Unknown metric'
+        liquid: 'Væske',
+        liquid_pumped: 'Pumpet væske:',
+        liquid_run_val_field: 'Ml der skal pumpes',
+        steps: 'Trin',
+        steps_made: 'Trin taget:',
+        steps_run_val_field: 'Trin der skal løbes',
+        time: 'Tid',
+        time_taken: 'Taget tid:',
+        time_run_val_field: 'Ms der skal køres',
+        unknown_run_metric: 'Ukendt metrik'
       },
-      true_liquid_pumped_field: 'Actual ml pumped',
-      apply_per_cl_metric_value_btn_label: 'Apply',
-      run_btn_label: 'Run',
+      true_liquid_pumped_field: 'Faktisk ml pumpet',
+      apply_per_cl_metric_value_btn_label: 'Anvend',
+      run_btn_label: 'Kør',
       stop_btn_label: 'Stop'
     },
     pump_setup_dc_hw_pins: {
-      control_pin_label: 'Control Pin',
-      control_pin_desc: 'A DC motor can be switched on and off by connecting it to and disconnecting it from a power source. ' +
-        'This is usually done with the aid of a relay. The relay opens and closes the electronic circuit to which the motor is connected. ' +
-        'The "BCM-Pin" field contains the BCM number of the pin that controls the relay.<br><br>' +
-        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
-        'to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
-        'the chip which is used on the Raspberry Pi. ' +
-        'These numbers changed between board versions. This link may help:',
-      power_state_desc: 'Depending on our setup the motor might run either if the GPIO-pin that controls the pump is set to high or low. Please select the pin-state in which your pump would run in your configuration. ',
-      power_state_label: 'Power state',
+      control_pin_label: 'Kontrol Pin',
+      control_pin_desc: "En DC-motor kan tændes og slukkes ved at forbinde den til og frakoble den fra en strømkilde. Dette gøres normalt ved hjælp af et relæ. Relæet åbner og lukker den elektroniske kreds, hvori motoren er tilsluttet. 'BCM-Pin'-feltet indeholder BCM-nummeret på den pin, der styrer relæet.<br><br><b>Vigtigt:</b> For det lokale board, der tilhører Raspberry Pi, svarer pinnenumrene ikke nødvendigvis til GPIO-numre, men BCM-numre. BCM henviser til 'Broadcom SOC channel'-nummeret, som er nummereringen inde i chippen, der bruges på Raspberry Pi. Disse numre ændredes mellem boardversionerne. Dette link kan hjælpe:",
+      power_state_desc: 'Afhængigt af vores opsætning kan motoren køre enten hvis GPIO-pinnen, der styrer pumpen, er sat til høj eller lav. Vælg venligst pin-tilstanden, hvor din pumpe ville køre i din konfiguration.',
+      power_state_label: 'Strømtilstand',
       power_state_options: {
-        high: 'High',
-        low: 'Low'
+        high: 'Høj',
+        low: 'Lav'
       }
     },
     pump_setup_dc_calibration: {
-      time_per_cl_pin_label: 'Time per cl in ms',
-      time_per_cl_pin_desc: '"Time per cl in ms" determines how many milliseconds (ms) the pump must run to pump one centiliter (cl). ' +
-        'This value is used to determine how long the pump must run to pump the desired amount of liquid from the bottle.'
+      time_per_cl_pin_label: 'Tid pr. cl i ms',
+      time_per_cl_pin_desc: '"Tid pr. cl i ms" bestemmer, hvor mange millisekunder (ms) pumpen skal køre for at pumpe et centiliter (cl). Denne værdi bruges til at bestemme, hvor længe pumpen skal køre for at pumpe den ønskede mængde væske fra flasken.'
     },
     pump_setup_stepper_hw_pins: {
-      step_pin_label: '(local) Step Pin',
-      enable_pin_label: 'Enable Pin',
-      pin_desc: 'A stepper motor driver usually has three important pins, that are used to control the motor.' +
+      step_pin_label: '(lokal) Trin Pin',
+      enable_pin_label: 'Aktiver Pin',
+      pin_desc: 'En stepper-motor-driver har normalt tre vigtige pins, der bruges til at styre motoren.\n' +
         '<ul>' +
         '        <li>' +
-        '          The step pin, which receives one pulse for each step the motor is to make.' +
+        '          Trin-pinnen, som modtager et pulssignal for hvert trin, motoren skal tage.' +
         '        </li>' +
         '        <li>' +
-        '          The enable pin. This pin decides whether the motor should be energized and thus actively ' +
-        '          hold its current position or not.' +
+        '          Aktiver-pinnen. Denne pin bestemmer, om motoren skal være energiseret og dermed aktivt holde sin nuværende position eller ej.' +
         '        </li>' +
         '        <li>' +
-        '          The direction pin. It decides on the direction that the motor takes. The direction that' +
-        '          the motor is running to is decided by one single pin, that controls the direction for all motors. ' +
-        '          That pin gets defined globally and is not part of this setup! ' +
-        '          Please build your machine in a way that connects that pin with the direction logic of all ' +
-        '          your motors.' +
+        '          Retningspinnen. Den afgør, hvilken retning motoren tager. Retningen, som motoren kører til, bestemmes af en enkelt pin, der styrer retningen for alle motorer. Denne pin defineres globalt og er ikke en del af denne opsætning! Byg venligst din maskine på en måde, der forbinder denne pin med retninglogikken for alle dine motorer.' +
         '        </li>' +
         '        <li>' +
-        '          Your motor driver very likely also provides more pins (step resolution/sleep/...). Please ' +
-        '          configure these statically in hardware!' +
+        '          Din motor-driver har sandsynligvis også flere pins (trinopløsning/søvn/...). Konfigurer disse statisk i hardwaren!' +
         '        </li>' +
         '      </ul>' +
-        '<b>Important:</b> For the local board, that belongs to the Raspberry Pi Pin-numbers don\'t necessarily correspond ' +
-        '        to GPIO numbers, but BCM numbers. BCM refers to the “Broadcom SOC channel” number, which is the numbering inside ' +
-        '        the chip which is used on the Raspberry Pi. ' +
-        '        These numbers changed between board versions. This link may help:'
+        '<b>Vigtigt:</b> For det lokale board, der tilhører Raspberry Pi, svarer pinnenumrene ikke nødvendigvis til GPIO-numre, men BCM-numre. BCM henviser til “Broadcom SOC channel”-nummeret, som er nummereringen inde i chippen, der bruges på Raspberry Pi. Disse numre ændredes mellem boardversionerne. Dette link kan hjælpe:'
     },
     pump_setup_stepper_calibration: {
       acceleration_label: 'Acceleration',
-      acceleration_desc: 'The acceleration field determines how fast the motor should accelerate or decelerate. ' +
-        'If the acceleration is too high, the motor may skip steps when accelerating or take too many steps when decelerating. ' +
-        'The acceleration is given in steps per second per second.',
-      max_steps_per_second_label: 'Max steps per second',
+      acceleration_desc: 'Acceleration-feltet bestemmer, hvor hurtigt motoren skal accelerere eller decelerere. Hvis accelerationen er for høj, kan motoren springe trin over, når den accelererer, eller tage for mange trin, når den decelererer. Accelerationen er angivet i trin pr. sekund pr. sekund.',
+      max_steps_per_second_label: 'Maks. trin pr. sekund',
       max_steps_per_second_desc: '<p>' +
-        '        The "max steps per second"-field determines fast the motor should spin at max. ' +
-        '        One revolution is normally divided into 200 steps. This can vary depending on the motor and motor ' +
-        '        driver settings.' +
-        '        If the value is too high, the motor may not be able to keep up and may skip steps or even not run at all. ' +
-        '        If the value is too low, the motor will run slower than necessary.<br>' +
+        '        "Maks. trin pr. sekund"-feltet bestemmer, hvor hurtigt motoren skal spinde ved maks. En revolution er normalt opdelt i 200 trin. Dette kan variere afhængigt af motoren og motor-driver-indstillingerne.' +
+        '        Hvis værdien er for høj, kan motoren muligvis ikke følge med og kan springe trin over eller endda slet ikke køre. ' +
+        '        Hvis værdien er for lav, kører motoren langsommere end nødvendigt.<br>' +
         '      </p>' +
         '      <p>' +
-        '        The rule is:' +
+        '        Reglen er:' +
         '      </p>' +
         '      <ul>' +
-        '        <li>higher = faster motor</li>' +
-        '        <li>lower = slower motor</li>' +
+        '        <li>højere = hurtigere motor</li>' +
+        '        <li>lavere = langsommere motor</li>' +
         '      </ul>',
-      steps_per_cl_label: 'Steps per cl',
-      steps_per_cl_desc: 'This field determines how many steps the motor must take to pump a cl.'
+      steps_per_cl_label: 'Trin pr. cl',
+      steps_per_cl_desc: 'Dette felt bestemmer, hvor mange trin motoren skal tage for at pumpe en cl.'
     },
     glass_form: {
-      name: 'Name',
-      size: 'Size',
-      default_checkbox: 'Default',
-      use_for_single_ingredients_checkbox: 'Use for single ingredients'
+      name: 'Navn',
+      size: 'Størrelse',
+      default_checkbox: 'Standard',
+      use_for_single_ingredients_checkbox: 'Brug til enkelte ingredienser'
     },
     event_action_editor_form: {
-      comment_label: 'Comment',
+      comment_label: 'Kommentar',
       execution_groups: {
-        label: 'Execution-groups',
-        write_to_create: 'Write to create new group...',
-        create_new: '<b>Create new:</b> {group}'
+        label: 'Udførelsesgrupper',
+        write_to_create: 'Skriv for at oprette ny gruppe...',
+        create_new: '<b>Opret ny:</b> {group}'
       },
-      trigger_label: 'Trigger',
+      trigger_label: 'Udløser',
       action: {
-        label: 'Action',
-        select_action: 'Select action to view options...',
+        label: 'Handling',
+        select_action: 'Vælg handling for at se muligheder...',
         options: {
-          call_url: 'Call URL',
-          audio: 'Play audio file',
-          python: 'Execute python script',
-          nothing: 'Do nothing'
+          call_url: 'Ring URL',
+          audio: 'Afspil lydfil',
+          python: 'Udfør python script',
+          nothing: 'Gør ingenting'
         },
         call_url: {
-          request_method_label: 'Request method',
+          request_method_label: 'Anmodningsmetode',
           url_label: 'URL'
         },
         audio: {
-          file_label: 'Audio (max. 20 MB)',
-          volume: 'Volume {nr}%',
-          output_device_label: 'Output device',
-          on_repeat_label: 'On repeat'
+          file_label: 'Lydfil (maks. 20 MB)',
+          volume: 'Lydstyrke {nr}%',
+          output_device_label: 'Output-enhed',
+          on_repeat_label: 'På gentagelse'
         },
         python: {
-          desc: 'Executes a python file. The docker image uses python 3. ' +
-            'You can also view the console output of your program in real-time.',
-          install_lib_tip: 'Install new libraries by using: <b>pip3 install &#60;library&#62;</b>',
-          fetching_libs: 'Fetching Libraries',
-          lib_list_lib: 'Library',
+          desc: 'Udfører en python-fil. Docker-billedet bruger python 3. Du kan også se konsoloutput af dit program i realtid.',
+          install_lib_tip: 'Installer nye biblioteker ved at bruge: <b>pip3 install &#60;bibliotek&#62;</b>',
+          fetching_libs: 'Henter biblioteker',
+          lib_list_lib: 'Bibliotek',
           lib_list_version: 'Version',
-          no_libs_found: 'No libraries installed',
-          python_file_label: 'Python (max. 20 MB)'
+          no_libs_found: 'Ingen biblioteker installeret',
+          python_file_label: 'Python (maks. 20 MB)'
         },
         nothing: {
-          desc: 'This action does nothing. But it will cancel other running actions that don\'t share execution-groups with it.'
+          desc: 'Denne handling gør intet. Men den vil afbryde andre igangværende handlinger, der ikke deler udførelsesgrupper med den.'
         }
       }
     },
     circular_cocktail_progress: {
-      headline: 'Currently fabricated cocktail',
-      no_cocktail_msg: 'Currently, no cocktail gets fabricated!<br>' +
-        'Go to "My recipes" or "Public recipes" to put one in order.',
-      close_btn_label: 'Close'
+      headline: 'Nuværende fremstillet cocktail',
+      no_cocktail_msg: 'I øjeblikket bliver der ikke fremstillet nogen cocktail!<br>' +
+        'Gå til "Mine opskrifter" eller "Offentlige opskrifter" for at bestille en.',
+      close_btn_label: 'Luk'
     },
     cocktail_production_manual_step_card: {
-      continue_btn_label: 'Continue',
-      add_ingredient_headline: 'Please manually add the following ingredients and click "continue":'
+      continue_btn_label: 'Fortsæt',
+      add_ingredient_headline: 'Tilføj venligst følgende ingredienser manuelt og klik på "fortsæt":'
     },
     donation_disclaimer: {
-      headline: 'Your support is needed!',
-      headline_caption: 'Scroll down to close',
-      donate_paypal_btn_label: 'Donate via PayPal',
-      donate_github_btn_label: 'Donate via GitHub sponsors',
-      headline_2: 'This software is free, but donations are appreciated!',
-      introduction: 'This software is free, but still it took and takes a lot time to develop and maintain it. ' +
-        'The developer of CocktailPi (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
-        'real income yet.',
-      main_text: '<p>Here are some more reasons why you should donate:</p>' +
+      headline: 'Din støtte er nødvendig!',
+      headline_caption: 'Rul ned for at lukke',
+      donate_paypal_btn_label: 'Donér via PayPal',
+      donate_github_btn_label: 'Donér via GitHub sponsorer',
+      headline_2: 'Denne software er gratis, men donationer værdsættes!',
+      introduction: 'Denne software er gratis, men det har stadig taget og tager meget tid at udvikle og vedligeholde den. Udvikleren af CocktailPi (mig) udvikler den i sin fritid. Jeg er også en studerende, der ikke har en reel indkomst endnu.',
+      main_text: '<p>Her er nogle flere grunde til, hvorfor du bør donere:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
-        '                Users of this software usually spent large amounts of money on hardware (a Raspberry Pi, Pumps, a case,\n' +
+        '                Brugere af denne software bruger normalt store summer penge på hardware (en Raspberry Pi, pumper, et kabinet,\n' +
         '                ...).\n' +
-        '                Nevertheless this hardware wouldn\'t function if the CocktailPi software wouldn\'t exist.\n' +
+        '                Alligevel ville denne hardware ikke fungere, hvis CocktailPi-softwaren ikke eksisterede.\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                You might think that that someone else will donate, but sadly they think that too. Before adding this\n' +
-        '                disclaimer I got around 50€ of donations in two years\n' +
+        '                Du tror måske, at nogen andre vil donere, men desværre tror de det også. Før jeg tilføjede denne\n' +
+        '                ansvarsfraskrivelse, modtog jeg omkring 50 € i donationer på to år\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                I usually don\'t get any feedback for the software. It doesn\'t collect any data. I have no idea how many\n' +
-        '                people are out there using it.\n' +
-        '                A donation and also "stars" on GitHub give me positive feedback and motivate me to continue working on\n' +
+        '                Jeg får normalt ingen feedback for softwaren. Den indsamler ingen data. Jeg har ingen idé om, hvor mange\n' +
+        '                mennesker derude, der bruger den.\n' +
+        '                En donation og også "stjerner" på GitHub giver mig positiv feedback og motiverer mig til at fortsætte med at arbejde på\n' +
         '                CocktailPi.\n' +
         '              </li>\n' +
         '              <li>\n' +
-        '                Developing this software causes costs. I as a developer often buy hardware, just to test\n' +
-        '                if it would function with the device and make sense.\n' +
+        '                Udvikling af denne software forårsager omkostninger. Jeg som udvikler køber ofte hardware, blot for at teste\n' +
+        '                om det ville fungere med enheden og give mening.\n' +
         '              </li>\n' +
         '            </ul>' +
         '            <p>\n' +
-        '              Donating is entirely voluntary. While the software remains free to use, your contribution\n' +
-        '              demonstrates your appreciation for the hard work and dedication, that were required to develop this software.\n' +
-        '              A donation also motivates me to continue refining and expanding the software\'s capabilities.\n' +
+        '              Donation er helt frivillig. Mens softwaren forbliver gratis at bruge, viser dit bidrag\n' +
+        '              din påskønnelse for det hårde arbejde og dedikation, der krævedes for at udvikle denne software.\n' +
+        '              En donation motiverer mig også til at fortsætte med at forfine og udvide softwarens kapaciteter.\n' +
         '            </p>\n' +
         '            <p>\n' +
-        '              You can donate using GitHub Sponsors or Paypal. You can pick any amount that you think that the software\n' +
-        '              is worth to you.\n' +
-        '              You can also do monthly donations if you want to support me and my work over a period of time.\n' +
+        '              Du kan donere ved hjælp af GitHub Sponsors eller Paypal. Du kan vælge et hvilket som helst beløb, som du mener, at softwaren\n' +
+        '              er værd for dig.\n' +
+        '              Du kan også foretage månedlige donationer, hvis du ønsker at støtte mig og mit arbejde over en periode.\n' +
         '            </p>',
       action_box: {
         donated: {
-          headline: 'Thank you for your donation. You made a difference!',
-          caption: 'This happens less often then you might think. Thank you very much!',
-          close_btn: 'Great people button (Close disclaimer)',
-          revert_btn: 'I didn\'t donate'
+          headline: 'Tak for din donation. Du gjorde en forskel!',
+          caption: 'Dette sker mindre ofte, end du måske tror. Mange tak!',
+          close_btn: 'Fantastisk menneske-knap (Luk ansvarsfraskrivelse)',
+          revert_btn: 'Jeg donerede ikke'
         },
         not_donated: {
-          headline: 'Thank you very much!',
-          donated_btn: 'I made a donation',
-          close_btn: 'No, remind me later'
+          headline: 'Mange tak!',
+          donated_btn: 'Jeg har doneret',
+          close_btn: 'Nej, påmind mig senere'
         },
         lying_is_no_nice: {
-          headline: 'Please note that lying is not nice.',
-          confirm_btn: 'Confirm',
-          checkbox: 'I\'m not a liar',
-          go_back: 'Go back'
+          headline: 'Vær opmærksom på, at det ikke er pænt at lyve.',
+          confirm_btn: 'Bekræft',
+          checkbox: 'Jeg er ikke en løgner',
+          go_back: 'Gå tilbage'
         }
       }
     },
     settings_appearance: {
-      language: 'Language',
-      save_btn_label: 'Save',
+      language: 'Sprog',
+      save_btn_label: 'Gem',
       notifications: {
-        settings_updated: 'Settings updated!'
+        settings_updated: 'Indstillinger opdateret!'
       },
       colors: {
         interface: {
-          headline: 'Interface colors',
+          headline: 'Grænsefladefarver',
           header: 'Header',
           sidebar: 'Sidebar',
-          background: 'Background',
-          btn_primary: 'Button / Primary',
-          btn_navigation_active: 'Button / Navigation active',
-          card_header: 'Card / Header',
-          card_body: 'Card / Body',
-          card_item_group: 'Card / Item group'
+          background: 'Baggrund',
+          btn_primary: 'Knap / Primær',
+          btn_navigation_active: 'Knap / Navigation aktiv',
+          card_header: 'Kort / Header',
+          card_body: 'Kort / Body',
+          card_item_group: 'Kort / Varegruppe'
         },
         simple_view: {
-          headline: 'Simple view colors',
+          headline: 'Simpel visningsfarver',
           header: 'Header + Footer',
           sidebar: 'Sidebar',
-          background: 'Background',
-          btn_primary: 'Button / Primary',
-          btn_navigation: 'Button / Navigation',
-          btn_navigation_active: 'Button / Navigation active',
-          cocktail_progress: 'Cocktail progress banner',
-          card: 'Card'
+          background: 'Baggrund',
+          btn_primary: 'Knap / Primær',
+          btn_navigation: 'Knap / Navigation',
+          btn_navigation_active: 'Knap / Navigation aktiv',
+          cocktail_progress: 'Cocktail fremskridtsbanner',
+          card: 'Kort'
         }
       }
     }
   },
   constants: {
     recipe_order_options: {
-      name_asc: 'Name asc',
-      name_desc: 'Name desc',
-      last_update_asc: 'Last update',
-      last_update_desc: 'Least update'
+      name_asc: 'Navn stigende',
+      name_desc: 'Navn faldende',
+      last_update_asc: 'Sidste opdatering',
+      last_update_desc: 'Mindst opdatering'
     },
     event_action_trigger_display_names: {
-      cocktail_prod_started: 'Cocktail production started',
-      cocktail_prod_manual_interaction_requested: 'Cocktail production manual interaction requested',
-      cocktail_prod_manual_interaction_completed: 'Cocktail production manual interaction completed',
-      cocktail_prod_finished: 'Cocktail production finished',
-      cocktail_prod_canceled: 'Cocktail production canceled',
-      application_started: 'Application started'
+      cocktail_prod_started: 'Cocktailproduktion startet',
+      cocktail_prod_manual_interaction_requested: 'Manuel interaktion under cocktailproduktion anmodet',
+      cocktail_prod_manual_interaction_completed: 'Manuel interaktion under cocktailproduktion afsluttet',
+      cocktail_prod_finished: 'Cocktailproduktion afsluttet',
+      cocktail_prod_canceled: 'Cocktailproduktion aflyst',
+      application_started: 'Applikation startet'
     }
   }
 }
