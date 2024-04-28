@@ -846,16 +846,16 @@ export default {
       metrics: {
         liquid: 'Væske',
         liquid_pumped: 'Pumpet væske:',
-        liquid_run_val_field: 'Ml der skal pumpes',
-        steps: 'Trin',
-        steps_made: 'Trin taget:',
-        steps_run_val_field: 'Trin der skal løbes',
+        liquid_run_val_field: 'mL der skal pumpes',
+        steps: 'Steps',
+        steps_made: 'Steps taget:',
+        steps_run_val_field: 'Step der skal køres',
         time: 'Tid',
-        time_taken: 'Taget tid:',
-        time_run_val_field: 'Ms der skal køres',
-        unknown_run_metric: 'Ukendt metrik'
+        time_taken: 'Brugt tid:',
+        time_run_val_field: 'ms der skal køres',
+        unknown_run_metric: 'Ukendt enhed'
       },
-      true_liquid_pumped_field: 'Faktisk ml pumpet',
+      true_liquid_pumped_field: 'Faktisk mL pumpet',
       apply_per_cl_metric_value_btn_label: 'Anvend',
       run_btn_label: 'Kør',
       stop_btn_label: 'Stop'
@@ -871,36 +871,36 @@ export default {
       }
     },
     pump_setup_dc_calibration: {
-      time_per_cl_pin_label: 'Tid pr. cl i ms',
-      time_per_cl_pin_desc: '"Tid pr. cl i ms" bestemmer, hvor mange millisekunder (ms) pumpen skal køre for at pumpe et centiliter (cl). Denne værdi bruges til at bestemme, hvor længe pumpen skal køre for at pumpe den ønskede mængde væske fra flasken.'
+      time_per_cl_pin_label: 'Tid pr. cL i ms',
+      time_per_cl_pin_desc: '"Tid pr. cL i ms" bestemmer, hvor mange millisekunder (ms) pumpen skal køre for at pumpe en centiliter (cL). Denne værdi bruges til at bestemme, hvor længe pumpen skal køre for at pumpe den ønskede mængde væske fra flasken.'
     },
     pump_setup_stepper_hw_pins: {
-      step_pin_label: '(lokal) Trin Pin',
-      enable_pin_label: 'Aktiver Pin',
+      step_pin_label: '(lokal) Step Pin',
+      enable_pin_label: 'Enable Pin',
       pin_desc: 'En stepper-motor-driver har normalt tre vigtige pins, der bruges til at styre motoren.\n' +
         '<ul>' +
         '        <li>' +
-        '          Trin-pinnen, som modtager et pulssignal for hvert trin, motoren skal tage.' +
+        '          <b>Step-pin:</b> Modtager et pulssignal for hvert step, motoren skal tage.' +
         '        </li>' +
         '        <li>' +
-        '          Aktiver-pinnen. Denne pin bestemmer, om motoren skal være energiseret og dermed aktivt holde sin nuværende position eller ej.' +
+        '          <b>Enable-pin:</b> Denne pin bestemmer, om motoren skal være spændingssat og dermed aktivt holde sin nuværende position eller ej.' +
         '        </li>' +
         '        <li>' +
-        '          Retningspinnen. Den afgør, hvilken retning motoren tager. Retningen, som motoren kører til, bestemmes af en enkelt pin, der styrer retningen for alle motorer. Denne pin defineres globalt og er ikke en del af denne opsætning! Byg venligst din maskine på en måde, der forbinder denne pin med retninglogikken for alle dine motorer.' +
+        '          <b>Dir-pin:</b> Afgør, hvilken retning motoren tager. Retningen, som motoren kører til, bestemmes af en enkelt pin, der styrer retningen for alle motorer. Denne pin defineres globalt og er ikke en del af denne opsætning! Byg venligst din maskine på en måde, der forbinder denne pin med retninglogikken for alle dine motorer.' +
         '        </li>' +
         '        <li>' +
-        '          Din motor-driver har sandsynligvis også flere pins (trinopløsning/søvn/...). Konfigurer disse statisk i hardwaren!' +
+        '          Din stepper-driver har sandsynligvis også flere pins (step resolution/sleep/...). Konfigurer disse statisk i hardwaren!' +
         '        </li>' +
         '      </ul>' +
         '<b>Vigtigt:</b> For det lokale board, der tilhører Raspberry Pi, svarer pinnenumrene ikke nødvendigvis til GPIO-numre, men BCM-numre. BCM henviser til “Broadcom SOC channel”-nummeret, som er nummereringen inde i chippen, der bruges på Raspberry Pi. Disse numre ændredes mellem boardversionerne. Dette link kan hjælpe:'
     },
     pump_setup_stepper_calibration: {
       acceleration_label: 'Acceleration',
-      acceleration_desc: 'Acceleration-feltet bestemmer, hvor hurtigt motoren skal accelerere eller decelerere. Hvis accelerationen er for høj, kan motoren springe trin over, når den accelererer, eller tage for mange trin, når den decelererer. Accelerationen er angivet i trin pr. sekund pr. sekund.',
-      max_steps_per_second_label: 'Maks. trin pr. sekund',
+      acceleration_desc: 'Acceleration-feltet bestemmer, hvor hurtigt motoren skal accelerere eller decelerere. Hvis accelerationen er for høj, kan motoren springe steps over, når den accelererer, eller tage for mange steps, når den decelererer. Accelerationen er angivet i steps pr. sekund pr. sekund.',
+      max_steps_per_second_label: 'Maks. steps pr. sekund',
       max_steps_per_second_desc: '<p>' +
-        '        "Maks. trin pr. sekund"-feltet bestemmer, hvor hurtigt motoren skal spinde ved maks. En revolution er normalt opdelt i 200 trin. Dette kan variere afhængigt af motoren og motor-driver-indstillingerne.' +
-        '        Hvis værdien er for høj, kan motoren muligvis ikke følge med og kan springe trin over eller endda slet ikke køre. ' +
+        '        "Maks. steps pr. sekund"-feltet bestemmer, hvor hurtigt motoren skal spinde ved maks. En omdrejning er normalt opdelt i 200 trin. Dette kan variere afhængigt af motoren og stepper-driver-indstillingerne.' +
+        '        Hvis værdien er for høj, kan motoren muligvis ikke følge med og kan springe steps over eller endda slet ikke køre. ' +
         '        Hvis værdien er for lav, kører motoren langsommere end nødvendigt.<br>' +
         '      </p>' +
         '      <p>' +
@@ -910,8 +910,8 @@ export default {
         '        <li>højere = hurtigere motor</li>' +
         '        <li>lavere = langsommere motor</li>' +
         '      </ul>',
-      steps_per_cl_label: 'Trin pr. cl',
-      steps_per_cl_desc: 'Dette felt bestemmer, hvor mange trin motoren skal tage for at pumpe en cl.'
+      steps_per_cl_label: 'Steps pr. cL',
+      steps_per_cl_desc: 'Dette felt bestemmer, hvor mange steps motoren skal tage for at pumpe en cL.'
     },
     glass_form: {
       name: 'Navn',
