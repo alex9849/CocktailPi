@@ -193,7 +193,7 @@ export default {
             alc_content: 'Alkoholindhold',
             bottle_size: 'Flaskestørrelse',
             unit: 'Enhed',
-            pump_time_multiplier: 'Pumpetids multiplikator',
+            pump_time_multiplier: 'Tidsmultiplikator for pumpe',
             parent_group: 'Hovedgruppe',
             actions: 'Handlinger'
           },
@@ -441,7 +441,7 @@ export default {
         save_btn_label: 'Gem',
         abort_btn_label: 'Afbryd'
       },
-      tutorial: "Når I2C aktiveres, bruges to GPIO-pins på det lokale board til SDA- og SCL-pinnen på I2C-bussen. Nogle boards tilbyder mere end en I2C-bus. CocktailPi-softwaren understøtter kun en I2C-bus ad gangen.\nDette understøttede bus er enheden på '/sys/bus/i2c/devices/i2c-1' på det underliggende Linux-filsystem.\nPå normale Raspberry PIs er pinsene, der bruges til SDL og SCL, normalt '2 for SDA' og '3 for SDL'\n\nHvis du ikke kan se de pins, du vil bruge her, skal du sørge for, at du ikke allerede har tildelt dem til noget andet.\n\n<b>Felterne for SDL- og SCL-pinnen påvirker ikke den valgte bus.</b>",
+      tutorial: "Når I2C aktiveres, bruges to GPIO-pins på det lokale board til SDA- og SCL-pinnen på I2C-bussen. Nogle boards tilbyder mere end en I2C-bus. CocktailPi-softwaren understøtter kun en I2C-bus ad gangen.\nDen understøttede bus er enheden på '/sys/bus/i2c/devices/i2c-1' på det underliggende Linux-filsystem.\nPå normale Raspberry PIs er pinsene, der bruges til SDL og SCL, normalt '2 for SDA' og '3 for SDL'\n\nHvis du ikke kan se de pins, du vil bruge her, skal du sørge for, at du ikke allerede har tildelt dem til noget andet.\n\n<b>Felterne for SDL- og SCL-pinnen påvirker ikke den valgte bus.</b>",
       configuration_warning: '<b><u>ADVARSEL!!!:</b></u> Aktivering og deaktivering af I2C-bussen vil udløse unix-kommandoer, der konfigurerer I2C-bussen. Sørg for, at SDA og SCL er valgt korrekt. Ellers kan det ske, at pins er i brug som normale pins og I2C-pins på samme tid. Dette vil få applikationen til at gå ned!'
     },
     pump_setup: {
@@ -449,7 +449,7 @@ export default {
       delete_btn_label: 'Slet pumpe',
       name: {
         handle: 'Håndtag',
-        headline: 'Hvordan skal din pumpe kaldes?',
+        headline: 'Hvad skal din pumpe kaldes?',
         pump_identifier_label: 'Pumpeidentifikator'
       },
       hw_pins: {
@@ -459,20 +459,20 @@ export default {
       calibration: {
         handle: 'Kalibrer',
         headline: 'Kalibrer din pumpe',
-        tube_capacity_label: 'Slangekapacitet (i ml)',
-        tube_capacity_desc: 'Slangekapaciteten bestemmer, hvor meget væske der er nødvendigt for at fylde slangen, der forbinder væskebeholderen med uddelerdelen af din cocktailmaskine. Denne metrik bruges til nøjagtigt at fylde dine slanger med væske, før der faktisk produceres en ny drink. Den bruges også til at tømme dine slanger (pumpe væsken tilbage i beholderen), hvis maskinen ikke har været brugt i et stykke tid.',
+        tube_capacity_label: 'Slangekapacitet (i mL)',
+        tube_capacity_desc: 'Slangekapaciteten angiver mængden af væske, der er nødvendig for at fylde slangen, som forbinder væskebeholderen med uddelerdelen i din cocktailmaskine. Denne oplysning bruges til præcist at fylde slangerne med væske, før der fremstilles en ny drink. Funktionen anvendes også til at tømme slangerne - det vil sige at pumpe væsken tilbage i beholderen - især hvis maskinen ikke har været i brug i længere tid.',
         motor_tester: {
           headline: 'Motortester',
           disable_reason_parameter_missing: 'Krævet pumpe-konfigurationsparameter mangler!',
-          stepper_desc: "Her kan du teste din motor og beregne antallet af trin, motoren skal tage for at pumpe en cl. Du kan køre testerne i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Trin': Fortæl motoren, hvor mange trin den skal tage. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne antallet af trin, som motoren skal tage for at pumpe en cl. Til dette skal du måle mængden af væske (i ml), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes en boks, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger.",
-          dc_desc: "Her kan du teste din motor og beregne den tid, det tager motoren at pumpe en cl. Du kan køre testeren i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Tid': Fortæl motoren, hvor mange trin den skal tage. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne mængden af tid, som motoren skal køre for at pumpe en cl. Til dette skal du måle mængden af væske (i ml), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes en boks, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger!"
+          stepper_desc: "Her kan du teste din motor og beregne antallet af steps, motoren skal tage for at pumpe en cL. Du kan køre testerne i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Steps': Fortæl motoren, hvor mange steps den skal tage. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne antallet af steps, som motoren skal tage for at pumpe en cL. Til dette skal du måle mængden af væske (i mL), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes et vindue, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger.",
+          dc_desc: "Her kan du teste din motor og beregne den tid, det tager motoren at pumpe en cL. Du kan køre testeren i to tilstande: 'Væske': Fortæl motoren, hvor meget væske den skal pumpe. 'Tid': Fortæl motoren, hvor lang tid den skal køre. Testeren bruges til at kontrollere og finjustere din konfiguration. Du kan også lade testeren beregne mængden af tid, som motoren skal køre for at pumpe en cL. Til dette skal du måle mængden af væske (i mL), som pumpen pumpede under din test. Du kan bruge en vægt til dette. Sørg også for, at dine slanger er fyldt med væske, da testeren ikke tager højde for tomme slanger eller luftbobler! Efterfølgende åbnes et vindue, hvor du kan indtaste dine målinger. Testeren vil derefter rette konfigurationen i henhold til dine målinger!"
         }
       },
       state: {
         handle: 'Tilstand',
         headline: 'Pumpetilstand',
-        pumped_up_label: 'Pumpet op',
-        pumped_up_desc: "'Pumpet op'-feltet indeholder oplysninger om fyldningstilstanden af slangene på en pumpe. Hvis slangene ikke er fyldt med væske, vil maskinen fylde dem, før der produceres en cocktail. Dette felt bruges også til at finde ud af, fra hvilke pumper væsken skal pumpes tilbage i beholderen, hvis maskinen ikke er blevet brugt i et stykke tid.",
+        pumped_up_label: 'Primet',
+        pumped_up_desc: "'Primet'-feltet indeholder oplysninger om fyldningstilstanden af slangene på en pumpe. Hvis slangene ikke er fyldt med væske, vil maskinen fylde dem, før der produceres en cocktail. Dette felt bruges også til at finde ud af, fra hvilke pumper væsken skal pumpes tilbage i beholderen, hvis maskinen ikke er blevet brugt i et stykke tid.",
         filling_level_label: 'Nuværende fyldningsniveau',
         filling_level_desc: 'Det nuværende fyldningsniveau for beholderen, der er forbundet med pumpen. Dette felt bruges til at kontrollere, om der stadig er nok væske tilbage til at producere en cocktail af en bestemt størrelse.',
         ingredient_label: 'Nuværende ingrediens',
@@ -532,7 +532,7 @@ export default {
         show_all_desc: 'Viser alle opskrifter',
         fabricable_owned: 'Fremstillelig med ejede ingredienser',
         fabricable_owned_desc: 'Viser kun opskrifter, der kan produceres med ejede ingredienser',
-        fabricable_auto: 'Fremstillelig fuldautomatisk',
+        fabricable_auto: 'Fuldautomatisk Fremstillelig',
         fabricable_auto_desc: 'Viser kun opskrifter, der kan produceres fuldautomatisk'
       },
       search_btn_label: 'Søg',
@@ -558,7 +558,7 @@ export default {
         headline: 'Fremstillelig:',
         show_all: 'Vis alle',
         fabricable_owned: 'Fremstillelig med ejede ingredienser',
-        fabricable_auto: 'Fremstillelig fuldautomatisk'
+        fabricable_auto: 'Fuldautomatisk Fremstillelig'
       },
       contains_ingredient_field_label: 'Indeholder ingredienser',
       order_by_selector_label: 'Sortér efter',
@@ -575,7 +575,7 @@ export default {
       alc_content: '{nr}% alkoholindhold',
       alc_content_range: '{min} - {max}% alkoholindhold',
       manual_instruction: 'Manuel instruktion:',
-      tag_boostable: 'Forstærkbar',
+      tag_boostable: 'Kan boostes',
       tag_unscaled: 'Uskaleret',
       edit_dialog: {
         edit_headline: 'Rediger Produktionstrin',
@@ -592,7 +592,7 @@ export default {
       amount: 'Mængde',
       amount_in: 'Mængde (i {metric})',
       scale_label: 'Skalér med volumen',
-      boostable_label: 'Forstærkbar'
+      boostable_label: 'Kan boostes'
     },
     prod_step_editor_instruction: {
       instruction_label: 'Instruktion'
@@ -625,7 +625,7 @@ export default {
       }
     },
     make_cocktail_add_manually: {
-      fulfilled_msg: 'Alle ingredienser tildelt pumper! Cocktail kan produceres fuldautomatisk!',
+      fulfilled_msg: 'Alle ingredienser er tildelt pumper! Cocktail kan produceres fuldautomatisk!',
       not_fulfilled_msg: 'Følgende ingredienser skal tilføjes manuelt eller er ikke tildelt pumper. Du vil blive bedt om at tilføje dem under produktionsforløbet:',
       tags: {
         in_bar: 'i baren',
@@ -633,23 +633,23 @@ export default {
       }
     },
     make_cocktail_occupied: {
-      fulfilled_msg: 'Maskinen er ikke optaget!',
-      occupied_cocktail_msg: 'Maskinen optaget! En cocktail bliver tilberedt i øjeblikket!',
-      occupied_pumps_msg: 'Maskinen optaget! En eller flere pumper bliver rengjort/pumpet op i øjeblikket!'
+      fulfilled_msg: 'Maskinen er klar!',
+      occupied_cocktail_msg: 'Maskinen er optaget! En cocktail bliver tilberedt i øjeblikket!',
+      occupied_pumps_msg: 'Maskinen optaget! En eller flere pumper bliver rengjort/primet i øjeblikket!'
     },
     make_cocktail_insufficient_ingredients: {
       fulfilled_msg: 'Følgende ingredienser vil blive forbrugt:',
       not_fulfilled_msg: 'Kan ikke lave cocktail! Nogle pumper har ikke nok væske tilbage:'
     },
     make_cocktail_customizer: {
-      headline: 'Bestillingspersonalisering',
-      headline_boosting: 'Forstærkning:',
-      boosting_desc: 'Øger (eller reducerer) ml af rapporterede forstærkbare ingredienser i basisopskriften. (Normalt spiritus) Ikke-forstærkbare ingredienser reduceres (eller øges). Mængden af dispenserede væsker forbliver den samme!',
-      headline_additional_ingredients: 'Yderligere ingredienser:',
-      additional_ingredients_desc: 'Ingredienser vil blive tilføjet som sidste produktionstrin. Mængden af dispenserede væsker øges med mængden af bestilte yderligere ingredienser.',
+      headline: 'Tilpas din bestilling',
+      headline_boosting: 'Justering af styrke:',
+      boosting_desc: 'Øger eller mindsker mængden af alkohol (og andre justerbare ingredienser) i den grundlæggende opskrift. Ingredienser, der ikke kan justeres, vil blive mindsket eller øget modsat. Den samlede mængde af væske forbliver uændret!',
+      headline_additional_ingredients: 'Ekstra ingredienser:',
+      additional_ingredients_desc: 'Ekstra ingredienser tilføjes som det sidste trin i produktionen. Den samlede mængde af væske i din drink vil øges med mængden af de tilføjede ekstra ingredienser.',
       add_new_ingredient_btn_label: 'Tilføj ny ingrediens',
       add_new_ingredient_headline: 'Tilføj ingrediens',
-      recipe_not_boostable: 'Opskrift ikke forstærkbar!'
+      recipe_not_boostable: 'Denne opskrift kan ikke boostes!'
     },
     make_cocktail_pump_editor: {
       headline: 'Pumpe-Layout',
@@ -659,7 +659,7 @@ export default {
           nr: 'Nr',
           ingredient: 'Nuværende Ingrediens',
           filling_level: 'Resterende fyldningsniveau',
-          pumped_up: 'Pumpet Op',
+          pumped_up: 'Primet',
           state: 'Tilstand',
           actions: 'Handlinger'
         },
@@ -669,8 +669,8 @@ export default {
       }
     },
     pump_up_btn: {
-      tooltip_up: 'Pump op',
-      tooltip_back: 'Pump tilbage'
+      tooltip_up: 'Prime',
+      tooltip_back: 'Tøm'
     },
     pump_turn_on_btn: {
       tooltip_on: 'Tænd',
@@ -726,7 +726,7 @@ export default {
           alc_content: 'Alkoholindhold',
           bottle_size: 'Flaskestørrelse',
           unit: 'Enhed',
-          pump_time_multiplier: 'Pumpe tidsmultiplikator',
+          pump_time_multiplier: 'Tidsmultiplikator for pumpe',
           parent_group: 'Hovedgruppe',
           has_image: 'Billede',
           actions: 'Handlinger'
@@ -760,11 +760,11 @@ export default {
       image: 'Billede',
       remove_img: 'Fjern eksisterende billede',
       bottle_size: 'Flaskestørrelse',
-      pump_time_multiplier: 'Pumpe tidsmultiplikator',
+      pump_time_multiplier: 'Tidsmultiplikator for pumpe',
       unit: 'Enhed',
       units: {
         gram: 'gram (g)',
-        milliliter: 'milliliter (ml)',
+        milliliter: 'milliliter (mL)',
         piece: 'stk',
         teaspoon: 'teskefuld(er)',
         tablespoon: 'spiseskefuld(er)'
