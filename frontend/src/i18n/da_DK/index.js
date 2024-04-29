@@ -21,7 +21,7 @@ export default {
     leave_sv_btn_label: 'Forlad simpel-visning',
     go_to_cocktail_progress_btn_label: 'Gå til detaljer >>',
     leave_sv_dialog: {
-      headline: 'Forlade simpel visning?',
+      headline: 'Forlad simpel visning?',
       yes_btn_label: 'Ja',
       no_btn_label: 'Nej'
     }
@@ -129,7 +129,7 @@ export default {
       headline: 'Pumpbare ingredienser',
       no_ingredients_available: 'Ingen ingredienser tildelt pumper!',
       recipe: {
-        ml_left: '{nr} ml tilbage',
+        ml_left: '{nr} mL tilbage',
         alc_content: '{nr}% alkohol'
       }
     },
@@ -161,7 +161,7 @@ export default {
         },
         groups: {
           headline: 'Ingrediensgrupper:',
-          text: 'Ingrediensgrupper er grupper, der består af flere "barn ingredienser" eller andre ingrediensgrupper. Opskrifter kan indeholde ingrediensgrupper. Før bestilling af sådan en opskrift, skal brugeren erstatte den ingrediensgruppe med en ingrediens, der tilhører den gruppe. Softwaren gør automatisk dette for brugeren, hvis en sådan ingrediens er tildelt en pumpe eller er markeret som værende i \'Baren\'. Ingredienser på pumper foretrækkes. \n\nEksempel: Du har en specifik ingrediens kaldet \'Whisky 08/15\'. Denne whisky er kategoriseret under ingrediensgruppen \'Bourbon\', som igen falder under den bredere kategori \'Whisky\'. Der er en yderligere barn ingrediensgruppe relateret til \'Whisky\' kendt som \'Scotch\'.\n\nDu har inkluderet \'Whisky 08/15\' i din bars lager. På grund af den hierarkiske struktur genkender CocktailPi nu, at \'Whisky 08/15\' kan anvendes ikke kun i opskrifter, der specifikt kræver denne ingrediens, men også i forskellige opskrifter, der kræver en hvilken som helst type \'Bourbon\' eller \'Whisky\'. Det er dog vigtigt at bemærke, at \'Whisky 08/15\' ikke kan erstatte opskrifter, der specifikt kræver \'Scotch\' eller andre forskellige ingredienser.'
+          text: 'Ingrediensgrupper er kategorier, der samler flere relaterede ingredienser eller andre undergrupper af ingredienser. I opskrifter, hvor der anvendes ingrediensgrupper, skal brugeren eller systemet erstatte gruppen med en specifik ingrediens, der hører til denne gruppe. Hvis en ingrediens allerede er tildelt til en automatisk pumpe eller er markeret som tilgængelig i baren, foretager systemet denne erstatning automatisk. Ingredienser, der er tilknyttet pumper, prioriteres i dette valg. \n\nLad os tage et eksempel for at illustrere dette: Forestil dig, at du har en ingrediens ved navn \'Whisky 08/15\', som er en type Bourbon. Bourbon er en undergruppe af den bredere kategori \'Whisky\'. Indenfor kategorien \'Whisky\' findes også en anden undergruppe kaldet \'Scotch\'. \n\nDu har tilføjet \'Whisky 08/15\' til lageret i din bar. CocktailPi genkender nu, at \'Whisky 08/15\' kan bruges i enhver opskrift, der kræver Bourbon eller Whisky generelt. Det er vigtigt at bemærke, at selvom \'Whisky 08/15\' falder under \'Whisky\'-kategorien, kan den ikke bruges i opskrifter, der specifikt kræver \'Scotch\' eller andre specifikke whiskyer, der ikke er Bourbon.'
         },
         close_btn_label: 'Luk'
       },
@@ -174,7 +174,7 @@ export default {
           columns: {
             group: 'Gruppe',
             alc_content: 'Alkoholindhold',
-            parent_group: 'Forældergruppe',
+            parent_group: 'Hovedgruppe',
             actions: 'Handlinger'
           },
           edit_btn_tooltip: 'Rediger',
@@ -193,8 +193,8 @@ export default {
             alc_content: 'Alkoholindhold',
             bottle_size: 'Flaskestørrelse',
             unit: 'Enhed',
-            pump_time_multiplier: 'Pumpe tidsmultiplikator',
-            parent_group: 'Forældergruppe',
+            pump_time_multiplier: 'Pumpetids multiplikator',
+            parent_group: 'Hovedgruppe',
             actions: 'Handlinger'
           },
           edit_btn_tooltip: 'Rediger',
@@ -269,7 +269,7 @@ export default {
           name: 'Navn',
           size: 'Størrelse',
           default: 'Standard',
-          for_single_ingredients: 'Til enkelte ingredienser',
+          for_single_ingredients: 'Til enkelte ingredienser (Eg. shot)',
           actions: 'Handlinger'
         },
         edit_btn_tooltip: 'Rediger',
@@ -286,7 +286,7 @@ export default {
       },
       help_dialog: {
         headline: 'Glas:',
-        text: "Forskellige typer cocktails serveres typisk i forskellige glasstile, hver med sin unikke størrelse. Når du bestiller en cocktail, har du to muligheder: du kan enten specificere den ønskede væskemængde for maskinen at dispensere eller vælge en specifik glastype. Hvis du vælger sidstnævnte, vil maskinen automatisk dispensere en mængde væske, der passer til det valgte glas volumen.\n\nDen væskemængde, som maskinen skal producere, vælges altid af den bestillende bruger. Det er dog muligt at tildele hvert opskrift et glas, der vælges som standard.\n\nHvis der ikke er valgt et standardglas for en bestemt opskrift, vil softwaren automatisk standardisere til at bruge det foruddefinerede 'standard' glas.\n\nDet er muligt at dispensere enkelte ingredienser. Standardglasset for disse ordrer kan også vælges her ved hjælp af egenskaben 'Brug til enkelte ingredienser'."
+        text: "Forskellige typer cocktails serveres typisk i forskellige glasstile, hver med sin unikke størrelse. Når du bestiller en cocktail, har du to muligheder: Du kan enten specificere den ønskede væskemængde, som maskinen skal dispensere, eller du kan vælge en specifik glastype. Hvis du vælger den sidstnævnte mulighed, vil maskinen automatisk dispensere den mængde væske, der passer til det valgte glas' volumen.\n\nBrugeren, der bestiller, vælger altid den ønskede væskemængde. Det er dog muligt at forbinde hver opskrift med et bestemt glas, som vælges som standard.\n\nHvis der ikke er valgt et standardglas for en bestemt opskrift, vil softwaren automatisk anvende det foruddefinerede 'standard' glas.\n\nDet er også muligt at dispensere enkelte ingredienser. For disse ordrer kan et standardglas ligeledes vælges under egenskaben 'Brug til enkelte ingredienser'."
       }
     },
     event_mgmt: {
@@ -334,10 +334,10 @@ export default {
         headline: 'Standardfilter',
         enable_btn_label: 'Aktivér standardfilter',
         fabricable: {
-          headline: 'Fremstillelig:',
+          headline: 'Kan fremstilles:',
           show_all: 'Vis alle',
-          fabricable_owned: 'Fremstillelig med ejede ingredienser',
-          fabricable_auto: 'Fremstillelig fuldautomatisk'
+          fabricable_owned: 'Kan fremstilles med de ingredienser, du har',
+          fabricable_auto: 'Kan fremstilles fuldautomatisk'
         },
         save_btn_label: 'Gem',
         notifications: {
@@ -430,6 +430,8 @@ export default {
         profile_updated: 'Profil opdateret'
       }
     },
+
+//MARK: START HER (29-04-2024) 
     i2c_mgmt: {
       headline: 'I2C-konfiguration',
       form: {
@@ -686,7 +688,7 @@ export default {
     },
     ingredientGroupForm: {
       name: 'Navn',
-      parent_group: 'Forældergruppe'
+      parent_group: 'Hovedgruppe'
     },
     ingredient_group_mgmt: {
       create_btn_label: 'Opret gruppe',
@@ -696,7 +698,7 @@ export default {
         columns: {
           group: 'Gruppe',
           alc_content: 'Alkoholindhold',
-          parent_group: 'Forældergruppe',
+          parent_group: 'Hovedgruppe',
           actions: 'Handlinger'
         },
         edit_btn_tooltip: 'Rediger',
@@ -725,7 +727,7 @@ export default {
           bottle_size: 'Flaskestørrelse',
           unit: 'Enhed',
           pump_time_multiplier: 'Pumpe tidsmultiplikator',
-          parent_group: 'Forældergruppe',
+          parent_group: 'Hovedgruppe',
           has_image: 'Billede',
           actions: 'Handlinger'
         },
@@ -754,7 +756,7 @@ export default {
       alc_content: 'Alkoholindhold',
       tab_automated: 'Automatiseret',
       tab_manual: 'Manuel',
-      parent_group: 'Forældergruppe',
+      parent_group: 'Hovedgruppe',
       image: 'Billede',
       remove_img: 'Fjern eksisterende billede',
       bottle_size: 'Flaskestørrelse',
