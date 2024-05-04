@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Language {
     en_US("English (US)", "English (US)"),
-    de("German", "Deutsch");
+    de("German", "Deutsch"),
+    da_DK("Danish", "Dansk");
 
     final String inEnglish;
     final String inNative;
