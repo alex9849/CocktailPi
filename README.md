@@ -50,7 +50,7 @@ Password: 123456
 An installation tutorial can be found here: https://cocktailpi.org/install/
 
 # Call to action
-Developing the software for this cocktail machine took a lot of time, and I still have features in mind that I want to implement. The cocktail maker software doesn’t send any data to me or other third parties, so I don’t get any feedback when someone is using the software. If you like the project, please consider giving it a „star“ on GitHub so that I can see that people are using it. Alternatively, I would also appreciate donations. The latter can be done here: https://github.com/sponsors/alex9849
+Developing the software for this cocktail machine took a lot of time, and I still have features in mind that I want to implement. The cocktail maker software doesn’t send any data to me or other third parties, so I don’t get any feedback when someone is using the software. If you like the project, please consider giving it a „star“ on GitHub so that I can see that people are using it.
 
 # Build the hardware
 You can find a more detailed instruction with an example list of building parts on the project website: https://cocktailpi.org/building-instructions/
