@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.repository;
 
 import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -60,7 +61,7 @@ public class OptionsRepository extends JdbcDaoSupport {
         }
     }
 
-    public void setPinOption(String key, GpioBoard.Pin pin) {
+    public void setPinOption(String key, Pin pin) {
         if(pin != null) {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_nr)\n" +
@@ -80,8 +81,8 @@ public class OptionsRepository extends JdbcDaoSupport {
         }
     }
 
-    public Optional<GpioBoard.Pin> getPinOption(String key) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<GpioBoard.Pin>>) con -> {
+    public Optional<Pin> getPinOption(String key) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<Pin>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT pin_board, pin_nr FROM options WHERE key = ?");
             pstmt.setString(1, key);
 

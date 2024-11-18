@@ -1,12 +1,7 @@
 package net.alex9849.cocktailpi.model.gpio;
 
-import net.alex9849.cocktailpi.service.GpioService;
-import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.pin.IOutputPin;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class GpioBoard {
     private long id;
@@ -48,36 +43,4 @@ public abstract class GpioBoard {
         return pinList;
     }
 
-    public abstract class Pin {
-        private final int nr;
-        private PinResource resource;
-        private boolean resourceValid;
-
-        public Pin(int nr) {
-            this.nr = nr;
-            this.resourceValid = false;
-        }
-
-        public int getPinNr() {
-            return nr;
-        }
-
-        public PinResource getResource() {
-            if(!resourceValid) {
-                GpioService service = SpringUtility.getBean(GpioService.class);
-                Optional<PinResource> oResource = service.getPinResourceByBoardIdAndPin(getBoardId(), getPinNr());
-                resource = oResource.orElse(null);
-                resourceValid = true;
-            }
-            return resource;
-        }
-
-        public abstract IOutputPin getOutputPin();
-
-        public abstract GpioBoard getGpioBoard();
-
-        public long getBoardId() {
-            return getGpioBoard().getId();
-        }
-    }
 }

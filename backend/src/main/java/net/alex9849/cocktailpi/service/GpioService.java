@@ -1,10 +1,7 @@
 package net.alex9849.cocktailpi.service;
 
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.I2CGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.PinResource;
+import net.alex9849.cocktailpi.model.gpio.*;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
 import net.alex9849.cocktailpi.payload.dto.gpio.GpioBoardDto;
 import net.alex9849.cocktailpi.payload.dto.gpio.I2CGpioBoardDto;
@@ -143,7 +140,7 @@ public class GpioService {
         gpioRepository.deleteBoard(id);
     }
 
-    public GpioBoard.Pin fromDto(PinDto.Request.Select pinDto) {
+    public Pin fromDto(PinDto.Request.Select pinDto) {
         if(pinDto == null) {
             return null;
         }

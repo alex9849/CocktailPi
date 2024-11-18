@@ -9,6 +9,7 @@ import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.io.i2c.I2CProvider;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.motorlib.pin.IOutputPin;
@@ -77,11 +78,11 @@ public class PinUtils {
         i2CMap.clear();
     }
 
-    public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, GpioBoard.Pin... pins) {
+    public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, Pin... pins) {
         List<PinResource> pinResources = new ArrayList<>();
         Set<Map.Entry<Long, Integer>> cPins = new HashSet<>();
         boolean pinDoubled = false;
-        for(GpioBoard.Pin cPin : pins) {
+        for(Pin cPin : pins) {
             if (cPin != null) {
                 pinDoubled |= !cPins.add(Map.entry(cPin.getBoardId(), cPin.getPinNr()));
                 if(cPin.getResource() != null) {

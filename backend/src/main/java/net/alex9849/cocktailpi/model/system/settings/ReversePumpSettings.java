@@ -1,6 +1,6 @@
 package net.alex9849.cocktailpi.model.system.settings;
 
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 
 public class ReversePumpSettings {
     private boolean enable;
@@ -23,15 +23,15 @@ public class ReversePumpSettings {
     }
 
     public static class Config {
-        private GpioBoard.Pin directorPin;
+        private Pin directorPin;
         private int overshoot;
         private int autoPumpBackTimer;
 
-        public GpioBoard.Pin getDirectorPin() {
+        public Pin getDirectorPin() {
             return directorPin;
         }
 
-        public void setDirectorPin(GpioBoard.Pin directorPin) {
+        public void setDirectorPin(Pin directorPin) {
             this.directorPin = directorPin;
         }
 

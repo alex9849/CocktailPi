@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.LocalPin;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 
 public class PinDto {
     private interface Nr { @NotNull int getNr(); }
@@ -40,12 +42,12 @@ public class PinDto {
             boolean inUse;
             String pinName;
 
-            public PumpPin(GpioBoard.Pin pin) {
+            public PumpPin(Pin pin) {
                 this.nr = pin.getPinNr();
                 this.boardId = pin.getBoardId();
                 this.inUse = pin.getResource() != null;
                 this.boardName = pin.getGpioBoard().getName();
-                this.pinName = (pin.getGpioBoard() instanceof LocalGpioBoard ? "BCM " : "GPIO ") + pin.getPinNr();
+                this.pinName = (pin instanceof LocalPin ? "BCM " : "GPIO ") + pin.getPinNr();
             }
         }
 
@@ -58,7 +60,7 @@ public class PinDto {
             boolean inUse;
             PinResourceDto.Response.Detailed pinResource;
 
-            public Detailed(GpioBoard.Pin pin) {
+            public Detailed(Pin pin) {
                 this.nr = pin.getPinNr();
                 this.boardId = pin.getBoardId();
                 this.inUse = pin.getResource() != null;

@@ -44,9 +44,8 @@ public class I2CGpioBoard extends GpioBoard {
     }
 
     @Override
-    protected GpioBoard.Pin getPinUnchecked(int pin) {
-        Pin oPin = new Pin(pin);
-        return oPin;
+    protected Pin getPinUnchecked(int pin) {
+        return new I2CBoardPin(this, pin);
     }
 
     @Override
@@ -69,24 +68,6 @@ public class I2CGpioBoard extends GpioBoard {
             this.minPin = minPin;
             this.maxPin = maxPin;
         }
-    }
-
-    public class Pin extends GpioBoard.Pin {
-
-        public Pin(int nr) {
-            super(nr);
-        }
-
-        @Override
-        public IOutputPin getOutputPin() {
-            return I2CGpioBoard.this.getBoardDriver().getOutputPin((byte) this.getPinNr());
-        }
-
-        @Override
-        public I2CGpioBoard getGpioBoard() {
-            return I2CGpioBoard.this;
-        }
-
     }
 
 }

@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.motor.DCMotor;
@@ -11,7 +12,7 @@ import net.alex9849.motorlib.pin.PinState;
 @DiscriminatorValue("dc")
 public class DcPump extends Pump {
     private Integer timePerClInMs;
-    private GpioBoard.Pin pin;
+    private Pin pin;
     private Boolean isPowerStateHigh;
     private DCMotor motorDriver;
 
@@ -23,11 +24,11 @@ public class DcPump extends Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public GpioBoard.Pin getPin() {
+    public Pin getPin() {
         return pin;
     }
 
-    public void setPin(GpioBoard.Pin pin) {
+    public void setPin(Pin pin) {
         this.pin = pin;
         this.resetDriver();
     }

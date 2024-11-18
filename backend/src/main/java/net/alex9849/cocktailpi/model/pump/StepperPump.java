@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.motorlib.motor.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.IStepperMotor;
@@ -11,26 +12,26 @@ import net.alex9849.motorlib.pin.PinState;
 @DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
     private AcceleratingStepper stepperDriver;
-    private GpioBoard.Pin enablePin;
-    private GpioBoard.Pin stepPin;
+    private Pin enablePin;
+    private Pin stepPin;
     private Integer stepsPerCl;
     private Integer maxStepsPerSecond;
     private Integer acceleration;
 
-    public GpioBoard.Pin getEnablePin() {
+    public Pin getEnablePin() {
         return enablePin;
     }
 
-    public void setEnablePin(GpioBoard.Pin enablePin) {
+    public void setEnablePin(Pin enablePin) {
         this.enablePin = enablePin;
         resetDriver();
     }
 
-    public GpioBoard.Pin getStepPin() {
+    public Pin getStepPin() {
         return stepPin;
     }
 
-    public void setStepPin(GpioBoard.Pin stepPin) {
+    public void setStepPin(Pin stepPin) {
         this.stepPin = stepPin;
         resetDriver();
     }

@@ -1,6 +1,6 @@
 package net.alex9849.cocktailpi.service.pumps;
 
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.Pump;
@@ -182,7 +182,7 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getPin() != null) {
-            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getPin());
+            Pin pin = gpioService.fromDto(patchPumpDto.getPin());
             toPatchDc.setPin(pin);
         } else {
             if(removeFields.contains("pin")) {
@@ -205,7 +205,7 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getEnablePin() != null) {
-            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getEnablePin());
+            Pin pin = gpioService.fromDto(patchPumpDto.getEnablePin());
             toPatchStepper.setEnablePin(pin);
         } else {
             if(removeFields.contains("enablePin")) {
@@ -214,7 +214,7 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getStepPin() != null) {
-            GpioBoard.Pin pin = gpioService.fromDto(patchPumpDto.getStepPin());
+            Pin pin = gpioService.fromDto(patchPumpDto.getStepPin());
             toPatchStepper.setStepPin(pin);
         } else {
             if(removeFields.contains("stepPin")) {

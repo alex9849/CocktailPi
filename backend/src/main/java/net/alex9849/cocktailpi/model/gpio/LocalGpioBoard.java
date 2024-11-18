@@ -18,28 +18,8 @@ public class LocalGpioBoard extends GpioBoard {
     }
 
     @Override
-    protected GpioBoard.Pin getPinUnchecked(int pin) {
-        Pin oPin = new Pin(pin);
-        return oPin;
+    protected LocalPin getPinUnchecked(int pin) {
+        return new LocalPin(this, pin);
     }
 
-
-    public class Pin extends GpioBoard.Pin {
-
-        public Pin(int nr) {
-            super(nr);
-        }
-
-        @Override
-        public IOutputPin getOutputPin() {
-            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-            return pinUtils.getBoardOutputPin(getPinNr());
-        }
-
-        @Override
-        public LocalGpioBoard getGpioBoard() {
-            return LocalGpioBoard.this;
-        }
-
-    }
 }
