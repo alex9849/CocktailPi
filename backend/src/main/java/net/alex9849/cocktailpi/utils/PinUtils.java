@@ -1,9 +1,7 @@
 package net.alex9849.cocktailpi.utils;
 
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
@@ -12,7 +10,9 @@ import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
+import net.alex9849.motorlib.pin.IInputPin;
 import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.pin.Pi4JInputPin;
 import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,12 +24,14 @@ public class PinUtils {
     @Autowired
     private Context pi4J;
 
-    @Autowired
-    private PumpMaintenanceService maintenanceService;
     private final Map<Integer, DigitalOutput> outputPinMap = new HashMap<>();
+    private final Map<Integer, DigitalInput> inputPinMap = new HashMap<>();
     private final Map<Integer, I2C> i2CMap = new HashMap<>();
 
     public synchronized IOutputPin getBoardOutputPin(int address) {
+        if(inputPinMap.containsKey(address)) {
+            inputPinMap.remove(address).shutdown(pi4J);
+        }
         if(!outputPinMap.containsKey(address)) {
             DigitalOutputConfig config = DigitalOutput
                     .newConfigBuilder(pi4J)
@@ -44,6 +46,31 @@ public class PinUtils {
             }
         }
         return new Pi4JOutputPin(outputPinMap.get(address));
+    }
+
+    public synchronized IInputPin getBoardInputPin(int address, PullResistance pull) {
+        if(outputPinMap.containsKey(address)) {
+            outputPinMap.remove(address).shutdown(pi4J);
+        }
+        if(inputPinMap.containsKey(address)) {
+            DigitalInput pin = inputPinMap.get(address);
+            if(pin.pull() != pull) {
+                inputPinMap.remove(address).shutdown(pi4J);
+            }
+        }
+        if(!inputPinMap.containsKey(address)) {
+            DigitalInputConfig config = DigitalInput
+                    .newConfigBuilder(pi4J)
+                    .address(address)
+                    .pull(pull)
+                    .build();
+
+            if(!pi4J.registry().exists(config.id())) {
+                DigitalInput pin = pi4J.create(config);
+                inputPinMap.put(address, pin);
+            }
+        }
+        return new Pi4JInputPin(inputPinMap.get(address));
     }
 
     public synchronized I2C getI2c(int address) {

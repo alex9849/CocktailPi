@@ -1,7 +1,9 @@
 package net.alex9849.cocktailpi.model.gpio;
 
+import com.pi4j.io.gpio.digital.PullResistance;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.pin.IInputPin;
 import net.alex9849.motorlib.pin.IOutputPin;
 
 import java.util.Optional;
@@ -33,6 +35,8 @@ public abstract class Pin {
     }
 
     public abstract IOutputPin getOutputPin();
+
+    public abstract IInputPin getInputPin(PullResistance pull);
 
     public GpioBoard getGpioBoard() {
         return board;
