@@ -113,6 +113,10 @@ const routes = [
             component: () => import('pages/PumpManagement'),
             name: 'pumpmanagement'
           }, {
+            path: 'admin/pump/settings/reversepumping',
+            component: () => import('pages/ReversePumpSettings.vue'),
+            name: 'reversepumpsettings'
+          }, {
             path: 'admin/pump/:pumpId/edit',
             component: () => import('pages/SetupPump'),
             name: 'editpump'
