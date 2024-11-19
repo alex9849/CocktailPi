@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.model;
 
+import com.pi4j.io.gpio.digital.PullResistance;
 import lombok.Getter;
 import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.motorlib.sensor.HX711;
@@ -22,7 +23,7 @@ public class Scale {
             if(!isCalibrateable()) {
                 return null;
             }
-            hx711 = new HX711(dtPin.getOutputPin(), clkPin.getOutputPin(), 128);
+            hx711 = new HX711(dtPin.getInputPin(PullResistance.OFF), clkPin.getOutputPin(), 128);
             hx711.calibrateEmpty(zeroForceValue);
             if(isConfigured()) {
                 hx711.calibrateWeighted(referenceForceValueWeight, referenceForceValue);
