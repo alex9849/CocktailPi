@@ -117,6 +117,10 @@ const routes = [
             component: () => import('pages/ReversePumpSettings.vue'),
             name: 'reversepumpsettings'
           }, {
+            path: 'admin/pump/settings/loadcell',
+            component: () => import('pages/LoadCellSettings.vue'),
+            name: 'loadcellsettings'
+          }, {
             path: 'admin/pump/:pumpId/edit',
             component: () => import('pages/SetupPump'),
             name: 'editpump'

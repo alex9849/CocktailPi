@@ -124,6 +124,7 @@
                         color="info"
                         label="Configure"
                         :icon="mdiPencilOutline"
+                        @click="$router.push({name: 'loadcellsettings'})"
                         dense
                         no-caps
                         size="sm"
