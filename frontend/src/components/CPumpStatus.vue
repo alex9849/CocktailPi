@@ -155,6 +155,12 @@
                           <q-badge>Local board / BCM 1</q-badge>
                         </td>
                       </tr>
+                      <tr>
+                        <td>Calibrated:</td>
+                        <td>
+                          <q-badge>false</q-badge>
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </q-card-section>
