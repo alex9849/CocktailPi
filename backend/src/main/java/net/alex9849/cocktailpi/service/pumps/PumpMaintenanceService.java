@@ -371,8 +371,7 @@ public class PumpMaintenanceService {
             ReversePumpSettings.Config cfg = new ReversePumpSettings.Config();
             cfg.setAutoPumpBackTimer(cfgDto.getAutoPumpBackTimer());
             cfg.setOvershoot(cfgDto.getOvershoot());
-            GpioBoard board = gpioService.getGpioBoard(cfgDto.getDirectorPin().getBoardId());
-            cfg.setDirectorPin(board.getPin(cfgDto.getDirectorPin().getNr()));
+            cfg.setDirectorPin(gpioService.fromDto(cfgDto.getDirectorPin()));
             rps.setSettings(cfg);
         }
         return rps;

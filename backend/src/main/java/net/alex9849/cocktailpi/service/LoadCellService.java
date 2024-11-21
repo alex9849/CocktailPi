@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.service;
 
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
+import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellDto;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
 import net.alex9849.cocktailpi.utils.PinUtils;
@@ -25,6 +26,10 @@ public class LoadCellService {
 
     @Autowired
     private OptionsRepository optionsRepository;
+
+    @Autowired
+    private GpioService gpioService;
+
 
     public LoadCell calibrateLoadCellZero() {
         LoadCell loadCell = getLoadCell();
@@ -73,6 +78,11 @@ public class LoadCellService {
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_REFERENCE_VALUE, false);
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT, false);
             } else {
+                LoadCell old = getLoadCell();
+                loadCell.setZeroForceValue(old.getZeroForceValue());
+                loadCell.setReferenceForceValue(old.getReferenceForceValue());
+                loadCell.setReferenceForceValueWeight(old.getReferenceForceValueWeight());
+
                 PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin());
                 PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin());
                 optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_CLK_PIN, loadCell.getClkPin());
@@ -106,6 +116,16 @@ public class LoadCellService {
         if(loadCell == null) {
             reloadLoadCell();
         }
+        return loadCell;
+    }
+
+    public LoadCell fromDto(LoadCellDto.Request.Create dto) {
+        if(dto == null) {
+            return null;
+        }
+        LoadCell loadCell = new LoadCell();
+        loadCell.setDtPin(gpioService.fromDto(dto.getDtPin()));
+        loadCell.setClkPin(gpioService.fromDto(dto.getClkPin()));
         return loadCell;
     }
 }
