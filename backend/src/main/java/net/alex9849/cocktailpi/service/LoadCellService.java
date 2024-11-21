@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LoadCellService {
     private LoadCell loadCell = null;
-    private final String REPO_KEY_LOAD_CELL_ENABLED = "LC_Enabled";
-    private final String REPO_KEY_LOAD_CELL_DT_PIN = "LC_DT";
-    private final String REPO_KEY_LOAD_CELL_CLK_PIN = "LC_SCK";
-    private final String REPO_KEY_LOAD_CELL_ZERO_VALUE = "LC_ZERO_VALUE";
-    private final String REPO_KEY_LOAD_CELL_REFERENCE_VALUE = "LC_REF_VALUE";
-    private final String REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT = "LC_REF_WEIGHT";
+    private static final String REPO_KEY_LOAD_CELL_ENABLED = "LC_Enabled";
+    public static final String REPO_KEY_LOAD_CELL_DT_PIN = "LC_DT";
+    public static final String REPO_KEY_LOAD_CELL_CLK_PIN = "LC_SCK";
+    private static final String REPO_KEY_LOAD_CELL_ZERO_VALUE = "LC_ZERO_VALUE";
+    private static final String REPO_KEY_LOAD_CELL_REFERENCE_VALUE = "LC_REF_VALUE";
+    private static final String REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT = "LC_REF_WEIGHT";
 
     @Autowired
     private PumpLockService lockService;

@@ -8,6 +8,7 @@ import net.alex9849.cocktailpi.model.gpio.I2CGpioBoard;
 import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
+import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.service.SystemService;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,14 @@ public class GpioRepository extends JdbcDaoSupport {
                 case SystemService.REPO_KEY_I2C_PIN_SCL:
                     pr.setType(PinResource.Type.I2C);
                     pr.setName("I2C SCL");
+                    break;
+                case LoadCellService.REPO_KEY_LOAD_CELL_CLK_PIN:
+                    pr.setType(PinResource.Type.LOAD_CELL);
+                    pr.setName("Load cell CLK");
+                    break;
+                case LoadCellService.REPO_KEY_LOAD_CELL_DT_PIN:
+                    pr.setType(PinResource.Type.LOAD_CELL);
+                    pr.setName("Load cell DT");
                     break;
                 default:
                     pr = null;
