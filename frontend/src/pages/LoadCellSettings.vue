@@ -90,6 +90,7 @@
     </q-card>
     <q-card
       class="q-pa-md bg-card-body text-card-body"
+      :class="{disabled: !currentLoadCell.enable}"
       flat
       bordered
     >
@@ -109,6 +110,7 @@
           >
             <q-step
               title="Zero-Point Calibration (No Weight)"
+              :disable="!currentLoadCell.enable"
               :name="1"
               :done="calibration.step > 1 || currentLoadCell.calibrated"
               :header-nav="calibration.step > 1 || currentLoadCell.calibrated"
@@ -119,6 +121,7 @@
                   @click="onClickCalibrateZero()"
                   color="primary"
                   label="Next"
+                  :disable="!currentLoadCell.enable"
                 />
               </q-stepper-navigation>
             </q-step>
@@ -127,6 +130,7 @@
               :name="2"
               :done="calibration.step > 2 || currentLoadCell.calibrated"
               :header-nav="currentLoadCell.calibrated"
+              :disable="!currentLoadCell.enable"
             >
               <p>
                 Place a known weight on the dispensing area.
@@ -135,6 +139,7 @@
               </p>
               <q-input
                 v-model:model-value.number="calibration.referenceWeight"
+                :disable="!currentLoadCell.enable"
                 label="Reference weight (in g)"
                 type="number"
                 filled
@@ -142,7 +147,7 @@
               />
               <q-stepper-navigation>
                 <q-btn
-                  :disable="calibration.referenceWeight < 1 || calibration.referenceWeight == null"
+                  :disable="calibration.referenceWeight < 1 || calibration.referenceWeight == null || !currentLoadCell.enable"
                   @click="onClickCalibrateReference(calibration.referenceWeight)"
                   color="primary"
                   label="Next"
@@ -152,6 +157,7 @@
             <q-step
               title="Validation Test"
               :name="3"
+              :disable="!currentLoadCell.enable"
               :done="currentLoadCell.calibrated"
               :header-nav="currentLoadCell.calibrated"
             >
@@ -163,6 +169,7 @@
                 <div class="col-grow">
                   <q-input
                     :model-value="calibration.measureWeight"
+                    :disable="!currentLoadCell.enable"
                     style="padding-inline: 12px"
                     type="number"
                     square
@@ -184,6 +191,7 @@
                     no-caps
                     size="md"
                     :icon="mdiReload"
+                    :disable="!currentLoadCell.enable"
                     @click="onClickMeasureLoadCell()"
                   />
                 </div>
@@ -191,12 +199,15 @@
               <q-stepper-navigation class="q-gutter-sm">
                 <q-btn
                   @click="$router.push({name: 'pumpmanagement'})"
+                  :disable="!currentLoadCell.enable"
                   color="primary"
                   label="Finnish"
                 />
                 <q-btn
                   @click="calibration.step = 1"
+                  :disable="!currentLoadCell.enable"
                   color="primary"
+                  :icon="mdiReload"
                   label="Start over"
                 />
               </q-stepper-navigation>
@@ -257,6 +268,7 @@ export default {
       this.v.form.enable.$model = !!data
       this.currentLoadCell = Object.assign(this.currentLoadCell, data)
       this.currentLoadCell.calibrated = !!(data?.calibrated)
+      this.currentLoadCell.enable = !!data
       this.calibration.step = this.currentLoadCell.calibrated ? 3 : 1
     },
     fetchSettings () {
