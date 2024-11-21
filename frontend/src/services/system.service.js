@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { pinDtoMapper } from 'src/services/gpio.service'
 
 const API_PATH = 'api/system/'
 
@@ -16,30 +15,6 @@ class SystemService {
   getAudioDevices () {
     return axios.get(API_PATH + 'audiodevices')
       .then(response => response.data)
-  }
-
-  setReversePumpSettings (settings) {
-    const dto = {
-      enable: settings.enable
-    }
-    if (settings.enable) {
-      dto.settings = {
-        directorPin: pinDtoMapper.toPinSelectDto(settings.settings.directorPin),
-        overshoot: settings.settings.overshoot,
-        autoPumpBackTimer: settings.settings.autoPumpBackTimer
-      }
-    }
-    return axios.put(API_PATH + 'settings/reversepumping', dto)
-  }
-
-  getReversePumpSettings () {
-    return axios.get(API_PATH + 'settings/reversepumping')
-      .then(response => {
-        if (!response.data.settings) {
-          delete response.data.settings
-        }
-        return response.data
-      })
   }
 
   getGlobalSettings () {

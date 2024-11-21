@@ -26,9 +26,6 @@ public class SystemEndpoint {
     @Autowired
     private SystemService systemService;
 
-    @Autowired
-    private PumpService pumpService;
-
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)
     public ResponseEntity<?> getPythonLibraries() throws IOException {
@@ -39,23 +36,6 @@ public class SystemEndpoint {
     @RequestMapping(value = "/audiodevices", method = RequestMethod.GET)
     public ResponseEntity<?> getAudioDevices() throws IOException {
         return ResponseEntity.ok(systemService.getAudioDevices());
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "settings/reversepumping", method = RequestMethod.PUT)
-    public ResponseEntity<?> setReversePumpSettings(@RequestBody @Valid ReversePumpSettingsDto.Request.Create settings) {
-        if(settings.isEnable() && settings.getSettings() == null) {
-            throw new IllegalStateException("Settings-Details are null!");
-        }
-        ReversePumpSettings reversePumpSettings = pumpService.fromDto(settings);
-        pumpService.setReversePumpingSettings(reversePumpSettings);
-        return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "settings/reversepumping", method = RequestMethod.GET)
-    public ResponseEntity<?> getReversePumpSettings() {;
-        return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(pumpService.getReversePumpingSettings()));
     }
 
     @RequestMapping(value = "settings/donated", method = RequestMethod.PUT)

@@ -848,7 +848,7 @@ export default {
         overshoot_label: 'Überschuss',
         overshoot_hint: 'Wie stark sollte die Anzahl ml beim Zurückpumpen überschritten werden?',
         auto_pump_back_timer_label: 'Inaktive Zeit bis zum automatischen Zurückpumpen',
-        save_btn_label: 'Speichern'
+        save_btn_label: 'Speichern & Zurück'
       },
       notifications: {
         updated: 'Einstellungen aktualisiert!'

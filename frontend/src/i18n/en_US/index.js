@@ -909,7 +909,7 @@ export default {
         overshoot_label: 'Overshoot',
         overshoot_hint: 'How strongly should number of ml be overshoot on pump back?',
         auto_pump_back_timer_label: 'Inactive time till automatic pump back',
-        save_btn_label: 'Save'
+        save_btn_label: 'Save & Return'
       },
       notifications: {
         updated: 'Settings updated!'

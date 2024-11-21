@@ -133,17 +133,6 @@ public class PumpService {
         return maintenanceService.getJobMetrics(id);
     }
 
-    public void setReversePumpingSettings(ReversePumpSettings settings) {
-        if (!lockService.testAndAcquireGlobal(maintenanceService)) {
-            throw new IllegalArgumentException("Some pumps are currently occupied!");
-        }
-        try {
-            maintenanceService.setReversePumpingSettings(settings);
-        } finally {
-            lockService.releaseGlobal(maintenanceService);
-        }
-    }
-
     public void orderCocktail(User user, Recipe recipe, CocktailOrderConfiguration orderConfiguration) {
         if (!lockService.testAndAcquireGlobal(cocktailOrderService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
@@ -171,9 +160,6 @@ public class PumpService {
     public CocktailProgress getCurrentCocktailProgress() {
         return cocktailOrderService.getCurrentCocktailProgress();
     }
-    public ReversePumpSettings getReversePumpingSettings() {
-        return maintenanceService.getReversePumpingSettings();
-    }
 
     public Pump fromDto(PumpDto.Request.Create pumpDto) {
         return dataService.fromDto(pumpDto);
@@ -187,7 +173,4 @@ public class PumpService {
         return cocktailOrderService.fromDto(orderConfigDto);
     }
 
-    public ReversePumpSettings fromDto(ReversePumpSettingsDto.Request.Create dto) {
-        return maintenanceService.fromDto(dto);
-    }
 }

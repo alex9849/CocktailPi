@@ -106,7 +106,7 @@
 import CGpioSelector from 'components/CGpioSelector.vue'
 import useVuelidate from '@vuelidate/core'
 import { mapActions, mapGetters } from 'vuex'
-import SystemService from 'src/services/system.service'
+import PumpSettingsService from 'src/services/pumpsettings.service'
 import { maxValue, minValue, required, requiredIf } from '@vuelidate/validators'
 
 export default {
@@ -164,7 +164,7 @@ export default {
     },
     onClickSave () {
       this.saving = true
-      SystemService.setReversePumpSettings(this.form)
+      PumpSettingsService.setReversePumpSettings(this.form)
         .then(() => {
           this.$q.notify({
             type: 'positive',
@@ -179,7 +179,7 @@ export default {
     },
     fetchSettings () {
       this.loading = true
-      SystemService.getReversePumpSettings()
+      PumpSettingsService.getReversePumpSettings()
         .then(settings => {
           this.v.form.$model = Object.assign(this.form, settings)
         })
