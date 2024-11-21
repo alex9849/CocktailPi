@@ -38,9 +38,9 @@
             <q-card-section>
               <c-gpio-selector
                 :dark="color.cardItemGroupDark"
-                v-model:model-value="v.form.settings.clkPin.$model"
-                :error-message="v.form.settings.clkPin.$errors[0]?.$message"
-                :error="v.form.settings.clkPin.$errors.length > 0"
+                v-model:model-value="v.form.clkPin.$model"
+                :error-message="v.form.$errors[0]?.$message"
+                :error="v.form.$errors.length > 0"
                 label="CLK"
                 clearable
               />
@@ -63,9 +63,9 @@
               <c-gpio-selector
                 disallow-expander-pins
                 :dark="color.cardItemGroupDark"
-                v-model:model-value="v.form.settings.dtPin.$model"
-                :error-message="v.form.settings.dtPin.$errors[0]?.$message"
-                :error="v.form.settings.dtPin.$errors.length > 0"
+                v-model:model-value="v.form.dtPin.$model"
+                :error-message="v.form.dtPin.$errors[0]?.$message"
+                :error="v.form.dtPin.$errors.length > 0"
                 label="DT"
                 clearable
               />
@@ -77,11 +77,12 @@
             <q-btn
               label="Save"
               color="green"
+              @click="onClickSave()"
             />
             <q-btn
               label="Save & Return"
               color="green"
-              @click="$router.push({name: 'pumpmanagement'})"
+              @click="onClickSave(true)"
             />
           </div>
         </div>
@@ -104,15 +105,18 @@
           <q-stepper
             v-model:model-value="calibration.step"
             vertical
+            header-nav
           >
             <q-step
               title="Zero-Point Calibration (No Weight)"
               :name="1"
+              :done="calibration.step > 1 || currentLoadCell.calibrated"
+              :header-nav="calibration.step > 1 || currentLoadCell.calibrated"
             >
               <p>Ensure the dispensing area is empty. Press the Next button to record the load cell's zero-point measurement.</p>
               <q-stepper-navigation>
                 <q-btn
-                  @click="calibration.step++"
+                  @click="onClickCalibrateZero()"
                   color="primary"
                   label="Next"
                 />
@@ -121,6 +125,8 @@
             <q-step
               title="Known Weight Calibration"
               :name="2"
+              :done="calibration.step > 2 || currentLoadCell.calibrated"
+              :header-nav="currentLoadCell.calibrated"
             >
               <p>
                 Place a known weight on the dispensing area.
@@ -128,7 +134,7 @@
                 Press the Next button to record the load cell's response to the known weight.
               </p>
               <q-input
-                v-model:model-value="calibration.referenceWeight"
+                v-model:model-value.number="calibration.referenceWeight"
                 label="Reference weight (in g)"
                 type="number"
                 filled
@@ -136,7 +142,8 @@
               />
               <q-stepper-navigation>
                 <q-btn
-                  @click="calibration.step++"
+                  :disable="calibration.referenceWeight < 1 || calibration.referenceWeight == null"
+                  @click="onClickCalibrateReference(calibration.referenceWeight)"
                   color="primary"
                   label="Next"
                 />
@@ -145,31 +152,42 @@
             <q-step
               title="Validation Test"
               :name="3"
+              :done="currentLoadCell.calibrated"
+              :header-nav="currentLoadCell.calibrated"
             >
               <p>
                 Place a random weight on the dispensing area.
                 Press the Measure button to read the load cell's response to the known weight and compare it with the response.
               </p>
-              <q-input
-                :model-value="calibration.measureWeight"
-                label="Measurement (g)"
-                prefix="g"
-                outlined
-                filled
-                readonly
-              >
-                <template v-slot:append>
+              <div class="row justify-center bg-grey-3 items-center">
+                <div class="col-grow">
+                  <q-input
+                    :model-value="calibration.measureWeight"
+                    style="padding-inline: 12px"
+                    type="number"
+                    square
+                    hide-bottom-space
+                    readonly
+                    borderless
+                    label="Measurement (g)"
+                  >
+                    <template v-slot:append>
+                      g
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-shrink q-pr-sm q-py-sm">
                   <q-btn
                     label="Measure"
                     color="primary"
                     outline
-                    dense
                     no-caps
                     size="md"
                     :icon="mdiReload"
+                    @click="onClickMeasureLoadCell()"
                   />
-                </template>
-              </q-input>
+                </div>
+              </div>
               <q-stepper-navigation class="q-gutter-sm">
                 <q-btn
                   @click="$router.push({name: 'pumpmanagement'})"
@@ -196,6 +214,7 @@ import { required, requiredIf } from '@vuelidate/validators'
 import CGpioSelector from 'components/CGpioSelector.vue'
 import { mapGetters } from 'vuex'
 import { mdiReload, mdiBullseyeArrow } from '@mdi/js'
+import PumpSettingsService from 'src/services/pumpsettings.service'
 
 export default {
   name: 'LoadCellSettings',
@@ -207,8 +226,13 @@ export default {
       v: useVuelidate()
     }
   },
+  created () {
+    this.fetchSettings()
+  },
   data () {
     return {
+      saving: false,
+      loading: true,
       calibration: {
         step: 3,
         referenceWeight: null,
@@ -216,13 +240,70 @@ export default {
       },
       form: {
         enable: false,
-        settings: {
-          clkPin: null,
-          dtPin: null,
-          calibratedWeight: null,
-          calibratedValue: null
-        }
+        clkPin: null,
+        dtPin: null
+      },
+      currentLoadCell: {
+        enable: false,
+        clkPin: null,
+        dtPin: null,
+        calibrated: false
       }
+    }
+  },
+  methods: {
+    receiveLoadCellFromBackend (data) {
+      this.v.form.$model = Object.assign(this.form, data)
+      this.v.form.enable.$model = !!data
+      this.currentLoadCell = Object.assign(this.currentLoadCell, data)
+      this.currentLoadCell.calibrated = !!(data?.calibrated)
+      this.calibration.step = this.currentLoadCell.calibrated ? 3 : 1
+    },
+    fetchSettings () {
+      PumpSettingsService.getLoadCell()
+        .then(loadcell => this.receiveLoadCellFromBackend(loadcell))
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    onClickSave (pushPumpManagement = false) {
+      this.saving = true
+      PumpSettingsService.setLoadCell(this.form.enable ? this.form : null)
+        .then(loadcell => {
+          this.$q.notify({
+            type: 'positive',
+            message: this.$t('Loadcell updated')
+          })
+          if (pushPumpManagement) {
+            this.$router.push({ name: 'pumpmanagement' })
+          } else {
+            this.receiveLoadCellFromBackend(loadcell)
+          }
+          return loadcell
+        })
+        .finally(loadcell => {
+          this.saving = false
+        })
+    },
+    onClickCalibrateZero () {
+      PumpSettingsService.calibrateLoadCellZero()
+        .then(loadcell => {
+          this.receiveLoadCellFromBackend(loadcell)
+          this.calibration.step = 2
+        })
+    },
+    onClickCalibrateReference (knownWeight) {
+      PumpSettingsService.calibrateLoadCellRefWeight(knownWeight)
+        .then(loadcell => {
+          this.receiveLoadCellFromBackend(loadcell)
+          this.calibration.step = 3
+        })
+    },
+    onClickMeasureLoadCell () {
+      PumpSettingsService.readLoadCell()
+        .then(measurement => {
+          this.calibration.measureWeight = measurement
+        })
     }
   },
   validations () {
@@ -231,13 +312,11 @@ export default {
         enable: {
           required
         },
-        settings: {
-          clkPin: {
-            required: requiredIf(() => this.form.enable)
-          },
-          dtPin: {
-            required: requiredIf(() => this.form.enable)
-          }
+        clkPin: {
+          required: requiredIf(() => this.form.enable)
+        },
+        dtPin: {
+          required: requiredIf(() => this.form.enable)
         }
       }
     }

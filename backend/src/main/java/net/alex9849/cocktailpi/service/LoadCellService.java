@@ -36,7 +36,7 @@ public class LoadCellService {
         if(loadCell == null) {
             throw new IllegalStateException("Load cell not configured!");
         }
-        loadCell.getHX711().calibrateEmpty(0);
+        loadCell.getHX711().calibrateEmpty();
         loadCell.setZeroForceValue(getLoadCell().getHX711().emptyValue);
         setLoadCell(loadCell);
         return getLoadCell();
@@ -48,8 +48,8 @@ public class LoadCellService {
             throw new IllegalStateException("Load cell not configured!");
         }
         loadCell.getHX711().calibrateWeighted(referenceWeight);
-        loadCell.setReferenceForceValueWeight(referenceWeight);
         loadCell.setReferenceForceValue(getLoadCell().getHX711().calibrationValue);
+        loadCell.setReferenceForceValueWeight(referenceWeight);
         setLoadCell(loadCell);
         return getLoadCell();
     }
@@ -59,7 +59,7 @@ public class LoadCellService {
         if(loadCell == null) {
             throw new IllegalStateException("Load cell not configured!");
         }
-        if(loadCell.isCalibrated()) {
+        if(!loadCell.isCalibrated()) {
             throw new IllegalStateException("Load cell not calibrated!");
         }
         return loadCell.getHX711().read();
@@ -70,7 +70,7 @@ public class LoadCellService {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
         try {
-            optionsRepository.setOption(REPO_KEY_LOAD_CELL_ENABLED, Boolean.valueOf(loadCell == null).toString());
+            optionsRepository.setOption(REPO_KEY_LOAD_CELL_ENABLED, Boolean.valueOf(loadCell != null).toString());
             if(loadCell == null) {
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_CLK_PIN, false);
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_DT_PIN, false);
@@ -79,14 +79,23 @@ public class LoadCellService {
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT, false);
             } else {
                 LoadCell old = getLoadCell();
-                loadCell.setZeroForceValue(old.getZeroForceValue());
-                loadCell.setReferenceForceValue(old.getReferenceForceValue());
-                loadCell.setReferenceForceValueWeight(old.getReferenceForceValueWeight());
+                if(old != null) {
+                    loadCell.setZeroForceValue(old.getZeroForceValue());
+                    loadCell.setReferenceForceValue(old.getReferenceForceValue());
+                    loadCell.setReferenceForceValueWeight(old.getReferenceForceValueWeight());
+                }
 
-                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin());
-                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin());
+                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin(), loadCell.getDtPin());
                 optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_CLK_PIN, loadCell.getClkPin());
                 optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_DT_PIN, loadCell.getDtPin());
+                optionsRepository.setOption(REPO_KEY_LOAD_CELL_ZERO_VALUE, String.valueOf(loadCell.getZeroForceValue()));
+                if(loadCell.getReferenceForceValue() != null) {
+                    optionsRepository.setOption(REPO_KEY_LOAD_CELL_REFERENCE_VALUE, String.valueOf(loadCell.getReferenceForceValue()));
+                }
+                if(loadCell.getReferenceForceValueWeight() != null) {
+                    optionsRepository.setOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT, String.valueOf(loadCell.getReferenceForceValueWeight()));
+                }
+
             }
             reloadLoadCell();
         } finally {

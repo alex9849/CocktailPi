@@ -30,7 +30,9 @@ public class PinUtils {
 
     public synchronized IOutputPin getBoardOutputPin(int address) {
         if(inputPinMap.containsKey(address)) {
-            inputPinMap.remove(address).shutdown(pi4J);
+            DigitalInput old = inputPinMap.remove(address);
+            old.shutdown(pi4J);
+            pi4J.registry().remove(old.id());
         }
         if(!outputPinMap.containsKey(address)) {
             DigitalOutputConfig config = DigitalOutput
@@ -50,7 +52,9 @@ public class PinUtils {
 
     public synchronized IInputPin getBoardInputPin(int address, PullResistance pull) {
         if(outputPinMap.containsKey(address)) {
-            outputPinMap.remove(address).shutdown(pi4J);
+            DigitalOutput old = outputPinMap.remove(address);
+            old.shutdown(pi4J);
+            pi4J.registry().remove(old.id());
         }
         if(inputPinMap.containsKey(address)) {
             DigitalInput pin = inputPinMap.get(address);
@@ -118,7 +122,7 @@ public class PinUtils {
             }
         }
         if(pinDoubled) {
-            throw new IllegalArgumentException("I2C Pins need to be different!");
+            throw new IllegalArgumentException("Pins need to be different!");
         }
         for(PinResource resource : pinResources) {
             if(!(resource.getType() == allowedType && (allowedIdIfTypeMatch == null || resource.getId() == allowedIdIfTypeMatch))) {

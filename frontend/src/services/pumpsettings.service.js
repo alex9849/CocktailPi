@@ -27,6 +27,40 @@ class PumpSettingsService {
         return response.data
       })
   }
+
+  setLoadCell (loadcell) {
+    let dto = null
+    if (loadcell != null) {
+      dto = {
+        clkPin: pinDtoMapper.toPinSelectDto(loadcell.clkPin),
+        dtPin: pinDtoMapper.toPinSelectDto(loadcell.dtPin)
+      }
+    }
+    return axios.put(API_PATH + 'loadcell', dto,
+      { headers: { 'Content-Type': 'application/json' } })
+      .then(response => response.data)
+  }
+
+  getLoadCell () {
+    return axios.get(API_PATH + 'loadcell')
+      .then(response => response.data)
+  }
+
+  readLoadCell () {
+    return axios.get(API_PATH + 'loadcell/read')
+      .then(response => response.data)
+  }
+
+  calibrateLoadCellZero () {
+    return axios.put(API_PATH + 'loadcell/calibratezero')
+      .then(response => response.data)
+  }
+
+  calibrateLoadCellRefWeight (referenceWeight) {
+    return axios.put(API_PATH + 'loadcell/calibratereference', referenceWeight,
+      { headers: { 'Content-Type': 'application/json' } })
+      .then(response => response.data)
+  }
 }
 
 export default new PumpSettingsService()
