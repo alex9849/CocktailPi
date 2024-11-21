@@ -10,13 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class PumpSettingsService {
+public class ReversePumpSettingsService {
 
     @Autowired
     private PumpMaintenanceService maintenanceService;
 
     @Autowired
     private PumpLockService lockService;
+
 
 
     public void setReversePumpingSettings(ReversePumpSettings settings) {

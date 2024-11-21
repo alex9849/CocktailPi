@@ -3,7 +3,7 @@ package net.alex9849.cocktailpi.endpoints;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
-import net.alex9849.cocktailpi.service.PumpSettingsService;
+import net.alex9849.cocktailpi.service.ReversePumpSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PumpSettingsEndpoint {
 
     @Autowired
-    private PumpSettingsService pumpSettingsService;
+    private ReversePumpSettingsService reversePumpSettingsService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.PUT)
@@ -25,15 +25,15 @@ public class PumpSettingsEndpoint {
         if(settings.isEnable() && settings.getSettings() == null) {
             throw new IllegalStateException("Settings-Details are null!");
         }
-        ReversePumpSettings reversePumpSettings = pumpSettingsService.fromDto(settings);
-        pumpSettingsService.setReversePumpingSettings(reversePumpSettings);
+        ReversePumpSettings reversePumpSettings = reversePumpSettingsService.fromDto(settings);
+        reversePumpSettingsService.setReversePumpingSettings(reversePumpSettings);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.GET)
     public ResponseEntity<?> getReversePumpSettings() {;
-        return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(pumpSettingsService.getReversePumpingSettings()));
+        return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(reversePumpSettingsService.getReversePumpingSettings()));
     }
 
 }

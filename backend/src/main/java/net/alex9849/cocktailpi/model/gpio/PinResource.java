@@ -30,6 +30,6 @@ public class PinResource {
     }
 
     public enum Type {
-        PUMP, I2C, PUMP_DIRECTION, GPIO_BOARD
+        PUMP, I2C, PUMP_DIRECTION, GPIO_BOARD, LOAD_CELL
     }
 }

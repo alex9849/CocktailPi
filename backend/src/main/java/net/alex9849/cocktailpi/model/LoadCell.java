@@ -5,7 +5,7 @@ import lombok.Getter;
 import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.motorlib.sensor.HX711;
 
-public class Scale {
+public class LoadCell {
     @Getter
     private Pin clkPin;
     @Getter
@@ -13,7 +13,7 @@ public class Scale {
     @Getter
     private long zeroForceValue;
     @Getter
-    private long referenceForceValue;
+    private Long referenceForceValue;
     @Getter
     private Long referenceForceValueWeight;
     private HX711 hx711;
@@ -25,7 +25,7 @@ public class Scale {
             }
             hx711 = new HX711(dtPin.getInputPin(PullResistance.OFF), clkPin.getOutputPin(), 128);
             hx711.calibrateEmpty(zeroForceValue);
-            if(isConfigured()) {
+            if(isCalibrated()) {
                 hx711.calibrateWeighted(referenceForceValueWeight, referenceForceValue);
             }
         }
@@ -36,7 +36,7 @@ public class Scale {
         return clkPin != null && dtPin != null;
     }
 
-    public boolean isConfigured() {
+    public boolean isCalibrated() {
         return isCalibrateable() && referenceForceValueWeight != null;
     }
 
@@ -55,7 +55,7 @@ public class Scale {
         hx711 = null;
     }
 
-    public void setReferenceForceValue(long referenceForceValue) {
+    public void setReferenceForceValue(Long referenceForceValue) {
         this.referenceForceValue = referenceForceValue;
         hx711 = null;
     }
