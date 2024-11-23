@@ -7,6 +7,7 @@ import lombok.*;
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.model.pump.Valve;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import org.springframework.beans.BeanUtils;
 
@@ -101,6 +102,9 @@ public class PumpDto {
                 }
                 if(pump instanceof DcPump) {
                     return new DcPumpDto.Response.Detailed((DcPump) pump);
+                }
+                if(pump instanceof Valve) {
+                    return new ValveDto.Response.Detailed((Valve) pump);
                 }
                 throw new IllegalStateException("Unknown pump type: " + pump.getClass().getName());
             }

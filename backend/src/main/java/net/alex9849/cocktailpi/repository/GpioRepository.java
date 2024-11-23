@@ -79,7 +79,7 @@ public class GpioRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<PinResource>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT pi.pin_nr, p.id AS pump_id, p.name AS pump_name, o.key AS o_key\n" +
                     "FROM gpio_pins pi\n" +
-                    "         LEFT JOIN pumps p ON (p.dc_pin_nr = pi.pin_nr AND p.dc_pin_board = pi.board)" +
+                    "         LEFT JOIN pumps p ON (p.oo_pin_nr = pi.pin_nr AND p.oo_pin_board = pi.board)" +
                     "                  OR (p.enable_pin_nr = pi.pin_nr AND p.enable_pin_board = pi.board)" +
                     "                  OR (p.step_pin_nr = pi.pin_nr AND p.step_pin_board = pi.board)\n" +
                     "         LEFT JOIN options o ON pi.pin_nr = o.pin_nr AND pi.board = o.pin_board\n" +
@@ -225,7 +225,7 @@ public class GpioRepository extends JdbcDaoSupport {
                             "from gpio_boards gb\n" +
                             "         LEFT JOIN gpio_pins gp on gb.id = gp.board\n" +
                             "         LEFT JOIN options o on gp.board = o.pin_board and gp.pin_nr = o.pin_nr\n" +
-                            "         LEFT JOIN pumps p on (gp.board = p.dc_pin_board and gp.pin_nr = p.dc_pin_nr) or\n" +
+                            "         LEFT JOIN pumps p on (gp.board = p.oo_pin_board and gp.pin_nr = p.oo_pin_nr) or\n" +
                             "                              (gp.board = p.step_pin_board and gp.pin_nr = p.step_pin_nr) or\n" +
                             "                              (gp.board = p.enable_pin_board and gp.pin_nr = p.enable_pin_nr)"
             );

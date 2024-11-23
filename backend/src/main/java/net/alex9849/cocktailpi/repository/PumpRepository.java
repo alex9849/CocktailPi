@@ -3,9 +3,7 @@ package net.alex9849.cocktailpi.repository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.pump.DcPump;
-import net.alex9849.cocktailpi.model.pump.Pump;
-import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.model.pump.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -32,7 +30,7 @@ public class PumpRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (dtype, name, " +
                     "completed, tube_capacity, current_ingredient_id, filling_level_in_ml, " +
-                    "is_pumped_up, dc_pin_board, dc_pin_nr, time_per_cl_in_ms, is_power_state_high, acceleration, " +
+                    "is_pumped_up, oo_pin_board, oo_pin_nr, time_per_cl_in_ms, is_power_state_high, acceleration, " +
                     "step_pin_board, step_pin_nr, enable_pin_board, enable_pin_nr, steps_per_cl, max_steps_per_second) VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             setParameters(pump, pstmt);
@@ -50,7 +48,7 @@ public class PumpRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET dtype = ?, name = ?, " +
                     "completed = ?, tube_capacity = ?, current_ingredient_id = ?, " +
-                    "filling_level_in_ml = ?, is_pumped_up = ?, dc_pin_board = ?, dc_pin_nr = ?, time_per_cl_in_ms = ?, " +
+                    "filling_level_in_ml = ?, is_pumped_up = ?, oo_pin_board = ?, oo_pin_nr = ?, time_per_cl_in_ms = ?, " +
                     "is_power_state_high = ?, acceleration = ?, step_pin_board = ?, step_pin_nr = ?, enable_pin_board = ?, " +
                     "enable_pin_nr = ?, steps_per_cl = ?, max_steps_per_second = ? WHERE id = ?");
             setParameters(pump, pstmt);
@@ -133,16 +131,20 @@ public class PumpRepository extends JdbcDaoSupport {
         pstmt.setObject(5, pump.getCurrentIngredientId());
         pstmt.setObject(6, pump.getFillingLevelInMl());
         pstmt.setBoolean(7, pump.isPumpedUp());
-        if(pump instanceof DcPump dcPump) {
-            if(dcPump.getPin() != null) {
-                pstmt.setObject(8, dcPump.getPin().getBoardId());
-                pstmt.setObject(9, dcPump.getPin().getPinNr());
+        if(pump instanceof OnOffPump onOffPump) {
+            if(onOffPump.getPin() != null) {
+                pstmt.setObject(8, onOffPump.getPin().getBoardId());
+                pstmt.setObject(9, onOffPump.getPin().getPinNr());
             } else {
                 pstmt.setNull(8, Types.INTEGER);
                 pstmt.setNull(9, Types.INTEGER);
             }
-            pstmt.setObject(10, dcPump.getTimePerClInMs());
-            pstmt.setObject(11, dcPump.isPowerStateHigh());
+            if(onOffPump instanceof DcPump dcPump) {
+                pstmt.setObject(10, dcPump.getTimePerClInMs());
+            } else {
+                pstmt.setNull(10, Types.INTEGER);
+            }
+            pstmt.setObject(11, onOffPump.isPowerStateHigh());
             pstmt.setNull(12, Types.INTEGER);
             pstmt.setNull(13, Types.INTEGER);
             pstmt.setNull(14, Types.INTEGER);
@@ -182,19 +184,26 @@ public class PumpRepository extends JdbcDaoSupport {
         Pump pump;
         String dType = rs.getString("dType");
 
-        if(Objects.equals(dType, DcPump.class.getAnnotation(DiscriminatorValue.class).value())) {
-            DcPump dcPump = new DcPump();
-            long boardId = rs.getLong("dc_pin_board");
+        if(Objects.equals(dType, DcPump.class.getAnnotation(DiscriminatorValue.class).value())
+                || Objects.equals(dType, Valve.class.getAnnotation(DiscriminatorValue.class).value())) {
+            OnOffPump onOffPump;
+            if(Objects.equals(dType, DcPump.class.getAnnotation(DiscriminatorValue.class).value())) {
+                DcPump dcPump = new DcPump();
+                dcPump.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
+                onOffPump = dcPump;
+            } else {
+                onOffPump = new Valve();
+            }
+            long boardId = rs.getLong("oo_pin_board");
             if(!rs.wasNull()) {
                 GpioBoard gpioBoard = gpioRepository.findById(boardId).orElse(null);
-                dcPump.setPin(gpioBoard.getPin((Integer) rs.getObject("dc_pin_nr")));
+                onOffPump.setPin(gpioBoard.getPin((Integer) rs.getObject("oo_pin_nr")));
             }
-            dcPump.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
             boolean isPowerStateHigh = rs.getBoolean("is_power_state_high");
             if(!rs.wasNull()) {
-                dcPump.setIsPowerStateHigh(isPowerStateHigh);
+                onOffPump.setIsPowerStateHigh(isPowerStateHigh);
             }
-            pump = dcPump;
+            pump = onOffPump;
         } else if(Objects.equals(dType, StepperPump.class.getAnnotation(DiscriminatorValue.class).value())) {
             StepperPump stepperPump = new StepperPump();
             stepperPump.setAcceleration((Integer) rs.getObject("acceleration"));

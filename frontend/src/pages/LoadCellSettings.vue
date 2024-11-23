@@ -165,25 +165,18 @@
                 Place a random weight on the dispensing area.
                 Press the Measure button to read the load cell's response to the known weight and compare it with the response.
               </p>
-              <div class="row justify-center bg-grey-3 items-center">
-                <div class="col-grow">
-                  <q-input
-                    :model-value="calibration.measureWeight"
-                    :disable="!currentLoadCell.enable"
-                    style="padding-inline: 12px"
-                    type="number"
-                    square
-                    hide-bottom-space
-                    readonly
-                    borderless
-                    label="Measurement (g)"
-                  >
-                    <template v-slot:append>
-                      g
-                    </template>
-                  </q-input>
-                </div>
-                <div class="col-shrink q-pr-sm q-py-sm">
+              <q-input
+                :model-value="formattedMeasurementWeight"
+                :disable="!currentLoadCell.enable"
+                style="padding-inline: 12px"
+                square
+                filled
+                hide-bottom-space
+                readonly
+                borderless
+                label="Measurement"
+              >
+                <template v-slot:append>
                   <q-btn
                     label="Measure"
                     color="primary"
@@ -194,19 +187,19 @@
                     :disable="!currentLoadCell.enable"
                     @click="onClickMeasureLoadCell()"
                   />
-                </div>
-              </div>
+                </template>
+              </q-input>
               <q-stepper-navigation class="q-gutter-sm">
                 <q-btn
                   @click="$router.push({name: 'pumpmanagement'})"
                   :disable="!currentLoadCell.enable"
-                  color="primary"
+                  color="positive"
                   label="Finnish"
                 />
                 <q-btn
                   @click="calibration.step = 1"
                   :disable="!currentLoadCell.enable"
-                  color="primary"
+                  color="negative"
                   :icon="mdiReload"
                   label="Start over"
                 />
@@ -337,7 +330,13 @@ export default {
   computed: {
     ...mapGetters({
       color: 'appearance/getNormalColors'
-    })
+    }),
+    formattedMeasurementWeight () {
+      if (this.calibration.measureWeight === null) {
+        return null
+      }
+      return this.calibration.measureWeight + ' g'
+    }
   }
 }
 </script>

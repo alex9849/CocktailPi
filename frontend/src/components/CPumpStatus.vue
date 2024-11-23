@@ -140,7 +140,7 @@
                       <tr>
                         <td>Status:</td>
                         <td>
-                          <q-badge>enabled</q-badge>
+                          <q-badge>{{ loadCellSettings.enable ? 'enabled' : 'disabled' }}</q-badge>
                         </td>
                       </tr>
                       <tr>
@@ -158,7 +158,7 @@
                       <tr>
                         <td>Calibrated:</td>
                         <td>
-                          <q-badge>false</q-badge>
+                          <q-badge>{{ loadCellSettings.calibrated }}</q-badge>
                         </td>
                       </tr>
                       </tbody>
@@ -176,6 +176,7 @@
 
 <script>
 import { mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import PumpSettingsService from 'src/services/pumpsettings.service'
 
 export default {
   name: 'CPumpStatus',
@@ -185,8 +186,38 @@ export default {
       default: ''
     }
   },
+  data: () => {
+    return {
+      reversePumpSettings: {
+
+      },
+      loadCellSettings: {
+        enable: false,
+        clkPin: null,
+        dtPin: null,
+        calibrated: false
+      }
+    }
+  },
   created () {
     this.mdiPencilOutline = mdiPencilOutline
+    this.fetchLoadCell()
+    this.fetchReversePumpSettings()
+  },
+  methods: {
+    fetchLoadCell () {
+      PumpSettingsService.getLoadCell().then(data => {
+        this.loadCellSettings = data
+        this.loadCellSettings = Object.assign(this.loadCellSettings, data)
+        this.loadCellSettings.calibrated = !!(data?.calibrated)
+        this.loadCellSettings.enable = !!data
+      })
+    },
+    fetchReversePumpSettings () {
+      PumpSettingsService.getReversePumpSettings().then(data => {
+        this.reversePumpSettings = data
+      })
+    }
   }
 }
 </script>

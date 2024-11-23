@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LoadCellService {
     private LoadCell loadCell = null;
+    private boolean checkedIfLoadCellPersisted = false;
     private static final String REPO_KEY_LOAD_CELL_ENABLED = "LC_Enabled";
     public static final String REPO_KEY_LOAD_CELL_DT_PIN = "LC_DT";
     public static final String REPO_KEY_LOAD_CELL_CLK_PIN = "LC_SCK";
@@ -95,8 +96,8 @@ public class LoadCellService {
                 if(loadCell.getReferenceForceValueWeight() != null) {
                     optionsRepository.setOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT, String.valueOf(loadCell.getReferenceForceValueWeight()));
                 }
-
             }
+            checkedIfLoadCellPersisted = false;
             reloadLoadCell();
         } finally {
             lockService.releaseGlobal(this);
@@ -122,8 +123,9 @@ public class LoadCellService {
     }
 
     public LoadCell getLoadCell() {
-        if(loadCell == null) {
+        if(loadCell == null && !checkedIfLoadCellPersisted) {
             reloadLoadCell();
+            checkedIfLoadCellPersisted = true;
         }
         return loadCell;
     }

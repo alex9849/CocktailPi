@@ -10,10 +10,8 @@ import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
 @DiscriminatorValue("dc")
-public class DcPump extends Pump {
+public class DcPump extends OnOffPump {
     private Integer timePerClInMs;
-    private Pin pin;
-    private Boolean isPowerStateHigh;
     private DCMotor motorDriver;
 
     public Integer getTimePerClInMs() {
@@ -24,30 +22,11 @@ public class DcPump extends Pump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    public Pin getPin() {
-        return pin;
-    }
-
-    public void setPin(Pin pin) {
-        this.pin = pin;
-        this.resetDriver();
-    }
-
-    public Boolean isPowerStateHigh() {
-        return isPowerStateHigh;
-    }
-
-    public void setIsPowerStateHigh(Boolean isPowerStateHigh) {
-        this.isPowerStateHigh = isPowerStateHigh;
-        this.resetDriver();
-    }
-
     public DCMotor getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");
         }
         if(motorDriver == null) {
-            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
             IOutputPin runPin = getPin().getOutputPin();
             IOutputPin dirPin = new IOutputPin() {
                 @Override
@@ -88,17 +67,12 @@ public class DcPump extends Pump {
     }
 
     @Override
-    protected boolean isHwPinsCompleted() {
-        return this.pin != null && this.isPowerStateHigh != null;
-    }
-
-    @Override
     protected boolean isCalibrationCompleted() {
         return this.timePerClInMs != null && this.getTubeCapacityInMl() != null;
     }
 
     @Override
     public boolean isCanPump() {
-        return this.pin != null && this.timePerClInMs != null && this.isPowerStateHigh != null;
+        return super.isHwPinsCompleted() && this.timePerClInMs != null;
     }
 }

@@ -8,19 +8,14 @@ import net.alex9849.cocktailpi.payload.dto.gpio.PinDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DcPumpDto {
-    private interface PinResponse { PinDto.Response.PumpPin getPin(); }
-    private interface PinRequest { PinDto.Request.Select getPin(); }
     private interface TimePerClInMs { @Min(1) Integer getTimePerClInMs(); }
-    private interface IsPowerStateHigh { Boolean getIsPowerStateHigh(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public static class Create extends PumpDto.Request.Create implements PinRequest, TimePerClInMs, IsPowerStateHigh {
-            PinDto.Request.Select pin;
+        public static class Create extends OnOffPumpDto.Request.Create implements TimePerClInMs {
             Integer timePerClInMs;
-            Boolean isPowerStateHigh;
         }
     }
 
@@ -30,18 +25,12 @@ public class DcPumpDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
-        public static class Detailed extends PumpDto.Response.Detailed implements PinResponse, TimePerClInMs, IsPowerStateHigh {
-            PinDto.Response.PumpPin pin;
+        public static class Detailed extends OnOffPumpDto.Response.Detailed implements TimePerClInMs {
             Integer timePerClInMs;
-            Boolean isPowerStateHigh;
-
 
             protected Detailed(DcPump dcPump) {
                 super(dcPump);
-                this.isPowerStateHigh = dcPump.isPowerStateHigh();
-                if(dcPump.getPin() != null) {
-                    pin = new PinDto.Response.PumpPin(dcPump.getPin());
-                }
+                timePerClInMs = dcPump.getTimePerClInMs();
             }
 
             @Override
