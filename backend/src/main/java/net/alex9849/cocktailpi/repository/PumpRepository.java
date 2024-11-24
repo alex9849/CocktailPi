@@ -141,6 +141,8 @@ public class PumpRepository extends JdbcDaoSupport {
             }
             if(onOffPump instanceof DcPump dcPump) {
                 pstmt.setObject(10, dcPump.getTimePerClInMs());
+            } else if (onOffPump instanceof Valve valve) {
+                pstmt.setObject(10, valve.getTimePerClInMs());
             } else {
                 pstmt.setNull(10, Types.INTEGER);
             }
@@ -192,7 +194,9 @@ public class PumpRepository extends JdbcDaoSupport {
                 dcPump.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
                 onOffPump = dcPump;
             } else {
-                onOffPump = new Valve();
+                Valve valve = new Valve();
+                valve.setTimePerClInMs((Integer) rs.getObject("time_per_cl_in_ms"));
+                onOffPump = valve;
             }
             long boardId = rs.getLong("oo_pin_board");
             if(!rs.wasNull()) {

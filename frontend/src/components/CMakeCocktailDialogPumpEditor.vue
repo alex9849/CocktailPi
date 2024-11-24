@@ -35,6 +35,10 @@
                   :name="mdiPump"
                 />
                 <q-icon
+                  v-if="props.row.type === 'valve'"
+                  :name="mdiPipeValve"
+                />
+                <q-icon
                   v-else
                 >
                   <img
@@ -157,7 +161,7 @@
               :props="props"
             >
               <c-pump-up-button
-                v-if="isAllowReversePumping"
+                v-if="isAllowReversePumping && props.row.canControlDirection"
                 :pump-id="props.row.id"
                 :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
                 :running="getPumpState(props.row.id).inPumpUp"
@@ -191,7 +195,7 @@ import CPumpUpButton from 'components/CPumpUpButton'
 import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
 import WebsocketService from 'src/services/websocket.service'
-import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
+import { mdiProgressClock, mdiPump, mdiPipeValve } from '@quasar/extras/mdi-v6'
 import { colors } from 'quasar'
 import { isDark } from 'src/mixins/utils'
 
@@ -257,6 +261,7 @@ export default {
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+    this.mdiPipeValve = mdiPipeValve
   },
   unmounted () {
     for (const id of this.allPumpIds) {

@@ -1,6 +1,8 @@
 package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
+import lombok.Getter;
+import lombok.Setter;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
@@ -10,6 +12,12 @@ import net.alex9849.motorlib.pin.PinState;
 @DiscriminatorValue("valve")
 public class Valve extends OnOffPump {
     private ValveDriver motorDriver;
+    @Getter @Setter
+    private long timePerClInMs;
+
+    public Valve() {
+        this.timePerClInMs = 100;
+    }
 
     @Override
     public boolean isCanControlDirection() {

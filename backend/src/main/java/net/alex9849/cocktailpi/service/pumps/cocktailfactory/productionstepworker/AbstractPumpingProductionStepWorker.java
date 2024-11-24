@@ -2,10 +2,13 @@ package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepwork
 
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.model.pump.Valve;
+import net.alex9849.cocktailpi.model.pump.ValveDriver;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.MultiStepper;
+import net.alex9849.motorlib.sensor.HX711;
 import net.openhft.affinity.AffinityLock;
 
 import java.util.*;
@@ -16,6 +19,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private Thread runner;
     private Set<PumpPhase> pumpPhases;
     private Map<StepperPump, Long> steppersToSteps;
+    private Map<Valve, Long> valvesToRequestedGrams;
+    private Map<Valve, Long> valvesToPumpedGrams;
     private Map<Pump, Integer> notUsedLiquid;
     private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
@@ -32,6 +37,8 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.usedPumps = new HashSet<>();
         this.pumpPhases = new HashSet<>();
         this.steppersToSteps = new HashMap<>();
+        this.valvesToRequestedGrams = new HashMap<>();
+        this.valvesToPumpedGrams = new HashMap<>();
         this.scheduledPumpFutures = new HashSet<>();
         this.notUsedLiquid = new HashMap<>();
     }
@@ -44,10 +51,20 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         this.pumpPhases = pumpPhases;
         this.requiredWorkTime = Math.max(this.requiredWorkTime,
                 this.pumpPhases.stream().mapToInt(PumpPhase::getStopTime).max().orElse(0));
-        this.usedPumps = new HashSet<>();
         for(PumpPhase pumpPhase : this.pumpPhases) {
             this.usedPumps.add(pumpPhase.getPump());
         }
+    }
+
+    protected synchronized void setValvesToRequestedGrams(Map<Valve, Long> valvesToRequestedGrams) {
+        Objects.requireNonNull(valvesToRequestedGrams);
+        if(this.isStarted()) {
+            throw new IllegalStateException("Worker already started!");
+        }
+        this.valvesToRequestedGrams = valvesToRequestedGrams;
+        this.requiredWorkTime = this.requiredWorkTime + valvesToRequestedGrams.entrySet()
+                .stream().mapToInt((e) -> ((int) (e.getKey().getTimePerClInMs() * e.getValue()) / 10)).sum();
+        this.usedPumps.addAll(valvesToRequestedGrams.keySet());
     }
 
     protected synchronized void setSteppersToComplete(Map<StepperPump, Long> steppersToSteps) {
@@ -112,6 +129,33 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             } catch (InterruptedException e) {
                 return;
             }
+            for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
+                Valve valve = entry.getKey();
+                ValveDriver driver = valve.getMotorDriver();
+                HX711 hx711 = valve.getLoadCell().getHX711();
+
+                long initialReadGrams = hx711.read();
+                long currentGrams = hx711.read();
+                long goalGrams = entry.getValue();
+
+                long valveStartTime = System.currentTimeMillis();
+                driver.setOpen(true);
+                while (currentGrams < initialReadGrams + goalGrams) {
+                    currentGrams = hx711.read();
+                    if(Thread.currentThread().isInterrupted()) {
+                        driver.setOpen(false);
+                        valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
+                        return;
+                    }
+                }
+                long valveEndTime = System.currentTimeMillis();
+                driver.setOpen(false);
+                long valveTimeElapsed = valveEndTime - valveStartTime;
+                if(entry.getValue() > 0) {
+                    valve.setTimePerClInMs((10 * valveTimeElapsed) / entry.getValue());
+                }
+                valvesToPumpedGrams.put(valve, goalGrams);
+            }
             onFinish();
         };
         runner = new Thread(runTask);
@@ -152,9 +196,19 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                 double notUsedLiquid = (double) (stepperPump.getMotorDriver().distanceToGo() * 10) / stepperPump.getStepsPerCl();
                 notUsedLiquidByPumpPrecise.put(stepperPump, notUsedLiquid);
             }
+            for(Valve valve : this.valvesToRequestedGrams.keySet()) {
+                long requestedLiquid = valvesToRequestedGrams.get(valve);
+                Long pumpedLiquid = valvesToPumpedGrams.get(valve);
+                if(pumpedLiquid != null) {
+                    notUsedLiquidByPumpPrecise.put(valve, (double) Math.max(0, requestedLiquid - pumpedLiquid.longValue()));
+                }
+            }
         } else {
             for(Map.Entry<StepperPump, Long> entry : this.steppersToSteps.entrySet()) {
                 notUsedLiquidByPumpPrecise.put(entry.getKey(), 10 * entry.getValue().doubleValue() / entry.getKey().getStepsPerCl());
+            }
+            for(Valve valve : this.valvesToRequestedGrams.keySet()) {
+                notUsedLiquidByPumpPrecise.put(valve, valvesToRequestedGrams.get(valve).doubleValue());
             }
         }
         notUsedLiquidByPumpPrecise.forEach((key, value) -> notUsedLiquid.put(key, (int) Math.round(value)));

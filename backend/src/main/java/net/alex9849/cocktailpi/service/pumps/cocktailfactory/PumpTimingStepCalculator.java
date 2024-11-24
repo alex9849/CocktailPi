@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.service.pumps.cocktailfactory;
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.model.pump.Valve;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker.PumpStepIngredient;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 
@@ -13,6 +14,7 @@ public class PumpTimingStepCalculator {
     private DcPump longestIngredientPump;
     private final Map<DcPump, Integer> otherPumpTimings;
 
+    Map<Valve, Long> valvesToRequestedGrams;
     private final Map<StepperPump, Long> steppersToSteps;
     private final Set<Pump> updatedPumps;
     private final int minimalPumpTime;
@@ -31,6 +33,7 @@ public class PumpTimingStepCalculator {
             throw new IllegalArgumentException("pumpStepIngredients must be non empty!");
         }
         this.updatedPumps = new HashSet<>();
+        this.valvesToRequestedGrams = new HashMap<>();
         this.steppersToSteps = new HashMap<>();
         this.longestPumpRunTime = 0;
         //Prioritize pumps with a low filling level
@@ -81,6 +84,9 @@ public class PumpTimingStepCalculator {
                         longestPumpRunTime = timeToRun;
                         longestIngredientPump = null;
                     }
+
+                } else if (pump instanceof Valve valve) {
+                    valvesToRequestedGrams.put(valve, (long) amountToFillForPumpInMl);
 
                 } else {
                     throw new IllegalArgumentException("Unknown pump-type: " + pump.getClass().getName());
@@ -153,5 +159,9 @@ public class PumpTimingStepCalculator {
 
     public Map<StepperPump, Long> getSteppersToComplete() {
         return steppersToSteps;
+    }
+
+    public Map<Valve, Long> getValvesToRequestedGrams() {
+        return valvesToRequestedGrams;
     }
 }

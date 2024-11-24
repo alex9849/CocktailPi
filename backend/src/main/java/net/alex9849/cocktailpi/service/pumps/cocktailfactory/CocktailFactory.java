@@ -200,6 +200,7 @@ public class CocktailFactory {
         }
         setState(CocktailProgress.State.FINISHED);
         this.shutDown();
+        this.requestPumpPersist(this.getUpdatedPumps());
         this.notifySubscribers();
     }
 

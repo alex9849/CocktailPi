@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepwork
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
+import net.alex9849.cocktailpi.model.pump.Valve;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.PumpPhase;
 
@@ -17,6 +18,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
         super(cocktailFactory);
         Set<PumpPhase> pumpPhases = new HashSet<>();
         Map<StepperPump, Long> steppersToSteps = new HashMap<>();
+        Map<Valve, Long> valvesToGrams = new HashMap<>();
         for(Pump pump : requiredPumps) {
             if(pump.isPumpedUp()) {
                 continue;
@@ -27,12 +29,15 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
                 pumpPhases.add(pumpPhase);
             } else if (pump instanceof StepperPump stepperPump) {
                 steppersToSteps.put(stepperPump, (long) (stepperPump.getStepsPerCl() * (stepperPump.getTubeCapacityInMl() / 10)));
+            } else if (pump instanceof Valve valve) {
+                valvesToGrams.put(valve, valve.getTubeCapacityInMl().longValue());
             } else {
                 throw new IllegalStateException("Unknown pump-type: " + pump.getClass().getName());
             }
         }
         this.setDcPumpPhases(pumpPhases);
         this.setSteppersToComplete(steppersToSteps);
+        this.setValvesToRequestedGrams(valvesToGrams);
     }
 
     protected void onFinish() {

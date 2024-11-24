@@ -45,5 +45,6 @@ public class AutomaticProductionStepWorker extends AbstractPumpingProductionStep
 
         this.setDcPumpPhases(pumpTimingStepCalculator.getPumpPhases());
         this.setSteppersToComplete(pumpTimingStepCalculator.getSteppersToComplete());
+        this.setValvesToRequestedGrams(pumpTimingStepCalculator.getValvesToRequestedGrams());
     }
 }
