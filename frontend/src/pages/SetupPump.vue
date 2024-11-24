@@ -213,8 +213,11 @@
           </c-assistant-container>
           <q-separator
             class="q-my-md"
+            v-if="pump.type !== 'valve'"
           />
-          <c-assistant-container>
+          <c-assistant-container
+            v-if="pump.type !== 'valve'"
+          >
             <template v-slot:explanations>
               {{ $t('page.pump_setup.calibration.tube_capacity_desc') }}
             </template>

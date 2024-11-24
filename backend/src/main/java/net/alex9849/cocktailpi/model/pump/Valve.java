@@ -24,6 +24,14 @@ public class Valve extends OnOffPump {
         return false;
     }
 
+    public Double getTubeCapacityInMl() {
+        return 1d;
+    }
+
+    public void setTubeCapacityInMl(Double tubeCapacityInMl) {
+        //Ignore
+    }
+
     @Override
     public ValveDriver getMotorDriver() {
         if(!isCanPump()) {
@@ -50,6 +58,10 @@ public class Valve extends OnOffPump {
 
     }
 
+    public boolean isCanPumpUp() {
+        return this.isCanPump();
+    }
+
     @Override
     public boolean isCanPump() {
         return isHwPinsCompleted()
@@ -59,6 +71,6 @@ public class Valve extends OnOffPump {
 
     @Override
     protected boolean isCalibrationCompleted() {
-        return isCanPump() && this.getTubeCapacityInMl() != null;
+        return isCanPump();
     }
 }
