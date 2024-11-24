@@ -98,6 +98,8 @@
       </q-form>
       <q-linear-progress
         :value="progressBar"
+        :query="jobState?.runningState?.runInfinity"
+        :reverse="jobState?.runningState?.runInfinity"
         :animation-speed="300"
         color="green"
       />

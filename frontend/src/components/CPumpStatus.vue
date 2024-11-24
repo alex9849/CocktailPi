@@ -86,13 +86,13 @@
                           </q-badge>
                         </td>
                       </tr>
-                      <tr>
+                      <tr v-if="reversePumpSettings.enable">
                         <td>{{ $t('component.pump_status.reverse_pumping.overshoot') }}</td>
                         <td>
                           <q-badge>{{ reversePumpSettings?.settings?.overshoot }}%</q-badge>
                         </td>
                       </tr>
-                      <tr>
+                      <tr v-if="reversePumpSettings.enable">
                         <td>{{ $t('component.pump_status.reverse_pumping.timer') }}</td>
                         <td>
                           <q-badge>{{ reversePumpSettings?.settings?.autoPumpBackTimer }} min</q-badge>
@@ -145,7 +145,7 @@
                           </q-badge>
                         </td>
                       </tr>
-                      <tr>
+                      <tr v-if="loadCellSettings.enable">
                         <td>{{ $t('component.pump_status.load_cell.calibrated') }}</td>
                         <td>
                           <q-badge

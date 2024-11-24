@@ -42,7 +42,7 @@ public class ValveTask extends PumpTask {
     protected PumpJobState.RunningState genRunningState() {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
         runningState.setForward(true);
-        runningState.setRunInfinity(isRunInfinity() || isPumpUpDown());
+        runningState.setRunInfinity(true);
         runningState.setPercentage((int) (100 * (currentGrams - initialReadGrams) / (goalGrams - initialReadGrams)));
         runningState.setJobId(getJobId());
         return runningState;
