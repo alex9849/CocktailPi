@@ -827,6 +827,7 @@ export default {
     pump_setup_type_selector: {
       headline: 'Welchen Pumpentyp möchten Sie hinzufügen?',
       dc_pump: 'Gleichstrompumpe',
+      valve: 'Ventil',
       stepper_pump: 'Schrittmotorpumpe'
     },
     pump_card: {

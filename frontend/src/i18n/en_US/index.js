@@ -888,6 +888,7 @@ export default {
     pump_setup_type_selector: {
       headline: 'What type of pump do you want to add?',
       dc_pump: 'DC Pump',
+      valve: 'Valve',
       stepper_pump: 'Stepper Pump'
     },
     pump_card: {

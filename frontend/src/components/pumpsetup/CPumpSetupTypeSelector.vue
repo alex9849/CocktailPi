@@ -22,7 +22,7 @@
               <q-card-section class="text-center">
                 <q-icon size="lg" :name="mdiPipeValve"/>
                 <p class="text-bold">
-                  {{ $t('component.pump_setup_type_selector.dc_pump') }}
+                  {{ $t('component.pump_setup_type_selector.valve') }}
                 </p>
               </q-card-section>
             </q-card>
