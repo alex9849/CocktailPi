@@ -91,7 +91,7 @@ public abstract class Pump {
 
     public abstract boolean isCanPump();
 
-    protected abstract void resetDriver();
+    public abstract void shutdownDriver();
 
     public boolean isCanPumpUp() {
         return this.isCanPump() && this.tubeCapacityInMl != null;

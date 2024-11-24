@@ -22,9 +22,13 @@ public class ValveDto {
         @Setter
         @EqualsAndHashCode(callSuper = true)
         public static class Detailed extends OnOffPumpDto.Response.Detailed {
+            private boolean loadCell;
+            private boolean loadCellCalibrated;
 
             protected Detailed(Valve valve) {
                 super(valve);
+                loadCell = valve.getLoadCell() != null;
+                loadCellCalibrated = loadCell && valve.getLoadCell().isCalibrated();
             }
 
             @Override

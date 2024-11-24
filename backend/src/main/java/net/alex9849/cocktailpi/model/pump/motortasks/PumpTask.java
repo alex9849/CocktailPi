@@ -59,6 +59,10 @@ public abstract class PumpTask implements Runnable {
 
     protected abstract JobMetrics genJobMetrics();
 
+    protected boolean isPumpUpDown() {
+        return isPumpUpDown;
+    }
+
     protected long getTimeElapsed() {
         if(this.stopTime == null) {
             return System.currentTimeMillis() - this.startTime;
@@ -85,7 +89,7 @@ public abstract class PumpTask implements Runnable {
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
-            pump.getMotorDriver().shutdown();
+            pump.shutdownDriver();
             callback.run();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ public abstract class OnOffPump extends Pump {
 
     public void setPin(Pin pin) {
         this.pin = pin;
-        this.resetDriver();
+        this.shutdownDriver();
     }
 
     public Boolean isPowerStateHigh() {
@@ -21,7 +21,7 @@ public abstract class OnOffPump extends Pump {
 
     public void setIsPowerStateHigh(Boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
-        this.resetDriver();
+        this.shutdownDriver();
     }
 
     @Override

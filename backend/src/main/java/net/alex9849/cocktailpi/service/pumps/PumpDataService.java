@@ -5,10 +5,7 @@ import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
-import net.alex9849.cocktailpi.payload.dto.pump.DcPumpDto;
-import net.alex9849.cocktailpi.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailpi.payload.dto.pump.StepperPumpDto;
-import net.alex9849.cocktailpi.payload.dto.pump.ValveDto;
+import net.alex9849.cocktailpi.payload.dto.pump.*;
 import net.alex9849.cocktailpi.repository.PumpRepository;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.service.IngredientService;
@@ -59,7 +56,7 @@ public class PumpDataService {
         pump = pumpRepository.create(pump);
         //Turn off pump
         if(pump.isCanPump()) {
-            pump.getMotorDriver().shutdown();
+            pump.shutdownDriver();
         }
         return pump;
     }
@@ -83,13 +80,13 @@ public class PumpDataService {
         pumpRepository.update(pump);
         if (beforeUpdate.isCanPump() && pump.isCanPump()){
             if(!Objects.equals(beforeUpdate.getMotorDriver(), pump.getMotorDriver())) {
-                beforeUpdate.getMotorDriver().shutdown();
-                pump.getMotorDriver().shutdown();
+                beforeUpdate.shutdownDriver();
+                pump.shutdownDriver();
             }
         } else if (beforeUpdate.isCanPump()) {
-            beforeUpdate.getMotorDriver().shutdown();
+            beforeUpdate.shutdownDriver();
         } else if (pump.isCanPump()) {
-            pump.getMotorDriver().shutdown();
+            pump.shutdownDriver();
         }
         return pump;
     }
@@ -105,7 +102,7 @@ public class PumpDataService {
         }
         pumpRepository.delete(id);
         if(pump.isCanPump()) {
-            pump.getMotorDriver().shutdown();
+            pump.shutdownDriver();
         }
     }
 
@@ -160,12 +157,12 @@ public class PumpDataService {
         if(toPatch instanceof StepperPump stepperPump) {
             return fromDto((StepperPumpDto.Request.Create) patchPumpDto, stepperPump, removeFields);
         } else if(toPatch instanceof OnOffPump onOffPump) {
-            return fromDto((DcPumpDto.Request.Create) patchPumpDto, onOffPump, removeFields);
+            return fromDto((OnOffPumpDto.Request.Create) patchPumpDto, onOffPump, removeFields);
         }
         return toPatch;
     }
 
-    private Pump fromDto(DcPumpDto.Request.Create patchPumpDto, OnOffPump toPatchOnOff, Set<String> removeFields) {
+    private Pump fromDto(OnOffPumpDto.Request.Create patchPumpDto, OnOffPump toPatchOnOff, Set<String> removeFields) {
         if(toPatchOnOff == null) {
             return toPatchOnOff;
         }

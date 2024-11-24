@@ -191,10 +191,10 @@
               </q-input>
               <q-stepper-navigation class="q-gutter-sm">
                 <q-btn
-                  @click="$router.push({name: 'pumpmanagement'})"
+                  @click="$router.back()"
                   :disable="!currentLoadCell.enable"
                   color="positive"
-                  label="Finnish"
+                  label="Finish & Return"
                 />
                 <q-btn
                   @click="calibration.step = 1"
@@ -271,7 +271,7 @@ export default {
           this.loading = false
         })
     },
-    onClickSave (pushPumpManagement = false) {
+    onClickSave (pushBack = false) {
       this.saving = true
       PumpSettingsService.setLoadCell(this.form.enable ? this.form : null)
         .then(loadcell => {
@@ -279,8 +279,8 @@ export default {
             type: 'positive',
             message: this.$t('Loadcell updated')
           })
-          if (pushPumpManagement) {
-            this.$router.push({ name: 'pumpmanagement' })
+          if (pushBack) {
+            this.$router.back()
           } else {
             this.receiveLoadCellFromBackend(loadcell)
           }

@@ -12,7 +12,22 @@
           <h5>{{ $t('component.pump_setup_type_selector.headline') }}</h5>
         </div>
         <div class="row justify-center q-col-gutter-lg">
-          <div class="col-5">
+          <div class="col-4">
+            <q-card
+              class="clickable"
+              @click="onClickAddPump( 'valve')"
+              :class="{'disabled': loading}"
+            >
+              <q-inner-loading :showing="valveLoading" />
+              <q-card-section class="text-center">
+                <q-icon size="lg" :name="mdiPipeValve"/>
+                <p class="text-bold">
+                  {{ $t('component.pump_setup_type_selector.dc_pump') }}
+                </p>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-4">
             <q-card
               class="clickable"
               @click="onClickAddPump( 'dc')"
@@ -27,7 +42,7 @@
               </q-card-section>
             </q-card>
           </div>
-          <div class="col-5">
+          <div class="col-4">
             <q-card
               class="clickable"
               @click="onClickAddPump('stepper')"
@@ -52,7 +67,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mdiProgressClock, mdiPump } from '@quasar/extras/mdi-v5'
+import { mdiProgressClock, mdiPump, mdiPipeValve } from '@quasar/extras/mdi-v6'
 import PumpService from 'src/services/pump.service'
 
 export default defineComponent({
@@ -66,10 +81,12 @@ export default defineComponent({
   created () {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
+    this.mdiPipeValve = mdiPipeValve
   },
   data: () => {
     return {
       stepperLoading: false,
+      valveLoading: false,
       dcLoading: false
     }
   },
@@ -78,10 +95,18 @@ export default defineComponent({
       if (this.loading) {
         return
       }
-      if (type === 'dc') {
-        this.dcLoading = true
-      } else {
-        this.stepperLoading = true
+      switch (type) {
+        case 'dc':
+          this.dcLoading = true
+          break
+        case 'valve':
+          this.valveLoading = true
+          break
+        case 'stepper':
+          this.stepperLoading = true
+          break
+        default:
+          throw new Error('Unknown pump type: ' + type)
       }
       const newPump = {
         type
@@ -96,13 +121,14 @@ export default defineComponent({
           })
         }).finally(() => {
           this.stepperLoading = false
+          this.valveLoading = false
           this.dcLoading = false
         })
     }
   },
   computed: {
     loading () {
-      return this.stepperLoading || this.dcLoading
+      return this.stepperLoading || this.dcLoading || this.valveLoading
     }
   }
 })

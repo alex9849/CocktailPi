@@ -59,7 +59,7 @@ public class DcPump extends OnOffPump {
                 * this.getTimePerClInMs() / 10d);
     }
 
-    protected void resetDriver() {
+    public void shutdownDriver() {
         if(this.motorDriver != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;

@@ -806,6 +806,7 @@ export default {
     pump_card: {
       dc_pump: 'Gleichstrompumpe',
       stepper_pump: 'Schrittmotorpumpe',
+      valve: 'Valve',
       option_missing: '-- fehlt --',
       no_ingredient_placeholder: 'Keine',
       fallack_name: 'Pumpe #{id}',

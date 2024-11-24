@@ -1,7 +1,6 @@
 package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.motorlib.motor.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
@@ -24,7 +23,7 @@ public class StepperPump extends Pump {
 
     public void setEnablePin(Pin enablePin) {
         this.enablePin = enablePin;
-        resetDriver();
+        shutdownDriver();
     }
 
     public Pin getStepPin() {
@@ -33,7 +32,7 @@ public class StepperPump extends Pump {
 
     public void setStepPin(Pin stepPin) {
         this.stepPin = stepPin;
-        resetDriver();
+        shutdownDriver();
     }
 
     public Integer getStepsPerCl() {
@@ -42,7 +41,7 @@ public class StepperPump extends Pump {
 
     public void setStepsPerCl(Integer stepsPerCl) {
         this.stepsPerCl = stepsPerCl;
-        resetDriver();
+        shutdownDriver();
     }
 
     public Integer getMaxStepsPerSecond() {
@@ -51,7 +50,7 @@ public class StepperPump extends Pump {
 
     public void setMaxStepsPerSecond(Integer maxStepsPerSecond) {
         this.maxStepsPerSecond = maxStepsPerSecond;
-        resetDriver();
+        shutdownDriver();
     }
 
     public Integer getAcceleration() {
@@ -60,10 +59,10 @@ public class StepperPump extends Pump {
 
     public void setAcceleration(Integer acceleration) {
         this.acceleration = acceleration;
-        resetDriver();
+        shutdownDriver();
     }
 
-    protected void resetDriver() {
+    public void shutdownDriver() {
         if(this.stepperDriver != null) {
             this.stepperDriver.shutdown();
             this.stepperDriver = null;

@@ -17,16 +17,19 @@
           <q-icon
             v-if="pump.type === 'dc'"
             :name="mdiPump"
-          >
-          </q-icon>
+          />
           <q-icon
-            v-else
+            v-else-if="pump.type === 'stepper'"
           >
             <img
               src="~assets/icons/stepper-motor.svg"
               :style="{'-webkit-filter': color.cardHeaderDark ? 'invert(100%)' : 'none', 'filter': color.cardHeaderDark ? 'invert(100%)' : 'none'}"
             />
           </q-icon>
+          <q-icon
+            v-else
+            :name="mdiPipeValve"
+          />
           {{ printPumpType }}
         </p>
       </div>
@@ -237,7 +240,6 @@
         </div>
       </div>
     </q-card-section>
-    <!--div style="flex-grow: 1"></div-->
     <hr class="text-grey-2 q-ma-none">
     <q-card-section class="q-pa-sm">
       <div class="row q-gutter-lg justify-end">
@@ -298,8 +300,9 @@ import {
   mdiStop,
   mdiReply,
   mdiShare,
-  mdiSync
-} from '@quasar/extras/mdi-v5'
+  mdiSync,
+  mdiPipeValve
+} from '@quasar/extras/mdi-v6'
 import WebSocketService from '../services/websocket.service'
 import PumpService from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
@@ -410,6 +413,7 @@ export default {
     this.mdiReply = mdiReply
     this.mdiShare = mdiShare
     this.mdiSync = mdiSync
+    this.mdiPipeValve = mdiPipeValve
   },
   unmounted () {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
@@ -425,10 +429,15 @@ export default {
       return this.$t('common.pump_fallback_name', { id: this.pump.id })
     },
     printPumpType () {
-      if (this.pump.type === 'dc') {
-        return this.$t('component.pump_card.dc_pump')
+      switch (this.pump.type) {
+        case 'dc':
+          return this.$t('component.pump_card.dc_pump')
+        case 'stepper':
+          return this.$t('component.pump_card.stepper_pump')
+        case 'valve':
+          return this.$t('component.pump_card.valve')
       }
-      return this.$t('component.pump_card.stepper_pump')
+      return null
     },
     progressBar () {
       const abortVal = {

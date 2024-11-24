@@ -867,6 +867,7 @@ export default {
     pump_card: {
       dc_pump: 'DC Pump',
       stepper_pump: 'Stepper Pump',
+      valve: 'Valve',
       option_missing: '-- missing --',
       no_ingredient_placeholder: 'None',
       fallack_name: 'Pump #{id}',

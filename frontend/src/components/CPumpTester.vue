@@ -123,7 +123,10 @@
               </tr>
             </table>
           </div>
-          <div class="col-grow">
+          <div
+            class="col-grow"
+            v-if="pump.type !== 'valve'"
+          >
             <q-form
               @submit="clickApplyMlPumpMetric"
               class="row justify-center items-center q-col-gutter-sm"

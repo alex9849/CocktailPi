@@ -18,7 +18,7 @@ public class ValveDriver implements IMotor {
         this.running = null;
     }
 
-    void setOpen(boolean open) {
+    public void setOpen(boolean open) {
         running = open;
         if (running) {
             this.runPin.digitalWrite(this.runningState);

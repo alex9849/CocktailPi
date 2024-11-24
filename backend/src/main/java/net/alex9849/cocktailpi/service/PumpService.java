@@ -39,6 +39,9 @@ public class PumpService {
     @Autowired
     private CocktailOrderService cocktailOrderService;
 
+    public void broadCastPumpLayout() {
+        webSocketService.broadcastPumpLayout(getAllPumps());
+    }
 
     public List<Pump> getAllPumps() {
         return dataService.getAllPumps();
@@ -50,7 +53,7 @@ public class PumpService {
 
     public Pump createPump(Pump pump) {
         Pump newPump = dataService.createPump(pump);
-        webSocketService.broadcastPumpLayout(dataService.getAllPumps());
+        broadCastPumpLayout();
         return newPump;
     }
 
@@ -60,7 +63,7 @@ public class PumpService {
         }
         try {
             Pump updatedPump = dataService.updatePump(pump);
-            webSocketService.broadcastPumpLayout(getAllPumps());
+            broadCastPumpLayout();
             return updatedPump;
         } finally {
             lockService.releasePumpLock(pump.getId(), dataService);
@@ -73,7 +76,7 @@ public class PumpService {
         }
         try {
             dataService.deletePump(id);
-            webSocketService.broadcastPumpLayout(getAllPumps());
+            broadCastPumpLayout();
         } finally {
             lockService.releasePumpLock(id, dataService);
         }
@@ -119,7 +122,7 @@ public class PumpService {
                         maintenanceService.reschedulePumpBack();
                         if(advice.getType() == PumpAdvice.Type.PUMP_UP || advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                             dataService.updatePump(pump);
-                            webSocketService.broadcastPumpLayout(dataService.getAllPumps());
+                            broadCastPumpLayout();
                         }
                     } finally {
                         lockService.releasePumpLock(pump.getId(), maintenanceService);

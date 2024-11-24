@@ -180,7 +180,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
     private synchronized void stopAllPumps() {
         for(Pump pump : this.usedPumps) {
-            pump.getMotorDriver().shutdown();
+            pump.shutdownDriver();
         }
     }
 

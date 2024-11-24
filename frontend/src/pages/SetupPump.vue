@@ -100,6 +100,17 @@
             :is-power-state-high-error-msg="attrState.isPowerStateHigh.errorMsg"
             :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
           />
+          <c-pump-setup-valve-hardware-pins
+            v-if="pump.type === 'valve'"
+            :pin="pump.pin"
+            @update:pin="setPumpAttr('pin', pump.pin, $event, !$event)"
+            :pin-error-msg="attrState.pin.errorMsg"
+            :pin-loading="attrState.pin.loading"
+            :is-power-state-high="pump.isPowerStateHigh"
+            @update:is-power-state-high="setPumpAttr('isPowerStateHigh', pump.isPowerStateHigh, $event, $event === null)"
+            :is-power-state-high-error-msg="attrState.isPowerStateHigh.errorMsg"
+            :is-power-state-high-loading="attrState.isPowerStateHigh.loading"
+          />
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation class="q-gutter-sm">
@@ -159,8 +170,13 @@
             :time-per-cl-in-ms-error-msg-error-msg="attrState.timePerClInMs.errorMsg"
             :time-per-cl-in-ms-loading-loading="attrState.timePerClInMs.loading"
           />
+          <c-pump-setup-valve-calibration
+            v-if="pump.type === 'valve'"
+            :has-load-cell="pump.loadCell"
+            :has-load-cell-calibrated="pump.loadCellCalibrated"
+          />
           <q-separator
-            class="q-mb-md"
+            class="q-my-md"
           />
           <c-assistant-container>
             <template v-slot:explanations>
@@ -172,6 +188,15 @@
                 v-if="pump.type === 'dc'"
                 v-html="$t('page.pump_setup.calibration.motor_tester.dc_desc')"
               />
+              <div
+                v-if="pump.type === 'valve'"
+              >
+                <p>
+                  Here you can test your valve and load cell. Note that the amount of liquid pumped is measured by the load cell.
+                  This means that only liquid that has been poured into the glass counts towards the amount dispensed.
+                  Unlike stepper or DC pumps, liquid that remains in the tubing isn't counted.
+                </p>
+              </div>
             </template>
             <template v-slot:fields>
               <p class="text-subtitle1 text-center">
@@ -381,10 +406,14 @@ import CPumpSetupDcHardwarePins from 'components/pumpsetup/CPumpSetupDcHardwareP
 import CPumpSetupDcCalibration from 'components/pumpsetup/CPumpSetupDcCalibration.vue'
 import CQuestion from 'components/CQuestion.vue'
 import { mapGetters } from 'vuex'
+import CPumpSetupValveHardwarePins from 'components/pumpsetup/CPumpSetupValveHardwarePins.vue'
+import CPumpSetupValveCalibration from 'components/pumpsetup/CPumpSetupValveCalibration.vue'
 
 export default {
   name: 'SetupPump',
   components: {
+    CPumpSetupValveCalibration,
+    CPumpSetupValveHardwarePins,
     CQuestion,
     CPumpSetupDcCalibration,
     CPumpSetupDcHardwarePins,
@@ -421,7 +450,11 @@ export default {
         // DC-Motor
         pin: '',
         isPowerStateHigh: '',
-        timePerClInMs: ''
+        timePerClInMs: '',
+
+        // Valve
+        loadCellCalibrated: false,
+        loadCell: false
       },
       attrState: {
         name: {
@@ -502,7 +535,11 @@ export default {
         return
       }
     }
-    const stepper = pump.setupStage
+    let stepper = pump.setupStage
+    const stepperQuery = to.query?.stage
+    if (stepperQuery) {
+      stepper = Math.min(stepperQuery - 1, stepper)
+    }
     next(vm => {
       vm.pump = pump
       vm.stepper = stepper
@@ -597,6 +634,11 @@ export default {
     },
     calibrationComplete () {
       return this.pump.setupStage > 2
+    }
+  },
+  watch: {
+    stepper (val) {
+      this.$router.push({ name: this.$route.name, query: { stage: val + 1 } })
     }
   }
 }

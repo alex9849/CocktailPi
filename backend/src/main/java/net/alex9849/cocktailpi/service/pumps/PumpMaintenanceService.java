@@ -6,6 +6,7 @@ import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 import net.alex9849.cocktailpi.model.pump.motortasks.StepperMotorTask;
+import net.alex9849.cocktailpi.model.pump.motortasks.ValveTask;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
@@ -86,7 +87,7 @@ public class PumpMaintenanceService {
         for (Pump pump : pumps) {
             cancelByPumpId(pump.getId());
             if (pump.isCanPump()) {
-                pump.getMotorDriver().shutdown();
+                pump.shutdownDriver();
             }
         }
     }
@@ -231,6 +232,25 @@ public class PumpMaintenanceService {
             }
 
             pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, isPumpUpDown, stepsToRun, callback);
+            jobFuture = liveTasksExecutor.submit(pumpTask);
+
+        } else if (pump instanceof Valve valve) {
+            long mlToPump;
+            switch (advice.getType()) {
+                case PUMP_ML:
+                    mlToPump = advice.getAmount();
+                    break;
+                case PUMP_UP:
+                    mlToPump = valve.getTubeCapacityInMl().longValue();
+                    break;
+                case RUN:
+                    mlToPump = Long.MAX_VALUE;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Valve can't run perform advice: " + advice.getType());
+            }
+
+            pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, callback);
             jobFuture = liveTasksExecutor.submit(pumpTask);
 
         } else {

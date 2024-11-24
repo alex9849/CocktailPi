@@ -43,6 +43,7 @@ public class PumpDto {
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = DcPumpDto.Request.Create.class, name = "dc"),
+                @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
         public static class Create implements TubeCapacityInMl, PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields {
@@ -63,6 +64,7 @@ public class PumpDto {
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = DcPumpDto.Response.Detailed.class, name = "dc"),
+                @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
         public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,

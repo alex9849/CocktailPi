@@ -30,6 +30,8 @@ public class LoadCellService {
 
     @Autowired
     private GpioService gpioService;
+    @Autowired
+    private PumpService pumpService;
 
 
     public LoadCell calibrateLoadCellZero() {
@@ -99,6 +101,7 @@ public class LoadCellService {
             }
             checkedIfLoadCellPersisted = false;
             reloadLoadCell();
+            pumpService.broadCastPumpLayout();
         } finally {
             lockService.releaseGlobal(this);
         }
