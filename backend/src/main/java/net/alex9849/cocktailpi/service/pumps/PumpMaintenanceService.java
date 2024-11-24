@@ -241,7 +241,7 @@ public class PumpMaintenanceService {
                     mlToPump = advice.getAmount();
                     break;
                 case PUMP_UP:
-                    mlToPump = valve.getTubeCapacityInMl().longValue();
+                    mlToPump = Math.round(valve.getTubeCapacityInMl());
                     break;
                 case RUN:
                     mlToPump = Long.MAX_VALUE;

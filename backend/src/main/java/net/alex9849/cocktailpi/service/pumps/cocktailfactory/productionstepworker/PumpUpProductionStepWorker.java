@@ -30,7 +30,7 @@ public class PumpUpProductionStepWorker extends AbstractPumpingProductionStepWor
             } else if (pump instanceof StepperPump stepperPump) {
                 steppersToSteps.put(stepperPump, (long) (stepperPump.getStepsPerCl() * (stepperPump.getTubeCapacityInMl() / 10)));
             } else if (pump instanceof Valve valve) {
-                valvesToGrams.put(valve, valve.getTubeCapacityInMl().longValue());
+                valvesToGrams.put(valve, Math.round(valve.getTubeCapacityInMl()));
             } else {
                 throw new IllegalStateException("Unknown pump-type: " + pump.getClass().getName());
             }
