@@ -129,33 +129,39 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
             } catch (InterruptedException e) {
                 return;
             }
-            for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
-                Valve valve = entry.getKey();
-                ValveDriver driver = valve.getMotorDriver();
-                HX711 hx711 = valve.getLoadCell().getHX711();
+            try {
+                for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
+                    Valve valve = entry.getKey();
+                    ValveDriver driver = valve.getMotorDriver();
+                    HX711 hx711 = valve.getLoadCell().getHX711();
 
-                long initialReadGrams = hx711.read();
-                long currentGrams = hx711.read();
-                long goalGrams = entry.getValue();
+                    long initialReadGrams = hx711.read();
+                    long currentGrams = hx711.read();
+                    long goalGrams = entry.getValue();
 
-                long valveStartTime = System.currentTimeMillis();
-                driver.setOpen(true);
-                while (currentGrams < initialReadGrams + goalGrams) {
-                    currentGrams = hx711.read();
-                    if(Thread.currentThread().isInterrupted()) {
-                        driver.setOpen(false);
-                        valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
-                        return;
+                    long valveStartTime = System.currentTimeMillis();
+                    driver.setOpen(true);
+                    while (currentGrams < initialReadGrams + goalGrams) {
+                        try {
+                            currentGrams = hx711.read();
+                        } catch (InterruptedException e) {
+                            driver.setOpen(false);
+                            valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
+                            return;
+                        }
                     }
+                    long valveEndTime = System.currentTimeMillis();
+                    driver.setOpen(false);
+                    long valveTimeElapsed = valveEndTime - valveStartTime;
+                    if(entry.getValue() > 0) {
+                        valve.setTimePerClInMs((10 * valveTimeElapsed) / entry.getValue());
+                    }
+                    valvesToPumpedGrams.put(valve, goalGrams);
                 }
-                long valveEndTime = System.currentTimeMillis();
-                driver.setOpen(false);
-                long valveTimeElapsed = valveEndTime - valveStartTime;
-                if(entry.getValue() > 0) {
-                    valve.setTimePerClInMs((10 * valveTimeElapsed) / entry.getValue());
-                }
-                valvesToPumpedGrams.put(valve, goalGrams);
+            } catch (InterruptedException e) {
+                return;
             }
+
             onFinish();
         };
         runner = new Thread(runTask);

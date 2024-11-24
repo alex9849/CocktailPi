@@ -39,7 +39,11 @@ public class LoadCellService {
         if(loadCell == null) {
             throw new IllegalStateException("Load cell not configured!");
         }
-        loadCell.getHX711().calibrateEmpty();
+        try {
+            loadCell.getHX711().calibrateEmpty();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Reading load cell has been interrupted!", e);
+        }
         loadCell.setZeroForceValue(getLoadCell().getHX711().emptyValue);
         setLoadCell(loadCell);
         return getLoadCell();
@@ -50,7 +54,11 @@ public class LoadCellService {
         if(loadCell == null) {
             throw new IllegalStateException("Load cell not configured!");
         }
-        loadCell.getHX711().calibrateWeighted(referenceWeight);
+        try {
+            loadCell.getHX711().calibrateWeighted(referenceWeight);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Reading load cell has been interrupted!", e);
+        }
         loadCell.setReferenceForceValue(getLoadCell().getHX711().calibrationValue);
         loadCell.setReferenceForceValueWeight(referenceWeight);
         setLoadCell(loadCell);
@@ -65,7 +73,11 @@ public class LoadCellService {
         if(!loadCell.isCalibrated()) {
             throw new IllegalStateException("Load cell not calibrated!");
         }
-        return loadCell.getHX711().read();
+        try {
+            return loadCell.getHX711().read();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Reading load cell has been interrupted!", e);
+        }
     }
 
     public void setLoadCell(LoadCell loadCell) {

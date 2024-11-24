@@ -1,6 +1,5 @@
 package net.alex9849.cocktailpi.model.pump.motortasks;
 
-import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.sensor.HX711;
@@ -25,14 +24,18 @@ public class ValveTask extends PumpTask {
         ValveDriver driver = valve.getMotorDriver();
 
         HX711 hx711 = valve.getLoadCell().getHX711();
-        initialReadGrams = hx711.read();
-        currentGrams = hx711.read();
-
-        driver.setOpen(true);
-        while (currentGrams < initialReadGrams + goalGrams && !isCancelledExecutionThread()) {
+        try {
+            initialReadGrams = hx711.read();
             currentGrams = hx711.read();
+            driver.setOpen(true);
+            while ((isRunInfinity() || (currentGrams < initialReadGrams + goalGrams)) && !isCancelledExecutionThread()) {
+                currentGrams = hx711.read();
+            }
+        } catch (InterruptedException e) {
+            cancel();
         }
         driver.setOpen(false);
+
     }
 
     @Override
