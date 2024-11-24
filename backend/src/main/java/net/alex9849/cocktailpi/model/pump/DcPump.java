@@ -22,6 +22,11 @@ public class DcPump extends OnOffPump {
         this.timePerClInMs = timePerClInMs;
     }
 
+    @Override
+    public boolean isCanControlDirection() {
+        return true;
+    }
+
     public DCMotor getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");

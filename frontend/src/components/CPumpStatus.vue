@@ -2,7 +2,7 @@
   <q-card class="bg-card-body text-card-body">
     <q-card-section class="q-pa-none">
       <q-expansion-item
-        label="Status"
+        :label="$t('component.pump_status.headline')"
         header-class="bg-card-header text-card-header text-weight-medium"
         :default-opened="!$q.platform.is.mobile"
       >
@@ -17,7 +17,9 @@
                   class="bg-card-item-group text-card-item-group full-height"
                 >
                   <q-card-section class="q-py-xs bg-card-header text-card-header">
-                    <p class="text-weight-medium">Pumps</p>
+                    <p class="text-weight-medium">
+                      {{ $t('component.pump_status.pumps.headline') }}
+                    </p>
                   </q-card-section>
                   <q-separator/>
                   <q-card-section
@@ -26,21 +28,15 @@
                     <table class="table-no-stripes">
                       <tbody>
                       <tr>
-                        <td>Pumps installed:</td>
+                        <td>{{ $t('component.pump_status.pumps.pumps_installed') }}</td>
                         <td>
-                          <q-badge>0</q-badge>
+                          <q-badge>{{ nrPumps }}</q-badge>
                         </td>
                       </tr>
                       <tr>
-                        <td>Ingredients installed:</td>
+                        <td>{{ $t('component.pump_status.pumps.ingredients_installed') }}</td>
                         <td>
-                          <q-badge>0</q-badge>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Pumps running:</td>
-                        <td>
-                          <q-badge>0</q-badge>
+                          <q-badge>{{ nrIngredientsInstalled }}</q-badge>
                         </td>
                       </tr>
                       </tbody>
@@ -58,12 +54,14 @@
                     class="q-py-xs q-pr-xs bg-cyan-1 row items-center bg-card-header text-card-header"
                   >
                     <div class="col">
-                      <p class="text-weight-medium">Reverse pumping</p>
+                      <p class="text-weight-medium">
+                        {{ $t('component.pump_status.reverse_pumping.headline') }}
+                      </p>
                     </div>
                     <div class="col-shrink">
                       <q-btn
                         color="info"
-                        label="Configure"
+                        :label="$t('component.pump_status.configure_btn')"
                         :icon="mdiPencilOutline"
                         @click="$router.push({name: 'reversepumpsettings'})"
                         dense
@@ -79,27 +77,25 @@
                     <table class="table-no-stripes">
                       <tbody>
                       <tr>
-                        <td>Status:</td>
+                        <td>{{ $t('component.pump_status.reverse_pumping.status') }}</td>
                         <td>
-                          <q-badge>enabled</q-badge>
+                          <q-badge
+                            :class="{'bg-negative': !reversePumpSettings.enable , 'bg-positive': reversePumpSettings.enable}"
+                          >
+                            {{ reversePumpingStatus }}
+                          </q-badge>
                         </td>
                       </tr>
                       <tr>
-                        <td>Dir-Pin:</td>
+                        <td>{{ $t('component.pump_status.reverse_pumping.overshoot') }}</td>
                         <td>
-                          <q-badge>Local board / BCM 0</q-badge>
+                          <q-badge>{{ reversePumpSettings?.settings?.overshoot }}%</q-badge>
                         </td>
                       </tr>
                       <tr>
-                        <td>Overshoot:</td>
+                        <td>{{ $t('component.pump_status.reverse_pumping.timer') }}</td>
                         <td>
-                          <q-badge>10%</q-badge>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Timer:</td>
-                        <td>
-                          <q-badge>5 min</q-badge>
+                          <q-badge>{{ reversePumpSettings?.settings?.autoPumpBackTimer }} min</q-badge>
                         </td>
                       </tr>
                       </tbody>
@@ -117,12 +113,14 @@
                     class="q-py-xs q-pr-xs bg-cyan-1 row items-center bg-card-header text-card-header"
                   >
                     <div class="col">
-                      <p class="text-weight-medium">Load cell</p>
+                      <p class="text-weight-medium">
+                        {{ $t('component.pump_status.load_cell.headline') }}
+                      </p>
                     </div>
                     <div class="col-shrink">
                       <q-btn
                         color="info"
-                        label="Configure"
+                        :label="$t('component.pump_status.configure_btn')"
                         :icon="mdiPencilOutline"
                         @click="$router.push({name: 'loadcellsettings'})"
                         dense
@@ -138,27 +136,23 @@
                     <table class="table-no-stripes">
                       <tbody>
                       <tr>
-                        <td>Status:</td>
+                        <td>{{ $t('component.pump_status.load_cell.status') }}</td>
                         <td>
-                          <q-badge>{{ loadCellSettings.enable ? 'enabled' : 'disabled' }}</q-badge>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings.enable , 'bg-positive': loadCellSettings.enable}"
+                          >
+                            {{ loadCellStatus }}
+                          </q-badge>
                         </td>
                       </tr>
                       <tr>
-                        <td>CLK-Pin:</td>
+                        <td>{{ $t('component.pump_status.load_cell.calibrated') }}</td>
                         <td>
-                          <q-badge>Local board / BCM 0</q-badge>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>DT-Pin:</td>
-                        <td>
-                          <q-badge>Local board / BCM 1</q-badge>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Calibrated:</td>
-                        <td>
-                          <q-badge>{{ loadCellSettings.calibrated }}</q-badge>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings?.calibrated , 'bg-positive': loadCellSettings?.calibrated}"
+                          >
+                            {{ loadCellCalibrated }}
+                          </q-badge>
                         </td>
                       </tr>
                       </tbody>
@@ -177,6 +171,7 @@
 <script>
 import { mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import PumpSettingsService from 'src/services/pumpsettings.service'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CPumpStatus',
@@ -217,6 +212,38 @@ export default {
       PumpSettingsService.getReversePumpSettings().then(data => {
         this.reversePumpSettings = data
       })
+    }
+  },
+  computed: {
+    ...mapGetters({
+      pumps: 'pumpLayout/getLayout'
+    }),
+    nrPumps () {
+      return this.pumps.length
+    },
+    nrIngredientsInstalled () {
+      return this.pumps.filter(x => !!x.currentIngredient).length
+    },
+    reversePumpingStatus () {
+      if (this.reversePumpSettings?.enable) {
+        return this.$t('component.pump_status.reverse_pumping.status_enabled')
+      } else {
+        return this.$t('component.pump_status.reverse_pumping.status_disabled')
+      }
+    },
+    loadCellStatus () {
+      if (this.loadCellSettings?.enable) {
+        return this.$t('component.pump_status.load_cell.status_enabled')
+      } else {
+        return this.$t('component.pump_status.load_cell.status_disabled')
+      }
+    },
+    loadCellCalibrated () {
+      if (this.loadCellSettings?.calibrated) {
+        return this.$t('component.pump_status.load_cell.calibrated_yes')
+      } else {
+        return this.$t('component.pump_status.load_cell.calibrated_no')
+      }
     }
   }
 }

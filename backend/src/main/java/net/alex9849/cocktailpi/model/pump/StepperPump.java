@@ -79,6 +79,11 @@ public class StepperPump extends Pump {
         return this.acceleration != null && this.stepsPerCl != null && this.maxStepsPerSecond != null && this.getTubeCapacityInMl() != null;
     }
 
+    @Override
+    public boolean isCanControlDirection() {
+        return true;
+    }
+
     public AcceleratingStepper getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");

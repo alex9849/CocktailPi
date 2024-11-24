@@ -12,6 +12,11 @@ public class Valve extends OnOffPump {
     private ValveDriver motorDriver;
 
     @Override
+    public boolean isCanControlDirection() {
+        return false;
+    }
+
+    @Override
     public ValveDriver getMotorDriver() {
         if(!isCanPump()) {
             throw new IllegalStateException("Motor not ready for pumping!");

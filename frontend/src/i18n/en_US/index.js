@@ -703,6 +703,32 @@ export default {
         not_in_bar: 'not in bar'
       }
     },
+    pump_status: {
+      headline: 'Status',
+      configure_btn: 'Configure',
+      pumps: {
+        headline: 'Pumps',
+        pumps_installed: 'Pumps installed:',
+        ingredients_installed: 'Ingredients installed:'
+      },
+      reverse_pumping: {
+        headline: 'Reverse pumping',
+        status: 'Status:',
+        status_enabled: 'Enabled',
+        status_disabled: 'Disabled',
+        overshoot: 'Overshoot:',
+        timer: 'Timer:'
+      },
+      load_cell: {
+        headline: 'Load cell',
+        status: 'Status:',
+        status_enabled: 'Enabled',
+        status_disabled: 'Disabled',
+        calibrated: 'Calibrated:',
+        calibrated_yes: 'Yes',
+        calibrated_no: 'No'
+      }
+    },
     make_cocktail_occupied: {
       fulfilled_msg: 'Machine is not occupied!',
       occupied_cocktail_msg: 'Machine occupied! A cocktail ist getting prepared currently!',
@@ -869,6 +895,7 @@ export default {
       stepper_pump: 'Stepper Pump',
       valve: 'Valve',
       option_missing: '-- missing --',
+      load_cell_not_calibrated: '-- not calibrated --',
       no_ingredient_placeholder: 'None',
       fallack_name: 'Pump #{id}',
       attr: {
@@ -881,7 +908,8 @@ export default {
         steps_per_cl: 'Steps per Cl',
         acceleration: 'Acceleration',
         max_steps_per_second: 'Max steps per second',
-        step_pin: 'Step pin'
+        step_pin: 'Step pin',
+        load_cell: 'Load cell'
       },
       pumpStates: {
         ready: 'Ready',

@@ -55,6 +55,8 @@ public abstract class Pump {
         return isPumpedUp;
     }
 
+    public abstract boolean isCanControlDirection();
+
     public void setPumpedUp(boolean pumpedUp) {
         isPumpedUp = pumpedUp;
     }

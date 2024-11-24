@@ -26,6 +26,7 @@ public class PumpDto {
     private interface IsPumpedUp { boolean isPumpedUp(); }
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
     private interface Name { String getName(); }
+    private interface CanControlDirection { boolean isCanControlDirection(); }
 
     private interface IRemoveFields { Set<String> getRemoveFields(); }
 
@@ -68,7 +69,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
         public abstract static class Detailed implements Id, FillingLevelInMl, TubeCapacityInMl,
-                CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name {
+                CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name, CanControlDirection {
             long id;
             Double tubeCapacityInMl;
             int fillingLevelInMl;
@@ -77,6 +78,7 @@ public class PumpDto {
             String name;
             PumpDto.State state;
             int setupStage;
+            boolean canControlDirection;
 
             public Detailed(Pump pump) {
                 BeanUtils.copyProperties(pump, this);
@@ -90,6 +92,7 @@ public class PumpDto {
                     this.state = State.READY;
                 }
                 this.setupStage = pump.getSetupStage().level;
+                this.canControlDirection = pump.isCanControlDirection();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
                 }

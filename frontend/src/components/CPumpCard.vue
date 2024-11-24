@@ -240,6 +240,70 @@
         </div>
       </div>
     </q-card-section>
+    <q-card-section
+      v-if="showDetailed && pump.type === 'valve'"
+      class="q-py-sm row items-center"
+      style="flex-grow: 1"
+    >
+      <div class="col">
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.load_cell') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.enable_pin') }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.loadCellCalibrated ? 'OK' : null).class"
+            >
+              {{ getDisplayAttribute(pump.loadCellCalibrated ? 'OK' : $t('component.pump_card.load_cell_not_calibrated')).label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayPin(pump.pin).class"
+            >
+              {{ getDisplayPin(pump.pin).label }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.running_state') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.tube_capacity') }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).class"
+            >
+              {{ getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
+            >
+              {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </q-card-section>
     <hr class="text-grey-2 q-ma-none">
     <q-card-section class="q-pa-sm">
       <div class="row q-gutter-lg justify-end">
@@ -255,6 +319,7 @@
         <div class="col">
           <div class="row q-gutter-sm justify-end">
             <q-btn
+              v-if="pump.canControlDirection"
               no-caps
               round
               :icon="mdiReply"

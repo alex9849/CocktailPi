@@ -278,7 +278,7 @@ public class PumpMaintenanceService {
         automaticPumpBackTask = scheduledTasksExecutor.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpDataService.getAllPumps();
             for (Pump pump : allPumps) {
-                if (pump.isPumpedUp() && pump.isCanPumpUp()) {
+                if (pump.isPumpedUp() && pump.isCanPumpUp() && pump.isCanControlDirection()) {
                     if (!pumpLockService.testAndAcquirePumpLock(pump.getId(), this)) {
                         logger.info("Can't perform pump-back for pump with ID " + pump.getId() + ": Pump is currently occupied!");
                         continue;

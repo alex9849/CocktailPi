@@ -645,6 +645,32 @@ export default {
         not_in_bar: 'nicht in Bar'
       }
     },
+    pump_status: {
+      headline: 'Status',
+      configure_btn: 'Konfigurieren',
+      pumps: {
+        headline: 'Pumpen',
+        pumps_installed: 'Pumpen erstellt:',
+        ingredients_installed: 'Zutaten zugewiesen:'
+      },
+      reverse_pumping: {
+        headline: 'Rückwärtspumpen',
+        status: 'Status:',
+        status_enabled: 'Aktiviert',
+        status_disabled: 'Deaktiviert',
+        overshoot: 'Overshoot:',
+        timer: 'Timer:'
+      },
+      load_cell: {
+        headline: 'Wägezelle',
+        status: 'Status:',
+        status_enabled: 'Aktiviert',
+        status_disabled: 'Deaktiviert',
+        calibrated: 'Kalibriert',
+        calibrated_yes: 'Ja',
+        calibrated_no: 'Nein'
+      }
+    },
     make_cocktail_occupied: {
       fulfilled_msg: 'Maschine ist nicht belegt!',
       occupied_cocktail_msg: 'Maschine belegt! Ein Cocktail wird gerade zubereitet!',
@@ -808,6 +834,7 @@ export default {
       stepper_pump: 'Schrittmotorpumpe',
       valve: 'Valve',
       option_missing: '-- fehlt --',
+      load_cell_not_calibrated: '-- nicht kalibriert --',
       no_ingredient_placeholder: 'Keine',
       fallack_name: 'Pumpe #{id}',
       attr: {
@@ -820,7 +847,8 @@ export default {
         steps_per_cl: 'Schritte pro Cl',
         acceleration: 'Beschleunigung',
         max_steps_per_second: 'Maximale Schritte pro Sekunde',
-        step_pin: 'Schrittpin'
+        step_pin: 'Schrittpin',
+        load_cell: 'Wägezelle'
       },
       pumpStates: {
         ready: 'Bereit',
