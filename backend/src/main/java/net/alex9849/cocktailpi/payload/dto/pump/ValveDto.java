@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.payload.dto.pump;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import net.alex9849.cocktailpi.model.pump.Valve;
 
@@ -12,7 +13,14 @@ public class ValveDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
-        public static class Create extends OnOffPumpDto.Request.Create  {}
+        public static class Create extends OnOffPumpDto.Request.Create  {
+
+            @JsonIgnore
+            public Double getTubeCapacityInMl() {
+                return 1d;
+            }
+
+        }
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,6 +37,11 @@ public class ValveDto {
                 super(valve);
                 loadCell = valve.getLoadCell() != null;
                 loadCellCalibrated = loadCell && valve.getLoadCell().isCalibrated();
+            }
+
+            @JsonIgnore
+            public Double getTubeCapacityInMl() {
+                return 1d;
             }
 
             @Override

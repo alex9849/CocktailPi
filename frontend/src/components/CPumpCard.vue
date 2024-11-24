@@ -280,11 +280,6 @@
               {{ $t('component.pump_card.attr.running_state') }}
             </p>
           </div>
-          <div class="col-6">
-            <p class="text-weight-medium">
-              {{ $t('component.pump_card.attr.tube_capacity') }}
-            </p>
-          </div>
         </div>
         <div class="row">
           <div class="col-6">
@@ -292,13 +287,6 @@
               :class="getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).class"
             >
               {{ getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).label }}
-            </p>
-          </div>
-          <div class="col-6">
-            <p
-              :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
-            >
-              {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
             </p>
           </div>
         </div>
