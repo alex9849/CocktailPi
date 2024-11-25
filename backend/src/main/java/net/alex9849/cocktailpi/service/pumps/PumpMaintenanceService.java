@@ -58,6 +58,7 @@ public class PumpMaintenanceService {
     private Map<Long, PumpJobState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
     private IOutputPin directionPin;
+    private boolean loadCellOccupied = false;
 
     public synchronized void postConstruct() {
         configureReversePumpSettings(true);
@@ -174,7 +175,9 @@ public class PumpMaintenanceService {
                 || advice.getType() == PumpAdvice.Type.PUMP_DOWN;
 
         if (pump instanceof DcPump dcPump) {
-
+            if(loadCellOccupied) {
+                throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
+            }
             long timeToRun = 0;
             switch (advice.getType()) {
                 case PUMP_ML:
@@ -207,7 +210,9 @@ public class PumpMaintenanceService {
 
 
         } else if (pump instanceof StepperPump stepperPump) {
-
+            if(loadCellOccupied) {
+                throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
+            }
             long stepsToRun = 0;
             switch (advice.getType()) {
                 case PUMP_ML:
@@ -239,18 +244,34 @@ public class PumpMaintenanceService {
             switch (advice.getType()) {
                 case PUMP_ML:
                     mlToPump = advice.getAmount();
+                    if(anyPumpsRunning()) {
+                        throw new IllegalArgumentException("Load cell occupied! Other pumps are running currently.");
+                    }
                     break;
                 case PUMP_UP:
+                    if(anyPumpsRunning()) {
+                        throw new IllegalArgumentException("Load cell occupied! Other pumps are running currently.");
+                    }
                     mlToPump = Math.round(valve.getTubeCapacityInMl());
                     break;
                 case RUN:
+                    if(loadCellOccupied) {
+                        throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
+                    }
                     mlToPump = Long.MAX_VALUE;
                     break;
                 default:
                     throw new IllegalArgumentException("Valve can't run perform advice: " + advice.getType());
             }
 
-            pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, callback);
+            Runnable finalCallback = callback;
+            Runnable valveTaskCallback = () -> {
+                loadCellOccupied = false;
+                finalCallback.run();
+            };
+
+            loadCellOccupied = true;
+            pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, valveTaskCallback);
             jobFuture = liveTasksExecutor.submit(pumpTask);
 
         } else {
