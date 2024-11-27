@@ -50,9 +50,7 @@
             >
               <q-inner-loading :showing="stepperLoading" />
               <q-card-section class="text-center">
-                <q-icon size="lg">
-                  <img src="~assets/icons/stepper-motor.svg" />
-                </q-icon>
+                <q-icon size="lg" :name="stepperMotor"/>
                 <p class="text-bold">
                   {{ $t('component.pump_setup_type_selector.stepper_pump') }}
                 </p>
@@ -68,6 +66,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { mdiProgressClock, mdiPump, mdiPipeValve } from '@quasar/extras/mdi-v6'
+import { stepperMotor } from 'src/services/svg.service'
 import PumpService from 'src/services/pump.service'
 
 export default defineComponent({
@@ -82,6 +81,7 @@ export default defineComponent({
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiPipeValve = mdiPipeValve
+    this.stepperMotor = stepperMotor
   },
   data: () => {
     return {

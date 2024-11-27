@@ -35,17 +35,13 @@
                   :name="mdiPump"
                 />
                 <q-icon
-                  v-if="props.row.type === 'valve'"
+                  v-else-if="props.row.type === 'valve'"
                   :name="mdiPipeValve"
                 />
                 <q-icon
                   v-else
-                >
-                  <img
-                    src="~assets/icons/stepper-motor.svg"
-                    :style="stepperFilter(props.rowIndex + 1)"
-                  />
-                </q-icon>
+                  :name="stepperMotor"
+                />
                 {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
               </p>
             </q-td>
@@ -196,8 +192,7 @@ import CPumpTurnOnOffButton from 'components/CPumpTurnOnOffButton'
 import CPumpedUpIconButton from 'components/CPumpedUpIconButton'
 import WebsocketService from 'src/services/websocket.service'
 import { mdiProgressClock, mdiPump, mdiPipeValve } from '@quasar/extras/mdi-v6'
-import { colors } from 'quasar'
-import { isDark } from 'src/mixins/utils'
+import { stepperMotor } from 'src/services/svg.service'
 
 export default {
   name: 'CMakeCocktailDialogPumpEditor',
@@ -262,6 +257,7 @@ export default {
     this.mdiPump = mdiPump
     this.mdiProgressClock = mdiProgressClock
     this.mdiPipeValve = mdiPipeValve
+    this.stepperMotor = stepperMotor
   },
   unmounted () {
     for (const id of this.allPumpIds) {
@@ -269,22 +265,6 @@ export default {
     }
   },
   methods: {
-    stepperFilter (rowNr) {
-      let color
-      if (rowNr % 2 === 0) {
-        color = colors.getPaletteColor('card-body')
-      } else {
-        color = colors.getPaletteColor('card-body-table-odd-text')
-      }
-      if (isDark(color)) {
-        return {}
-      } else {
-        return {
-          '-webkit-filter': 'invert(100%)',
-          filter: 'invert(100%)'
-        }
-      }
-    },
     markPump (pump) {
       if (!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
         return false

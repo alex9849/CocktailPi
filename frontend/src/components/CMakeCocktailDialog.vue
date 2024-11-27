@@ -28,13 +28,23 @@
         </q-toolbar>
         <q-separator />
       </q-card-section>
-      <q-card-section class="page-content q-gutter-md">
+      <q-card-section class="page-content">
         <c-make-cocktail-dialog-amount-to-produce
           v-model:model-value="v.amountToProduce.$model"
           :recipe-default-glass="recipe.defaultGlass"
           :default-value-no-glass="250"
         />
         <div class="q-gutter-y-sm">
+          <q-btn
+            class="q-mt-md"
+            color="positive"
+            size="lg"
+            no-caps
+            @click="onMakeCocktail()"
+            :disable="!cocktailOrderable"
+          >
+            {{ $t('component.make_cocktail_dialog.order_btn_label', {nr: feasibilityReport.totalAmountInMl}) }}
+          </q-btn>
           <c-make-cocktail-dialog-ingredient-group-replacements
             v-if="feasibilityReportValid"
             :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"

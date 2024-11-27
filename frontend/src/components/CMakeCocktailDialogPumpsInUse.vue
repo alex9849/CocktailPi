@@ -1,5 +1,6 @@
 <template>
   <c-q-headlined-card
+    v-if="!hide"
     :card-class="cardClass"
     :headline="headline"
     :icon="icon"
@@ -60,6 +61,9 @@ export default {
     },
     icon () {
       return this.isFulfilled ? mdiCheck : mdiClose
+    },
+    hide () {
+      return this.isFulfilled
     }
   }
 }

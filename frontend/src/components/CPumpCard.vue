@@ -20,12 +20,8 @@
           />
           <q-icon
             v-else-if="pump.type === 'stepper'"
-          >
-            <img
-              src="~assets/icons/stepper-motor.svg"
-              :style="{'-webkit-filter': color.cardHeaderDark ? 'invert(100%)' : 'none', 'filter': color.cardHeaderDark ? 'invert(100%)' : 'none'}"
-            />
-          </q-icon>
+            :name="stepperMotor"
+          />
           <q-icon
             v-else
             :name="mdiPipeValve"
@@ -356,6 +352,7 @@ import {
   mdiSync,
   mdiPipeValve
 } from '@quasar/extras/mdi-v6'
+import { stepperMotor } from 'src/services/svg.service'
 import WebSocketService from '../services/websocket.service'
 import PumpService from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
@@ -467,6 +464,7 @@ export default {
     this.mdiShare = mdiShare
     this.mdiSync = mdiSync
     this.mdiPipeValve = mdiPipeValve
+    this.stepperMotor = stepperMotor
   },
   unmounted () {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
