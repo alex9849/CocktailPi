@@ -26,6 +26,7 @@
     </template>
   </c-assistant-container>
   <q-separator
+    :dark="color.cardBodyDark"
     class="q-mb-md"
   />
   <c-assistant-container>
@@ -53,6 +54,7 @@
     </template>
   </c-assistant-container>
   <q-separator
+    :dark="color.cardBodyDark"
     class="q-mb-md"
   />
   <c-assistant-container>

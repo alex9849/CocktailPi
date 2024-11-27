@@ -13,6 +13,7 @@
         <q-card
           flat
           bordered
+          :dark="color.cardBodyDark"
           class="clickable bg-card-body text-card-body"
           :class="{'disabled': orderDialog.loadingId !== null}"
           @click="openOrderDialog(iRecipe)"

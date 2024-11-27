@@ -2,6 +2,7 @@
   <q-card
     :style="{'backgroundColor': backgroundColor, 'color': textColor}"
     class="full-height"
+    :dark="isDark"
   >
     <q-card-section
       class="full-height q-pa-sm"

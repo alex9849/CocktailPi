@@ -18,6 +18,7 @@
       flat
       bordered
       header-nav
+      :dark="color.cardHeaderDark"
     >
       <q-step
         :caption="handleComplete ? $t('page.pump_setup.caption_complete') : $t('page.pump_setup.caption_optional')"
@@ -177,6 +178,7 @@
           />
           <q-separator
             class="q-my-md"
+            :dark="color.cardBodyDark"
           />
           <c-assistant-container>
             <template v-slot:explanations>
@@ -213,6 +215,7 @@
           </c-assistant-container>
           <q-separator
             class="q-my-md"
+            :dark="color.cardBodyDark"
             v-if="pump.type !== 'valve'"
           />
           <c-assistant-container
@@ -300,6 +303,7 @@
             </template>
           </c-assistant-container>
           <q-separator
+            :dark="color.cardBodyDark"
             class="q-my-md"
           />
           <c-assistant-container>
@@ -328,6 +332,7 @@
             </template>
           </c-assistant-container>
           <q-separator
+            :dark="color.cardBodyDark"
             class="q-my-md"
           />
           <c-assistant-container>

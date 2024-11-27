@@ -14,6 +14,7 @@
         <q-card
           class="q-my-md bg-card-header text-card-header"
           flat
+          :dark="color.cardHeaderDark"
           bordered
         >
           <q-card-section
@@ -23,7 +24,7 @@
             {{ $t('component.recipe_search_list.loading') }}
           </q-card-section>
           <q-inner-loading
-            :dark="color.cardBodyDark"
+            :dark="color.cardHeaderDark"
             showing
           >
             <q-spinner

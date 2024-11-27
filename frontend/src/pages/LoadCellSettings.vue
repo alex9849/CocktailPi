@@ -104,9 +104,11 @@
           bordered
         >
           <q-stepper
+            class="bg-card-item-group text-card-item-group"
             v-model:model-value="calibration.step"
             vertical
             header-nav
+            :dark="color.cardItemGroupDark"
           >
             <q-step
               title="Zero-Point Calibration (No Weight)"
@@ -143,6 +145,7 @@
                 label="Reference weight (in g)"
                 type="number"
                 filled
+                :dark="color.cardItemGroupDark"
                 outlined
               />
               <q-stepper-navigation>
@@ -175,6 +178,7 @@
                 readonly
                 borderless
                 label="Measurement"
+                :dark="color.cardItemGroupDark"
               >
                 <template v-slot:append>
                   <q-btn

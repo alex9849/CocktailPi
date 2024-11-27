@@ -26,6 +26,7 @@
     </template>
   </c-assistant-container>
   <q-separator
+    :dark="color.cardBodyDark"
     class="q-my-md"
   />
   <c-assistant-container>

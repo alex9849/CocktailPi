@@ -13,6 +13,7 @@
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
                 <q-card
+                  :dark="color.cardHeaderDark"
                   flat
                   bordered
                   class="bg-card-item-group text-card-item-group"
@@ -51,6 +52,7 @@
                 <q-card
                   flat
                   bordered
+                  :dark="color.cardHeaderDark"
                   class="bg-card-item-group text-card-item-group"
                 >
                   <q-card-section
@@ -273,6 +275,7 @@ import CGpioExpanderExpansionItem from 'components/gpiosetup/CGpioExpanderExpans
 import GpioService from 'src/services/gpio.service'
 import SystemService from 'src/services/system.service'
 import CQuestion from 'components/CQuestion.vue'
+import { mapGetters } from 'vuex'
 export default {
   name: 'GpioManagement',
   data: () => {
@@ -372,6 +375,11 @@ export default {
           this.deleteDialog.errorMessage = err?.response?.data?.message
         })
     }
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   }
 }
 

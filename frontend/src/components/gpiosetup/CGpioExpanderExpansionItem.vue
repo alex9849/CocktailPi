@@ -67,7 +67,7 @@
             <q-list separator class="bg-white">
               <q-item :key="pin.nr" v-for="pin in pins.pins">
                 <q-item-section>
-                  <div class="row items-center q-col-gutter-md">
+                  <div class="row items-center q-col-gutter-md text-black">
                     <div class="col-auto">
                       {{ pinPrefix }}{{ pin.nr }}
                     </div>
