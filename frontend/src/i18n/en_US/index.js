@@ -379,6 +379,38 @@ export default {
         headline: 'Appearance'
       }
     },
+    load_cell_mgmt: {
+      headline: 'Load cell',
+      hardware_settings: {
+        headline: 'Load cell settings',
+        enable_btn_label: 'Enable load cell',
+        clk_pin_label: 'CLK-Pin',
+        dt_pin_label: 'DT-Pin',
+        save_btn_label: 'Save',
+        save_and_return_btn_label: 'Save & Return'
+      },
+      calibration: {
+        headline: 'Calibration',
+        next_btn_label: 'Next',
+        zero_point: {
+          headline: 'Zero-Point Calibration (No Weight)',
+          text: 'Ensure the dispensing area is empty. Press the Next button to record the load cell\'s zero-point measurement.'
+        },
+        known_weight: {
+          headline: 'Known Weights Calibration',
+          text: 'Place a known weight on the dispensing area. Enter the weight value in grams using the input field. Press the Next button to record the load cell\'s response to the known weight.',
+          ref_weight_field_label: 'Reference weight (in g)'
+        },
+        validation: {
+          headline: 'Validation Test',
+          text: 'Place a random weight on the dispensing area. Press the Measure button to read the load cell\'s response to the known weight and compare it with the response.',
+          measure_btn_label: 'Measure',
+          measure_field_label: 'Measurement',
+          finish_and_return_btn_label: 'Finish & Return',
+          start_over_btn_label: 'Start over'
+        }
+      }
+    },
     simple_collections: {
       headline: 'Collections',
       no_collections_msg: 'No collections found!'

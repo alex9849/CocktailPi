@@ -374,6 +374,38 @@ export default {
         headline: 'Darstellung'
       }
     },
+    load_cell_mgmt: {
+      headline: 'Wägezelle',
+      hardware_settings: {
+        headline: 'Hardwareeinstellungen',
+        enable_btn_label: 'Wägezelle aktivieren',
+        clk_pin_label: 'CLK-Pin',
+        dt_pin_label: 'DT-Pin',
+        save_btn_label: 'Speichern',
+        save_and_return_btn_label: 'Speichern & Zurück'
+      },
+      calibration: {
+        headline: 'Kalibrierung',
+        next_btn_label: 'Weiter',
+        zero_point: {
+          headline: 'Nullpunkt-Kalibrierung (Ohne Gewicht)',
+          text: 'Stellen Sie sicher, dass der Ausgabebereich leer ist. Drücken Sie die Weiter-Taste, um die Nullpunktmessung der Wägezelle zu erfassen.'
+        },
+        known_weight: {
+          headline: 'Kalibrierung mit bekanntem Gewicht',
+          text: 'Platzieren Sie ein bekanntes Gewicht im Ausgabebereich. Geben Sie den Wert des Gewichts in Gramm in das Eingabefeld ein. Drücken Sie die Weiter-Taste, um die Wägezelle auf das bekannte Gewicht kalibrieren.',
+          ref_weight_field_label: 'Referenzgewicht (in g)'
+        },
+        validation: {
+          headline: 'Validierungstest',
+          text: 'Platzieren Sie ein beliebiges Gewicht im Abgabebereich. Drücken Sie die Messen-Taste, um die Wägezelle auszulesen und ausgeben zu lassen.',
+          measure_btn_label: 'Messen',
+          measure_field_label: 'Messung (in g)',
+          finish_and_return_btn_label: 'Beenden & Zurück',
+          start_over_btn_label: 'Neustart'
+        }
+      }
+    },
     simple_collections: {
       headline: 'Listen',
       no_collections_msg: 'Keine Listen gefunden!'

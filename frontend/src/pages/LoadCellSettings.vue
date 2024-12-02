@@ -1,13 +1,13 @@
 <template>
   <q-page class="page-content q-gutter-y-lg" padding>
-    <h5>Load cell</h5>
+    <h5>{{ $t('page.load_cell_mgmt.headline') }}</h5>
     <q-card
       class="q-pa-md bg-card-body text-card-body"
       flat
       bordered
     >
       <div class="row">
-        <p class="text-weight-medium q-pb-md">Load cell settings</p>
+        <p class="text-weight-medium q-pb-md">{{ $t('page.load_cell_mgmt.hardware_settings.headline') }}</p>
       </div>
       <q-form class="q-col-gutter-md">
         <div class="row">
@@ -17,7 +17,7 @@
             bordered
           >
             <q-toggle
-              label="Enable load cell"
+              :label="$t('page.load_cell_mgmt.hardware_settings.enable_btn_label')"
               color="green"
               v-model:model-value="v.form.enable.$model"
             />
@@ -31,7 +31,7 @@
                   bordered>
             <q-card-section>
               <div class="text-subtitle2">
-                CLK-Pin
+                {{ $t('page.load_cell_mgmt.hardware_settings.clk_pin_label') }}
               </div>
             </q-card-section>
             <q-separator/>
@@ -55,7 +55,7 @@
                   bordered>
             <q-card-section>
               <div class="text-subtitle2">
-                DT-Pin
+                {{ $t('page.load_cell_mgmt.hardware_settings.dt_pin_label') }}
               </div>
             </q-card-section>
             <q-separator/>
@@ -75,12 +75,12 @@
         <div class="row justify-end">
           <div class="q-gutter-sm">
             <q-btn
-              label="Save"
+              :label="$t('page.load_cell_mgmt.hardware_settings.save_btn_label')"
               color="green"
               @click="onClickSave()"
             />
             <q-btn
-              label="Save & Return"
+              :label="$t('page.load_cell_mgmt.hardware_settings.save_and_return_btn_label')"
               color="green"
               @click="onClickSave(true)"
             />
@@ -95,7 +95,7 @@
       bordered
     >
       <div class="row">
-        <p class="text-weight-medium q-pb-md">Calibration</p>
+        <p class="text-weight-medium q-pb-md">{{ $t('page.load_cell_mgmt.calibration.headline') }}</p>
       </div>
       <div class="row">
         <q-card
@@ -111,38 +111,36 @@
             :dark="color.cardItemGroupDark"
           >
             <q-step
-              title="Zero-Point Calibration (No Weight)"
+              :title="$t('page.load_cell_mgmt.calibration.zero_point.headline')"
               :disable="!currentLoadCell.enable"
               :name="1"
               :done="calibration.step > 1 || currentLoadCell.calibrated"
               :header-nav="calibration.step > 1 || currentLoadCell.calibrated"
             >
-              <p>Ensure the dispensing area is empty. Press the Next button to record the load cell's zero-point measurement.</p>
+              <p>{{ $t('page.load_cell_mgmt.calibration.zero_point.text') }}</p>
               <q-stepper-navigation>
                 <q-btn
                   @click="onClickCalibrateZero()"
                   color="primary"
-                  label="Next"
+                  :label="$t('page.load_cell_mgmt.calibration.next_btn_label')"
                   :disable="!currentLoadCell.enable"
                 />
               </q-stepper-navigation>
             </q-step>
             <q-step
-              title="Known Weight Calibration"
+              :title="$t('page.load_cell_mgmt.calibration.known_weight.headline')"
               :name="2"
               :done="calibration.step > 2 || currentLoadCell.calibrated"
               :header-nav="currentLoadCell.calibrated"
               :disable="!currentLoadCell.enable"
             >
               <p>
-                Place a known weight on the dispensing area.
-                Enter the weight value in grams using the input field.
-                Press the Next button to record the load cell's response to the known weight.
+                {{ $t('page.load_cell_mgmt.calibration.known_weight.text') }}
               </p>
               <q-input
                 v-model:model-value.number="calibration.referenceWeight"
                 :disable="!currentLoadCell.enable"
-                label="Reference weight (in g)"
+                :label="$t('page.load_cell_mgmt.calibration.known_weight.ref_weight_field_label')"
                 type="number"
                 filled
                 :dark="color.cardItemGroupDark"
@@ -153,20 +151,19 @@
                   :disable="calibration.referenceWeight < 1 || calibration.referenceWeight == null || !currentLoadCell.enable"
                   @click="onClickCalibrateReference(calibration.referenceWeight)"
                   color="primary"
-                  label="Next"
+                  :label="$t('page.load_cell_mgmt.calibration.next_btn_label')"
                 />
               </q-stepper-navigation>
             </q-step>
             <q-step
-              title="Validation Test"
+              :title="$t('page.load_cell_mgmt.calibration.validation.headline')"
               :name="3"
               :disable="!currentLoadCell.enable"
               :done="currentLoadCell.calibrated"
               :header-nav="currentLoadCell.calibrated"
             >
               <p>
-                Place a random weight on the dispensing area.
-                Press the Measure button to read the load cell's response to the known weight and compare it with the response.
+                {{ $t('page.load_cell_mgmt.calibration.validation.text') }}
               </p>
               <q-input
                 :model-value="formattedMeasurementWeight"
@@ -177,12 +174,12 @@
                 hide-bottom-space
                 readonly
                 borderless
-                label="Measurement"
+                :label="$t('page.load_cell_mgmt.calibration.validation.measure_field_label')"
                 :dark="color.cardItemGroupDark"
               >
                 <template v-slot:append>
                   <q-btn
-                    label="Measure"
+                    :label="$t('page.load_cell_mgmt.calibration.validation.measure_btn_label')"
                     color="primary"
                     outline
                     no-caps
@@ -198,14 +195,14 @@
                   @click="$router.back()"
                   :disable="!currentLoadCell.enable"
                   color="positive"
-                  label="Finish & Return"
+                  :label="$t('page.load_cell_mgmt.calibration.validation.finish_and_return_btn_label')"
                 />
                 <q-btn
                   @click="calibration.step = 1"
                   :disable="!currentLoadCell.enable"
                   color="negative"
                   :icon="mdiReload"
-                  label="Start over"
+                  :label="$t('page.load_cell_mgmt.calibration.validation.start_over_btn_label')"
                 />
               </q-stepper-navigation>
             </q-step>
