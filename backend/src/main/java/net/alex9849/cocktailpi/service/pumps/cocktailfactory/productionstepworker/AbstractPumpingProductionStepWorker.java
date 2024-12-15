@@ -144,20 +144,21 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
                     long valveStartTime = System.currentTimeMillis();
                     long valveEndTime = System.currentTimeMillis();
-                    while (currentGrams < initialReadGrams + goalGrams) {
-                        driver.setOpen(true);
+                    try {
                         while (currentGrams < initialReadGrams + goalGrams) {
-                            try {
+                            driver.setOpen(true);
+                            while (currentGrams < initialReadGrams + goalGrams) {
                                 currentGrams = hx711.read_once();
-                            } catch (InterruptedException e) {
-                                driver.setOpen(false);
-                                valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
-                                return;
                             }
+                            valveEndTime = System.currentTimeMillis();
+                            driver.setOpen(false);
+                            currentGrams = hx711.read(7);
                         }
-                        valveEndTime = System.currentTimeMillis();
+                    } catch (InterruptedException e) {
                         driver.setOpen(false);
                         currentGrams = hx711.read(7);
+                        valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
+                        return;
                     }
                     initialReadGrams = currentGrams;
                     long valveTimeElapsed = valveEndTime - valveStartTime;
