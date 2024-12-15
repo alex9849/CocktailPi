@@ -20,7 +20,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <pi4j.version>2.6.0</pi4j.version>
+        <pi4j.version>2.7.0</pi4j.version>
     </properties>
 
     <repositories>

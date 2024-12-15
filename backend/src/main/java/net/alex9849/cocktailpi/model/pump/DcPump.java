@@ -43,6 +43,16 @@ public class DcPump extends OnOffPump {
                 public boolean isHigh() {
                     return false;
                 }
+
+                @Override
+                public void digitalWriteAndWait(PinState state) {
+
+                }
+
+                @Override
+                public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {
+
+                }
             };
             motorDriver = new DCMotor(runPin, dirPin, isPowerStateHigh()? PinState.HIGH : PinState.LOW);
         }
@@ -65,7 +75,7 @@ public class DcPump extends OnOffPump {
     }
 
     public void shutdownDriver() {
-        if(this.motorDriver != null) {
+        if(this.isCanPump() && this.getMotorDriver() != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;
         }

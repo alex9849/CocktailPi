@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.utils;
 
 import lombok.SneakyThrows;
 import net.alex9849.cocktailpi.config.seed.SeedDataInserter;
+import net.alex9849.cocktailpi.service.PumpService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -22,6 +23,9 @@ public class SpringUtility implements ApplicationContextAware {
     @Autowired
     private SeedDataInserter seedDataInserter;
 
+    @Autowired
+    private PumpService pumpService;
+
 
     @Autowired
     private static ApplicationContext applicationContext;
@@ -31,6 +35,7 @@ public class SpringUtility implements ApplicationContextAware {
         this.applicationContext = applicationContext;
         flyway.migrate();
         seedDataInserter.migrate();
+        pumpService.stopAllPumps();
     }
 
     /*

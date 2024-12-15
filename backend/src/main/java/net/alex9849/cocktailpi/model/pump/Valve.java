@@ -25,7 +25,7 @@ public class Valve extends OnOffPump {
     }
 
     public Double getTubeCapacityInMl() {
-        return 1d;
+        return 3d;
     }
 
     public void setTubeCapacityInMl(Double tubeCapacityInMl) {
@@ -46,7 +46,7 @@ public class Valve extends OnOffPump {
 
     @Override
     public void shutdownDriver() {
-        if(this.motorDriver != null) {
+        if(this.isCanPump() && this.getMotorDriver() != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;
         }

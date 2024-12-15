@@ -38,8 +38,6 @@ public class PinUtils {
             DigitalOutputConfig config = DigitalOutput
                     .newConfigBuilder(pi4J)
                     .address(address)
-                    .shutdown(DigitalState.LOW)
-                    .initial(DigitalState.LOW)
                     .build();
 
             if(!pi4J.registry().exists(config.id())) {

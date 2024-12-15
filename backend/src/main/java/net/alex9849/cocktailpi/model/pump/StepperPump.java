@@ -63,7 +63,7 @@ public class StepperPump extends Pump {
     }
 
     public void shutdownDriver() {
-        if(this.stepperDriver != null) {
+        if(this.isCanPump() && this.getMotorDriver() != null) {
             this.stepperDriver.shutdown();
             this.stepperDriver = null;
         }
@@ -101,6 +101,16 @@ public class StepperPump extends Pump {
                 @Override
                 public boolean isHigh() {
                     return false;
+                }
+
+                @Override
+                public void digitalWriteAndWait(PinState state) {
+
+                }
+
+                @Override
+                public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {
+
                 }
             };
 
