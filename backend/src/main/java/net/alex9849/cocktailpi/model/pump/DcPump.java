@@ -75,7 +75,7 @@ public class DcPump extends OnOffPump {
     }
 
     public void shutdownDriver() {
-        if(this.isCanPump() && this.getMotorDriver() != null) {
+        if(this.motorDriver != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;
         }

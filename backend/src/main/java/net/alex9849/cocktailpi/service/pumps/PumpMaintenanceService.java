@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional
@@ -58,7 +59,7 @@ public class PumpMaintenanceService {
     private Map<Long, PumpJobState> lastState = new HashMap<>();
     private Direction direction = Direction.FORWARD;
     private IOutputPin directionPin;
-    private boolean loadCellOccupied = false;
+    private AtomicInteger loadCellOccupied = new AtomicInteger(0);
 
     public synchronized void postConstruct() {
         configureReversePumpSettings(true);
@@ -88,7 +89,7 @@ public class PumpMaintenanceService {
         for (Pump pump : pumps) {
             cancelByPumpId(pump.getId());
             if (pump.isCanPump()) {
-                pump.shutdownDriver();
+                pump.getMotorDriver().shutdown();
             }
         }
     }
@@ -175,7 +176,8 @@ public class PumpMaintenanceService {
                 || advice.getType() == PumpAdvice.Type.PUMP_DOWN;
 
         if (pump instanceof DcPump dcPump) {
-            if(loadCellOccupied) {
+            if(loadCellOccupied.get() > 0) {
+                callback.run();
                 throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
             }
             long timeToRun = 0;
@@ -210,7 +212,8 @@ public class PumpMaintenanceService {
 
 
         } else if (pump instanceof StepperPump stepperPump) {
-            if(loadCellOccupied) {
+            if(loadCellOccupied.get() > 0) {
+                callback.run();
                 throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
             }
             long stepsToRun = 0;
@@ -241,36 +244,47 @@ public class PumpMaintenanceService {
 
         } else if (pump instanceof Valve valve) {
             long mlToPump;
+            boolean requireLoadCell = false;
             switch (advice.getType()) {
                 case PUMP_ML:
-                    mlToPump = advice.getAmount();
                     if(anyPumpsRunning()) {
+                        callback.run();
                         throw new IllegalArgumentException("Load cell occupied! Other pumps are running currently.");
                     }
+                    requireLoadCell = true;
+                    mlToPump = advice.getAmount();
                     break;
                 case PUMP_UP:
                     if(anyPumpsRunning()) {
+                        callback.run();
                         throw new IllegalArgumentException("Load cell occupied! Other pumps are running currently.");
                     }
+                    requireLoadCell = true;
                     mlToPump = Math.round(valve.getTubeCapacityInMl());
                     break;
                 case RUN:
-                    if(loadCellOccupied) {
+                    if(loadCellOccupied.get() > 0) {
+                        callback.run();
                         throw new IllegalArgumentException("Load cell occupied! A valve is running that requires genuine load cell data!");
                     }
                     mlToPump = Long.MAX_VALUE;
                     break;
                 default:
+                    callback.run();
                     throw new IllegalArgumentException("Valve can't run perform advice: " + advice.getType());
             }
 
             Runnable finalCallback = callback;
+            boolean finalRequireLoadCell = requireLoadCell;
             Runnable valveTaskCallback = () -> {
-                loadCellOccupied = false;
+                if(finalRequireLoadCell) {
+                    loadCellOccupied.decrementAndGet();
+                }
                 finalCallback.run();
             };
-
-            loadCellOccupied = true;
+            if(requireLoadCell) {
+                loadCellOccupied.incrementAndGet();
+            }
             pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, valveTaskCallback);
             jobFuture = liveTasksExecutor.submit(pumpTask);
 

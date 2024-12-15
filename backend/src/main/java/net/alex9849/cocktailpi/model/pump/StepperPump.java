@@ -63,7 +63,7 @@ public class StepperPump extends Pump {
     }
 
     public void shutdownDriver() {
-        if(this.isCanPump() && this.getMotorDriver() != null) {
+        if(this.stepperDriver != null) {
             this.stepperDriver.shutdown();
             this.stepperDriver = null;
         }

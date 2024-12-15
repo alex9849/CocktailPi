@@ -46,7 +46,7 @@ public class Valve extends OnOffPump {
 
     @Override
     public void shutdownDriver() {
-        if(this.isCanPump() && this.getMotorDriver() != null) {
+        if(this.motorDriver != null) {
             this.motorDriver.shutdown();
             this.motorDriver = null;
         }
