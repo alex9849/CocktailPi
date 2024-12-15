@@ -115,11 +115,12 @@
               :disable="!currentLoadCell.enable"
               :name="1"
               :done="calibration.step > 1 || currentLoadCell.calibrated"
-              :header-nav="calibration.step > 1 || currentLoadCell.calibrated"
+              :header-nav="(calibration.step > 1 || currentLoadCell.calibrated) && !loadingCalibration"
             >
               <p>{{ $t('page.load_cell_mgmt.calibration.zero_point.text') }}</p>
               <q-stepper-navigation>
                 <q-btn
+                  :loading="loadingCalibration"
                   @click="onClickCalibrateZero()"
                   color="primary"
                   :label="$t('page.load_cell_mgmt.calibration.next_btn_label')"
@@ -131,7 +132,7 @@
               :title="$t('page.load_cell_mgmt.calibration.known_weight.headline')"
               :name="2"
               :done="calibration.step > 2 || currentLoadCell.calibrated"
-              :header-nav="currentLoadCell.calibrated"
+              :header-nav="currentLoadCell.calibrated && !loadingCalibration"
               :disable="!currentLoadCell.enable"
             >
               <p>
@@ -139,7 +140,7 @@
               </p>
               <q-input
                 v-model:model-value.number="calibration.referenceWeight"
-                :disable="!currentLoadCell.enable"
+                :disable="!currentLoadCell.enable || loadingCalibration"
                 :label="$t('page.load_cell_mgmt.calibration.known_weight.ref_weight_field_label')"
                 type="number"
                 filled
@@ -151,6 +152,7 @@
                   :disable="calibration.referenceWeight < 1 || calibration.referenceWeight == null || !currentLoadCell.enable"
                   @click="onClickCalibrateReference(calibration.referenceWeight)"
                   color="primary"
+                  :loading="loadingCalibration"
                   :label="$t('page.load_cell_mgmt.calibration.next_btn_label')"
                 />
               </q-stepper-navigation>
@@ -160,7 +162,7 @@
               :name="3"
               :disable="!currentLoadCell.enable"
               :done="currentLoadCell.calibrated"
-              :header-nav="currentLoadCell.calibrated"
+              :header-nav="currentLoadCell.calibrated && !loadingCalibration"
             >
               <p>
                 {{ $t('page.load_cell_mgmt.calibration.validation.text') }}
@@ -184,6 +186,7 @@
                     outline
                     no-caps
                     size="md"
+                    :loading="loadingMeasure"
                     :icon="mdiReload"
                     :disable="!currentLoadCell.enable"
                     @click="onClickMeasureLoadCell()"
@@ -238,6 +241,8 @@ export default {
     return {
       saving: false,
       loading: true,
+      loadingMeasure: false,
+      loadingCalibration: false,
       calibration: {
         step: 3,
         referenceWeight: null,
@@ -292,23 +297,35 @@ export default {
         })
     },
     onClickCalibrateZero () {
+      this.loadingCalibration = true
       PumpSettingsService.calibrateLoadCellZero()
         .then(loadcell => {
           this.receiveLoadCellFromBackend(loadcell)
           this.calibration.step = 2
         })
+        .finally(() => {
+          this.loadingCalibration = false
+        })
     },
     onClickCalibrateReference (knownWeight) {
+      this.loadingCalibration = true
       PumpSettingsService.calibrateLoadCellRefWeight(knownWeight)
         .then(loadcell => {
           this.receiveLoadCellFromBackend(loadcell)
           this.calibration.step = 3
         })
+        .finally(() => {
+          this.loadingCalibration = false
+        })
     },
     onClickMeasureLoadCell () {
+      this.loadingMeasure = true
       PumpSettingsService.readLoadCell()
         .then(measurement => {
           this.calibration.measureWeight = measurement
+        })
+        .finally(() => {
+          this.loadingMeasure = false
         })
     }
   },
