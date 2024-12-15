@@ -27,14 +27,17 @@ public class ValveTask extends PumpTask {
         try {
             initialReadGrams = hx711.read();
             currentGrams = hx711.read();
-            driver.setOpen(true);
             while ((isRunInfinity() || (currentGrams < initialReadGrams + goalGrams)) && !isCancelledExecutionThread()) {
-                currentGrams = hx711.read();
+                driver.setOpen(true);
+                while ((isRunInfinity() || (currentGrams < initialReadGrams + goalGrams)) && !isCancelledExecutionThread()) {
+                    currentGrams = hx711.read_once();
+                }
+                driver.setOpen(false);
+                currentGrams = hx711.read(7);
             }
         } catch (InterruptedException e) {
             cancel();
         }
-        driver.setOpen(false);
 
     }
 

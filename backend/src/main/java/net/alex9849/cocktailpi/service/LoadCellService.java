@@ -40,7 +40,7 @@ public class LoadCellService {
             throw new IllegalStateException("Load cell not configured!");
         }
         try {
-            loadCell.getHX711().calibrateEmpty();
+            loadCell.getHX711().calibrateEmpty(7);
         } catch (InterruptedException e) {
             throw new RuntimeException("Reading load cell has been interrupted!", e);
         }
@@ -55,7 +55,7 @@ public class LoadCellService {
             throw new IllegalStateException("Load cell not configured!");
         }
         try {
-            loadCell.getHX711().calibrateWeighted(referenceWeight);
+            loadCell.getHX711().calibrateWeighted(referenceWeight, 7);
         } catch (InterruptedException e) {
             throw new RuntimeException("Reading load cell has been interrupted!", e);
         }
@@ -74,7 +74,7 @@ public class LoadCellService {
             throw new IllegalStateException("Load cell not calibrated!");
         }
         try {
-            return loadCell.getHX711().read();
+            return loadCell.getHX711().read(7);
         } catch (InterruptedException e) {
             throw new RuntimeException("Reading load cell has been interrupted!", e);
         }
