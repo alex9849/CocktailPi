@@ -947,8 +947,8 @@ export default {
           on_repeat_label: 'På gentagelse'
         },
         python: {
-          desc: 'Udfører en python-fil. Docker-billedet bruger python 3. Du kan også se konsoloutput af dit program i realtid.',
-          install_lib_tip: 'Installer nye biblioteker ved at bruge: <b>pip3 install &#60;bibliotek&#62;</b>',
+          desc: 'Kører en Python-fil. Python 3 bruges. Du kan også se konsoloutput af dit program i realtid.',
+          install_lib_tip: 'Nye biblioteker kan installeres med <b>&#60;rodmappe&#62;/venv/bin/pip3 install &#60;bibliotek&#62;</b>, hvor "rodmappe" svarer til mappen, hvor cocktailpi jar-filen ligger. Bemærk venligst, at venv-mappen først oprettes, efter at Python-bibliotekerne er blevet scannet ved hjælp af knappen nedenfor, eller et Python-script er blevet kørt via hændelsessystemet.',
           fetching_libs: 'Henter biblioteker',
           lib_list_lib: 'Bibliotek',
           lib_list_version: 'Version',

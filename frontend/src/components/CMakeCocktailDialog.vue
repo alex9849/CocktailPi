@@ -26,7 +26,9 @@
                  v-close-popup
           />
         </q-toolbar>
-        <q-separator />
+        <q-separator
+          :dark="color.backgroundDark"
+        />
       </q-card-section>
       <q-card-section class="page-content">
         <c-make-cocktail-dialog-amount-to-produce

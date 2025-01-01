@@ -1105,9 +1105,9 @@ export default {
           on_repeat_label: 'On repeat'
         },
         python: {
-          desc: 'Executes a python file. The docker image uses python 3. ' +
+          desc: 'Executes a python file using python 3. ' +
             'You can also view the console output of your program in real-time.',
-          install_lib_tip: 'Install new libraries by using: <b>pip3 install &#60;library&#62;</b>',
+          install_lib_tip: 'New libraries can be installed using <b>&#60;root folder&#62;/venv/bin/pip3 install &#60;library&#62;</b>, where "root folder" corresponds to the folder containing the cocktailpi jar file. Please note that the venv folder is only created after the Python libraries have been scanned using the button below or a Python script has been executed via the event system.',
           fetching_libs: 'Fetching Libraries',
           lib_list_lib: 'Library',
           lib_list_version: 'Version',

@@ -1027,7 +1027,7 @@ export default {
         python: {
           desc: 'Führt eine Python-Datei aus. Es wird Python 3 verwendet. ' +
             'Die Konsolenausgabe Ihres Programms wird in Echtzeit anzeigt.',
-          install_lib_tip: 'Neue Bibliotheken können mit <b>pip3 install &#60;Bibliothek&#62;</b> installiert werden.',
+          install_lib_tip: 'Neue Bibliotheken können mit <b>&#60;Stammordner&#62;/venv/bin/pip3 install &#60;Bibliothek&#62;</b> installiert werden, wobei "Stammordner" dem Ordner entspricht, in welchem die cocktailpi-jar-datei liegt. Bitte beachte, dass der venv-Ordner erst stellet wird, nachdem die python Libraries mit dem Button unterhalb ausgelesen wurden, oder ein Pythonskript über das Eventsystem ausgeführt wurde.',
           fetching_libs: 'Bibliotheken laden',
           lib_list_lib: 'Bibliothek',
           lib_list_version: 'Version',
