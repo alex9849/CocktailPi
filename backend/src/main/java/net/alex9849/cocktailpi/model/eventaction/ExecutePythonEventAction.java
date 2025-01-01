@@ -1,8 +1,12 @@
 package net.alex9849.cocktailpi.model.eventaction;
 
 import jakarta.persistence.DiscriminatorValue;
+import net.alex9849.cocktailpi.utils.SpringUtility;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 @DiscriminatorValue("ExecPy")
@@ -31,7 +35,11 @@ public class ExecutePythonEventAction extends FileEventAction {
             writer.close();
             reader.close();
 
-            process = Runtime.getRuntime().exec("python3 -u " + file.getAbsolutePath());
+            File cocktailPiDir = new File(System.getProperty("java.class.path")).getAbsoluteFile().getParentFile();
+            File vEnvDir = new File(cocktailPiDir, "venv");
+            SpringUtility.createPythonVenv();
+
+            process = Runtime.getRuntime().exec(vEnvDir.getAbsolutePath() + "/bin/python3 -u " + file.getAbsolutePath());
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errorInput = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -42,12 +50,10 @@ public class ExecutePythonEventAction extends FileEventAction {
             process.waitFor();
             file.delete();
         } catch (InterruptedException e) {
-            if(process != null && process.isAlive()) {
+            if (process.isAlive()) {
                 process.destroy();
             }
-            if(file != null) {
-                file.delete();
-            }
+            file.delete();
         } catch (IOException e) {
             e.printStackTrace();
             runningAction.addLog(e);

@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.I2cAddress;
@@ -19,10 +20,12 @@ import net.alex9849.cocktailpi.payload.response.VersionResponse;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailpi.utils.PinUtils;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
@@ -84,7 +87,11 @@ public class SystemService {
 
     public List<PythonLibraryInfo> getInstalledPythonLibraries() throws IOException {
         List<PythonLibraryInfo> pythonLibraries = new ArrayList<>();
-        Process process = Runtime.getRuntime().exec("pip3 list");
+        File cocktailPiDir = new File(System.getProperty("java.class.path")).getAbsoluteFile().getParentFile();
+        File vEnvDir = new File(cocktailPiDir, "venv");
+        SpringUtility.createPythonVenv();
+
+        Process process = Runtime.getRuntime().exec(vEnvDir.getAbsolutePath() + "/bin/pip3 list");
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String s = null;
         int line = 1;
