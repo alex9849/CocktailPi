@@ -149,6 +149,9 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                             driver.setOpen(true);
                             while (currentGrams < initialReadGrams + goalGrams) {
                                 currentGrams = hx711.read_once();
+                                if(Thread.interrupted()) {
+                                    throw new InterruptedException();
+                                }
                             }
                             valveEndTime = System.currentTimeMillis();
                             driver.setOpen(false);
