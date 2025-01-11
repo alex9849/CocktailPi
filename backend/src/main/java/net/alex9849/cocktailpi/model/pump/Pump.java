@@ -16,6 +16,15 @@ public abstract class Pump {
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
     private String name;
+    private Integer milliWatt;
+
+    public Integer getMilliWatt() {
+        return milliWatt;
+    }
+
+    public void setMilliWatt(Integer milliWatt) {
+        this.milliWatt = milliWatt;
+    }
 
     public long getId() {
         return id;
