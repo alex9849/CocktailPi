@@ -517,6 +517,8 @@ export default {
         headline: 'Kalibrieren Sie Ihre Pumpe',
         tube_capacity_label: 'Schlauchkapazität (in ml)',
         tube_capacity_desc: 'Die Schlauchkapazität bestimmt, wie viel Flüssigkeit benötigt wird, um den Schlauch, der den Flüssigkeitsbehälter mit dem Ausgabeteil Ihrer Cocktailmaschine verbindet, zu füllen. Diese Metrik wird verwendet, um die Schläuche mit Flüssigkeit zu füllen, bevor tatsächlich ein neuer Drink hergestellt wird. Sie wird auch verwendet, um die Schläuche zu entleeren (die Flüssigkeit zurück in den Behälter zu pumpen), wenn die Maschine längere Zeit nicht benutzt wurde.',
+        milliwatt_label: 'Milliwatt (in mW)',
+        milliwatt_desc: 'Wie viel Leistung benötigt diese Pumpe? CocktailPi lässt, nur so viele Pumpen gleichzeitig laufen, wie das Netzteil gleichzeitig versorgen kann.',
         motor_tester: {
           headline: 'Motortester',
           disable_reason_parameter_missing: 'Erforderlicher Pumpenkonfigurationsparameter fehlt!',

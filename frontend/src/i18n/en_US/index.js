@@ -536,6 +536,9 @@ export default {
           'accurately fill your hoses with liquid before actually producing a new drink. ' +
           'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
           'been used for a while.',
+        milliwatt_label: 'Milliwatt (in mW)',
+        milliwatt_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
+          'concurrently as the power supply can power at the same time.',
         motor_tester: {
           headline: 'Motor tester',
           disable_reason_parameter_missing: 'Required pump-config parameter missing!',
@@ -933,7 +936,7 @@ export default {
       fallack_name: 'Pump #{id}',
       attr: {
         ingredient: 'Ingredient',
-        filling_level: 'filling level',
+        filling_level: 'Filling level',
         time_per_cl: 'Time per Cl',
         enable_pin: 'Enable pin',
         running_state: 'Running state',

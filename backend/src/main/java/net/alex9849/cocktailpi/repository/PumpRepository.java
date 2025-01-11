@@ -32,7 +32,7 @@ public class PumpRepository extends JdbcDaoSupport {
                     "completed, tube_capacity, current_ingredient_id, filling_level_in_ml, " +
                     "is_pumped_up, milli_watt, oo_pin_board, oo_pin_nr, time_per_cl_in_ms, is_power_state_high, acceleration, " +
                     "step_pin_board, step_pin_nr, enable_pin_board, enable_pin_nr, steps_per_cl, max_steps_per_second) VALUES " +
-                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             setParameters(pump, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -232,7 +232,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setId(rs.getLong("id"));
         pump.setName((String) rs.getObject("name"));
         pump.setTubeCapacityInMl((Double) rs.getObject("tube_capacity"));
-        pump.setMilliWatt(rs.getInt("mill_watt"));
+        pump.setMilliWatt(rs.getInt("milli_watt"));
         long ingredientId = rs.getLong("current_ingredient_id");
         if(!rs.wasNull()) {
             pump.setCurrentIngredientId(ingredientId);

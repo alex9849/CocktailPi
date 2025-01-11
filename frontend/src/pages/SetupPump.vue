@@ -244,6 +244,34 @@
               </q-input>
             </template>
           </c-assistant-container>
+          <q-separator
+            class="q-my-md"
+            :dark="color.cardBodyDark"
+          />
+          <c-assistant-container>
+            <template v-slot:explanations>
+              {{ $t('page.pump_setup.calibration.milliwatt_desc') }}
+            </template>
+            <template v-slot:fields>
+              <q-input
+                :dark="color.cardBodyDark"
+                :model-value="pump.milliWatt"
+                @update:model-value="setPumpAttr('milliWatt', pump.milliWatt, $event, $event === '')"
+                :error-message="attrState.milliWatt.errorMsg"
+                :error="!!attrState.milliWatt.errorMsg"
+                :loading="attrState.milliWatt.loading"
+                debounce="600"
+                outlined
+                type="number"
+                filled
+                :label="$t('page.pump_setup.calibration.milliwatt_label')"
+              >
+                <template v-slot:append>
+                  mW
+                </template>
+              </q-input>
+            </template>
+          </c-assistant-container>
         </c-setup-step>
         <div class="col-12">
           <q-stepper-navigation class="q-gutter-sm">
@@ -446,6 +474,7 @@ export default {
         currentIngredient: '',
         fillingLevelInMl: '',
         tubeCapacityInMl: '',
+        milliWatt: '',
         pumpedUp: false,
 
         // Stepper-Motor
@@ -491,6 +520,11 @@ export default {
           saved: false
         },
         tubeCapacityInMl: {
+          loading: false,
+          errorMsg: '',
+          saved: false
+        },
+        milliWatt: {
           loading: false,
           errorMsg: '',
           saved: false
