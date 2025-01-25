@@ -487,9 +487,13 @@ clear
 if [ "$langsel" = "1" ]; then
     echo "CocktailPi wurde installiert!"
     echo "Bitte starte deinen Raspberry Pi neu."
-	echo "Ein Neustart wird benötigt um die UI zu starten."
+  	echo "Ein Neustart wird benötigt um die UI zu starten."
+  	echo ""
+  	echo "Wenn dir das Projekt gefällt, kannst du es gerne auf GitHub \"starren\" ;)"
 else
     echo "CocktailPi has been installed!"
     echo "Please reboot your Raspberry Pi."
-	echo "A restart is required to start the UI."
+	  echo "A restart is required to start the UI."
+	  echo ""
+	  echo "If you like the project, please consider to \"star\" it on GitHub ;)"
 fi
