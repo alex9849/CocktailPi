@@ -403,7 +403,10 @@ else
     echo "Installing touchscreen dependencies..."
 fi
 
-rm -r /home/pi/wait-for-app-html
+if [ -d /home/pi/wait-for-app-html ]; then
+    rm -r /home/pi/wait-for-app-html
+fi
+
 sudo -u pi wget -q --show-progress https://github.com/alex9849/CocktailPi/releases/latest/download/wait-for-app.tar -O /home/pi/wait-for-app.tar
 
 sudo -u pi tar -xf /home/pi/wait-for-app.tar -C /home/pi/
@@ -437,7 +440,9 @@ if [ "$modsel" = "3" ]; then
     else
         select_confirm "To continue, a screen must be connected to the Raspberry Pi. Make sure that a screen is connected."
     fi
-    rm /home/pi/.config/wayfire.ini
+    if [ -f /home/pi/.config/wayfire.ini ]; then
+        rm -r /home/pi/.config/wayfire.ini
+    fi
     sudo -u pi touch /home/pi/.config/wayfire.ini
     echo "[core]" >> /home/pi/.config/wayfire.ini
     echo "plugins = \\" >> /home/pi/.config/wayfire.ini
@@ -461,7 +466,7 @@ EOF
 
     for i in {1..20}
     do
-        echo "Waiting $((15-$i)) seconds..."
+        echo "Waiting $((20-$i)) seconds..."
         sleep 1
     done
 
@@ -469,8 +474,9 @@ EOF
 
 fi
 
-
-rm /home/pi/.config/wayfire.ini
+if [ -f /home/pi/.config/wayfire.ini ]; then
+    rm -r /home/pi/.config/wayfire.ini
+fi
 sudo -u pi touch /home/pi/.config/wayfire.ini
 
 echo "[core]" >> /home/pi/.config/wayfire.ini
