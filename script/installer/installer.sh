@@ -272,7 +272,7 @@ if [ "$modsel" = "3" ]; then
     clear
 	confirmsel=""
 	if [ "$langsel" = "1" ]; then
-        select_confirm_exit "Sie haben ausgewählt, dass der Touchscreen mit Bildschirmtastatur installiert werden soll. Hierzu muss zwingend bereits während der Installation ein Bildschirm an den Raspberry Pi angeschlossen sein. Bitte bestätigen Sie, dass ein Bildschirm an den Raspberry Pi angeschlossen ist."
+        select_confirm_exit "Sie haben ausgewählt, dass der Touchscreen mit Bildschirmtastatur installiert werden soll. Hierzu muss zwingend bereits während der Installation ein Bildschirm an dem Raspberry Pi angeschlossen sein. Bitte bestätigen Sie, dass ein Bildschirm an den Raspberry Pi angeschlossen ist."
 	else
         select_confirm_exit "You have selected that the touchscreen and an on-screen keyboard should be installed. To do this, a screen must be connected to the Raspberry Pi during installation. Please confirm that a screen is connected to the Raspberry Pi."
 	fi
@@ -454,7 +454,7 @@ export XDG_RUNTIME_DIR=/run/user/1000
 nohup wayfire -c /home/pi/.config/wayfire.ini &
 EOF
     if [ "$langsel" = "1" ]; then
-        select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Bestätigen Sie anschließend um mit der Installation forzufahren."
+        select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Bestätigen Sie anschließend um mit der Installation fortzufahren."
     else
         select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. Then confirm to continue with the installation."
     fi
