@@ -7,7 +7,6 @@ langsel=$1
 # 2 = CocktailPi + Touchscreen without keyboard
 # 3 = CocktailPi + Touchscreen + Keyboard
 modsel=$2
-waylanduser="pi"
 
 
 function color {
@@ -149,7 +148,6 @@ function select_mode {
     done
 }
 
-
 function select_confirm {
     clear
     echo -e "$1"
@@ -176,12 +174,12 @@ function select_confirm {
     fi
 
     read -n 1 confirmsel
-	confirmselsize=${#confirmsel} 
-	if [ "$confirmselsize" = "0" ]; then
-	    confirmsel=99
+	  confirmselsize=${#confirmsel}
+  	if [ "$confirmselsize" = "0" ]; then
+	      confirmsel=99
         clear
         select_confirm "$1"
-	fi
+	  fi
 
     for i in $confirmsel; do
     case "$i" in
@@ -278,6 +276,27 @@ if [ "$modsel" = "3" ]; then
 	else
         select_confirm_exit "You have selected that the touchscreen and an on-screen keyboard should be installed. To do this, a screen must be connected to the Raspberry Pi during installation. Please confirm that a screen is connected to the Raspberry Pi."
 	fi
+fi
+
+users=($(cat /etc/passwd | grep "/bin/bash" | sed 's/:.*//'))
+pi_user_found=0
+for user in "${users[@]}"; do
+    if [ "$user" = "pi" ]; then
+      pi_user_found=1
+      break
+    fi
+done
+
+if [ "$pi_user_found" == "0" ]; then
+  clear
+  	if [ "$langsel" = "1" ]; then
+        echo "Der \"pi\"-Benutzer konnte nicht gefunden werden!"
+        echo "Bitte flashen Sie Ihr Betriebssystem erneut und setzen Sie den Standardbenutzer auf \"pi\", bevor Sie den Flashvorgang starten!"
+  	else
+        echo "The \"pi\"-user could not be found!"
+        echo "Please re-flash your operating system and set the default user to \"pi\" before starting the flashing process!"
+  	fi
+  exit 1
 fi
 
 
@@ -385,7 +404,7 @@ if [ "$langsel" = "1" ]; then
 else
     echo "Please wait..."
 fi
-raspi-config nonint do_boot_behaviour B2
+sudo -u pi raspi-config nonint do_boot_behaviour B2
 
 apt install --no-install-recommends -y chromium-browser rpi-chromium-mods
 apt install --no-install-recommends -y wayfire seatd xdg-user-dirs
