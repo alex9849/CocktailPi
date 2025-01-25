@@ -762,6 +762,13 @@ export default {
         calibrated: 'Calibrated:',
         calibrated_yes: 'Yes',
         calibrated_no: 'No'
+      },
+      power_limit: {
+        headline: 'Power limit',
+        status: 'Status:',
+        status_enabled: 'Enabled',
+        status_disabled: 'Disabled',
+        limit: 'Limit:'
       }
     },
     make_cocktail_occupied: {

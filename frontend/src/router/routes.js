@@ -121,6 +121,10 @@ const routes = [
             component: () => import('pages/LoadCellSettings.vue'),
             name: 'loadcellsettings'
           }, {
+            path: 'admin/pump/settings/powerlimit',
+            component: () => import('pages/PowerLimitSettings.vue'),
+            name: 'powerlimitsettings'
+          }, {
             path: 'admin/pump/:pumpId/edit',
             component: () => import('pages/SetupPump'),
             name: 'editpump'

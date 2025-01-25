@@ -10,7 +10,7 @@
           <q-separator/>
           <q-card-section>
             <div class="row q-col-gutter-sm justify-center">
-              <div class="col-12 col-md-4 col-lg-12">
+              <div class="col-12 col-md-3 col-lg-12">
                 <q-card
                   flat
                   bordered
@@ -44,7 +44,7 @@
                   </q-card-section>
                 </q-card>
               </div>
-              <div class="col-12 col-md-4 col-lg-12">
+              <div class="col-12 col-md-3 col-lg-12">
                 <q-card
                   flat
                   bordered
@@ -103,7 +103,7 @@
                   </q-card-section>
                 </q-card>
               </div>
-              <div class="col-12 col-md-4 col-lg-12">
+              <div class="col-12 col-md-3 col-lg-12">
                 <q-card
                   flat
                   bordered
@@ -147,6 +147,63 @@
                       </tr>
                       <tr v-if="loadCellSettings.enable">
                         <td>{{ $t('component.pump_status.load_cell.calibrated') }}</td>
+                        <td>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings?.calibrated , 'bg-positive': loadCellSettings?.calibrated}"
+                          >
+                            {{ loadCellCalibrated }}
+                          </q-badge>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </q-card-section>
+                </q-card>
+              </div>
+              <div class="col-12 col-md-3 col-lg-12">
+                <q-card
+                  flat
+                  bordered
+                  class="bg-card-item-group text-card-item-group full-height"
+                >
+                  <q-card-section
+                    class="q-py-xs q-pr-xs bg-cyan-1 row items-center bg-card-header text-card-header"
+                  >
+                    <div class="col">
+                      <p class="text-weight-medium">
+                        {{ $t('component.pump_status.power_limit.headline') }}
+                      </p>
+                    </div>
+                    <div class="col-shrink">
+                      <q-btn
+                        color="info"
+                        :label="$t('component.pump_status.configure_btn')"
+                        :icon="mdiPencilOutline"
+                        @click="$router.push({name: 'powerlimitsettings'})"
+                        dense
+                        no-caps
+                        size="sm"
+                      />
+                    </div>
+                  </q-card-section>
+                  <q-separator/>
+                  <q-card-section
+                    class="q-py-sm"
+                  >
+                    <table class="table-no-stripes">
+                      <tbody>
+                      <tr>
+                        <td>{{ $t('component.pump_status.power_limit.status') }}</td>
+                        <td>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings.enable , 'bg-positive': loadCellSettings.enable}"
+                          >
+                            {{ loadCellStatus }}
+                          </q-badge>
+                        </td>
+                      </tr>
+                      <tr v-if="loadCellSettings.enable">
+                        <td>{{ $t('component.pump_status.power_limit.limit') }}</td>
                         <td>
                           <q-badge
                             :class="{'bg-negative': !loadCellSettings?.calibrated , 'bg-positive': loadCellSettings?.calibrated}"
