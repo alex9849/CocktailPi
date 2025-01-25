@@ -299,12 +299,22 @@ if [ "$pi_user_found" == "0" ]; then
   exit 1
 fi
 
+wget -q --spider http://google.com
+if [ $? -ne 0 ]; then
+    clear
+    if [ "$langsel" = "1" ]; then
+        echo "Keine Internetverbindung! Bitte verbinde den Raspberry Pi mit dem Internet und starte das Skript erneut!"
+    else
+        echo "No internet connection! Please connect the Raspberry Pi to the internet and restart the script!"
+    fi
+    exit 1
+fi
 
 if [ "$langsel" = "1" ]; then
-        echo "Update system..."
-    else
-        echo "Updating system..."
-    fi
+    echo "Update system..."
+else
+    echo "Updating system..."
+fi
 sleep 2
 apt-get update && sudo apt-get -y upgrade
 
@@ -471,7 +481,7 @@ clear
 if [ "$langsel" = "1" ]; then
     echo "CocktailPi wurde installiert!"
     echo "Bitte starte deinen Raspberry Pi neu."
-	echo "Ein neustart wird benötigt um die UI zu starten."
+	echo "Ein Neustart wird benötigt um die UI zu starten."
 else
     echo "CocktailPi has been installed!"
     echo "Please reboot your Raspberry Pi."
