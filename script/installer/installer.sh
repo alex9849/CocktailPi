@@ -404,7 +404,7 @@ if [ "$langsel" = "1" ]; then
 else
     echo "Please wait..."
 fi
-sudo -u pi raspi-config nonint do_boot_behaviour B2
+raspi-config nonint do_boot_behaviour B2
 
 apt install --no-install-recommends -y chromium-browser rpi-chromium-mods
 apt install --no-install-recommends -y wayfire seatd xdg-user-dirs
