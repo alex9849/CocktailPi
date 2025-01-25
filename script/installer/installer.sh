@@ -459,6 +459,12 @@ EOF
         select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. Then confirm to continue with the installation."
     fi
 
+    for i in {0..15}
+    do
+        echo "Waiting $((15-$i)) seconds..."
+        sleep 1
+    done
+
     pkill -f wayfire
 
 fi
