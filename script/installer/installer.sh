@@ -256,7 +256,7 @@ fi
 if [ "$(id -u)" != "0" ]; then
     clear
     if [ "$langsel" = "1" ]; then
-        color r x "Sie benoetigen root Rechte. Wechseln sie zum root-Benutzer mit \"sudo -i\""
+        color r x "Sie benötigen root Rechte. Wechseln sie zum root-Benutzer mit \"sudo -i\""
     else
         color r x "You need root privileges. Switch to the roor-User using \"sudo -i\""
     fi
@@ -459,9 +459,9 @@ export XDG_RUNTIME_DIR=/run/user/1000
 nohup wayfire -c /home/pi/.config/wayfire.ini &
 EOF
     if [ "$langsel" = "1" ]; then
-        select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Bestätigen Sie anschließend um mit der Installation fortzufahren."
+        select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Kehren Sie nach dem hinzufügen hierher zurück und setzen Sie das Skript mit 1 fort."
     else
-        select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. Then confirm to continue with the installation."
+        select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. After adding, return here and continue the script with 1."
     fi
 
     for i in {1..20}
