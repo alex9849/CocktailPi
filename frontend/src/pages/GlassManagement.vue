@@ -33,6 +33,7 @@
     </TopButtonArranger>
     <div class="q-py-md">
       <q-table
+        :dark="color.cardBodyDark"
         :columns="columns"
         :loading="loading"
         :pagination="{rowsPerPage: 0, sortBy: 'name'}"
