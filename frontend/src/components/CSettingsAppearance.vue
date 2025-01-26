@@ -50,10 +50,30 @@
             :dark="color.cardItemGroupDark"
             class="bg-card-item-group text-card-item-group"
           >
-            <p class="text-subtitle2 q-pt-sm q-pl-md">
-              {{ $t('component.settings_appearance.colors.interface.headline') }}
-            </p>
-            <q-card-section class="q-pt-sm q-gutter-sm">
+            <div class="q-pt-sm q-px-md row items-center justify-between">
+              <p class="text-subtitle2 col-auto">
+                {{ $t('component.settings_appearance.colors.interface.headline') }}
+              </p>
+              <div class="col-shrink q-gutter-sm">
+                <q-btn
+                  dense
+                  no-caps
+                  color="primary"
+                  @click="setDefaultNormalColors(false)"
+                >
+                  Set light
+                </q-btn>
+                <q-btn
+                  dense
+                  no-caps
+                  color="primary"
+                  @click="setDefaultNormalColors(true)"
+                >
+                  Set dark
+                </q-btn>
+              </div>
+            </div>
+            <q-card-section class="q-pt-sm q-mt-none q-gutter-sm">
               <c-color-selector-field
                 v-model:model-value="form.colors.normal.header"
                 :dark="color.cardItemGroupDark"
@@ -103,10 +123,22 @@
             bordered
             class="bg-card-item-group text-card-item-group"
           >
-            <p class="text-subtitle2 q-pt-sm q-pl-md">
-              {{ $t('component.settings_appearance.colors.simple_view.headline') }}
-            </p>
-            <q-card-section class="q-pt-sm q-gutter-sm">
+            <div class="q-pt-sm q-px-md row items-center justify-between">
+              <p class="text-subtitle2 col-auto">
+                {{ $t('component.settings_appearance.colors.simple_view.headline') }}
+              </p>
+              <div class="col-shrink q-gutter-sm">
+                <q-btn
+                  dense
+                  no-caps
+                  color="primary"
+                  @click="setDefaultSimpleViewColors()"
+                >
+                  Reset
+                </q-btn>
+              </div>
+            </div>
+            <q-card-section class="q-pt-sm q-mt-none q-gutter-sm">
               <c-color-selector-field
                 v-model:model-value="form.colors.simpleView.header"
                 :dark="color.cardItemGroupDark"
@@ -184,11 +216,12 @@ export default {
           normal: {
             header: '#85452b',
             sidebar: '#bf947b',
-            btnPrimary: '#85452b',
-            btnNavigation: '#bf947b',
+            background: '#ffffff',
+            btnPrimary: '#bf947b',
             btnNavigationActive: '#fddfb1',
-            cardPrimary: '#f3f3f3',
-            cardSecondary: '#fdfdfe'
+            cardHeader: '#c9eaf5',
+            cardBody: '#f3f3f3',
+            cardItemGroup: '#fdfdfe'
           },
           simpleView: {
             header: '#1a237e',
@@ -215,6 +248,37 @@ export default {
     ...mapMutations({
       setAppearanceSettings: 'appearance/setAppearanceSettings'
     }),
+    setDefaultNormalColors (isDarkMode) {
+      if (isDarkMode) {
+        this.form.colors.normal.header = '#3b3b3b'
+        this.form.colors.normal.sidebar = '#141414'
+        this.form.colors.normal.background = '#292929'
+        this.form.colors.normal.btnPrimary = '#2a7f85'
+        this.form.colors.normal.btnNavigationActive = '#757575'
+        this.form.colors.normal.cardHeader = '#575757'
+        this.form.colors.normal.cardBody = '#3d3d3d'
+        this.form.colors.normal.cardItemGroup = '#1c1c1c'
+      } else {
+        this.form.colors.normal.header = '#f3f3fa'
+        this.form.colors.normal.sidebar = '#30343f'
+        this.form.colors.normal.background = '#ffffff'
+        this.form.colors.normal.btnPrimary = '#2a7f85'
+        this.form.colors.normal.btnNavigationActive = '#3273dc'
+        this.form.colors.normal.cardHeader = '#c9eaf5'
+        this.form.colors.normal.cardBody = '#f3f3fa'
+        this.form.colors.normal.cardItemGroup = '#fafaff'
+      }
+    },
+    setDefaultSimpleViewColors () {
+      this.form.colors.simpleView.header = '#1a237e'
+      this.form.colors.simpleView.sidebar = '#616161'
+      this.form.colors.simpleView.background = '#000000'
+      this.form.colors.simpleView.btnPrimary = '#9336a3'
+      this.form.colors.simpleView.btnNavigation = '#616161'
+      this.form.colors.simpleView.btnNavigationActive = '#9336a3'
+      this.form.colors.simpleView.cocktailProgress = '#1b5e20'
+      this.form.colors.simpleView.cardPrimary = '#787878'
+    },
     fetchLanguages () {
       SystemService.getLanguages()
         .then(data => {
