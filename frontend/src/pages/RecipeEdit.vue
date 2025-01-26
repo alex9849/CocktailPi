@@ -48,6 +48,7 @@
                 outlined
               />
               <div
+                :style="{borderColor: color.cardItemGroupDark ? 'lightgrey' : 'grey'}"
                 :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': editRecipe.recipe.hasImage && !editRecipe.image && !editRecipe.removeImage}"
                 class="row"
               >

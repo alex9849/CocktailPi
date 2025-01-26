@@ -31,7 +31,6 @@
         :pagination="{rowsPerPage: 0, sortBy: 'trigger'}"
         :rows="eventActions"
         hide-bottom
-        :dark="color.cardBodyDark"
         selection="multiple"
       >
         <template
