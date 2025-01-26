@@ -21,6 +21,7 @@
     </TopButtonArranger>
     <div class="q-py-md">
       <q-table
+        :dark="color.cardBodyDark"
         :columns="columns"
         :rows="ownedIngredients"
         :loading="loading"
