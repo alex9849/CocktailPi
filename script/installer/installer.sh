@@ -117,9 +117,9 @@ function select_mode {
     fi
 
     read -n 1 modsel
-	modselsize=${#modsel} 
-	if [ "$modselsize" = "0" ]; then
-	    modsel=99
+	  modselsize=${#modsel}
+	  if [ "$modselsize" = "0" ]; then
+	      modsel=99
         clear
         select_mode
 	fi
@@ -276,6 +276,13 @@ if [ "$modsel" = "3" ]; then
 	else
         select_confirm_exit "You have selected that the touchscreen and an on-screen keyboard should be installed. To do this, a screen must be connected to the Raspberry Pi during installation. Please confirm that a screen is connected to the Raspberry Pi."
 	fi
+fi
+
+is_ssh=""
+if [[ $(who am i) =~ \([0-9a-z\:\.]+\)$ ]]; then
+    is_ssh=1
+else
+    is_ssh=0;
 fi
 
 users=($(cat /etc/passwd | grep "/bin/bash" | sed 's/:.*//'))
@@ -435,10 +442,18 @@ sudo -u pi mkdir -p /home/pi/.config
 if [ "$modsel" = "3" ]; then
     pkill -f wayfire
     confirmsel=""
-    if [ "$langsel" = "1" ]; then
-        select_confirm "Um fortfahren zu können muss ein Bildschirm an dem Raspberry Pi angeschlossen sein. Stellen Sie sicher, dass ein Bildschirm angeschlossen ist."
+    if [ "$is_ssh" = "1" ]; then
+        if [ "$langsel" = "1" ]; then
+            select_confirm "Um fortfahren zu können muss ein Bildschirm an dem Raspberry Pi angeschlossen sein. Stellen Sie sicher, dass ein Bildschirm angeschlossen ist."
+        else
+            select_confirm "To continue, a screen must be connected to the Raspberry Pi. Make sure that a screen is connected."
+        fi
     else
-        select_confirm "To continue, a screen must be connected to the Raspberry Pi. Make sure that a screen is connected."
+        if [ "$langsel" = "1" ]; then
+            select_confirm "Im nächsten Schritt wird sich ein Browser auf ihrem Bildschirm öffnen und eine Chrome-Erweiterung anzeigen (Bildschirmtastatur), welche Sie installieren müssen. Sobald Sie auf \"Bestätigen\" drücken haben Sie 120 Sekunden Zeit um die Erweiterung zu installieren, bevor das setup den Browser schließt und die Installation fortsetzt."
+        else
+            select_confirm "In the next step, a browser will open on your screen and display a Chrome extension (on-screen keyboard), which you must install (Add to chrome). As soon as you press \"Confirm\", you have 120 seconds to install the extension before the setup closes the browser and continues the installation."
+        fi
     fi
     if [ -f /home/pi/.config/wayfire.ini ]; then
         rm -r /home/pi/.config/wayfire.ini
@@ -458,17 +473,20 @@ if [ "$modsel" = "3" ]; then
 export XDG_RUNTIME_DIR=/run/user/1000
 nohup wayfire -c /home/pi/.config/wayfire.ini &
 EOF
-    if [ "$langsel" = "1" ]; then
-        select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Kehren Sie nach dem hinzufügen hierher zurück und setzen Sie das Skript mit 1 fort."
+    if [ "$is_ssh" = "1" ]; then
+        if [ "$langsel" = "1" ]; then
+            select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Kehren Sie nach dem hinzufügen hierher zurück und setzen Sie das Skript mit 1 fort."
+        else
+            select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. After adding, return here and continue the script with 1."
+        fi
+        for i in {1..20}
+        do
+            echo "Waiting $((20-$i)) seconds..."
+            sleep 1
+        done
     else
-        select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. After adding, return here and continue the script with 1."
+        sleep 120
     fi
-
-    for i in {1..20}
-    do
-        echo "Waiting $((20-$i)) seconds..."
-        sleep 1
-    done
 
     pkill -f wayfire
 
