@@ -436,9 +436,9 @@ if [ "$modsel" = "3" ]; then
         fi
     else
         if [ "$langsel" = "1" ]; then
-            select_confirm "Im nächsten Schritt wird sich ein Browser auf ihrem Bildschirm öffnen und eine Chrome-Erweiterung anzeigen (Bildschirmtastatur), welche Sie installieren müssen. Sobald Sie auf \"Bestätigen\" drücken haben Sie 120 Sekunden Zeit um die Erweiterung zu installieren, bevor das setup den Browser schließt und die Installation fortsetzt."
+            select_confirm "Im nächsten Schritt wird sich ein Browser auf ihrem Bildschirm öffnen und eine Chrome-Erweiterung anzeigen (Bildschirmtastatur), welche Sie installieren müssen. Sobald Sie auf \"Bestätigen\" drücken haben Sie 100 Sekunden Zeit um die Erweiterung zu installieren, bevor das setup den Browser schließt und die Installation fortsetzt."
         else
-            select_confirm "In the next step, a browser will open on your screen and display a Chrome extension (on-screen keyboard), which you must install (Add to chrome). As soon as you press \"Confirm\", you have 120 seconds to install the extension before the setup closes the browser and continues the installation."
+            select_confirm "In the next step, a browser will open on your screen and display a Chrome extension (on-screen keyboard), which you must install (Add to chrome). As soon as you press \"Confirm\", you have 100 seconds to install the extension before the setup closes the browser and continues the installation."
         fi
     fi
     if [ -f /home/pi/.config/wayfire.ini ]; then
@@ -471,7 +471,7 @@ EOF
             sleep 1
         done
     else
-        sleep 120
+        sleep 100
     fi
 
     pkill -f wayfire
