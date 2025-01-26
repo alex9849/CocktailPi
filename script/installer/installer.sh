@@ -377,20 +377,6 @@ fi
 service cocktailpi start
 
 
-clear
-if [ "$langsel" = "1" ]; then
-    echo "Konfiguriere standard GPIO Boot-Status..."
-else
-    echo "Configure default GPIO boot state..."
-fi
-sleep 2
-if cat /boot/firmware/config.txt | grep -q "gpio"; then
-    sed -i '/gpio/c\gpio=0-27=op,dl' /boot/firmware/config.txt
-else
-    echo "gpio=0-27=op,dl" >> /boot/firmware/config.txt
-fi
-
-
 if [ "$modsel" = "1" ]; then
     clear
 	if [ "$langsel" = "1" ]; then
