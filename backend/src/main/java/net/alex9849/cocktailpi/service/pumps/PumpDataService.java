@@ -258,8 +258,8 @@ public class PumpDataService {
                 afterStep = stepNew.getStepPin();
                 afterEnable = stepNew.getEnablePin();
             }
-            updateDefaultPinState(beforeEnable, afterEnable, true, true);
-            updateDefaultPinState(beforeStep, afterStep, true, true);
+            updateDefaultPinState(beforeEnable, afterEnable, false, false);
+            updateDefaultPinState(beforeStep, afterStep, false, false);
             return;
         }
     }
