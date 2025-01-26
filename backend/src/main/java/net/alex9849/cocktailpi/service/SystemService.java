@@ -376,7 +376,7 @@ public class SystemService {
 
         AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();
-        normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#f3f3fa"));
+        normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#e1e1eb"));
         normalColors.setSidebar(optionsRepository.getOption("COLOR_NORMAL_SIDEBAR").orElse("#30343f"));
         normalColors.setBackground(optionsRepository.getOption("COLOR_NORMAL_BACKGROUND").orElse("#ffffff"));
         normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#3273dc"));

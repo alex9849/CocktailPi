@@ -261,7 +261,7 @@ export default {
         this.form.colors.normal.cardBody = '#3d3d3d'
         this.form.colors.normal.cardItemGroup = '#1c1c1c'
       } else {
-        this.form.colors.normal.header = '#f3f3fa'
+        this.form.colors.normal.header = '#e1e1eb'
         this.form.colors.normal.sidebar = '#30343f'
         this.form.colors.normal.background = '#ffffff'
         this.form.colors.normal.btnPrimary = '#2a7f85'
