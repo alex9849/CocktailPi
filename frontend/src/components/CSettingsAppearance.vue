@@ -266,7 +266,7 @@ export default {
         this.form.colors.normal.background = '#ffffff'
         this.form.colors.normal.btnPrimary = '#2a7f85'
         this.form.colors.normal.btnNavigationActive = '#3273dc'
-        this.form.colors.normal.cardHeader = '#d3eaf2'
+        this.form.colors.normal.cardHeader = '#c7e8f2'
         this.form.colors.normal.cardBody = '#f3f3fa'
         this.form.colors.normal.cardItemGroup = '#fafaff'
       }
