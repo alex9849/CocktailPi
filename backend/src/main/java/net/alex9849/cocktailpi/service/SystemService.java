@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.LocalPin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.I2cAddress;
 import net.alex9849.cocktailpi.model.system.PythonLibraryInfo;
@@ -21,6 +22,7 @@ import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.pin.PinState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -58,6 +57,9 @@ public class SystemService {
 
     @Value("${alex9849.app.devMode}")
     private boolean isDevMode;
+
+    @Value("${alex9849.app.isRaspberryPi}")
+    private boolean isRaspberryPi;
 
     @Value("${alex9849.app.build.version}")
     private String appVersion; // = "1.0.0";
@@ -163,6 +165,57 @@ public class SystemService {
             }
         }
         return settings;
+    }
+
+    public void setPinBootState(LocalPin pin, PinState defaultState) {
+        if(!isRaspberryPi) {
+            return;
+        }
+        int pinNr = pin.getPinNr();
+        try {
+            BufferedReader file = new BufferedReader(new FileReader("/boot/firmware/config.txt"));
+            StringBuilder inputBuffer = new StringBuilder();
+            String line;
+
+            boolean foundLine = false;
+            while ((line = file.readLine()) != null) {
+                if (line.startsWith("gpio=" + pinNr + "=")) {
+                    foundLine = true;
+                    line = "gpio=" + pinNr + "=op,";
+                    if (defaultState == null) {
+                        continue;
+                    }
+                    if (defaultState == PinState.LOW) {
+                        line += "dl";
+                    } else {
+                        line += "dh";
+                    }
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+            file.close();
+
+            if(!foundLine && defaultState != null) {
+                line = "gpio=" + pinNr + "=op,";
+                if (defaultState == PinState.LOW) {
+                    line += "dl";
+                } else {
+                    line += "dh";
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+
+            // write the new string with the replaced line OVER the same file
+            FileOutputStream fileOut = new FileOutputStream("/boot/firmware/config.txt");
+            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {

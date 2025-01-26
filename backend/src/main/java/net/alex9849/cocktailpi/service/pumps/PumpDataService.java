@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.service.pumps;
 
+import net.alex9849.cocktailpi.model.gpio.LocalPin;
 import net.alex9849.cocktailpi.model.gpio.Pin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.*;
@@ -9,8 +10,10 @@ import net.alex9849.cocktailpi.payload.dto.pump.*;
 import net.alex9849.cocktailpi.repository.PumpRepository;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.service.IngredientService;
+import net.alex9849.cocktailpi.service.SystemService;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.pin.PinState;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import java.util.*;
 @Service
 @Transactional
 public class PumpDataService {
+
     @Autowired
     private PumpRepository pumpRepository;
 
@@ -29,6 +33,8 @@ public class PumpDataService {
 
     @Autowired
     private GpioService gpioService;
+    @Autowired
+    private SystemService systemService;
 
     //
     // CRUD actions
@@ -54,6 +60,7 @@ public class PumpDataService {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), valve.getPin());
         }
         pump = pumpRepository.create(pump);
+        updateDefaultPinState(null, pump);
         //Turn off pump
         if(pump.isCanPump()) {
             pump.shutdownDriver();
@@ -76,7 +83,7 @@ public class PumpDataService {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), stepperPump.getEnablePin(), stepperPump.getStepPin());
         }
 
-
+        updateDefaultPinState(beforeUpdate, pump);
         pumpRepository.update(pump);
         if (beforeUpdate.isCanPump() && pump.isCanPump()){
             if(!Objects.equals(beforeUpdate.getMotorDriver(), pump.getMotorDriver())) {
@@ -100,6 +107,7 @@ public class PumpDataService {
         if(pump == null) {
             throw new IllegalArgumentException("Pump doesn't exist!");
         }
+        updateDefaultPinState(pump, null);
         pumpRepository.delete(id);
         if(pump.isCanPump()) {
             pump.shutdownDriver();
@@ -209,5 +217,81 @@ public class PumpDataService {
 
     public List<Pump> findPumpsWithIngredient(long ingredientId) {
         return pumpRepository.findPumpsWithIngredient(ingredientId);
+    }
+
+    private void updateDefaultPinState(Pump oldPump, Pump newPump) {
+        if(oldPump != null && newPump != null) {
+            if(!oldPump.getClass().equals(newPump.getClass())) {
+                throw new IllegalArgumentException("Pumps need to have the same class!");
+            }
+        }
+        if((newPump instanceof OnOffPump) || (oldPump instanceof OnOffPump)) {
+            OnOffPump ooOld = (OnOffPump) oldPump;
+            OnOffPump ooNew = (OnOffPump) newPump;
+            Pin before = null;
+            Pin after = null;
+            Boolean beforeDefaultStateLow = null;
+            Boolean afterDefaultStateLow = null;
+            if(oldPump != null) {
+                before = ooOld.getPin();
+                beforeDefaultStateLow = ooOld.isPowerStateHigh();
+            }
+            if(newPump != null) {
+                after = ooNew.getPin();
+                afterDefaultStateLow = ooNew.isPowerStateHigh();
+            }
+            updateDefaultPinState(before, after, beforeDefaultStateLow, afterDefaultStateLow);
+            return;
+        }
+        if((newPump instanceof StepperPump) || (oldPump instanceof StepperPump)) {
+            StepperPump stepOld = (StepperPump) oldPump;
+            StepperPump stepNew = (StepperPump) newPump;
+            Pin beforeStep = null;
+            Pin beforeEnable = null;
+            Pin afterStep = null;
+            Pin afterEnable = null;
+            if(stepOld != null) {
+                beforeStep = stepOld.getStepPin();
+                beforeEnable = stepOld.getEnablePin();
+            }
+            if(stepNew != null) {
+                afterStep = stepNew.getStepPin();
+                afterEnable = stepNew.getEnablePin();
+            }
+            updateDefaultPinState(beforeEnable, afterEnable, true, true);
+            updateDefaultPinState(beforeStep, afterStep, true, true);
+            return;
+        }
+    }
+
+    private void updateDefaultPinState(Pin before, Pin after, Boolean oldDefaultStateLow, Boolean newDefaultStateLow) {
+        if (!(before instanceof LocalPin)) {
+            before = null;
+        }
+        if (!(after instanceof LocalPin)) {
+            after = null;
+        }
+        if(after != null && before != null) {
+            if(before.getPinNr() == after.getPinNr()) {
+                if (oldDefaultStateLow == newDefaultStateLow) {
+                    return;
+                }
+                updateDefaultPinState((LocalPin) after, newDefaultStateLow, false);
+                return;
+            }
+        }
+        updateDefaultPinState((LocalPin) before, newDefaultStateLow, true);
+        updateDefaultPinState((LocalPin) after, newDefaultStateLow, false);
+    }
+
+    private void updateDefaultPinState(LocalPin pin, Boolean defaultStateLow, boolean delete) {
+        if(pin == null) {
+            return;
+        }
+        if (delete || (defaultStateLow == null)) {
+            systemService.setPinBootState(pin, null);
+            return;
+        }
+        systemService.setPinBootState(pin, defaultStateLow ? PinState.LOW : PinState.HIGH);
     }
 }
