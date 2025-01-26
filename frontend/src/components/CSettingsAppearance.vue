@@ -214,22 +214,24 @@ export default {
         language: '',
         colors: {
           normal: {
-            header: '#85452b',
-            sidebar: '#bf947b',
+            header: '#f3f3fa',
+            sidebar: '#30343f',
             background: '#ffffff',
-            btnPrimary: '#bf947b',
-            btnNavigationActive: '#fddfb1',
+            btnPrimary: '#2a7f85',
+            btnNavigationActive: '#3273dc',
             cardHeader: '#c9eaf5',
-            cardBody: '#f3f3f3',
-            cardItemGroup: '#fdfdfe'
+            cardBody: '#f3f3fa',
+            cardItemGroup: '#fafaff'
           },
           simpleView: {
             header: '#1a237e',
             sidebar: '#616161',
+            background: '#000000',
             btnPrimary: '#616161',
             btnNavigation: '#616161',
             btnNavigationActive: '#b968c7',
-            cocktailProgress: '#1b5e20'
+            cocktailProgress: '#1b5e20',
+            cardPrimary: '#787878'
           }
         }
       },
