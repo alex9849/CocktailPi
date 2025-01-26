@@ -277,7 +277,7 @@ export default {
       this.form.colors.simpleView.background = '#000000'
       this.form.colors.simpleView.btnPrimary = '#9336a3'
       this.form.colors.simpleView.btnNavigation = '#616161'
-      this.form.colors.simpleView.btnNavigationActive = '#9336a3'
+      this.form.colors.simpleView.btnNavigationActive = '#a85eb5'
       this.form.colors.simpleView.cocktailProgress = '#1b5e20'
       this.form.colors.simpleView.cardPrimary = '#787878'
     },
