@@ -2,6 +2,7 @@
   <q-card flat
           bordered
           :class="cardClass"
+          :dark="color.backgroundDark"
   >
     <q-card-section
       horizontal
@@ -31,6 +32,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'CQHeadlinedCard',
   props: {
@@ -47,6 +50,11 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    })
   }
 }
 </script>

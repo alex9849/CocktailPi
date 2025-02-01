@@ -2,7 +2,7 @@
   <q-card>
     <q-card-section class="q-pa-sm">
       <div class="q-gutter-xs">
-        <q-input
+        <!--q-input
           outlined
           disable
           :label="$t('component.make_cocktail_group_replacements.card.prod_step_label')"
@@ -13,7 +13,7 @@
           <template v-slot:label>
             <p class="text-grey-10 text-weight-medium">{{ $t('component.make_cocktail_group_replacements.card.prod_step_label') }}</p>
           </template>
-        </q-input>
+        </q-input-->
         <q-input
           outlined
           disable

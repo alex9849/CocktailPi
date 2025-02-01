@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.LocalPin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.I2cAddress;
 import net.alex9849.cocktailpi.model.system.PythonLibraryInfo;
@@ -21,6 +22,7 @@ import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.pin.PinState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -58,6 +57,9 @@ public class SystemService {
 
     @Value("${alex9849.app.devMode}")
     private boolean isDevMode;
+
+    @Value("${alex9849.app.isRaspberryPi}")
+    private boolean isRaspberryPi;
 
     @Value("${alex9849.app.build.version}")
     private String appVersion; // = "1.0.0";
@@ -163,6 +165,57 @@ public class SystemService {
             }
         }
         return settings;
+    }
+
+    public void setPinBootState(LocalPin pin, PinState defaultState) {
+        if(!isRaspberryPi) {
+            return;
+        }
+        int pinNr = pin.getPinNr();
+        try {
+            BufferedReader file = new BufferedReader(new FileReader("/boot/firmware/config.txt"));
+            StringBuilder inputBuffer = new StringBuilder();
+            String line;
+
+            boolean foundLine = false;
+            while ((line = file.readLine()) != null) {
+                if (line.startsWith("gpio=" + pinNr + "=")) {
+                    foundLine = true;
+                    line = "gpio=" + pinNr + "=op,";
+                    if (defaultState == null) {
+                        continue;
+                    }
+                    if (defaultState == PinState.LOW) {
+                        line += "dl";
+                    } else {
+                        line += "dh";
+                    }
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+            file.close();
+
+            if(!foundLine && defaultState != null) {
+                line = "gpio=" + pinNr + "=op,";
+                if (defaultState == PinState.LOW) {
+                    line += "dl";
+                } else {
+                    line += "dh";
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');
+            }
+
+            // write the new string with the replaced line OVER the same file
+            FileOutputStream fileOut = new FileOutputStream("/boot/firmware/config.txt");
+            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
@@ -323,24 +376,24 @@ public class SystemService {
 
         AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();
-        normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#693F2F"));
-        normalColors.setSidebar(optionsRepository.getOption("COLOR_NORMAL_SIDEBAR").orElse("#BF947B"));
-        normalColors.setBackground(optionsRepository.getOption("COLOR_NORMAL_BACKGROUND").orElse("#FFFFFF"));
-        normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#FDDFB1"));
-        normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#85452B"));
-        normalColors.setCardHeader(optionsRepository.getOption("COLOR_NORMAL_CARD_HEADER").orElse("#DEF5F8"));
-        normalColors.setCardBody(optionsRepository.getOption("COLOR_NORMAL_CARD_BODY").orElse("#F9F9F9"));
-        normalColors.setCardItemGroup(optionsRepository.getOption("COLOR_NORMAL_CARD_ITEM_GROUP").orElse("#FFFFFF"));
+        normalColors.setHeader(optionsRepository.getOption("COLOR_NORMAL_HEADER").orElse("#e1e1eb"));
+        normalColors.setSidebar(optionsRepository.getOption("COLOR_NORMAL_SIDEBAR").orElse("#30343f"));
+        normalColors.setBackground(optionsRepository.getOption("COLOR_NORMAL_BACKGROUND").orElse("#ffffff"));
+        normalColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_NORMAL_BTN_NAVIGATION_ACTIVE").orElse("#3273dc"));
+        normalColors.setBtnPrimary(optionsRepository.getOption("COLOR_NORMAL_BTN_PRIMARY").orElse("#2a7f85"));
+        normalColors.setCardHeader(optionsRepository.getOption("COLOR_NORMAL_CARD_HEADER").orElse("#c7e8f2"));
+        normalColors.setCardBody(optionsRepository.getOption("COLOR_NORMAL_CARD_BODY").orElse("#f3f3fa"));
+        normalColors.setCardItemGroup(optionsRepository.getOption("COLOR_NORMAL_CARD_ITEM_GROUP").orElse("#fafaff"));
 
 
         AppearanceSettingsDto.Duplex.SvColors svColors = new AppearanceSettingsDto.Duplex.SvColors();
-        svColors.setHeader(optionsRepository.getOption("COLOR_SV_HEADER").orElse("#1A237E"));
+        svColors.setHeader(optionsRepository.getOption("COLOR_SV_HEADER").orElse("#1a237e"));
         svColors.setSidebar(optionsRepository.getOption("COLOR_SV_SIDEBAR").orElse("#616161"));
         svColors.setBackground(optionsRepository.getOption("COLOR_SV_BACKGROUND").orElse("#000000"));
         svColors.setBtnNavigation(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION").orElse("#616161"));
-        svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#9336A3"));
-        svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#9336A3"));
-        svColors.setCocktailProgress(optionsRepository.getOption("COLOR_SV_CPROGRESS").orElse("#1B5E20"));
+        svColors.setBtnNavigationActive(optionsRepository.getOption("COLOR_SV_BTN_NAVIGATION_ACTIVE").orElse("#a85eb5"));
+        svColors.setBtnPrimary(optionsRepository.getOption("COLOR_SV_BTN_PRIMARY").orElse("#9336a3"));
+        svColors.setCocktailProgress(optionsRepository.getOption("COLOR_SV_CPROGRESS").orElse("#1b5e20"));
         svColors.setCardPrimary(optionsRepository.getOption("COLOR_SV_CARD_PRIMARY").orElse("#787878"));
         colors.setNormal(normalColors);
         colors.setSimpleView(svColors);

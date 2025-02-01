@@ -2,6 +2,7 @@
   <q-card
     flat
     bordered
+    :dark="color.backgroundDark"
   >
     <q-card-section class="q-pa-none">
       <q-expansion-item

@@ -31,13 +31,12 @@
       @update:model-value="e => setValue('alcoholContent', e)"
     />
     <div class="row"
-         :style="{borderColor: color.cardBodyDark ? 'lightgrey' : 'grey'}"
+         :style="{borderColor: 'grey'}"
          :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.hasImage && !newImage && !removeImage}"
     >
       <div class="col">
         <q-toggle :label="$t('component.ingredient_form.remove_img')"
                   color="red"
-                  :dark="color.cardBodyDark"
                   :disable="disable"
                   v-if="modelValue.hasImage && !newImage"
                   :model-value="removeImage"
@@ -45,7 +44,6 @@
         />
         <q-file :label="$t('component.ingredient_form.image')"
                 outlined
-                :dark="color.cardBodyDark"
                 bottom-slots
                 :disable="disable"
                 v-if="!removeImage"
@@ -54,6 +52,7 @@
                 max-file-size="20971520"
                 accept="image/*"
                 clearable
+                filled
                 hide-bottom-space
         >
           <template v-slot:prepend>

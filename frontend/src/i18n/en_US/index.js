@@ -957,7 +957,7 @@ export default {
       pumpStates: {
         ready: 'Ready',
         incomplete: 'Incomplete',
-        running: 'Running'
+        running: 'Running...'
       },
       pumpUpStates: {
         pumped_up: 'Pumped Up',

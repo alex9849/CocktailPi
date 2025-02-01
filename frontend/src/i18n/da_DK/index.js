@@ -811,7 +811,7 @@ export default {
       pumpStates: {
         ready: 'Klar',
         incomplete: 'Ukomplet',
-        running: 'Kører'
+        running: 'Kører...'
       },
       pumpUpStates: {
         pumped_up: 'Primet',

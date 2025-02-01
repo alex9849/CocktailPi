@@ -31,15 +31,22 @@
       </div>
       <div class="col-shrink">
         <div class="row q-gutter-sm">
-          <q-badge :color="pumpedUpState.color" class="text-subtitle2">
+          <q-badge
+            v-if="pump.state !== 'READY' || this.pumpJobState.runningState"
+            :color="pumpState.color"
+            class="text-subtitle2">
+            {{ pumpState.label }}
+          </q-badge>
+          <q-badge
+            v-else
+            :color="pumpedUpState.color"
+            class="text-subtitle2"
+          >
             <div class="row q-col-gutter-sm">
               <p>
                 {{ pumpedUpState.label }}
               </p>
             </div>
-          </q-badge>
-          <q-badge :color="pumpState.color" class="text-subtitle2">
-            {{ pumpState.label }}
           </q-badge>
         </div>
       </div>
