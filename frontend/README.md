@@ -38,6 +38,8 @@ Root Folder is frontend
 
 Build folder is dist/spa
 
+Env falls back to window.location.origin if none is set
+
 ```bash
-export API_BASE_URL=...
+API_BASE_URL= https://demo.cocktailpi.org
 ```
