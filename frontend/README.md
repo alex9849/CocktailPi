@@ -1,4 +1,4 @@
-# CocktailPi (quasar-project )
+# CocktailPi (quasar-project)
 
 A RaspberryPi based cocktail machine
 
