@@ -4,11 +4,12 @@ import authHeader from 'src/services/auth-header'
 import store from '../store'
 
 export default boot(({ app }) => {
+  axios.defaults.baseURL = process.env.API_BASE_URL || window.location.origin
   axios.defaults.onErrorNotify = true
 
   axios.interceptors.request.use(cfg => {
     cfg.headers.Authorization = authHeader()
-    cfg.baseURL = process.env.API_BASE_URL || store().getters['auth/getFormattedServerAddress']
+    cfg.baseURL = store().getters['auth/getFormattedServerAddress']
     return cfg
   })
   axios.interceptors.response.use(cfg => cfg, error => {
