@@ -26,7 +26,7 @@ npm run lint
 
 ### Build the app for production
 ```bash
-npm run build
+quasar build
 ```
 
 ### Customize the configuration
