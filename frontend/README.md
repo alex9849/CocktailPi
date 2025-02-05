@@ -33,6 +33,11 @@ quasar build
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js).
 
 ### ENV Variable for cloudflare pages deployment
+
+Root Folder is frontend
+
+Build folder is dist/spa
+
 ```bash
 export API_BASE_URL=...
 ```

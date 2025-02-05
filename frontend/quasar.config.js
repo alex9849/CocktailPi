@@ -52,6 +52,10 @@ module.exports = configure(function (ctx) {
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
+      env: {
+        API_BASE_URL: process.env.API_BASE_URL || undefined
+      },
+
       // transpile: false,
       // publicPath: '/',
 
@@ -111,7 +115,7 @@ module.exports = configure(function (ctx) {
     framework: {
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
-	  cssAddon: true,
+      cssAddon: true,
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -119,7 +123,7 @@ module.exports = configure(function (ctx) {
       //
       // components: [],
       // directives: [],
-	  config: {
+      config: {
         notify: {
           progress: true,
           position: 'bottom',
