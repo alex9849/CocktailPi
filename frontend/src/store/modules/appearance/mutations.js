@@ -2,22 +2,55 @@ import { i18n } from 'boot/i18n'
 import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
 import { colors } from 'quasar'
 
-export const setAppearanceSettings = (state, payload) => {
-  i18n.global.locale = payload.language.name
+export const setAppearanceSettings = (state, payload = {}) => {
+  if (payload.language && payload.language.name) {
+    i18n.global.locale = payload.language.name
+  }
   const settings = {
-    language: payload.language,
-    colors: {}
+    language: payload.language || { name: 'en_US' },
+    colors: {
+      normal: {
+        cardBody: '#FFFFFF',
+        background: '#FFFFFF',
+        btnPrimary: '#85452b',
+        btnNavigationActive: '#fddfb1',
+        sidebar: '#bf947b',
+        header: '#85452b',
+        cardHeader: '#85452b',
+        cardItemGroup: '#f3f3f3'
+      },
+      simpleView: {
+        background: '#FFFFFF',
+        header: '#1a237e',
+        btnNavigation: '#616161',
+        btnNavigationActive: '#b968c7',
+        btnPrimary: '#616161',
+        sidebar: '#616161',
+        cocktailProgress: '#1b5e20',
+        cardPrimary: '#f3f3f3'
+      }
+    }
   }
-  if (colors.brightness(payload.colors.normal.cardBody) > 240) {
-    payload.colors.normal.cardBodyTableOdd = '#FFFFFF'
+
+  if (payload.colors) {
+    settings.colors = {
+      normal: { ...settings.colors.normal, ...payload.colors.normal },
+      simpleView: { ...settings.colors.simpleView, ...payload.colors.simpleView }
+    }
+  }
+
+  if (colors.brightness(settings.colors.normal.cardBody) > 240) {
+    settings.colors.normal.cardBodyTableOdd = '#FFFFFF'
   } else {
-    payload.colors.normal.cardBodyTableOdd = colors.lighten(payload.colors.normal.cardBody, 3)
+    settings.colors.normal.cardBodyTableOdd = colors.lighten(settings.colors.normal.cardBody, 3)
   }
-  payload.colors.normal.cardBackgroundInfoIcon = complementColor(payload.colors.normal.background, 50)
-  for (const areaKey in payload.colors) {
+
+  settings.colors.normal.cardBackgroundInfoIcon = complementColor(settings.colors.normal.background, 50)
+
+  for (const areaKey in settings.colors) {
     const areaColors = {}
-    for (const colorKey in payload.colors[areaKey]) {
-      const color = payload.colors[areaKey][colorKey]
+    for (const colorKey in settings.colors[areaKey]) {
+      const color = settings.colors[areaKey][colorKey]
       const textColor = calcTextColor(color)
       areaColors[colorKey] = color
       areaColors[colorKey + 'Text'] = textColor
@@ -60,5 +93,6 @@ export const setAppearanceSettings = (state, payload) => {
   style.setProperty('--q-sv-cocktailprogress', settings.colors.simpleView.cocktailProgress)
   style.setProperty('--q-sv-card-primary', settings.colors.simpleView.cardPrimary)
   style.setProperty('--q-sv-card-primary-text', settings.colors.simpleView.cardPrimaryText)
+
   state.appearance = settings
 }
