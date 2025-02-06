@@ -7,7 +7,6 @@ import websocket from './modules/websocket/index'
 import common from './modules/common/index'
 import appearance from 'src/store/modules/appearance'
 import updater from 'src/store/modules/updater'
-import recipes from 'src/store/modules/recipes'
 
 const store = createStore({
   modules: {
@@ -18,8 +17,7 @@ const store = createStore({
     websocket,
     appearance,
     updater,
-    common,
-    recipes
+    common
   },
 
   // enable strict mode (adds overhead!)

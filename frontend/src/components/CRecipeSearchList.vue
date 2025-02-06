@@ -75,7 +75,10 @@ import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
 import CRecipeList from 'components/CRecipeList'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import RecipeService from 'src/services/recipe.service'
+import { mapGetters } from 'vuex'
+import { useRecipeStore } from 'src/stores/recipes'
+import { storeToRefs } from 'pinia'
 
 export default {
   name: 'CRecipeSearchList',
@@ -85,34 +88,42 @@ export default {
     onlyOwnRecipes: Boolean,
     categoryId: Number
   },
+
+  setup () {
+    const recipeStore = useRecipeStore()
+    const { scrollPosition, pagination, recipes } = storeToRefs(recipeStore)
+    return {
+      recipeStore,
+      scrollPosition,
+      pagination,
+      recipes
+    }
+  },
+
   data () {
     return {
       loading: false,
       filter: this.defaultFilter()
     }
   },
+
   computed: {
-    ...mapState('recipes', ['scrollPosition', 'pagination']),
-    ...mapGetters('recipes', ['cachedRecipes']),
     ...mapGetters({
       user: 'auth/getUser',
       color: 'appearance/getNormalColors'
-    }),
-    recipes () {
-      return this.cachedRecipes
-    }
+    })
   },
+
   created () {
     this.mdiAlert = mdiAlert
     this.filter = { ...this.defaultFilter(), ...this.$route.query }
   },
+
   mounted () {
     this.restoreScrollPosition()
   },
-  methods: {
-    ...mapMutations('recipes', ['setRecipes', 'setScrollPosition']),
-    ...mapActions('recipes', ['fetchRecipes']),
 
+  methods: {
     defaultFilter () {
       return {
         query: '',
@@ -122,25 +133,36 @@ export default {
       }
     },
 
-    onLoad (index, done) {
+    async onLoad (index, done) {
       if (this.pagination.totalPages < index) {
         done()
         this.$refs.infiniteScroll.stop()
         return
       }
-      this.fetchRecipes({
-        page: index - 1,
-        filter: this.filter,
-        userId: this.onlyOwnRecipes ? this.user.id : null,
-        collectionId: this.collectionId,
-        categoryId: this.categoryId,
-        orderBy: this.filter.orderBy
-      }).then(() => done())
+
+      const response = await RecipeService.getRecipes(
+        index - 1,
+        this.onlyOwnRecipes ? this.user.id : null,
+        this.collectionId,
+        this.filter.fabricable,
+        this.filter.containsIngredients,
+        this.filter.query,
+        this.categoryId,
+        this.filter.orderBy
+      )
+
+      if (index === 1) {
+        this.recipeStore.setRecipes(response.content)
+      } else {
+        this.recipeStore.addRecipes(response.content)
+      }
+      this.recipeStore.setPagination({ page: response.number, totalPages: response.totalPages })
+      done()
     },
 
     onClickSearch () {
       window.scrollTo({ top: 0 })
-      this.setRecipes([]) // Clear cached recipes
+      this.recipeStore.setRecipes([]) // Clear cached recipes
       this.updateRoute()
       this.$refs.infiniteScroll.reset()
       this.$refs.infiniteScroll.resume()
@@ -148,7 +170,7 @@ export default {
     },
 
     saveScrollPosition () {
-      this.setScrollPosition(window.scrollY)
+      this.recipeStore.setScrollPosition(window.scrollY)
     },
 
     restoreScrollPosition () {
@@ -162,6 +184,7 @@ export default {
       this.$router.replace({ name: this.$route.name, query }).catch(() => {})
     }
   },
+
   watch: {
     collectionId: 'onClickSearch',
     onlyOwnRecipes: 'onClickSearch',
@@ -170,6 +193,11 @@ export default {
     $route (to, from) {
       if (from.name === 'recipedetails') {
         this.saveScrollPosition()
+      }
+
+      if (!to.path.includes('/recipes')) {
+        this.$refs.infiniteScroll.reset()
+        this.$refs.infiniteScroll.stop()
       }
     }
   }
