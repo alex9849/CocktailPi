@@ -73,132 +73,132 @@
 <script>
 import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
 import CRecipeList from 'components/CRecipeList'
-import RecipeService from 'src/services/recipe.service'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
+import RecipeService from 'src/services/recipe.service'
 import { mapGetters } from 'vuex'
+import { useRecipeStore } from 'src/stores/recipes'
+import { storeToRefs } from 'pinia'
 
 export default {
   name: 'CRecipeSearchList',
   components: { CRecipeList, CRecipeSearchFilterCard },
   props: {
-    collectionId: {
-      type: Number,
-      required: false
-    },
-    onlyOwnRecipes: {
-      type: Boolean,
-      required: false
-    },
-    categoryId: {
-      type: Number,
-      required: false
+    collectionId: Number,
+    onlyOwnRecipes: Boolean,
+    categoryId: Number
+  },
+
+  setup () {
+    const recipeStore = useRecipeStore()
+    const { scrollPosition, pagination, recipes } = storeToRefs(recipeStore)
+    return {
+      recipeStore,
+      scrollPosition,
+      pagination,
+      recipes
     }
   },
+
   data () {
     return {
-      recipes: [],
       loading: false,
-      filter: this.routeOptions().filter,
-      pagination: {
-        page: 0,
-        totalPages: 1
-      }
+      filter: this.defaultFilter()
     }
   },
-  created () {
-    this.mdiAlert = mdiAlert
-  },
-  methods: {
-    onLoad (index, done) {
-      if (this.pagination.totalPages < index) {
-        done()
-        this.$refs.infiniteScroll.stop()
-        return
-      }
-      this.updateRecipes(false, index - 1)
-        .then(x => {
-          done()
-        })
-    },
-    routeOptions () {
-      const queryParams = this.$route.query
-      let containsIngredients = queryParams.containsIngredients ? queryParams.containsIngredients : []
-      if (!Array.isArray(containsIngredients)) {
-        containsIngredients = [containsIngredients]
-      }
-      const filter = {
-        query: queryParams.query ? queryParams.query : '',
-        fabricable: queryParams.fabricable ? queryParams.fabricable : '',
-        containsIngredients,
-        orderBy: queryParams.orderBy
-      }
-      const filterSet = filter.query || filter.fabricable || filter.containsIngredients.length !== 0 || filter.orderBy
-      const defaultFilter = this.$store.getters['common/getDefaultFilter']
-      if (defaultFilter.enable && !filterSet) {
-        filter.fabricable = defaultFilter.filter.fabricable
-        this.updateRoute(filter)
-      }
-      return {
-        filter
-      }
-    },
-    updateRoute (filter = this.filter) {
-      let query = Object.assign({}, filter)
-      query = JsUtils.cleanObject(query)
-      this.$router.replace({ name: this.$route.name, query }).catch(() => {
-      })
-    },
-    updateRecipes (withLoadingAnimation = true, page) {
-      this.loading = true
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          RecipeService.getRecipes(page,
-            this.onlyOwnRecipes ? this.user.id : null,
-            this.collectionId,
-            this.filter.fabricable,
-            this.filter.containsIngredients,
-            this.filter.query,
-            this.categoryId,
-            this.filter.orderBy
-          ).then(page => {
-            this.recipes.push(...page.content)
-            this.pagination.totalPages = page.totalPages
-            this.pagination.page = page.number
-            this.loading = false
-            resolve(page.content)
-          }, error => {
-            this.loading = false
-            reject(error)
-          })
-        }, withLoadingAnimation ? 500 : 0)
-      })
-    },
-    onClickSearch () {
-      window.scrollTo({ top: 0 })
-      this.updateRoute()
-      this.recipes = []
-      this.$refs.infiniteScroll.reset()
-      this.$refs.infiniteScroll.resume()
-      this.$refs.infiniteScroll.trigger()
-    }
-  },
-  watch: {
-    collectionId () {
-      this.onClickSearch()
-    },
-    onlyOwnRecipes () {
-      this.onClickSearch()
-    },
-    categoryId () {
-      this.onClickSearch()
-    }
-  },
+
   computed: {
     ...mapGetters({
       user: 'auth/getUser',
       color: 'appearance/getNormalColors'
     })
+  },
+
+  created () {
+    this.mdiAlert = mdiAlert
+    this.filter = { ...this.defaultFilter(), ...this.$route.query }
+  },
+
+  mounted () {
+    this.restoreScrollPosition()
+  },
+
+  methods: {
+    defaultFilter () {
+      return {
+        query: '',
+        fabricable: '',
+        containsIngredients: [],
+        orderBy: null
+      }
+    },
+
+    async onLoad (index, done) {
+      if (this.pagination.totalPages < index) {
+        done()
+        this.$refs.infiniteScroll.stop()
+        return
+      }
+
+      const response = await RecipeService.getRecipes(
+        index - 1,
+        this.onlyOwnRecipes ? this.user.id : null,
+        this.collectionId,
+        this.filter.fabricable,
+        this.filter.containsIngredients,
+        this.filter.query,
+        this.categoryId,
+        this.filter.orderBy
+      )
+
+      if (index === 1) {
+        this.recipeStore.setRecipes(response.content)
+      } else {
+        this.recipeStore.addRecipes(response.content)
+      }
+      this.recipeStore.setPagination({ page: response.number, totalPages: response.totalPages })
+      done()
+    },
+
+    onClickSearch () {
+      window.scrollTo({ top: 0 })
+      this.updateRoute()
+      this.$refs.infiniteScroll.reset()
+      this.$refs.infiniteScroll.resume()
+      this.$refs.infiniteScroll.trigger()
+    },
+
+    saveScrollPosition () {
+      this.recipeStore.setScrollPosition(window.scrollY)
+    },
+
+    restoreScrollPosition () {
+      this.$nextTick(() => {
+        window.scrollTo({ top: this.scrollPosition || 0, behavior: 'instant' })
+      })
+    },
+
+    updateRoute (filter = this.filter) {
+      const query = JsUtils.cleanObject({ ...filter })
+      this.$router.replace({ name: this.$route.name, query }).catch(() => {})
+    }
+  },
+
+  watch: {
+    collectionId: 'onClickSearch',
+    onlyOwnRecipes: 'onClickSearch',
+    categoryId: 'onClickSearch',
+
+    $route (to, from) {
+      if (from.name === 'recipedetails') {
+        this.saveScrollPosition()
+      }
+
+      if (!to.path.includes('/recipes')) {
+        this.$refs.infiniteScroll.reset()
+        this.$refs.infiniteScroll.stop()
+      }
+    }
   }
 }
 </script>

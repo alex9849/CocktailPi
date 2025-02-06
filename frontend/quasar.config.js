@@ -26,7 +26,8 @@ module.exports = configure(function (ctx) {
     boot: [
       'axios',
       'store',
-      'i18n'
+      'i18n',
+      'pinia'
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
