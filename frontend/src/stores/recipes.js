@@ -30,16 +30,6 @@ export const useRecipeStore = defineStore('recipes', {
 
     setPagination (pagination) {
       this.pagination = pagination
-    },
-
-    resetState () {
-      this.cachedRecipes = []
-      this.scrollPosition = 0
-      this.pagination = {
-        page: 0,
-        totalPages: 1
-      }
-      this.lastUpdate = Date.now()
     }
   }
 })

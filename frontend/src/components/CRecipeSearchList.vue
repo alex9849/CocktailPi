@@ -162,7 +162,6 @@ export default {
 
     onClickSearch () {
       window.scrollTo({ top: 0 })
-      this.recipeStore.setRecipes([]) // Clear cached recipes
       this.updateRoute()
       this.$refs.infiniteScroll.reset()
       this.$refs.infiniteScroll.resume()
