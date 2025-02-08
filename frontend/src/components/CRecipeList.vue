@@ -87,9 +87,6 @@ export default {
     $route: {
       deep: true,
       handler (newValue, oldValue) {
-        if (oldValue.name !== newValue.name) {
-          return
-        }
         this.setLastRecipeListRoute(newValue)
       }
     }
