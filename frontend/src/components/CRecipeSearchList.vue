@@ -98,7 +98,8 @@ export default {
       pagination: 'recipes/pagination',
       scrollPosition: 'recipes/scrollPosition',
       cachedRecipes: 'recipes/cachedRecipes',
-      getApplicableRoute: 'recipes/getApplicableRoute'
+      getApplicableRoute: 'recipes/getApplicableRoute',
+      isCachedRoute: 'recipes/isCachedRoute'
     }),
     recipes () {
       return this.cachedRecipes
@@ -109,14 +110,7 @@ export default {
     this.filter = { ...this.defaultFilter(), ...this.$route.query }
   },
   mounted () {
-    if (this.getApplicableRoute === this.$route.name) {
-      this.restoreScrollPosition()
-    } else {
-      this.resetCache()
-      this.setApplicableRoute(this.$route.name)
-    }
-    this.$refs.infiniteScroll.setIndex(this.pagination.page)
-    this.$refs.infiniteScroll.resume()
+    this.loadCache()
   },
   beforeUnmount () {
     this.saveScrollPosition()
@@ -127,7 +121,20 @@ export default {
       resetCache: 'recipes/reset'
     }),
     ...mapActions('recipes', ['fetchRecipes']),
-
+    loadCache () {
+      if (this.isCachedRoute(this.$route)) {
+        this.restoreScrollPosition()
+        this.$refs.infiniteScroll.setIndex(this.pagination.page)
+      } else {
+        this.resetCache()
+        this.setApplicableRoute({
+          name: this.$route.name,
+          query: this.$route.query
+        })
+        this.$refs.infiniteScroll.reset()
+      }
+      this.$refs.infiniteScroll.resume()
+    },
     defaultFilter () {
       return {
         query: '',
@@ -161,8 +168,6 @@ export default {
       window.scrollTo({ top: 0 })
       this.resetCache()
       this.updateRoute()
-      this.$refs.infiniteScroll.reset()
-      this.$refs.infiniteScroll.resume()
     },
 
     saveScrollPosition () {
@@ -177,7 +182,9 @@ export default {
 
     updateRoute (filter = this.filter) {
       const query = JsUtils.cleanObject({ ...filter })
-      this.$router.replace({ name: this.$route.name, query }).catch(() => {})
+      this.$router.replace({ name: this.$route.name, query })
+        .then(this.loadCache)
+        .catch(() => {})
     }
   },
   watch: {

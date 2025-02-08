@@ -1,5 +1,8 @@
 export default {
-  applicableRoute: null,
+  applicableRoute: {
+    name: null,
+    query: {}
+  },
   cachedRecipes: [],
   scrollPosition: 0,
   pagination: {

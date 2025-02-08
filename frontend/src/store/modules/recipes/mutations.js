@@ -15,12 +15,16 @@ export const setPagination = (state, pagination) => {
 }
 
 export const setApplicableRoute = (state, route) => {
-  state.applicableRoute = route
+  state.applicableRoute.query = route.query
+  state.applicableRoute.name = route.name
 }
 
 export const reset = (state) => {
   state.cachedRecipes = []
-  state.applicableRoute = null
+  state.applicableRoute = {
+    name: null,
+    query: {}
+  }
   state.scrollPosition = 0
   state.pagination.page = 1
   state.pagination.totalPages = 1
