@@ -75,7 +75,7 @@ import CRecipeSearchFilterCard from 'components/CRecipeSearchFilterCard'
 import CRecipeList from 'components/CRecipeList'
 import { mdiAlert } from '@quasar/extras/mdi-v5'
 import JsUtils from 'src/services/JsUtils'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'CRecipeSearchList',
@@ -92,11 +92,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('recipes', ['scrollPosition', 'pagination']),
-    ...mapGetters('recipes', ['cachedRecipes']),
     ...mapGetters({
       user: 'auth/getUser',
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      pagination: 'recipes/pagination',
+      scrollPosition: 'recipes/scrollPosition',
+      cachedRecipes: 'recipes/cachedRecipes',
+      getApplicableRoute: 'recipes/getApplicableRoute'
     }),
     recipes () {
       return this.cachedRecipes
@@ -107,10 +109,23 @@ export default {
     this.filter = { ...this.defaultFilter(), ...this.$route.query }
   },
   mounted () {
-    this.restoreScrollPosition()
+    if (this.getApplicableRoute === this.$route.name) {
+      this.restoreScrollPosition()
+    } else {
+      this.resetCache()
+      this.setApplicableRoute(this.$route.name)
+    }
+    this.$refs.infiniteScroll.setIndex(this.pagination.page)
+    this.$refs.infiniteScroll.resume()
+  },
+  beforeUnmount () {
+    this.saveScrollPosition()
   },
   methods: {
-    ...mapMutations('recipes', ['setRecipes', 'setScrollPosition']),
+    ...mapMutations('recipes', ['setRecipes', 'setScrollPosition', 'setApplicableRoute']),
+    ...mapMutations({
+      resetCache: 'recipes/reset'
+    }),
     ...mapActions('recipes', ['fetchRecipes']),
 
     defaultFilter () {
@@ -129,7 +144,7 @@ export default {
         return
       }
       this.fetchRecipes({
-        page: index - 1,
+        page: index,
         filter: this.filter,
         userId: this.onlyOwnRecipes ? this.user.id : null,
         collectionId: this.collectionId,
@@ -140,11 +155,10 @@ export default {
 
     onClickSearch () {
       window.scrollTo({ top: 0 })
-      this.setRecipes([]) // Clear cached recipes
+      this.resetCache()
       this.updateRoute()
       this.$refs.infiniteScroll.reset()
       this.$refs.infiniteScroll.resume()
-      this.$refs.infiniteScroll.trigger()
     },
 
     saveScrollPosition () {
@@ -165,13 +179,7 @@ export default {
   watch: {
     collectionId: 'onClickSearch',
     onlyOwnRecipes: 'onClickSearch',
-    categoryId: 'onClickSearch',
-
-    $route (to, from) {
-      if (from.name === 'recipedetails') {
-        this.saveScrollPosition()
-      }
-    }
+    categoryId: 'onClickSearch'
   }
 }
 </script>

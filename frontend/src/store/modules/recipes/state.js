@@ -1,8 +1,9 @@
 export default {
+  applicableRoute: null,
   cachedRecipes: [],
   scrollPosition: 0,
   pagination: {
-    page: 0,
+    page: 1,
     totalPages: 1
   }
 }

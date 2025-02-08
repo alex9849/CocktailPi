@@ -109,20 +109,22 @@
         <div class="row justify-center items-center q-gutter-md">
           <div class="col-shrink">
             <table>
-              <tr v-if="pump.type === 'stepper'">
-                <td><b>{{ $t('component.pump_tester.metrics.steps_made') }}</b></td>
-                <td>{{ jobMetrics.stepsMade }}</td>
-              </tr>
-              <tr>
-                <td><b>{{ $t('component.pump_tester.metrics.liquid_pumped') }}</b></td>
-                <td>
-                  <p>{{ jobMetrics.mlPumped }} ml <i>(should-value)</i></p>
-                </td>
-              </tr>
-              <tr>
-                <td><b>{{ $t('component.pump_tester.metrics.time_taken') }}</b></td>
-                <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
-              </tr>
+              <tbody>
+                <tr v-if="pump.type === 'stepper'">
+                  <td><b>{{ $t('component.pump_tester.metrics.steps_made') }}</b></td>
+                  <td>{{ jobMetrics.stepsMade }}</td>
+                </tr>
+                <tr>
+                  <td><b>{{ $t('component.pump_tester.metrics.liquid_pumped') }}</b></td>
+                  <td>
+                    <p>{{ jobMetrics.mlPumped }} ml <i>(should-value)</i></p>
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>{{ $t('component.pump_tester.metrics.time_taken') }}</b></td>
+                  <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
+                </tr>
+              </tbody>
             </table>
           </div>
           <div
@@ -385,5 +387,7 @@ export default {
 </script>
 
 <style scoped>
-
+  tbody tr {
+    background-color: transparent;
+  }
 </style>
