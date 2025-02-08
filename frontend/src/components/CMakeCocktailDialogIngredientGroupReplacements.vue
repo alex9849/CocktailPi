@@ -16,7 +16,7 @@
         >
           <c-make-cocktail-dialog-ingredient-group-replacements-card
             :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }"
-            @ReplacementUpdate="onReplacementUpdate(row.productionStep, row.ingredientGroup.id, $event)"
+            @ReplacementUpdate="onReplacementUpdate(row.ingredientGroup.id, $event)"
             :replacement-entry="row"
           />
         </div>
@@ -39,23 +39,18 @@ export default {
   },
   emits: ['ReplacementUpdate'],
   methods: {
-    onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
-      this.$emit('ReplacementUpdate', { prodStepNr: prodStepNr - 1, toReplaceId, replacement })
+    onReplacementUpdate (toReplaceId, replacement) {
+      this.$emit('ReplacementUpdate', { toReplaceId, replacement })
     }
   },
   computed: {
     tableRows () {
       const data = []
-      let prodStepNr = 0
-      for (const prodStep of this.ingredientGroupReplacements) {
-        prodStepNr++
-        for (const ingredientGroupReplacement of prodStep) {
-          data.push({
-            productionStep: prodStepNr,
-            ingredientGroup: ingredientGroupReplacement.ingredientGroup,
-            replacement: ingredientGroupReplacement.selectedReplacement
-          })
-        }
+      for (const ingredientGroupReplacement of this.ingredientGroupReplacements) {
+        data.push({
+          ingredientGroup: ingredientGroupReplacement.ingredientGroup,
+          replacement: ingredientGroupReplacement.selectedReplacement
+        })
       }
       return data
     },

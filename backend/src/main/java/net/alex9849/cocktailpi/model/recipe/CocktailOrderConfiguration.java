@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 public class CocktailOrderConfiguration {
-    //ProductionStep, IngredientGroupId, Replacement
-    private Map<Long, Map<Long, AddableIngredient>> productionStepReplacements = new HashMap<>();
+    //IngredientGroupId, Replacement
+    private Map<Long, AddableIngredient> productionStepReplacements = new HashMap<>();
     private Integer amountOrderedInMl;
     private Customisations customisations;
 
-    public Map<Long, Map<Long, AddableIngredient>> getProductionStepReplacements() {
+    public Map<Long, AddableIngredient> getProductionStepReplacements() {
         return productionStepReplacements;
     }
 
-    public void setProductionStepReplacements(Map<Long, Map<Long, AddableIngredient>> productionStepReplacements) {
+    public void setProductionStepReplacements(Map<Long, AddableIngredient> productionStepReplacements) {
         this.productionStepReplacements = productionStepReplacements;
     }
 
@@ -28,9 +28,8 @@ public class CocktailOrderConfiguration {
         this.amountOrderedInMl = amountOrderedInMl;
     }
 
-    public AddableIngredient getReplacement(long productionStep, long ingredientGroupId) {
+    public AddableIngredient getReplacement(long ingredientGroupId) {
         return productionStepReplacements
-                .getOrDefault(productionStep, new HashMap<>())
                 .getOrDefault(ingredientGroupId, null);
     }
 

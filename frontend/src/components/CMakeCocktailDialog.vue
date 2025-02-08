@@ -51,7 +51,7 @@
             v-if="feasibilityReportValid"
             :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
             :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
-            @ReplacementUpdate="onReplacementUpdate($event.prodStepNr, $event.toReplaceId, $event.replacement)"
+            @ReplacementUpdate="onReplacementUpdate($event.toReplaceId, $event.replacement)"
           />
           <c-make-cocktail-dialog-ingredients-to-add-manually
             :unassigned-ingredients="ingredientsToAddManually"
@@ -222,16 +222,12 @@ export default {
       this.customisations = customisations
       this.tryCheckFeasibility()
     },
-    onReplacementUpdate (prodStepNr, toReplaceId, replacement) {
+    onReplacementUpdate (toReplaceId, replacement) {
       const config = this.getCurrentOrderConfigurationDto()
-      let currentProdStepNr = 0
-      for (const prodStep of config.productionStepReplacements) {
-        for (const ingredientGroupReplacement of prodStep) {
-          if (currentProdStepNr === prodStepNr && ingredientGroupReplacement.ingredientGroupId === toReplaceId) {
-            ingredientGroupReplacement.replacementId = replacement?.id
-          }
+      for (const ingredientGroupReplacement of config.ingredientGroupReplacements) {
+        if (ingredientGroupReplacement.ingredientGroupId === toReplaceId) {
+          ingredientGroupReplacement.replacementId = replacement?.id
         }
-        currentProdStepNr++
       }
       this.checkFeasibility(config)
     },
@@ -244,15 +240,11 @@ export default {
         }
       }
       const newReplacements = []
-      for (const prodStep of this.feasibilityReport.ingredientGroupReplacements) {
-        const prodStepReplacements = []
-        for (const ingredientGroupReplacement of prodStep) {
-          prodStepReplacements.push({
-            ingredientGroupId: ingredientGroupReplacement.ingredientGroup.id,
-            replacementId: ingredientGroupReplacement?.selectedReplacement?.id
-          })
-        }
-        newReplacements.push(prodStepReplacements)
+      for (const ingredientGroupReplacement of this.feasibilityReport.ingredientGroupReplacements) {
+        newReplacements.push({
+          ingredientGroupId: ingredientGroupReplacement.ingredientGroup.id,
+          replacementId: ingredientGroupReplacement?.selectedReplacement?.id
+        })
       }
       for (const additionalIngredient of this.customisations.additionalIngredients) {
         if (additionalIngredient.amount > 0) {
@@ -262,7 +254,7 @@ export default {
           })
         }
       }
-      config.productionStepReplacements = newReplacements
+      config.ingredientGroupReplacements = newReplacements
       return config
     },
     checkFeasibility (orderConfig) {

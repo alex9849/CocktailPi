@@ -158,33 +158,28 @@ public class CocktailOrderService {
         }
         CocktailOrderConfiguration orderConfig = new CocktailOrderConfiguration();
         BeanUtils.copyProperties(orderConfigDto, orderConfig);
-        long pStep = 0;
-        Map<Long, Map<Long, AddableIngredient>> replacements = new HashMap<>();
+        Map<Long, AddableIngredient> replacements = new HashMap<>();
         orderConfig.setProductionStepReplacements(replacements);
-        for(List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> pStepDto : orderConfigDto.getProductionStepReplacements()) {
-            Map<Long, AddableIngredient> stepReplacements = replacements.computeIfAbsent(pStep, k -> new HashMap<>());
-            for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : pStepDto) {
-                Ingredient toReplace = ingredientService.getIngredient(replacementDto.getIngredientGroupId());
-                if(toReplace == null) {
-                    throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
-                }
-                if(!(toReplace instanceof IngredientGroup)) {
-                    throw new IllegalArgumentException("Ingredient to replace with id \"" + toReplace.getName() + "\" is not a IngredientGroup!");
-                }
-                AddableIngredient addableIngredientReplacement = null;
-                if(replacementDto.getReplacementId() != null) {
-                    Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
-                    if(replacement == null) {
-                        throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
-                    }
-                    if(!(replacement instanceof AddableIngredient)) {
-                        throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
-                    }
-                    addableIngredientReplacement = (AddableIngredient) replacement;
-                }
-                stepReplacements.put(toReplace.getId(), addableIngredientReplacement);
+        for(FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create replacementDto : orderConfigDto.getIngredientGroupReplacements()) {
+            Ingredient toReplace = ingredientService.getIngredient(replacementDto.getIngredientGroupId());
+            if(toReplace == null) {
+                throw new IllegalArgumentException("IngredientGroup with id \"" + replacementDto.getIngredientGroupId() + "\" not found!");
             }
-            pStep++;
+            if(!(toReplace instanceof IngredientGroup)) {
+                throw new IllegalArgumentException("Ingredient to replace with id \"" + toReplace.getName() + "\" is not a IngredientGroup!");
+            }
+            AddableIngredient addableIngredientReplacement = null;
+            if(replacementDto.getReplacementId() != null) {
+                Ingredient replacement = ingredientService.getIngredient(replacementDto.getReplacementId());
+                if(replacement == null) {
+                    throw new IllegalArgumentException("AddableIngredient with id \"" + replacementDto.getReplacementId() + "\" not found!");
+                }
+                if(!(replacement instanceof AddableIngredient)) {
+                    throw new IllegalArgumentException("Replacement-Ingredient with id \"" + replacement.getName() + "\" is not an AddableIngredient!");
+                }
+                addableIngredientReplacement = (AddableIngredient) replacement;
+            }
+            replacements.put(toReplace.getId(), addableIngredientReplacement);
         }
 
         CocktailOrderConfigurationDto.CustomisationsDto.Request.Create customisationsDto = orderConfigDto.getCustomisations();
