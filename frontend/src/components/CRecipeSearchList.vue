@@ -114,6 +114,7 @@ export default {
   },
   beforeUnmount () {
     this.saveScrollPosition()
+    this.$refs.infiniteScroll.stop()
   },
   methods: {
     ...mapMutations('recipes', ['setRecipes', 'setScrollPosition', 'setApplicableRoute']),
@@ -134,6 +135,7 @@ export default {
         this.$refs.infiniteScroll.reset()
       }
       this.$refs.infiniteScroll.resume()
+      this.$refs.infiniteScroll.poll()
     },
     defaultFilter () {
       return {
