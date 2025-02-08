@@ -67,7 +67,7 @@ public class RecipeService {
                                            Long inCategory, Long[] containsIngredients,
                                            String searchName, FabricableFilter fabricable, int pageNumber,
                                            int pageSize, Sort sort) {
-        long offset = (long) (pageNumber - 1) * pageSize;
+        long offset = (long) pageNumber * pageSize;
         List<Set<Long>> idsToFindSetList = new ArrayList<>();
 
         if(inCategory != null) {

@@ -6,8 +6,8 @@
   <div class="row q-col-gutter-lg">
     <q-pagination
       class="col-12 flex justify-center"
-      :model-value="pagination.page + 1"
-      @update:model-value="onPageClick($event - 1)"
+      :model-value="pagination.page"
+      @update:model-value="onPageClick($event)"
       :max="pagination.totalPages"
       :max-pages="9"
       :active-color="paginationColors.active"

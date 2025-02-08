@@ -33,6 +33,9 @@ class RecipeService {
       orderBy
     }
     params = JsUtils.cleanObject(params)
+    if (params.page) {
+      params.page -= 1
+    }
     const config = {
       params,
       paramsSerializer: (params) => Querystring.stringify(params)
@@ -40,6 +43,8 @@ class RecipeService {
     return axios.get(API_PATH, config)
       .then(response => {
         response.data.content = response.data.content.map(x => this.afterRecipeLoad(x))
+        response.data.number += 1
+        response.data.pageable.pageNumber += 1
         return response.data
       })
   }

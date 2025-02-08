@@ -138,6 +138,7 @@ export default {
     },
 
     onLoad (index, done) {
+      this.loading = true
       if (this.pagination.totalPages < index) {
         done()
         this.$refs.infiniteScroll.stop()
@@ -151,6 +152,9 @@ export default {
         categoryId: this.categoryId,
         orderBy: this.filter.orderBy
       }).then(() => done())
+        .finally(() => {
+          this.loading = false
+        })
     },
 
     onClickSearch () {
