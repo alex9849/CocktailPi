@@ -147,12 +147,12 @@ export default {
     },
 
     onLoad (index, done) {
-      this.loading = true
       if (this.pagination.totalPages < index) {
         done()
         this.$refs.infiniteScroll.stop()
         return
       }
+      this.loading = true
       this.fetchRecipes({
         page: index,
         filter: this.filter,
