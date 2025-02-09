@@ -92,90 +92,93 @@
     >
     <q-card-section
       v-if="showDetailed && pump.type === 'stepper'"
-      class="q-py-sm"
+      class="q-py-sm row items-center"
+      style="flex-grow: 1"
     >
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.steps_per_cl') }}
-          </p>
+      <div class="col">
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.steps_per_cl') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.max_steps_per_second') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.max_steps_per_second') }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.stepsPerCl).class"
+            >
+              {{ getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
+            >
+              {{ getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.stepsPerCl).class"
-          >
-            {{ getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.acceleration') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.step_pin') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
-          >
-            {{ getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.acceleration).class"
+            >
+              {{ getDisplayAttribute(pump.acceleration, 'steps/s²').label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayPin(pump.stepPin).class"
+            >
+              {{ getDisplayPin(pump.stepPin).label }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.acceleration') }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.enable_pin') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.tube_capacity') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.step_pin') }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.acceleration).class"
-          >
-            {{ getDisplayAttribute(pump.acceleration, 'steps/s²').label }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayPin(pump.stepPin).class"
-          >
-            {{ getDisplayPin(pump.stepPin).label }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.enable_pin') }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.tube_capacity') }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayPin(pump.enablePin).class"
-          >
-            {{ getDisplayPin(pump.enablePin).label }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
-          >
-            {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayPin(pump.enablePin).class"
+            >
+              {{ getDisplayPin(pump.enablePin).label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
+            >
+              {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
+            </p>
+          </div>
         </div>
       </div>
     </q-card-section>

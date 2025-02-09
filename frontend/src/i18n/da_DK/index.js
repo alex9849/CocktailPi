@@ -796,7 +796,7 @@ export default {
       fallack_name: 'Pumpe #{id}',
       attr: {
         ingredient: 'Ingrediens',
-        filling_level: 'fyldningsniveau',
+        filling_level: 'Fyldningsniveau',
         time_per_cl: 'Tid pr. cL',
         enable_pin: 'Enable pin',
         running_state: 'Kørende tilstand',
