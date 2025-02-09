@@ -9,6 +9,7 @@
       @load="onLoad"
       :offset="300"
       ref="infiniteScroll"
+      :disable="disableLoading"
     >
       <template v-slot:loading>
         <q-card
@@ -87,6 +88,7 @@ export default {
   },
   data () {
     return {
+      disableLoading: true,
       loading: false,
       filter: this.defaultFilter()
     }
@@ -110,6 +112,7 @@ export default {
     this.filter = { ...this.defaultFilter(), ...this.$route.query }
   },
   mounted () {
+    this.disableLoading = false
     this.loadCache()
   },
   beforeUnmount () {
