@@ -24,7 +24,7 @@ class JsUtils {
 
       const isObjects = this.isObject(value1) && this.isObject(value2)
 
-      if ((isObjects && !this.isDeepEqual(value1, value2)) ||
+      if ((isObjects && !this.deepEquals(value1, value2)) ||
         (!isObjects && value1 !== value2)
       ) {
         return false
