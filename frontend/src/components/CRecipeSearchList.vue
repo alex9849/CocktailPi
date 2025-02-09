@@ -180,8 +180,11 @@ export default {
     },
 
     restoreScrollPosition () {
+      // delay by 2 ticks, because the router's scroll behaviour otherwise overwrites these changes.
       this.$nextTick(() => {
-        window.scrollTo({ top: this.scrollPosition || 0, behavior: 'instant' })
+        this.$nextTick(() => {
+          window.scrollTo({ top: this.scrollPosition || 0, behavior: 'instant' })
+        })
       })
     },
 
