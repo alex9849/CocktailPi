@@ -1,7 +1,8 @@
 export default {
   applicableRoute: {
     name: null,
-    query: {}
+    query: {},
+    params: {}
   },
   cachedRecipes: [],
   scrollPosition: 0,

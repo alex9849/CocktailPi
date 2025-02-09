@@ -23,7 +23,8 @@ export const reset = (state) => {
   state.cachedRecipes = []
   state.applicableRoute = {
     name: null,
-    query: {}
+    query: {},
+    params: {}
   }
   state.scrollPosition = 0
   state.pagination.page = 1
