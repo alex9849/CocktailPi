@@ -1,6 +1,7 @@
 package net.alex9849.cocktailpi.model.pump.motortasks;
 
 import net.alex9849.cocktailpi.model.pump.*;
+import net.alex9849.motorlib.exception.HX711Exception;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.sensor.HX711;
 
@@ -36,6 +37,9 @@ public class ValveTask extends PumpTask {
                 currentGrams = hx711.read(7);
             }
         } catch (InterruptedException e) {
+            cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
             cancel();
         }
 
