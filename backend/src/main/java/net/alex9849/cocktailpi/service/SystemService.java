@@ -219,6 +219,13 @@ public class SystemService {
         }
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
+            if (!(i2CSettings.getSdaPin() instanceof LocalPin)) {
+                throw new IllegalArgumentException("SDA pin needs to be on RaspberryPi GPIO board!");
+            }
+            if (!(i2CSettings.getSclPin() instanceof LocalPin)) {
+                throw new IllegalArgumentException("SCL pin needs to be on RaspberryPi GPIO board!");
+            }
+
             pinUtils.shutdownOutputPin(i2CSettings.getSdaPin().getPinNr());
             pinUtils.shutdownOutputPin(i2CSettings.getSclPin().getPinNr());
         } else {
@@ -231,30 +238,25 @@ public class SystemService {
         try {
             Process process;
             if (i2CSettings.isEnable()) {
-                if (!(i2CSettings.getSdaPin() instanceof LocalPin)) {
-                    throw new IllegalArgumentException("SDA pin needs to be on RaspberryPi GPIO board!");
-                }
-                LocalPin sdaPin = (LocalPin) i2CSettings.getSdaPin();
-                if (!(i2CSettings.getSclPin() instanceof LocalPin)) {
-                    throw new IllegalArgumentException("SCL pin needs to be on RaspberryPi GPIO board!");
-                }
-                LocalPin sclPin = (LocalPin) i2CSettings.getSclPin();
-                setPinBootState(sdaPin.getPinNr(), "a0");
-                setPinBootState(sclPin.getPinNr(), "a0");
                 process = Runtime.getRuntime().exec("raspi-config nonint do_i2c 0");
             } else {
-                I2CSettings oldSettings = getI2cSettings();
-                if (oldSettings.isEnable()) {
-                    if (oldSettings.getSdaPin() instanceof LocalPin oldSdaPin) {
-                        setPinBootState(oldSdaPin, null);
-                    }
-                    if (oldSettings.getSclPin() instanceof LocalPin oldSclPin) {
-                        setPinBootState(oldSclPin, null);
-                    }
-                }
                 process = Runtime.getRuntime().exec("raspi-config nonint do_i2c 1");
             }
             process.waitFor();
+
+            I2CSettings oldSettings = getI2cSettings();
+            if (oldSettings.isEnable()) {
+                if (oldSettings.getSdaPin() instanceof LocalPin oldSdaPin) {
+                    setPinBootState(oldSdaPin, null);
+                }
+                if (oldSettings.getSclPin() instanceof LocalPin oldSclPin) {
+                    setPinBootState(oldSclPin, null);
+                }
+            }
+            if (i2CSettings.isEnable()) {
+                setPinBootState(i2CSettings.getSdaPin().getPinNr(), "a0");
+                setPinBootState(i2CSettings.getSclPin().getPinNr(), "a0");
+            }
             optionsRepository.setOption("I2C_Enable", String.valueOf(i2CSettings.isEnable()));
             optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SCL, i2CSettings.getSclPin());
             optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SDA, i2CSettings.getSdaPin());
