@@ -507,11 +507,11 @@ export default {
         'This supported bus is the device at ' +
         '<div class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--outline text-black" role="status">/sys/bus/i2c/devices/i2c-1</div> ' +
         'on the underlying linux filesystem.\n' +
-        'On normal Raspberry PIs the pins used for SDL and SCL are on normally <b>2 for SDA</b> and <b>3 for SDL</b>\n' +
+        'On normal Raspberry PIs the pins used for SDA and SCL are on normally <b>2 for SDA</b> and <b>3 for SCL</b>\n' +
         '\n' +
         'If you can\'t see the pins that you want to use here, make sure that you don\'t have them assigned to something already.' +
         '<br><br>' +
-        '<b>The fields for the SDL and SCL pin don\'t influence the selected bus.</b>',
+        '<b>The fields for the SDA and SCL pin don\'t influence the selected bus.</b>',
       configuration_warning: '<b><u>WARNING!!!:</b></u> Enabling and disabling the I2C-bus will trigger unix commands that configure the I2C ' +
         'bus. Make sure that SDA and SCL are selected correctly. Otherwise it can happen, that pins are in use as normal pins and I2C pins at the same time. This will crash the application!'
     },
