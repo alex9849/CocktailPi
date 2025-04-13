@@ -167,42 +167,26 @@ public class SystemService {
         return settings;
     }
 
-    public void setPinBootState(LocalPin pin, PinState defaultState) {
+    private void setPinBootState(int pinNr, String bootState) {
         if(!isRaspberryPi) {
             return;
         }
-        int pinNr = pin.getPinNr();
         try {
             BufferedReader file = new BufferedReader(new FileReader("/boot/firmware/config.txt"));
             StringBuilder inputBuffer = new StringBuilder();
             String line;
 
-            boolean foundLine = false;
             while ((line = file.readLine()) != null) {
                 if (line.startsWith("gpio=" + pinNr + "=")) {
-                    foundLine = true;
-                    line = "gpio=" + pinNr + "=op,";
-                    if (defaultState == null) {
-                        continue;
-                    }
-                    if (defaultState == PinState.LOW) {
-                        line += "dl";
-                    } else {
-                        line += "dh";
-                    }
+                    continue;
                 }
                 inputBuffer.append(line);
                 inputBuffer.append('\n');
             }
             file.close();
 
-            if(!foundLine && defaultState != null) {
-                line = "gpio=" + pinNr + "=op,";
-                if (defaultState == PinState.LOW) {
-                    line += "dl";
-                } else {
-                    line += "dh";
-                }
+            if(bootState != null) {
+                line = "gpio=" + pinNr + "=" + bootState;
                 inputBuffer.append(line);
                 inputBuffer.append('\n');
             }
@@ -215,7 +199,18 @@ public class SystemService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void setPinBootState(LocalPin pin, PinState bootState) {
+        if (bootState == null) {
+            setPinBootState(pin.getPinNr(), null);
+            return;
+        }
+        if (bootState == PinState.HIGH) {
+            setPinBootState(pin.getPinNr(), "op,dh");
+        } else {
+            setPinBootState(pin.getPinNr(), "op,dl");
+        }
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
@@ -236,8 +231,27 @@ public class SystemService {
         try {
             Process process;
             if (i2CSettings.isEnable()) {
+                if (!(i2CSettings.getSdaPin() instanceof LocalPin)) {
+                    throw new IllegalArgumentException("SDA pin needs to be on RaspberryPi GPIO board!");
+                }
+                LocalPin sdaPin = (LocalPin) i2CSettings.getSdaPin();
+                if (!(i2CSettings.getSclPin() instanceof LocalPin)) {
+                    throw new IllegalArgumentException("SCL pin needs to be on RaspberryPi GPIO board!");
+                }
+                LocalPin sclPin = (LocalPin) i2CSettings.getSclPin();
+                setPinBootState(sdaPin.getPinNr(), "a0");
+                setPinBootState(sclPin.getPinNr(), "a0");
                 process = Runtime.getRuntime().exec("raspi-config nonint do_i2c 0");
             } else {
+                I2CSettings oldSettings = getI2cSettings();
+                if (oldSettings.isEnable()) {
+                    if (oldSettings.getSdaPin() instanceof LocalPin oldSdaPin) {
+                        setPinBootState(oldSdaPin, null);
+                    }
+                    if (oldSettings.getSclPin() instanceof LocalPin oldSclPin) {
+                        setPinBootState(oldSclPin, null);
+                    }
+                }
                 process = Runtime.getRuntime().exec("raspi-config nonint do_i2c 1");
             }
             process.waitFor();
