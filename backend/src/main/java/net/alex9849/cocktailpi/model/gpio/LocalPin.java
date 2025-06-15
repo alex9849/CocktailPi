@@ -8,8 +8,8 @@ import net.alex9849.motorlib.pin.IOutputPin;
 
 public class LocalPin extends Pin {
 
-    public LocalPin(LocalGpioBoard board, int nr) {
-        super(board, nr);
+    public LocalPin(LocalGpioBoard board, int nr, String displayName) {
+        super(board, nr, displayName);
     }
 
     @Override

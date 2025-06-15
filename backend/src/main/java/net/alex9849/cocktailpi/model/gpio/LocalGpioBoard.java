@@ -19,7 +19,12 @@ public class LocalGpioBoard extends GpioBoard {
 
     @Override
     protected LocalPin getPinUnchecked(int pin) {
-        return new LocalPin(this, pin);
+        return new LocalPin(this, pin, pinDisplayName(pin));
+    }
+
+    @Override
+    protected String pinDisplayName(int pin) {
+        return "BCM" + String.valueOf(pin);
     }
 
 }

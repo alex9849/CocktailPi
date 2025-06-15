@@ -1,24 +1,19 @@
 package net.alex9849.cocktailpi.model.gpio;
 
 
+import com.pi4j.io.i2c.I2C;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.mcp230xx.Mcp23017;
-import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.motorlib.I2CPinExpander;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @DiscriminatorValue("i2c")
-public class I2CGpioBoard extends GpioBoard {
-    private static final Map<Byte, Mcp23017> boardMap = new HashMap<>();
-    private final BoardModel boardModel;
+public abstract class I2CGpioBoard extends GpioBoard {
+    private static final Map<Byte, I2CPinExpander> boardMap = new HashMap<>();
     private byte i2cAddress;
-
-    public I2CGpioBoard(BoardModel boardModel) {
-        this.boardModel = boardModel;
-    }
 
     public byte getI2cAddress() {
         return i2cAddress;
@@ -28,46 +23,42 @@ public class I2CGpioBoard extends GpioBoard {
         this.i2cAddress = i2cAddress;
     }
 
-    public BoardModel getBoardModel() {
-        return boardModel;
-    }
+    public abstract I2CBoardModel getBoardModel();
 
-    public Mcp23017 getBoardDriver() {
-        if(boardMap.containsKey(getI2cAddress()) && !boardMap.get(getI2cAddress()).isOpen()) {
-            boardMap.remove(getI2cAddress());
+    public I2CPinExpander getBoardDriver() {
+        PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+        if(boardMap.containsKey(getI2cAddress())) {
+            I2CPinExpander expander = boardMap.get(getI2cAddress());
+            if (!expander.isOpen() || !isExpanderInstance(expander)) {
+                if (expander.isOpen()) {
+                    pinUtils.shutdownI2CAddress(getI2cAddress());
+                }
+                boardMap.remove(getI2cAddress());
+            }
         }
         if(!boardMap.containsKey(getI2cAddress())) {
-            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-            boardMap.put(getI2cAddress(), new Mcp23017(pinUtils.getI2c(getI2cAddress())));
+            boardMap.put(getI2cAddress(), genExpanderInstance(pinUtils.getI2c(getI2cAddress())));
         }
         return boardMap.get(getI2cAddress());
     }
 
+    protected abstract boolean isExpanderInstance(I2CPinExpander expander);
+
+    protected abstract I2CPinExpander genExpanderInstance(I2C device);
+
     @Override
     protected Pin getPinUnchecked(int pin) {
-        return new I2CBoardPin(this, pin);
+        return new I2CBoardPin(this, pin, pinDisplayName(pin));
     }
 
     @Override
     public int getMinPin() {
-        return boardModel.minPin;
+        return getBoardModel().minPin;
     }
 
     @Override
     public int getMaxPin() {
-        return boardModel.maxPin;
-    }
-
-    public enum BoardModel {
-        MCP23017(0, 15);
-
-        final int minPin;
-        final int maxPin;
-
-        BoardModel(int minPin, int maxPin) {
-            this.minPin = minPin;
-            this.maxPin = maxPin;
-        }
+        return getBoardModel().maxPin;
     }
 
 }

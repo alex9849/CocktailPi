@@ -13,11 +13,13 @@ public abstract class Pin {
     private PinResource resource;
     private boolean resourceValid;
     private final GpioBoard board;
+    private final String displayName;
 
-    public Pin(GpioBoard board, int nr) {
+    public Pin(GpioBoard board, int nr, String displayName) {
         this.nr = nr;
         this.resourceValid = false;
         this.board = board;
+        this.displayName = displayName;
     }
 
     public int getPinNr() {
@@ -44,5 +46,9 @@ public abstract class Pin {
 
     public long getBoardId() {
         return getGpioBoard().getId();
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

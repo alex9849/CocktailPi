@@ -6,8 +6,8 @@ import net.alex9849.motorlib.pin.IOutputPin;
 
 public class I2CBoardPin extends Pin {
 
-    public I2CBoardPin(I2CGpioBoard board, int nr) {
-        super(board, nr);
+    public I2CBoardPin(I2CGpioBoard board, int nr, String displayName) {
+        super(board, nr, displayName);
     }
 
     @Override

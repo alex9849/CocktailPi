@@ -35,6 +35,8 @@ public abstract class GpioBoard {
 
     protected abstract Pin getPinUnchecked(int pin);
 
+    protected abstract String pinDisplayName(int pin);
+
     public List<Pin> getPins() {
         List<Pin> pinList = new ArrayList<>();
         for(int i = getMinPin(); i <= getMaxPin(); i++) {
