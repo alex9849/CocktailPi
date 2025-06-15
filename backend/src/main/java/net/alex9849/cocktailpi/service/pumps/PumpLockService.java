@@ -57,7 +57,7 @@ public class PumpLockService {
         if(globalLock != null && globalLock.owner != acquirer) {
             return false;
         }
-        return lockByPumpId.values().stream().noneMatch(x -> x.owner != acquirer);
+        return lockByPumpId.isEmpty();
     }
 
     public synchronized void acquireGlobal(Object acquirer) {
