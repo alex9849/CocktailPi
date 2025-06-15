@@ -17,6 +17,7 @@ public class ReversePumpSettingsDto {
     private interface IDirectorPinRequest { @NotNull PinDto.Request.Select getDirectorPin(); }
     private interface IOvershoot { @Min(0) @Max(200) int getOvershoot(); }
     private interface IAutoPumpBackTimer { @Min(0) @Max(60) int getAutoPumpBackTimer(); }
+    private interface IForwardStateHigh { boolean isForwardStateHigh(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
@@ -55,10 +56,11 @@ public class ReversePumpSettingsDto {
         public static class Request {
 
             @Getter @Setter @EqualsAndHashCode
-            public static class Create implements IDirectorPinRequest, IOvershoot, IAutoPumpBackTimer {
+            public static class Create implements IDirectorPinRequest, IOvershoot, IForwardStateHigh, IAutoPumpBackTimer {
                 PinDto.Request.Select directorPin;
                 int overshoot;
                 int autoPumpBackTimer;
+                boolean forwardStateHigh;
             }
 
         }
@@ -66,14 +68,16 @@ public class ReversePumpSettingsDto {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Response {
             @Getter @Setter @EqualsAndHashCode
-            public static class Detailed implements IDirectorPinResponse, IOvershoot, IAutoPumpBackTimer {
+            public static class Detailed implements IDirectorPinResponse, IOvershoot, IForwardStateHigh, IAutoPumpBackTimer {
                 PinDto.Response.Detailed directorPin;
                 int overshoot;
                 int autoPumpBackTimer;
+                boolean forwardStateHigh;
 
                 public Detailed(ReversePumpSettings.Config cfg) {
                     this.overshoot = cfg.getOvershoot();
                     this.autoPumpBackTimer = cfg.getAutoPumpBackTimer();
+                    this.forwardStateHigh = cfg.isForwardStateHigh();
                     if(cfg.getDirectorPin() != null) {
                         this.directorPin = new PinDto.Response.Detailed(cfg.getDirectorPin());
                     }

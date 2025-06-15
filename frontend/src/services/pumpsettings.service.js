@@ -12,7 +12,8 @@ class PumpSettingsService {
       dto.settings = {
         directorPin: pinDtoMapper.toPinSelectDto(settings.settings.directorPin),
         overshoot: settings.settings.overshoot,
-        autoPumpBackTimer: settings.settings.autoPumpBackTimer
+        autoPumpBackTimer: settings.settings.autoPumpBackTimer,
+        forwardStateHigh: settings.settings.forwardStateHigh
       }
     }
     return axios.put(API_PATH + 'reversepumping', dto)

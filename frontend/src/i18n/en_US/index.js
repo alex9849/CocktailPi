@@ -968,10 +968,15 @@ export default {
         enable_label: 'Enable reverse pumping',
         vd_pin_headline: 'Voltage director pin',
         vd_pin_label: 'Director-Pin',
+        forward_state_high_label: 'Forward state',
         overshoot_label: 'Overshoot',
         overshoot_hint: 'How strongly should number of ml be overshoot on pump back?',
         auto_pump_back_timer_label: 'Inactive time till automatic pump back',
-        save_btn_label: 'Save & Return'
+        save_btn_label: 'Save & Return',
+        forward_state: {
+          high: 'High',
+          low: 'Low'
+        }
       },
       notifications: {
         updated: 'Settings updated!'
