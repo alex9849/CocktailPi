@@ -99,16 +99,14 @@ import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import GpioService from 'src/services/gpio.service'
 import { mapGetters } from 'vuex'
 import { complementColor } from 'src/mixins/utils'
+import { i2cExpanderBoardTypes } from 'src/mixins/constants'
 export default {
   name: 'CGpioExpanderExpansionItem',
+  mixins: [i2cExpanderBoardTypes],
   props: {
     nonEditable: {
       type: Boolean,
       default: false
-    },
-    pinPrefix: {
-      type: String,
-      default: () => 'GPIO '
     },
     board: {
       type: Object,
@@ -158,7 +156,7 @@ export default {
             pinsUsed: this.board.usedPinCount,
             pinsMax: this.board.pinCount,
             addr: '0x' + this.board.address.toString(16),
-            board: this.board.boardModel
+            board: this.i2cExpanderBoardTypeName(this.board.boardModel)
           }
         )
       }

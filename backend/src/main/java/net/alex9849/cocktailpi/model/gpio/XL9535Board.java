@@ -19,6 +19,10 @@ public abstract class XL9535Board extends I2CGpioBoard {
 
     @Override
     protected String pinDisplayName(int pin) {
-        return "A" + String.valueOf(pin);
+        if (pin < 8) {
+            return "A" + String.valueOf(pin);
+        } else {
+            return "B" + String.valueOf(pin % 8);
+        }
     }
 }

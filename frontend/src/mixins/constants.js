@@ -77,5 +77,15 @@ export const i2cExpanderBoardTypes = {
         value: 'XL9535_K16V5_RELAY'
       }]
     }
+  },
+  methods: {
+    i2cExpanderBoardTypeName (value) {
+      for (const pair of this.i2cExpanderBoardTypes) {
+        if (pair.value === value) {
+          return pair.label
+        }
+      }
+      return 'Unknown'
+    }
   }
 }

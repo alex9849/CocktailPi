@@ -152,7 +152,6 @@
                   >
                     <c-gpio-expander-expansion-item
                       non-editable
-                      pin-prefix="BCM "
                       :board="localBoard"
                     />
                   </div>
