@@ -48,7 +48,7 @@
           ref="pinSelect"
           @update:modelValue="onSelectPin"
           @popupShow="onOpenPinSelectPopup"
-          :option-label="x => x ? pinIdPrefix + x.nr : null"
+          :option-label="x => x.pinName"
           :error="error"
           :disable="loading || disable"
           :loading="loading"
@@ -104,7 +104,7 @@
             >
               <q-item-section avatar>
                 <q-item-label>
-                  {{ pinIdPrefix }}{{ opt.nr }}
+                  {{ opt.pinName }}
                 </q-item-label>
               </q-item-section>
               <q-item-section
@@ -278,14 +278,6 @@ export default {
     },
     emitPin () {
       this.$emit('update:model-value', this.selection.pin)
-    }
-  },
-  computed: {
-    pinIdPrefix () {
-      if (this.selection.board?.type === 'local') {
-        return 'BCM '
-      }
-      return 'GPIO'
     }
   }
 }
