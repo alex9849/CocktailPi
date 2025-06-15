@@ -69,7 +69,7 @@
                 <q-item-section>
                   <div class="row items-center q-col-gutter-md text-black">
                     <div class="col-auto">
-                      {{ pinPrefix }}{{ pin.nr }}
+                      {{ pin.pinName }}
                     </div>
                     <div class="col">
                       <q-icon

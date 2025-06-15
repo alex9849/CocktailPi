@@ -47,23 +47,25 @@ public class PinDto {
                 this.boardId = pin.getBoardId();
                 this.inUse = pin.getResource() != null;
                 this.boardName = pin.getGpioBoard().getName();
-                this.pinName = (pin instanceof LocalPin ? "BCM " : "GPIO ") + pin.getPinNr();
+                this.pinName = pin.getDisplayName();
             }
         }
 
         @Getter
         @Setter
         @EqualsAndHashCode
-        public static class Detailed implements Nr, BoardId, InUse, PinResource {
+        public static class Detailed implements Nr, BoardId, InUse, PinName, PinResource {
             int nr;
             long boardId;
             boolean inUse;
+            String pinName;
             PinResourceDto.Response.Detailed pinResource;
 
             public Detailed(Pin pin) {
                 this.nr = pin.getPinNr();
                 this.boardId = pin.getBoardId();
                 this.inUse = pin.getResource() != null;
+                this.pinName = pin.getDisplayName();
                 if(pin.getResource() != null) {
                     this.pinResource = new PinResourceDto.Response.Detailed(pin.getResource());
                 }
