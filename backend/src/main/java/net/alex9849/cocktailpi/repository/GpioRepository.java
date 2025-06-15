@@ -2,7 +2,6 @@ package net.alex9849.cocktailpi.repository;
 
 
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.*;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
 import net.alex9849.cocktailpi.service.LoadCellService;
@@ -139,7 +138,7 @@ public class GpioRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO gpio_boards (name, dType, board_model, i2c_address) " +
                     "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, gpioBoard.getName());
-            pstmt.setString(2, gpioBoard.getClass().getAnnotation(DiscriminatorValue.class).value());
+            pstmt.setString(2, gpioBoard.getType().discriminatorValue);
 
             if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
                 pstmt.setString(3, i2CGpioBoard.getBoardModel().name());
@@ -242,12 +241,12 @@ public class GpioRepository extends JdbcDaoSupport {
     private GpioBoard parseRs(ResultSet rs) throws SQLException {
         String dType = rs.getString("dType");
         GpioBoard gpioBoard;
-        if(dType.equals(I2CGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {
+        if(dType.equals(GpioBoardType.I2C.discriminatorValue)) {
             I2CBoardModel boardModel = I2CBoardModel.valueOf(rs.getString("board_model"));
             I2CGpioBoard i2CGpioBoard = I2CBoardModel.genInstance(boardModel);
             i2CGpioBoard.setI2cAddress(rs.getByte("i2c_address"));
             gpioBoard = i2CGpioBoard;
-        } else if (dType.equals(LocalGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {
+        } else if (dType.equals(GpioBoardType.LOCAL.discriminatorValue)) {
             gpioBoard = new LocalGpioBoard();
         } else {
             throw new IllegalArgumentException("GpioBoard-Type doesn't exist: " + dType);

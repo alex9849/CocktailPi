@@ -5,7 +5,6 @@ import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.pin.IOutputPin;
 
-@DiscriminatorValue("local")
 public class LocalGpioBoard extends GpioBoard {
     @Override
     public int getMinPin() {
@@ -25,6 +24,11 @@ public class LocalGpioBoard extends GpioBoard {
     @Override
     protected String pinDisplayName(int pin) {
         return "BCM" + String.valueOf(pin);
+    }
+
+    @Override
+    public GpioBoardType getType() {
+        return GpioBoardType.LOCAL;
     }
 
 }

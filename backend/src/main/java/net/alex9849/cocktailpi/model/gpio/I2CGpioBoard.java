@@ -10,7 +10,6 @@ import net.alex9849.motorlib.pin.I2CPinExpander;
 import java.util.HashMap;
 import java.util.Map;
 
-@DiscriminatorValue("i2c")
 public abstract class I2CGpioBoard extends GpioBoard {
     private static final Map<Byte, I2CPinExpander> boardMap = new HashMap<>();
     private byte i2cAddress;
@@ -61,4 +60,8 @@ public abstract class I2CGpioBoard extends GpioBoard {
         return getBoardModel().maxPin;
     }
 
+    @Override
+    public GpioBoardType getType() {
+        return GpioBoardType.I2C;
+    }
 }

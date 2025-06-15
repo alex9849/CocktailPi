@@ -45,4 +45,6 @@ public abstract class GpioBoard {
         return pinList;
     }
 
+    public abstract GpioBoardType getType();
+
 }

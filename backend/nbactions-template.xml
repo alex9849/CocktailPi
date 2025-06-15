@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-Remote run</actionName>
+        <displayName>Remote run</displayName>
+        <goals>
+            <goal>install</goal>
+            <goal>antrun:run@exec</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-Remote debug</actionName>
+        <displayName>Remote debug</displayName>
+        <goals>
+            <goal>install</goal>
+            <goal>antrun:run@debug</goal>
+        </goals>
+    </action>
+</actions>

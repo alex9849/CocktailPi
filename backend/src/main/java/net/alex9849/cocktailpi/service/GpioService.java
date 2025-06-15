@@ -51,8 +51,7 @@ public class GpioService {
     }
 
     public GpioBoard createGpioBoard(GpioBoard gpioBoard) {
-        List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getClass()
-                .getAnnotation(DiscriminatorValue.class).value());
+        List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getType().discriminatorValue);
 
         if(gpioRepository.getBoardsByName(gpioBoard.getName()).isPresent()) {
             throw new IllegalArgumentException("A GpioBoard with that name already exists!");
