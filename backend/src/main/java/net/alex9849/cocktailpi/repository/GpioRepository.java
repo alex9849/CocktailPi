@@ -3,10 +3,7 @@ package net.alex9849.cocktailpi.repository;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.I2CGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.PinResource;
+import net.alex9849.cocktailpi.model.gpio.*;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
 import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.service.SystemService;
@@ -246,8 +243,8 @@ public class GpioRepository extends JdbcDaoSupport {
         String dType = rs.getString("dType");
         GpioBoard gpioBoard;
         if(dType.equals(I2CGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {
-            String boardModel = rs.getString("board_model");
-            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(I2CGpioBoard.BoardModel.valueOf(boardModel));
+            I2CBoardModel boardModel = I2CBoardModel.valueOf(rs.getString("board_model"));
+            I2CGpioBoard i2CGpioBoard = I2CBoardModel.genInstance(boardModel);
             i2CGpioBoard.setI2cAddress(rs.getByte("i2c_address"));
             gpioBoard = i2CGpioBoard;
         } else if (dType.equals(LocalGpioBoard.class.getAnnotation(DiscriminatorValue.class).value())) {

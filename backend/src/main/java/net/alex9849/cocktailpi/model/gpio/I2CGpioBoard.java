@@ -5,7 +5,7 @@ import com.pi4j.io.i2c.I2C;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.I2CPinExpander;
+import net.alex9849.motorlib.pin.I2CPinExpander;
 
 import java.util.HashMap;
 import java.util.Map;

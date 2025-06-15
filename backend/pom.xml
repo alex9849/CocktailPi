@@ -113,7 +113,7 @@
         <dependency>
             <groupId>net.alex9849.motorlib</groupId>
             <artifactId>motorlib</artifactId>
-            <version>1.0-20250615.064335-4</version>
+            <version>1.0-20250615.082741-5</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

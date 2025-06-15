@@ -171,8 +171,8 @@ public class GpioService {
         if(gpioBoardDto instanceof LocalGpioBoardDto.Request.Create) {
             gpioBoard = new LocalGpioBoard();
         } else if (gpioBoardDto instanceof I2CGpioBoardDto.Request.Create i2cGpioBoardDto) {
-            I2CGpioBoard.BoardModel boardModel = I2CGpioBoard.BoardModel.valueOf(i2cGpioBoardDto.getBoardModel());
-            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(boardModel);
+            I2CBoardModel boardModel = I2CBoardModel.valueOf(i2cGpioBoardDto.getBoardModel());
+            I2CGpioBoard i2CGpioBoard = I2CBoardModel.genInstance(boardModel);
             i2CGpioBoard.setI2cAddress(i2cGpioBoardDto.getAddress());
             gpioBoard = i2CGpioBoard;
         } else {
