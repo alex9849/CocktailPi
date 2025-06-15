@@ -69,12 +69,27 @@ public class PumpMaintenanceService {
     private void configureReversePumpSettings (boolean reschedulePumpBack) {
         this.reversePumpSettings = this.getReversePumpingSettings();
         if(reversePumpSettings.isEnable()) {
-            directionPin = reversePumpSettings.getSettings().getDirectorPin().getOutputPin();
-            directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
+            setDirection(this.direction);
         }
         if(reschedulePumpBack) {
             this.reschedulePumpBack();
         }
+    }
+
+    private void setDirection (Direction direction) {
+        if (!reversePumpSettings.isEnable()) {
+            throw new IllegalStateException("ReversePumpSettings is not enabled!");
+        }
+        directionPin = reversePumpSettings.getSettings().getDirectorPin().getOutputPin();
+        boolean fwHigh = reversePumpSettings.getSettings().isForwardStateHigh();
+        PinState pinState;
+        if ((direction == Direction.FORWARD) == fwHigh) {
+            pinState = PinState.HIGH;
+        } else {
+            pinState = PinState.LOW;
+        }
+        directionPin.digitalWrite(pinState);
+        this.direction = direction;
     }
 
     @Scheduled(fixedDelay = 500)
@@ -154,32 +169,17 @@ public class PumpMaintenanceService {
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                 overshootMultiplier += reversePumpSettings.getSettings().getOvershoot() / 100d;
             }
-            PinState backwardPinState;
-            if (reversePumpSettings.getSettings().isForwardStateHigh()) {
-                backwardPinState = PinState.LOW;
-            } else {
-                backwardPinState = PinState.HIGH;
-            }
-            this.directionPin.digitalWrite(backwardPinState);
+            setDirection(Direction.BACKWARD);
             final Runnable oldCallback = callback;
             callback = () -> {
                 synchronized (this) {
                     if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
-                        PinState forwardPinState;
-                        if (reversePumpSettings.getSettings().isForwardStateHigh()) {
-                            forwardPinState = PinState.HIGH;
-                        } else {
-                            forwardPinState = PinState.LOW;
-                        }
-                        this.directionPin.digitalWrite(forwardPinState);
-                        this.direction = Direction.FORWARD;
+                        setDirection(Direction.FORWARD);
                     }
                     oldCallback.run();
                 }
             };
         }
-
-        this.direction = direction;
 
         Future<?> jobFuture;
         PumpTask pumpTask;
