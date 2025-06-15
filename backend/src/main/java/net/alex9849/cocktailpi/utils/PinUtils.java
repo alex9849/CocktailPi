@@ -103,6 +103,7 @@ public class PinUtils {
     public synchronized void shutdownI2C() {
         i2CMap.values().forEach(x -> pi4J.shutdown(x.id()));
         i2CMap.clear();
+        pi4J.getI2CProvider().shutdown(pi4J);
     }
 
     public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, Pin... pins) {
