@@ -470,7 +470,7 @@ fi
 raspi-config nonint do_boot_behaviour B2
 
 apt install --no-install-recommends -y chromium-browser rpi-chromium-mods
-apt install --no-install-recommends -y wayfire seatd xdg-user-dirs
+apt install --no-install-recommends -y wayfire seatd xdg-user-dirs jq
 
 raspi-config nonint do_wayland W2
 
