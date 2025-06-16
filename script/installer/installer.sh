@@ -550,16 +550,21 @@ echo "dpms = false" >> /home/pi/.config/wayfire.ini
 
 
 clear
+service cocktailpi start
+if [ "$modsel" = "3" ] || [ "$modsel" = "2" ]; then
+  PI_ID=$(id -u pi)
+  sudo -u pi XDG_RUNTIME_DIR=/run/user/$PI_ID \
+    nohup wayfire -c /home/pi/.config/wayfire.ini > /dev/null 2>&1 < /dev/null & disown
+fi
+
 if [ "$langsel" = "1" ]; then
-    echo "CocktailPi wurde installiert!"
-    echo "Bitte starte deinen Raspberry Pi neu."
-  	echo "Ein Neustart wird benötigt um die UI zu starten."
+    echo "CocktailPi wurde installiert und startet jetzt im Hintergrund."
+    echo "Es kann einige Zeit dauer, bis sich die Software für den ersten start initialisiert hat."
   	echo ""
   	echo "Wenn dir das Projekt gefällt, kannst du es gerne auf GitHub \"starren\" ;)"
 else
-    echo "CocktailPi has been installed!"
-    echo "Please reboot your Raspberry Pi."
-	  echo "A restart is required to start the UI."
+    echo "CocktailPi has been installed and is currently starting in the background."
+    echo "It can take a while, till the software initialized itself for the first start."
 	  echo ""
 	  echo "If you like the project, please consider to \"star\" it on GitHub ;)"
 fi
