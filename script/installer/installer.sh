@@ -450,7 +450,7 @@ if [ "$modsel" = "3" ]; then
     echo "        autostart" >> /home/pi/.config/wayfire.ini
     echo "" >> /home/pi/.config/wayfire.ini
     echo "[autostart]" >> /home/pi/.config/wayfire.ini
-    echo "chromium = chromium-browser https://chromewebstore.google.com/detail/chrome-simple-keyboard-a/cjabmkimbcmhhepelfhjhbhonnapiipj --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --force-device-scale-factor=1.0" >> /home/pi/.config/wayfire.ini
+    echo "chromium = chromium-browser https://chromewebstore.google.com/detail/chrome-simple-keyboard-a/cjabmkimbcmhhepelfhjhbhonnapiipj --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
     echo "screensaver = false" >> /home/pi/.config/wayfire.ini
     echo "dpms = false" >> /home/pi/.config/wayfire.ini
 
