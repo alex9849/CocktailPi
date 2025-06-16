@@ -87,7 +87,7 @@ function select_mode {
         echo "(1) CocktailPi"
         echo "(2) CocktailPi + Touchscreen ohne Bildschirmtastatur"
         echo "(3) CocktailPi + Touchscreen mit Bildschirmtastatur"
-        echo "(4) Größe der Touchscreen UI ändern"
+        echo "(4) Konfiguration: Größe der Touchscreen UI ändern"
         echo ""
         echo "(0) Exit"
     else
@@ -98,7 +98,7 @@ function select_mode {
         echo "(1) CocktailPi"
         echo "(2) CocktailPi + Touchscreen without on-screen keyboard"
         echo "(3) CocktailPi + Touchscreen with on-screen keyboard"
-        echo "(4) Change size of Touchscreen UI"
+        echo "(4) Configuration: Change size of Touchscreen UI"
         echo ""
         echo "(0) Exit"
     fi
