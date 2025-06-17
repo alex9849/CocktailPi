@@ -314,9 +314,12 @@ if [ "$modsel" = "4" ]; then
   else
     # File exists — merge NEW_JSON into it
     TMP_FILE='TempPreferences'
-    sudo -u pi touch "$TMP_FILE"
+    touch "$TMP_FILE"
     echo "$NEW_JSON" | sudo -u pi jq -s '.[0] * .[1]' "$FILE" - > "$TMP_FILE"
-    sudo -u pi mv -f "$TMP_FILE" "$FILE"
+    mv -f "$TMP_FILE" "$FILE"
+    chown pi:pi "$FILE"
+    chmod 600 "$FILE"
+
   fi
   PI_ID=$(id -u pi)
   sudo -u pi XDG_RUNTIME_DIR=/run/user/$PI_ID \
