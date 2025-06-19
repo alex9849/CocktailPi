@@ -83,6 +83,7 @@ public class StepperMotorTask extends PumpTask {
         metrics.setStartTime(getStartTime());
         metrics.setStopTime(getStopTime());
         metrics.setStepsMade(getStepsMade());
+        metrics.setException(null);
         return metrics;
     }
 }

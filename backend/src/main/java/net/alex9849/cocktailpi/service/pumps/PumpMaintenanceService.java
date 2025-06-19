@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.service.pumps;
 
+import com.pi4j.exception.Pi4JException;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.pump.motortasks.DcMotorTask;
@@ -11,6 +12,7 @@ import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDt
 import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.service.WebSocketService;
+import net.alex9849.cocktailpi.utils.ExceptionUtils;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.pin.IOutputPin;
@@ -23,6 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -100,9 +103,15 @@ public class PumpMaintenanceService {
     public synchronized void stopAllPumps() {
         List<Pump> pumps = pumpDataService.getAllPumps();
         for (Pump pump : pumps) {
-            cancelByPumpId(pump.getId());
-            if (pump.isCanPump()) {
-                pump.getMotorDriver().shutdown();
+            try {
+                cancelByPumpId(pump.getId());
+                if (pump.isCanPump()) {
+                    pump.getMotorDriver().shutdown();
+                }
+            } catch (Pi4JException e) {
+                for (String msg : ExceptionUtils.getExceptionTraceMessages(e)) {
+                    logger.error(msg);
+                }
             }
         }
     }

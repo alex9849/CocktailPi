@@ -1,5 +1,7 @@
 package net.alex9849.cocktailpi.model.pump;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +14,8 @@ public class JobMetrics {
     long stepsMade;
     long startTime;
     Long stopTime;
+    @JsonIgnore
+    Exception exception;
 
     @Override
     public boolean equals(Object o) {
@@ -24,5 +28,10 @@ public class JobMetrics {
     @Override
     public int hashCode() {
         return Objects.hash(id, mlPumped, stepsMade, startTime, stopTime);
+    }
+
+    @JsonGetter
+    public boolean exceptional() {
+        return exception != null;
     }
 }
