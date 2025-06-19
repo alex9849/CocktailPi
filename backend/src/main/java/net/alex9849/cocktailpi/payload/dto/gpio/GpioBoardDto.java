@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.I2CGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.local.LocalGpioBoard;
 import org.springframework.beans.BeanUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -1,7 +1,7 @@
 package net.alex9849.cocktailpi.service.pumps;
 
-import net.alex9849.cocktailpi.model.gpio.LocalPin;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
+import net.alex9849.cocktailpi.model.gpio.local.LocalHwPin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
@@ -172,8 +172,8 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getPin() != null) {
-            Pin pin = gpioService.fromDto(patchPumpDto.getPin());
-            toPatchOnOff.setPin(pin);
+            HardwarePin hwPin = gpioService.fromDto(patchPumpDto.getPin());
+            toPatchOnOff.setPin(hwPin);
         } else if(removeFields.contains("pin")) {
             toPatchOnOff.setPin(null);
         }
@@ -187,8 +187,8 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getEnablePin() != null) {
-            Pin pin = gpioService.fromDto(patchPumpDto.getEnablePin());
-            toPatchStepper.setEnablePin(pin);
+            HardwarePin hwPin = gpioService.fromDto(patchPumpDto.getEnablePin());
+            toPatchStepper.setEnablePin(hwPin);
         } else {
             if(removeFields.contains("enablePin")) {
                 toPatchStepper.setEnablePin(null);
@@ -196,8 +196,8 @@ public class PumpDataService {
         }
 
         if(patchPumpDto.getStepPin() != null) {
-            Pin pin = gpioService.fromDto(patchPumpDto.getStepPin());
-            toPatchStepper.setStepPin(pin);
+            HardwarePin hwPin = gpioService.fromDto(patchPumpDto.getStepPin());
+            toPatchStepper.setStepPin(hwPin);
         } else {
             if(removeFields.contains("stepPin")) {
                 toPatchStepper.setStepPin(null);
@@ -224,8 +224,8 @@ public class PumpDataService {
         if((newPump instanceof OnOffPump) || (oldPump instanceof OnOffPump)) {
             OnOffPump ooOld = (OnOffPump) oldPump;
             OnOffPump ooNew = (OnOffPump) newPump;
-            Pin before = null;
-            Pin after = null;
+            HardwarePin before = null;
+            HardwarePin after = null;
             Boolean beforeDefaultStateLow = null;
             Boolean afterDefaultStateLow = null;
             if(oldPump != null) {
@@ -242,10 +242,10 @@ public class PumpDataService {
         if((newPump instanceof StepperPump) || (oldPump instanceof StepperPump)) {
             StepperPump stepOld = (StepperPump) oldPump;
             StepperPump stepNew = (StepperPump) newPump;
-            Pin beforeStep = null;
-            Pin beforeEnable = null;
-            Pin afterStep = null;
-            Pin afterEnable = null;
+            HardwarePin beforeStep = null;
+            HardwarePin beforeEnable = null;
+            HardwarePin afterStep = null;
+            HardwarePin afterEnable = null;
             if(stepOld != null) {
                 beforeStep = stepOld.getStepPin();
                 beforeEnable = stepOld.getEnablePin();
@@ -260,11 +260,11 @@ public class PumpDataService {
         }
     }
 
-    private void updateDefaultPinState(Pin before, Pin after, Boolean oldDefaultStateLow, Boolean newDefaultStateLow) {
-        if (!(before instanceof LocalPin)) {
+    private void updateDefaultPinState(HardwarePin before, HardwarePin after, Boolean oldDefaultStateLow, Boolean newDefaultStateLow) {
+        if (!(before instanceof LocalHwPin)) {
             before = null;
         }
-        if (!(after instanceof LocalPin)) {
+        if (!(after instanceof LocalHwPin)) {
             after = null;
         }
         if(after != null && before != null) {
@@ -272,15 +272,15 @@ public class PumpDataService {
                 if (oldDefaultStateLow == newDefaultStateLow) {
                     return;
                 }
-                updateDefaultPinState((LocalPin) after, newDefaultStateLow, false);
+                updateDefaultPinState((LocalHwPin) after, newDefaultStateLow, false);
                 return;
             }
         }
-        updateDefaultPinState((LocalPin) before, newDefaultStateLow, true);
-        updateDefaultPinState((LocalPin) after, newDefaultStateLow, false);
+        updateDefaultPinState((LocalHwPin) before, newDefaultStateLow, true);
+        updateDefaultPinState((LocalHwPin) after, newDefaultStateLow, false);
     }
 
-    private void updateDefaultPinState(LocalPin pin, Boolean defaultStateLow, boolean delete) {
+    private void updateDefaultPinState(LocalHwPin pin, Boolean defaultStateLow, boolean delete) {
         if(pin == null) {
             return;
         }

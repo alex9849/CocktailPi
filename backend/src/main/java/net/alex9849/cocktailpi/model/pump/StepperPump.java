@@ -1,7 +1,7 @@
 package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 import net.alex9849.motorlib.motor.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.IStepperMotor;
@@ -11,27 +11,27 @@ import net.alex9849.motorlib.pin.PinState;
 @DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
     private AcceleratingStepper stepperDriver;
-    private Pin enablePin;
-    private Pin stepPin;
+    private HardwarePin enableHwPin;
+    private HardwarePin stepHwPin;
     private Integer stepsPerCl;
     private Integer maxStepsPerSecond;
     private Integer acceleration;
 
-    public Pin getEnablePin() {
-        return enablePin;
+    public HardwarePin getEnablePin() {
+        return enableHwPin;
     }
 
-    public void setEnablePin(Pin enablePin) {
-        this.enablePin = enablePin;
+    public void setEnablePin(HardwarePin enableHwPin) {
+        this.enableHwPin = enableHwPin;
         shutdownDriver();
     }
 
-    public Pin getStepPin() {
-        return stepPin;
+    public HardwarePin getStepPin() {
+        return stepHwPin;
     }
 
-    public void setStepPin(Pin stepPin) {
-        this.stepPin = stepPin;
+    public void setStepPin(HardwarePin stepHwPin) {
+        this.stepHwPin = stepHwPin;
         shutdownDriver();
     }
 
@@ -71,7 +71,7 @@ public class StepperPump extends Pump {
 
     @Override
     protected boolean isHwPinsCompleted() {
-        return this.enablePin != null && this.stepPin != null;
+        return this.enableHwPin != null && this.stepHwPin != null;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class StepperPump extends Pump {
 
     @Override
     public boolean isCanPump() {
-        return this.enablePin != null && this.stepPin != null &&
+        return this.enableHwPin != null && this.stepHwPin != null &&
                 this.maxStepsPerSecond != null && this.acceleration != null && this.stepsPerCl != null;
     }
 }

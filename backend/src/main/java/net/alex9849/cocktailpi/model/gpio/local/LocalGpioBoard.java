@@ -1,9 +1,7 @@
-package net.alex9849.cocktailpi.model.gpio;
+package net.alex9849.cocktailpi.model.gpio.local;
 
-import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.utils.PinUtils;
-import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.pin.IOutputPin;
+import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.GpioBoardType;
 
 public class LocalGpioBoard extends GpioBoard {
     @Override
@@ -17,8 +15,8 @@ public class LocalGpioBoard extends GpioBoard {
     }
 
     @Override
-    protected LocalPin getPinUnchecked(int pin) {
-        return new LocalPin(this, pin, pinDisplayName(pin));
+    protected LocalHwPin getPinUnchecked(int pin) {
+        return new LocalHwPin(this, pin, pinDisplayName(pin));
     }
 
     @Override

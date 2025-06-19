@@ -1,21 +1,21 @@
 package net.alex9849.cocktailpi.model.gpio;
 
 import com.pi4j.io.gpio.digital.PullResistance;
+import lombok.Getter;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.pin.IInputPin;
-import net.alex9849.motorlib.pin.IOutputPin;
 
 import java.util.Optional;
 
-public abstract class Pin {
+public abstract class HardwarePin {
     private final int nr;
     private PinResource resource;
     private boolean resourceValid;
     private final GpioBoard board;
+    @Getter
     private final String displayName;
 
-    public Pin(GpioBoard board, int nr, String displayName) {
+    public HardwarePin(GpioBoard board, int nr, String displayName) {
         this.nr = nr;
         this.resourceValid = false;
         this.board = board;
@@ -36,9 +36,9 @@ public abstract class Pin {
         return resource;
     }
 
-    public abstract IOutputPin getOutputPin();
+    public abstract OutputPin getOutputPin();
 
-    public abstract IInputPin getInputPin(PullResistance pull);
+    public abstract InputPin getInputPin(PullResistance pull);
 
     public GpioBoard getGpioBoard() {
         return board;
@@ -46,10 +46,6 @@ public abstract class Pin {
 
     public long getBoardId() {
         return getGpioBoard().getId();
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     public boolean isExceptional() {

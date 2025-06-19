@@ -1,6 +1,4 @@
-package net.alex9849.cocktailpi.model.gpio;
-
-import java.lang.reflect.InvocationTargetException;
+package net.alex9849.cocktailpi.model.gpio.i2cboard;
 
 public enum I2CBoardModel {
     MCP23017(0, 15),

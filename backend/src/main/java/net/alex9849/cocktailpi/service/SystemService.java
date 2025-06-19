@@ -3,9 +3,8 @@ package net.alex9849.cocktailpi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalPin;
+import net.alex9849.cocktailpi.model.gpio.local.LocalHwPin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.I2cAddress;
 import net.alex9849.cocktailpi.model.system.PythonLibraryInfo;
@@ -27,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileSystemUtils;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
@@ -201,7 +199,7 @@ public class SystemService {
         }
     }
 
-    public void setPinBootState(LocalPin pin, PinState bootState) {
+    public void setPinBootState(LocalHwPin pin, PinState bootState) {
         if (bootState == null) {
             setPinBootState(pin.getPinNr(), null);
             return;
@@ -219,10 +217,10 @@ public class SystemService {
         }
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
-            if (!(i2CSettings.getSdaPin() instanceof LocalPin)) {
+            if (!(i2CSettings.getSdaPin() instanceof LocalHwPin)) {
                 throw new IllegalArgumentException("SDA pin needs to be on RaspberryPi GPIO board!");
             }
-            if (!(i2CSettings.getSclPin() instanceof LocalPin)) {
+            if (!(i2CSettings.getSclPin() instanceof LocalHwPin)) {
                 throw new IllegalArgumentException("SCL pin needs to be on RaspberryPi GPIO board!");
             }
 
@@ -246,10 +244,10 @@ public class SystemService {
 
             I2CSettings oldSettings = getI2cSettings();
             if (oldSettings.isEnable()) {
-                if (oldSettings.getSdaPin() instanceof LocalPin oldSdaPin) {
+                if (oldSettings.getSdaPin() instanceof LocalHwPin oldSdaPin) {
                     setPinBootState(oldSdaPin, null);
                 }
-                if (oldSettings.getSclPin() instanceof LocalPin oldSclPin) {
+                if (oldSettings.getSclPin() instanceof LocalHwPin oldSclPin) {
                     setPinBootState(oldSclPin, null);
                 }
             }

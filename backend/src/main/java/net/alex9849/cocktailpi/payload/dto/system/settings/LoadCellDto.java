@@ -34,8 +34,8 @@ public class LoadCellDto {
             boolean calibrated;
 
             public Detailed(LoadCell loadCell) {
-                clkPin = new PinDto.Response.Detailed(loadCell.getClkPin());
-                dtPin = new PinDto.Response.Detailed(loadCell.getDtPin());
+                clkPin = new PinDto.Response.Detailed(loadCell.getClkHwPin());
+                dtPin = new PinDto.Response.Detailed(loadCell.getDtHwPin());
                 calibrated = loadCell.isCalibrated();
             }
 

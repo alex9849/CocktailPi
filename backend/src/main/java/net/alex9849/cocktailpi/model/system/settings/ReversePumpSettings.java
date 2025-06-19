@@ -2,7 +2,7 @@ package net.alex9849.cocktailpi.model.system.settings;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 
 public class ReversePumpSettings {
     private boolean enable;
@@ -26,7 +26,7 @@ public class ReversePumpSettings {
 
     @Getter @Setter
     public static class Config {
-        private Pin directorPin;
+        private HardwarePin directorHwPin;
         private int overshoot;
         private int autoPumpBackTimer;
         private boolean forwardStateHigh;

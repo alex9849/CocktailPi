@@ -1,4 +1,4 @@
-package net.alex9849.cocktailpi.model.gpio;
+package net.alex9849.cocktailpi.model.gpio.i2cboard;
 
 public class XL9535K16V5Board extends XL9535Board {
 

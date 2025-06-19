@@ -3,6 +3,9 @@ package net.alex9849.cocktailpi.repository;
 
 import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailpi.model.gpio.*;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CBoardModel;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.local.LocalGpioBoard;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
 import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.service.SystemService;

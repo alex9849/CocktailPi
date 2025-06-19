@@ -1,8 +1,10 @@
-package net.alex9849.cocktailpi.model.gpio;
+package net.alex9849.cocktailpi.model.gpio.i2cboard;
 
 
 import com.pi4j.io.i2c.I2C;
-import jakarta.persistence.DiscriminatorValue;
+import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import net.alex9849.cocktailpi.model.gpio.GpioBoardType;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.pin.I2CPinExpander;
@@ -46,8 +48,8 @@ public abstract class I2CGpioBoard extends GpioBoard {
     protected abstract I2CPinExpander genExpanderInstance(I2C device);
 
     @Override
-    protected Pin getPinUnchecked(int pin) {
-        return new I2CBoardPin(this, pin, pinDisplayName(pin));
+    protected HardwarePin getPinUnchecked(int pin) {
+        return new I2CBoardHwPin(this, pin, pinDisplayName(pin));
     }
 
     @Override

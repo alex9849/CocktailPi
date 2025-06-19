@@ -1,17 +1,17 @@
 package net.alex9849.cocktailpi.model.pump;
 
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 
 public abstract class OnOffPump extends Pump {
-    private Pin pin;
+    private HardwarePin hwPin;
     private Boolean isPowerStateHigh;
 
-    public Pin getPin() {
-        return pin;
+    public HardwarePin getPin() {
+        return hwPin;
     }
 
-    public void setPin(Pin pin) {
-        this.pin = pin;
+    public void setPin(HardwarePin hwPin) {
+        this.hwPin = hwPin;
         this.shutdownDriver();
     }
 
@@ -26,6 +26,6 @@ public abstract class OnOffPump extends Pump {
 
     @Override
     protected boolean isHwPinsCompleted() {
-        return this.pin != null && this.isPowerStateHigh != null;
+        return this.hwPin != null && this.isPowerStateHigh != null;
     }
 }

@@ -78,8 +78,8 @@ public class ReversePumpSettingsDto {
                     this.overshoot = cfg.getOvershoot();
                     this.autoPumpBackTimer = cfg.getAutoPumpBackTimer();
                     this.forwardStateHigh = cfg.isForwardStateHigh();
-                    if(cfg.getDirectorPin() != null) {
-                        this.directorPin = new PinDto.Response.Detailed(cfg.getDirectorPin());
+                    if(cfg.getDirectorHwPin() != null) {
+                        this.directorPin = new PinDto.Response.Detailed(cfg.getDirectorHwPin());
                     }
                 }
             }

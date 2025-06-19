@@ -1,4 +1,4 @@
-package net.alex9849.cocktailpi.model.gpio;
+package net.alex9849.cocktailpi.model.gpio.i2cboard;
 
 import com.pi4j.io.i2c.I2C;
 import net.alex9849.motorlib.pin.I2CPinExpander;

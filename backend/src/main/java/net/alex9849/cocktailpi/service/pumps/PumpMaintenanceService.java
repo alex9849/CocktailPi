@@ -80,7 +80,7 @@ public class PumpMaintenanceService {
         if (!rps.isEnable()) {
             throw new IllegalStateException("ReversePumpSettings is not enabled!");
         }
-        directionPin = rps.getSettings().getDirectorPin().getOutputPin();
+        directionPin = rps.getSettings().getDirectorHwPin().getOutputPin();
         boolean fwHigh = rps.getSettings().isForwardStateHigh();
         PinState pinState;
         if ((direction == Direction.FORWARD) == fwHigh) {
@@ -356,11 +356,11 @@ public class PumpMaintenanceService {
         optionsRepository.setOption("RPS_Enable", Boolean.valueOf(settings.isEnable()).toString());
         if (settings.isEnable()) {
             ReversePumpSettings.Config details = settings.getSettings();
-            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP_DIRECTION, null, details.getDirectorPin());
+            PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP_DIRECTION, null, details.getDirectorHwPin());
             optionsRepository.setOption("RPS_Overshoot", Integer.valueOf(details.getOvershoot()).toString());
             optionsRepository.setOption("RPS_AutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
             optionsRepository.setOption("RPS_ForwardState", Boolean.valueOf(details.isForwardStateHigh()).toString());
-            optionsRepository.setPinOption(REPO_KEY_PUMP_DIRECTION_PIN, details.getDirectorPin());
+            optionsRepository.setPinOption(REPO_KEY_PUMP_DIRECTION_PIN, details.getDirectorHwPin());
 
         } else {
             optionsRepository.delOption("RPS_Overshoot", false);
@@ -383,8 +383,8 @@ public class PumpMaintenanceService {
             cfg.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPS_Overshoot").orElse(null)));
             cfg.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPS_AutoPumpBackTimer").orElse(null)));
             cfg.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPS_ForwardState").orElse(null)));
-            cfg.setDirectorPin(optionsRepository.getPinOption(REPO_KEY_PUMP_DIRECTION_PIN).orElse(null));
-            if(cfg.getDirectorPin() == null) {
+            cfg.setDirectorHwPin(optionsRepository.getPinOption(REPO_KEY_PUMP_DIRECTION_PIN).orElse(null));
+            if(cfg.getDirectorHwPin() == null) {
                 rps.setEnable(false);
                 return rps;
             }
@@ -454,7 +454,7 @@ public class PumpMaintenanceService {
             cfg.setAutoPumpBackTimer(cfgDto.getAutoPumpBackTimer());
             cfg.setOvershoot(cfgDto.getOvershoot());
             cfg.setForwardStateHigh(cfgDto.isForwardStateHigh());
-            cfg.setDirectorPin(gpioService.fromDto(cfgDto.getDirectorPin()));
+            cfg.setDirectorHwPin(gpioService.fromDto(cfgDto.getDirectorPin()));
             rps.setSettings(cfg);
         }
         return rps;

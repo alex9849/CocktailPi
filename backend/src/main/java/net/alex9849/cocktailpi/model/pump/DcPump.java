@@ -1,10 +1,6 @@
 package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.Pin;
-import net.alex9849.cocktailpi.utils.PinUtils;
-import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.motor.DCMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;

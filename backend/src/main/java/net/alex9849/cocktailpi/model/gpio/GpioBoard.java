@@ -38,23 +38,23 @@ public abstract class GpioBoard {
         this.errors = errors;
     }
 
-    public Pin getPin(int pin) {
+    public HardwarePin getPin(int pin) {
         if(pin < getMinPin() || pin > getMaxPin()) {
             throw new IllegalArgumentException("Pin out of range! Requested pin: " + pin + ", Pin range: " + getMinPin() + " - " + getMaxPin());
         }
         return getPinUnchecked(pin);
     }
 
-    protected abstract Pin getPinUnchecked(int pin);
+    protected abstract HardwarePin getPinUnchecked(int pin);
 
     protected abstract String pinDisplayName(int pin);
 
-    public List<Pin> getPins() {
-        List<Pin> pinList = new ArrayList<>();
+    public List<HardwarePin> getPins() {
+        List<HardwarePin> hwPinList = new ArrayList<>();
         for(int i = getMinPin(); i <= getMaxPin(); i++) {
-            pinList.add(getPinUnchecked(i));
+            hwPinList.add(getPinUnchecked(i));
         }
-        return pinList;
+        return hwPinList;
     }
 
     public abstract GpioBoardType getType();
