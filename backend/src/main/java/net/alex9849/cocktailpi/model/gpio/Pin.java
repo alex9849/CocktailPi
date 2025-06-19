@@ -51,4 +51,8 @@ public abstract class Pin {
     public String getDisplayName() {
         return displayName;
     }
+
+    public boolean isExceptional() {
+        return this.getGpioBoard().isExceptional();
+    }
 }

@@ -1,11 +1,15 @@
 package net.alex9849.cocktailpi.model.gpio;
 
+import net.alex9849.cocktailpi.model.system.ErrorInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GpioBoard {
     private long id;
     private String name;
+    private List<ErrorInfo> errors = new ArrayList<>();
+
     public long getId() {
         return id;
     }
@@ -25,6 +29,14 @@ public abstract class GpioBoard {
     public abstract int getMinPin();
 
     public abstract int getMaxPin();
+
+    public List<ErrorInfo> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<ErrorInfo> errors) {
+        this.errors = errors;
+    }
 
     public Pin getPin(int pin) {
         if(pin < getMinPin() || pin > getMaxPin()) {
@@ -46,5 +58,9 @@ public abstract class GpioBoard {
     }
 
     public abstract GpioBoardType getType();
+
+    public boolean isExceptional() {
+        return !this.errors.isEmpty();
+    }
 
 }
