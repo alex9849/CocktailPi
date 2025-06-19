@@ -98,10 +98,6 @@ public class PumpDataService {
         return pump;
     }
 
-    public Optional<Pump> findByBcmPin(int bcmPin) {
-        return pumpRepository.findByBcmPin(bcmPin);
-    }
-
     public void deletePump(long id) {
         Pump pump = getPump(id);
         if(pump == null) {

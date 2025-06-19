@@ -89,20 +89,6 @@ public class PumpRepository extends JdbcDaoSupport {
         });
     }
 
-    public Optional<Pump> findByBcmPin(int bcmPin) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where dc_pin = ? or enable_pin = ? or step_pin = ?");
-            pstmt.setInt(1, bcmPin);
-            pstmt.setInt(2, bcmPin);
-            pstmt.setInt(3, bcmPin);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(parseRs(rs));
-            }
-            return Optional.empty();
-        });
-    }
-
     public Optional<Pump> findById(long id) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<Pump>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM pumps where id = ?");
