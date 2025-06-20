@@ -68,7 +68,7 @@ public class CocktailOrderService {
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange)
                 .subscribeProgress(progess -> {
                     switch (progess.getState()) {
-                        case FINISHED, CANCELLED -> onFinishCallback.run();
+                        case FINISHED, CANCELLED, ERROR -> onFinishCallback.run();
                     }
                 });
         this.cocktailFactory = cocktailFactory;
