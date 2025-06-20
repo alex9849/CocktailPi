@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.endpoints;
 
+import net.alex9849.motorlib.exception.HX711Exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,10 +15,18 @@ import java.util.Date;
 public class ExceptionResponder {
 
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
-    public ResponseEntity<ErrorDetails> handleException(Exception ex, WebRequest request) {
+    public ResponseEntity<ErrorDetails> handleArgumentAndStateException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<ErrorDetails> handleException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        ex.printStackTrace();
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
