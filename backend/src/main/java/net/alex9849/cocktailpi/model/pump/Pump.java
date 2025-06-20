@@ -4,15 +4,14 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.service.IngredientService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
-import net.alex9849.motorlib.motor.DCMotor;
 import net.alex9849.motorlib.motor.IMotor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Pump {
-    protected static Map<Long, IMotor> motorDrivers = new ConcurrentHashMap<>();
+    protected static Map<Long, IMotor> motorDrivers = new HashMap<>();
 
     private long id;
     private Double tubeCapacityInMl;
