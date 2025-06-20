@@ -7,7 +7,10 @@ import lombok.*;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
 import net.alex9849.cocktailpi.model.gpio.local.LocalGpioBoard;
+import net.alex9849.cocktailpi.model.system.ErrorInfo;
 import org.springframework.beans.BeanUtils;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GpioBoardDto {
@@ -42,11 +45,13 @@ public class GpioBoardDto {
             String name;
             int pinCount;
             int usedPinCount;
+            List<ErrorInfo> errors;
 
             protected Detailed(GpioBoard gpioBoard) {
                 BeanUtils.copyProperties(gpioBoard, this);
                 pinCount = (gpioBoard.getMaxPin() - gpioBoard.getMinPin()) + 1;
                 usedPinCount = (int) gpioBoard.getPins().stream().filter(x -> x.getResource() != null).count();
+                errors = gpioBoard.getErrors();
             }
 
             public static Detailed toDto(GpioBoard gpioBoard) {

@@ -3,12 +3,14 @@ package net.alex9849.cocktailpi.model.gpio;
 import net.alex9849.cocktailpi.model.system.ErrorInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class GpioBoard {
     private long id;
     private String name;
-    private List<ErrorInfo> errors = new ArrayList<>();
+    private static Map<Long, List<ErrorInfo>> errors = new HashMap<>();
 
     public long getId() {
         return id;
@@ -31,11 +33,11 @@ public abstract class GpioBoard {
     public abstract int getMaxPin();
 
     public List<ErrorInfo> getErrors() {
-        return errors;
+        return errors.getOrDefault(getId(), new ArrayList<>());
     }
 
-    public void setErrors(List<ErrorInfo> errors) {
-        this.errors = errors;
+    public void addError(ErrorInfo error) {
+        errors.computeIfAbsent(getId(), x -> new ArrayList<>()).add(error);
     }
 
     public HardwarePin getPin(int pin) {

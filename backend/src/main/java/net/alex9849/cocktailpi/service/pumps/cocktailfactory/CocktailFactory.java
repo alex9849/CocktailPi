@@ -19,6 +19,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CocktailFactory {
+    public enum CancelReason {
+        MANUAL, ERROR
+    }
     private final static int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
     private final static int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
 
@@ -196,7 +199,7 @@ public class CocktailFactory {
         this.notifySubscribers();
     }
 
-    public void cancelCocktail() {
+    public void cancelCocktail(CancelReason cancelReason) {
         if(isFinished() || isCanceled()) {
             throw new IllegalStateException("Cocktail already done!");
         }

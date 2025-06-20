@@ -141,7 +141,7 @@ public class CocktailOrderService {
         if(this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
             return false;
         }
-        this.cocktailFactory.cancelCocktail();
+        this.cocktailFactory.cancelCocktail(CocktailFactory.CancelReason.MANUAL);
         return true;
     }
 

@@ -179,6 +179,14 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         runner = new Thread(runTask);
         runner.setPriority(Thread.MAX_PRIORITY);
         runner.start();
+        runner.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+                getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR);
+            }
+        });
 
         this.notifySubscribers();
     }

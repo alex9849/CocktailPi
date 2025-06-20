@@ -1,21 +1,22 @@
 package net.alex9849.cocktailpi.model.system;
 
-import lombok.Getter;
-import lombok.Setter;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class ErrorInfo {
+    @JsonIgnore
     private final Exception exception;
-    @Getter @Setter
-    private String resolvingHint;
 
     public ErrorInfo(Exception exception) {
         this.exception = exception;
     }
 
+    @JsonGetter
     public List<String> getExceptionTraceMessages() {
         List<String> errorMessages = new ArrayList<>();
         HashSet<Throwable> errors = new HashSet<>();
