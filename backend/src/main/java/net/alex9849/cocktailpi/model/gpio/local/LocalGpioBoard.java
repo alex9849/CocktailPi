@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.model.gpio.local;
 
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
 import net.alex9849.cocktailpi.model.gpio.GpioBoardType;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
 
 public class LocalGpioBoard extends GpioBoard {
     @Override
@@ -29,4 +30,9 @@ public class LocalGpioBoard extends GpioBoard {
         return GpioBoardType.LOCAL;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LocalGpioBoard that)) return false;
+        return super.equals(o);
+    }
 }

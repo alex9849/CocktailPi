@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class HardwarePin {
@@ -51,4 +52,11 @@ public abstract class HardwarePin {
     public boolean isExceptional() {
         return this.getGpioBoard().isExceptional();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof HardwarePin that)) return false;
+        return nr == that.nr && Objects.equals(board, that.board);
+    }
+
 }

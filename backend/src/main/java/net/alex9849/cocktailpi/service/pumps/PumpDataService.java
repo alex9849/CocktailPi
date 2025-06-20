@@ -85,15 +85,13 @@ public class PumpDataService {
 
         updateDefaultPinState(beforeUpdate, pump);
         pumpRepository.update(pump);
-        if (beforeUpdate.isCanPump() && pump.isCanPump()){
-            if(!Objects.equals(beforeUpdate.getMotorDriver(), pump.getMotorDriver())) {
+        if (!pump.equalDriverProperties(beforeUpdate)){
+            if(beforeUpdate.isCanPump()) {
                 beforeUpdate.shutdownDriver();
+            }
+            if(pump.isCanPump()) {
                 pump.shutdownDriver();
             }
-        } else if (beforeUpdate.isCanPump()) {
-            beforeUpdate.shutdownDriver();
-        } else if (pump.isCanPump()) {
-            pump.shutdownDriver();
         }
         return pump;
     }

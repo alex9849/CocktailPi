@@ -4,11 +4,16 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.service.IngredientService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.motor.DCMotor;
 import net.alex9849.motorlib.motor.IMotor;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Pump {
+    protected static Map<Long, IMotor> motorDrivers = new ConcurrentHashMap<>();
+
     private long id;
     private Double tubeCapacityInMl;
     private int fillingLevelInMl;
@@ -81,7 +86,14 @@ public abstract class Pump {
         this.currentIngredientId = currentIngredientId;
     }
 
-    public abstract IMotor getMotorDriver();
+    public IMotor getMotorDriver() {
+        if(!isCanPump()) {
+            throw new IllegalStateException("Motor not ready for pumping!");
+        }
+        return motorDrivers.computeIfAbsent(getId(), x -> genMotorDriver());
+    }
+
+    protected abstract IMotor genMotorDriver();
 
     public String getName() {
         return name;
@@ -93,7 +105,14 @@ public abstract class Pump {
 
     public abstract boolean isCanPump();
 
-    public abstract void shutdownDriver();
+    public void shutdownDriver() {
+        if(motorDrivers.containsKey(getId())) {
+            motorDrivers.get(getId()).shutdown();
+            motorDrivers.remove(getId());
+        }
+    }
+
+    public abstract boolean equalDriverProperties(Pump other);
 
     public boolean isCanPumpUp() {
         return this.isCanPump() && this.tubeCapacityInMl != null;

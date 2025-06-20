@@ -11,6 +11,7 @@ import net.alex9849.motorlib.pin.I2CPinExpander;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class I2CGpioBoard extends GpioBoard {
     private static final Map<Byte, I2CPinExpander> boardMap = new HashMap<>();
@@ -66,4 +67,13 @@ public abstract class I2CGpioBoard extends GpioBoard {
     public GpioBoardType getType() {
         return GpioBoardType.I2C;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof I2CGpioBoard that)) return false;
+        if (!super.equals(o)) return false;
+        return i2cAddress == that.i2cAddress
+                && getBoardModel() == that.getBoardModel();
+    }
+
 }

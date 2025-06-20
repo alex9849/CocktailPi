@@ -2,15 +2,17 @@ package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.HardwarePin;
+import net.alex9849.motorlib.motor.DCMotor;
 import net.alex9849.motorlib.motor.StepperDriver;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.IStepperMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
+import java.util.Objects;
+
 @DiscriminatorValue("stepper")
 public class StepperPump extends Pump {
-    private AcceleratingStepper stepperDriver;
     private HardwarePin enableHwPin;
     private HardwarePin stepHwPin;
     private Integer stepsPerCl;
@@ -62,11 +64,16 @@ public class StepperPump extends Pump {
         shutdownDriver();
     }
 
-    public void shutdownDriver() {
-        if(this.stepperDriver != null) {
-            this.stepperDriver.shutdown();
-            this.stepperDriver = null;
+    @Override
+    public boolean equalDriverProperties(Pump other) {
+        if(other instanceof StepperPump stepperOther) {
+            return Objects.equals(this.enableHwPin, stepperOther.enableHwPin)
+                    && Objects.equals(this.stepHwPin, stepperOther.stepHwPin)
+                    && Objects.equals(this.maxStepsPerSecond, stepperOther.maxStepsPerSecond)
+                    && Objects.equals(this.acceleration, stepperOther.acceleration)
+                    && Objects.equals(this.stepsPerCl, stepperOther.stepsPerCl);
         }
+        return false;
     }
 
     @Override
@@ -85,41 +92,33 @@ public class StepperPump extends Pump {
     }
 
     public AcceleratingStepper getMotorDriver() {
-        if(!isCanPump()) {
-            throw new IllegalStateException("Motor not ready for pumping!");
-        }
-        if(this.stepperDriver == null) {
+        return (AcceleratingStepper) super.getMotorDriver();
+    }
 
-            IOutputPin enablePin = getEnablePin().getOutputPin();
-            IOutputPin stepPin = getStepPin().getOutputPin();
-            IOutputPin dirPin = new IOutputPin() {
-                @Override
-                public void digitalWrite(PinState value) {
-                    //TODO implement direction functionality
-                }
+    public AcceleratingStepper genMotorDriver() {
+        IOutputPin enablePin = getEnablePin().getOutputPin();
+        IOutputPin stepPin = getStepPin().getOutputPin();
+        IOutputPin dirPin = new IOutputPin() {
+            @Override
+            public void digitalWrite(PinState value) {}
 
-                @Override
-                public boolean isHigh() {
-                    return false;
-                }
+            @Override
+            public boolean isHigh() {
+                return false;
+            }
 
-                @Override
-                public void digitalWriteAndWait(PinState state) {
+            @Override
+            public void digitalWriteAndWait(PinState state) {}
 
-                }
+            @Override
+            public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {}
+        };
 
-                @Override
-                public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {
-
-                }
-            };
-
-            IStepperMotor motor = new StepperDriver(enablePin, stepPin, dirPin);
-            this.stepperDriver = new AcceleratingStepper(motor);
-            this.stepperDriver.setMaxSpeed(getMaxStepsPerSecond());
-            this.stepperDriver.setAcceleration(getAcceleration());
-        }
-        return this.stepperDriver;
+        IStepperMotor motor = new StepperDriver(enablePin, stepPin, dirPin);
+        AcceleratingStepper aMotor = new AcceleratingStepper(motor);
+        aMotor.setMaxSpeed(getMaxStepsPerSecond());
+        aMotor.setAcceleration(getAcceleration());
+        return aMotor;
     }
 
     @Override

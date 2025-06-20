@@ -2,10 +2,7 @@ package net.alex9849.cocktailpi.model.gpio;
 
 import net.alex9849.cocktailpi.model.system.ErrorInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class GpioBoard {
     private long id;
@@ -63,6 +60,12 @@ public abstract class GpioBoard {
 
     public boolean isExceptional() {
         return !this.errors.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GpioBoard gpioBoard)) return false;
+        return id == gpioBoard.id;
     }
 
 }
