@@ -104,7 +104,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                     pumpPhase.setStarted();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    new Thread(() -> getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR)).start();
+                    new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
                 }
             }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
 
@@ -115,7 +115,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                     cl.countDown();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    new Thread(() -> getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR)).start();
+                    new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
                 }
             }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
@@ -192,7 +192,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         runner.start();
         runner.setUncaughtExceptionHandler((t, e) -> {
             e.printStackTrace();
-            getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR);
+            getCocktailFactory().cancelCocktail(true);
         });
 
         this.notifySubscribers();

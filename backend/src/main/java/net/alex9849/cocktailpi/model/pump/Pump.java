@@ -86,10 +86,12 @@ public abstract class Pump {
     }
 
     public IMotor getMotorDriver() {
-        if(!isCanPump()) {
-            throw new IllegalStateException("Motor not ready for pumping!");
+        synchronized (motorDrivers) {
+            if(!isCanPump()) {
+                throw new IllegalStateException("Motor not ready for pumping!");
+            }
+            return motorDrivers.computeIfAbsent(getId(), x -> genMotorDriver());
         }
-        return motorDrivers.computeIfAbsent(getId(), x -> genMotorDriver());
     }
 
     protected abstract IMotor genMotorDriver();
@@ -105,9 +107,11 @@ public abstract class Pump {
     public abstract boolean isCanPump();
 
     public void shutdownDriver() {
-        if(motorDrivers.containsKey(getId())) {
-            motorDrivers.get(getId()).shutdown();
-            motorDrivers.remove(getId());
+        synchronized (motorDrivers) {
+            if(motorDrivers.containsKey(getId())) {
+                motorDrivers.get(getId()).shutdown();
+                motorDrivers.remove(getId());
+            }
         }
     }
 

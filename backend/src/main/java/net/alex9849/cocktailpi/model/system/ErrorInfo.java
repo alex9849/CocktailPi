@@ -10,9 +10,9 @@ import java.util.List;
 
 public class ErrorInfo {
     @JsonIgnore
-    private final Exception exception;
+    private final Throwable exception;
 
-    public ErrorInfo(Exception exception) {
+    public ErrorInfo(Throwable exception) {
         this.exception = exception;
     }
 

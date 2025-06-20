@@ -82,7 +82,9 @@ public class CocktailOrderService {
     }
 
     private void onCocktailProgressSubscriptionChange(CocktailProgress progress) {
-        if(progress.getState() == CocktailProgress.State.CANCELLED || progress.getState() == CocktailProgress.State.FINISHED) {
+        if(progress.getState() == CocktailProgress.State.CANCELLED
+                || progress.getState() == CocktailProgress.State.ERROR
+                || progress.getState() == CocktailProgress.State.FINISHED) {
             this.scheduler.schedule(() -> {
                 this.cocktailFactory = null;
                 this.prevCocktailProgress = null;
@@ -103,6 +105,7 @@ public class CocktailOrderService {
                 eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_MANUAL_INTERACTION_REQUESTED);
                 break;
             case CANCELLED:
+            case ERROR:
                 eventService.triggerActions(EventTrigger.COCKTAIL_PRODUCTION_CANCELED);
                 break;
             case FINISHED:
@@ -141,7 +144,7 @@ public class CocktailOrderService {
         if(this.cocktailFactory == null || this.cocktailFactory.isFinished()) {
             return false;
         }
-        this.cocktailFactory.cancelCocktail(CocktailFactory.CancelReason.MANUAL);
+        this.cocktailFactory.cancelCocktail(false);
         return true;
     }
 
