@@ -26,7 +26,7 @@ public class ReversePumpSettings {
 
     @Getter @Setter
     public static class Config {
-        private HardwarePin directorHwPin;
+        private HardwarePin directorPin;
         private int overshoot;
         private int autoPumpBackTimer;
         private boolean forwardStateHigh;
