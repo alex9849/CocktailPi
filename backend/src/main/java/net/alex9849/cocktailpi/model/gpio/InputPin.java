@@ -1,7 +1,6 @@
 package net.alex9849.cocktailpi.model.gpio;
 
 import lombok.Getter;
-import net.alex9849.cocktailpi.exception.PinException;
 import net.alex9849.cocktailpi.model.system.ErrorInfo;
 import net.alex9849.motorlib.pin.IInputPin;
 
@@ -21,7 +20,7 @@ public class InputPin implements IInputPin {
             return this.pin.isHigh();
         } catch (Exception e) {
             boardHwPin.getGpioBoard().addError(new ErrorInfo(e));
-            throw new PinException(e, this.boardHwPin);
+            throw e;
         }
     }
 
@@ -31,7 +30,7 @@ public class InputPin implements IInputPin {
             return this.pin.isPull();
         } catch (Exception e) {
             boardHwPin.getGpioBoard().addError(new ErrorInfo(e));
-            throw new PinException(e, this.boardHwPin);
+            throw e;
         }
     }
 }

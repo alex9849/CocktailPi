@@ -25,7 +25,6 @@ public class StepperPump extends Pump {
 
     public void setEnablePin(HardwarePin enableHwPin) {
         this.enableHwPin = enableHwPin;
-        shutdownDriver();
     }
 
     public HardwarePin getStepPin() {
@@ -34,7 +33,6 @@ public class StepperPump extends Pump {
 
     public void setStepPin(HardwarePin stepHwPin) {
         this.stepHwPin = stepHwPin;
-        shutdownDriver();
     }
 
     public Integer getStepsPerCl() {
@@ -43,7 +41,6 @@ public class StepperPump extends Pump {
 
     public void setStepsPerCl(Integer stepsPerCl) {
         this.stepsPerCl = stepsPerCl;
-        shutdownDriver();
     }
 
     public Integer getMaxStepsPerSecond() {
@@ -52,7 +49,6 @@ public class StepperPump extends Pump {
 
     public void setMaxStepsPerSecond(Integer maxStepsPerSecond) {
         this.maxStepsPerSecond = maxStepsPerSecond;
-        shutdownDriver();
     }
 
     public Integer getAcceleration() {
@@ -61,7 +57,6 @@ public class StepperPump extends Pump {
 
     public void setAcceleration(Integer acceleration) {
         this.acceleration = acceleration;
-        shutdownDriver();
     }
 
     @Override

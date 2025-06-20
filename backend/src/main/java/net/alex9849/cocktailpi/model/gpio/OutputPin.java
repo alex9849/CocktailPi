@@ -1,7 +1,6 @@
 package net.alex9849.cocktailpi.model.gpio;
 
 import lombok.Getter;
-import net.alex9849.cocktailpi.exception.PinException;
 import net.alex9849.cocktailpi.model.system.ErrorInfo;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
@@ -23,7 +22,7 @@ public class OutputPin implements IOutputPin {
             this.pin.digitalWrite(pinState);
         } catch (Exception e) {
             boardHwPin.getGpioBoard().addError(new ErrorInfo(e));
-            throw new PinException(e, this.boardHwPin);
+            throw e;
         }
     }
 
@@ -33,7 +32,7 @@ public class OutputPin implements IOutputPin {
             return this.pin.isHigh();
         } catch (Exception e) {
             boardHwPin.getGpioBoard().addError(new ErrorInfo(e));
-            throw new PinException(e, this.boardHwPin);
+            throw e;
         }
     }
 
@@ -43,7 +42,7 @@ public class OutputPin implements IOutputPin {
             this.pin.digitalWriteAndWait(pinState);
         } catch (Exception e) {
             boardHwPin.getGpioBoard().addError(new ErrorInfo(e));
-            throw new PinException(e, this.boardHwPin);
+            throw e;
         }
     }
 

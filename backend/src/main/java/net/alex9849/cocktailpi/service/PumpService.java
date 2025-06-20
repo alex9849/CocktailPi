@@ -84,8 +84,8 @@ public class PumpService {
         if (!lockService.testAndAcquireGlobal(maintenanceService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
-        maintenanceService.stopAllPumps();
         try {
+            maintenanceService.stopAllPumps();
             for (Pump pump : dataService.getAllPumps()) {
                 if (!pump.isCanPump()) {
                     continue;

@@ -14,7 +14,6 @@ public abstract class OnOffPump extends Pump {
 
     public void setPin(HardwarePin hwPin) {
         this.hwPin = hwPin;
-        this.shutdownDriver();
     }
 
     public Boolean isPowerStateHigh() {
@@ -23,7 +22,6 @@ public abstract class OnOffPump extends Pump {
 
     public void setIsPowerStateHigh(Boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
-        this.shutdownDriver();
     }
 
     @Override

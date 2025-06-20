@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker;
 
+import com.pi4j.exception.Pi4JException;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
 import net.alex9849.cocktailpi.model.pump.Valve;
@@ -98,14 +99,24 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
         for (PumpPhase pumpPhase : this.pumpPhases) {
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                pumpPhase.getPump().getMotorDriver().setRunning(true);
-                pumpPhase.setStarted();
+                try {
+                    pumpPhase.getPump().getMotorDriver().setRunning(true);
+                    pumpPhase.setStarted();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    new Thread(() -> getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR)).start();
+                }
             }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
 
             scheduledPumpFutures.add(scheduler.schedule(() -> {
-                pumpPhase.getPump().getMotorDriver().setRunning(false);
-                pumpPhase.setStopped();
-                cl.countDown();
+                try {
+                    pumpPhase.getPump().getMotorDriver().setRunning(false);
+                    pumpPhase.setStopped();
+                    cl.countDown();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    new Thread(() -> getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR)).start();
+                }
             }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
         }
 
@@ -179,13 +190,9 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         runner = new Thread(runTask);
         runner.setPriority(Thread.MAX_PRIORITY);
         runner.start();
-        runner.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                e.printStackTrace();
-                getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR);
-            }
+        runner.setUncaughtExceptionHandler((t, e) -> {
+            e.printStackTrace();
+            getCocktailFactory().cancelCocktail(CocktailFactory.CancelReason.ERROR);
         });
 
         this.notifySubscribers();
@@ -243,6 +250,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         if (!this.scheduler.isShutdown()) {
             this.scheduler.shutdown();
         }
+
         return true;
     }
 
@@ -260,7 +268,11 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
 
     private synchronized void stopAllPumps() {
         for(Pump pump : this.usedPumps) {
-            pump.shutdownDriver();
+            try {
+                pump.shutdownDriver();
+            } catch (Pi4JException e) {
+                e.printStackTrace();
+            }
         }
     }
 
