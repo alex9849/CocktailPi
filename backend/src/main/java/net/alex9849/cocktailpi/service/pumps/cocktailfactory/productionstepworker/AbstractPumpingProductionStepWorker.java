@@ -218,7 +218,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                 long requestedLiquid = valvesToRequestedGrams.get(valve);
                 Long pumpedLiquid = valvesToPumpedGrams.get(valve);
                 if(pumpedLiquid != null) {
-                    notUsedLiquidByPumpPrecise.put(valve, (double) Math.max(0, requestedLiquid - pumpedLiquid.longValue()));
+                    notUsedLiquidByPumpPrecise.put(valve, (double) Math.max(0, requestedLiquid - pumpedLiquid));
                 }
             }
         } else {
