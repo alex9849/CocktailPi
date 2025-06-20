@@ -19,8 +19,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CocktailFactory {
-    private final int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
-    private final int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
+    private final static int MINIMAL_PUMP_OPERATION_TIME_IN_MS = 500;
+    private final static int MINIMAL_PUMP_BREAK_TIME_IN_MS = 500;
 
     private final List<Consumer<CocktailProgress>> subscribers = new ArrayList<>();
     private final List<AbstractProductionStepWorker> productionStepWorkers = new ArrayList<>();
@@ -30,8 +30,6 @@ public class CocktailFactory {
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
 
-    private int requestedAmount;
-    private CocktailProgress cocktailprogress;
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
 
@@ -41,7 +39,7 @@ public class CocktailFactory {
     }
 
     /**
-     * @param feasibleRecipe the recipe constisting only of productionsteps that contain ManualIngredients and AutomatedIngredients.
+     * @param feasibleRecipe the recipe consisting only of production steps that contain ManualIngredients and AutomatedIngredients.
      * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
      */
     public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps) {
@@ -62,7 +60,7 @@ public class CocktailFactory {
 
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
         if(!workerIterator.hasNext()) {
-            throw new IllegalArgumentException("Cound't create ProductionStepWorkers from recipe!");
+            throw new IllegalArgumentException("Couldn't create ProductionStepWorkers from recipe!");
         }
         AbstractProductionStepWorker currentWorker = workerIterator.next();
         this.currentProductionStepWorker = currentWorker;
@@ -84,9 +82,8 @@ public class CocktailFactory {
         if(pStep instanceof AddIngredientsProductionStep) {
             return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
         }
-        if(pStep instanceof WrittenInstructionProductionStep) {
-            WrittenInstructionProductionStep wIPStep = (WrittenInstructionProductionStep) pStep;
-            return Arrays.asList(new WrittenInstructionProductionStepWorker(this, wIPStep.getMessage()));
+        if(pStep instanceof WrittenInstructionProductionStep wIPStep) {
+            return List.of(new WrittenInstructionProductionStepWorker(this, wIPStep.getMessage()));
         }
         throw new IllegalStateException("ProductionStepType unknown!");
     }
@@ -110,7 +107,7 @@ public class CocktailFactory {
                 }
             }
             else {
-                throw new IllegalStateException("IgredientType not implemented yet: "
+                throw new IllegalStateException("IngredientType not implemented yet: "
                         + Objects.requireNonNull(psi.getIngredient()).getClass().getName());
             }
         }
@@ -142,7 +139,7 @@ public class CocktailFactory {
         return this.productionStepWorkers.stream()
                 .filter(x -> x instanceof AbstractPumpingProductionStepWorker)
                 .flatMap(x -> ((AbstractPumpingProductionStepWorker) x).getNotUsedLiquid().entrySet().stream())
-                .collect(Collectors.toMap(x -> x.getKey(), v -> v.getValue(), (v1, v2) -> v1 + v2));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum));
     }
 
     private void onSubscriptionChange(StepProgress stepProgress) {
@@ -157,17 +154,17 @@ public class CocktailFactory {
     }
 
     private Set<Ingredient> getNeededIngredientIds() {
-        return new HashSet<Ingredient>(this.feasibleRecipe.getFeasibleProductionSteps().stream()
+        return new HashSet<>(this.feasibleRecipe.getFeasibleProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
-                .collect(Collectors.toMap(x -> x.getIngredient().getId(), x -> x.getIngredient(), (a, b) -> a))
+                .collect(Collectors.toMap(x -> x.getIngredient().getId(), ProductionStepIngredient::getIngredient, (a, b) -> a))
                 .values());
     }
 
     private Set<Ingredient> getAvailableIngredientIds() {
-        return new HashSet<Ingredient>(this.pumps.stream()
-                .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), x -> x.getCurrentIngredient(), (a, b) -> a))
+        return new HashSet<>(this.pumps.stream()
+                .collect(Collectors.toMap(x -> x.getCurrentIngredient().getId(), Pump::getCurrentIngredient, (a, b) -> a))
                 .values());
     }
 
@@ -179,17 +176,12 @@ public class CocktailFactory {
                 .mapToInt(ProductionStepIngredient::getAmount).sum();
     }
 
-    private void handleWorkerNotification(AbstractProductionStepWorker worker, StepProgress stepProgress) {
-        this.notifySubscribers();
-    }
-
     public void makeCocktail() {
         if(this.state != CocktailProgress.State.READY_TO_START) {
             throw new IllegalStateException("Factory not ready to start!");
         }
         setState(CocktailProgress.State.RUNNING);
         this.requestPumpPersist(this.getUpdatedPumps());
-        this.cocktailprogress = new CocktailProgress();
         this.notifySubscribers();
         this.currentProductionStepWorker.start();
     }
@@ -272,12 +264,10 @@ public class CocktailFactory {
         cocktailprogress.setState(this.state);
         cocktailprogress.setProgress(getProgressInPercent());
 
-        if(this.currentProductionStepWorker instanceof ManualProductionStepWorker) {
-            ManualProductionStepWorker worker = (ManualProductionStepWorker) this.currentProductionStepWorker;
+        if(this.currentProductionStepWorker instanceof ManualProductionStepWorker worker) {
             cocktailprogress.setCurrentIngredientsToAddManually(worker.getProgress().getIngredientsToBeAdded());
         }
-        if(this.currentProductionStepWorker instanceof WrittenInstructionProductionStepWorker) {
-            WrittenInstructionProductionStepWorker worker = (WrittenInstructionProductionStepWorker) this.currentProductionStepWorker;
+        if(this.currentProductionStepWorker instanceof WrittenInstructionProductionStepWorker worker) {
             cocktailprogress.setWrittenInstruction(worker.getProgress().getMessage());
         }
         return cocktailprogress;
@@ -301,8 +291,7 @@ public class CocktailFactory {
                     timeElapsed += TIME_FOR_MANUAL_PROGRESS;
                 }
 
-            } else if (worker instanceof AbstractPumpingProductionStepWorker) {
-                AbstractPumpingProductionStepWorker pumpingWorker = (AbstractPumpingProductionStepWorker) worker;
+            } else if (worker instanceof AbstractPumpingProductionStepWorker pumpingWorker) {
                 timeNeeded += pumpingWorker.getRequiredPumpingTime();
                 if(worker.isFinished()) {
                     timeElapsed += pumpingWorker.getRequiredPumpingTime();
@@ -323,6 +312,6 @@ public class CocktailFactory {
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
                 .flatMap(x -> x.getStepIngredients().stream())
-                .collect(Collectors.toMap(x -> x.getIngredient(), x -> x.getAmount(), (a, b) -> a + b));
+                .collect(Collectors.toMap(ProductionStepIngredient::getIngredient, ProductionStepIngredient::getAmount, Integer::sum));
     }
 }
