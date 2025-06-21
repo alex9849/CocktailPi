@@ -67,8 +67,16 @@ public class PumpMaintenanceService {
     }
 
     private void configureReversePumpSettings (boolean reschedulePumpBack) {
-        if(getReversePumpingSettings().isEnable()) {
-            setDirection(this.direction);
+        try {
+            if(getReversePumpingSettings().isEnable()) {
+                setDirection(this.direction);
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to configure reverse pump settings due. Disabling reverse pumping!");
+            ex.printStackTrace();
+            ReversePumpSettings reversePumpSettings = new ReversePumpSettings();
+            reversePumpSettings.setEnable(false);
+            setReversePumpingSettings(reversePumpSettings);
         }
         if(reschedulePumpBack) {
             this.reschedulePumpBack();
@@ -177,12 +185,22 @@ public class PumpMaintenanceService {
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
                 overshootMultiplier += rps.getSettings().getOvershoot() / 100d;
             }
-            setDirection(Direction.BACKWARD);
+            try {
+                setDirection(Direction.BACKWARD);
+            } catch (Exception e) {
+                callback.run();
+                throw e;
+            }
             final Runnable oldCallback = callback;
             callback = () -> {
                 synchronized (this) {
                     if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
-                        setDirection(Direction.FORWARD);
+                        try {
+                            setDirection(Direction.FORWARD);
+                        } catch (Exception e) {
+                            oldCallback.run();
+                            throw e;
+                        }
                     }
                     oldCallback.run();
                 }

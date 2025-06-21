@@ -106,8 +106,11 @@ public abstract class Pump {
 
     public abstract boolean isCanPump();
 
-    public void shutdownDriver() {
+    public void shutdownDriver(boolean createNonExistent) {
         synchronized (motorDrivers) {
+            if(createNonExistent && isCanPump()) {
+                getMotorDriver();
+            }
             if(motorDrivers.containsKey(getId())) {
                 motorDrivers.get(getId()).shutdown();
                 motorDrivers.remove(getId());

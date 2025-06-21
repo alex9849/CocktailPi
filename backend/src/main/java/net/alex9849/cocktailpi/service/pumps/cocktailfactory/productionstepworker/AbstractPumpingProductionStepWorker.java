@@ -269,7 +269,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private synchronized void stopAllPumps() {
         for(Pump pump : this.usedPumps) {
             try {
-                pump.shutdownDriver();
+                pump.shutdownDriver(false);
             } catch (Pi4JException e) {
                 e.printStackTrace();
             }

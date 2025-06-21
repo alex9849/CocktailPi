@@ -63,7 +63,7 @@ public class PumpDataService {
         updateDefaultPinState(null, pump);
         //Turn off pump
         if(pump.isCanPump()) {
-            pump.shutdownDriver();
+            pump.shutdownDriver(true);
         }
         return pump;
     }
@@ -87,10 +87,11 @@ public class PumpDataService {
         pumpRepository.update(pump);
         if (!pump.equalDriverProperties(beforeUpdate)){
             if(beforeUpdate.isCanPump()) {
-                beforeUpdate.shutdownDriver();
+                beforeUpdate.shutdownDriver(false);
             }
             if(pump.isCanPump()) {
-                pump.shutdownDriver();
+                pump.getMotorDriver();
+                pump.shutdownDriver(true);
             }
         }
         return pump;
@@ -104,7 +105,7 @@ public class PumpDataService {
         updateDefaultPinState(pump, null);
         pumpRepository.delete(id);
         if(pump.isCanPump()) {
-            pump.shutdownDriver();
+            pump.shutdownDriver(false);
         }
     }
 
