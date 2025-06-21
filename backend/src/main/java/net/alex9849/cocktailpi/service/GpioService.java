@@ -102,17 +102,17 @@ public class GpioService {
                 }
                 Optional<PinResource> oPinResource = getPinResourceByI2CAddress(oldI2CGpioBoard.getI2cAddress());
                 if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
-                    if(oPinResource.isPresent()) {
-                        throw new IllegalArgumentException("I2C-Address already in use!");
-                    }
-                    pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
+                    throw new IllegalArgumentException("I2C-Address already in use!");
+                }
+                if(oldI2CGpioBoard.getI2cAddress() != i2CGpioBoard.getI2cAddress()) {
+                    i2CGpioBoard.getBoardDriver().updateI2c(pinUtils.getI2c(i2CGpioBoard.getI2cAddress()), false);
+                    pinUtils.shutdownI2CAddress(oldI2CGpioBoard.getI2cAddress());
                 }
 
             } else {
                 throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
             }
             gpioRepository.updateBoard(gpioBoard);
-            reloadGlobalPins();
             return gpioRepository.findById(gpioBoard.getId()).orElse(null);
         } finally {
             pumpLockService.releaseGlobal(this);
@@ -136,7 +136,7 @@ public class GpioService {
             throw new IllegalStateException("Some pins from the board are still assigned to resources!");
         }
         if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
-            pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
+            i2CGpioBoard.shutdownDriver();
         }
         gpioRepository.deleteBoard(id);
     }
@@ -181,5 +181,16 @@ public class GpioService {
         }
         gpioBoard.setName(gpioBoardDto.getName());
         return gpioBoard;
+    }
+
+    public void restartBoard(GpioBoard gpioBoard) {
+        pumpLockService.testAndAcquireGlobal(this);
+        try {
+            if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+                i2CGpioBoard.restart();
+            }
+        } finally {
+            pumpLockService.releaseGlobal(this);
+        }
     }
 }

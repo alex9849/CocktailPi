@@ -76,4 +76,20 @@ public abstract class I2CGpioBoard extends GpioBoard {
                 && getBoardModel() == that.getBoardModel();
     }
 
+    public void restart() {
+        PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+        pinUtils.shutdownI2CAddress(getI2cAddress());
+        this.getBoardDriver().updateI2c(pinUtils.getI2c(getI2cAddress()), false);
+    }
+
+    public void shutdownDriver() {
+        if(boardMap.containsKey(getI2cAddress())) {
+            I2CPinExpander expander = boardMap.get(getI2cAddress());
+            if (expander.isOpen()) {
+                PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+                pinUtils.shutdownI2CAddress(getI2cAddress());
+                boardMap.remove(getI2cAddress());
+            }
+        }
+    }
 }

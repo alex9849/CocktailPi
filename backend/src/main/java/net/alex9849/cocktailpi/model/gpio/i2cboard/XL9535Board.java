@@ -1,6 +1,8 @@
 package net.alex9849.cocktailpi.model.gpio.i2cboard;
 
 import com.pi4j.io.i2c.I2C;
+import net.alex9849.cocktailpi.utils.PinUtils;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.pin.I2CPinExpander;
 import net.alex9849.motorlib.xl9535.XL9535;
 

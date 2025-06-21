@@ -30,6 +30,17 @@
             <div class="row justify-end q-col-gutter-sm">
               <div>
                 <q-btn
+                  :icon="mdiRestart"
+                  :loading="restarting"
+                  @click.stop="onClickRestart()"
+                  text-color="white"
+                  color="info"
+                  dense
+                  rounded
+                />
+              </div>
+              <div>
+                <q-btn
                   @click.stop="$router.push({name: 'gpioexpandereditor', params: {id: board.id}})"
                   :icon="mdiPencilOutline"
                   text-color="white"
@@ -95,7 +106,7 @@
 </template>
 
 <script>
-import { mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
+import { mdiDelete, mdiRestart, mdiPencilOutline } from '@quasar/extras/mdi-v5'
 import GpioService from 'src/services/gpio.service'
 import { mapGetters } from 'vuex'
 import { complementColor } from 'src/mixins/utils'
@@ -113,18 +124,20 @@ export default {
       required: true
     }
   },
-  emits: ['clickDelete'],
+  emits: ['clickDelete', 'clickRestart'],
   data: () => {
     return {
       pins: {
         loading: false,
         pins: []
-      }
+      },
+      restarting: false
     }
   },
   created () {
     this.mdiDelete = mdiDelete
     this.mdiPencilOutline = mdiPencilOutline
+    this.mdiRestart = mdiRestart
   },
   methods: {
     fetchPins () {
@@ -135,6 +148,13 @@ export default {
         })
         .finally(() => {
           this.pins.loading = false
+        })
+    },
+    onClickRestart () {
+      this.restarting = true
+      GpioService.restartGpioBoard(this.board.id)
+        .finally(() => {
+          this.restarting = false
         })
     }
   },

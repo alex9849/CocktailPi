@@ -225,7 +225,7 @@
         <dependency>
             <groupId>net.alex9849.motorlib</groupId>
             <artifactId>motorlib</artifactId>
-            <version>1.0-20250620.112217-8</version>
+            <version>1.0-20250621.073047-10</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

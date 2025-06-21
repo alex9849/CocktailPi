@@ -92,4 +92,15 @@ public class GpioEndpoint {
         return ResponseEntity.ok(gpioBoard.getPins().stream().map(PinDto.Response.Detailed::new).toList());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(path = "{id}/restart", method = RequestMethod.POST)
+    private ResponseEntity<?> restartBoard(@PathVariable(value = "id") long boardId) {
+        GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);
+        if(gpioBoard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        gpioService.restartBoard(gpioBoard);
+        return ResponseEntity.ok().build();
+    }
+
 }
