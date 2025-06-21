@@ -749,7 +749,9 @@ export default {
         status_enabled: 'Enabled',
         status_disabled: 'Disabled',
         overshoot: 'Overshoot:',
-        timer: 'Timer:'
+        timer: 'Timer:',
+        timer_no_timer_label: 'Never',
+        overshoot_no_overshoot_label: 'No'
       },
       load_cell: {
         headline: 'Load cell',

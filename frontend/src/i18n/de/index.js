@@ -691,7 +691,9 @@ export default {
         status_enabled: 'Aktiviert',
         status_disabled: 'Deaktiviert',
         overshoot: 'Overshoot:',
-        timer: 'Timer:'
+        timer: 'Timer:',
+        timer_no_timer_label: 'Niemals',
+        overshoot_no_overshoot_label: 'Nein'
       },
       load_cell: {
         headline: 'Wägezelle',
