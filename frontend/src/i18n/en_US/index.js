@@ -912,6 +912,8 @@ export default {
       add_btn_label: 'Add',
       start_all_btn_label: 'Start all',
       stop_all_btn_label: 'Stop all',
+      show_pump_details_btn_label: 'Show details',
+      hide_pump_details_btn_label: 'Hide details',
       no_pumps_found: 'No pumps found!',
       notifications: {
         all_stopped: 'All pumps stopped!',

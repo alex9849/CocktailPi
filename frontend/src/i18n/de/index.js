@@ -851,6 +851,8 @@ export default {
       add_btn_label: 'Hinzufügen',
       start_all_btn_label: 'Alle starten',
       stop_all_btn_label: 'Alle stoppen',
+      show_pump_details_btn_label: 'Details anzeigen',
+      hide_pump_details_btn_label: 'Details ausblenden',
       no_pumps_found: 'Keine Pumpen gefunden!',
       notifications: {
         all_stopped: 'Alle Pumpen gestoppt!',

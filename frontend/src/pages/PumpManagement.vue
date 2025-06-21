@@ -28,7 +28,7 @@
       <TopButtonArranger>
         <q-btn
           color="info"
-          :label="showPumpDetails ? 'Hide details' : 'Show details'"
+          :label="showPumpDetails ? $t('component.pump_mgmt.hide_pump_details_btn_label'):$t('component.pump_mgmt.show_pump_details_btn_label')"
           @click="showPumpDetails = !showPumpDetails"
           :icon="showPumpDetails ? mdiChevronDoubleUp : mdiChevronDoubleDown"
           no-caps

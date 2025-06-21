@@ -35,7 +35,17 @@
             v-if="pump.state !== 'READY' || this.pumpJobState.runningState"
             :color="pumpState.color"
             class="text-subtitle2">
-            {{ pumpState.label }}
+            <div
+              class="row q-col-gutter-xs items-center"
+            >
+              <q-icon
+                v-if="pumpState.icon"
+                :name="pumpState.icon"
+              />
+              <p>
+                {{ pumpState.label }}
+              </p>
+            </div>
           </q-badge>
           <q-badge
             v-else
@@ -360,6 +370,7 @@ import {
   mdiReply,
   mdiShare,
   mdiSync,
+  mdiAlert,
   mdiPipeValve
 } from '@quasar/extras/mdi-v6'
 import { stepperMotor } from 'src/services/svg.service'
@@ -473,6 +484,7 @@ export default {
     this.mdiReply = mdiReply
     this.mdiShare = mdiShare
     this.mdiSync = mdiSync
+    this.mdiAlert = mdiAlert
     this.mdiPipeValve = mdiPipeValve
     this.stepperMotor = stepperMotor
   },
@@ -541,7 +553,8 @@ export default {
     pumpState () {
       const state = {
         color: '',
-        label: ''
+        label: '',
+        icon: null
       }
       switch (this.pump.state) {
         case 'READY':
@@ -552,6 +565,7 @@ export default {
         case 'TESTABLE':
           state.color = 'negative'
           state.label = this.$t('component.pump_card.pumpStates.incomplete')
+          state.icon = this.mdiAlert
           break
       }
       if (this.pumpJobState.runningState) {
