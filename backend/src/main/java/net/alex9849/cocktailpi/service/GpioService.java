@@ -78,6 +78,7 @@ public class GpioService {
 
     public GpioBoard updateGpioBoard(GpioBoard gpioBoard) {
         pumpLockService.testAndAcquireGlobal(this);
+        boolean releadPins = false;
         try {
             Optional<GpioBoard> oOldGpioBoard = gpioRepository.findById(gpioBoard.getId());
             if(oOldGpioBoard.isEmpty()) {
@@ -107,12 +108,16 @@ public class GpioService {
                 if(oldI2CGpioBoard.getI2cAddress() != i2CGpioBoard.getI2cAddress()) {
                     i2CGpioBoard.getBoardDriver().updateI2c(pinUtils.getI2c(i2CGpioBoard.getI2cAddress()), false);
                     pinUtils.shutdownI2CAddress(oldI2CGpioBoard.getI2cAddress());
+                    releadPins = true;
                 }
 
             } else {
                 throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
             }
             gpioRepository.updateBoard(gpioBoard);
+            if(releadPins) {
+                reloadGlobalPins();
+            }
             return gpioRepository.findById(gpioBoard.getId()).orElse(null);
         } finally {
             pumpLockService.releaseGlobal(this);
@@ -188,6 +193,7 @@ public class GpioService {
         try {
             if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
                 i2CGpioBoard.restart();
+                reloadGlobalPins();
             }
         } finally {
             pumpLockService.releaseGlobal(this);
