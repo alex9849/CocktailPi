@@ -125,6 +125,17 @@
               </q-tooltip>
             </q-btn>
             <q-btn
+              @click="startAction(props.row.id)"
+              :icon="mdiPlay"
+              color="positive"
+              dense
+              rounded
+            >
+              <q-tooltip>
+                {{ $t('page.event_mgmt.action_table.start_btn_tooltip') }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
               :icon="mdiPencilOutline"
               :style="{backgroundColor: '#31ccec'}"
               dense
@@ -201,7 +212,7 @@
 
 <script>
 
-import { mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiConsole } from '@quasar/extras/mdi-v5'
+import { mdiPlay, mdiDelete, mdiPencilOutline, mdiSkullCrossbones, mdiConsole } from '@quasar/extras/mdi-v5'
 import WebSocketService from '../services/websocket.service'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CEditDialog from 'components/CEditDialog'
@@ -255,6 +266,7 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.mdiSkullCrossbones = mdiSkullCrossbones
     this.mdiConsole = mdiConsole
+    this.mdiPlay = mdiPlay
     this.initialize()
   },
   mounted () {
@@ -271,6 +283,9 @@ export default {
     WebSocketService.unsubscribe(this, '/user/topic/eventactionstatus')
   },
   methods: {
+    startAction (actionId) {
+      EventActionService.startEventAction(actionId)
+    },
     showEventActionLog (actionId) {
       this.actionLog.show = true
       this.actionLog.topic = '/user/topic/eventactionlog/' + actionId

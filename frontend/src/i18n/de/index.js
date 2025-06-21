@@ -331,6 +331,7 @@ export default {
         },
         view_logs_btn_tooltip: 'Logs anzeigen',
         edit_btn_tooltip: 'Bearbeiten',
+        start_btn_tooltip: 'Start',
         delete_btn_tooltip: 'Löschen'
       },
       delete_dialog: {

@@ -42,6 +42,10 @@ class EventActionService {
     return axios.delete(API_PATH + String(eventActionId))
   }
 
+  startEventAction (eventActionId) {
+    return axios.post(API_PATH + String(eventActionId) + '/start')
+  }
+
   getAllExecutionGroups () {
     return axios.get(API_PATH + 'executiongroup')
       .then(response => response.data)

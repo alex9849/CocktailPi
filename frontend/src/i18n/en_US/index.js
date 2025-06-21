@@ -336,6 +336,7 @@ export default {
         },
         view_logs_btn_tooltip: 'View logs',
         edit_btn_tooltip: 'Edit',
+        start_btn_tooltip: 'Start',
         delete_btn_tooltip: 'Delete'
       },
       delete_dialog: {
