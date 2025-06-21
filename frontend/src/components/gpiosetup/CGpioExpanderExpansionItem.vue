@@ -153,6 +153,12 @@ export default {
     onClickRestart () {
       this.restarting = true
       GpioService.restartGpioBoard(this.board.id)
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: this.$t('component.gpio_expander_expansion_item.i2c_backend_restarted')
+          })
+        })
         .finally(() => {
           this.restarting = false
         })

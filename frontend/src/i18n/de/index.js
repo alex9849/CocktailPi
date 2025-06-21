@@ -843,7 +843,8 @@ export default {
     },
     gpio_expander_expansion_item: {
       caption_local: 'Board: Lokal, Nutzung: {pinsUsed}/{pinsMax}',
-      caption_i2c: 'Adresse: {addr}, Board: {board}, Nutzung: {pinsUsed}/{pinsMax}'
+      caption_i2c: 'Adresse: {addr}, Board: {board}, Nutzung: {pinsUsed}/{pinsMax}',
+      i2c_backend_restarted: 'I2C backend neu gestarted'
     },
     pump_mgmt: {
       headline: 'Pumpenverwaltung',

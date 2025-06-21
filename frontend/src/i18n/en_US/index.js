@@ -904,7 +904,8 @@ export default {
     },
     gpio_expander_expansion_item: {
       caption_local: 'Board: Local, Usage: {pinsUsed}/{pinsMax}',
-      caption_i2c: 'Address: {addr}, Board: {board}, Usage: {pinsUsed}/{pinsMax}'
+      caption_i2c: 'Address: {addr}, Board: {board}, Usage: {pinsUsed}/{pinsMax}',
+      i2c_backend_restarted: 'I2C backend restarted'
     },
     pump_mgmt: {
       headline: 'Pump Management',
