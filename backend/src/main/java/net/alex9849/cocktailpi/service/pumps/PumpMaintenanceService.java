@@ -63,20 +63,16 @@ public class PumpMaintenanceService {
     private AtomicInteger loadCellOccupied = new AtomicInteger(0);
 
     public synchronized void postConstruct() {
-        configureReversePumpSettings(true);
+        try {
+            configureReversePumpSettings(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void configureReversePumpSettings (boolean reschedulePumpBack) {
-        try {
-            if(getReversePumpingSettings().isEnable()) {
-                setDirection(this.direction);
-            }
-        } catch (Exception ex) {
-            logger.error("Failed to configure reverse pump settings due. Disabling reverse pumping!");
-            ex.printStackTrace();
-            ReversePumpSettings reversePumpSettings = new ReversePumpSettings();
-            reversePumpSettings.setEnable(false);
-            setReversePumpingSettings(reversePumpSettings);
+        if(getReversePumpingSettings().isEnable()) {
+            setDirection(this.direction);
         }
         if(reschedulePumpBack) {
             this.reschedulePumpBack();
