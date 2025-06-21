@@ -99,8 +99,22 @@
                     class="row q-py-sm q-col-gutter-xs"
                   >
                     <div class="col-12">
-                      <p>{{ $t('page.gpio_mgmt.status_box.i2c_box.sda_pin') }} {{ i2cStatus.data.sdaPin?.nr }}</p>
-                      <p>{{ $t('page.gpio_mgmt.status_box.i2c_box.scl_pin') }} {{ i2cStatus.data.sclPin?.nr }}</p>
+                      <p>
+                        {{ $t('page.gpio_mgmt.status_box.i2c_box.sda_pin') }}
+                        <q-badge
+                          class="bg-info"
+                        >
+                          {{ i2cStatus.data.sdaPin.boardName + ' / ' + i2cStatus.data.sdaPin.pinName }}
+                        </q-badge>
+                      </p>
+                      <p>
+                        {{ $t('page.gpio_mgmt.status_box.i2c_box.scl_pin') }}
+                        <q-badge
+                          class="bg-info"
+                        >
+                          {{i2cStatus.data.sclPin.boardName + ' / ' + i2cStatus.data.sclPin.pinName}}
+                        </q-badge>
+                      </p>
                     </div>
                   </q-card-section>
                 </q-card>

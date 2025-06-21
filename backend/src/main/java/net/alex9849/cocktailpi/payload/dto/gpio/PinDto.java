@@ -51,11 +51,12 @@ public class PinDto {
         @Getter
         @Setter
         @EqualsAndHashCode
-        public static class Detailed implements Nr, BoardId, InUse, PinName, PinResource {
+        public static class Detailed implements Nr, BoardId, InUse, PinName, BoardName, PinResource {
             int nr;
             long boardId;
             boolean inUse;
             String pinName;
+            String boardName;
             PinResourceDto.Response.Detailed pinResource;
 
             public Detailed(HardwarePin hwPin) {
@@ -63,6 +64,7 @@ public class PinDto {
                 this.boardId = hwPin.getBoardId();
                 this.inUse = hwPin.getResource() != null;
                 this.pinName = hwPin.getDisplayName();
+                this.boardName = hwPin.getGpioBoard().getName();
                 if(hwPin.getResource() != null) {
                     this.pinResource = new PinResourceDto.Response.Detailed(hwPin.getResource());
                 }

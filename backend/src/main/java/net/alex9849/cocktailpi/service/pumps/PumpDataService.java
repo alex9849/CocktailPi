@@ -16,6 +16,7 @@ import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.pin.PinState;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -25,6 +25,15 @@
           no-caps
         />
       </TopButtonArranger>
+      <TopButtonArranger>
+        <q-btn
+          color="info"
+          :label="showPumpDetails ? 'Hide details' : 'Show details'"
+          @click="showPumpDetails = !showPumpDetails"
+          :icon="showPumpDetails ? mdiChevronDoubleUp : mdiChevronDoubleDown"
+          no-caps
+        />
+      </TopButtonArranger>
     </div>
     <div class="row q-col-gutter-lg q-mt-md reverse">
       <div class="col-lg-3 col-12">
@@ -40,7 +49,7 @@
             <c-pump-card
               style="height: 100%"
               :pump="pump"
-              show-detailed
+              :show-detailed="showPumpDetails"
             />
           </div>
           <div
@@ -68,7 +77,7 @@
 import TopButtonArranger from 'components/TopButtonArranger.vue'
 import CPumpCard from 'components/CPumpCard.vue'
 import CPumpSetupTypeSelector from 'components/pumpsetup/CPumpSetupTypeSelector.vue'
-import { mdiAlert, mdiDelete, mdiPencilOutline, mdiPlay, mdiPlusCircleOutline, mdiStop } from '@quasar/extras/mdi-v5'
+import { mdiChevronDoubleUp, mdiChevronDoubleDown, mdiAlert, mdiDelete, mdiPencilOutline, mdiPlay, mdiPlusCircleOutline, mdiStop } from '@quasar/extras/mdi-v5'
 import PumpService from 'src/services/pump.service'
 import { mapGetters } from 'vuex'
 import CPumpStatus from 'components/CPumpStatus.vue'
@@ -82,11 +91,14 @@ export default {
     this.mdiPlay = mdiPlay
     this.mdiStop = mdiStop
     this.mdiAlert = mdiAlert
+    this.mdiChevronDoubleDown = mdiChevronDoubleDown
+    this.mdiChevronDoubleUp = mdiChevronDoubleUp
     this.mdiPlusCircleOutline = mdiPlusCircleOutline
   },
   data () {
     return {
-      showAddDialog: false
+      showAddDialog: false,
+      showPumpDetails: false
     }
   },
   methods: {
