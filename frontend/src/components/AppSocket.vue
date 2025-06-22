@@ -48,6 +48,9 @@ export default {
     }, true)
     WebsocketService.subscribe(this, '/user/topic/uistateinfos', infoMessage => {
       if (infoMessage.body === 'INVALIDATE_CACHED_RECIPES') {
+        if (['publicrecipes', 'myrecipes', 'collection'].includes(this.$route.name)) {
+          return
+        }
         vm.invalidateCachedRecipes()
       }
     }, false)
