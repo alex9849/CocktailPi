@@ -34,6 +34,7 @@ public class WebSocketService {
     public static final String WS_ACTIONS_STATUS_DESTINATION = "/topic/eventactionstatus";
     public static final String WS_ACTIONS_LOG_DESTINATION = "/topic/eventactionlog";
     public static final String WS_PUMP_RUNNING_STATE_DESTINATION = "/topic/pump/runningstate";
+    public static final String WS_UI_STATE_INFOS =  "/topic/uistateinfos";
 
     public synchronized void broadcastCurrentCocktailProgress(@Nullable CocktailProgress cocktailprogress) {
         Object cocktailprogressDto = "DELETE";
@@ -53,6 +54,15 @@ public class WebSocketService {
             cocktailProgressDto = new CocktailProgressDto.Response.Detailed(cocktailProgress);
         }
         simpMessagingTemplate.convertAndSendToUser(name, WS_COCKTAIL_DESTINATION, cocktailProgressDto);
+    }
+
+    public synchronized void invalidateRecipeScrollCaches() {
+        String message = "INVALIDATE_CACHED_RECIPES";
+        List<String> subscribers = simpUserRegistry.getUsers().stream()
+                .map(SimpUser::getName).toList();
+        for(String username : subscribers) {
+            simpMessagingTemplate.convertAndSendToUser(username, WS_UI_STATE_INFOS, message);
+        }
     }
 
     public synchronized void broadcastPumpLayout(List<Pump> pumps) {

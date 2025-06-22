@@ -52,6 +52,7 @@ public class PumpService {
     public Pump createPump(Pump pump) {
         Pump newPump = dataService.createPump(pump);
         broadCastPumpLayout();
+        webSocketService.invalidateRecipeScrollCaches();
         return newPump;
     }
 
@@ -62,6 +63,7 @@ public class PumpService {
         try {
             Pump updatedPump = dataService.updatePump(pump);
             broadCastPumpLayout();
+            webSocketService.invalidateRecipeScrollCaches();
             return updatedPump;
         } finally {
             lockService.releasePumpLock(pump.getId(), dataService);
@@ -75,6 +77,7 @@ public class PumpService {
         try {
             dataService.deletePump(id);
             broadCastPumpLayout();
+            webSocketService.invalidateRecipeScrollCaches();
         } finally {
             lockService.releasePumpLock(id, dataService);
         }

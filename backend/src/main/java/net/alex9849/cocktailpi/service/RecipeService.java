@@ -50,7 +50,7 @@ public class RecipeService {
     CategoryService categoryService;
 
     @Autowired
-    CollectionRepository collectionRepository;
+    WebSocketService webSocketService;
 
     @Autowired
     GlassService glassService;
@@ -60,7 +60,9 @@ public class RecipeService {
         if(userService.getUser(recipe.getOwner().getId()) == null) {
             throw new IllegalArgumentException("User doesn't exist!");
         }
-        return recipeRepository.create(recipe);
+        Recipe newRecipe = recipeRepository.create(recipe);
+        webSocketService.invalidateRecipeScrollCaches();
+        return newRecipe;
     }
 
     public Page<Recipe> getRecipesByFilter(Long ownerId, Long inCollection,
@@ -180,11 +182,16 @@ public class RecipeService {
         if(recipeRepository.findById(recipe.getId()).isEmpty()) {
             throw new IllegalArgumentException("Recipe doesn't exist!");
         }
-        return recipeRepository.update(recipe);
+        if(recipeRepository.update(recipe)) {
+            webSocketService.invalidateRecipeScrollCaches();
+            return true;
+        }
+        return false;
     }
 
     public void delete(long recipeId) {
         recipeRepository.delete(recipeId);
+        webSocketService.invalidateRecipeScrollCaches();
     }
 
     public Recipe fromDto(RecipeDto.Request.Create recipeDto) {

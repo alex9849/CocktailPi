@@ -25,6 +25,9 @@ public class IngredientService {
     @Autowired
     private PumpDataService pumpService;
 
+    @Autowired
+    private WebSocketService webSocketService;
+
     public Ingredient getIngredient(long id) {
         return ingredientRepository.findById(id).orElse(null);
     }
@@ -142,6 +145,7 @@ public class IngredientService {
         AddableIngredient aIngredient = (AddableIngredient) ingredient;
         aIngredient.setInBar(inBar);
         ingredientRepository.update(aIngredient);
+        webSocketService.invalidateRecipeScrollCaches();
     }
 
     public void setImage(long ingredientId, byte[] image) {
