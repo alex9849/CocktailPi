@@ -7,10 +7,7 @@ import net.alex9849.cocktailpi.model.user.ERole;
 import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.recipe.IngredientRecipeDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
-import net.alex9849.cocktailpi.service.CollectionService;
-import net.alex9849.cocktailpi.service.IngredientService;
-import net.alex9849.cocktailpi.service.RecipeService;
-import net.alex9849.cocktailpi.service.UserService;
+import net.alex9849.cocktailpi.service.*;
 import net.alex9849.cocktailpi.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,7 +44,8 @@ public class RecipeEndpoint {
     IngredientService ingredientService;
 
     @Autowired
-    CollectionService collectionService;
+    SystemService systemService;
+
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
@@ -58,7 +56,7 @@ public class RecipeEndpoint {
                                          @RequestParam(value = "inCategory", required = false) Long inCategory,
                                          @RequestParam(value = "page", defaultValue = "0") int page,
                                          @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
-        final int pageSize = 12;
+        final int pageSize = systemService.getAppearance().getRecipePageSize();
         page = Math.max(page, 0);
         Sort sort;
         switch (orderBy) {

@@ -357,6 +357,7 @@ public class SystemService {
             throw new IllegalArgumentException("Appearance can't be updated in demomode!");
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
+        optionsRepository.setOption("RECIPES_PAGE_SIZE", String.valueOf(settingsDto.getRecipePageSize()));
 
         AppearanceSettingsDto.Duplex.NormalColors nc = settingsDto.getColors().getNormal();
         AppearanceSettingsDto.Duplex.SvColors scv = settingsDto.getColors().getSimpleView();
@@ -380,13 +381,18 @@ public class SystemService {
         optionsRepository.setOption("COLOR_SV_CARD_PRIMARY", scv.getCardPrimary());
     }
 
-    public Object getAppearance() {
+    public AppearanceSettingsDto.Duplex.Detailed getAppearance() {
         String stringLanguage = optionsRepository.getOption("LANGUAGE")
                 .orElse(Language.en_US.name());
         Language language = Language.valueOf(stringLanguage);
 
         AppearanceSettingsDto.Duplex.Detailed settingsDto = new AppearanceSettingsDto.Duplex.Detailed();
         settingsDto.setLanguage(language);
+        settingsDto.setRecipePageSize(
+                Integer.parseInt(optionsRepository
+                        .getOption("RECIPES_PAGE_SIZE")
+                        .orElse(String.valueOf(12))
+                ));
 
         AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();

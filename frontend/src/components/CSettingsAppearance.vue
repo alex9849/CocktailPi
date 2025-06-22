@@ -42,6 +42,26 @@
           </q-card-section>
         </q-card>
       </div>
+      <div class="row">
+        <q-card
+          class="col bg-card-item-group text-card-item-group"
+          flat
+          bordered
+          :dark="color.cardItemGroupDark"
+        >
+          <q-card-section>
+            <q-select
+              :label="$t('component.settings_appearance.recipe_page_size')"
+              v-model:model-value="v.form.recipePageSize.$model"
+              :dark="color.cardItemGroupDark"
+              :options="pageSizeOptions"
+              :option-label="option => $t('component.settings_appearance.recipe_page_size_option', {nr: option})"
+              outlined
+              hide-bottom-space
+            />
+          </q-card-section>
+        </q-card>
+      </div>
       <div class="row q-col-gutter-md">
         <div class="col-12 col-md-6">
           <q-card
@@ -199,7 +219,7 @@
 <script>
 
 import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import { required, minValue } from '@vuelidate/validators'
 import SystemService from 'src/services/system.service'
 import { mapGetters, mapMutations } from 'vuex'
 import CColorSelectorField from 'components/CColorSelectorField.vue'
@@ -212,6 +232,7 @@ export default {
       saving: false,
       form: {
         language: '',
+        recipePageSize: 8,
         colors: {
           normal: {
             header: '#f3f3fa',
@@ -235,7 +256,8 @@ export default {
           }
         }
       },
-      languageOptions: []
+      languageOptions: [],
+      pageSizeOptions: [8, 12, 16, 20, 24, 28, 32, 36, 40]
     }
   },
   setup () {
@@ -325,6 +347,10 @@ export default {
       form: {
         language: {
           required
+        },
+        recipePageSize: {
+          required,
+          minValue: minValue(8)
         }
       }
     }

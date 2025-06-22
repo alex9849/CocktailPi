@@ -1115,6 +1115,8 @@ export default {
     },
     settings_appearance: {
       language: 'Sprache',
+      recipe_page_size: 'Rezepte pro Seite',
+      recipe_page_size_option: '{nr} Rezepte',
       save_btn_label: 'Speichern',
       notifications: {
         settings_updated: 'Einstellungen aktualisiert!'
