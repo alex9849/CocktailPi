@@ -183,7 +183,7 @@ public class FeasibilityFactory {
         List<ProductionStepIngredient> productionStepIngredients = recipe.getProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream()).collect(Collectors.toList());
+                .flatMap(x -> x.getStepIngredients().stream()).toList();
 
         //apply boost
         if(!recipe.isBoostable() && orderConfiguration.getCustomisations().getBoost() != 100) {
@@ -208,10 +208,10 @@ public class FeasibilityFactory {
             return;
         }
         double multiplier;
-        if(liquidAmountToBeScaledTo < 0) {
+        if(liquidAmountToBeScaledTo <= 0) {
             multiplier = 0;
         } else {
-            multiplier = orderConfiguration.getAmountOrderedInMl() / ((double) liquidAmountScaled);
+            multiplier = liquidAmountToBeScaledTo / ((double) liquidAmountScaled);
         }
 
         for(ProductionStep pStep : recipe.getProductionSteps()) {
