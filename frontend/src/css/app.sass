@@ -22,6 +22,39 @@ tbody tr:nth-child(odd)
   background-color: inherit
   color: inherit
 
+.col-recipe-list-card
+  height: auto
+  width: 100%
+  @media (min-width: 850px)
+    width: 50%
+  @media (min-width: 1025px)
+    width: 100%
+  @media (min-width: 1100px)
+    width: 50%
+
+.col-xsm-4
+  flex: 0 0 100%
+  max-width: 100%
+  @media (min-width: 400px)
+    flex: 0 0 33.3333%
+    max-width: 33.3333%
+
+.col-xsm-8
+  flex: 0 0 100%
+  max-width: 100%
+  @media (min-width: 400px)
+    flex: 0 0 66.6666%
+    max-width: 66.6666%
+
+.q-pt-xsm-none
+  @media (min-width: 400px)
+    padding-top: 0
+
+.q-pl-xsm-sm
+  @media (min-width: 400px)
+    padding-left: 8px
+
+
 /* .q-card--bordered
   border: 1px solid rgba(0, 0, 0, 0.12)
 

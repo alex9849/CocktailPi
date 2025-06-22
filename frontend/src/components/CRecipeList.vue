@@ -18,7 +18,7 @@
       <div
         v-for="recipe of recipes"
         :key="recipe.id"
-        class="col-12 col-lg-6"
+        class="col-recipe-list-card"
       >
         <router-link
           class="no-link-format"
