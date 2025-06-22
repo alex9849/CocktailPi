@@ -25,7 +25,7 @@ export const recipeSearchListLogic = {
       filter: this.routeOptions().filter,
       pagination: {
         page: this.routeOptions().page,
-        totalPages: 1
+        totalPages: 0
       }
     }
   },
