@@ -74,6 +74,9 @@ public class SystemService {
     @Autowired
     private PinUtils pinUtils;
 
+    @Autowired
+    private WebSocketService webSocketService;
+
     public void shutdown(boolean isRestart) throws IOException {
         if(isDemoMode) {
             throw new IllegalArgumentException("System can't be shutdown in demomode!");
@@ -379,6 +382,7 @@ public class SystemService {
         optionsRepository.setOption("COLOR_SV_BTN_PRIMARY", scv.getBtnPrimary());
         optionsRepository.setOption("COLOR_SV_CPROGRESS", scv.getCocktailProgress());
         optionsRepository.setOption("COLOR_SV_CARD_PRIMARY", scv.getCardPrimary());
+        webSocketService.invalidateRecipeScrollCaches();
     }
 
     public AppearanceSettingsDto.Duplex.Detailed getAppearance() {
