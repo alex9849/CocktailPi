@@ -13,7 +13,7 @@ import net.alex9849.cocktailpi.model.system.settings.Language;
 public class AppearanceSettingsDto {
 
     private interface ILanguage { @NotNull Language getLanguage(); }
-    private interface IRecipePageSize { @NotNull @Min(8) @Max(40) int getRecipePageSize(); }
+    private interface IRecipePageSize { @NotNull @Min(8) @Max(42) int getRecipePageSize(); }
     private final static String hexColorPatten = "^#[A-Fa-f0-9]{6}$";
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

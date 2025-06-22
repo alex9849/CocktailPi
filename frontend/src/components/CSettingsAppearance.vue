@@ -257,7 +257,7 @@ export default {
         }
       },
       languageOptions: [],
-      pageSizeOptions: [8, 12, 16, 20, 24, 28, 32, 36, 40]
+      pageSizeOptions: Array.from({ length: ((42 - 8) / 2) + 1 }, (_, k) => 8 + k * 2)
     }
   },
   setup () {
