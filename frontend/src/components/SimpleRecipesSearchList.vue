@@ -5,7 +5,7 @@
   />
   <div class="row q-col-gutter-lg">
     <q-pagination
-      v-if="pagination.totalPages > 0"
+      v-if="pagination.totalPages > 1"
       class="col-12 flex justify-center"
       :model-value="pagination.page"
       @update:model-value="onPageClick($event)"
@@ -24,7 +24,7 @@
       :recipes="recipes"
     />
     <q-pagination
-      v-if="pagination.totalPages > 0 && !loading"
+      v-if="pagination.totalPages > 1 && !loading"
       class="col-12 flex justify-center"
       :model-value="pagination.page"
       @update:model-value="onPageClick($event)"
