@@ -274,7 +274,7 @@ if [ ! -n "$modsel" ]; then
 fi
 
 if [ "$modsel" = "4" ]; then
-  if ! command -v chromium-browser >/dev/null 2>&1; then
+  if ! [ -d "/home/pi/.config/chromium-profile/" ] then
     if [ "$langsel" = "1" ]; then
         color r x "Touchscreen UI ist nicht installiert. Bitte installieren Sie diese zuerst und starten Sie dann das Skript neu!"
     else
