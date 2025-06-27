@@ -196,19 +196,19 @@
                         <td>{{ $t('component.pump_status.power_limit.status') }}</td>
                         <td>
                           <q-badge
-                            :class="{'bg-negative': !loadCellSettings.enable , 'bg-positive': loadCellSettings.enable}"
+                            :class="{'bg-negative': !powerLimitSettings.enable , 'bg-positive': powerLimitSettings.enable}"
                           >
-                            {{ loadCellStatus }}
+                            {{ powerLimitStatus }}
                           </q-badge>
                         </td>
                       </tr>
-                      <tr v-if="loadCellSettings.enable">
+                      <tr v-if="powerLimitSettings.enable">
                         <td>{{ $t('component.pump_status.power_limit.limit_label') }}</td>
                         <td>
                           <q-badge
                             class="bg-info"
                           >
-                            {{ $t('component.pump_status.power_limit.limit_value', {limit: 1}) }}
+                            {{ $t('component.pump_status.power_limit.limit_value', {limit: powerLimitSettings.limit}) }}
                           </q-badge>
                         </td>
                       </tr>
@@ -240,8 +240,10 @@ export default {
   },
   data: () => {
     return {
-      reversePumpSettings: {
-
+      reversePumpSettings: {},
+      powerLimitSettings: {
+        enabled: false,
+        limit: 1
       },
       loadCellSettings: {
         enable: false,
@@ -293,6 +295,13 @@ export default {
         return this.$t('component.pump_status.load_cell.status_enabled')
       } else {
         return this.$t('component.pump_status.load_cell.status_disabled')
+      }
+    },
+    powerLimitStatus () {
+      if (this.powerLimitStatus?.enable) {
+        return this.$t('component.pump_status.power_limit.status_enabled')
+      } else {
+        return this.$t('component.pump_status.power_limit.status_disabled')
       }
     },
     loadCellCalibrated () {

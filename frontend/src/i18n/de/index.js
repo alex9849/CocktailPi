@@ -383,7 +383,8 @@ export default {
         clk_pin_label: 'CLK-Pin',
         dt_pin_label: 'DT-Pin',
         save_btn_label: 'Speichern',
-        save_and_return_btn_label: 'Speichern & Zurück'
+        save_and_return_btn_label: 'Speichern & Zurück',
+        update_success_message: 'Wägezelle gespeichert'
       },
       calibration: {
         headline: 'Kalibrierung',
@@ -407,6 +408,18 @@ export default {
         }
       }
     },
+    power_limit_mgmt: {
+      headline: 'Power limit',
+      hardware_settings: {
+        headline: 'Power limit einstellungen',
+        enable_btn_label: 'Power limit aktivieren',
+        power_limit_label: 'Power limit (in mW)',
+        save_btn_label: 'Speichern',
+        save_and_return_btn_label: 'Speichern & Zurück',
+        update_success_message: 'Power limit gespeichert'
+      }
+    },
+
     simple_collections: {
       headline: 'Listen',
       no_collections_msg: 'Keine Listen gefunden!'
