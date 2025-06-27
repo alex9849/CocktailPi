@@ -96,7 +96,6 @@ export default {
   methods: {
     receiveLoadCellFromBackend (data) {
       this.v.form.$model = Object.assign(this.form, data)
-      this.v.form.enable.$model = !!data
     },
     fetchSettings () {
       PumpSettingsService.getPowerLimit()

@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellDto;
+import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailpi.service.LoadCellService;
+import net.alex9849.cocktailpi.service.PowerLimitService;
 import net.alex9849.cocktailpi.service.ReversePumpSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,10 @@ public class PumpSettingsEndpoint {
 
     @Autowired
     private ReversePumpSettingsService reversePumpSettingsService;
-
     @Autowired
     private LoadCellService loadCellService;
+    @Autowired
+    private PowerLimitService powerLimitService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.PUT)
@@ -51,7 +54,7 @@ public class PumpSettingsEndpoint {
         if(loadCell == null) {
             return ResponseEntity.ok(null);
         } else {
-            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCellService.getLoadCell()));
+            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCell));
         }
     }
 
@@ -64,7 +67,7 @@ public class PumpSettingsEndpoint {
         if(loadCell == null) {
             return ResponseEntity.ok(null);
         } else {
-            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCellService.getLoadCell()));
+            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCell));
         }
     }
 
@@ -84,6 +87,28 @@ public class PumpSettingsEndpoint {
     @RequestMapping(value = "loadcell/calibratereference", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellRefWeight(@RequestBody @NotNull Long referenceWeight) {
         return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCellService.calibrateRefValue(referenceWeight)));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "powerlimit", method = RequestMethod.GET)
+    public ResponseEntity<?> getPowerLimit() {
+        PowerLimitSettingsDto.Duplex.Detailed powerLimitSaved = powerLimitService.getPowerLimit();
+        if(powerLimitSaved == null) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(powerLimitSaved);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "powerlimit", method = RequestMethod.PUT)
+    public ResponseEntity<?> setPowerLimit(@RequestBody(required = false) @Valid PowerLimitSettingsDto.Duplex.Detailed settings) {
+        PowerLimitSettingsDto.Duplex.Detailed powerLimitSaved = powerLimitService.setPowerLimit(settings);
+        if(powerLimitSaved == null) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(powerLimitSaved);
+        }
     }
 
 }
