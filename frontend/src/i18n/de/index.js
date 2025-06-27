@@ -719,6 +719,14 @@ export default {
         calibrated: 'Kalibriert',
         calibrated_yes: 'Ja',
         calibrated_no: 'Nein'
+      },
+      power_limit: {
+        headline: 'Power limit',
+        status: 'Status:',
+        status_enabled: 'Aktiviert',
+        status_disabled: 'Deaktiviert',
+        limit_label: 'Limit:',
+        limit_value: '{limit} mW'
       }
     },
     make_cocktail_occupied: {

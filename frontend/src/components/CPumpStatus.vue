@@ -257,6 +257,7 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.fetchLoadCell()
     this.fetchReversePumpSettings()
+    this.fetchPowerLimitSettings()
   },
   methods: {
     fetchLoadCell () {
@@ -270,6 +271,11 @@ export default {
     fetchReversePumpSettings () {
       PumpSettingsService.getReversePumpSettings().then(data => {
         this.reversePumpSettings = data
+      })
+    },
+    fetchPowerLimitSettings () {
+      PumpSettingsService.getPowerLimit().then(data => {
+        this.powerLimitSettings = data
       })
     }
   },
@@ -298,7 +304,7 @@ export default {
       }
     },
     powerLimitStatus () {
-      if (this.powerLimitStatus?.enable) {
+      if (this.powerLimitSettings?.enable) {
         return this.$t('component.pump_status.power_limit.status_enabled')
       } else {
         return this.$t('component.pump_status.power_limit.status_disabled')
