@@ -409,14 +409,14 @@ export default {
       }
     },
     power_limit_mgmt: {
-      headline: 'Power limit',
+      headline: 'Leistungbegrenzung',
       hardware_settings: {
-        headline: 'Power limit einstellungen',
-        enable_btn_label: 'Power limit aktivieren',
-        power_limit_label: 'Power limit (in mW)',
+        headline: 'Leistungbegrenzung Einstellungen',
+        enable_btn_label: 'Leistungbegrenzung aktivieren',
+        power_limit_label: 'Maximale Leistung (in mW)',
         save_btn_label: 'Speichern',
         save_and_return_btn_label: 'Speichern & Zurück',
-        update_success_message: 'Power limit gespeichert'
+        update_success_message: 'Strombegrenzung gespeichert'
       }
     },
 
@@ -721,7 +721,7 @@ export default {
         calibrated_no: 'Nein'
       },
       power_limit: {
-        headline: 'Power limit',
+        headline: 'Leistungbegrenzung',
         status: 'Status:',
         status_enabled: 'Aktiviert',
         status_disabled: 'Deaktiviert',
