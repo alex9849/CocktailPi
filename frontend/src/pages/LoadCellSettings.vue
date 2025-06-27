@@ -283,7 +283,7 @@ export default {
         .then(loadcell => {
           this.$q.notify({
             type: 'positive',
-            message: this.$t('Loadcell updated')
+            message: this.$t('page.load_cell_mgmt.hardware_settings.update_success_message')
           })
           if (pushBack) {
             this.$router.back()

@@ -1,13 +1,13 @@
 <template>
   <q-page class="page-content q-gutter-y-lg" padding>
-    <h5>{{ $t('page.load_cell_mgmt.headline') }}</h5>
+    <h5>{{ $t('page.power_limit_mgmt.headline') }}</h5>
     <q-card
       class="q-pa-md bg-card-body text-card-body"
       flat
       bordered
     >
       <div class="row">
-        <p class="text-weight-medium q-pb-md">{{ $t('page.load_cell_mgmt.hardware_settings.headline') }}</p>
+        <p class="text-weight-medium q-pb-md">{{ $t('page.power_limit_mgmt.hardware_settings.headline') }}</p>
       </div>
       <q-form class="q-col-gutter-md">
         <div class="row">
@@ -17,7 +17,7 @@
             bordered
           >
             <q-toggle
-              :label="$t('page.load_cell_mgmt.hardware_settings.enable_btn_label')"
+              :label="$t('page.power_limit_mgmt.hardware_settings.enable_btn_label')"
               color="green"
               v-model:model-value="v.form.enable.$model"
             />
@@ -30,19 +30,13 @@
                   flat
                   bordered>
             <q-card-section>
-              <div class="text-subtitle2">
-                {{ $t('page.load_cell_mgmt.hardware_settings.clk_pin_label') }}
-              </div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section>
               <q-input
                 type="number"
                 :dark="color.cardItemGroupDark"
                 v-model:model-value.number="v.form.limit.$model"
                 :error-message="v.form.$errors[0]?.$message"
                 :error="v.form.$errors.length > 0"
-                label="Power limit (in mW)"
+                :label="$t('page.power_limit_mgmt.hardware_settings.power_limit_label')"
                 clearable
                 filled
               >
@@ -56,12 +50,12 @@
         <div class="row justify-end">
           <div class="q-gutter-sm">
             <q-btn
-              :label="$t('page.load_cell_mgmt.hardware_settings.save_btn_label')"
+              :label="$t('page.power_limit_mgmt.hardware_settings.save_btn_label')"
               color="green"
               @click="onClickSave()"
             />
             <q-btn
-              :label="$t('page.load_cell_mgmt.hardware_settings.save_and_return_btn_label')"
+              :label="$t('page.power_limit_mgmt.hardware_settings.save_and_return_btn_label')"
               color="green"
               @click="onClickSave(true)"
             />
@@ -75,7 +69,7 @@
 <script>
 
 import useVuelidate from '@vuelidate/core'
-import { required, requiredIf } from '@vuelidate/validators'
+import { minValue, required, requiredIf } from '@vuelidate/validators'
 import { mapGetters } from 'vuex'
 import PumpSettingsService from 'src/services/pumpsettings.service'
 
@@ -103,7 +97,7 @@ export default {
         .then(loadcell => {
           this.$q.notify({
             type: 'positive',
-            message: this.$t('Loadcell updated')
+            message: this.$t('page.power_limit_mgmt.hardware_settings.update_success_message')
           })
           if (pushBack) {
             this.$router.back()
@@ -124,7 +118,8 @@ export default {
           required
         },
         limit: {
-          required: requiredIf(() => this.form.enable)
+          required: requiredIf(() => this.form.enable),
+          minValue: minValue(1)
         }
       }
     }

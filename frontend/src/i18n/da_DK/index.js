@@ -459,7 +459,7 @@ export default {
         headline: 'Kalibrer din pumpe',
         tube_capacity_label: 'Slangekapacitet (i mL)',
         tube_capacity_desc: 'Slangekapaciteten angiver mængden af væske, der er nødvendig for at fylde slangen, som forbinder væskebeholderen med uddelerdelen i din cocktailmaskine. Denne oplysning bruges til præcist at fylde slangerne med væske, før der fremstilles en ny drink. Funktionen anvendes også til at tømme slangerne - det vil sige at pumpe væsken tilbage i beholderen - især hvis maskinen ikke har været i brug i længere tid.',
-        milliwatt_label: 'Milliwatt (in mW)',
+        milliwatt_label: 'Strømforbrug (in mW)',
         milliwatt_desc: 'Hvor meget strøm har denne pumpe brug for? CocktailPi kører kun så mange pumper samtidig, som strømforsyningsenheden kan levere på samme tid.',
         motor_tester: {
           headline: 'Motortester',

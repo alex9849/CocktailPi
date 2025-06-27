@@ -203,12 +203,12 @@
                         </td>
                       </tr>
                       <tr v-if="loadCellSettings.enable">
-                        <td>{{ $t('component.pump_status.power_limit.limit') }}</td>
+                        <td>{{ $t('component.pump_status.power_limit.limit_label') }}</td>
                         <td>
                           <q-badge
                             :class="{'bg-negative': !loadCellSettings?.calibrated , 'bg-positive': loadCellSettings?.calibrated}"
                           >
-                            {{ loadCellCalibrated }}
+                            {{ $t('component.pump_status.power_limit.limit_value', {limit: 1}) }}
                           </q-badge>
                         </td>
                       </tr>

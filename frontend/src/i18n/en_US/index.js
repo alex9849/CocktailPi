@@ -388,7 +388,8 @@ export default {
         clk_pin_label: 'CLK-Pin',
         dt_pin_label: 'DT-Pin',
         save_btn_label: 'Save',
-        save_and_return_btn_label: 'Save & Return'
+        save_and_return_btn_label: 'Save & Return',
+        update_success_message: 'Loadcell updated'
       },
       calibration: {
         headline: 'Calibration',
@@ -410,6 +411,17 @@ export default {
           finish_and_return_btn_label: 'Finish & Return',
           start_over_btn_label: 'Start over'
         }
+      }
+    },
+    power_limit_mgmt: {
+      headline: 'Power limit',
+      hardware_settings: {
+        headline: 'Power limit settings',
+        enable_btn_label: 'Enable power limit',
+        power_limit_label: 'Power limit (in mW)',
+        save_btn_label: 'Save',
+        save_and_return_btn_label: 'Save & Return',
+        update_success_message: 'Power limit updated'
       }
     },
     simple_collections: {
@@ -537,7 +549,7 @@ export default {
           'accurately fill your hoses with liquid before actually producing a new drink. ' +
           'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
           'been used for a while.',
-        milliwatt_label: 'Milliwatt (in mW)',
+        milliwatt_label: 'Power consumption (in mW)',
         milliwatt_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
           'concurrently as the power supply can power at the same time.',
         motor_tester: {
@@ -771,7 +783,8 @@ export default {
         status: 'Status:',
         status_enabled: 'Enabled',
         status_disabled: 'Disabled',
-        limit: 'Limit:'
+        limit_label: 'Limit:',
+        limit_value: '{limit} mW'
       }
     },
     make_cocktail_occupied: {
