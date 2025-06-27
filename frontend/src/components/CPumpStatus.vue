@@ -206,7 +206,7 @@
                         <td>{{ $t('component.pump_status.power_limit.limit_label') }}</td>
                         <td>
                           <q-badge
-                            :class="{'bg-negative': !loadCellSettings?.calibrated , 'bg-positive': loadCellSettings?.calibrated}"
+                            class="bg-info"
                           >
                             {{ $t('component.pump_status.power_limit.limit_value', {limit: 1}) }}
                           </q-badge>

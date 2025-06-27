@@ -62,6 +62,17 @@ class PumpSettingsService {
       { headers: { 'Content-Type': 'application/json' } })
       .then(response => response.data)
   }
+
+  setPowerLimit (powerLimit) {
+    return axios.put(API_PATH + 'powerlimit', powerLimit,
+      { headers: { 'Content-Type': 'application/json' } })
+      .then(response => response.data)
+  }
+
+  getPowerLimit () {
+    return axios.get(API_PATH + 'powerlimit')
+      .then(response => response.data)
+  }
 }
 
 export default new PumpSettingsService()

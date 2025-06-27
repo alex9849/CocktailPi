@@ -90,11 +90,25 @@ export default {
       }
     }
   },
+  created () {
+    this.fetchSettings()
+  },
   methods: {
+    receiveLoadCellFromBackend (data) {
+      this.v.form.$model = Object.assign(this.form, data)
+      this.v.form.enable.$model = !!data
+    },
+    fetchSettings () {
+      PumpSettingsService.getPowerLimit()
+        .then(powerLimit => this.receiveLoadCellFromBackend(powerLimit))
+        .finally(() => {
+          this.loading = false
+        })
+    },
     onClickSave (pushBack = false) {
       this.saving = true
-      PumpSettingsService.setLoadCell(this.form.enable ? this.form : null)
-        .then(loadcell => {
+      PumpSettingsService.setPowerLimit(this.form.enable ? this.form : null)
+        .then(powerLimit => {
           this.$q.notify({
             type: 'positive',
             message: this.$t('page.power_limit_mgmt.hardware_settings.update_success_message')
@@ -102,11 +116,11 @@ export default {
           if (pushBack) {
             this.$router.back()
           } else {
-            this.receiveLoadCellFromBackend(loadcell)
+            this.receiveLoadCellFromBackend(powerLimit)
           }
-          return loadcell
+          return powerLimit
         })
-        .finally(loadcell => {
+        .finally(powerLimit => {
           this.saving = false
         })
     }

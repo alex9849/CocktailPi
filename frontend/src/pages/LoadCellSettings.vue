@@ -77,11 +77,13 @@
             <q-btn
               :label="$t('page.load_cell_mgmt.hardware_settings.save_btn_label')"
               color="green"
+              :disable="v.form.$invalid"
               @click="onClickSave()"
             />
             <q-btn
               :label="$t('page.load_cell_mgmt.hardware_settings.save_and_return_btn_label')"
               color="green"
+              :disable="v.form.$invalid"
               @click="onClickSave(true)"
             />
           </div>
