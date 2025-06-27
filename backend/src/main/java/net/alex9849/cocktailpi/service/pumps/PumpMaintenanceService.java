@@ -1,12 +1,13 @@
 package net.alex9849.cocktailpi.service.pumps;
 
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
+import com.pi4j.exception.Pi4JException;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.pump.motortasks.DcMotorTask;
 import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 import net.alex9849.cocktailpi.model.pump.motortasks.StepperMotorTask;
 import net.alex9849.cocktailpi.model.pump.motortasks.ValveTask;
+import net.alex9849.cocktailpi.model.system.ErrorInfo;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
@@ -62,19 +63,37 @@ public class PumpMaintenanceService {
     private AtomicInteger loadCellOccupied = new AtomicInteger(0);
 
     public synchronized void postConstruct() {
-        configureReversePumpSettings(true);
-        this.stopAllPumps();
+        try {
+            configureReversePumpSettings(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void configureReversePumpSettings (boolean reschedulePumpBack) {
-        this.reversePumpSettings = this.getReversePumpingSettings();
-        if(reversePumpSettings.isEnable()) {
-            directionPin = reversePumpSettings.getSettings().getDirectorPin().getOutputPin();
-            directionPin.digitalWrite(direction == Direction.FORWARD ? PinState.HIGH : PinState.LOW);
+        if(getReversePumpingSettings().isEnable()) {
+            setDirection(this.direction);
         }
         if(reschedulePumpBack) {
             this.reschedulePumpBack();
         }
+    }
+
+    private void setDirection (Direction direction) {
+        ReversePumpSettings rps = getReversePumpingSettings();
+        if (!rps.isEnable()) {
+            throw new IllegalStateException("ReversePumpSettings is not enabled!");
+        }
+        directionPin = rps.getSettings().getDirectorPin().getOutputPin();
+        boolean fwHigh = rps.getSettings().isForwardStateHigh();
+        PinState pinState;
+        if ((direction == Direction.FORWARD) == fwHigh) {
+            pinState = PinState.HIGH;
+        } else {
+            pinState = PinState.LOW;
+        }
+        directionPin.digitalWrite(pinState);
+        this.direction = direction;
     }
 
     @Scheduled(fixedDelay = 500)
@@ -87,9 +106,16 @@ public class PumpMaintenanceService {
     public synchronized void stopAllPumps() {
         List<Pump> pumps = pumpDataService.getAllPumps();
         for (Pump pump : pumps) {
-            cancelByPumpId(pump.getId());
-            if (pump.isCanPump()) {
-                pump.getMotorDriver().shutdown();
+            try {
+                cancelByPumpId(pump.getId());
+                if (pump.isCanPump()) {
+                    pump.getMotorDriver().shutdown();
+                }
+            } catch (Pi4JException e) {
+                ErrorInfo eInfo = new ErrorInfo(e);
+                for (String msg : eInfo.getExceptionTraceMessages()) {
+                    logger.error(msg);
+                }
             }
         }
     }
@@ -147,27 +173,35 @@ public class PumpMaintenanceService {
 
         double overshootMultiplier = 1;
         if (direction == Direction.BACKWARD) {
-            if(!reversePumpSettings.isEnable()) {
+            ReversePumpSettings rps = getReversePumpingSettings();
+            if(!rps.isEnable()) {
                 callback.run();
                 throw new IllegalArgumentException("Reverse pumping not enabled!");
             }
             if(advice.getType() == PumpAdvice.Type.PUMP_DOWN) {
-                overshootMultiplier += reversePumpSettings.getSettings().getOvershoot() / 100d;
+                overshootMultiplier += rps.getSettings().getOvershoot() / 100d;
             }
-            this.directionPin.digitalWrite(PinState.LOW);
+            try {
+                setDirection(Direction.BACKWARD);
+            } catch (Exception e) {
+                callback.run();
+                throw e;
+            }
             final Runnable oldCallback = callback;
             callback = () -> {
                 synchronized (this) {
                     if (this.direction == Direction.BACKWARD && !this.anyPumpsRunning()) {
-                        this.directionPin.digitalWrite(PinState.HIGH);
-                        this.direction = Direction.FORWARD;
+                        try {
+                            setDirection(Direction.FORWARD);
+                        } catch (Exception e) {
+                            oldCallback.run();
+                            throw e;
+                        }
                     }
                     oldCallback.run();
                 }
             };
         }
-
-        this.direction = direction;
 
         Future<?> jobFuture;
         PumpTask pumpTask;
@@ -303,13 +337,14 @@ public class PumpMaintenanceService {
             automaticPumpBackTask.cancel(false);
             automaticPumpBackTask = null;
         }
-        if (reversePumpSettings == null || !reversePumpSettings.isEnable()) {
+        ReversePumpSettings rps = getReversePumpingSettings();
+        if (rps == null || !rps.isEnable()) {
             return;
         }
-        if (reversePumpSettings.getSettings().getAutoPumpBackTimer() == 0) {
+        if (rps.getSettings().getAutoPumpBackTimer() == 0) {
             return;
         }
-        long delay = reversePumpSettings.getSettings().getAutoPumpBackTimer();
+        long delay = rps.getSettings().getAutoPumpBackTimer();
         automaticPumpBackTask = scheduledTasksExecutor.scheduleAtFixedRate(() -> {
             List<Pump> allPumps = pumpDataService.getAllPumps();
             for (Pump pump : allPumps) {
@@ -338,25 +373,31 @@ public class PumpMaintenanceService {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP_DIRECTION, null, details.getDirectorPin());
             optionsRepository.setOption("RPS_Overshoot", Integer.valueOf(details.getOvershoot()).toString());
             optionsRepository.setOption("RPS_AutoPumpBackTimer", Integer.valueOf(details.getAutoPumpBackTimer()).toString());
-
+            optionsRepository.setOption("RPS_ForwardState", Boolean.valueOf(details.isForwardStateHigh()).toString());
             optionsRepository.setPinOption(REPO_KEY_PUMP_DIRECTION_PIN, details.getDirectorPin());
 
         } else {
             optionsRepository.delOption("RPS_Overshoot", false);
             optionsRepository.delOption("RPS_AutoPumpBackTimer", false);
+            optionsRepository.delOption("RPS_ForwardState", false);
             optionsRepository.delOption(REPO_KEY_PUMP_DIRECTION_PIN, false);
             optionsRepository.setOption("RPS_Enable", Boolean.valueOf(settings.isEnable()).toString());
         }
+        this.reversePumpSettings = null;
         configureReversePumpSettings(true);
     }
 
     public synchronized ReversePumpSettings getReversePumpingSettings() {
+        if(this.reversePumpSettings != null) {
+            return this.reversePumpSettings;
+        }
         ReversePumpSettings rps = new ReversePumpSettings();
         rps.setEnable(Boolean.parseBoolean(optionsRepository.getOption("RPS_Enable").orElse(null)));
         if (rps.isEnable()) {
             ReversePumpSettings.Config cfg = new ReversePumpSettings.Config();
             cfg.setOvershoot(Integer.parseInt(optionsRepository.getOption("RPS_Overshoot").orElse(null)));
             cfg.setAutoPumpBackTimer(Integer.parseInt(optionsRepository.getOption("RPS_AutoPumpBackTimer").orElse(null)));
+            cfg.setForwardStateHigh(Boolean.parseBoolean(optionsRepository.getOption("RPS_ForwardState").orElse(null)));
             cfg.setDirectorPin(optionsRepository.getPinOption(REPO_KEY_PUMP_DIRECTION_PIN).orElse(null));
             if(cfg.getDirectorPin() == null) {
                 rps.setEnable(false);
@@ -364,7 +405,8 @@ public class PumpMaintenanceService {
             }
             rps.setSettings(cfg);
         }
-        return rps;
+        this.reversePumpSettings  = rps;
+        return this.reversePumpSettings;
     }
 
     public synchronized PumpJobState getJobStateByPumpId(long pumpId) {
@@ -426,6 +468,7 @@ public class PumpMaintenanceService {
             ReversePumpSettings.Config cfg = new ReversePumpSettings.Config();
             cfg.setAutoPumpBackTimer(cfgDto.getAutoPumpBackTimer());
             cfg.setOvershoot(cfgDto.getOvershoot());
+            cfg.setForwardStateHigh(cfgDto.isForwardStateHigh());
             cfg.setDirectorPin(gpioService.fromDto(cfgDto.getDirectorPin()));
             rps.setSettings(cfg);
         }

@@ -100,9 +100,9 @@ public class LoadCellService {
                     loadCell.setReferenceForceValueWeight(old.getReferenceForceValueWeight());
                 }
 
-                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkPin(), loadCell.getDtPin());
-                optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_CLK_PIN, loadCell.getClkPin());
-                optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_DT_PIN, loadCell.getDtPin());
+                PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.LOAD_CELL, null, loadCell.getClkHwPin(), loadCell.getDtHwPin());
+                optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_CLK_PIN, loadCell.getClkHwPin());
+                optionsRepository.setPinOption(REPO_KEY_LOAD_CELL_DT_PIN, loadCell.getDtHwPin());
                 optionsRepository.setOption(REPO_KEY_LOAD_CELL_ZERO_VALUE, String.valueOf(loadCell.getZeroForceValue()));
                 if(loadCell.getReferenceForceValue() != null) {
                     optionsRepository.setOption(REPO_KEY_LOAD_CELL_REFERENCE_VALUE, String.valueOf(loadCell.getReferenceForceValue()));
@@ -126,8 +126,8 @@ public class LoadCellService {
             return;
         }
         LoadCell loadCell = new LoadCell();
-        loadCell.setClkPin(optionsRepository.getPinOption(REPO_KEY_LOAD_CELL_CLK_PIN).orElse(null));
-        loadCell.setDtPin(optionsRepository.getPinOption(REPO_KEY_LOAD_CELL_DT_PIN).orElse(null));
+        loadCell.setClkHwPin(optionsRepository.getPinOption(REPO_KEY_LOAD_CELL_CLK_PIN).orElse(null));
+        loadCell.setDtHwPin(optionsRepository.getPinOption(REPO_KEY_LOAD_CELL_DT_PIN).orElse(null));
         optionsRepository.getOption(REPO_KEY_LOAD_CELL_ZERO_VALUE)
                 .ifPresent(s -> loadCell.setZeroForceValue(Long.parseLong(s)));
         optionsRepository.getOption(REPO_KEY_LOAD_CELL_REFERENCE_VALUE)
@@ -150,8 +150,8 @@ public class LoadCellService {
             return null;
         }
         LoadCell loadCell = new LoadCell();
-        loadCell.setDtPin(gpioService.fromDto(dto.getDtPin()));
-        loadCell.setClkPin(gpioService.fromDto(dto.getClkPin()));
+        loadCell.setDtHwPin(gpioService.fromDto(dto.getDtPin()));
+        loadCell.setClkHwPin(gpioService.fromDto(dto.getClkPin()));
         return loadCell;
     }
 }

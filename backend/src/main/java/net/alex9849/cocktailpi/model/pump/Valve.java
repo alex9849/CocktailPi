@@ -6,12 +6,12 @@ import lombok.Setter;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import net.alex9849.motorlib.motor.IMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
 @DiscriminatorValue("valve")
 public class Valve extends OnOffPump {
-    private ValveDriver motorDriver;
     @Getter @Setter
     private long timePerClInMs;
 
@@ -34,22 +34,12 @@ public class Valve extends OnOffPump {
 
     @Override
     public ValveDriver getMotorDriver() {
-        if(!isCanPump()) {
-            throw new IllegalStateException("Motor not ready for pumping!");
-        }
-        if (motorDriver == null) {
-            IOutputPin runPin = getPin().getOutputPin();
-            motorDriver = new ValveDriver(runPin, isPowerStateHigh() ? PinState.HIGH : PinState.LOW);
-        }
-        return motorDriver;
+        return (ValveDriver) super.getMotorDriver();
     }
 
     @Override
-    public void shutdownDriver() {
-        if(this.motorDriver != null) {
-            this.motorDriver.shutdown();
-            this.motorDriver = null;
-        }
+    protected IMotor genMotorDriver() {
+        return new ValveDriver(getPin().getOutputPin(), isPowerStateHigh() ? PinState.HIGH : PinState.LOW);
     }
 
     public LoadCell getLoadCell() {

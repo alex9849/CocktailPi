@@ -2,7 +2,7 @@ package net.alex9849.cocktailpi.payload.dto.gpio;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import net.alex9849.cocktailpi.model.gpio.I2CGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class I2CGpioBoardDto {

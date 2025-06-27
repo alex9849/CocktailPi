@@ -6,10 +6,8 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.io.i2c.I2CProvider;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
-import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.motorlib.pin.IInputPin;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.Pi4JInputPin;
@@ -105,17 +103,18 @@ public class PinUtils {
     public synchronized void shutdownI2C() {
         i2CMap.values().forEach(x -> pi4J.shutdown(x.id()));
         i2CMap.clear();
+        pi4J.getI2CProvider().shutdown(pi4J);
     }
 
-    public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, Pin... pins) {
+    public static void failIfPinOccupiedOrDoubled(PinResource.Type allowedType, Long allowedIdIfTypeMatch, HardwarePin... hwPins) {
         List<PinResource> pinResources = new ArrayList<>();
         Set<Map.Entry<Long, Integer>> cPins = new HashSet<>();
         boolean pinDoubled = false;
-        for(Pin cPin : pins) {
-            if (cPin != null) {
-                pinDoubled |= !cPins.add(Map.entry(cPin.getBoardId(), cPin.getPinNr()));
-                if(cPin.getResource() != null) {
-                    pinResources.add(cPin.getResource());
+        for(HardwarePin cHwPin : hwPins) {
+            if (cHwPin != null) {
+                pinDoubled |= !cPins.add(Map.entry(cHwPin.getBoardId(), cHwPin.getPinNr()));
+                if(cHwPin.getResource() != null) {
+                    pinResources.add(cHwPin.getResource());
                 }
             }
         }

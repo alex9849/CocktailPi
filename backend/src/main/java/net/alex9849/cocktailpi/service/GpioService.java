@@ -1,7 +1,9 @@
 package net.alex9849.cocktailpi.service;
 
-import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.gpio.*;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CBoardModel;
+import net.alex9849.cocktailpi.model.gpio.i2cboard.I2CGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.local.LocalGpioBoard;
 import net.alex9849.cocktailpi.model.system.GpioStatus;
 import net.alex9849.cocktailpi.payload.dto.gpio.GpioBoardDto;
 import net.alex9849.cocktailpi.payload.dto.gpio.I2CGpioBoardDto;
@@ -51,8 +53,7 @@ public class GpioService {
     }
 
     public GpioBoard createGpioBoard(GpioBoard gpioBoard) {
-        List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getClass()
-                .getAnnotation(DiscriminatorValue.class).value());
+        List<GpioBoard> byType = getGpioBoardsByType(gpioBoard.getType().discriminatorValue);
 
         if(gpioRepository.getBoardsByName(gpioBoard.getName()).isPresent()) {
             throw new IllegalArgumentException("A GpioBoard with that name already exists!");
@@ -77,6 +78,7 @@ public class GpioService {
 
     public GpioBoard updateGpioBoard(GpioBoard gpioBoard) {
         pumpLockService.testAndAcquireGlobal(this);
+        boolean releadPins = false;
         try {
             Optional<GpioBoard> oOldGpioBoard = gpioRepository.findById(gpioBoard.getId());
             if(oOldGpioBoard.isEmpty()) {
@@ -101,17 +103,21 @@ public class GpioService {
                 }
                 Optional<PinResource> oPinResource = getPinResourceByI2CAddress(oldI2CGpioBoard.getI2cAddress());
                 if(oPinResource.isPresent() && oPinResource.get().getId() != gpioBoard.getId()) {
-                    if(oPinResource.isPresent()) {
-                        throw new IllegalArgumentException("I2C-Address already in use!");
-                    }
-                    pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
+                    throw new IllegalArgumentException("I2C-Address already in use!");
+                }
+                if(oldI2CGpioBoard.getI2cAddress() != i2CGpioBoard.getI2cAddress()) {
+                    i2CGpioBoard.getBoardDriver().updateI2c(pinUtils.getI2c(i2CGpioBoard.getI2cAddress()), false);
+                    pinUtils.shutdownI2CAddress(oldI2CGpioBoard.getI2cAddress());
+                    releadPins = true;
                 }
 
             } else {
                 throw new IllegalStateException("Unknown board type: " + gpioBoard.getClass());
             }
             gpioRepository.updateBoard(gpioBoard);
-            reloadGlobalPins();
+            if(releadPins) {
+                reloadGlobalPins();
+            }
             return gpioRepository.findById(gpioBoard.getId()).orElse(null);
         } finally {
             pumpLockService.releaseGlobal(this);
@@ -135,12 +141,12 @@ public class GpioService {
             throw new IllegalStateException("Some pins from the board are still assigned to resources!");
         }
         if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
-            pinUtils.shutdownI2CAddress(i2CGpioBoard.getI2cAddress());
+            i2CGpioBoard.shutdownDriver();
         }
         gpioRepository.deleteBoard(id);
     }
 
-    public Pin fromDto(PinDto.Request.Select pinDto) {
+    public HardwarePin fromDto(PinDto.Request.Select pinDto) {
         if(pinDto == null) {
             return null;
         }
@@ -171,8 +177,8 @@ public class GpioService {
         if(gpioBoardDto instanceof LocalGpioBoardDto.Request.Create) {
             gpioBoard = new LocalGpioBoard();
         } else if (gpioBoardDto instanceof I2CGpioBoardDto.Request.Create i2cGpioBoardDto) {
-            I2CGpioBoard.BoardModel boardModel = I2CGpioBoard.BoardModel.valueOf(i2cGpioBoardDto.getBoardModel());
-            I2CGpioBoard i2CGpioBoard = new I2CGpioBoard(boardModel);
+            I2CBoardModel boardModel = I2CBoardModel.valueOf(i2cGpioBoardDto.getBoardModel());
+            I2CGpioBoard i2CGpioBoard = I2CBoardModel.genInstance(boardModel);
             i2CGpioBoard.setI2cAddress(i2cGpioBoardDto.getAddress());
             gpioBoard = i2CGpioBoard;
         } else {
@@ -180,5 +186,17 @@ public class GpioService {
         }
         gpioBoard.setName(gpioBoardDto.getName());
         return gpioBoard;
+    }
+
+    public void restartBoard(GpioBoard gpioBoard) {
+        pumpLockService.testAndAcquireGlobal(this);
+        try {
+            if(gpioBoard instanceof I2CGpioBoard i2CGpioBoard) {
+                i2CGpioBoard.restart();
+                reloadGlobalPins();
+            }
+        } finally {
+            pumpLockService.releaseGlobal(this);
+        }
     }
 }

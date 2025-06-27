@@ -57,7 +57,12 @@ public class PumpLockService {
         if(globalLock != null && globalLock.owner != acquirer) {
             return false;
         }
-        return lockByPumpId.values().stream().noneMatch(x -> x.owner != acquirer);
+        for (Map.Entry<Long, LockData> entry : lockByPumpId.entrySet()) {
+            if(entry.getValue().owner != acquirer) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public synchronized void acquireGlobal(Object acquirer) {

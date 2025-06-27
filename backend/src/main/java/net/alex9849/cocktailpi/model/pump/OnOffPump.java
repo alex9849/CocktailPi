@@ -1,18 +1,19 @@
 package net.alex9849.cocktailpi.model.pump;
 
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
+
+import java.util.Objects;
 
 public abstract class OnOffPump extends Pump {
-    private Pin pin;
+    private HardwarePin hwPin;
     private Boolean isPowerStateHigh;
 
-    public Pin getPin() {
-        return pin;
+    public HardwarePin getPin() {
+        return hwPin;
     }
 
-    public void setPin(Pin pin) {
-        this.pin = pin;
-        this.shutdownDriver();
+    public void setPin(HardwarePin hwPin) {
+        this.hwPin = hwPin;
     }
 
     public Boolean isPowerStateHigh() {
@@ -21,11 +22,18 @@ public abstract class OnOffPump extends Pump {
 
     public void setIsPowerStateHigh(Boolean isPowerStateHigh) {
         this.isPowerStateHigh = isPowerStateHigh;
-        this.shutdownDriver();
     }
 
     @Override
     protected boolean isHwPinsCompleted() {
-        return this.pin != null && this.isPowerStateHigh != null;
+        return this.hwPin != null && this.isPowerStateHigh != null;
+    }
+
+    public boolean equalDriverProperties(Pump other) {
+        if (other instanceof OnOffPump oopOther) {
+            return Objects.equals(hwPin, oopOther.hwPin)
+                    &&  Objects.equals(isPowerStateHigh, oopOther.isPowerStateHigh);
+        }
+        return false;
     }
 }

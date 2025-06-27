@@ -89,10 +89,17 @@ public abstract class PumpTask implements Runnable {
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
-            pump.shutdownDriver();
-            callback.run();
+            pump.shutdownDriver(false);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.stopTime = System.currentTimeMillis();
+            this.finishedJobMetrics = genJobMetrics();
+            this.finishedRunningState = genRunningState();
+            this.finishedJobMetrics.setException(e);
+        } finally {
+            callback.run();
         }
     }
 

@@ -1,6 +1,8 @@
 package net.alex9849.cocktailpi.model.system.settings;
 
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import lombok.Getter;
+import lombok.Setter;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 
 public class ReversePumpSettings {
     private boolean enable;
@@ -22,34 +24,12 @@ public class ReversePumpSettings {
         this.settings = settings;
     }
 
+    @Getter @Setter
     public static class Config {
-        private Pin directorPin;
+        private HardwarePin directorPin;
         private int overshoot;
         private int autoPumpBackTimer;
-
-        public Pin getDirectorPin() {
-            return directorPin;
-        }
-
-        public void setDirectorPin(Pin directorPin) {
-            this.directorPin = directorPin;
-        }
-
-        public int getOvershoot() {
-            return overshoot;
-        }
-
-        public void setOvershoot(int overshoot) {
-            this.overshoot = overshoot;
-        }
-
-        public int getAutoPumpBackTimer() {
-            return autoPumpBackTimer;
-        }
-
-        public void setAutoPumpBackTimer(int autoPumpBackTimer) {
-            this.autoPumpBackTimer = autoPumpBackTimer;
-        }
+        private boolean forwardStateHigh;
     }
 
 

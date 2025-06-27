@@ -88,7 +88,7 @@ export const recipeSearchListLogic = {
     },
     updateRoute (filter = this.filter) {
       let query = {
-        page: this.pagination?.page + 1
+        page: this.pagination?.page
       }
       if (query.page === 1) {
         delete query.page

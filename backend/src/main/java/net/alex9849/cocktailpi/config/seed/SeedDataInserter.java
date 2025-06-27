@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import net.alex9849.cocktailpi.model.Category;
 import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
+import net.alex9849.cocktailpi.model.gpio.local.LocalGpioBoard;
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
 import net.alex9849.cocktailpi.model.recipe.Recipe;

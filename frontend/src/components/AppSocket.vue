@@ -46,11 +46,20 @@ export default {
     WebsocketService.subscribe(this, '/user/topic/pump/layout', layoutMessage => {
       vm.setPumpLayout(JSON.parse(layoutMessage.body))
     }, true)
+    WebsocketService.subscribe(this, '/user/topic/uistateinfos', infoMessage => {
+      if (infoMessage.body === 'INVALIDATE_CACHED_RECIPES') {
+        if (['publicrecipes', 'myrecipes', 'collection'].includes(this.$route.name)) {
+          return
+        }
+        vm.invalidateCachedRecipes()
+      }
+    }, false)
   },
   methods: {
     ...mapMutations({
       setCocktailProgress: 'cocktailProgress/setCocktailProgress',
-      setPumpLayout: 'pumpLayout/setLayout'
+      setPumpLayout: 'pumpLayout/setLayout',
+      invalidateCachedRecipes: 'recipes/reset'
     }),
     connectWebsocket () {
       WebsocketService.connectWebsocket()
@@ -58,6 +67,7 @@ export default {
     disconnectWebsocket () {
       WebsocketService.unsubscribe(this, '/user/topic/cocktailprogress')
       WebsocketService.unsubscribe(this, '/user/topic/pump/layout')
+      WebsocketService.unsubscribe(this, '/user/topic/uistateinfos')
       WebsocketService.disconnectWebsocket()
     }
   },

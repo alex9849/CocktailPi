@@ -1,5 +1,7 @@
 package net.alex9849.cocktailpi.payload.dto.system.settings;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
@@ -11,14 +13,16 @@ import net.alex9849.cocktailpi.model.system.settings.Language;
 public class AppearanceSettingsDto {
 
     private interface ILanguage { @NotNull Language getLanguage(); }
+    private interface IRecipePageSize { @NotNull @Min(8) @Max(200) int getRecipePageSize(); }
     private final static String hexColorPatten = "^#[A-Fa-f0-9]{6}$";
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Duplex {
         @NoArgsConstructor()
         @Getter @Setter
-        public static class Detailed implements ILanguage {
+        public static class Detailed implements ILanguage, IRecipePageSize {
             Language language;
+            int recipePageSize;
             @NotNull
             Colors colors;
         }

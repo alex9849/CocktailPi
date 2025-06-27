@@ -5,9 +5,10 @@
   />
   <div class="row q-col-gutter-lg">
     <q-pagination
+      v-if="pagination.totalPages > 1"
       class="col-12 flex justify-center"
-      :model-value="pagination.page + 1"
-      @update:model-value="onPageClick($event - 1)"
+      :model-value="pagination.page"
+      @update:model-value="onPageClick($event)"
       :max="pagination.totalPages"
       :max-pages="9"
       :active-color="paginationColors.active"
@@ -21,6 +22,21 @@
     <c-simple-recipe-list
       class="col-12"
       :recipes="recipes"
+    />
+    <q-pagination
+      v-if="pagination.totalPages > 1 && !loading"
+      class="col-12 flex justify-center"
+      :model-value="pagination.page"
+      @update:model-value="onPageClick($event)"
+      :max="pagination.totalPages"
+      :max-pages="9"
+      :active-color="paginationColors.active"
+      :text-color="paginationColors.text"
+      :active-text-color="paginationColors.activeText"
+      :boundary-numbers="true"
+      size="17px"
+      outline
+      direction-links
     />
   </div>
   <q-inner-loading

@@ -33,7 +33,6 @@
     <template v-slot:option="scope">
       <q-item
         v-bind="scope.itemProps"
-        v-on="scope.itemProps"
       >
         <q-item-section>
           {{ scope.opt.name }}

@@ -1,18 +1,14 @@
 package net.alex9849.cocktailpi.model.pump;
 
 import jakarta.persistence.DiscriminatorValue;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.Pin;
-import net.alex9849.cocktailpi.utils.PinUtils;
-import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.motor.DCMotor;
+import net.alex9849.motorlib.motor.IMotor;
 import net.alex9849.motorlib.pin.IOutputPin;
 import net.alex9849.motorlib.pin.PinState;
 
 @DiscriminatorValue("dc")
 public class DcPump extends OnOffPump {
     private Integer timePerClInMs;
-    private DCMotor motorDriver;
 
     public Integer getTimePerClInMs() {
         return timePerClInMs;
@@ -28,36 +24,30 @@ public class DcPump extends OnOffPump {
     }
 
     public DCMotor getMotorDriver() {
-        if(!isCanPump()) {
-            throw new IllegalStateException("Motor not ready for pumping!");
-        }
-        if(motorDriver == null) {
-            IOutputPin runPin = getPin().getOutputPin();
-            IOutputPin dirPin = new IOutputPin() {
-                @Override
-                public void digitalWrite(PinState value) {
-                    //TODO implement direction functionality
-                }
-
-                @Override
-                public boolean isHigh() {
-                    return false;
-                }
-
-                @Override
-                public void digitalWriteAndWait(PinState state) {
-
-                }
-
-                @Override
-                public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {
-
-                }
-            };
-            motorDriver = new DCMotor(runPin, dirPin, isPowerStateHigh()? PinState.HIGH : PinState.LOW);
-        }
-        return motorDriver;
+        return (DCMotor) super.getMotorDriver();
     }
+
+    @Override
+    protected DCMotor genMotorDriver() {
+        IOutputPin runPin = getPin().getOutputPin();
+        IOutputPin dirPin = new IOutputPin() {
+            @Override
+            public void digitalWrite(PinState value) {}
+
+            @Override
+            public boolean isHigh() {
+                return false;
+            }
+
+            @Override
+            public void digitalWriteAndWait(PinState state) {}
+
+            @Override
+            public void setWaitAfterWriteTimeNs(long waitAfterWriteTimeNs) {}
+        };
+        return new DCMotor(runPin, dirPin, isPowerStateHigh()? PinState.HIGH : PinState.LOW);
+    }
+
     public int getConvertMlToRuntime(double mlToPump) {
         double multiplier = 1;
         if(getCurrentIngredient() != null) {
@@ -72,13 +62,6 @@ public class DcPump extends OnOffPump {
         }
         return runtime / (getCurrentIngredient().getPumpTimeMultiplier()
                 * this.getTimePerClInMs() / 10d);
-    }
-
-    public void shutdownDriver() {
-        if(this.motorDriver != null) {
-            this.motorDriver.shutdown();
-            this.motorDriver = null;
-        }
     }
 
     @Override

@@ -60,7 +60,32 @@ export const i2cExpanderBoardTypes = {
       i2cExpanderBoardTypes: [{
         label: 'MCP23017',
         value: 'MCP23017'
+      }, {
+        label: 'XL9535-K1V5',
+        value: 'XL9535_K1V5_RELAY'
+      }, {
+        label: 'XL9535-K2V5',
+        value: 'XL9535_K2V5_RELAY'
+      }, {
+        label: 'XL9535-K4V5',
+        value: 'XL9535_K4V5_RELAY'
+      }, {
+        label: 'XL9535-K8V5',
+        value: 'XL9535_K8V5_RELAY'
+      }, {
+        label: 'XL9535-K16V5',
+        value: 'XL9535_K16V5_RELAY'
       }]
+    }
+  },
+  methods: {
+    i2cExpanderBoardTypeName (value) {
+      for (const pair of this.i2cExpanderBoardTypes) {
+        if (pair.value === value) {
+          return pair.label
+        }
+      }
+      return 'Unknown'
     }
   }
 }

@@ -2,14 +2,14 @@ package net.alex9849.cocktailpi.model;
 
 import com.pi4j.io.gpio.digital.PullResistance;
 import lombok.Getter;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 import net.alex9849.motorlib.sensor.HX711;
 
 public class LoadCell {
     @Getter
-    private Pin clkPin;
+    private HardwarePin clkHwPin;
     @Getter
-    private Pin dtPin;
+    private HardwarePin dtHwPin;
     @Getter
     private long zeroForceValue;
     @Getter
@@ -23,7 +23,7 @@ public class LoadCell {
             if(!isCalibrateable()) {
                 return null;
             }
-            hx711 = new HX711(dtPin.getInputPin(PullResistance.OFF), clkPin.getOutputPin(), 128);
+            hx711 = new HX711(dtHwPin.getInputPin(PullResistance.OFF), clkHwPin.getOutputPin(), 128);
             hx711.calibrateEmpty(zeroForceValue);
             if(isCalibrated()) {
                 hx711.calibrateWeighted(referenceForceValueWeight, referenceForceValue);
@@ -33,20 +33,20 @@ public class LoadCell {
     }
 
     public boolean isCalibrateable() {
-        return clkPin != null && dtPin != null;
+        return clkHwPin != null && dtHwPin != null;
     }
 
     public boolean isCalibrated() {
         return isCalibrateable() && referenceForceValueWeight != null;
     }
 
-    public void setClkPin(Pin clkPin) {
-        this.clkPin = clkPin;
+    public void setClkHwPin(HardwarePin clkHwPin) {
+        this.clkHwPin = clkHwPin;
         hx711 = null;
     }
 
-    public void setDtPin(Pin dtPin) {
-        this.dtPin = dtPin;
+    public void setDtHwPin(HardwarePin dtHwPin) {
+        this.dtHwPin = dtHwPin;
         hx711 = null;
     }
 

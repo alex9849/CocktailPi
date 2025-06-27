@@ -2,7 +2,7 @@ package net.alex9849.cocktailpi.repository;
 
 import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -61,8 +61,8 @@ public class OptionsRepository extends JdbcDaoSupport {
         }
     }
 
-    public void setPinOption(String key, Pin pin) {
-        if(pin != null) {
+    public void setPinOption(String key, HardwarePin hwPin) {
+        if(hwPin != null) {
             getJdbcTemplate().execute((ConnectionCallback<Void>) con -> {
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO options (key, value, pin_board, pin_nr)\n" +
                         "VALUES (?, ?, ?, ?)\n" +
@@ -70,8 +70,8 @@ public class OptionsRepository extends JdbcDaoSupport {
                         "    SET value = excluded.value, pin_board = excluded.pin_board, pin_nr = excluded.pin_nr");
                 pstmt.setString(1, key);
                 pstmt.setNull(2, Types.VARCHAR);
-                pstmt.setLong(3, pin.getBoardId());
-                pstmt.setInt(4, pin.getPinNr());
+                pstmt.setLong(3, hwPin.getBoardId());
+                pstmt.setInt(4, hwPin.getPinNr());
 
                 pstmt.executeUpdate();
                 return null;
@@ -81,8 +81,8 @@ public class OptionsRepository extends JdbcDaoSupport {
         }
     }
 
-    public Optional<Pin> getPinOption(String key) {
-        return getJdbcTemplate().execute((ConnectionCallback<Optional<Pin>>) con -> {
+    public Optional<HardwarePin> getPinOption(String key) {
+        return getJdbcTemplate().execute((ConnectionCallback<Optional<HardwarePin>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT pin_board, pin_nr FROM options WHERE key = ?");
             pstmt.setString(1, key);
 

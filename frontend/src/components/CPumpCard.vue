@@ -35,7 +35,17 @@
             v-if="pump.state !== 'READY' || this.pumpJobState.runningState"
             :color="pumpState.color"
             class="text-subtitle2">
-            {{ pumpState.label }}
+            <div
+              class="row q-col-gutter-xs items-center"
+            >
+              <q-icon
+                v-if="pumpState.icon"
+                :name="pumpState.icon"
+              />
+              <p>
+                {{ pumpState.label }}
+              </p>
+            </div>
           </q-badge>
           <q-badge
             v-else
@@ -92,90 +102,93 @@
     >
     <q-card-section
       v-if="showDetailed && pump.type === 'stepper'"
-      class="q-py-sm"
+      class="q-py-sm row items-center"
+      style="flex-grow: 1"
     >
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.steps_per_cl') }}
-          </p>
+      <div class="col">
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.steps_per_cl') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.max_steps_per_second') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.max_steps_per_second') }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.stepsPerCl).class"
+            >
+              {{ getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
+            >
+              {{ getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.stepsPerCl).class"
-          >
-            {{ getDisplayAttribute(pump.stepsPerCl, 'steps/cl').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.acceleration') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.step_pin') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.maxStepsPerSecond).class"
-          >
-            {{ getDisplayAttribute(pump.maxStepsPerSecond, 'steps/s').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.acceleration).class"
+            >
+              {{ getDisplayAttribute(pump.acceleration, 'steps/s²').label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayPin(pump.stepPin).class"
+            >
+              {{ getDisplayPin(pump.stepPin).label }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.acceleration') }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.enable_pin') }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.tube_capacity') }}
+            </p>
+          </div>
         </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.step_pin') }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.acceleration).class"
-          >
-            {{ getDisplayAttribute(pump.acceleration, 'steps/s²').label }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayPin(pump.stepPin).class"
-          >
-            {{ getDisplayPin(pump.stepPin).label }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.enable_pin') }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p class="text-weight-medium">
-            {{ $t('component.pump_card.attr.tube_capacity') }}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <p
-            :class="getDisplayPin(pump.enablePin).class"
-          >
-            {{ getDisplayPin(pump.enablePin).label }}
-          </p>
-        </div>
-        <div class="col-6">
-          <p
-            :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
-          >
-            {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
-          </p>
+        <div class="row">
+          <div class="col-6">
+            <p
+              :class="getDisplayPin(pump.enablePin).class"
+            >
+              {{ getDisplayPin(pump.enablePin).label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p
+              :class="getDisplayAttribute(pump.tubeCapacityInMl).class"
+            >
+              {{ getDisplayAttribute(pump.tubeCapacityInMl, 'ml').label }}
+            </p>
+          </div>
         </div>
       </div>
     </q-card-section>
@@ -357,6 +370,7 @@ import {
   mdiReply,
   mdiShare,
   mdiSync,
+  mdiAlert,
   mdiPipeValve
 } from '@quasar/extras/mdi-v6'
 import { stepperMotor } from 'src/services/svg.service'
@@ -470,6 +484,7 @@ export default {
     this.mdiReply = mdiReply
     this.mdiShare = mdiShare
     this.mdiSync = mdiSync
+    this.mdiAlert = mdiAlert
     this.mdiPipeValve = mdiPipeValve
     this.stepperMotor = stepperMotor
   },
@@ -538,7 +553,8 @@ export default {
     pumpState () {
       const state = {
         color: '',
-        label: ''
+        label: '',
+        icon: null
       }
       switch (this.pump.state) {
         case 'READY':
@@ -549,6 +565,7 @@ export default {
         case 'TESTABLE':
           state.color = 'negative'
           state.label = this.$t('component.pump_card.pumpStates.incomplete')
+          state.icon = this.mdiAlert
           break
       }
       if (this.pumpJobState.runningState) {

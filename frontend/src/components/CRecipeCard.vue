@@ -11,7 +11,7 @@
         class="row full-height"
       >
         <div class="col-12 row">
-          <div class="col-12 col-sm-4 col-md-4 col-lg-3 flex">
+          <div class="col-12 col-xsm-4 col-sm-4 col-md-4 col-lg-3 flex">
             <q-img
               :src="imageUrl"
               v-if="recipe.hasImage"
@@ -27,7 +27,7 @@
               src="~assets/cocktail-solid.png"
             />
           </div>
-          <div class="col-12 col-sm-8 col-md-8 col-lg-9 q-pl-sm-sm q-pt-sm-none q-pt-sm flex column">
+          <div class="col-12 col-xsm-8 col-sm-8 col-md-8 col-lg-9 q-pl-xsm-sm q-pt-xsm-none q-pt-sm flex column">
             <div class="row">
               <div class="col-12 row justify-around">
                 <div class="col">

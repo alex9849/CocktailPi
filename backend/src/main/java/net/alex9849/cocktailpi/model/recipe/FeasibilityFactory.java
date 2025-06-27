@@ -75,7 +75,7 @@ public class FeasibilityFactory {
 
     private void computeIngredientGroupReplacementsAndFeasibleRecipe() {
         boolean allIngredientGroupsReplaced = true;
-        List<List<FeasibilityReport.IngredientGroupReplacement>> ingredientGroupReplacements = new ArrayList<>();
+        Map<Long, FeasibilityReport.IngredientGroupReplacement> ingredientGroupReplacements = new HashMap<>();
         List<ProductionStep> feasibleProductionSteps = new ArrayList<>();
         for (int i = 0; i < recipe.getProductionSteps().size(); i++) {
             ProductionStep productionStep = recipe.getProductionSteps().get(i);
@@ -83,10 +83,6 @@ public class FeasibilityFactory {
                 feasibleProductionSteps.add(productionStep);
                 continue;
             }
-
-            //Used to create the feasibilityReport
-            List<FeasibilityReport.IngredientGroupReplacement> stepIngredientGroupReplacements = new ArrayList<>();
-            ingredientGroupReplacements.add(stepIngredientGroupReplacements);
 
             //The productionStep that should be added to the feasibleRecipe
             AddIngredientsProductionStep aipStep = (AddIngredientsProductionStep) productionStep;
@@ -108,7 +104,7 @@ public class FeasibilityFactory {
                 FeasibilityReport.IngredientGroupReplacement ingredientGroupReplacement = new FeasibilityReport.IngredientGroupReplacement();
                 IngredientGroup toReplaceIngredientGroup = (IngredientGroup) psIngredient.getIngredient();
                 ingredientGroupReplacement.setIngredientGroup(toReplaceIngredientGroup);
-                AddableIngredient addableIngredient = orderConfiguration.getReplacement(i, psIngredient.getIngredient().getId());
+                AddableIngredient addableIngredient = orderConfiguration.getReplacement(psIngredient.getIngredient().getId());
 
                 if (addableIngredient != null) {
                     if(toReplaceIngredientGroup.getAddableIngredientChildren().stream()
@@ -129,7 +125,7 @@ public class FeasibilityFactory {
                     }
                 }
 
-                stepIngredientGroupReplacements.add(ingredientGroupReplacement);
+                ingredientGroupReplacements.put(ingredientGroupReplacement.getIngredientGroup().getId(), ingredientGroupReplacement);
                 mergeWithExistingProductionStepIngredients(existingProductionStepsByIngredientId, feasibleProductionStepIngredient);
             }
             AddIngredientsProductionStep feasibleAIPSStep = new AddIngredientsProductionStep();
@@ -138,7 +134,7 @@ public class FeasibilityFactory {
         }
         this.feasibilityReport.setAllIngredientGroupsReplaced(allIngredientGroupsReplaced);
         this.feasibleRecipe.setFeasibleProductionSteps(feasibleProductionSteps);
-        this.feasibilityReport.setIngredientGroupReplacements(ingredientGroupReplacements);
+        this.feasibilityReport.setIngredientGroupReplacements(new ArrayList<>(ingredientGroupReplacements.values()));
     }
 
     private void computeRequiredIngredients() {
@@ -187,7 +183,7 @@ public class FeasibilityFactory {
         List<ProductionStepIngredient> productionStepIngredients = recipe.getProductionSteps().stream()
                 .filter(x -> x instanceof AddIngredientsProductionStep)
                 .map(x -> (AddIngredientsProductionStep) x)
-                .flatMap(x -> x.getStepIngredients().stream()).collect(Collectors.toList());
+                .flatMap(x -> x.getStepIngredients().stream()).toList();
 
         //apply boost
         if(!recipe.isBoostable() && orderConfiguration.getCustomisations().getBoost() != 100) {
@@ -212,10 +208,10 @@ public class FeasibilityFactory {
             return;
         }
         double multiplier;
-        if(liquidAmountToBeScaledTo < 0) {
+        if(liquidAmountToBeScaledTo <= 0) {
             multiplier = 0;
         } else {
-            multiplier = orderConfiguration.getAmountOrderedInMl() / ((double) liquidAmountScaled);
+            multiplier = liquidAmountToBeScaledTo / ((double) liquidAmountScaled);
         }
 
         for(ProductionStep pStep : recipe.getProductionSteps()) {

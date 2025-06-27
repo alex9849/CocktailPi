@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeasibilityReportDto {
     private interface RequiredIngredients { List<RequiredIngredientDto.Response.Detailed> getRequiredIngredients(); }
-    private interface IngredientGroupReplacements { List<List<IngredientGroupReplacementDto.Response.Detailed>> getIngredientGroupReplacements(); }
+    private interface IngredientGroupReplacements { List<IngredientGroupReplacementDto.Response.Detailed> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface TotalAmountInMl { int getTotalAmountInMl(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
@@ -25,18 +25,16 @@ public class FeasibilityReportDto {
         public static class Detailed implements IngredientGroupReplacements, IsFeasible,
                 IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
 
-            List<List<IngredientGroupReplacementDto.Response.Detailed>> ingredientGroupReplacements;
+            List<IngredientGroupReplacementDto.Response.Detailed> ingredientGroupReplacements;
             List<RequiredIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
             int totalAmountInMl;
 
             public Detailed(FeasibilityReport report) {
-                this.ingredientGroupReplacements = new ArrayList<>();
-                for (List<FeasibilityReport.IngredientGroupReplacement> pStepReplacements : report.getIngredientGroupReplacements()) {
-                    List<IngredientGroupReplacementDto.Response.Detailed> pStepReplacementsDtos = pStepReplacements.stream().map(IngredientGroupReplacementDto.Response.Detailed::new).collect(Collectors.toList());
-                    this.ingredientGroupReplacements.add(pStepReplacementsDtos);
-                }
+                this.ingredientGroupReplacements = report.getIngredientGroupReplacements()
+                        .stream().map(IngredientGroupReplacementDto.Response.Detailed::new)
+                        .collect(Collectors.toList());
                 this.requiredIngredients = report.getRequiredIngredients().stream()
                         .map(RequiredIngredientDto.Response.Detailed::new)
                         .collect(Collectors.toList());

@@ -7,11 +7,9 @@ import net.alex9849.cocktailpi.model.pump.PumpAdvice;
 import net.alex9849.cocktailpi.model.recipe.CocktailOrderConfiguration;
 import net.alex9849.cocktailpi.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailpi.model.recipe.Recipe;
-import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
 import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailpi.payload.dto.pump.PumpDto;
-import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailpi.service.pumps.CocktailOrderService;
 import net.alex9849.cocktailpi.service.pumps.PumpDataService;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
@@ -54,6 +52,7 @@ public class PumpService {
     public Pump createPump(Pump pump) {
         Pump newPump = dataService.createPump(pump);
         broadCastPumpLayout();
+        webSocketService.invalidateRecipeScrollCaches();
         return newPump;
     }
 
@@ -64,6 +63,7 @@ public class PumpService {
         try {
             Pump updatedPump = dataService.updatePump(pump);
             broadCastPumpLayout();
+            webSocketService.invalidateRecipeScrollCaches();
             return updatedPump;
         } finally {
             lockService.releasePumpLock(pump.getId(), dataService);
@@ -77,6 +77,7 @@ public class PumpService {
         try {
             dataService.deletePump(id);
             broadCastPumpLayout();
+            webSocketService.invalidateRecipeScrollCaches();
         } finally {
             lockService.releasePumpLock(id, dataService);
         }
@@ -86,8 +87,8 @@ public class PumpService {
         if (!lockService.testAndAcquireGlobal(maintenanceService)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
-        maintenanceService.stopAllPumps();
         try {
+            maintenanceService.stopAllPumps();
             for (Pump pump : dataService.getAllPumps()) {
                 if (!pump.isCanPump()) {
                     continue;

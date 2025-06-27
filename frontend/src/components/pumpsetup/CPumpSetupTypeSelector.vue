@@ -14,7 +14,7 @@
         <div class="row justify-center q-col-gutter-lg">
           <div class="col-4">
             <q-card
-              class="clickable"
+              class="clickable full-height"
               @click="onClickAddPump( 'valve')"
               :class="{'disabled': loading}"
             >
@@ -29,7 +29,7 @@
           </div>
           <div class="col-4">
             <q-card
-              class="clickable"
+              class="clickable full-height"
               @click="onClickAddPump( 'dc')"
               :class="{'disabled': loading}"
             >
@@ -44,7 +44,7 @@
           </div>
           <div class="col-4">
             <q-card
-              class="clickable"
+              class="clickable full-height"
               @click="onClickAddPump('stepper')"
               :class="{'disabled': loading}"
             >

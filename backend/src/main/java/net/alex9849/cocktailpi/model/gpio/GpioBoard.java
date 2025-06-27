@@ -1,11 +1,14 @@
 package net.alex9849.cocktailpi.model.gpio;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.alex9849.cocktailpi.model.system.ErrorInfo;
+
+import java.util.*;
 
 public abstract class GpioBoard {
     private long id;
     private String name;
+    private static Map<Long, List<ErrorInfo>> errors = new HashMap<>();
+
     public long getId() {
         return id;
     }
@@ -26,21 +29,43 @@ public abstract class GpioBoard {
 
     public abstract int getMaxPin();
 
-    public Pin getPin(int pin) {
+    public List<ErrorInfo> getErrors() {
+        return errors.getOrDefault(getId(), new ArrayList<>());
+    }
+
+    public void addError(ErrorInfo error) {
+        errors.computeIfAbsent(getId(), x -> new ArrayList<>()).add(error);
+    }
+
+    public HardwarePin getPin(int pin) {
         if(pin < getMinPin() || pin > getMaxPin()) {
             throw new IllegalArgumentException("Pin out of range! Requested pin: " + pin + ", Pin range: " + getMinPin() + " - " + getMaxPin());
         }
         return getPinUnchecked(pin);
     }
 
-    protected abstract Pin getPinUnchecked(int pin);
+    protected abstract HardwarePin getPinUnchecked(int pin);
 
-    public List<Pin> getPins() {
-        List<Pin> pinList = new ArrayList<>();
+    protected abstract String pinDisplayName(int pin);
+
+    public List<HardwarePin> getPins() {
+        List<HardwarePin> hwPinList = new ArrayList<>();
         for(int i = getMinPin(); i <= getMaxPin(); i++) {
-            pinList.add(getPinUnchecked(i));
+            hwPinList.add(getPinUnchecked(i));
         }
-        return pinList;
+        return hwPinList;
+    }
+
+    public abstract GpioBoardType getType();
+
+    public boolean isExceptional() {
+        return !this.errors.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GpioBoard gpioBoard)) return false;
+        return id == gpioBoard.id;
     }
 
 }

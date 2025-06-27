@@ -3,9 +3,8 @@ package net.alex9849.cocktailpi.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
 import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalPin;
+import net.alex9849.cocktailpi.model.gpio.local.LocalHwPin;
 import net.alex9849.cocktailpi.model.gpio.PinResource;
 import net.alex9849.cocktailpi.model.system.I2cAddress;
 import net.alex9849.cocktailpi.model.system.PythonLibraryInfo;
@@ -27,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileSystemUtils;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
@@ -75,6 +73,9 @@ public class SystemService {
 
     @Autowired
     private PinUtils pinUtils;
+
+    @Autowired
+    private WebSocketService webSocketService;
 
     public void shutdown(boolean isRestart) throws IOException {
         if(isDemoMode) {
@@ -167,42 +168,26 @@ public class SystemService {
         return settings;
     }
 
-    public void setPinBootState(LocalPin pin, PinState defaultState) {
+    private void setPinBootState(int pinNr, String bootState) {
         if(!isRaspberryPi) {
             return;
         }
-        int pinNr = pin.getPinNr();
         try {
             BufferedReader file = new BufferedReader(new FileReader("/boot/firmware/config.txt"));
             StringBuilder inputBuffer = new StringBuilder();
             String line;
 
-            boolean foundLine = false;
             while ((line = file.readLine()) != null) {
                 if (line.startsWith("gpio=" + pinNr + "=")) {
-                    foundLine = true;
-                    line = "gpio=" + pinNr + "=op,";
-                    if (defaultState == null) {
-                        continue;
-                    }
-                    if (defaultState == PinState.LOW) {
-                        line += "dl";
-                    } else {
-                        line += "dh";
-                    }
+                    continue;
                 }
                 inputBuffer.append(line);
                 inputBuffer.append('\n');
             }
             file.close();
 
-            if(!foundLine && defaultState != null) {
-                line = "gpio=" + pinNr + "=op,";
-                if (defaultState == PinState.LOW) {
-                    line += "dl";
-                } else {
-                    line += "dh";
-                }
+            if(bootState != null) {
+                line = "gpio=" + pinNr + "=" + bootState;
                 inputBuffer.append(line);
                 inputBuffer.append('\n');
             }
@@ -215,7 +200,18 @@ public class SystemService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void setPinBootState(LocalHwPin pin, PinState bootState) {
+        if (bootState == null) {
+            setPinBootState(pin.getPinNr(), null);
+            return;
+        }
+        if (bootState == PinState.HIGH) {
+            setPinBootState(pin.getPinNr(), "op,dh");
+        } else {
+            setPinBootState(pin.getPinNr(), "op,dl");
+        }
     }
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
@@ -224,6 +220,13 @@ public class SystemService {
         }
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
+            if (!(i2CSettings.getSdaPin() instanceof LocalHwPin)) {
+                throw new IllegalArgumentException("SDA pin needs to be on RaspberryPi GPIO board!");
+            }
+            if (!(i2CSettings.getSclPin() instanceof LocalHwPin)) {
+                throw new IllegalArgumentException("SCL pin needs to be on RaspberryPi GPIO board!");
+            }
+
             pinUtils.shutdownOutputPin(i2CSettings.getSdaPin().getPinNr());
             pinUtils.shutdownOutputPin(i2CSettings.getSclPin().getPinNr());
         } else {
@@ -241,6 +244,20 @@ public class SystemService {
                 process = Runtime.getRuntime().exec("raspi-config nonint do_i2c 1");
             }
             process.waitFor();
+
+            I2CSettings oldSettings = getI2cSettings();
+            if (oldSettings.isEnable()) {
+                if (oldSettings.getSdaPin() instanceof LocalHwPin oldSdaPin) {
+                    setPinBootState(oldSdaPin, null);
+                }
+                if (oldSettings.getSclPin() instanceof LocalHwPin oldSclPin) {
+                    setPinBootState(oldSclPin, null);
+                }
+            }
+            if (i2CSettings.isEnable()) {
+                setPinBootState(i2CSettings.getSdaPin().getPinNr(), "a0");
+                setPinBootState(i2CSettings.getSclPin().getPinNr(), "a0");
+            }
             optionsRepository.setOption("I2C_Enable", String.valueOf(i2CSettings.isEnable()));
             optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SCL, i2CSettings.getSclPin());
             optionsRepository.setPinOption(REPO_KEY_I2C_PIN_SDA, i2CSettings.getSdaPin());
@@ -343,6 +360,7 @@ public class SystemService {
             throw new IllegalArgumentException("Appearance can't be updated in demomode!");
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
+        optionsRepository.setOption("RECIPES_PAGE_SIZE", String.valueOf(settingsDto.getRecipePageSize()));
 
         AppearanceSettingsDto.Duplex.NormalColors nc = settingsDto.getColors().getNormal();
         AppearanceSettingsDto.Duplex.SvColors scv = settingsDto.getColors().getSimpleView();
@@ -364,15 +382,21 @@ public class SystemService {
         optionsRepository.setOption("COLOR_SV_BTN_PRIMARY", scv.getBtnPrimary());
         optionsRepository.setOption("COLOR_SV_CPROGRESS", scv.getCocktailProgress());
         optionsRepository.setOption("COLOR_SV_CARD_PRIMARY", scv.getCardPrimary());
+        webSocketService.invalidateRecipeScrollCaches();
     }
 
-    public Object getAppearance() {
+    public AppearanceSettingsDto.Duplex.Detailed getAppearance() {
         String stringLanguage = optionsRepository.getOption("LANGUAGE")
                 .orElse(Language.en_US.name());
         Language language = Language.valueOf(stringLanguage);
 
         AppearanceSettingsDto.Duplex.Detailed settingsDto = new AppearanceSettingsDto.Duplex.Detailed();
         settingsDto.setLanguage(language);
+        settingsDto.setRecipePageSize(
+                Integer.parseInt(optionsRepository
+                        .getOption("RECIPES_PAGE_SIZE")
+                        .orElse(String.valueOf(12))
+                ));
 
         AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();

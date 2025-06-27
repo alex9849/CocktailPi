@@ -12,6 +12,13 @@
     <artifactId>backend</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <target.platform.name>raspberry</target.platform.name>
+        <run.with.java.module>false</run.with.java.module>
+        <jvmargs.run></jvmargs.run>
+        <jvmargs.debug></jvmargs.debug>
+    </properties>
+
     <profiles>
         <profile>
             <id>dev</id>
@@ -21,6 +28,112 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>dev-remote</id>
+            <properties>
+                <activatedProperties>dev-remote</activatedProperties>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>setMavenJarPluginOutputDir</id>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <exportAntProperties>true</exportAntProperties>
+                                    <target>
+                                        <condition property="finalJarDir" value="${project.build.directory}/lib"
+                                                   else="${project.build.directory}">
+                                            <equals arg1="${run.with.java.module}" arg2="true" casesensitive=""/>
+                                        </condition>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>clean</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <target>
+                                        <property name="local.dist.dir" value="${project.build.directory}"/>
+                                        <property name="remote.runtime.encoding" value="UTF-8"/>
+                                        <property name="dist.jar.name" value="${project.build.finalName}"/>
+                                        <ant antfile="antrun/build.xml" target="clean-remote"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>build</id>
+                                <phase>install</phase>
+                                <configuration>
+                                    <target>
+                                        <property name="local.dist.dir" value="${project.build.directory}"/>
+                                        <property name="remote.runtime.encoding" value="UTF-8"/>
+                                        <property name="dist.jar.name" value="${project.build.finalName}"/>
+                                        <ant antfile="antrun/build.xml" target="build-remote"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>exec</id>
+                                <configuration>
+                                    <target>
+                                        <property name="remote.run.jvmargs" value="${jvmargs.run}"/>
+                                        <property name="target.run.as.module" value="${run.with.java.module}"/>
+                                        <property name="local.dist.dir" value="${project.build.directory}"/>
+                                        <property name="remote.runtime.encoding" value="UTF-8"/>
+                                        <property name="dist.jar.name" value="${project.build.finalName}"/>
+                                        <ant antfile="antrun/build.xml" target="run-remote"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>debug</id>
+                                <configuration>
+                                    <target>
+                                        <property name="remote.debug.jvmargs" value="${jvmargs.debug}"/>
+                                        <property name="target.run.as.module" value="${run.with.java.module}"/>
+                                        <property name="local.dist.dir" value="${project.build.directory}"/>
+                                        <property name="remote.runtime.encoding" value="UTF-8"/>
+                                        <property name="dist.jar.name" value="${project.build.finalName}"/>
+                                        <ant antfile="antrun/build.xml" target="debug-remote"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                                <version>0.1.55</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.10.8</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>prod</id>
@@ -102,8 +215,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
+            <version>1.18.36</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -113,7 +225,7 @@
         <dependency>
             <groupId>net.alex9849.motorlib</groupId>
             <artifactId>motorlib</artifactId>
-            <version>0.1.10</version>
+            <version>1.0-20250621.073047-10</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -147,6 +259,12 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <executable>true</executable>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

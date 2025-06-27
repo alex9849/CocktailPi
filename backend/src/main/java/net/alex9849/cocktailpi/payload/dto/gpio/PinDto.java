@@ -2,10 +2,7 @@ package net.alex9849.cocktailpi.payload.dto.gpio;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalGpioBoard;
-import net.alex9849.cocktailpi.model.gpio.LocalPin;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 
 public class PinDto {
     private interface Nr { @NotNull int getNr(); }
@@ -42,30 +39,34 @@ public class PinDto {
             boolean inUse;
             String pinName;
 
-            public PumpPin(Pin pin) {
-                this.nr = pin.getPinNr();
-                this.boardId = pin.getBoardId();
-                this.inUse = pin.getResource() != null;
-                this.boardName = pin.getGpioBoard().getName();
-                this.pinName = (pin instanceof LocalPin ? "BCM " : "GPIO ") + pin.getPinNr();
+            public PumpPin(HardwarePin hwPin) {
+                this.nr = hwPin.getPinNr();
+                this.boardId = hwPin.getBoardId();
+                this.inUse = hwPin.getResource() != null;
+                this.boardName = hwPin.getGpioBoard().getName();
+                this.pinName = hwPin.getDisplayName();
             }
         }
 
         @Getter
         @Setter
         @EqualsAndHashCode
-        public static class Detailed implements Nr, BoardId, InUse, PinResource {
+        public static class Detailed implements Nr, BoardId, InUse, PinName, BoardName, PinResource {
             int nr;
             long boardId;
             boolean inUse;
+            String pinName;
+            String boardName;
             PinResourceDto.Response.Detailed pinResource;
 
-            public Detailed(Pin pin) {
-                this.nr = pin.getPinNr();
-                this.boardId = pin.getBoardId();
-                this.inUse = pin.getResource() != null;
-                if(pin.getResource() != null) {
-                    this.pinResource = new PinResourceDto.Response.Detailed(pin.getResource());
+            public Detailed(HardwarePin hwPin) {
+                this.nr = hwPin.getPinNr();
+                this.boardId = hwPin.getBoardId();
+                this.inUse = hwPin.getResource() != null;
+                this.pinName = hwPin.getDisplayName();
+                this.boardName = hwPin.getGpioBoard().getName();
+                if(hwPin.getResource() != null) {
+                    this.pinResource = new PinResourceDto.Response.Detailed(hwPin.getResource());
                 }
             }
         }

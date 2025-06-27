@@ -58,7 +58,7 @@ export default {
       if (this.cocktailProgress.state === 'FINISHED') {
         return 'green'
       }
-      if (this.cocktailProgress.state === 'CANCELLED') {
+      if (this.cocktailProgress.state === 'CANCELLED' || this.cocktailProgress.state === 'ERROR') {
         return 'red'
       }
       if (this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
@@ -75,6 +75,9 @@ export default {
       }
       if (this.cocktailProgress.state === 'CANCELLED') {
         return 'Cancelled!'
+      }
+      if (this.cocktailProgress.state === 'ERROR') {
+        return 'Error!'
       }
       if (this.cocktailProgress.state === 'MANUAL_ACTION_REQUIRED' || this.cocktailProgress.state === 'MANUAL_INGREDIENT_ADD') {
         return 'Manual action required! (' + this.cocktailProgress.progress + '%)'

@@ -6,6 +6,7 @@ export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale = payload.language.name
   const settings = {
     language: payload.language,
+    recipePageSize: payload.recipePageSize,
     colors: {}
   }
   if (colors.brightness(payload.colors.normal.cardBody) > 240) {

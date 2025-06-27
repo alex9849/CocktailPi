@@ -44,6 +44,19 @@
                 :disable="disableForm"
                 clearable
               />
+              <q-select
+                :dark="color.cardItemGroupDark"
+                :options="forwardStateOptions"
+                v-model:model-value="v.form.settings.forwardStateHigh.$model"
+                map-options
+                emit-value
+                outlined
+                clearable
+                hide-bottom-space
+                :label="$t('component.reverse_pump_settings.form.forward_state_high_label')"
+                :error-message="v.form.settings.forwardStateHigh.$errors[0]?.$message"
+                :error="v.form.settings.forwardStateHigh.$errors.length > 0"
+              />
             </q-card-section>
           </q-card>
         </div>
@@ -121,7 +134,8 @@ export default {
         settings: {
           overshoot: 0,
           directorPin: null,
-          autoPumpBackTimer: 0
+          autoPumpBackTimer: 0,
+          forwardStateHigh: false
         }
       },
       autoPumpBackTimerOptions: [{
@@ -194,6 +208,15 @@ export default {
     }),
     disableForm () {
       return this.saving
+    },
+    forwardStateOptions () {
+      return [{
+        label: this.$t('component.reverse_pump_settings.form.forward_state.high'),
+        value: true
+      }, {
+        label: this.$t('component.reverse_pump_settings.form.forward_state.low'),
+        value: false
+      }]
     }
   },
   validations () {
@@ -210,6 +233,9 @@ export default {
             required: requiredIf(() => this.form.enable)
           },
           autoPumpBackTimer: {
+            required: requiredIf(() => this.form.enable)
+          },
+          forwardStateHigh: {
             required: requiredIf(() => this.form.enable)
           }
         }

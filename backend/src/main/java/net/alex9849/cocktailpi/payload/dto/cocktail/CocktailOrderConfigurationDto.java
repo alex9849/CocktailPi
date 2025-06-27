@@ -10,15 +10,15 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CocktailOrderConfigurationDto {
     public interface AmountToProduce { @Min(10) @Max(5000) Integer getAmountOrderedInMl(); }
-    public interface ProductionStepReplacements { @NotNull() List<List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create>> getProductionStepReplacements(); }
+    public interface IngredientGroupReplacements { @NotNull() List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> getIngredientGroupReplacements(); }
     public interface Customisations { @NotNull() CustomisationsDto.Request.Create getCustomisations(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode
-        public static class Create implements AmountToProduce, ProductionStepReplacements, Customisations {
+        public static class Create implements AmountToProduce, IngredientGroupReplacements, Customisations {
             Integer amountOrderedInMl;
-            List<List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create>> productionStepReplacements;
+            List<FeasibilityReportDto.IngredientGroupReplacementDto.Request.Create> ingredientGroupReplacements;
             CustomisationsDto.Request.Create customisations;
         }
     }

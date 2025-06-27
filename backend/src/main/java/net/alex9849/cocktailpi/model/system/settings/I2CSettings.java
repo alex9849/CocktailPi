@@ -1,12 +1,11 @@
 package net.alex9849.cocktailpi.model.system.settings;
 
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.Pin;
+import net.alex9849.cocktailpi.model.gpio.HardwarePin;
 
 public class I2CSettings {
     private boolean enable;
-    private Pin sdaPin;
-    private Pin sclPin;
+    private HardwarePin sdaHwPin;
+    private HardwarePin sclHwPin;
 
     public boolean isEnable() {
         return enable;
@@ -16,19 +15,19 @@ public class I2CSettings {
         this.enable = enable;
     }
 
-    public Pin getSdaPin() {
-        return sdaPin;
+    public HardwarePin getSdaPin() {
+        return sdaHwPin;
     }
 
-    public void setSdaPin(Pin sdaPin) {
-        this.sdaPin = sdaPin;
+    public void setSdaPin(HardwarePin sdaHwPin) {
+        this.sdaHwPin = sdaHwPin;
     }
 
-    public Pin getSclPin() {
-        return sclPin;
+    public HardwarePin getSclPin() {
+        return sclHwPin;
     }
 
-    public void setSclPin(Pin sclPin) {
-        this.sclPin = sclPin;
+    public void setSclPin(HardwarePin sclHwPin) {
+        this.sclHwPin = sclHwPin;
     }
 }

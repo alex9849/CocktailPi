@@ -2,6 +2,7 @@ export default function () {
   return {
     appearance: {
       language: 'en_US',
+      recipePageSize: 12,
       colors: {
         normal: {
           header: '#85452b',

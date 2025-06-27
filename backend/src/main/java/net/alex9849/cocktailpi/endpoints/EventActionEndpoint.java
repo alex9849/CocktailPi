@@ -56,6 +56,17 @@ public class EventActionEndpoint {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "/{id}/start", method = RequestMethod.POST)
+    public ResponseEntity<?> runAction(@PathVariable long id) {
+        EventAction eventAction = eventService.getEventAction(id);
+        if (eventAction == null) {
+            return ResponseEntity.notFound().build();
+        }
+        eventService.startActionAndBroadcastStatus(eventAction);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
