@@ -104,6 +104,7 @@ public class PumpTaskExecutor extends Thread {
 
     public Future<?> submit(PumpTask task) {
         synchronized (this.pumpTaskGroups) {
+            task.setCompletionCallBack(() -> this.pumpTaskGroups.notify());
             for (List<PumpTask> group : pumpTaskGroups) {
                 if (this.powerLimit != null) {
                     int groupConsumption = group.stream().mapToInt(x -> x.getPump().getPowerConsumption()).sum();
