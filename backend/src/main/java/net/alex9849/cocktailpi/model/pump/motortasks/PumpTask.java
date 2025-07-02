@@ -49,6 +49,10 @@ public abstract class PumpTask implements Runnable {
         cdl.countDown();
     }
 
+    public Pump getPump() {
+        return pump;
+    }
+
     public long getJobId() {
         return jobId;
     }

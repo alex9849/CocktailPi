@@ -118,7 +118,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pstmt.setObject(idx++, pump.getCurrentIngredientId());
         pstmt.setObject(idx++, pump.getFillingLevelInMl());
         pstmt.setBoolean(idx++, pump.isPumpedUp());
-        pstmt.setInt(idx++, pump.getMilliWatt());
+        pstmt.setInt(idx++, pump.getPowerConsumption());
         if(pump instanceof OnOffPump onOffPump) {
             if(onOffPump.getPin() != null) {
                 pstmt.setObject(idx++, onOffPump.getPin().getBoardId());

@@ -51,7 +51,7 @@ public class PumpMaintenanceService {
 
     private final Logger logger = LoggerFactory.getLogger(PumpMaintenanceService.class);
 
-    private final ExecutorService liveTasksExecutor = Executors.newCachedThreadPool();
+    private final PumpTaskExecutor pumpTaskExecutor = PumpTaskExecutor.getInstance();
     private final ScheduledExecutorService scheduledTasksExecutor = Executors.newSingleThreadScheduledExecutor();
     private ReversePumpSettings reversePumpSettings;
     private ScheduledFuture<?> automaticPumpBackTask;
@@ -242,7 +242,7 @@ public class PumpMaintenanceService {
             } else {
                 pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, timeToRun, callback);
             }
-            jobFuture = liveTasksExecutor.submit(pumpTask);
+            jobFuture = pumpTaskExecutor.submit(pumpTask);
 
 
         } else if (pump instanceof StepperPump stepperPump) {
@@ -274,7 +274,7 @@ public class PumpMaintenanceService {
             }
 
             pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, isPumpUpDown, stepsToRun, callback);
-            jobFuture = liveTasksExecutor.submit(pumpTask);
+            jobFuture = pumpTaskExecutor.submit(pumpTask);
 
         } else if (pump instanceof Valve valve) {
             long mlToPump;
@@ -320,7 +320,7 @@ public class PumpMaintenanceService {
                 loadCellOccupied.incrementAndGet();
             }
             pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, valveTaskCallback);
-            jobFuture = liveTasksExecutor.submit(pumpTask);
+            jobFuture = pumpTaskExecutor.submit(pumpTask);
 
         } else {
             callback.run();

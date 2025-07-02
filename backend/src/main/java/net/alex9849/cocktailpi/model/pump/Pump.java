@@ -22,7 +22,7 @@ public abstract class Pump {
     private String name;
     private int milliWatt;
 
-    public int getMilliWatt() {
+    public int getPowerConsumption() {
         return milliWatt;
     }
 

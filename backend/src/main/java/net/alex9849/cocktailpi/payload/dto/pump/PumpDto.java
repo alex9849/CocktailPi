@@ -95,7 +95,7 @@ public class PumpDto {
                     this.state = State.READY;
                 }
                 this.setupStage = pump.getSetupStage().level;
-                this.milliWatt = pump.getMilliWatt();
+                this.milliWatt = pump.getPowerConsumption();
                 this.canControlDirection = pump.isCanControlDirection();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
