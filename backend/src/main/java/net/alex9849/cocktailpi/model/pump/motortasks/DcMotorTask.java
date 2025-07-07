@@ -19,11 +19,13 @@ public class DcMotorTask extends PumpTask {
     }
 
     @Override
-    protected synchronized void runPump() {
+    protected void runPump() {
         while (remainingDuration > 0 && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    wait();
+                    synchronized (this) {
+                        wait();
+                    }
                 } catch (InterruptedException ignored) {}
                 if(this.isCancelledExecutionThread()) {
                     return;
