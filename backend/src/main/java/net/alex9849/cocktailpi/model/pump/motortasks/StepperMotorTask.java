@@ -50,14 +50,16 @@ public class StepperMotorTask extends PumpTask {
     }
 
     @Override
-    protected synchronized void runPump() {
+    protected void runPump() {
         while (this.remainingSteps > 0 && !this.isCancelledExecutionThread()) {
             if(this.isCancelledExecutionThread()) {
                return;
             }
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    wait();
+                    synchronized (this) {
+                        wait();
+                    }
                 } catch (InterruptedException ignored) {}
                 if(this.isCancelledExecutionThread()) {
                     return;

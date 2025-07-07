@@ -103,11 +103,12 @@ public class PumpTaskExecutor extends Thread {
 
     public void submit(PumpTask task) {
         synchronized (this.pumpTaskGroups) {
-            task.addCompletionCallBack(() -> {
+            Runnable completionCallback = () -> {
                 synchronized (this.pumpTaskGroups) {
                     this.pumpTaskGroups.notify();
                 }
-            });
+            };
+            task.addCompletionCallBack(completionCallback);
 
             List<PumpTask> addGroup = null;
             for (List<PumpTask> group : pumpTaskGroups) {
@@ -126,8 +127,8 @@ public class PumpTaskExecutor extends Thread {
             }
             addGroup.add(task);
             this.pumpTaskGroups.notify();
-            Future<?> future = executor.submit(task);
-            task.readify(future);
         }
+        Future<?> future = executor.submit(task);
+        task.readify(future);
     }
 }
