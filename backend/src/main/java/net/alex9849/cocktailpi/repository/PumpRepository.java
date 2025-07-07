@@ -52,7 +52,7 @@ public class PumpRepository extends JdbcDaoSupport {
                     "is_power_state_high = ?, acceleration = ?, step_pin_board = ?, step_pin_nr = ?, enable_pin_board = ?, " +
                     "enable_pin_nr = ?, steps_per_cl = ?, max_steps_per_second = ? WHERE id = ?");
             setParameters(pump, pstmt);
-            pstmt.setLong(19, pump.getId());
+            pstmt.setLong(20, pump.getId());
             return pstmt.executeUpdate() != 0;
         });
     }

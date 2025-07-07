@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;
     long stepsToRun;
-    private AcceleratingStepper driver;
     private Future<Void> taskFuture;
     private long remainingSteps;
 
@@ -41,15 +40,13 @@ public class StepperMotorTask extends PumpTask {
     }
 
     public long getStepsMade() {
-        return stepsToRun - Math.abs(driver.distanceToGo());
+        return stepsToRun - Math.abs(stepperPump.getMotorDriver().distanceToGo());
     }
 
     @Override
     public void cancel() {
         super.cancel();
-        if(this.driver != null) {
-            StepperTaskWorker.getInstance().cancelTask(this.driver);
-        }
+        StepperTaskWorker.getInstance().cancelTask(stepperPump.getMotorDriver());
     }
 
     @Override
@@ -66,8 +63,8 @@ public class StepperMotorTask extends PumpTask {
                     return;
                 }
             }
-            this.driver = stepperPump.getMotorDriver();
-            this.driver.move(this.remainingSteps);
+            AcceleratingStepper driver = stepperPump.getMotorDriver();
+            driver.move(this.remainingSteps);
             this.remainingSteps = 0;
             taskFuture = StepperTaskWorker.getInstance().submitTask(driver);
             while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
@@ -80,7 +77,8 @@ public class StepperMotorTask extends PumpTask {
 
     @Override
     protected void doSuspend() {
-        long remainingSteps = this.driver.distanceToGo();
+        AcceleratingStepper driver = stepperPump.getMotorDriver();
+        long remainingSteps = driver.distanceToGo();
         long stepsToStopNow = (long) Math.ceil(Math.pow(driver.getSpeed(), 2.0F) / ((double) 2.0F * driver.getAcceleration()));
         driver.moveTo(stepsToStopNow);
         while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
