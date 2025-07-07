@@ -569,8 +569,14 @@ export default {
           break
       }
       if (this.pumpJobState.runningState) {
-        state.color = 'positive'
-        state.label = this.$t('component.pump_card.pumpStates.running')
+        const runningState = this.pumpJobState.runningState
+        if (runningState.state === 'SUSPENDED' || runningState.state === 'READY') {
+          state.color = 'warning'
+          state.label = 'Suspended'
+        } else {
+          state.color = 'positive'
+          state.label = this.$t('component.pump_card.pumpStates.running')
+        }
       }
       return state
     }

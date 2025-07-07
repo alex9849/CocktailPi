@@ -1,6 +1,7 @@
 package net.alex9849.cocktailpi.service.pumps;
 
 
+import lombok.Setter;
 import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class PumpTaskExecutor extends Thread {
     private static PumpTaskExecutor instance;
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final List<List<PumpTask>> pumpTaskGroups = new ArrayList<>();
+    @Setter
     private Integer powerLimit = null;
 
     private PumpTaskExecutor() {}
@@ -25,10 +27,6 @@ public class PumpTaskExecutor extends Thread {
             PumpTaskExecutor.instance.start();
         }
         return PumpTaskExecutor.instance;
-    }
-
-    public void setPowerLimit(int milliWatt) {
-        this.powerLimit = milliWatt;
     }
 
     public void delPowerLimit() {

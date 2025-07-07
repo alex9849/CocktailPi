@@ -36,7 +36,9 @@ public class DcMotorTask extends PumpTask {
             dcMotor.setRunning(true);
             long startTime = System.currentTimeMillis();
             try {
-                wait(remainingDuration);
+                synchronized (this) {
+                    wait(remainingDuration);
+                }
             } catch (InterruptedException ignored) {
                 //Ignore
             }
@@ -56,6 +58,7 @@ public class DcMotorTask extends PumpTask {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
+        runningState.setState(getState());
         runningState.setPercentage((int) (((getTimeElapsed()) * 100) / duration));
         runningState.setJobId(getJobId());
         return runningState;

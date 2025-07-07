@@ -99,6 +99,7 @@ public class StepperMotorTask extends PumpTask {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
         runningState.setPercentage((int) (getStepsMade() * 100 / stepsToRun));
         runningState.setForward(getDirection() == Direction.FORWARD);
+        runningState.setState(getState());
         runningState.setRunInfinity(isRunInfinity());
         runningState.setJobId(getJobId());
         return runningState;

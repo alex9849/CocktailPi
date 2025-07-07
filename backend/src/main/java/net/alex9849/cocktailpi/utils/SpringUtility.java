@@ -2,7 +2,7 @@ package net.alex9849.cocktailpi.utils;
 
 import lombok.SneakyThrows;
 import net.alex9849.cocktailpi.config.seed.SeedDataInserter;
-import net.alex9849.cocktailpi.model.eventaction.ExecutePythonEventAction;
+import net.alex9849.cocktailpi.service.PowerLimitService;
 import net.alex9849.cocktailpi.service.PumpService;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.BeanWrapper;
@@ -33,6 +33,8 @@ public class SpringUtility implements ApplicationContextAware {
 
     @Autowired
     private static ApplicationContext applicationContext;
+    @Autowired
+    private PowerLimitService powerLimitService;
 
     @SneakyThrows
     public void setApplicationContext(final ApplicationContext applicationContext) {
@@ -40,6 +42,7 @@ public class SpringUtility implements ApplicationContextAware {
         flyway.migrate();
         seedDataInserter.migrate();
         pumpService.stopAllPumps();
+        powerLimitService.applyPowerLimit();
     }
 
     /*

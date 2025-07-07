@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.service;
 import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
+import net.alex9849.cocktailpi.service.pumps.PumpTaskExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,16 @@ public class PowerLimitService {
     @Autowired
     private PumpLockService pumpLockService;
 
+    private final PumpTaskExecutor pumpTaskExecutor = PumpTaskExecutor.getInstance();
+
+    public void applyPowerLimit() {
+        PowerLimitSettingsDto.Duplex.Detailed limit = getPowerLimit();
+        if (limit.isEnable()) {
+            pumpTaskExecutor.setPowerLimit(limit.getLimit());
+        } else {
+            pumpTaskExecutor.setPowerLimit(null);
+        }
+    }
 
 
     public PowerLimitSettingsDto.Duplex.Detailed getPowerLimit() {
@@ -39,7 +50,13 @@ public class PowerLimitService {
         } finally {
             pumpLockService.releaseGlobal(this);
         }
-        return getPowerLimit();
+        PowerLimitSettingsDto.Duplex.Detailed limit = getPowerLimit();
+        if (limit.isEnable()) {
+            pumpTaskExecutor.setPowerLimit(limit.getLimit());
+        } else {
+            pumpTaskExecutor.setPowerLimit(null);
+        }
+        return limit;
     }
 
 }

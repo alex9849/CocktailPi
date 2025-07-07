@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.model.pump;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 
 import java.util.Objects;
 
@@ -29,18 +30,19 @@ public class PumpJobState {
         boolean isRunInfinity;
         boolean isForward;
         int percentage;
+        PumpTask.State state;
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             RunningState that = (RunningState) o;
-            return jobId == that.jobId && isRunInfinity == that.isRunInfinity && isForward == that.isForward && percentage == that.percentage;
+            return jobId == that.jobId && isRunInfinity == that.isRunInfinity && isForward == that.isForward && percentage == that.percentage && state == that.state;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(jobId, isRunInfinity, isForward, percentage);
+            return Objects.hash(jobId, isRunInfinity, isForward, percentage, state);
         }
     }
 }
