@@ -18,7 +18,7 @@ public class ValveDriver implements IMotor {
         this.running = null;
     }
 
-    public void setOpen(boolean open) {
+    public synchronized void setOpen(boolean open) {
         running = open;
         if (running) {
             this.runPin.digitalWrite(this.runningState);
@@ -29,7 +29,7 @@ public class ValveDriver implements IMotor {
         }
     }
 
-    public boolean isOpen() {
+    public synchronized boolean isOpen() {
         if (this.running == null) {
             this.running = this.runPin.isHigh() && this.runningState == PinState.HIGH;
         }
@@ -37,7 +37,7 @@ public class ValveDriver implements IMotor {
     }
 
     @Override
-    public void shutdown() {
+    public synchronized void shutdown() {
         setOpen(false);
     }
 

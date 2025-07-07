@@ -237,12 +237,9 @@ public class PumpMaintenanceService {
                     throw new IllegalArgumentException("DcPump can't run certain number of steps!");
             }
 
-            if (timeToRun == Long.MAX_VALUE) {
-                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, Long.MAX_VALUE, callback);
-            } else {
-                pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, timeToRun, callback);
-            }
-            jobFuture = pumpTaskExecutor.submit(pumpTask);
+            pumpTask = new DcMotorTask(prevJobId, dcPump, this.direction, isPumpUpDown, timeToRun);
+            pumpTask.addCompletionCallBack(callback);
+            pumpTaskExecutor.submit(pumpTask);
 
 
         } else if (pump instanceof StepperPump stepperPump) {
@@ -273,8 +270,9 @@ public class PumpMaintenanceService {
                     throw new IllegalArgumentException("DcPump can't run certain amount of time!");
             }
 
-            pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, isPumpUpDown, stepsToRun, callback);
-            jobFuture = pumpTaskExecutor.submit(pumpTask);
+            pumpTask = new StepperMotorTask(prevJobId, stepperPump, this.direction, isPumpUpDown, stepsToRun);
+            pumpTask.addCompletionCallBack(callback);
+            pumpTaskExecutor.submit(pumpTask);
 
         } else if (pump instanceof Valve valve) {
             long mlToPump;
@@ -319,8 +317,9 @@ public class PumpMaintenanceService {
             if(requireLoadCell) {
                 loadCellOccupied.incrementAndGet();
             }
-            pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown, valveTaskCallback);
-            jobFuture = pumpTaskExecutor.submit(pumpTask);
+            pumpTask = new ValveTask(valve, mlToPump, prevJobId, valve, isPumpUpDown);
+            pumpTask.addCompletionCallBack(valveTaskCallback);
+            pumpTaskExecutor.submit(pumpTask);
 
         } else {
             callback.run();
@@ -329,7 +328,6 @@ public class PumpMaintenanceService {
 
         jobIdByPumpId.put(pump.getId(), pumpTask.getJobId());
         pumpTasksByJobId.put(pumpTask.getJobId(), pumpTask);
-        pumpTask.readify(jobFuture);
         return pumpTask.getJobId();
     }
     public synchronized void reschedulePumpBack() {

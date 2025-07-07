@@ -16,15 +16,24 @@ public class StepperMotorTask extends PumpTask {
     StepperPump stepperPump;
     long stepsToRun;
     private AcceleratingStepper driver;
-
+    private Future<Void> taskFuture;
+    private long remainingSteps;
 
     /**
      * @param stepsToRun Long.MAX_VALUE == unlimited
      */
-    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun, Runnable callback) {
-        super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, isPumpUpDown, direction, callback);
+    public StepperMotorTask(Long prevJobId, StepperPump stepperPump, Direction direction, boolean isPumpUpDown, long stepsToRun) {
+        super(prevJobId, stepperPump, stepsToRun == Long.MAX_VALUE, isPumpUpDown, direction);
         this.stepperPump = stepperPump;
+        if(isRunInfinity()) {
+            stepsToRun = 10000000000L;
+        }
         this.stepsToRun = Math.max(1, stepsToRun);
+        if (getDirection() == Direction.BACKWARD) {
+            this.remainingSteps = -this.stepsToRun;
+        } else {
+            this.remainingSteps = this.stepsToRun;
+        }
     }
 
     public long getMlPumped() {
@@ -44,25 +53,45 @@ public class StepperMotorTask extends PumpTask {
     }
 
     @Override
-    protected void pumpRun() {
-        this.driver = stepperPump.getMotorDriver();
-        if (isRunInfinity()) {
-            //Pick a very large number
-            stepsToRun = 10000000000L;
-        } else if (stepsToRun == 0) {
-            stepsToRun = 1;
+    protected void runPump() {
+        while (this.remainingSteps > 0 && !this.isCancelledExecutionThread()) {
+            if(this.isCancelledExecutionThread()) {
+               return;
+            }
+            while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
+                try {
+                    wait();
+                } catch (InterruptedException ignored) {}
+                if(this.isCancelledExecutionThread()) {
+                    return;
+                }
+            }
+            this.driver = stepperPump.getMotorDriver();
+            this.driver.move(this.remainingSteps);
+            this.remainingSteps = 0;
+            taskFuture = StepperTaskWorker.getInstance().submitTask(driver);
+            while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
+                try {
+                    taskFuture.get();
+                } catch (ExecutionException | InterruptedException ignored) {}
+            }
         }
-        if (getDirection() == Direction.BACKWARD) {
-            driver.move(-stepsToRun);
-        } else {
-            driver.move(stepsToRun);
-        }
-        Future<Void> future = StepperTaskWorker.getInstance().submitTask(driver);
+    }
+
+    @Override
+    protected void doSuspend() {
+        long remainingSteps = this.driver.distanceToGo();
+        long stepsToStopNow = (long) Math.ceil(Math.pow(driver.getSpeed(), 2.0F) / ((double) 2.0F * driver.getAcceleration()));
+        driver.moveTo(stepsToStopNow);
         while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
             try {
-                future.get();
+                taskFuture.get();
             } catch (ExecutionException | InterruptedException ignored) {}
         }
+        remainingSteps = remainingSteps - stepsToStopNow;
+        this.remainingSteps = remainingSteps;
+        driver.shutdown();
+        driver.move(remainingSteps);
     }
 
     @Override

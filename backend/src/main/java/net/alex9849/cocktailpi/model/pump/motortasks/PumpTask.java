@@ -1,33 +1,44 @@
 package net.alex9849.cocktailpi.model.pump.motortasks;
 
+import lombok.Getter;
 import net.alex9849.cocktailpi.model.pump.JobMetrics;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.PumpJobState;
 import net.alex9849.motorlib.motor.Direction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 public abstract class PumpTask implements Runnable {
+    public enum State {
+        READY, RUNNING, ERROR, FINISHED, SUSPENDING, SUSPENDED
+    }
     private static long maxId;
+    @Getter
     private final long jobId;
+    @Getter
     private final Long prevJobId;
+    @Getter
     private final Pump pump;
     private final CountDownLatch cdl;
     private final boolean runInfinity;
 
     private final boolean isPumpUpDown;
-    private final Runnable callback;
+    private final List<Runnable> callbacks;
     private final Direction direction;
     private PumpJobState.RunningState finishedRunningState;
     private JobMetrics finishedJobMetrics;
     private long startTime;
     private Long stopTime;
     private boolean cancelled;
+    @Getter
+    protected State state;
     private Future<?> future;
 
 
-    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction, Runnable callback) {
+    public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction) {
         this.prevJobId = prevJobId;
         this.jobId = ++maxId;
         this.cdl = new CountDownLatch(1);
@@ -37,7 +48,7 @@ public abstract class PumpTask implements Runnable {
         this.runInfinity = runInfinity;
         this.startTime = System.currentTimeMillis();
         this.cancelled = false;
-        this.callback = callback;
+        this.callbacks = new ArrayList<>();
     }
 
     public void readify(Future<?> taskFuture) {
@@ -49,15 +60,7 @@ public abstract class PumpTask implements Runnable {
         cdl.countDown();
     }
 
-    public Pump getPump() {
-        return pump;
-    }
-
-    public long getJobId() {
-        return jobId;
-    }
-
-    protected abstract void pumpRun();
+    protected abstract void runPump();
 
     protected abstract PumpJobState.RunningState genRunningState();
 
@@ -74,16 +77,46 @@ public abstract class PumpTask implements Runnable {
         return this.stopTime - this.startTime;
     }
 
-    public Long getPrevJobId() {
-        return prevJobId;
+    protected void triggerCallbacks() {
+        for (Runnable callback : callbacks) {
+            callback.run();
+        }
     }
+
+    public void addCompletionCallBack(Runnable runnable) {
+        this.callbacks.add(runnable);
+    }
+
+    public void signalStart() {
+        if (getState() == State.RUNNING) {
+            notify();
+            return;
+        }
+        if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
+            this.state = State.RUNNING;
+            notify();
+        }
+        throw new IllegalStateException("Can't start stepper task from state " + getState());
+    }
+
+    public Void suspend() {
+        if(this.state != State.RUNNING) {
+            throw new IllegalStateException("Cannot suspend action from current state " +  this.state);
+        }
+        this.state = State.SUSPENDING;
+        doSuspend();
+        this.state = State.SUSPENDED;
+        return null;
+    }
+
+    protected abstract void doSuspend();
 
     @Override
     public void run() {
         try {
             cdl.await();
             this.startTime = System.currentTimeMillis();
-            pumpRun();
+            runPump();
 
             if(isPumpUpDown && !isCancelledExecutionThread()) {
                 pump.setPumpedUp(getDirection() == Direction.FORWARD);
@@ -94,6 +127,7 @@ public abstract class PumpTask implements Runnable {
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
             pump.shutdownDriver(false);
+            this.state = State.FINISHED;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -102,8 +136,9 @@ public abstract class PumpTask implements Runnable {
             this.finishedJobMetrics = genJobMetrics();
             this.finishedRunningState = genRunningState();
             this.finishedJobMetrics.setException(e);
+            this.state = State.ERROR;
         } finally {
-            callback.run();
+            triggerCallbacks();
         }
     }
 

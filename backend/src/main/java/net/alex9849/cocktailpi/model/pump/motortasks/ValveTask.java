@@ -8,41 +8,61 @@ import net.alex9849.motorlib.sensor.HX711;
 public class ValveTask extends PumpTask {
     private Valve valve;
     private long goalGrams;
+    private long remainingGrams;
     private long initialReadGrams;
     private long currentGrams;
 
     public ValveTask(Valve valve, long goalGrams, Long prevJobId, Pump pump,
-                     boolean isPumpUp, Runnable callback) {
-        super(prevJobId, pump, goalGrams == Long.MAX_VALUE, isPumpUp, Direction.FORWARD, callback);
+                     boolean isPumpUp) {
+        super(prevJobId, pump, goalGrams == Long.MAX_VALUE, isPumpUp, Direction.FORWARD);
         this.valve = valve;
         this.goalGrams = goalGrams;
+        this.remainingGrams = this.goalGrams;
         this.currentGrams = 0;
         this.initialReadGrams = 0;
     }
 
     @Override
-    protected void pumpRun() {
-        ValveDriver driver = valve.getMotorDriver();
-
-        HX711 hx711 = valve.getLoadCell().getHX711();
-        try {
-            initialReadGrams = hx711.read();
-            currentGrams = hx711.read();
-            while ((isRunInfinity() || (currentGrams < initialReadGrams + goalGrams)) && !isCancelledExecutionThread()) {
-                driver.setOpen(true);
-                while ((isRunInfinity() || (currentGrams < initialReadGrams + goalGrams)) && !isCancelledExecutionThread()) {
-                    currentGrams = hx711.read_once();
+    protected void runPump() {
+        while (remainingGrams > 0 && !this.isCancelledExecutionThread()) {
+            while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
+                try {
+                    wait();
+                } catch (InterruptedException ignored) {}
+                if(this.isCancelledExecutionThread()) {
+                    return;
                 }
-                driver.setOpen(false);
-                currentGrams = hx711.read(7);
             }
-        } catch (InterruptedException e) {
-            cancel();
-        } catch (Exception e) {
-            e.printStackTrace();
-            cancel();
-        }
 
+            ValveDriver driver = valve.getMotorDriver();
+            HX711 hx711 = valve.getLoadCell().getHX711();
+            try {
+                initialReadGrams = hx711.read();
+                long absoluteGoalGrams = initialReadGrams + remainingGrams;
+                currentGrams = hx711.read();
+                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
+                    driver.setOpen(true);
+                    while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
+                        currentGrams = hx711.read_once();
+                    }
+                    driver.setOpen(false);
+                    currentGrams = hx711.read(7);
+                }
+            } catch (InterruptedException e) {
+                cancel();
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                cancel();
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void doSuspend() {
+        state = State.SUSPENDING;
+        valve.getMotorDriver().setOpen(false);
     }
 
     @Override

@@ -55,7 +55,6 @@ public class PumpTaskExecutor extends Thread {
                     }
 
                     List<PumpTask> currentGroup = pumpTaskGroups.get(currentGroupIdx);
-
                     boolean suspendGroup = false;
                     long startWaitTime = System.currentTimeMillis();
                     while (!suspendGroup) {
@@ -72,7 +71,7 @@ public class PumpTaskExecutor extends Thread {
                         if (suspendGroup) {
                             List<Callable<Void>> suspendTasks = new ArrayList<>();
                             for (PumpTask pumpTask : currentGroup) {
-                                suspendTasks.add(() -> pumpTask.suspend());
+                                suspendTasks.add(pumpTask::suspend);
                             }
                             try {
                                 List<Future<Void>> futures = executor.invokeAll(suspendTasks);
@@ -102,9 +101,11 @@ public class PumpTaskExecutor extends Thread {
     }
 
 
-    public Future<?> submit(PumpTask task) {
+    public void submit(PumpTask task) {
         synchronized (this.pumpTaskGroups) {
-            task.setCompletionCallBack(() -> this.pumpTaskGroups.notify());
+            task.addCompletionCallBack(this.pumpTaskGroups::notify);
+
+            List<PumpTask> addGroup = null;
             for (List<PumpTask> group : pumpTaskGroups) {
                 if (this.powerLimit != null) {
                     int groupConsumption = group.stream().mapToInt(x -> x.getPump().getPowerConsumption()).sum();
@@ -112,15 +113,17 @@ public class PumpTaskExecutor extends Thread {
                         continue;
                     }
                 }
-                group.add(task);
-                this.pumpTaskGroups.notify();
-                return null;
+                addGroup = group;
+                break;
             }
-            List<PumpTask> newGroup = new ArrayList<>();
-            newGroup.add(task);
-            this.pumpTaskGroups.add(newGroup);
+            if (addGroup == null) {
+                addGroup = new ArrayList<>();
+                this.pumpTaskGroups.add(addGroup);
+            }
+            addGroup.add(task);
             this.pumpTaskGroups.notify();
-            return null;
+            Future<?> future = executor.submit(task);
+            task.readify(future);
         }
     }
 }

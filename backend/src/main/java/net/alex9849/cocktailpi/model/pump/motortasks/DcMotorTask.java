@@ -9,24 +9,44 @@ import net.alex9849.motorlib.motor.Direction;
 public class DcMotorTask extends PumpTask {
     DcPump dcPump;
     long duration;
+    long remainingDuration;
 
-    public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, boolean isPumpUpDown, long duration, Runnable callback) {
-        super(prevJobId, dcPump, duration == Long.MAX_VALUE, isPumpUpDown, direction, callback);
+    public DcMotorTask(Long prevJobId, DcPump dcPump, Direction direction, boolean isPumpUpDown, long duration) {
+        super(prevJobId, dcPump, duration == Long.MAX_VALUE, isPumpUpDown, direction);
         this.dcPump = dcPump;
         this.duration = Math.max(1, duration);
+        this.remainingDuration = this.duration;
     }
 
     @Override
-    protected void pumpRun() {
-        DCMotor dcMotor = dcPump.getMotorDriver();
-        dcMotor.setDirection(getDirection());
-        dcMotor.setRunning(true);
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException ignored) {
-            //Ignore
+    protected void runPump() {
+        while (remainingDuration > 0 && !this.isCancelledExecutionThread()) {
+            while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
+                try {
+                    wait();
+                } catch (InterruptedException ignored) {}
+                if(this.isCancelledExecutionThread()) {
+                    return;
+                }
+            }
+            DCMotor dcMotor = dcPump.getMotorDriver();
+            dcMotor.setDirection(getDirection());
+            dcMotor.setRunning(true);
+            long startTime = System.currentTimeMillis();
+            try {
+                wait(remainingDuration);
+            } catch (InterruptedException ignored) {
+                //Ignore
+            }
+            dcMotor.setRunning(false);
+            remainingDuration -= (System.currentTimeMillis() - startTime);
         }
-        dcMotor.setRunning(false);
+    }
+
+    @Override
+    protected void doSuspend() {
+        notify();
+        dcPump.getMotorDriver().setRunning(false);
     }
 
     @Override
