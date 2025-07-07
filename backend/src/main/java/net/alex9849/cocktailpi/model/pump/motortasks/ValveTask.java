@@ -23,7 +23,7 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected void runPump() {
+    protected synchronized void runPump() {
         while (remainingGrams > 0 && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {

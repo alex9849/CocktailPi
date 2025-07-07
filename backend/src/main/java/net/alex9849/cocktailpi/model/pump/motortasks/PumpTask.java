@@ -49,6 +49,7 @@ public abstract class PumpTask implements Runnable {
         this.startTime = System.currentTimeMillis();
         this.cancelled = false;
         this.callbacks = new ArrayList<>();
+        this.state = State.READY;
     }
 
     public void readify(Future<?> taskFuture) {
@@ -87,7 +88,7 @@ public abstract class PumpTask implements Runnable {
         this.callbacks.add(runnable);
     }
 
-    public void signalStart() {
+    public synchronized void signalStart() {
         if (getState() == State.RUNNING) {
             notify();
             return;
@@ -95,6 +96,7 @@ public abstract class PumpTask implements Runnable {
         if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
             this.state = State.RUNNING;
             notify();
+            return;
         }
         throw new IllegalStateException("Can't start stepper task from state " + getState());
     }

@@ -19,7 +19,7 @@ public class DcMotorTask extends PumpTask {
     }
 
     @Override
-    protected void runPump() {
+    protected synchronized void runPump() {
         while (remainingDuration > 0 && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
@@ -44,7 +44,7 @@ public class DcMotorTask extends PumpTask {
     }
 
     @Override
-    protected void doSuspend() {
+    protected synchronized void doSuspend() {
         notify();
         dcPump.getMotorDriver().setRunning(false);
     }

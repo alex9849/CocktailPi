@@ -103,7 +103,11 @@ public class PumpTaskExecutor extends Thread {
 
     public void submit(PumpTask task) {
         synchronized (this.pumpTaskGroups) {
-            task.addCompletionCallBack(this.pumpTaskGroups::notify);
+            task.addCompletionCallBack(() -> {
+                synchronized (this.pumpTaskGroups) {
+                    this.pumpTaskGroups.notify();
+                }
+            });
 
             List<PumpTask> addGroup = null;
             for (List<PumpTask> group : pumpTaskGroups) {
