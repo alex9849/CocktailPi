@@ -14,6 +14,7 @@ public class JobMetrics {
     long stepsMade;
     long startTime;
     Long stopTime;
+    Long timeElapsed;
     @JsonIgnore
     Exception exception;
 
@@ -22,12 +23,14 @@ public class JobMetrics {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobMetrics that = (JobMetrics) o;
-        return id == that.id && mlPumped == that.mlPumped && stepsMade == that.stepsMade && startTime == that.startTime && Objects.equals(stopTime, that.stopTime);
+        return id == that.id && mlPumped == that.mlPumped && stepsMade == that.stepsMade && startTime == that.startTime
+                && Objects.equals(stopTime, that.stopTime) && Objects.equals(timeElapsed, that.timeElapsed)
+                && Objects.equals(exception, that.exception);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mlPumped, stepsMade, startTime, stopTime);
+        return Objects.hash(id, mlPumped, stepsMade, startTime, stopTime, timeElapsed, exception);
     }
 
     @JsonGetter

@@ -6,9 +6,7 @@ import net.alex9849.cocktailpi.model.pump.StepperPump;
 import net.alex9849.cocktailpi.service.pumps.StepperTaskWorker;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.Direction;
-import net.openhft.affinity.AffinityLock;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -39,8 +37,8 @@ public class StepperMotorTask extends PumpTask {
         return (getStepsMade() * 10) / stepperPump.getStepsPerCl();
     }
 
-    public long getStepsMade() {
-        return stepsToRun - Math.abs(stepperPump.getMotorDriver().distanceToGo());
+    public synchronized long getStepsMade() {
+        return (stepsToRun - this.remainingSteps) - Math.abs(stepperPump.getMotorDriver().distanceToGo());
     }
 
     @Override
@@ -66,8 +64,10 @@ public class StepperMotorTask extends PumpTask {
                 }
             }
             AcceleratingStepper driver = stepperPump.getMotorDriver();
-            driver.move(this.remainingSteps);
-            this.remainingSteps = 0;
+            synchronized (this) {
+                driver.move(this.remainingSteps);
+                this.remainingSteps = 0;
+            }
             taskFuture = StepperTaskWorker.getInstance().submitTask(driver);
             while (driver.distanceToGo() != 0 && !isCancelledExecutionThread() && !taskFuture.isDone()) {
                 try {
@@ -83,15 +83,16 @@ public class StepperMotorTask extends PumpTask {
         long remainingSteps = driver.distanceToGo();
         long stepsToStopNow = (long) Math.ceil(Math.pow(driver.getSpeed(), 2.0F) / ((double) 2.0F * driver.getAcceleration()));
         remainingSteps = remainingSteps - stepsToStopNow;
-        this.remainingSteps = remainingSteps;
-        driver.move(stepsToStopNow);
+        synchronized (this) {
+            this.remainingSteps = remainingSteps;
+            driver.move(stepsToStopNow);
+        }
         while (driver.distanceToGo() != 0 && !isCancelledExecutionThread() && !taskFuture.isDone()) {
             try {
                 taskFuture.get();
             } catch (ExecutionException | InterruptedException ignored) {}
         }
         driver.shutdown();
-        driver.move(remainingSteps);
     }
 
     @Override
