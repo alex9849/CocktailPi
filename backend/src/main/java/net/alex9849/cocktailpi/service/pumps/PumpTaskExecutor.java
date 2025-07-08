@@ -69,13 +69,13 @@ public class PumpTaskExecutor extends Thread {
                             break;
                         }
                         if (suspendGroup) {
-                            List<Callable<Void>> suspendTasks = new ArrayList<>();
+                            List<Callable<Boolean>> suspendTasks = new ArrayList<>();
                             for (PumpTask pumpTask : currentGroup) {
                                 suspendTasks.add(pumpTask::suspend);
                             }
                             try {
-                                List<Future<Void>> futures = executor.invokeAll(suspendTasks);
-                                for (Future<Void> future : futures) {
+                                List<Future<Boolean>> futures = executor.invokeAll(suspendTasks);
+                                for (Future<Boolean> future : futures) {
                                     try {
                                         future.get();
                                     } catch (Exception e) {

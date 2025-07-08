@@ -82,7 +82,7 @@ public class StepperMotorTask extends PumpTask {
         AcceleratingStepper driver = stepperPump.getMotorDriver();
         long remainingSteps = driver.distanceToGo();
         long stepsToStopNow = (long) Math.ceil(Math.pow(driver.getSpeed(), 2.0F) / ((double) 2.0F * driver.getAcceleration()));
-        driver.moveTo(stepsToStopNow);
+        driver.move(stepsToStopNow);
         while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
             try {
                 taskFuture.get();

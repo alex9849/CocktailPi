@@ -88,27 +88,27 @@ public abstract class PumpTask implements Runnable {
         this.callbacks.add(runnable);
     }
 
-    public synchronized void signalStart() {
+    public synchronized boolean signalStart() {
         if (getState() == State.RUNNING) {
             notify();
-            return;
+            return true;
         }
         if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
             this.state = State.RUNNING;
             notify();
-            return;
+            return true;
         }
-        throw new IllegalStateException("Can't start stepper task from state " + getState());
+        return false;
     }
 
-    public Void suspend() {
+    public boolean suspend() {
         if(this.state != State.RUNNING) {
-            throw new IllegalStateException("Cannot suspend action from current state " +  this.state);
+            return false;
         }
         this.state = State.SUSPENDING;
         doSuspend();
         this.state = State.SUSPENDED;
-        return null;
+        return true;
     }
 
     protected abstract void doSuspend();
