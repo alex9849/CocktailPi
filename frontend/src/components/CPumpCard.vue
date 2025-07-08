@@ -532,7 +532,7 @@ export default {
       if (runningState.state === 'SUSPENDED') {
         color = 'warning'
         if (runningState.runInfinity) {
-          value = 100
+          value = 1
         }
         query = false
       }
