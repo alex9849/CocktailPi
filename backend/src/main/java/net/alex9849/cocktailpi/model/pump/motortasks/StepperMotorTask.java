@@ -85,7 +85,7 @@ public class StepperMotorTask extends PumpTask {
         remainingSteps = remainingSteps - stepsToStopNow;
         this.remainingSteps = remainingSteps;
         driver.move(stepsToStopNow);
-        while (driver.distanceToGo() != 0 && !isCancelledExecutionThread()) {
+        while (driver.distanceToGo() != 0 && !isCancelledExecutionThread() && !taskFuture.isDone()) {
             try {
                 taskFuture.get();
             } catch (ExecutionException | InterruptedException ignored) {}
