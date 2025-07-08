@@ -66,7 +66,7 @@
       :value="progressBar.value"
       :reverse="progressBar.reverse"
       animation-speed="1000"
-      color="cyan-4"
+      :color="progressBar.color"
     />
     <q-card-section class="q-py-sm">
       <div class="row">
@@ -370,6 +370,7 @@ import {
   mdiReply,
   mdiShare,
   mdiSync,
+  mdiClockOutline,
   mdiAlert,
   mdiPipeValve
 } from '@quasar/extras/mdi-v6'
@@ -487,6 +488,7 @@ export default {
     this.mdiAlert = mdiAlert
     this.mdiPipeValve = mdiPipeValve
     this.stepperMotor = stepperMotor
+    this.mdiClockOutline = mdiClockOutline
   },
   unmounted () {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
@@ -516,7 +518,8 @@ export default {
       const abortVal = {
         value: this.pump.pumpedUp ? 1 : 0,
         query: false,
-        reverse: false
+        reverse: false,
+        color: 'cyan-4'
       }
       if (!this.pumpJobState.runningState) {
         return abortVal
@@ -524,10 +527,20 @@ export default {
       const runningState = this.pumpJobState.runningState
       let value = runningState.forward ? runningState.percentage : (100 - runningState.percentage)
       value = value / 100
+      let color = 'cyan-4'
+      let query = runningState.runInfinity
+      if (runningState.state === 'SUSPENDED') {
+        color = 'warning'
+        if (runningState.runInfinity) {
+          value = 100
+        }
+        query = false
+      }
       return {
         value,
-        query: runningState.runInfinity,
-        reverse: runningState.forward && runningState.runInfinity
+        query,
+        reverse: runningState.forward && runningState.runInfinity,
+        color
       }
     },
     printIngredient () {
@@ -573,6 +586,7 @@ export default {
         if (runningState.state === 'SUSPENDED' || runningState.state === 'READY') {
           state.color = 'warning'
           state.label = 'Suspended'
+          state.icon = this.mdiClockOutline
         } else {
           state.color = 'positive'
           state.label = this.$t('component.pump_card.pumpStates.running')
