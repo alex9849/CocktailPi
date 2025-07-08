@@ -82,10 +82,11 @@ public class PumpTaskExecutor extends Thread {
                                         e.printStackTrace();
                                     }
                                 }
+                                //noinspection BusyWait
+                                Thread.sleep(500);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-
                         }
                     }
                     if(pumpTaskGroups.isEmpty()) {
