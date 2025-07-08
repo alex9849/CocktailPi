@@ -24,13 +24,10 @@ public class PumpTaskExecutor extends Thread {
         if (PumpTaskExecutor.instance == null) {
             PumpTaskExecutor.instance = new PumpTaskExecutor();
             PumpTaskExecutor.instance.setDaemon(true);
+            PumpTaskExecutor.instance.setName("PumpTaskExecutor");
             PumpTaskExecutor.instance.start();
         }
         return PumpTaskExecutor.instance;
-    }
-
-    public void delPowerLimit() {
-        this.powerLimit = null;
     }
 
     public void cleanUpFinishedPumpTasks() {
@@ -47,6 +44,7 @@ public class PumpTaskExecutor extends Thread {
             try {
                 while (true) {
                     long timeTillSuspend = 10_000;
+                    long timeRemaining = timeTillSuspend;
 
                     while (pumpTaskGroups.isEmpty()) {
                         pumpTaskGroups.wait();
@@ -54,13 +52,17 @@ public class PumpTaskExecutor extends Thread {
 
                     List<PumpTask> currentGroup = pumpTaskGroups.get(currentGroupIdx);
                     boolean suspendGroup = false;
-                    long startWaitTime = System.currentTimeMillis();
                     while (!suspendGroup) {
                         for (PumpTask pumpTask : currentGroup) {
                             pumpTask.signalStart();
                         }
-                        pumpTaskGroups.wait(timeTillSuspend);
-                        suspendGroup = System.currentTimeMillis() - startWaitTime >= timeTillSuspend;
+                        long startWaitTime = System.currentTimeMillis();
+                        pumpTaskGroups.wait(timeRemaining);
+                        timeRemaining = timeRemaining - (System.currentTimeMillis() - startWaitTime);
+                        if (timeRemaining <= 0) {
+                            timeRemaining = timeTillSuspend;
+                            suspendGroup = true;
+                        }
                         cleanUpFinishedPumpTasks();
                         suspendGroup &= pumpTaskGroups.size() > 1;
                         if (currentGroup.isEmpty()) {

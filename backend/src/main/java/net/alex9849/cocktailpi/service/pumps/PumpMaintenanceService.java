@@ -423,7 +423,7 @@ public class PumpMaintenanceService {
         return pumpState;
     }
 
-    private Map<Long, PumpJobState> getJobStateMapByPumpId(boolean onlyDelta) {
+    private synchronized Map<Long, PumpJobState> getJobStateMapByPumpId(boolean onlyDelta) {
         Map<Long, PumpJobState> stateMap = new HashMap<>();
         for (Long pumpId : this.jobIdByPumpId.keySet()) {
             PumpJobState pumpState = getJobStateByPumpId(pumpId);

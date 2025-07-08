@@ -16,6 +16,7 @@ public class StepperTaskWorker extends Thread {
     private StepperTaskWorker() {
         this.setPriority(MAX_PRIORITY);
         this.setDaemon(true);
+        this.setName("StepperTaskWorker");
         motorTasks = new ArrayList<>();
         this.start();
     }
