@@ -529,7 +529,7 @@ export default {
       value = value / 100
       let color = 'cyan-4'
       let query = runningState.runInfinity
-      if (runningState.state === 'SUSPENDED') {
+      if (runningState.state === 'SUSPENDED' || runningState.state === 'READY') {
         color = 'warning'
         if (runningState.runInfinity) {
           value = 1

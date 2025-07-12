@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -30,9 +31,32 @@ public class PumpTaskExecutor extends Thread {
         return PumpTaskExecutor.instance;
     }
 
-    public void cleanUpFinishedPumpTasks() {
-        for (List<PumpTask> pumpTasks : new ArrayList<>(pumpTaskGroups)) {
+    private int getPowerConsumption(List<PumpTask> pumpTasks) {
+        return pumpTasks.stream().mapToInt(x -> x.getPump().getPowerConsumption()).sum();
+    }
+
+    private void cleanupSchedule(int currentIdx) {
+        for(List<PumpTask> pumpTasks : pumpTaskGroups) {
             pumpTasks.removeIf(PumpTask::isFinished);
+        }
+        for (int i = 0; i < pumpTaskGroups.size(); i++) {
+            List<PumpTask> groupToFill = pumpTaskGroups.get(i);
+            int groupPConsumption =  getPowerConsumption(groupToFill);
+            for (int j = 0; j < pumpTaskGroups.size(); j++) {
+                // Do not move tasks away from the current group
+                if(i >= j || j == currentIdx) {
+                    continue;
+                }
+                List<PumpTask> distributeGroup = pumpTaskGroups.get(j);
+                for(PumpTask pumpTask : new ArrayList<>(distributeGroup)) {
+                    if(groupPConsumption + pumpTask.getPump().getPowerConsumption() > powerLimit) {
+                        continue;
+                    }
+                    distributeGroup.remove(pumpTask);
+                    groupToFill.add(pumpTask);
+                    groupPConsumption += pumpTask.getPump().getPowerConsumption();
+                }
+            }
         }
         pumpTaskGroups.removeIf(List::isEmpty);
     }
@@ -50,8 +74,8 @@ public class PumpTaskExecutor extends Thread {
                         pumpTaskGroups.wait();
                     }
 
-                    List<PumpTask> currentGroup = pumpTaskGroups.get(currentGroupIdx);
                     boolean suspendGroup = false;
+                    List<PumpTask> currentGroup = pumpTaskGroups.get(currentGroupIdx % pumpTaskGroups.size());
                     while (!suspendGroup) {
                         for (PumpTask pumpTask : currentGroup) {
                             pumpTask.signalStart();
@@ -63,7 +87,10 @@ public class PumpTaskExecutor extends Thread {
                             timeRemaining = timeTillSuspend;
                             suspendGroup = true;
                         }
-                        cleanUpFinishedPumpTasks();
+                        for(List<PumpTask> pumpTasks : pumpTaskGroups) {
+                            pumpTasks.removeIf(PumpTask::isFinished);
+                        }
+                        cleanupSchedule(currentGroupIdx);
                         suspendGroup &= pumpTaskGroups.size() > 1;
                         if (currentGroup.isEmpty()) {
                             break;
@@ -110,23 +137,9 @@ public class PumpTaskExecutor extends Thread {
                 }
             };
             task.addCompletionCallBack(completionCallback);
-
-            List<PumpTask> addGroup = null;
-            for (List<PumpTask> group : pumpTaskGroups) {
-                if (this.powerLimit != null) {
-                    int groupConsumption = group.stream().mapToInt(x -> x.getPump().getPowerConsumption()).sum();
-                    if (groupConsumption + task.getPump().getPowerConsumption() > this.powerLimit) {
-                        continue;
-                    }
-                }
-                addGroup = group;
-                break;
-            }
-            if (addGroup == null) {
-                addGroup = new ArrayList<>();
-                this.pumpTaskGroups.add(addGroup);
-            }
+            List<PumpTask> addGroup = new ArrayList<>();
             addGroup.add(task);
+            pumpTaskGroups.add(addGroup);
             this.pumpTaskGroups.notify();
         }
         Future<?> future = executor.submit(task);
