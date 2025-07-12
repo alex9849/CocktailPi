@@ -80,9 +80,7 @@ public class ExecutePythonEventAction extends FileEventAction {
                     runningAction.addLog(logType, s);
                 }
                 reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException ignore) {}
         }
     }
 }
