@@ -75,6 +75,8 @@ public class DcMotorTask extends PumpTask {
         metrics.setMlPumped(getMlPumped());
         metrics.setStartTime(getStartTime());
         metrics.setStopTime(getStopTime());
+        metrics.setTimeElapsed(getTimeElapsed());
+        metrics.setException(null);
         return metrics;
     }
 

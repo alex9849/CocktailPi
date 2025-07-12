@@ -32,6 +32,8 @@ public abstract class PumpTask implements Runnable {
     private JobMetrics finishedJobMetrics;
     private long startTime;
     private Long stopTime;
+    private long timeElapsed;
+    private Long timeElapsedStartTrack;
     private boolean cancelled;
     @Getter
     protected State state;
@@ -72,10 +74,24 @@ public abstract class PumpTask implements Runnable {
     }
 
     protected long getTimeElapsed() {
-        if(this.stopTime == null) {
-            return System.currentTimeMillis() - this.startTime;
+        if(timeElapsedStartTrack == null) {
+            return timeElapsed;
         }
-        return this.stopTime - this.startTime;
+        return timeElapsed + (System.currentTimeMillis() - timeElapsedStartTrack);
+    }
+
+    protected void startRunTimeTrack() {
+        if (timeElapsedStartTrack == null) {
+            timeElapsedStartTrack = System.currentTimeMillis();
+        }
+    }
+
+    protected void stopRunTimeTrack() {
+        if (timeElapsedStartTrack == null) {
+            return;
+        }
+        timeElapsed += System.currentTimeMillis() - timeElapsedStartTrack;
+        timeElapsedStartTrack = null;
     }
 
     protected void triggerCallbacks() {
@@ -95,6 +111,7 @@ public abstract class PumpTask implements Runnable {
         }
         if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
             this.state = State.RUNNING;
+            startRunTimeTrack();
             notify();
             return true;
         }
@@ -108,6 +125,7 @@ public abstract class PumpTask implements Runnable {
         this.state = State.SUSPENDING;
         doSuspend();
         this.state = State.SUSPENDED;
+        stopRunTimeTrack();
         return true;
     }
 
@@ -125,6 +143,7 @@ public abstract class PumpTask implements Runnable {
             }
 
             this.stopTime = System.currentTimeMillis();
+            stopRunTimeTrack();
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
@@ -135,6 +154,7 @@ public abstract class PumpTask implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             this.stopTime = System.currentTimeMillis();
+            stopRunTimeTrack();
             this.finishedJobMetrics = genJobMetrics();
             this.finishedRunningState = genRunningState();
             this.finishedJobMetrics.setException(e);

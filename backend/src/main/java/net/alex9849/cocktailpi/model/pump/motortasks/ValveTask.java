@@ -85,6 +85,8 @@ public class ValveTask extends PumpTask {
         metrics.setMlPumped(currentGrams - initialReadGrams);
         metrics.setStartTime(getStartTime());
         metrics.setStopTime(getStopTime());
+        metrics.setTimeElapsed(getTimeElapsed());
+        metrics.setException(null);
         return metrics;
     }
 }
