@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.alex9849.cocktailpi.model.pump.motortasks.PumpTask;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +14,7 @@ import java.util.concurrent.Future;
 public class PumpTaskExecutor extends Thread {
     private static PumpTaskExecutor instance;
     private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final static long waitTimeBetweenTasks = 300;
     private final List<List<PumpTask>> pumpTaskGroups = new ArrayList<>();
     @Setter
     private Integer powerLimit = null;
@@ -49,7 +49,7 @@ public class PumpTaskExecutor extends Thread {
                 }
                 List<PumpTask> distributeGroup = pumpTaskGroups.get(j);
                 for(PumpTask pumpTask : new ArrayList<>(distributeGroup)) {
-                    if(groupPConsumption + pumpTask.getPump().getPowerConsumption() > powerLimit) {
+                    if(powerLimit != null && groupPConsumption + pumpTask.getPump().getPowerConsumption() > powerLimit) {
                         continue;
                     }
                     distributeGroup.remove(pumpTask);
@@ -110,7 +110,7 @@ public class PumpTaskExecutor extends Thread {
                                     }
                                 }
                                 //noinspection BusyWait
-                                Thread.sleep(500);
+                                Thread.sleep(waitTimeBetweenTasks);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }

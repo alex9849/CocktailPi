@@ -20,6 +20,8 @@ public class DcMotorTask extends PumpTask {
 
     @Override
     protected void runPump() {
+        DCMotor dcMotor = dcPump.getMotorDriver();
+        dcMotor.setDirection(getDirection());
         while (remainingDuration > 0 && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
@@ -31,20 +33,20 @@ public class DcMotorTask extends PumpTask {
                     return;
                 }
             }
-            DCMotor dcMotor = dcPump.getMotorDriver();
-            dcMotor.setDirection(getDirection());
             dcMotor.setRunning(true);
             long startTime = System.currentTimeMillis();
             try {
                 synchronized (this) {
                     wait(remainingDuration);
                 }
-            } catch (InterruptedException ignored) {
-                //Ignore
+            } catch (InterruptedException ignored) {}
+            if(this.isCancelledExecutionThread()) {
+                dcMotor.setRunning(false);
+                return;
             }
-            dcMotor.setRunning(false);
             remainingDuration -= (System.currentTimeMillis() - startTime);
         }
+        dcMotor.setRunning(false);
     }
 
     @Override
