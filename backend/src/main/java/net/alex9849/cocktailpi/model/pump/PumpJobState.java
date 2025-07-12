@@ -16,7 +16,7 @@ public class PumpJobState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PumpJobState jobState = (PumpJobState) o;
-        return lastJobId == jobState.lastJobId && Objects.equals(runningState, jobState.runningState);
+        return Objects.equals(lastJobId, jobState.lastJobId) && Objects.equals(runningState, jobState.runningState);
     }
 
     @Override
