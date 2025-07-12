@@ -57,8 +57,8 @@ export const recipeSearchListLogic = {
         filter
       }
     },
-    updateRecipes (withLoadingAnimation = true) {
-      this.loading = withLoadingAnimation
+    updateRecipes (withLoadingAnimation = false) {
+      this.loading = true
       if (withLoadingAnimation) {
         this.recipes = []
       }
