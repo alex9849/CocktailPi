@@ -20,14 +20,14 @@ public abstract class Pump {
     private boolean isPumpedUp;
     private AutomatedIngredient currentIngredient;
     private String name;
-    private int milliWatt;
+    private int powerConsumption;
 
     public int getPowerConsumption() {
-        return milliWatt;
+        return powerConsumption;
     }
 
-    public void setMilliWatt(int milliWatt) {
-        this.milliWatt = milliWatt;
+    public void setpowerConsumption(int powerConsumption) {
+        this.powerConsumption = powerConsumption;
     }
 
     public long getId() {

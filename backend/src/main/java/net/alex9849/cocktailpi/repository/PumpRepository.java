@@ -218,7 +218,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setId(rs.getLong("id"));
         pump.setName((String) rs.getObject("name"));
         pump.setTubeCapacityInMl((Double) rs.getObject("tube_capacity"));
-        pump.setMilliWatt(rs.getInt("milli_watt"));
+        pump.setpowerConsumption(rs.getInt("milli_watt"));
         long ingredientId = rs.getLong("current_ingredient_id");
         if(!rs.wasNull()) {
             pump.setCurrentIngredientId(ingredientId);

@@ -459,8 +459,8 @@ export default {
         headline: 'Kalibrer din pumpe',
         tube_capacity_label: 'Slangekapacitet (i mL)',
         tube_capacity_desc: 'Slangekapaciteten angiver mængden af væske, der er nødvendig for at fylde slangen, som forbinder væskebeholderen med uddelerdelen i din cocktailmaskine. Denne oplysning bruges til præcist at fylde slangerne med væske, før der fremstilles en ny drink. Funktionen anvendes også til at tømme slangerne - det vil sige at pumpe væsken tilbage i beholderen - især hvis maskinen ikke har været i brug i længere tid.',
-        milliwatt_label: 'Strømforbrug (in mW)',
-        milliwatt_desc: 'Hvor meget strøm har denne pumpe brug for? CocktailPi kører kun så mange pumper samtidig, som strømforsyningsenheden kan levere på samme tid.',
+        power_consumption_label: 'Strømforbrug (in mW)',
+        power_consumption_desc: 'Hvor meget strøm har denne pumpe brug for? CocktailPi kører kun så mange pumper samtidig, som strømforsyningsenheden kan levere på samme tid.',
         motor_tester: {
           headline: 'Motortester',
           disable_reason_parameter_missing: 'Krævet pumpe-konfigurationsparameter mangler!',
@@ -806,12 +806,15 @@ export default {
         steps_per_cl: 'Steps pr. cL',
         acceleration: 'Acceleration',
         max_steps_per_second: 'Maks. steps pr. sekund',
-        step_pin: 'Step pin'
+        step_pin: 'Step pin',
+        power_limit: 'Strømforbrug',
+        power_limit_text: '{limit} mW'
       },
       pumpStates: {
         ready: 'Klar',
         incomplete: 'Ukomplet',
-        running: 'Kører...'
+        running: 'Kører...',
+        suspended: 'Suspenderet'
       },
       pumpUpStates: {
         pumped_up: 'Primet',

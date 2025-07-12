@@ -190,6 +190,20 @@
             </p>
           </div>
         </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.power_limit') }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p>
+              {{ $t('component.pump_card.attr.power_limit_text', {limit: pump.powerConsumption}) }}
+            </p>
+          </div>
+        </div>
       </div>
     </q-card-section>
     <q-card-section
@@ -254,6 +268,20 @@
             </p>
           </div>
         </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.power_limit') }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p>
+              {{ $t('component.pump_card.attr.power_limit_text', {limit: pump.powerConsumption}) }}
+            </p>
+          </div>
+        </div>
       </div>
     </q-card-section>
     <q-card-section
@@ -296,6 +324,11 @@
               {{ $t('component.pump_card.attr.running_state') }}
             </p>
           </div>
+          <div class="col-6">
+            <p class="text-weight-medium">
+              {{ $t('component.pump_card.attr.power_limit') }}
+            </p>
+          </div>
         </div>
         <div class="row">
           <div class="col-6">
@@ -303,6 +336,11 @@
               :class="getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).class"
             >
               {{ getDisplayAttribute(pump.isPowerStateHigh == null ? null : (pump.isPowerStateHigh ? 'HIGH' : 'LOW')).label }}
+            </p>
+          </div>
+          <div class="col-6">
+            <p>
+              {{ $t('component.pump_card.attr.power_limit_text', {limit: pump.powerConsumption}) }}
             </p>
           </div>
         </div>
@@ -585,7 +623,7 @@ export default {
         const runningState = this.pumpJobState.runningState
         if (runningState.state === 'SUSPENDED' || runningState.state === 'READY') {
           state.color = 'warning'
-          state.label = 'Suspended'
+          state.label = this.$t('component.pump_card.pumpStates.suspended')
           state.icon = this.mdiClockOutline
         } else {
           state.color = 'positive'

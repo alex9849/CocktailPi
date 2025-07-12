@@ -250,21 +250,21 @@
           />
           <c-assistant-container>
             <template v-slot:explanations>
-              {{ $t('page.pump_setup.calibration.milliwatt_desc') }}
+              {{ $t('page.pump_setup.calibration.power_consumption_desc') }}
             </template>
             <template v-slot:fields>
               <q-input
                 :dark="color.cardBodyDark"
-                :model-value="pump.milliWatt"
-                @update:model-value="setPumpAttr('milliWatt', pump.milliWatt, $event, $event === '')"
-                :error-message="attrState.milliWatt.errorMsg"
-                :error="!!attrState.milliWatt.errorMsg"
-                :loading="attrState.milliWatt.loading"
+                :model-value="pump.powerConsumption"
+                @update:model-value="setPumpAttr('powerConsumption', pump.powerConsumption, $event === '' ? 0 : Number($event))"
+                :error-message="attrState.powerConsumption.errorMsg"
+                :error="!!attrState.powerConsumption.errorMsg"
+                :loading="attrState.powerConsumption.loading"
                 debounce="600"
                 outlined
                 type="number"
                 filled
-                :label="$t('page.pump_setup.calibration.milliwatt_label')"
+                :label="$t('page.pump_setup.calibration.power_consumption_label')"
               >
                 <template v-slot:append>
                   mW
@@ -474,7 +474,7 @@ export default {
         currentIngredient: '',
         fillingLevelInMl: '',
         tubeCapacityInMl: '',
-        milliWatt: '',
+        powerConsumption: '',
         pumpedUp: false,
 
         // Stepper-Motor
@@ -524,7 +524,7 @@ export default {
           errorMsg: '',
           saved: false
         },
-        milliWatt: {
+        powerConsumption: {
           loading: false,
           errorMsg: '',
           saved: false

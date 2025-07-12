@@ -549,8 +549,8 @@ export default {
           'accurately fill your hoses with liquid before actually producing a new drink. ' +
           'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
           'been used for a while.',
-        milliwatt_label: 'Power consumption (in mW)',
-        milliwatt_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
+        power_consumption_label: 'Power consumption (in mW)',
+        power_consumption_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
           'concurrently as the power supply can power at the same time.',
         motor_tester: {
           headline: 'Motor tester',
@@ -971,12 +971,15 @@ export default {
         acceleration: 'Acceleration',
         max_steps_per_second: 'Max steps per second',
         step_pin: 'Step pin',
-        load_cell: 'Load cell'
+        load_cell: 'Load cell',
+        power_limit: 'Power consumption',
+        power_limit_text: '{limit} mW'
       },
       pumpStates: {
         ready: 'Ready',
         incomplete: 'Incomplete',
-        running: 'Running...'
+        running: 'Running...',
+        suspended: 'Suspended'
       },
       pumpUpStates: {
         pumped_up: 'Pumped Up',

@@ -106,7 +106,7 @@ export class PumpDtoMapper {
       name: detailed.name,
       tubeCapacityInMl: detailed.tubeCapacityInMl,
       fillingLevelInMl: detailed.fillingLevelInMl,
-      milliWatt: detailed.milliWatt,
+      powerConsumption: detailed.powerConsumption,
       isPumpedUp: detailed.pumpedUp,
       currentIngredientId: detailed.currentIngredient?.id,
 

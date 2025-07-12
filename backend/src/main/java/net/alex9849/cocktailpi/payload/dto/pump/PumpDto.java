@@ -20,8 +20,8 @@ public class PumpDto {
     private interface Id { long getId(); }
     private interface FillingLevelInMl { @Min(0) int getFillingLevelInMl(); }
     private interface PatchFillingLevelInMl { @Min(0) Integer getFillingLevelInMl(); }
-    private interface MilliWatt { @Min(0) int getMilliWatt(); }
-    private interface PatchMilliWatt { @Min(0) Integer getMilliWatt(); }
+    private interface PowerConsumption { @Min(0) int getPowerConsumption(); }
+    private interface PatchPowerConsumption { @Min(0) Integer getPowerConsumption(); }
     private interface TubeCapacityInMl { @Min(1) Double getTubeCapacityInMl(); }
     private interface CurrentIngredientId { Long getCurrentIngredientId();}
     private interface CurrentIngredient { AutomatedIngredientDto.Response.Detailed getCurrentIngredient();}
@@ -49,14 +49,14 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
-        public static class Create implements TubeCapacityInMl, PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields, PatchMilliWatt {
+        public static class Create implements TubeCapacityInMl, PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields, PatchPowerConsumption {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
             Boolean isPumpedUp;
             Long currentIngredientId;
             String name;
             Set<String> removeFields;
-            Integer milliWatt;
+            Integer powerConsumption;
         }
     }
 
@@ -70,12 +70,12 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
-        public abstract static class Detailed implements Id, FillingLevelInMl, MilliWatt, TubeCapacityInMl,
+        public abstract static class Detailed implements Id, FillingLevelInMl, PowerConsumption, TubeCapacityInMl,
                 CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name, CanControlDirection {
             long id;
             Double tubeCapacityInMl;
             int fillingLevelInMl;
-            int milliWatt;
+            int powerConsumption;
             boolean pumpedUp;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             String name;
@@ -95,7 +95,7 @@ public class PumpDto {
                     this.state = State.READY;
                 }
                 this.setupStage = pump.getSetupStage().level;
-                this.milliWatt = pump.getPowerConsumption();
+                this.powerConsumption = pump.getPowerConsumption();
                 this.canControlDirection = pump.isCanControlDirection();
                 if(pump.getCurrentIngredient() != null) {
                     this.currentIngredient = new AutomatedIngredientDto.Response.Detailed(pump.getCurrentIngredient());
