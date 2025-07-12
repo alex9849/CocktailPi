@@ -26,7 +26,7 @@ public abstract class Pump {
         return powerConsumption;
     }
 
-    public void setpowerConsumption(int powerConsumption) {
+    public void setPowerConsumption(int powerConsumption) {
         this.powerConsumption = powerConsumption;
     }
 

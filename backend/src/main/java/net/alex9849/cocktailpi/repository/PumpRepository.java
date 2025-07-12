@@ -30,7 +30,7 @@ public class PumpRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Pump>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO pumps (dtype, name, " +
                     "completed, tube_capacity, current_ingredient_id, filling_level_in_ml, " +
-                    "is_pumped_up, milli_watt, oo_pin_board, oo_pin_nr, time_per_cl_in_ms, is_power_state_high, acceleration, " +
+                    "is_pumped_up, power_consumption, oo_pin_board, oo_pin_nr, time_per_cl_in_ms, is_power_state_high, acceleration, " +
                     "step_pin_board, step_pin_nr, enable_pin_board, enable_pin_nr, steps_per_cl, max_steps_per_second) VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             setParameters(pump, pstmt);
@@ -48,7 +48,7 @@ public class PumpRepository extends JdbcDaoSupport {
         return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE pumps SET dtype = ?, name = ?, " +
                     "completed = ?, tube_capacity = ?, current_ingredient_id = ?, " +
-                    "filling_level_in_ml = ?, is_pumped_up = ?, milli_watt = ?, oo_pin_board = ?, oo_pin_nr = ?, time_per_cl_in_ms = ?, " +
+                    "filling_level_in_ml = ?, is_pumped_up = ?, power_consumption = ?, oo_pin_board = ?, oo_pin_nr = ?, time_per_cl_in_ms = ?, " +
                     "is_power_state_high = ?, acceleration = ?, step_pin_board = ?, step_pin_nr = ?, enable_pin_board = ?, " +
                     "enable_pin_nr = ?, steps_per_cl = ?, max_steps_per_second = ? WHERE id = ?");
             setParameters(pump, pstmt);
@@ -218,7 +218,7 @@ public class PumpRepository extends JdbcDaoSupport {
         pump.setId(rs.getLong("id"));
         pump.setName((String) rs.getObject("name"));
         pump.setTubeCapacityInMl((Double) rs.getObject("tube_capacity"));
-        pump.setpowerConsumption(rs.getInt("milli_watt"));
+        pump.setPowerConsumption(rs.getInt("power_consumption"));
         long ingredientId = rs.getLong("current_ingredient_id");
         if(!rs.wasNull()) {
             pump.setCurrentIngredientId(ingredientId);
