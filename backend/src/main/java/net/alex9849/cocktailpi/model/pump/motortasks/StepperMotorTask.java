@@ -49,7 +49,7 @@ public class StepperMotorTask extends PumpTask {
 
     @Override
     protected void runPump() {
-        while (this.remainingSteps > 0 && !this.isCancelledExecutionThread()) {
+        while (Math.abs(this.remainingSteps) > 0 && !this.isCancelledExecutionThread()) {
             if(this.isCancelledExecutionThread()) {
                return;
             }
