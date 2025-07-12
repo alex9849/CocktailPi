@@ -250,7 +250,19 @@
           />
           <c-assistant-container>
             <template v-slot:explanations>
-              {{ $t('page.pump_setup.calibration.power_consumption_desc') }}
+              <p>{{ $t('page.pump_setup.calibration.power_consumption_desc') }}</p>
+              <div class="row justify-center q-py-md">
+                <div class="col-auto">
+                  <q-btn
+                    class="text-white bg-info"
+                    dense
+                    no-caps
+                    @click="$router.push({name: 'powerlimitsettings'})"
+                  >
+                    {{ $t('page.pump_setup.calibration.power_consumption_link_text') }}
+                  </q-btn>
+                </div>
+              </div>
             </template>
             <template v-slot:fields>
               <q-input

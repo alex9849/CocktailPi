@@ -1,11 +1,16 @@
 package net.alex9849.cocktailpi.service;
 
+import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.repository.OptionsRepository;
+import net.alex9849.cocktailpi.service.pumps.PumpDataService;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
 import net.alex9849.cocktailpi.service.pumps.PumpTaskExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class PowerLimitService {
@@ -15,6 +20,8 @@ public class PowerLimitService {
     private PumpLockService pumpLockService;
 
     private final PumpTaskExecutor pumpTaskExecutor = PumpTaskExecutor.getInstance();
+    @Autowired
+    private PumpDataService pumpDataService;
 
     public void applyPowerLimit() {
         PowerLimitSettingsDto.Duplex.Detailed limit = getPowerLimit();
@@ -44,6 +51,10 @@ public class PowerLimitService {
                 optionsRepository.setOption("POWER_LIMIT_ENABLE", String.valueOf(false));
                 optionsRepository.delOption("POWER_LIMIT_LIMIT", false);
             } else {
+                OptionalInt maxLimit = pumpDataService.getAllPumps().stream().mapToInt(Pump::getPowerConsumption).max();
+                if(maxLimit.isPresent() && maxLimit.getAsInt() > detailed.getLimit()) {
+                    throw new IllegalArgumentException("Pump with higher power consumption found! (Minimum " + maxLimit.getAsInt() + "mW)");
+                }
                 optionsRepository.setOption("POWER_LIMIT_ENABLE", String.valueOf(true));
                 optionsRepository.setOption("POWER_LIMIT_LIMIT", String.valueOf(detailed.getLimit()));
             }

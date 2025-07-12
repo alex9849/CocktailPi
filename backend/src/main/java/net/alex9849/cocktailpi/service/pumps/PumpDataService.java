@@ -7,9 +7,11 @@ import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.payload.dto.pump.*;
+import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.repository.PumpRepository;
 import net.alex9849.cocktailpi.service.GpioService;
 import net.alex9849.cocktailpi.service.IngredientService;
+import net.alex9849.cocktailpi.service.PowerLimitService;
 import net.alex9849.cocktailpi.service.SystemService;
 import net.alex9849.cocktailpi.utils.PinUtils;
 import net.alex9849.cocktailpi.utils.SpringUtility;
@@ -36,6 +38,8 @@ public class PumpDataService {
     private GpioService gpioService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private PowerLimitService powerLimitService;
 
     //
     // CRUD actions
@@ -82,6 +86,12 @@ public class PumpDataService {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), onOffPump.getPin());
         } else if (pump instanceof StepperPump stepperPump) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.PUMP, pump.getId(), stepperPump.getEnablePin(), stepperPump.getStepPin());
+        }
+        PowerLimitSettingsDto.Duplex.Detailed powerLimitSettings = powerLimitService.getPowerLimit();
+        if(powerLimitSettings.isEnable()) {
+            if(pump.getPowerConsumption() > powerLimitSettings.getLimit()) {
+                throw new IllegalArgumentException("Pump power consumption exceeds global power limit! (" + powerLimitSettings.getLimit() + "mW)");
+            }
         }
 
         updateDefaultPinState(beforeUpdate, pump);

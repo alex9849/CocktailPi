@@ -551,7 +551,8 @@ export default {
           'been used for a while.',
         power_consumption_label: 'Power consumption (in mW)',
         power_consumption_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
-          'concurrently as the power supply can power at the same time.',
+          'concurrently as the power supply can power at the same time. This parameter only has an effect if the \'Power limit\' feature has been enabled!',
+        power_consumption_link_text: 'Setup power limit',
         motor_tester: {
           headline: 'Motor tester',
           disable_reason_parameter_missing: 'Required pump-config parameter missing!',
