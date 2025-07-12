@@ -13,8 +13,10 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.cocktail.CocktailOrderConfigurationDto;
 import net.alex9849.cocktailpi.payload.dto.cocktail.FeasibilityReportDto;
+import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.service.EventService;
 import net.alex9849.cocktailpi.service.IngredientService;
+import net.alex9849.cocktailpi.service.PowerLimitService;
 import net.alex9849.cocktailpi.service.WebSocketService;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +44,9 @@ public class CocktailOrderService {
     private PumpMaintenanceService pumpUpService;
 
     @Autowired
+    private PowerLimitService powerLimitService;
+
+    @Autowired
     private WebSocketService webSocketService;
 
     @Autowired
@@ -63,8 +68,13 @@ public class CocktailOrderService {
         if(!report.isFeasible()) {
             throw new IllegalArgumentException("Cocktail not feasible!");
         }
+        PowerLimitSettingsDto.Duplex.Detailed powerLimitSettings = powerLimitService.getPowerLimit();
+        Integer powerLimit = null;
+        if(powerLimitSettings.isEnable()) {
+            powerLimit = powerLimitSettings.getLimit();
+        }
         CocktailFactory cocktailFactory = new CocktailFactory(feasibilityFactory.getFeasibleRecipe(), user,
-                new HashSet<>(pumpDataService.getAllCompletedPumps()), this::onRequestPumpPersist)
+                new HashSet<>(pumpDataService.getAllCompletedPumps()), powerLimit, this::onRequestPumpPersist)
                 .subscribeProgress(this::onCocktailProgressSubscriptionChange)
                 .subscribeProgress(progess -> {
                     switch (progess.getState()) {

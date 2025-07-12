@@ -29,33 +29,35 @@ public class CocktailFactory {
     private final Set<Pump> pumps;
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
+    private final Integer powerLimit;
 
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
 
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Consumer<Set<Pump>> onRequestPumpPersist) {
-        this(feasibleRecipe, user, pumps);
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Integer powerLimit, Consumer<Set<Pump>> onRequestPumpPersist) {
+        this(feasibleRecipe, user, pumps, powerLimit);
         this.onRequestPumpPersist = onRequestPumpPersist;
     }
 
-    /**
-     * @param feasibleRecipe the recipe consisting only of production steps that contain ManualIngredients and AutomatedIngredients.
-     * @param pumps pumps is an output parameter! The attribute fillingLevelInMl will be decreased according to the recipe.
-     */
-    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps) {
+    public CocktailFactory(FeasibleRecipe feasibleRecipe, User user, Set<Pump> pumps, Integer powerLimit) {
         this.pumps = pumps;
         this.feasibleRecipe = feasibleRecipe;
         this.user = user;
+        this.powerLimit = powerLimit;
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(x -> x.getCurrentIngredient().getId()));
 
+        Map<Pump, Integer> remainingFillingLevelByPump = new HashMap<>();
         for(ProductionStep pStep : feasibleRecipe.getFeasibleProductionSteps()) {
-            this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId));
+            this.productionStepWorkers.addAll(generateWorkers(pStep, pumpsByIngredientId, remainingFillingLevelByPump));
+        }
+        for (Map.Entry<Pump, Integer> entry : remainingFillingLevelByPump.entrySet()) {
+            entry.getKey().setFillingLevelInMl(entry.getValue());
         }
         Set<Pump> usedPumps = this.getUpdatedPumps();
         if(!usedPumps.isEmpty()) {
-            this.productionStepWorkers.add(0, new PumpUpProductionStepWorker(this, usedPumps));
+            this.productionStepWorkers.addAll(0, generatePumpUpWorker(usedPumps));
         }
 
         Iterator<AbstractProductionStepWorker> workerIterator = this.productionStepWorkers.iterator();
@@ -78,9 +80,34 @@ public class CocktailFactory {
         setState(CocktailProgress.State.READY_TO_START);
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
+    private List<PumpUpProductionStepWorker> generatePumpUpWorker(Set<Pump> usedPumps) {
+        if (powerLimit == null) {
+            return List.of(new PumpUpProductionStepWorker(this, usedPumps));
+        }
+        int remainingPowerLimit = powerLimit;
+        List<PumpUpProductionStepWorker> pumpUpWorkers = new ArrayList<>();
+        Set<Pump> pumpUpPhasePumps = new HashSet<>();
+        for(Pump pump : usedPumps) {
+            if(pump.isPumpedUp()) {
+                continue;
+            }
+            if(remainingPowerLimit < pump.getPowerConsumption()) {
+                pumpUpWorkers.add(new PumpUpProductionStepWorker(this, pumpUpPhasePumps));
+                pumpUpPhasePumps = new HashSet<>();
+                remainingPowerLimit = powerLimit;
+            }
+            pumpUpPhasePumps.add(pump);
+            remainingPowerLimit -= pump.getPowerConsumption();
+        }
+        if(!pumpUpPhasePumps.isEmpty()) {
+            pumpUpWorkers.add(new PumpUpProductionStepWorker(this, pumpUpPhasePumps));
+        }
+        return pumpUpWorkers;
+    }
+
+    private List<AbstractProductionStepWorker> generateWorkers(ProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId, Map<Pump, Integer> remainingFillingLevelByPump) {
         if(pStep instanceof AddIngredientsProductionStep) {
-            return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId);
+            return generateWorkers((AddIngredientsProductionStep) pStep, pumpsByIngredientId, remainingFillingLevelByPump);
         }
         if(pStep instanceof WrittenInstructionProductionStep wIPStep) {
             return List.of(new WrittenInstructionProductionStepWorker(this, wIPStep.getMessage()));
@@ -88,7 +115,7 @@ public class CocktailFactory {
         throw new IllegalStateException("ProductionStepType unknown!");
     }
 
-    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId) {
+    private List<AbstractProductionStepWorker> generateWorkers(AddIngredientsProductionStep pStep, Map<Long, List<Pump>> pumpsByIngredientId, Map<Pump, Integer> remainingFillingLevelByPump) {
         List<AbstractProductionStepWorker> workers = new ArrayList<>();
         List<ProductionStepIngredient> manualProductionSteps = new ArrayList<>();
         List<ProductionStepIngredient> automaticProductionSteps = new ArrayList<>();
@@ -115,8 +142,12 @@ public class CocktailFactory {
             workers.add(new ManualProductionStepWorker(this, manualProductionSteps));
         }
         if(!automaticProductionSteps.isEmpty()) {
-            workers.add(new AutomaticProductionStepWorker(this, pumps,
-                    automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS));
+            List<PumpTimingStepCalculator> stepCalculators = AutomaticProductionStepWorker.splitStepByPowerLimit(pumps,
+                    automaticProductionSteps, MINIMAL_PUMP_OPERATION_TIME_IN_MS, MINIMAL_PUMP_BREAK_TIME_IN_MS, remainingFillingLevelByPump, powerLimit);
+
+            for(PumpTimingStepCalculator stepCalculator : stepCalculators) {
+                workers.add(new AutomaticProductionStepWorker(this, stepCalculator));
+            }
         }
         return workers;
     }

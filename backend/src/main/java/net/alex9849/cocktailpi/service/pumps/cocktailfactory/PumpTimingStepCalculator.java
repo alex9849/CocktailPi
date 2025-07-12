@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory;
 
+import lombok.Getter;
 import net.alex9849.cocktailpi.model.pump.DcPump;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.pump.StepperPump;
@@ -8,6 +9,7 @@ import net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworke
 import net.alex9849.motorlib.motor.AcceleratingStepper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PumpTimingStepCalculator {
     private int longestPumpRunTime;
@@ -16,11 +18,13 @@ public class PumpTimingStepCalculator {
 
     Map<Valve, Long> valvesToRequestedGrams;
     private final Map<StepperPump, Long> steppersToSteps;
-    private final Set<Pump> updatedPumps;
+    @Getter
+    private final Map<Pump, Integer> remainingFillingLevelByPump;
     private final int minimalPumpTime;
     private final int minimalBreakTime;
 
-    public PumpTimingStepCalculator(Set<PumpStepIngredient> pumpStepIngredients, int minimalPumpTime, int minimalBreakTime) {
+    public PumpTimingStepCalculator(Set<PumpStepIngredient> pumpStepIngredients, int minimalPumpTime, int minimalBreakTime,
+                                    Map<Pump, Integer> remainingFillingLevelByPump) {
         if(minimalPumpTime <= 0) {
             throw new IllegalArgumentException("minimalPumpTime needs to be at least 1!");
         }
@@ -32,7 +36,7 @@ public class PumpTimingStepCalculator {
         if(pumpStepIngredients.size() == 0) {
             throw new IllegalArgumentException("pumpStepIngredients must be non empty!");
         }
-        this.updatedPumps = new HashSet<>();
+        this.remainingFillingLevelByPump = remainingFillingLevelByPump;
         this.valvesToRequestedGrams = new HashMap<>();
         this.steppersToSteps = new HashMap<>();
         this.longestPumpRunTime = 0;
@@ -44,19 +48,25 @@ public class PumpTimingStepCalculator {
         for(PumpStepIngredient pumpStepIngredient : pumpStepIngredients) {
             int remainingAmountToFillInMl = pumpStepIngredient.getAmount();
             for(Pump pump : pumpStepIngredient.getApplicablePumps()) {
-                if(pump.getFillingLevelInMl() == 0) {
-                    continue;
-                }
                 if(remainingAmountToFillInMl <= 0) {
                     break;
                 }
+                int remainingFillingLevel = remainingFillingLevelByPump.getOrDefault(pump, pump.getFillingLevelInMl());
+                if(remainingFillingLevel == 0) {
+                    continue;
+                }
                 int amountToFillForPumpInMl;
-                if(pump.getFillingLevelInMl() > remainingAmountToFillInMl) {
+                if(remainingFillingLevel > remainingAmountToFillInMl) {
                     amountToFillForPumpInMl = remainingAmountToFillInMl;
-                    pump.setFillingLevelInMl(pump.getFillingLevelInMl() - amountToFillForPumpInMl);
+                    remainingFillingLevelByPump.compute(pump, (p, currentConsumption) -> {
+                        if(currentConsumption == null) {
+                            currentConsumption = p.getFillingLevelInMl();
+                        }
+                        return currentConsumption - amountToFillForPumpInMl;
+                    });
                 } else {
-                    amountToFillForPumpInMl = pump.getFillingLevelInMl();
-                    pump.setFillingLevelInMl(0);
+                    amountToFillForPumpInMl = remainingFillingLevel;
+                    remainingFillingLevelByPump.put(pump, 0);
                 }
 
                 int timeToRun;
@@ -91,8 +101,6 @@ public class PumpTimingStepCalculator {
                 } else {
                     throw new IllegalArgumentException("Unknown pump-type: " + pump.getClass().getName());
                 }
-
-                this.updatedPumps.add(pump);
                 remainingAmountToFillInMl -= amountToFillForPumpInMl;
             }
             if(remainingAmountToFillInMl > 0) {
@@ -105,18 +113,6 @@ public class PumpTimingStepCalculator {
             timeToRunPerPump.remove(longestIngredientPump);
         }
         this.otherPumpTimings = timeToRunPerPump;
-    }
-
-    public Set<Pump> getUpdatedPumps() {
-        return updatedPumps;
-    }
-
-    public int getLongestIngredientTime() {
-        return longestPumpRunTime;
-    }
-
-    public Pump getLongestIngredientPump() {
-        return longestIngredientPump;
     }
 
     public Set<PumpPhase> getPumpPhases() {
@@ -163,5 +159,13 @@ public class PumpTimingStepCalculator {
 
     public Map<Valve, Long> getValvesToRequestedGrams() {
         return valvesToRequestedGrams;
+    }
+
+    public Set<Pump> getUsedPumps() {
+        Set<Pump> pumps = new HashSet<>();
+        pumps.addAll(getSteppersToComplete().keySet());
+        pumps.addAll(getValvesToRequestedGrams().keySet());
+        pumps.addAll(getPumpPhases().stream().map(PumpPhase::getPump).collect(Collectors.toSet()));
+        return pumps;
     }
 }
