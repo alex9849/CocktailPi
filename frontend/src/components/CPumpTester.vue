@@ -122,7 +122,7 @@
                 </tr>
                 <tr>
                   <td><b>{{ $t('component.pump_tester.metrics.time_taken') }}</b></td>
-                  <td>{{ jobMetrics.stopTime - jobMetrics.startTime }} ms</td>
+                  <td>{{ jobMetrics.timeElapsed }} ms</td>
                 </tr>
               </tbody>
             </table>
