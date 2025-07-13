@@ -17,18 +17,20 @@ public class FeasibilityReportDto {
     private interface IngredientGroupReplacements { List<IngredientGroupReplacementDto.Response.Detailed> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface TotalAmountInMl { int getTotalAmountInMl(); }
+    private interface FailNoGlass { boolean isFailNoGlass(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements IngredientGroupReplacements, IsFeasible,
-                IsAllIngredientGroupsReplaced, RequiredIngredients, TotalAmountInMl {
+                IsAllIngredientGroupsReplaced, RequiredIngredients, FailNoGlass, TotalAmountInMl {
 
             List<IngredientGroupReplacementDto.Response.Detailed> ingredientGroupReplacements;
             List<RequiredIngredientDto.Response.Detailed> requiredIngredients;
             boolean allIngredientGroupsReplaced;
             boolean isFeasible;
+            boolean failNoGlass;
             int totalAmountInMl;
 
             public Detailed(FeasibilityReport report) {
@@ -40,6 +42,7 @@ public class FeasibilityReportDto {
                         .collect(Collectors.toList());
                 this.requiredIngredients.sort(Comparator.comparing(x -> x.getIngredient().getName()));
                 this.allIngredientGroupsReplaced = report.isAllIngredientGroupsReplaced();
+                this.failNoGlass = report.isFailNoGlass();
                 this.isFeasible = report.isFeasible();
                 this.totalAmountInMl = report.getTotalAmountInMl();
             }

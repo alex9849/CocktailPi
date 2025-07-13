@@ -56,6 +56,9 @@
           <c-make-cocktail-dialog-pumps-in-use
             :pumps-occupied="anyPumpOccupied"
           />
+          <c-make-cocktail-dialog-no-glass-error
+            v-if="feasibilityReport.failNoGlass"
+          />
           <c-make-cocktail-dialog-insufficient-ingredients
             v-if="feasibilityReportValid"
             :required-ingredients="feasibilityReport.requiredIngredients"
@@ -101,10 +104,12 @@ import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsIn
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
 import WebsocketService from 'src/services/websocket.service'
 import CMakeCocktailDialogAmountToProduce from 'components/CMakeCocktailDialogAmountToProduce.vue'
+import CMakeCocktailDialogNoGlassError from 'components/CMakeCocktailDialogNoGlassError.vue'
 
 export default {
   name: 'CMakeCocktailDialog',
   components: {
+    CMakeCocktailDialogNoGlassError,
     CMakeCocktailDialogAmountToProduce,
     CMakeCocktailDialogRecipeCustomiser,
     CMakeCocktailDialogPumpsInUse,

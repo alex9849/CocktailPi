@@ -638,6 +638,9 @@ export default {
         not_in_bar: 'ikke i Bar / tilføj manuelt'
       }
     },
+    make_cocktail_no_glass: {
+      not_fulfilled_msg: 'Intet glas placeret i udleveringsområdet.'
+    },
     make_cocktail_customizer: {
       headline: 'Tilpas din bestilling',
       headline_boosting: 'Justering af styrke:',

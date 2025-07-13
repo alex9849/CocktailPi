@@ -12,45 +12,19 @@ import java.util.List;
 import java.util.Set;
 
 public class FeasibilityReport {
+    @Getter @Setter
     private List<IngredientGroupReplacement> ingredientGroupReplacements = new ArrayList<>();
+    @Getter @Setter
     private Set<RequiredIngredient> requiredIngredients = new HashSet<>();
+    @Getter @Setter
+    private boolean failNoGlass;
+    @Getter @Setter
     private boolean allIngredientGroupsReplaced;
+    @Getter @Setter
     private int totalAmountInMl;
 
-    public List<IngredientGroupReplacement> getIngredientGroupReplacements() {
-        return ingredientGroupReplacements;
-    }
-
-    public void setIngredientGroupReplacements(List<IngredientGroupReplacement> ingredientGroupReplacements) {
-        this.ingredientGroupReplacements = ingredientGroupReplacements;
-    }
-
-    public Set<RequiredIngredient> getRequiredIngredients() {
-        return requiredIngredients;
-    }
-
-    public void setRequiredIngredients(Set<RequiredIngredient> requiredIngredients) {
-        this.requiredIngredients = requiredIngredients;
-    }
-
-    public boolean isAllIngredientGroupsReplaced() {
-        return allIngredientGroupsReplaced;
-    }
-
-    public void setAllIngredientGroupsReplaced(boolean allIngredientGroupsReplaced) {
-        this.allIngredientGroupsReplaced = allIngredientGroupsReplaced;
-    }
-
-    public int getTotalAmountInMl() {
-        return totalAmountInMl;
-    }
-
-    public void setTotalAmountInMl(int totalAmountInMl) {
-        this.totalAmountInMl = totalAmountInMl;
-    }
-
     public boolean isFeasible() {
-        return allIngredientGroupsReplaced && requiredIngredients.stream().allMatch(x -> x.amountMissing == 0);
+        return !failNoGlass && allIngredientGroupsReplaced && requiredIngredients.stream().allMatch(x -> x.amountMissing == 0);
     }
 
     @Getter @Setter

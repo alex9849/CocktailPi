@@ -737,6 +737,9 @@ export default {
         not_in_bar: 'not in Bar / manuell hinzufügen'
       }
     },
+    make_cocktail_no_glass: {
+      not_fulfilled_msg: 'Kein Glas im Ausgabebereich platziert.'
+    },
     make_cocktail_customizer: {
       headline: 'Bestellanpassung',
       headline_boosting: 'Boosting:',

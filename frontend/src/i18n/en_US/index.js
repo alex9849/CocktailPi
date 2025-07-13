@@ -795,6 +795,9 @@ export default {
         not_in_bar: 'not in bar / add manually'
       }
     },
+    make_cocktail_no_glass: {
+      not_fulfilled_msg: 'No glass placed in the dispensing area.'
+    },
     make_cocktail_customizer: {
       headline: 'Order customizer',
       headline_boosting: 'Boosting:',
