@@ -796,7 +796,7 @@ export default {
       }
     },
     make_cocktail_no_glass: {
-      not_fulfilled_msg: 'No glass placed in the dispensing area.'
+      not_fulfilled_msg: 'No glass placed on the dispensing area.'
     },
     make_cocktail_customizer: {
       headline: 'Order customizer',

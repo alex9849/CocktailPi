@@ -61,7 +61,11 @@ public class PumpSettingsEndpoint {
     @RequestMapping(value = "loadcell", method = RequestMethod.PUT)
     public ResponseEntity<?> setLoadCell(@RequestBody(required = false) @Valid LoadCellSettingsDto.Request.Create settings) {
         LoadCell loadCell = loadCellService.fromDto(settings);
-        loadCellService.setLoadCell(loadCell, settings.getDispensingArea());
+        LoadCellSettingsDto.Duplex.DispensingArea daSettings = null;
+        if (settings != null) {
+            daSettings = settings.getDispensingArea();
+        }
+        loadCellService.setLoadCell(loadCell, daSettings);
         loadCell = loadCellService.getLoadCell();
         if(loadCell == null) {
             return ResponseEntity.ok(null);
