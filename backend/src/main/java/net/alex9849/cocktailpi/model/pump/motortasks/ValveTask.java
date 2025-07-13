@@ -30,7 +30,10 @@ public class ValveTask extends PumpTask {
                     synchronized (this) {
                         wait();
                     }
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                    cancel();
+                    return;
+                }
                 if(this.isCancelledExecutionThread()) {
                     return;
                 }
@@ -39,17 +42,19 @@ public class ValveTask extends PumpTask {
             ValveDriver driver = valve.getMotorDriver();
             HX711 hx711 = valve.getLoadCell().getHX711();
             try {
-                initialReadGrams = hx711.read();
+                initialReadGrams = hx711.read(7);
                 long absoluteGoalGrams = initialReadGrams + remainingGrams;
-                currentGrams = hx711.read();
-                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
+                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread()
+                        && getState() != State.SUSPENDED && getState() != State.SUSPENDING) {
                     driver.setOpen(true);
-                    while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
+                    while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread()
+                            && getState() != State.SUSPENDED && getState() != State.SUSPENDING) {
                         currentGrams = hx711.read_once();
                     }
                     driver.setOpen(false);
                     currentGrams = hx711.read(7);
                 }
+                remainingGrams = absoluteGoalGrams - currentGrams;
             } catch (InterruptedException e) {
                 cancel();
                 return;
