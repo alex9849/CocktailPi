@@ -58,6 +58,7 @@ public class GlassService {
         glass.setSize(glassDto.getSize());
         glass.setName(glassDto.getName());
         glass.setId(glassDto.getId());
+        glass.setEmptyWeight(glassDto.getEmptyWeight());
         glass.setUseForSingleIngredients(glassDto.isUseForSingleIngredients());
         glass.setDefault(glassDto.isDefault());
         return glass;

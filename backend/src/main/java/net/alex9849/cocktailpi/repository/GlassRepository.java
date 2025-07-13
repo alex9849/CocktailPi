@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,32 +99,42 @@ public class GlassRepository extends JdbcDaoSupport {
     public boolean update (Glass glass) {
         Long siGlassId = getSingleIngredientGlassId();
         Long defaultGlassId = getDefaultGlassId();
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE glasses SET name = ?, size = ? WHERE id = ?");
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE glasses SET name = ?, size = ?, empty_weight = ? WHERE id = ?");
             pstmt.setString(1, glass.getName());
             pstmt.setLong(2, glass.getSize());
-            pstmt.setLong(3, glass.getId());
-            if(glass.isDefault() && !Objects.equals(glass.getId(), defaultGlassId)) {
+            if (glass.getEmptyWeight() != null) {
+                pstmt.setObject(3, glass.getEmptyWeight());
+            } else {
+                pstmt.setNull(3, Types.INTEGER);
+            }
+            pstmt.setLong(4, glass.getId());
+            if (glass.isDefault() && !Objects.equals(glass.getId(), defaultGlassId)) {
                 optionsRepository.setOption(OPTION_DEFAULT_GLASS_ID, String.valueOf(glass.getId()));
             }
-            if(!glass.isDefault() && Objects.equals(glass.getId(), defaultGlassId)) {
+            if (!glass.isDefault() && Objects.equals(glass.getId(), defaultGlassId)) {
                 optionsRepository.delOption(OPTION_DEFAULT_GLASS_ID, false);
             }
-            if(glass.isUseForSingleIngredients() && !Objects.equals(glass.getId(), siGlassId)) {
+            if (glass.isUseForSingleIngredients() && !Objects.equals(glass.getId(), siGlassId)) {
                 optionsRepository.setOption(OPTION_SINGLE_INGREDIENT_GLASS_ID, String.valueOf(glass.getId()));
             }
-            if(!glass.isUseForSingleIngredients() && Objects.equals(glass.getId(), siGlassId)) {
+            if (!glass.isUseForSingleIngredients() && Objects.equals(glass.getId(), siGlassId)) {
                 optionsRepository.delOption(OPTION_SINGLE_INGREDIENT_GLASS_ID, false);
             }
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public Glass create (Glass glass) {
         return getJdbcTemplate().execute((ConnectionCallback<Glass>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO glasses (name, size) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO glasses (name, size, empty_weight) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, glass.getName());
             pstmt.setLong(2, glass.getSize());
+            if (glass.getEmptyWeight() != null) {
+                pstmt.setObject(3, glass.getEmptyWeight());
+            } else {
+                pstmt.setNull(3, Types.INTEGER);
+            }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (!rs.next()) {
@@ -166,6 +173,7 @@ public class GlassRepository extends JdbcDaoSupport {
         glass.setId(rs.getLong("id"));
         glass.setName(rs.getString("name"));
         glass.setSize(rs.getLong("size"));
+        glass.setEmptyWeight((Integer) rs.getObject("empty_weight"));
         return glass;
     }
 }

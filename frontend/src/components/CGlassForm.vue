@@ -25,11 +25,10 @@
       outlined
       :disable="disabled"
       hide-bottom-space
-      v-model:model-value.number="v.modelValue.empty_weight.$model"
-      :error-message="v.modelValue.empty_weight.$errors[0]?.$message"
-      :error="v.modelValue.empty_weight.$errors.length > 0"
+      v-model:model-value.number="v.modelValue.emptyWeight.$model"
+      :error-message="v.modelValue.emptyWeight.$errors[0]?.$message"
+      :error="v.modelValue.emptyWeight.$errors.length > 0"
       :label="$t('component.glass_form.empty_weight')"
-      suffix="ml"
       type="number"
     >
       <template v-slot:append>
@@ -114,7 +113,7 @@ export default {
           minValue: minValue(10),
           maxValue: maxValue(5000)
         },
-        empty_weight: {
+        emptyWeight: {
           minValue: minValue(1)
         },
         default: {},

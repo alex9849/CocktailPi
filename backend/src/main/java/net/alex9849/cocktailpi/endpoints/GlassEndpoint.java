@@ -52,8 +52,8 @@ public class GlassEndpoint {
         }
         Glass glass = glassService.fromDto(glassDto);
         glass.setId(id);
-        glassService.updateGlass(glass);
-        return ResponseEntity.ok().build();
+        glass = glassService.updateGlass(glass);
+        return ResponseEntity.ok(new GlassDto.Duplex.Detailed(glass));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
