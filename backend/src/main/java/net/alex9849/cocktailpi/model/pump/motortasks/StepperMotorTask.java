@@ -98,7 +98,12 @@ public class StepperMotorTask extends PumpTask {
     @Override
     protected PumpJobState.RunningState genRunningState() {
         PumpJobState.RunningState runningState = new PumpJobState.RunningState();
-        runningState.setPercentage((int) (getStepsMade() * 100 / stepsToRun));
+        long stepsToRun = this.stepsToRun;
+        if (stepsToRun == 0) {
+            runningState.setPercentage(0);
+        } else {
+            runningState.setPercentage((int) (getStepsMade() * 100 / stepsToRun));
+        }
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setState(getState());
         runningState.setRunInfinity(isRunInfinity());

@@ -61,13 +61,22 @@ public class DcMotorTask extends PumpTask {
         runningState.setForward(getDirection() == Direction.FORWARD);
         runningState.setRunInfinity(isRunInfinity());
         runningState.setState(getState());
-        runningState.setPercentage((int) (((getTimeElapsed()) * 100) / duration));
+        if(duration == 0) {
+            runningState.setPercentage(0);
+        } else {
+            runningState.setPercentage((int) (((getTimeElapsed()) * 100) / duration));
+        }
         runningState.setJobId(getJobId());
         return runningState;
     }
 
     public long getMlPumped() {
-        return (getTimeElapsed() * 10) /  dcPump.getTimePerClInMs();
+        Integer timePerCl = dcPump.getTimePerClInMs();
+        if(timePerCl == null || timePerCl == 0) {
+            return 0;
+        } else {
+            return (getTimeElapsed() * 10) /  timePerCl;
+        }
     }
 
     @Override

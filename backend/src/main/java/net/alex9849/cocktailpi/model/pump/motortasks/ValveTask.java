@@ -73,7 +73,11 @@ public class ValveTask extends PumpTask {
         runningState.setForward(true);
         runningState.setRunInfinity(true);
         runningState.setState(getState());
-        runningState.setPercentage((int) (100 * (currentGrams - initialReadGrams) / (goalGrams - initialReadGrams)));
+        if(goalGrams == initialReadGrams) {
+            runningState.setPercentage(0);
+        } else {
+            runningState.setPercentage((int) (100 * (currentGrams - initialReadGrams) / (goalGrams - initialReadGrams)));
+        }
         runningState.setJobId(getJobId());
         return runningState;
     }
