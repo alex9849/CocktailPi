@@ -64,6 +64,7 @@
 import useVuelidate from '@vuelidate/core'
 import { maxLength, maxValue, minValue, required } from '@vuelidate/validators'
 import { mdiReload } from '@mdi/js'
+import PumpSettingsService from 'src/services/pumpsettings.service'
 
 export default {
   name: 'CGlassForm',
@@ -85,6 +86,14 @@ export default {
   },
   methods: {
     onClickMeasureLoadCell () {
+      this.loadingMeasure = true
+      PumpSettingsService.readLoadCell()
+        .then(measurement => {
+          this.v.modelValue.emptyWeight.$model = measurement
+        })
+        .finally(() => {
+          this.loadingMeasure = false
+        })
     }
   },
   watch: {
