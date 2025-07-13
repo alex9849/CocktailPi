@@ -27,6 +27,8 @@ public class GlassService {
     private LoadCellService loadCellService;
     @Autowired
     private WebSocketService webSocketService;
+    @Autowired
+    private PumpLockService pumpLockService;
 
     private void setDispensingAreaState(DispensingAreaState newState) {
         if (!Objects.equals(dispensingAreaState, newState)) {
@@ -41,7 +43,7 @@ public class GlassService {
         newState.setAreaEmpty(false);
         newState.setGlass(null);
         LoadCellSettingsDto.Duplex.DispensingArea daSettings = loadCellService.getDispensingAreaSettings();
-        if (!daSettings.isMatchGlass() && !daSettings.isCheckGlassPlaced()) {
+        if (!daSettings.isMatchGlass() && !daSettings.isCheckGlassPlaced() && pumpLockService.canAcquireGlobal(true)) {
             setDispensingAreaState(newState);
             return;
         }
