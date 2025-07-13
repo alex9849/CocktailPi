@@ -70,6 +70,11 @@ public class CocktailFactory {
             AbstractProductionStepWorker nextWorker = workerIterator.next();
             currentWorker.setOnFinishCallback(() -> {
                 this.currentProductionStepWorker = nextWorker;
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    new Thread(() -> this.cancelCocktail(true)).start();
+                }
                 nextWorker.start();
             });
             currentWorker = nextWorker;
