@@ -19,9 +19,32 @@
       :error-message="v.modelValue.size.$errors[0]?.$message"
       :error="v.modelValue.size.$errors.length > 0"
       :label="$t('component.glass_form.size')"
-      suffix="ml"
       type="number"
     />
+    <q-input
+      outlined
+      :disable="disabled"
+      hide-bottom-space
+      v-model:model-value.number="v.modelValue.empty_weight.$model"
+      :error-message="v.modelValue.empty_weight.$errors[0]?.$message"
+      :error="v.modelValue.empty_weight.$errors.length > 0"
+      :label="$t('component.glass_form.empty_weight')"
+      suffix="ml"
+      type="number"
+    >
+      <template v-slot:append>
+        <q-btn
+          :label="$t('component.glass_form.load_cell_measure_btn_label')"
+          color="primary"
+          outline
+          no-caps
+          size="md"
+          :loading="loadingMeasure"
+          :icon="mdiReload"
+          @click="onClickMeasureLoadCell()"
+        />
+      </template>
+    </q-input>
     <div class="row justify-evenly">
       <q-checkbox
         :label="$t('component.glass_form.default_checkbox')"
@@ -41,6 +64,7 @@
 
 import useVuelidate from '@vuelidate/core'
 import { maxLength, maxValue, minValue, required } from '@vuelidate/validators'
+import { mdiReload } from '@mdi/js'
 
 export default {
   name: 'CGlassForm',
@@ -55,6 +79,15 @@ export default {
     }
   },
   emits: ['invalid'],
+  data: () => {
+    return {
+      loadingMeasure: false
+    }
+  },
+  methods: {
+    onClickMeasureLoadCell () {
+    }
+  },
   watch: {
     'v.modelValue.$invalid': {
       immediate: true,
@@ -64,7 +97,10 @@ export default {
     }
   },
   setup () {
-    return { v: useVuelidate() }
+    return {
+      mdiReload,
+      v: useVuelidate()
+    }
   },
   validations () {
     return {
@@ -77,6 +113,9 @@ export default {
           required,
           minValue: minValue(10),
           maxValue: maxValue(5000)
+        },
+        empty_weight: {
+          minValue: minValue(1)
         },
         default: {},
         useForSingleIngredients: {}

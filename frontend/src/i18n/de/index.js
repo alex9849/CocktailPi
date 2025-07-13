@@ -294,6 +294,7 @@ export default {
         columns: {
           name: 'Name',
           size: 'Größe',
+          empty_weight: 'Leergewicht',
           default: 'Standard',
           for_single_ingredients: 'Für einzelne Zutaten',
           actions: 'Aktionen'
@@ -1026,9 +1027,11 @@ export default {
     },
     glass_form: {
       name: 'Name',
-      size: 'Größe',
+      size: 'Größe (in ml)',
+      empty_weight: 'Leergewicht (in g)',
       default_checkbox: 'Standard',
-      use_for_single_ingredients_checkbox: 'Verwenden für einzelne Zutaten'
+      use_for_single_ingredients_checkbox: 'Verwenden für einzelne Zutaten',
+      load_cell_measure_btn_label: 'Messen'
     },
     event_action_editor_form: {
       comment_label: 'Kommentar',

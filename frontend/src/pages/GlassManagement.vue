@@ -87,6 +87,18 @@
             {{ props.row.size }} ml
           </q-td>
         </template>
+        <template v-slot:body-cell-empty_weight="props">
+          <q-td :props="props"
+                key="empty_weight"
+          >
+            <p v-if="props.row.empty_weight">
+              {{ props.row.empty_weight }} g
+            </p>
+            <p v-else>
+              -
+            </p>
+          </q-td>
+        </template>
         <template v-slot:body-cell-default="props">
           <q-td :props="props"
                 key="default"
@@ -203,6 +215,7 @@ export default {
       columns: [
         { name: 'name', label: this.$t('page.glass_mgmt.glass_table.columns.name'), field: 'name', align: 'center' },
         { name: 'size', label: this.$t('page.glass_mgmt.glass_table.columns.size'), field: 'size', align: 'center' },
+        { name: 'empty_weight', label: this.$t('page.glass_mgmt.glass_table.columns.empty_weight'), field: 'empty_weight', align: 'center' },
         { name: 'default', label: this.$t('page.glass_mgmt.glass_table.columns.default'), field: 'default', align: 'center' },
         {
           name: 'useForSingleIngredients',
@@ -224,6 +237,7 @@ export default {
           id: -1,
           name: '',
           size: '',
+          empty_weight: '',
           useForSingleIngredients: false,
           default: false
         }
