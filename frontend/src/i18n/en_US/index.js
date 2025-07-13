@@ -551,7 +551,7 @@ export default {
           'It is also used to empty your hoses (pump the liquid back into the container) if the machine has not ' +
           'been used for a while.',
         power_consumption_label: 'Power consumption (in mW)',
-        power_consumption_desc: 'How much power does this pump require? CocktailPi attempts to only run as many pumps ' +
+        power_consumption_desc: 'How much power does this pump require? CocktailPi only runs as many pumps ' +
           'concurrently as the power supply can power at the same time. This parameter only has an effect if the \'Power limit\' feature has been enabled!',
         power_consumption_link_text: 'Setup power limit',
         motor_tester: {
