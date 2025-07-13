@@ -14,27 +14,33 @@
           v-for="requiredIngredient in displayIngredientList"
           :key="requiredIngredient.ingredient.id"
         >
-          {{ requiredIngredient.ingredient.name }}:
-          <strong>
-            {{ requiredIngredient.amountRequired }} {{ requiredIngredient.ingredient.unit }}
-          </strong>
-          <span
-            v-if="isError === 'INSUFFICIENT_INGREDIENTS'"
-          > required</span>
-          <q-chip
-            :color="requiredIngredient.ingredient.inBar? 'green-4' : 'red-4'"
-            v-if="!requiredIngredient.ingredient.onPump"
-            dense
-            square
-            :ripple="false"
+          <div
+            class="items-center flex"
           >
-            <div v-if="requiredIngredient.ingredient.inBar">
-              {{ $t('component.make_cocktail_insufficient_ingredients.tags.in_bar') }}
+            <div>
+              {{ requiredIngredient.ingredient.name }}:
+              <strong>
+                {{ requiredIngredient.amountRequired }} {{ requiredIngredient.ingredient.unit }}
+              </strong>
+              <span
+                v-if="isError === 'INSUFFICIENT_INGREDIENTS'"
+              > required</span>
             </div>
-            <div v-else>
-              {{ $t('component.make_cocktail_insufficient_ingredients.tags.not_in_bar') }}
-            </div>
-          </q-chip>
+            <q-chip
+              :color="requiredIngredient.ingredient.inBar? 'green-4' : 'red-4'"
+              v-if="!requiredIngredient.ingredient.onPump"
+              dense
+              square
+              :ripple="false"
+            >
+              <div v-if="requiredIngredient.ingredient.inBar">
+                {{ $t('component.make_cocktail_insufficient_ingredients.tags.in_bar') }}
+              </div>
+              <div v-else>
+                {{ $t('component.make_cocktail_insufficient_ingredients.tags.not_in_bar') }}
+              </div>
+            </q-chip>
+          </div>
         </li>
       </ul>
     </template>
