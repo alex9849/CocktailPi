@@ -32,6 +32,9 @@ public class GlassService {
             if(loadcell == null) {
                 return;
             }
+            if(!loadcell.isCalibrated()) {
+                return;
+            }
             long weight = loadcell.getHX711().read(7);
             Glass foundGlass = getGlass(weight);
             if(foundGlass == null && currentGlass == null) {
