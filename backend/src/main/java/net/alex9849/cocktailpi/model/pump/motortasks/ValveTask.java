@@ -23,13 +23,11 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected void runPump() {
-        while (remainingGrams > 0 && !this.isCancelledExecutionThread()) {
+    protected synchronized void runPump() {
+        while ((isRunInfinity() || remainingGrams > 0) && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    synchronized (this) {
-                        wait();
-                    }
+                    wait();
                 } catch (InterruptedException ignored) {
                     cancel();
                     return;
@@ -44,11 +42,9 @@ public class ValveTask extends PumpTask {
             try {
                 initialReadGrams = hx711.read(7);
                 long absoluteGoalGrams = initialReadGrams + remainingGrams;
-                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread()
-                        && getState() != State.SUSPENDED && getState() != State.SUSPENDING) {
+                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
                     driver.setOpen(true);
-                    while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread()
-                            && getState() != State.SUSPENDED && getState() != State.SUSPENDING) {
+                    while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
                         currentGrams = hx711.read_once();
                     }
                     driver.setOpen(false);
@@ -67,8 +63,7 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected void doSuspend() {
-        state = State.SUSPENDING;
+    protected synchronized void doSuspend() {
         valve.getMotorDriver().setOpen(false);
     }
 
