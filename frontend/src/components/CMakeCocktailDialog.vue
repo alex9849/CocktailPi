@@ -164,7 +164,7 @@ export default {
     this.detectedGlassValid = false
     WebsocketService.subscribe(this, '/user/topic/dispensingarea', glass => {
       const state = JSON.parse(glass.body)
-      this.dispensingAreaEmpty = state.empty
+      this.dispensingAreaEmpty = state.areaEmpty
     }, true)
   },
   unmounted () {

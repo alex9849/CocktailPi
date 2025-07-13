@@ -9,7 +9,6 @@ import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProduct
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailpi.service.GlassService;
-import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 
@@ -43,7 +42,7 @@ public class FeasibilityFactory {
         this.computeRequiredIngredients();
         this.computeTotalAmountOfMl();
         GlassService gService = SpringUtility.getBean(GlassService.class);
-        this.feasibilityReport.setFailNoGlass(gService.getDispensingAreaState().getEmpty());
+        this.feasibilityReport.setFailNoGlass(gService.getDispensingAreaState().isAreaEmpty());
     }
 
     private void computeTotalAmountOfMl() {

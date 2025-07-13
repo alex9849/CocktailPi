@@ -9,15 +9,15 @@ import java.util.Objects;
 @Getter @Setter
 public class DispensingAreaState {
     private Glass glass;
-    private Boolean empty;
+    private boolean areaEmpty;
 
-    public boolean getEmpty() {
-        return glass == null && empty;
+    public boolean isAreaEmpty() {
+        return glass == null && areaEmpty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DispensingAreaState that)) return false;
-        return Objects.equals(glass, that.glass) && Objects.equals(empty, that.empty);
+        return Objects.equals(glass, that.glass) && areaEmpty == that.areaEmpty;
     }
 }

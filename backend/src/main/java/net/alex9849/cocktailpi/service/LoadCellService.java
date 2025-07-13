@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LoadCellService {
     private LoadCell loadCell = null;
+    private LoadCellSettingsDto.Duplex.DispensingArea dispensingAreaSettings = null;
     private boolean checkedIfLoadCellPersisted = false;
     private static final String REPO_KEY_LOAD_CELL_ENABLED = "LC_Enabled";
     public static final String REPO_KEY_LOAD_CELL_DT_PIN = "LC_DT";
@@ -84,20 +85,23 @@ public class LoadCellService {
     }
 
     public LoadCellSettingsDto.Duplex.DispensingArea getDispensingAreaSettings() {
-        boolean enabled = Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_LOAD_CELL_ENABLED).orElse(null));
-        LoadCellSettingsDto.Duplex.DispensingArea settings = new LoadCellSettingsDto.Duplex.DispensingArea();
-        if (!enabled) {
-            settings.setMatchGlass(false);
-            settings.setCheckGlassPlaced(false);
-            return settings;
+        if(dispensingAreaSettings == null) {
+            boolean enabled = Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_LOAD_CELL_ENABLED).orElse(null));
+            LoadCellSettingsDto.Duplex.DispensingArea settings = new LoadCellSettingsDto.Duplex.DispensingArea();
+            if (!enabled) {
+                settings.setMatchGlass(false);
+                settings.setCheckGlassPlaced(false);
+                return settings;
+            }
+            settings.setMatchGlass(Boolean.parseBoolean(
+                    optionsRepository.getOption(REPO_KEY_LOAD_CELL_MATCH_GLASS).orElse(String.valueOf(false))
+            ));
+            settings.setCheckGlassPlaced(Boolean.parseBoolean(
+                    optionsRepository.getOption(REPO_KEY_LOAD_CELL_CHECK_GLASS_PLACED).orElse(String.valueOf(false))
+            ));
+            dispensingAreaSettings = settings;
         }
-        settings.setMatchGlass(Boolean.parseBoolean(
-                optionsRepository.getOption(REPO_KEY_LOAD_CELL_MATCH_GLASS).orElse(String.valueOf(false))
-        ));
-        settings.setCheckGlassPlaced(Boolean.parseBoolean(
-                optionsRepository.getOption(REPO_KEY_LOAD_CELL_CHECK_GLASS_PLACED).orElse(String.valueOf(false))
-        ));
-        return settings;
+        return dispensingAreaSettings;
     }
 
     public void setLoadCell(LoadCell loadCell, LoadCellSettingsDto.Duplex.DispensingArea dispensingAreaSettings) {
@@ -138,6 +142,7 @@ public class LoadCellService {
                     optionsRepository.setOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT, String.valueOf(loadCell.getReferenceForceValueWeight()));
                 }
             }
+            this.dispensingAreaSettings = null;
             checkedIfLoadCellPersisted = false;
             reloadLoadCell();
             pumpService.broadCastPumpLayout();

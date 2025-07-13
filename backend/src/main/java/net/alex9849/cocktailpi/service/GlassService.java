@@ -4,6 +4,7 @@ import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.system.DispensingAreaState;
 import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
+import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellSettingsDto;
 import net.alex9849.cocktailpi.repository.GlassRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,30 +28,38 @@ public class GlassService {
     @Autowired
     private WebSocketService webSocketService;
 
+    private void setDispensingAreaState(DispensingAreaState newState) {
+        if (!Objects.equals(dispensingAreaState, newState)) {
+            dispensingAreaState = newState;
+            webSocketService.broadcastDetectedGlass(dispensingAreaState);
+        }
+    }
+
     @Scheduled(fixedDelay = 500)
     void updateCurrentGlass() {
         DispensingAreaState newState = new DispensingAreaState();
+        newState.setAreaEmpty(false);
+        newState.setGlass(null);
+        LoadCellSettingsDto.Duplex.DispensingArea daSettings = loadCellService.getDispensingAreaSettings();
+        if (!daSettings.isMatchGlass() && !daSettings.isCheckGlassPlaced()) {
+            setDispensingAreaState(newState);
+            return;
+        }
+
         long measuredWeight;
         try {
             measuredWeight = loadCellService.readLoadCell();
         } catch (IllegalStateException e) {
-            newState.setEmpty(null);
-            if (dispensingAreaState.getGlass() != null) {
-                newState.setGlass(null);
-                dispensingAreaState = newState;
-                webSocketService.broadcastDetectedGlass(dispensingAreaState);
-            }
+            setDispensingAreaState(newState);
             return;
         }
-        newState.setEmpty(measuredWeight < 20);
-        newState.setGlass(getGlassByWeight(measuredWeight));
-        if(Objects.equals(newState, dispensingAreaState)) {
-            return;
+        if(daSettings.isCheckGlassPlaced()) {
+            newState.setAreaEmpty(measuredWeight < 20);
         }
-        synchronized (this) {
-            dispensingAreaState = newState;
-            webSocketService.broadcastDetectedGlass(dispensingAreaState);
+        if(daSettings.isMatchGlass()) {
+            newState.setGlass(getGlassByWeight(measuredWeight));
         }
+        setDispensingAreaState(newState);
     }
 
     public synchronized DispensingAreaState getDispensingAreaState() {

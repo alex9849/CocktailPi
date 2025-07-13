@@ -8,12 +8,12 @@ import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 @Getter @Setter
 public class DispensingAreaStateDto {
     private GlassDto.Duplex.Detailed glass;
-    private Boolean empty;
+    private Boolean areaEmpty;
 
     public DispensingAreaStateDto(DispensingAreaState dispensingAreaState) {
         if (dispensingAreaState.getGlass() != null) {
             glass = new GlassDto.Duplex.Detailed(dispensingAreaState.getGlass());
         }
-        empty = dispensingAreaState.getEmpty();
+        areaEmpty = dispensingAreaState.isAreaEmpty();
     }
 }
