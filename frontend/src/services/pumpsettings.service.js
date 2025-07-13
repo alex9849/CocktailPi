@@ -29,12 +29,16 @@ class PumpSettingsService {
       })
   }
 
-  setLoadCell (loadcell) {
+  setLoadCell (loadcellSettings) {
     let dto = null
-    if (loadcell != null) {
+    if (loadcellSettings != null) {
       dto = {
-        clkPin: pinDtoMapper.toPinSelectDto(loadcell.clkPin),
-        dtPin: pinDtoMapper.toPinSelectDto(loadcell.dtPin)
+        clkPin: pinDtoMapper.toPinSelectDto(loadcellSettings.clkPin),
+        dtPin: pinDtoMapper.toPinSelectDto(loadcellSettings.dtPin),
+        dispensingArea: {
+          checkGlassPlaced: loadcellSettings.dispensingArea.checkGlassPlaced,
+          matchGlass: loadcellSettings.dispensingArea.matchGlass
+        }
       }
     }
     return axios.put(API_PATH + 'loadcell', dto,

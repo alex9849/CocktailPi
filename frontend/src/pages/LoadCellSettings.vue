@@ -72,6 +72,36 @@
             </q-card-section>
           </q-card>
         </div>
+        <div class="row"
+             v-if="v.form.enable.$model"
+        >
+          <q-card
+            class="col bg-card-item-group text-card-item-group"
+            flat
+            bordered
+          >
+            <q-card-section>
+              <div class="text-subtitle2">
+                Cocktail production
+              </div>
+            </q-card-section>
+            <q-separator/>
+            <q-card-section>
+              <div>
+                <q-toggle
+                  label="Check if glass placed in dispensing area"
+                  v-model:model-value="v.form.dispensingArea.checkGlassPlaced.$model"
+                />
+              </div>
+              <div>
+                <q-toggle
+                  label="Use measured weight to detect glass type"
+                  v-model:model-value="v.form.dispensingArea.matchGlass.$model"
+                />
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
         <div class="row justify-end">
           <div class="q-gutter-sm">
             <q-btn
@@ -253,13 +283,21 @@ export default {
       form: {
         enable: false,
         clkPin: null,
-        dtPin: null
+        dtPin: null,
+        dispensingArea: {
+          checkGlassPlaced: false,
+          matchGlass: false
+        }
       },
       currentLoadCell: {
         enable: false,
         clkPin: null,
         dtPin: null,
-        calibrated: false
+        calibrated: false,
+        dispensingArea: {
+          checkGlassPlaced: false,
+          matchGlass: false
+        }
       }
     }
   },
@@ -342,6 +380,10 @@ export default {
         },
         dtPin: {
           required: requiredIf(() => this.form.enable)
+        },
+        dispensingArea: {
+          checkGlassPlaced: {},
+          matchGlass: {}
         }
       }
     }

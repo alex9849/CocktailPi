@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
-import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellDto;
+import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellSettingsDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
 import net.alex9849.cocktailpi.service.LoadCellService;
@@ -12,7 +12,6 @@ import net.alex9849.cocktailpi.service.PowerLimitService;
 import net.alex9849.cocktailpi.service.ReversePumpSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,20 +53,20 @@ public class PumpSettingsEndpoint {
         if(loadCell == null) {
             return ResponseEntity.ok(null);
         } else {
-            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCell));
+            return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(loadCell, loadCellService.getDispensingAreaSettings()));
         }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "loadcell", method = RequestMethod.PUT)
-    public ResponseEntity<?> setLoadCell(@RequestBody(required = false) @Valid LoadCellDto.Request.Create settings) {
+    public ResponseEntity<?> setLoadCell(@RequestBody(required = false) @Valid LoadCellSettingsDto.Request.Create settings) {
         LoadCell loadCell = loadCellService.fromDto(settings);
-        loadCellService.setLoadCell(loadCell);
+        loadCellService.setLoadCell(loadCell, settings.getDispensingArea());
         loadCell = loadCellService.getLoadCell();
         if(loadCell == null) {
             return ResponseEntity.ok(null);
         } else {
-            return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCell));
+            return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(loadCell, loadCellService.getDispensingAreaSettings()));
         }
     }
 
@@ -80,13 +79,18 @@ public class PumpSettingsEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "loadcell/calibratezero", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellZero() {
-        return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCellService.calibrateLoadCellZero()));
+        return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
+                loadCellService.calibrateLoadCellZero(), loadCellService.getDispensingAreaSettings()
+        ));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "loadcell/calibratereference", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellRefWeight(@RequestBody @NotNull Long referenceWeight) {
-        return ResponseEntity.ok(new LoadCellDto.Response.Detailed(loadCellService.calibrateRefValue(referenceWeight)));
+        return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
+                loadCellService.calibrateRefValue(referenceWeight),
+                loadCellService.getDispensingAreaSettings()
+        ));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
