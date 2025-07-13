@@ -1,10 +1,12 @@
 package net.alex9849.cocktailpi.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@EqualsAndHashCode
 public class Glass {
     private long id;
     private String name;

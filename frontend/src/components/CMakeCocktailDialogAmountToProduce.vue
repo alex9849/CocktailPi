@@ -234,18 +234,19 @@ export default {
   },
   mounted () {
     this.detectedGlassValid = false
-    WebsocketService.subscribe(this, '/user/topic/placedglass', glass => {
-      if (glass.body === 'DELETE') {
+    WebsocketService.subscribe(this, '/user/topic/dispensingarea', glass => {
+      const state = JSON.parse(glass.body)
+      if (!state.glass) {
         this.detectedGlass = null
         this.detectedGlassValid = true
         return
       }
-      this.detectedGlass = JSON.parse(glass.body).id
+      this.detectedGlass = state.glass.id
       this.detectedGlassValid = true
     }, true)
   },
   unmounted () {
-    WebsocketService.unsubscribe(this, '/user/topic/placedglass')
+    WebsocketService.unsubscribe(this, '/user/topic/dispensingarea')
   },
   watch: {
     activeGlass () {

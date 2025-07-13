@@ -126,6 +126,7 @@ export default {
   data () {
     return {
       amountToProduce: '',
+      dispensingAreaEmpty: false,
       feasibilityReportValid: false,
       feasibilityReport: {
         ingredientGroupReplacements: [],
@@ -154,10 +155,18 @@ export default {
       mdiClose
     }
   },
+  mounted () {
+    this.detectedGlassValid = false
+    WebsocketService.subscribe(this, '/user/topic/dispensingarea', glass => {
+      const state = JSON.parse(glass.body)
+      this.dispensingAreaEmpty = state.empty
+    }, true)
+  },
   unmounted () {
     for (const id of this.allPumpIds) {
       WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
     }
+    WebsocketService.unsubscribe(this, '/user/topic/dispensingarea')
   },
   watch: {
     recipe: {
@@ -172,13 +181,16 @@ export default {
       }
     },
     amountToProduce: {
-      handler (value) {
-        const config = this.getCurrentOrderConfigurationDto()
-        config.amountOrderedInMl = value
-        this.tryCheckFeasibility(config)
+      handler () {
+        this.tryCheckFeasibility()
       }
     },
     getPumpLayout: {
+      handler () {
+        this.tryCheckFeasibility()
+      }
+    },
+    dispensingAreaEmpty: {
       handler () {
         this.tryCheckFeasibility()
       }

@@ -57,8 +57,8 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
         if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_ACTIONS_STATUS_DESTINATION)) {
             webSocketService.sendRunningEventActionsStatusToUser(eventService.getRunningActionsInformation(), event.getUser().getName());
         }
-        if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_ACTIONS_DETECTED_GLASS)) {
-            webSocketService.sendDetectedGlassToUser(glassService.getDetectedGlass(), event.getUser().getName());
+        if (Objects.equals(simpDestination, "/user" + WebSocketService.WS_DISPENSING_AREA)) {
+            webSocketService.sendDetectedGlassToUser(glassService.getDispensingAreaState(), event.getUser().getName());
         }
 
         final String userPumpRunningStateDestination = "/user" + WebSocketService.WS_PUMP_RUNNING_STATE_DESTINATION + "/";

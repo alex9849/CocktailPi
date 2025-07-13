@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.service;
 
 import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.LoadCell;
+import net.alex9849.cocktailpi.model.system.DispensingAreaState;
 import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailpi.repository.GlassRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
 @Transactional
 public class GlassService {
-    private Glass currentGlass = null;
+    private DispensingAreaState dispensingAreaState = new DispensingAreaState();
 
     @Autowired
     private GlassRepository glassRepository;
@@ -27,36 +29,35 @@ public class GlassService {
 
     @Scheduled(fixedDelay = 500)
     void updateCurrentGlass() {
+        DispensingAreaState newState = new DispensingAreaState();
+        long measuredWeight;
         try {
-            LoadCell loadcell = loadCellService.getLoadCell();
-            if(loadcell == null) {
-                return;
+            measuredWeight = loadCellService.readLoadCell();
+        } catch (IllegalStateException e) {
+            newState.setEmpty(null);
+            if (dispensingAreaState.getGlass() != null) {
+                newState.setGlass(null);
+                dispensingAreaState = newState;
+                webSocketService.broadcastDetectedGlass(dispensingAreaState);
             }
-            if(!loadcell.isCalibrated()) {
-                return;
-            }
-            long weight = loadcell.getHX711().read(7);
-            Glass foundGlass = getGlass(weight);
-            if(foundGlass == null && currentGlass == null) {
-                return;
-            }
-            if(foundGlass != null && currentGlass != null && currentGlass.getId() == foundGlass.getId()) {
-                return;
-            }
-            synchronized (this) {
-                currentGlass = foundGlass;
-                webSocketService.broadcastDetectedGlass(currentGlass);
-            }
-        } catch (InterruptedException e) {
             return;
+        }
+        newState.setEmpty(measuredWeight < 20);
+        newState.setGlass(getGlassByWeight(measuredWeight));
+        if(Objects.equals(newState, dispensingAreaState)) {
+            return;
+        }
+        synchronized (this) {
+            dispensingAreaState = newState;
+            webSocketService.broadcastDetectedGlass(dispensingAreaState);
         }
     }
 
-    public synchronized Glass getDetectedGlass() {
-        return currentGlass;
+    public synchronized DispensingAreaState getDispensingAreaState() {
+        return dispensingAreaState;
     }
 
-    private Glass getGlass(long weight) {
+    private Glass getGlassByWeight(long weight) {
         Glass foundGlass = null;
         int currentWeightDiff = Integer.MAX_VALUE;
         for (Glass glass : getAll()) {
