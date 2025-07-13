@@ -9,20 +9,32 @@
     <template v-slot:content>
       <ul
         style="text-align: start"
-        v-if="isFulfilled"
       >
-        <li v-for="requiredIngredient in requiredIngredients" :key="requiredIngredient.ingredient.id">
+        <li
+          v-for="requiredIngredient in displayIngredientList"
+          :key="requiredIngredient.ingredient.id"
+        >
           {{ requiredIngredient.ingredient.name }}:
-          <strong>{{ requiredIngredient.amountRequired }} {{ requiredIngredient.ingredient.unit }}</strong>
-        </li>
-      </ul>
-      <ul
-        style="text-align: start"
-        v-else
-      >
-        <li v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.ingredient.id">
-          {{ insufficientIngredient.ingredient.name }}:
-          <strong>{{ insufficientIngredient.amountRequired }} {{ insufficientIngredient.ingredient.unit }}</strong> required
+          <strong>
+            {{ requiredIngredient.amountRequired }} {{ requiredIngredient.ingredient.unit }}
+          </strong>
+          <span
+            v-if="isError === 'INSUFFICIENT_INGREDIENTS'"
+          > required</span>
+          <q-chip
+            :color="requiredIngredient.ingredient.inBar? 'green-4' : 'red-4'"
+            v-if="!requiredIngredient.ingredient.onPump"
+            dense
+            square
+            :ripple="false"
+          >
+            <div v-if="requiredIngredient.ingredient.inBar">
+              {{ $t('component.make_cocktail_insufficient_ingredients.tags.in_bar') }}
+            </div>
+            <div v-else>
+              {{ $t('component.make_cocktail_insufficient_ingredients.tags.not_in_bar') }}
+            </div>
+          </q-chip>
         </li>
       </ul>
     </template>
@@ -30,7 +42,7 @@
 </template>
 
 <script>
-import { mdiClose, mdiCheck } from '@quasar/extras/mdi-v5'
+import { mdiClose, mdiCheck, mdiAlertOutline } from '@quasar/extras/mdi-v5'
 import CQHeadlinedCard from 'components/CQHeadlinedCard'
 
 export default {
@@ -43,34 +55,55 @@ export default {
     }
   },
   computed: {
-    isFulfilled () {
-      return this.insufficientIngredients.length === 0
+    isError () {
+      if (this.insufficientIngredients.length !== 0) {
+        return 'INSUFFICIENT_INGREDIENTS'
+      }
+      if (this.ingredientsToAddManually.length !== 0) {
+        return 'UNASSIGNED_INGREDIENTS'
+      }
+      return null
     },
     insufficientIngredients () {
       return this.requiredIngredients
         .filter(x => x.amountMissing > 0)
     },
+    ingredientsToAddManually () {
+      return this.requiredIngredients
+        .filter(x => !x.ingredient.onPump).map(x => x.ingredient)
+    },
+    displayIngredientList () {
+      switch (this.isError) {
+        case 'INSUFFICIENT_INGREDIENTS': return this.insufficientIngredients
+        case 'UNASSIGNED_INGREDIENTS': return this.requiredIngredients
+        default: return this.requiredIngredients
+      }
+    },
     cardClass () {
       return {
-        'bg-warning': !this.isFulfilled,
-        'bg-light-blue-3': this.isFulfilled
+        'bg-warning': this.isError,
+        'bg-light-blue-3': !this.isError
       }
     },
     headline () {
-      if (this.isFulfilled) {
-        return this.$t('component.make_cocktail_insufficient_ingredients.fulfilled_msg')
-      } else {
-        return this.$t('component.make_cocktail_insufficient_ingredients.not_fulfilled_msg')
+      switch (this.isError) {
+        case 'INSUFFICIENT_INGREDIENTS': return this.$t('component.make_cocktail_insufficient_ingredients.insufficient_filling_level')
+        case 'UNASSIGNED_INGREDIENTS': return this.$t('component.make_cocktail_insufficient_ingredients.unassigned_ingredients')
+        default: return this.$t('component.make_cocktail_insufficient_ingredients.fulfilled_msg')
       }
     },
     iconClass () {
-      return this.isFulfilled ? 'text-white' : 'text-negative'
+      return this.isError ? 'text-negative' : 'text-white'
     },
     iconBackgroundClass () {
-      return this.isFulfilled ? 'bg-light-green-14' : 'bg-warning'
+      return this.isError ? 'bg-warning' : 'bg-light-green-14'
     },
     icon () {
-      return this.isFulfilled ? mdiCheck : mdiClose
+      switch (this.isError) {
+        case 'INSUFFICIENT_INGREDIENTS': return mdiClose
+        case 'UNASSIGNED_INGREDIENTS': return mdiAlertOutline
+        default: return mdiCheck
+      }
     }
   }
 }

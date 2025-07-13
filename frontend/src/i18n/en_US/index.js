@@ -744,15 +744,6 @@ export default {
         }
       }
     },
-    make_cocktail_add_manually: {
-      fulfilled_msg: 'All ingredients assigned to pumps! Cocktail can be produced fully automatic!',
-      not_fulfilled_msg: 'The following ingredients have to get added manually or are not assigned to pumps. ' +
-        'You will be asked to add them during the production progress:',
-      tags: {
-        in_bar: 'in bar',
-        not_in_bar: 'not in bar'
-      }
-    },
     pump_status: {
       headline: 'Status',
       configure_btn: 'Configure',
@@ -796,7 +787,13 @@ export default {
     },
     make_cocktail_insufficient_ingredients: {
       fulfilled_msg: 'The following ingredients will be consumed:',
-      not_fulfilled_msg: 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:'
+      insufficient_filling_level: 'Can\'t make cocktail! Some pumps don\'t have enough liquid left:',
+      unassigned_ingredients: 'Some ingredients have to get added manually. ' +
+        'You will be asked to add them during the production progress:',
+      tags: {
+        in_bar: 'in bar / add manually',
+        not_in_bar: 'not in bar / add manually'
+      }
     },
     make_cocktail_customizer: {
       headline: 'Order customizer',

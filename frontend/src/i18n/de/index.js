@@ -687,14 +687,6 @@ export default {
         }
       }
     },
-    make_cocktail_add_manually: {
-      fulfilled_msg: 'Alle Zutaten sind Pumpen zugeordnet! Cocktail kann vollautomatisch hergestellt werden!',
-      not_fulfilled_msg: 'Die folgenden Zutaten müssen manuell hinzugefügt werden oder sind keinen Pumpen zugeordnet. Sie werden während des Herstellungsprozesses aufgefordert, diese hinzuzufügen:',
-      tags: {
-        in_bar: 'in Bar',
-        not_in_bar: 'nicht in Bar'
-      }
-    },
     pump_status: {
       headline: 'Status',
       configure_btn: 'Konfigurieren',
@@ -738,7 +730,12 @@ export default {
     },
     make_cocktail_insufficient_ingredients: {
       fulfilled_msg: 'Die folgenden Zutaten werden verbraucht:',
-      not_fulfilled_msg: 'Cocktail kann nicht hergestellt werden! Einige Pumpen-Behälter haben nicht mehr genügend Flüssigkeit:'
+      insufficient_filling_level: 'Cocktail kann nicht hergestellt werden! Einige Pumpen-Behälter haben nicht mehr genügend Flüssigkeit:',
+      unassigned_ingredients: 'Einige Zutaten müssen manuell hinzugefügt werden. Sie werden während des Produktionsprozesses dazu aufgefordert:',
+      tags: {
+        in_bar: 'in Bar / manuell hinzufügen',
+        not_in_bar: 'not in Bar / manuell hinzufügen'
+      }
     },
     make_cocktail_customizer: {
       headline: 'Bestellanpassung',

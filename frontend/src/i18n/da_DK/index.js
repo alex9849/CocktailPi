@@ -624,14 +624,6 @@ export default {
         }
       }
     },
-    make_cocktail_add_manually: {
-      fulfilled_msg: 'Alle ingredienser er tildelt pumper! Cocktail kan produceres fuldautomatisk!',
-      not_fulfilled_msg: 'Følgende ingredienser skal tilføjes manuelt eller er ikke tildelt pumper. Du vil blive bedt om at tilføje dem under produktionsforløbet:',
-      tags: {
-        in_bar: 'i baren',
-        not_in_bar: 'ikke i baren'
-      }
-    },
     make_cocktail_occupied: {
       fulfilled_msg: 'Maskinen er klar!',
       occupied_cocktail_msg: 'Maskinen er optaget! En cocktail bliver tilberedt i øjeblikket!',
@@ -639,7 +631,12 @@ export default {
     },
     make_cocktail_insufficient_ingredients: {
       fulfilled_msg: 'Følgende ingredienser vil blive forbrugt:',
-      not_fulfilled_msg: 'Kan ikke lave cocktail! Nogle pumper har ikke nok væske tilbage:'
+      insufficient_filling_level: 'Kan ikke lave cocktail! Nogle pumper har ikke nok væske tilbage:',
+      unassigned_ingredients: 'Nogle ingredienser skal tilføjes manuelt. Du vil blive bedt om at tilføje dem undervejs i produktionen:',
+      tags: {
+        in_bar: 'tilføj i bar / manuelt',
+        not_in_bar: 'ikke i Bar / tilføj manuelt'
+      }
     },
     make_cocktail_customizer: {
       headline: 'Tilpas din bestilling',

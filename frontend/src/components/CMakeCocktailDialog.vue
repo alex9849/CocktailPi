@@ -53,9 +53,6 @@
             :all-ingredient-groups-replaced="feasibilityReport.allIngredientGroupsReplaced"
             @ReplacementUpdate="onReplacementUpdate($event.toReplaceId, $event.replacement)"
           />
-          <c-make-cocktail-dialog-ingredients-to-add-manually
-            :unassigned-ingredients="ingredientsToAddManually"
-          />
           <c-make-cocktail-dialog-pumps-in-use
             :pumps-occupied="anyPumpOccupied"
           />
@@ -99,7 +96,6 @@ import { maxValue, minValue, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import CMakeCocktailDialogInsufficientIngredients from 'components/CMakeCocktailDialogInsufficientIngredients'
 import CMakeCocktailDialogPumpEditor from 'components/CMakeCocktailDialogPumpEditor'
-import CMakeCocktailDialogIngredientsToAddManually from 'components/CMakeCocktailDialogIngredientsToAddManually'
 import CMakeCocktailDialogIngredientGroupReplacements from 'components/CMakeCocktailDialogIngredientGroupReplacements'
 import CMakeCocktailDialogPumpsInUse from 'components/CMakeCocktailDialogPumpsInUse'
 import CMakeCocktailDialogRecipeCustomiser from 'components/CMakeCocktailDialogRecipeCustomiser'
@@ -113,7 +109,6 @@ export default {
     CMakeCocktailDialogRecipeCustomiser,
     CMakeCocktailDialogPumpsInUse,
     CMakeCocktailDialogIngredientGroupReplacements,
-    CMakeCocktailDialogIngredientsToAddManually,
     CMakeCocktailDialogPumpEditor,
     CMakeCocktailDialogInsufficientIngredients
   },
@@ -325,10 +320,6 @@ export default {
         !this.anyPumpOccupied &&
         !this.hasCocktailProgress &&
         !this.v.amountToProduce.$invalid
-    },
-    ingredientsToAddManually () {
-      return this.feasibilityReport.requiredIngredients
-        .filter(x => !x.ingredient.onPump).map(x => x.ingredient)
     }
   },
   validations () {
