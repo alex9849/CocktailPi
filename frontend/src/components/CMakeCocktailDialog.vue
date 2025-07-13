@@ -159,16 +159,10 @@ export default {
       mdiClose
     }
   },
-  mounted () {
-    WebsocketService.subscribe(this, '/user/topic/placedglass', glass => {
-      console.log(glass)
-    }, true)
-  },
   unmounted () {
     for (const id of this.allPumpIds) {
       WebsocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(id))
     }
-    WebsocketService.unsubscribe(this, '/user/topic/placedglass')
   },
   watch: {
     recipe: {

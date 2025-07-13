@@ -22,8 +22,8 @@
       <q-select
         :dark="color.backgroundDark"
         v-if="showGlassSelector"
-        :model-value="selectedGlass"
-        @update:modelValue="onGlassSelect($event)"
+        :model-value="activeGlass"
+        @update:modelValue="selectedGlass = $event"
         :label="$t('component.make_cocktail_amount_to_produce.glass_selector_label')"
         input-class="text-center text-weight-medium"
         style="width: 400px"
@@ -31,10 +31,62 @@
         outlined
         :options="availableGlasses"
         :option-label="x => x.name + ' (' + x.size + 'ml)'"
-        :error="!selectedGlass"
+        :error="!activeGlass"
         :error-message="$t('errors.field_required')"
         hide-bottom-space
-      />
+      >
+        <template v-slot:selected-item="scope">
+          <span>
+            {{ scope.opt.name }} ({{ scope.opt.size }}ml)
+            <span
+              class="text-positive text-italic"
+              v-if="scope.opt.id === detectedGlass"
+            >
+              Auto detected
+            </span>
+            <span
+              class="text-positive text-italic"
+              v-else-if="scope.opt.id === recipeDefaultGlass?.id"
+            >
+              Recipe default
+            </span>
+            <span
+              class="text-positive text-italic"
+              v-else-if="scope.opt.default"
+            >
+              Global default
+            </span>
+          </span>
+        </template>
+        <template v-slot:option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section>
+              <q-item-label>{{ scope.opt.name }} ({{ scope.opt.size }}ml)</q-item-label>
+              <q-item-label
+                caption
+                class="text-positive"
+                v-if="scope.opt.id === detectedGlass"
+              >
+                Auto detected
+              </q-item-label>
+              <q-item-label
+                caption
+                class="text-positive"
+                v-else-if="scope.opt.id === recipeDefaultGlass?.id"
+              >
+                Recipe default
+              </q-item-label>
+              <q-item-label
+                caption
+                class="text-positive"
+                v-else-if="scope.opt.default"
+              >
+                Global default
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-input
         v-else
         :dark="color.backgroundDark"
@@ -120,6 +172,7 @@ import GlassService from 'src/services/glass.service'
 import { mdiMinus, mdiMinusThick, mdiPlus, mdiPlusThick, mdiSwapHorizontalBold } from '@quasar/extras/mdi-v5'
 import { mapGetters } from 'vuex'
 import { calcTextColor, complementColor } from 'src/mixins/utils'
+import WebsocketService from 'src/services/websocket.service'
 
 export default {
   name: 'CMakeCocktailDialogAmountToProduce',
@@ -139,11 +192,12 @@ export default {
   emits: ['update:modelValue'],
   data: () => {
     return {
+      detectedGlass: '',
+      detectedGlassValid: false,
       loading: false,
       availableGlasses: [],
       selectedGlass: null,
-      isGlassSelect: true,
-      lastIsValidEmit: null
+      isGlassSelect: true
     }
   },
   created () {
@@ -157,20 +211,6 @@ export default {
       .then(x => {
         x.sort((a, b) => a.size - b.size)
         this.availableGlasses = x
-        if (this.recipeDefaultGlass) {
-          this.onGlassSelect(this.recipeDefaultGlass)
-        } else if (this.availableGlasses.length !== 0) {
-          for (const glass of this.availableGlasses) {
-            if (glass.default) {
-              this.onGlassSelect(glass)
-            }
-          }
-        } else {
-          this.isGlassSelect = false
-          if (!this.modelValue) {
-            this.emitAmountToProduce(this.defaultValueNoGlass)
-          }
-        }
       })
       .finally(() => {
         this.loading = false
@@ -183,23 +223,51 @@ export default {
       }
       this.$emit('update:modelValue', val)
     },
-    onGlassSelect (glass) {
-      this.selectedGlass = glass
-      this.emitAmountToProduce(glass?.size)
-    },
     toggleShowGlassSelect () {
       this.isGlassSelect = !this.isGlassSelect
       if (this.isGlassSelect) {
-        this.onGlassSelect(this.selectedGlass)
+        this.emitAmountToProduce(this.activeGlass?.size)
       } else if (!this.modelValue) {
         this.emitAmountToProduce(this.defaultValueNoGlass)
       }
+    }
+  },
+  mounted () {
+    this.detectedGlassValid = false
+    WebsocketService.subscribe(this, '/user/topic/placedglass', glass => {
+      if (glass.body === 'DELETE') {
+        this.detectedGlass = null
+        this.detectedGlassValid = true
+        return
+      }
+      this.detectedGlass = JSON.parse(glass.body).id
+      this.detectedGlassValid = true
+    }, true)
+  },
+  unmounted () {
+    WebsocketService.unsubscribe(this, '/user/topic/placedglass')
+  },
+  watch: {
+    activeGlass () {
+      if (this.activeGlass && this.isGlassSelect) {
+        this.emitAmountToProduce(this.activeGlass.size)
+      }
+    },
+    dataLoaded () {
+      if (this.activeGlass) {
+        return
+      }
+      this.isGlassSelect = false
+      this.emitAmountToProduce(this.defaultValueNoGlass)
     }
   },
   computed: {
     ...mapGetters({
       color: 'appearance/getNormalColors'
     }),
+    dataLoaded () {
+      return !this.loading && this.detectedGlassValid
+    },
     plusMinusBtnColor () {
       const background = complementColor(this.color.background, 15)
       return {
@@ -215,6 +283,29 @@ export default {
     },
     showGlassSelector () {
       return this.isGlassSelect && this.availableGlasses.length !== 0
+    },
+    activeGlass () {
+      if (this.selectedGlass) {
+        return this.selectedGlass
+      }
+      let found = null
+      for (const glass of this.availableGlasses) {
+        if (glass.id === this.detectedGlass) {
+          found = glass
+        }
+      }
+      if (found) {
+        return found
+      }
+      if (this.recipeDefaultGlass) {
+        return this.recipeDefaultGlass
+      }
+      for (const glass of this.availableGlasses) {
+        if (glass.default) {
+          return glass
+        }
+      }
+      return null
     }
   }
 }

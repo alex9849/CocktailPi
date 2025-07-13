@@ -821,7 +821,7 @@ export default {
           filling_level: 'Remaining filling level',
           pumped_up: 'Pumped Up',
           state: 'State',
-          actions: 'actions'
+          actions: 'Actions'
         },
         refill_btn_label: 'Fill',
         state_ok: 'OK',

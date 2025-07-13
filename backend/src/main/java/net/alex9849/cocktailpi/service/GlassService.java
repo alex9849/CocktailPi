@@ -63,8 +63,8 @@ public class GlassService {
             if(glass.getEmptyWeight() == null) {
                 continue;
             }
-            int lowerBound = glass.getEmptyWeight() - 10;
-            int upperBound = glass.getEmptyWeight() + 10;
+            int lowerBound = glass.getEmptyWeight() - 5;
+            int upperBound = glass.getEmptyWeight() + 15;
             if (lowerBound <= weight && weight <= upperBound) {
                 int weightDiff = (int) Math.abs(weight - glass.getEmptyWeight());
                 if(foundGlass == null || currentWeightDiff > weightDiff) {
