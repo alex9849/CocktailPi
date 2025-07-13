@@ -249,9 +249,12 @@ export default {
     WebsocketService.unsubscribe(this, '/user/topic/dispensingarea')
   },
   watch: {
-    activeGlass () {
-      if (this.activeGlass && this.isGlassSelect) {
-        this.emitAmountToProduce(this.activeGlass.size)
+    activeGlass: {
+      immediate: true,
+      handler () {
+        if (this.activeGlass && this.isGlassSelect) {
+          this.emitAmountToProduce(this.activeGlass.size)
+        }
       }
     },
     dataLoaded () {
