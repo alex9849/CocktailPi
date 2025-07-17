@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.service;
 
 import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.LoadCell;
+import net.alex9849.cocktailpi.model.pump.LoadCellReader;
 import net.alex9849.cocktailpi.model.system.DispensingAreaState;
 import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellSettingsDto;
@@ -51,10 +52,16 @@ public class GlassService {
         long measuredWeight;
         try {
             LoadCell loadCell = loadCellService.getLoadCell();
-            if (loadCell == null) {
+            if (loadCell == null || !loadCell.isCalibrated()) {
+                setDispensingAreaState(newState);
                 return;
             }
-            measuredWeight = loadCell.getLoadCellReader().readCurrent().get();
+            LoadCellReader reader = loadCell.getLoadCellReader();
+            if (reader == null) {
+                setDispensingAreaState(newState);
+                return;
+            }
+            measuredWeight = reader.readCurrent().get();
         } catch (InterruptedException | ExecutionException | HX711Exception e) {
             setDispensingAreaState(newState);
             return;
