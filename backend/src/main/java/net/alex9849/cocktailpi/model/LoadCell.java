@@ -3,9 +3,13 @@ package net.alex9849.cocktailpi.model;
 import com.pi4j.io.gpio.digital.PullResistance;
 import lombok.Getter;
 import net.alex9849.cocktailpi.model.gpio.HardwarePin;
+import net.alex9849.cocktailpi.model.pump.LoadCellReader;
 import net.alex9849.motorlib.sensor.HX711;
 
 public class LoadCell {
+    private static HX711 hx711;
+    private static LoadCellReader reader;
+
     @Getter
     private HardwarePin clkHwPin;
     @Getter
@@ -16,20 +20,51 @@ public class LoadCell {
     private Long referenceForceValue;
     @Getter
     private Long referenceForceValueWeight;
-    private HX711 hx711;
 
-    public HX711 getHX711() {
-        if(hx711 == null) {
-            if(!isCalibrateable()) {
-                return null;
-            }
-            hx711 = new HX711(dtHwPin.getInputPin(PullResistance.OFF), clkHwPin.getOutputPin(), 128);
-            hx711.calibrateEmpty(zeroForceValue);
-            if(isCalibrated()) {
-                hx711.calibrateWeighted(referenceForceValueWeight, referenceForceValue);
-            }
+
+    private HX711 genHX711() {
+        shutdown();
+        if(!isCalibrateable()) {
+            return null;
+        }
+        HX711 hx711 = new HX711(dtHwPin.getInputPin(PullResistance.OFF), clkHwPin.getOutputPin(), 128);
+        hx711.calibrateEmpty(zeroForceValue);
+        if(isCalibrated()) {
+            hx711.calibrateWeighted(referenceForceValueWeight, referenceForceValue);
         }
         return hx711;
+    }
+
+    public synchronized HX711 getHX711() {
+        if(hx711 == null) {
+            hx711 = genHX711();
+        }
+        return hx711;
+    }
+
+    public synchronized LoadCellReader getLoadCellReader() {
+        HX711 hx711 = getHX711();
+        if(hx711 == null) {
+            return null;
+        }
+        if (reader == null) {
+            reader = new LoadCellReader(hx711, 7);
+        }
+        return reader;
+    }
+
+    public synchronized void shutdown() {
+        if(hx711 != null) {
+            hx711 = null;
+        }
+        if(reader != null) {
+            try {
+                reader.shutdownBlocking();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            reader = null;
+        }
     }
 
     public boolean isCalibrateable() {

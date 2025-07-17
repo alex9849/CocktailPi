@@ -7,6 +7,7 @@ import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellSettingsDto;
 import net.alex9849.cocktailpi.repository.GlassRepository;
 import net.alex9849.cocktailpi.service.pumps.PumpLockService;
+import net.alex9849.motorlib.exception.HX711Exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Transactional
@@ -27,8 +29,6 @@ public class GlassService {
     private LoadCellService loadCellService;
     @Autowired
     private WebSocketService webSocketService;
-    @Autowired
-    private PumpLockService pumpLockService;
 
     private void setDispensingAreaState(DispensingAreaState newState) {
         if (!Objects.equals(dispensingAreaState, newState)) {
@@ -37,21 +37,25 @@ public class GlassService {
         }
     }
 
-    @Scheduled(fixedDelay = 500)
+    @Scheduled(fixedDelay = 300)
     void updateCurrentGlass() {
         DispensingAreaState newState = new DispensingAreaState();
         newState.setAreaEmpty(false);
         newState.setGlass(null);
         LoadCellSettingsDto.Duplex.DispensingArea daSettings = loadCellService.getDispensingAreaSettings();
-        if (!daSettings.isMatchGlass() && !daSettings.isCheckGlassPlaced() && pumpLockService.canAcquireGlobal(true)) {
+        if (!daSettings.isMatchGlass() && !daSettings.isCheckGlassPlaced()) {
             setDispensingAreaState(newState);
             return;
         }
 
         long measuredWeight;
         try {
-            measuredWeight = loadCellService.readLoadCell();
-        } catch (IllegalStateException e) {
+            LoadCell loadCell = loadCellService.getLoadCell();
+            if (loadCell == null) {
+                return;
+            }
+            measuredWeight = loadCell.getLoadCellReader().readCurrent().get();
+        } catch (InterruptedException | ExecutionException | HX711Exception e) {
             setDispensingAreaState(newState);
             return;
         }

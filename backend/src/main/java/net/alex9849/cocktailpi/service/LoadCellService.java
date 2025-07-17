@@ -154,7 +154,10 @@ public class LoadCellService {
     private void reloadLoadCell() {
         boolean enabled = Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_LOAD_CELL_ENABLED).orElse(null));
         if (!enabled) {
-            loadCell = null;
+            if (loadCell != null) {
+                loadCell.shutdown();
+                loadCell = null;
+            }
             return;
         }
         LoadCell loadCell = new LoadCell();

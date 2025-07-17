@@ -38,17 +38,17 @@ public class ValveTask extends PumpTask {
             }
 
             ValveDriver driver = valve.getMotorDriver();
-            HX711 hx711 = valve.getLoadCell().getHX711();
+            LoadCellReader loadCell = valve.getLoadCell().getLoadCellReader();
             try {
-                initialReadGrams = hx711.read(7);
+                initialReadGrams = loadCell.readFromNow(7).get();
                 long absoluteGoalGrams = initialReadGrams + remainingGrams;
                 while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
                     driver.setOpen(true);
                     while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
-                        currentGrams = hx711.read_once();
+                        currentGrams = loadCell.readFromNow(1).get();
                     }
                     driver.setOpen(false);
-                    currentGrams = hx711.read(7);
+                    currentGrams = loadCell.readFromNow(7).get();
                 }
                 remainingGrams = absoluteGoalGrams - currentGrams;
             } catch (InterruptedException e) {
