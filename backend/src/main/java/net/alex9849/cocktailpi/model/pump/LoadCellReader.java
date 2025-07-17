@@ -95,18 +95,31 @@ public class LoadCellReader extends Thread {
     }
 
     public Future<Long> readCurrent() {
+        return readCurrent(dataPoints.length);
+    }
+
+    public Future<Long> readCurrent(int rounds) {
         synchronized (taskMap) {
             if(!running) {
                 throw new HX711Exception("Load cell shut down");
             }
-            List<Request> list = taskMap.computeIfAbsent(dataPointIdx, k -> new ArrayList<>());
+            if(arrayFilled) {
+                CompletableFuture<Long> future = new CompletableFuture<>();
+                future.complete(mean(rounds));
+                return future;
+            }
+            List<Request> list = taskMap.computeIfAbsent(dataPoints.length - 1, k -> new ArrayList<>());
             CompletableFuture<Long> future = new CompletableFuture<>();
             Request request = new Request();
             request.future = future;
-            request.rounds = dataPoints.length;
+            request.rounds = rounds;
             list.add(request);
             return future;
         }
+    }
+
+    public Future<Long> readFromNow() {
+        return readFromNow(dataPoints.length);
     }
 
     public Future<Long> readFromNow(int readRounds) {
