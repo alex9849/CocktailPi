@@ -55,8 +55,8 @@ public class StepperMotorTask extends PumpTask {
             }
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    synchronized (this) {
-                        wait();
+                    synchronized (signalLock) {
+                        signalLock.wait();
                     }
                 } catch (InterruptedException ignored) {}
                 if(this.isCancelledExecutionThread()) {

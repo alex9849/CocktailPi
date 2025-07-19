@@ -38,6 +38,8 @@ public abstract class PumpTask implements Runnable {
     @Getter
     protected State state;
     private Future<?> future;
+    protected final Object signalLock;
+    protected final Object stateLock;
 
 
     public PumpTask(Long prevJobId, Pump pump, boolean runInfinity, boolean isPumpUpDown, Direction direction) {
@@ -51,6 +53,8 @@ public abstract class PumpTask implements Runnable {
         this.startTime = System.currentTimeMillis();
         this.cancelled = false;
         this.callbacks = new ArrayList<>();
+        this.signalLock = new Object();
+        this.stateLock = new Object();
         this.state = State.READY;
     }
 
@@ -104,27 +108,39 @@ public abstract class PumpTask implements Runnable {
         this.callbacks.add(runnable);
     }
 
-    public synchronized boolean signalStart() {
-        if (getState() == State.RUNNING) {
-            notify();
-            return true;
+    public boolean signalStart() {
+        synchronized (stateLock) {
+            if (getState() == State.RUNNING) {
+                synchronized (signalLock) {
+                    signalLock.notify();
+                }
+                return true;
+            }
+            if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
+                this.state = State.RUNNING;
+                startRunTimeTrack();
+                synchronized (signalLock) {
+                    signalLock.notify();
+                }
+                return true;
+            }
+            return false;
         }
-        if(getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
-            this.state = State.RUNNING;
-            startRunTimeTrack();
-            notify();
-            return true;
-        }
-        return false;
     }
 
     public boolean suspend() {
-        if(this.state != State.RUNNING) {
-            return false;
+        synchronized (stateLock) {
+            if(this.state != State.RUNNING) {
+                return false;
+            }
+            this.state = State.SUSPENDING;
         }
-        this.state = State.SUSPENDING;
         doSuspend();
-        this.state = State.SUSPENDED;
+        synchronized (stateLock) {
+            if(getState() == State.SUSPENDING) {
+                this.state = State.SUSPENDED;
+            }
+        }
         stopRunTimeTrack();
         return true;
     }
@@ -148,7 +164,9 @@ public abstract class PumpTask implements Runnable {
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
             pump.shutdownDriver(false);
-            this.state = State.FINISHED;
+            synchronized (stateLock) {
+                this.state = State.FINISHED;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -158,7 +176,9 @@ public abstract class PumpTask implements Runnable {
             this.finishedJobMetrics = genJobMetrics();
             this.finishedRunningState = genRunningState();
             this.finishedJobMetrics.setException(e);
-            this.state = State.ERROR;
+            synchronized (stateLock) {
+                this.state = State.ERROR;
+            }
         } finally {
             triggerCallbacks();
         }

@@ -25,8 +25,8 @@ public class DcMotorTask extends PumpTask {
         while (remainingDuration > 0 && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    synchronized (this) {
-                        wait();
+                    synchronized (signalLock) {
+                        signalLock.wait();
                     }
                 } catch (InterruptedException ignored) {}
                 if(this.isCancelledExecutionThread()) {
@@ -36,8 +36,10 @@ public class DcMotorTask extends PumpTask {
             dcMotor.setRunning(true);
             long startTime = System.currentTimeMillis();
             try {
-                synchronized (this) {
-                    wait(remainingDuration);
+                synchronized (signalLock) {
+                    if (remainingDuration > 0) {
+                        signalLock.wait(remainingDuration);
+                    }
                 }
             } catch (InterruptedException ignored) {}
             if(this.isCancelledExecutionThread()) {
@@ -50,8 +52,10 @@ public class DcMotorTask extends PumpTask {
     }
 
     @Override
-    protected synchronized void doSuspend() {
-        notify();
+    protected void doSuspend() {
+        synchronized (signalLock) {
+            signalLock.notify();
+        }
         dcPump.getMotorDriver().setRunning(false);
     }
 

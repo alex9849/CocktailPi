@@ -6,7 +6,7 @@ import net.alex9849.motorlib.motor.Direction;
 import net.alex9849.motorlib.sensor.HX711;
 
 public class ValveTask extends PumpTask {
-    private Valve valve;
+    private final Valve valve;
     private long goalGrams;
     private long remainingGrams;
     private long initialReadGrams;
@@ -27,8 +27,8 @@ public class ValveTask extends PumpTask {
         while ((isRunInfinity() || remainingGrams > 0) && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    synchronized (this) {
-                        wait();
+                    synchronized (signalLock) {
+                        signalLock.wait();
                     }
                 } catch (InterruptedException ignored) {
                     cancel();
@@ -44,15 +44,18 @@ public class ValveTask extends PumpTask {
             try {
                 initialReadGrams = loadCell.readFromNow(7).get();
                 long absoluteGoalGrams = initialReadGrams + remainingGrams;
-                while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
-                    driver.setOpen(true);
+                synchronized (valve) {
                     while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
-                        currentGrams = loadCell.readFromNow(1).get();
+                        driver.setOpen(true);
+                        while ((isRunInfinity() || (currentGrams < absoluteGoalGrams)) && !isCancelledExecutionThread() && getState() != State.SUSPENDING) {
+                            currentGrams = loadCell.readFromNow(1).get();
+                        }
+                        driver.setOpen(false);
+                        currentGrams = loadCell.readFromNow(7).get();
                     }
-                    driver.setOpen(false);
-                    currentGrams = loadCell.readFromNow(7).get();
+                    remainingGrams = absoluteGoalGrams - currentGrams;
                 }
-                remainingGrams = absoluteGoalGrams - currentGrams;
+
             } catch (InterruptedException e) {
                 cancel();
                 return;
@@ -65,7 +68,11 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected void doSuspend() {}
+    protected void doSuspend() {
+        synchronized (valve) {
+            valve.getMotorDriver().setOpen(false);
+        }
+    }
 
     @Override
     protected PumpJobState.RunningState genRunningState() {
