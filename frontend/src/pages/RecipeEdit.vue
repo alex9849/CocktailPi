@@ -196,6 +196,7 @@ export default {
     next(vm => {
       vm.editRecipe.recipe = recipe
       vm.isNew = isNew
+      glasses.sort((a, b) => a.size - b.size)
       vm.glasses = glasses
     })
   },

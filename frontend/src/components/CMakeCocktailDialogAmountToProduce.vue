@@ -40,21 +40,21 @@
             {{ scope.opt.name }} ({{ scope.opt.size }}ml)
             <span
               class="text-positive text-italic"
-              v-if="scope.opt.id === detectedGlass"
+              v-if="scope.opt.id === recipeDefaultGlass?.id"
             >
-              Auto detected
-            </span>
-            <span
-              class="text-positive text-italic"
-              v-else-if="scope.opt.id === recipeDefaultGlass?.id"
-            >
-              Recipe default
+              {{ $t('component.make_cocktail_amount_to_produce.badge_recipe_default') }}
             </span>
             <span
               class="text-positive text-italic"
               v-else-if="scope.opt.default"
             >
-              Global default
+              {{ $t('component.make_cocktail_amount_to_produce.badge_global_default') }}
+            </span>
+            <span
+              class="text-positive text-italic"
+              v-else-if="scope.opt.id === detectedGlass"
+            >
+              {{ $t('component.make_cocktail_amount_to_produce.badge_auto_detected') }}
             </span>
           </span>
         </template>
@@ -65,23 +65,15 @@
               <q-item-label
                 caption
                 class="text-positive"
-                v-if="scope.opt.id === detectedGlass"
+                v-if="glassBadges(scope.opt).length !== 0"
               >
-                Auto detected
-              </q-item-label>
-              <q-item-label
-                caption
-                class="text-positive"
-                v-else-if="scope.opt.id === recipeDefaultGlass?.id"
-              >
-                Recipe default
-              </q-item-label>
-              <q-item-label
-                caption
-                class="text-positive"
-                v-else-if="scope.opt.default"
-              >
-                Global default
+                <span
+                  class="q-pr-xs"
+                  v-for="badge in glassBadges(scope.opt)"
+                  :key="badge"
+                >
+                  {{ badge }}
+                </span>
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -230,6 +222,23 @@ export default {
       } else if (!this.modelValue) {
         this.emitAmountToProduce(this.defaultValueNoGlass)
       }
+    },
+    glassBadges (glass) {
+      const badges = []
+      if (glass.id === this.recipeDefaultGlass?.id) {
+        badges.push(this.$t('component.make_cocktail_amount_to_produce.badge_recipe_default'))
+      } else if (glass.default) {
+        badges.push(this.$t('component.make_cocktail_amount_to_produce.badge_global_default'))
+      }
+      if (glass.id === this.detectedGlass) {
+        badges.push(this.$t('component.make_cocktail_amount_to_produce.badge_auto_detected'))
+      }
+      for (const idx in badges) {
+        if (idx < badges.length - 1) {
+          badges[idx] = badges[idx] + ','
+        }
+      }
+      return badges
     }
   },
   mounted () {

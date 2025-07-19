@@ -730,6 +730,9 @@ export default {
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glass',
+      badge_auto_detected: 'Auto detected',
+      badge_recipe_default: 'Recipe default',
+      badge_global_default: 'Global default',
       amount_to_produce_label: 'Amount to produce'
     },
     make_cocktail_group_replacements: {

@@ -673,6 +673,9 @@ export default {
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glas',
+      badge_auto_detected: 'Automatisch erkannt',
+      badge_recipe_default: 'Rezeptstandard',
+      badge_global_default: 'Globaler Standard',
       amount_to_produce_label: 'Zu produzierende Menge'
     },
     make_cocktail_group_replacements: {
