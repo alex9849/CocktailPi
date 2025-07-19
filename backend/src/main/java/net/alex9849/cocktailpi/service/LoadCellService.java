@@ -96,10 +96,10 @@ public class LoadCellService {
         if (!lockService.testAndAcquireGlobal(this)) {
             throw new IllegalArgumentException("Some pumps are currently occupied!");
         }
-        if(isDemoMode) {
-            throw new IllegalArgumentException("Modifying load cell settings is not allowed in demomode!");
-        }
         try {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Modifying load cell settings is not allowed in demomode!");
+            }
             optionsRepository.setOption(REPO_KEY_LOAD_CELL_ENABLED, Boolean.valueOf(loadCell != null).toString());
             if (loadCell == null) {
                 optionsRepository.delOption(REPO_KEY_LOAD_CELL_CLK_PIN, false);
