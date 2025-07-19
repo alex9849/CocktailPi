@@ -389,6 +389,8 @@ export default {
       },
       calibration: {
         headline: 'Kalibrierung',
+        calibrated_batch_yes: 'Ok',
+        calibrated_batch_no: 'Fehlt',
         next_btn_label: 'Weiter',
         zero_point: {
           headline: 'Nullpunkt-Kalibrierung (Ohne Gewicht)',
@@ -712,7 +714,13 @@ export default {
         status_disabled: 'Deaktiviert',
         calibrated: 'Kalibriert',
         calibrated_yes: 'Ja',
-        calibrated_no: 'Nein'
+        calibrated_no: 'Nein',
+        check_glass_placed: 'Glas erkennung:',
+        check_glass_placed_yes: 'Ja',
+        check_glass_placed_no: 'Nein',
+        match_glass: 'Glas abgleichen:',
+        match_glass_yes: 'Ja',
+        match_glass_no: 'Nein'
       },
       power_limit: {
         headline: 'Leistungbegrenzung',

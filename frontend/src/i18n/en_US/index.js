@@ -394,6 +394,8 @@ export default {
       },
       calibration: {
         headline: 'Calibration',
+        calibrated_batch_yes: 'Ok',
+        calibrated_batch_no: 'Missing',
         next_btn_label: 'Next',
         zero_point: {
           headline: 'Zero-Point Calibration (No Weight)',
@@ -769,7 +771,13 @@ export default {
         status_disabled: 'Disabled',
         calibrated: 'Calibrated:',
         calibrated_yes: 'Yes',
-        calibrated_no: 'No'
+        calibrated_no: 'No',
+        check_glass_placed: 'Glass detection:',
+        check_glass_placed_yes: 'Yes',
+        check_glass_placed_no: 'No',
+        match_glass: 'Glass matching:',
+        match_glass_yes: 'Yes',
+        match_glass_no: 'No'
       },
       power_limit: {
         headline: 'Power limit',

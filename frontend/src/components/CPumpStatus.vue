@@ -155,6 +155,26 @@
                           </q-badge>
                         </td>
                       </tr>
+                      <tr v-if="loadCellSettings.enable">
+                        <td>{{ $t('component.pump_status.load_cell.check_glass_placed') }}</td>
+                        <td>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings?.dispensingArea.checkGlassPlaced , 'bg-positive': loadCellSettings?.dispensingArea.checkGlassPlaced}"
+                          >
+                            {{ loadCellCheckGlassPlaced }}
+                          </q-badge>
+                        </td>
+                      </tr>
+                      <tr v-if="loadCellSettings.enable">
+                        <td>{{ $t('component.pump_status.load_cell.match_glass') }}</td>
+                        <td>
+                          <q-badge
+                            :class="{'bg-negative': !loadCellSettings?.dispensingArea.matchGlass , 'bg-positive': loadCellSettings?.dispensingArea.matchGlass}"
+                          >
+                            {{ loadCellMatchGlass }}
+                          </q-badge>
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </q-card-section>
@@ -249,7 +269,11 @@ export default {
         enable: false,
         clkPin: null,
         dtPin: null,
-        calibrated: false
+        calibrated: false,
+        dispensingArea: {
+          checkGlassPlaced: false,
+          matchGlass: false
+        }
       }
     }
   },
@@ -328,6 +352,18 @@ export default {
         return this.reversePumpSettings?.settings?.overshoot + ' %'
       }
       return this.$t('component.pump_status.reverse_pumping.overshoot_no_overshoot_label')
+    },
+    loadCellCheckGlassPlaced () {
+      if (this.loadCellSettings?.dispensingArea?.checkGlassPlaced) {
+        return this.$t('component.pump_status.load_cell.check_glass_placed_yes')
+      }
+      return this.$t('component.pump_status.load_cell.check_glass_placed_no')
+    },
+    loadCellMatchGlass () {
+      if (this.loadCellSettings?.dispensingArea?.matchGlass) {
+        return this.$t('component.pump_status.load_cell.match_glass_yes')
+      }
+      return this.$t('component.pump_status.load_cell.match_glass_no')
     }
   }
 }

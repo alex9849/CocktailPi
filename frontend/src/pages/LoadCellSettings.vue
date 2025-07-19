@@ -127,7 +127,21 @@
       bordered
     >
       <div class="row">
-        <p class="text-weight-medium q-pb-md">{{ $t('page.load_cell_mgmt.calibration.headline') }}</p>
+        <p class="text-weight-medium q-pb-md">
+          {{ $t('page.load_cell_mgmt.calibration.headline') }}
+          <q-badge
+            v-if="currentLoadCell.calibrated"
+            class="bg-positive q-pa-xs"
+          >
+            {{ $t('page.load_cell_mgmt.calibration.calibrated_batch_yes') }}
+          </q-badge>
+          <q-badge
+            v-else
+            class="bg-negative q-pa-xs"
+          >
+            {{ $t('page.load_cell_mgmt.calibration.calibrated_batch_no') }}
+          </q-badge>
+        </p>
       </div>
       <div class="row">
         <q-card
