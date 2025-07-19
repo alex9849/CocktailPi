@@ -85,21 +85,9 @@ public class LoadCellService {
     }
 
     public LoadCellSettingsDto.Duplex.DispensingArea getDispensingAreaSettings() {
-        if(dispensingAreaSettings == null) {
-            boolean enabled = Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_LOAD_CELL_ENABLED).orElse(null));
-            LoadCellSettingsDto.Duplex.DispensingArea settings = new LoadCellSettingsDto.Duplex.DispensingArea();
-            if (!enabled) {
-                settings.setMatchGlass(false);
-                settings.setCheckGlassPlaced(false);
-                return settings;
-            }
-            settings.setMatchGlass(Boolean.parseBoolean(
-                    optionsRepository.getOption(REPO_KEY_LOAD_CELL_MATCH_GLASS).orElse(String.valueOf(false))
-            ));
-            settings.setCheckGlassPlaced(Boolean.parseBoolean(
-                    optionsRepository.getOption(REPO_KEY_LOAD_CELL_CHECK_GLASS_PLACED).orElse(String.valueOf(false))
-            ));
-            dispensingAreaSettings = settings;
+        if (loadCell == null && !checkedIfLoadCellPersisted) {
+            reloadLoadCell();
+            checkedIfLoadCellPersisted = true;
         }
         return dispensingAreaSettings;
     }
@@ -153,11 +141,16 @@ public class LoadCellService {
 
     private void reloadLoadCell() {
         boolean enabled = Boolean.parseBoolean(optionsRepository.getOption(REPO_KEY_LOAD_CELL_ENABLED).orElse(null));
+
         if (!enabled) {
             if (loadCell != null) {
                 loadCell.shutdown();
                 loadCell = null;
             }
+            LoadCellSettingsDto.Duplex.DispensingArea settings = new LoadCellSettingsDto.Duplex.DispensingArea();
+            settings.setMatchGlass(false);
+            settings.setCheckGlassPlaced(false);
+            this.dispensingAreaSettings = settings;
             return;
         }
         LoadCell loadCell = new LoadCell();
@@ -170,6 +163,14 @@ public class LoadCellService {
         optionsRepository.getOption(REPO_KEY_LOAD_CELL_REFERENCE_WEIGHT)
                 .ifPresent(s -> loadCell.setReferenceForceValueWeight(Long.parseLong(s)));
         this.loadCell = loadCell;
+        LoadCellSettingsDto.Duplex.DispensingArea settings = new LoadCellSettingsDto.Duplex.DispensingArea();
+        settings.setMatchGlass(Boolean.parseBoolean(
+                optionsRepository.getOption(REPO_KEY_LOAD_CELL_MATCH_GLASS).orElse(String.valueOf(false))
+        ));
+        settings.setCheckGlassPlaced(Boolean.parseBoolean(
+                optionsRepository.getOption(REPO_KEY_LOAD_CELL_CHECK_GLASS_PLACED).orElse(String.valueOf(false))
+        ));
+        this.dispensingAreaSettings = settings;
     }
 
     public LoadCell getLoadCell() {
