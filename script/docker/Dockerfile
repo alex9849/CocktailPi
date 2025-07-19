@@ -3,7 +3,7 @@ EXPOSE 8080/tcp
 
 RUN apt update
 RUN apt -y full-upgrade
-RUN apt -yq install python python3-pip wget alsa-utils
+RUN apt -yq install python3-full python3-pip wget alsa-utils
 
 ENV LOG_LEVEL=debug
 ENV TZ=Europe/Berlin

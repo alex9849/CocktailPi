@@ -403,7 +403,7 @@ if [ "$langsel" = "1" ]; then
         echo "Installing dependencies..."
     fi
 sleep 2
-apt install --no-install-recommends -y openjdk-17-jdk i2c-tools python3-full python3-pip pigpio wget libjna-java alsa-utils python3-pip nano curl
+apt install --no-install-recommends -y openjdk-17-jdk i2c-tools python3-full python3-pip pigpio wget libjna-java alsa-utils nano curl
 
 clear
 if [ "$langsel" = "1" ]; then
