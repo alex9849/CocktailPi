@@ -87,7 +87,7 @@
             <q-btn
               :label="$t('layout.full_layout.donate_btn_label')"
               :icon="mdiPiggyBank"
-              color="orange-5"
+              color="orange-7"
               @click="clickDonate"
             />
           </div>
