@@ -23,11 +23,13 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected synchronized void runPump() {
+    protected void runPump() {
         while ((isRunInfinity() || remainingGrams > 0) && !this.isCancelledExecutionThread()) {
             while (getState() == State.READY || getState() == State.SUSPENDING || getState() == State.SUSPENDED) {
                 try {
-                    wait();
+                    synchronized (this) {
+                        wait();
+                    }
                 } catch (InterruptedException ignored) {
                     cancel();
                     return;
@@ -63,9 +65,7 @@ public class ValveTask extends PumpTask {
     }
 
     @Override
-    protected synchronized void doSuspend() {
-        valve.getMotorDriver().setOpen(false);
-    }
+    protected void doSuspend() {}
 
     @Override
     protected PumpJobState.RunningState genRunningState() {
