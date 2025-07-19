@@ -17,8 +17,14 @@
               {{ $t('component.donation_disclaimer.headline_caption') }}
               <q-icon :name="mdiChevronDoubleDown"/>
             </p>
-
           </q-toolbar-title>
+          <q-btn flat
+                 round
+                 size="xl"
+                 dense
+                 icon="close"
+                 @click="closeDialog"
+          />
         </q-toolbar>
       </q-card-section>
       <q-separator
