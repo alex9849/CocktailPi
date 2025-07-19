@@ -3,6 +3,9 @@
     ref="appSocket"
   />
   <router-view/>
+  <app-donation-disclaimer
+    ref="donationDisclaimer"
+  />
   <app-qr-link />
 </template>
 
@@ -14,10 +17,11 @@
 import { store } from '../store'
 import AppSocket from 'components/AppSocket'
 import AppQrLink from 'components/AppQrLink.vue'
+import AppDonationDisclaimer from 'components/AppDonationDisclaimer.vue'
 
 export default {
   name: 'LoggedInLayout',
-  components: { AppQrLink, AppSocket },
+  components: { AppDonationDisclaimer, AppQrLink, AppSocket },
   beforeRouteEnter (to, from, next) {
     Promise.all([
       store.dispatch('category/fetchCategories'),

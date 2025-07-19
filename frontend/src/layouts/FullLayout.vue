@@ -83,6 +83,14 @@
               :icon="link.icon"
             />
           </div>
+          <div class="row justify-center">
+            <q-btn
+              :label="$t('layout.full_layout.donate_btn_label')"
+              :icon="mdiPiggyBank"
+              color="orange-5"
+              @click="clickDonate"
+            />
+          </div>
         </q-card-section>
       </q-card>
 

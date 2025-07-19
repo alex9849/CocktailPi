@@ -1102,7 +1102,7 @@ export default {
       donate_paypal_btn_label: 'Spenden via PayPal',
       donate_github_btn_label: 'Spenden via GitHub Sponsors',
       headline_2: 'Diese Software ist kostenlos, aber Spenden werden gerne gesehen!',
-      introduction: 'Diese Software ist kostenlos, aber ihre Entwicklung und Wartung erfordern viel Zeit. Der Entwickler von CocktailPi (ich) entwickelt sie in seiner Freizeit. Zur Zeit bin ich Student, und habe noch kein festes Einkommen.',
+      introduction: 'Diese Software ist kostenlos, aber ihre Entwicklung und Wartung erfordern viel Zeit. Der Entwickler von CocktailPi (ich) entwickelt sie in seiner Freizeit.',
       main_text: '<p>Hier sind einige weitere Gründe, warum du spenden solltest:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
@@ -1136,10 +1136,10 @@ export default {
         '            </p>',
       action_box: {
         donated: {
-          headline: 'Vielen Dank für deine Spende! Dein Beitrag macht einen Unterschied!',
-          caption: 'Ernsthaft, vielen Dank! Das passiert echt selten.',
-          close_btn: 'Nette-Menschen-Button (Disclaimer schließen)',
-          revert_btn: 'Ich habe doch nicht gespendet'
+          headline: 'Vielen Dank für deine Spende! (Vielleicht)',
+          caption: 'Das kommt seltener vor, als Sie vielleicht denken. Vielen Dank!',
+          close_btn: 'Disclaimer schließen',
+          revert_btn: 'Ich möchte wieder daran erinnert werden'
         },
         not_donated: {
           headline: 'Vielen Dank!',
@@ -1147,10 +1147,10 @@ export default {
           close_btn: 'Nein, erinnere mich später'
         },
         lying_is_no_nice: {
-          headline: 'Achtung! Lügen ist nicht nett.',
-          confirm_btn: 'Weiter',
-          checkbox: 'Ich bin kein Lügner',
-          go_back: 'Zurück gehen'
+          headline: 'Es fühlt sich besser an, diesen Button zu klicken, wenn man gespendet hat.',
+          confirm_btn: 'Bestätigen',
+          checkbox: 'Ich möchte diesen Hinweis nicht noch einmal sehen',
+          go_back: 'Zurück'
         }
       }
     },

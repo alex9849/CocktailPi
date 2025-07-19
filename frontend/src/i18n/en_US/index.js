@@ -1188,8 +1188,7 @@ export default {
       donate_github_btn_label: 'Donate via GitHub sponsors',
       headline_2: 'This software is free, but donations are appreciated!',
       introduction: 'This software is free, but still it took and takes a lot time to develop and maintain it. ' +
-        'The developer of CocktailPi (me) develops it in his free time. I\'m also a student who doesn\'t have a ' +
-        'real income yet.',
+        'The developer of CocktailPi (me) develops it in his free time.',
       main_text: '<p>Here are some more reasons why you should donate:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
@@ -1224,20 +1223,20 @@ export default {
         '            </p>',
       action_box: {
         donated: {
-          headline: 'Thank you for your donation. You made a difference!',
+          headline: 'Thank you for your donation! (Maybe)',
           caption: 'This happens less often then you might think. Thank you very much!',
-          close_btn: 'Great people button (Close disclaimer)',
-          revert_btn: 'I didn\'t donate'
+          close_btn: 'Close disclaimer',
+          revert_btn: 'I want to be reminded again'
         },
         not_donated: {
           headline: 'Thank you very much!',
-          donated_btn: 'I made a donation',
+          donated_btn: 'I made a donation / Don\'t remind me',
           close_btn: 'No, remind me later'
         },
         lying_is_no_nice: {
-          headline: 'Please note that lying is not nice.',
+          headline: 'It feels better to click this button when you have made a donation.',
           confirm_btn: 'Confirm',
-          checkbox: 'I\'m not a liar',
+          checkbox: 'I don\'t want to see this disclaimer again',
           go_back: 'Go back'
         }
       }

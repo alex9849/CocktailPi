@@ -981,7 +981,7 @@ export default {
       donate_paypal_btn_label: 'Donér via PayPal',
       donate_github_btn_label: 'Donér via GitHub sponsorer',
       headline_2: 'Denne software er gratis, men donationer værdsættes!',
-      introduction: 'Denne software er gratis, men det har stadig taget og tager meget tid at udvikle og vedligeholde den. Udvikleren af CocktailPi (mig) udvikler den i sin fritid. Jeg er også en studerende, der ikke har en reel indkomst endnu.',
+      introduction: 'Denne software er gratis, men det har stadig taget og tager meget tid at udvikle og vedligeholde den. Udvikleren af CocktailPi (mig) udvikler den i sin fritid.',
       main_text: '<p>Her er nogle flere grunde til, hvorfor du bør donere:</p>' +
         '            <ul>\n' +
         '              <li>\n' +
@@ -1016,10 +1016,10 @@ export default {
         '            </p>',
       action_box: {
         donated: {
-          headline: 'Tak for din donation. Du gjorde en forskel!',
-          caption: 'Dette sker mindre ofte, end du måske tror. Mange tak!',
-          close_btn: 'Fantastisk menneske-knap (Luk ansvarsfraskrivelse)',
-          revert_btn: 'Jeg donerede ikke'
+          headline: 'Tak for din donation! (Måske)',
+          caption: 'Det sker sjældnere, end man skulle tro. Tusind tak!',
+          close_btn: 'Luk meddelelsen',
+          revert_btn: 'Jeg vil gerne mindes igen'
         },
         not_donated: {
           headline: 'Mange tak!',
@@ -1027,9 +1027,9 @@ export default {
           close_btn: 'Nej, påmind mig senere'
         },
         lying_is_no_nice: {
-          headline: 'Vær opmærksom på, at det ikke er pænt at lyve.',
+          headline: 'Det føles bedre at trykke på denne knap, hvis man har doneret.',
           confirm_btn: 'Bekræft',
-          checkbox: 'Jeg er ikke en løgner',
+          checkbox: 'Jeg vil ikke se denne meddelelse igen',
           go_back: 'Gå tilbage'
         }
       }
