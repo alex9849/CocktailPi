@@ -1,10 +1,7 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker;
 
 import com.pi4j.exception.Pi4JException;
-import net.alex9849.cocktailpi.model.pump.Pump;
-import net.alex9849.cocktailpi.model.pump.StepperPump;
-import net.alex9849.cocktailpi.model.pump.Valve;
-import net.alex9849.cocktailpi.model.pump.ValveDriver;
+import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.PumpPhase;
 import net.alex9849.motorlib.motor.AcceleratingStepper;
@@ -145,10 +142,10 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                 for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
                     Valve valve = entry.getKey();
                     ValveDriver driver = valve.getMotorDriver();
-                    HX711 hx711 = valve.getLoadCell().getHX711();
+                    LoadCellReader lcReader = valve.getLoadCell().getLoadCellReader();
 
                     if(initialReadGrams == null) {
-                        initialReadGrams = hx711.read(7);
+                        initialReadGrams = lcReader.readFromNow(7).get();
                     }
                     long currentGrams = initialReadGrams;
                     long goalGrams = entry.getValue();
@@ -159,18 +156,20 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                         while (currentGrams < initialReadGrams + goalGrams) {
                             driver.setOpen(true);
                             while (currentGrams < initialReadGrams + goalGrams) {
-                                currentGrams = hx711.read_once();
+                                currentGrams = lcReader.readCurrent(7).get();
                                 if(Thread.interrupted()) {
                                     throw new InterruptedException();
                                 }
                             }
                             valveEndTime = System.currentTimeMillis();
                             driver.setOpen(false);
-                            currentGrams = hx711.read(7);
+                            currentGrams = lcReader.readFromNow(7).get();
                         }
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         driver.setOpen(false);
-                        currentGrams = hx711.read(7);
+                        try {
+                            currentGrams = lcReader.readFromNow(7).get();
+                        } catch (ExecutionException ignore) {}
                         valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
                         return;
                     }
@@ -181,7 +180,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                     }
                     valvesToPumpedGrams.put(valve, goalGrams);
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException|ExecutionException e) {
                 return;
             }
 
