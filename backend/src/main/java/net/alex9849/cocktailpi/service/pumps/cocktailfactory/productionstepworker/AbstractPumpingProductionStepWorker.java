@@ -156,7 +156,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                         while (currentGrams < initialReadGrams + goalGrams) {
                             driver.setOpen(true);
                             while (currentGrams < initialReadGrams + goalGrams) {
-                                currentGrams = lcReader.readCurrent(7).get();
+                                currentGrams = lcReader.readCurrent(1).get();
                                 if(Thread.interrupted()) {
                                     throw new InterruptedException();
                                 }
