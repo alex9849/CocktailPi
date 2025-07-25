@@ -88,112 +88,113 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     }
 
     @Override
-    public synchronized void start() {
-        super.start();
-        this.startTime = System.currentTimeMillis();
-        this.endTime = this.startTime + this.getRequiredPumpingTime();
-        CountDownLatch cl = new CountDownLatch(this.pumpPhases.size());
+    public void start() {
+        synchronized (this) {
+            super.start();
+            this.startTime = System.currentTimeMillis();
+            this.endTime = this.startTime + this.getRequiredPumpingTime();
+            CountDownLatch cl = new CountDownLatch(this.pumpPhases.size());
 
-        for (PumpPhase pumpPhase : this.pumpPhases) {
-            scheduledPumpFutures.add(scheduler.schedule(() -> {
-                try {
-                    pumpPhase.getPump().getMotorDriver().setRunning(true);
-                    pumpPhase.setStarted();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
-                }
-            }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
-
-            scheduledPumpFutures.add(scheduler.schedule(() -> {
-                try {
-                    pumpPhase.getPump().getMotorDriver().setRunning(false);
-                    pumpPhase.setStopped();
-                    cl.countDown();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
-                }
-            }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
-        }
-
-        this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
-        Runnable runTask = () -> {
-            MultiStepper multiStepper = new MultiStepper();
-            for(Map.Entry<StepperPump, Long> entry : steppersToSteps.entrySet()) {
-                AcceleratingStepper driver = entry.getKey().getMotorDriver();
-                driver.move(entry.getValue());
-                multiStepper.addStepper(driver);
-            }
-            try (AffinityLock al = AffinityLock.acquireCore()) {
-                while (multiStepper.runRound()) {
-                    if(Thread.interrupted()) {
-                        return;
-                    }
-                }
-            }
-            try {
-                cl.await();
-            } catch (InterruptedException e) {
-                return;
-            }
-            try {
-                Long initialReadGrams = null;
-                for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
-                    Valve valve = entry.getKey();
-                    ValveDriver driver = valve.getMotorDriver();
-                    LoadCellReader lcReader = valve.getLoadCell().getLoadCellReader();
-
-                    if(initialReadGrams == null) {
-                        initialReadGrams = lcReader.readFromNow(7).get();
-                    }
-                    long currentGrams = initialReadGrams;
-                    long goalGrams = entry.getValue();
-
-                    long valveStartTime = System.currentTimeMillis();
-                    long valveEndTime = System.currentTimeMillis();
+            for (PumpPhase pumpPhase : this.pumpPhases) {
+                scheduledPumpFutures.add(scheduler.schedule(() -> {
                     try {
-                        while (currentGrams < initialReadGrams + goalGrams) {
-                            driver.setOpen(true);
-                            while (currentGrams < initialReadGrams + goalGrams) {
-                                currentGrams = lcReader.readCurrent(1).get();
-                                if(Thread.interrupted()) {
-                                    throw new InterruptedException();
-                                }
-                            }
-                            valveEndTime = System.currentTimeMillis();
-                            driver.setOpen(false);
-                            currentGrams = lcReader.readFromNow(7).get();
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        driver.setOpen(false);
-                        try {
-                            currentGrams = lcReader.readFromNow(7).get();
-                        } catch (ExecutionException ignore) {}
-                        valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
-                        return;
+                        pumpPhase.getPump().getMotorDriver().setRunning(true);
+                        pumpPhase.setStarted();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
                     }
-                    initialReadGrams = currentGrams;
-                    long valveTimeElapsed = valveEndTime - valveStartTime;
-                    if(entry.getValue() > 0) {
-                        valve.setTimePerClInMs((10 * valveTimeElapsed) / entry.getValue());
+                }, pumpPhase.getStartTime(), TimeUnit.MILLISECONDS));
+
+                scheduledPumpFutures.add(scheduler.schedule(() -> {
+                    try {
+                        pumpPhase.getPump().getMotorDriver().setRunning(false);
+                        pumpPhase.setStopped();
+                        cl.countDown();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        new Thread(() -> getCocktailFactory().cancelCocktail(true)).start();
                     }
-                    valvesToPumpedGrams.put(valve, goalGrams);
-                }
-            } catch (InterruptedException|ExecutionException e) {
-                return;
+                }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
 
-            onFinish();
-        };
-        runner = new Thread(runTask);
-        runner.setPriority(Thread.MAX_PRIORITY);
-        runner.start();
-        runner.setUncaughtExceptionHandler((t, e) -> {
-            e.printStackTrace();
-            getCocktailFactory().cancelCocktail(true);
-        });
+            this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
+            Runnable runTask = () -> {
+                MultiStepper multiStepper = new MultiStepper();
+                for(Map.Entry<StepperPump, Long> entry : steppersToSteps.entrySet()) {
+                    AcceleratingStepper driver = entry.getKey().getMotorDriver();
+                    driver.move(entry.getValue());
+                    multiStepper.addStepper(driver);
+                }
+                try (AffinityLock al = AffinityLock.acquireCore()) {
+                    while (multiStepper.runRound()) {
+                        if(Thread.interrupted()) {
+                            return;
+                        }
+                    }
+                }
+                try {
+                    cl.await();
+                } catch (InterruptedException e) {
+                    return;
+                }
+                try {
+                    Long initialReadGrams = null;
+                    for(Map.Entry<Valve, Long> entry : valvesToRequestedGrams.entrySet()) {
+                        Valve valve = entry.getKey();
+                        ValveDriver driver = valve.getMotorDriver();
+                        LoadCellReader lcReader = valve.getLoadCell().getLoadCellReader();
 
+                        if(initialReadGrams == null) {
+                            initialReadGrams = lcReader.readFromNow(7).get();
+                        }
+                        long currentGrams = initialReadGrams;
+                        long goalGrams = entry.getValue();
+
+                        long valveStartTime = System.currentTimeMillis();
+                        long valveEndTime = System.currentTimeMillis();
+                        try {
+                            while (currentGrams < initialReadGrams + goalGrams) {
+                                driver.setOpen(true);
+                                while (currentGrams < initialReadGrams + goalGrams) {
+                                    currentGrams = lcReader.readCurrent(1).get();
+                                    if(Thread.interrupted()) {
+                                        throw new InterruptedException();
+                                    }
+                                }
+                                valveEndTime = System.currentTimeMillis();
+                                driver.setOpen(false);
+                                currentGrams = lcReader.readFromNow(7).get();
+                            }
+                        } catch (InterruptedException | ExecutionException e) {
+                            driver.setOpen(false);
+                            try {
+                                currentGrams = lcReader.readFromNow(7).get();
+                            } catch (ExecutionException ignore) {}
+                            valvesToPumpedGrams.put(valve, Math.max(0, currentGrams - initialReadGrams));
+                            return;
+                        }
+                        initialReadGrams = currentGrams;
+                        long valveTimeElapsed = valveEndTime - valveStartTime;
+                        if(entry.getValue() > 0) {
+                            valve.setTimePerClInMs((10 * valveTimeElapsed) / entry.getValue());
+                        }
+                        valvesToPumpedGrams.put(valve, goalGrams);
+                    }
+                } catch (InterruptedException|ExecutionException e) {
+                    return;
+                }
+
+                onFinish();
+            };
+            runner = new Thread(runTask);
+            runner.setPriority(Thread.MAX_PRIORITY);
+            runner.setUncaughtExceptionHandler((t, e) -> {
+                e.printStackTrace();
+                getCocktailFactory().cancelCocktail(true);
+            });
+            runner.start();
+        }
         this.notifySubscribers();
     }
 
