@@ -13,7 +13,7 @@
         <div class="col-12 row">
           <div class="col-12 col-xsm-4 col-sm-4 col-md-4 col-lg-3 flex">
             <q-img
-              :src="imageUrl"
+              :src="imageUrl + '&width=500'"
               v-if="recipe.hasImage"
               placeholder-src="~assets/cocktail-solid.png"
               :ratio="16/9"

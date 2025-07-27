@@ -17,7 +17,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none col-12">
       <q-img
-        :src="imageLink"
+        :src="imageLink + '&width=500'"
         v-if="recipe.hasImage"
         placeholder-src="~assets/cocktail-solid.png"
         :ratio="16/9"

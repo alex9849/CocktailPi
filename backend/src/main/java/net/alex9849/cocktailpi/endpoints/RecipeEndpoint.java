@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -130,7 +131,7 @@ public class RecipeEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+            image = ImageUtils.resizeImage(image, 1500, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             recipeService.setImage(recipe.getId(), out.toByteArray());
@@ -167,7 +168,7 @@ public class RecipeEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1000, 16d / 9);
+            image = ImageUtils.resizeImage(image, 2000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             recipeService.setImage(recipe.getId(), out.toByteArray());
@@ -177,7 +178,8 @@ public class RecipeEndpoint {
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<?> getRecipeImage(@PathVariable("id") long id,
-                                     @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {
+                                     @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient,
+                                     @RequestParam(value = "width", defaultValue = "-1") int width) throws IOException {
         byte[] image;
         if(isIngredient) {
             image = ingredientService.getImage(id);
@@ -186,6 +188,13 @@ public class RecipeEndpoint {
         }
         if(image == null) {
             return ResponseEntity.notFound().build();
+        }
+        if (width > 0) {
+            BufferedImage bImage = ImageIO.read(new ByteArrayInputStream(image));
+            bImage = ImageUtils.resizeImage(bImage, width, 16d / 9);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "jpg", out);
+            image = out.toByteArray();
         }
         return ResponseEntity.ok(image);
     }
