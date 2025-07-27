@@ -131,7 +131,7 @@ public class RecipeEndpoint {
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 1500, 16d / 9);
+            image = ImageUtils.resizeImage(image, 2000, 16d / 9);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", out);
             recipeService.setImage(recipe.getId(), out.toByteArray());
