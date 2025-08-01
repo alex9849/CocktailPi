@@ -105,7 +105,7 @@ watch(() => props.recipes, (newValue) => {
 // Intersection handling
 function onIntersection (entry) {
   const index = parseInt(entry.target.dataset.id, 10)
-  inView.value.splice(index, 1, entry.isIntersecting)
+  inView.value[index] = entry.isIntersecting
 }
 
 // (Optional) Sliding render window helper — not currently used
