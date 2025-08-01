@@ -16,32 +16,34 @@
         </q-card>
       </div>
       <div
-        v-for="recipe of recipes"
-        :key="recipe.id"
-        class="col-recipe-list-card"
+        v-for="index in inView.length"
+        :key="recipes[index - 1].id"
+        :data-id="index - 1"
+        class="col-recipe-list-card card-height"
+        v-intersection="onIntersection"
       >
         <router-link
           class="no-link-format"
-          :to="{name: 'recipedetails', params: {id: recipe.id}}"
+          :to="{name: 'recipedetails', params: {id: recipes[index - 1].id}}"
         >
           <c-recipe-card
-            :recipe="recipe"
+            v-if="inView[index - 1]"
+            :recipe="recipes[index - 1]"
             show-ingredients
-            style="height: 160px"
             class="q-card--bordered q-card--flat no-shadow"
             :background-color="color.cardBody"
           >
             <template v-slot:headline>
               <slot
                 v-if="!!$slots.recipeHeadline"
-                :recipe="recipe"
+                :recipe="recipes[index - 1]"
                 name="recipeHeadline"
               />
             </template>
             <template v-slot:topRight>
               <slot
                 v-if="!!$slots.recipeTopRight"
-                :recipe="recipe"
+                :recipe="recipes[index - 1]"
                 name="recipeTopRight"
               />
             </template>
@@ -70,13 +72,27 @@ export default {
       default: false
     }
   },
+  data: () => {
+    return {
+      inView: []
+    }
+  },
   created () {
     this.setLastRecipeListRoute(this.$route)
   },
   methods: {
     ...mapMutations({
       setLastRecipeListRoute: 'common/setLastRecipeListRoute'
-    })
+    }),
+    onIntersection (entry) {
+      const index = parseInt(entry.target.dataset.id, 10)
+      this.inView.splice(index, 1, entry.isIntersecting)
+    },
+    renderCard (index) {
+      const start = Math.max(0, index - 3)
+      const end = Math.min(this.inView.length - 1, index + 3)
+      return this.inView.slice(start, end + 1).some(Boolean)
+    }
   },
   computed: {
     ...mapGetters({
@@ -86,8 +102,21 @@ export default {
   watch: {
     $route: {
       deep: true,
-      handler (newValue, oldValue) {
+      handler (newValue) {
         this.setLastRecipeListRoute(newValue)
+      }
+    },
+    recipes: {
+      immediate: true,
+      deep: true,
+      handler (newValue) {
+        const currLen = this.inView.length
+        if (newValue.length > currLen) {
+          const appendVal = Array.apply(null, Array(newValue.length - currLen)).map(_ => false)
+          this.inView.push(...appendVal)
+        } else {
+          this.inView.splice(newValue.length, currLen - newValue.length)
+        }
       }
     }
   }
@@ -99,4 +128,12 @@ export default {
   text-decoration: none;
   color: inherit;
 }
+
+.card-height {
+  height: unset;
+  @media (min-width: 401px) {
+    height: 200px;
+  }
+}
+
 </style>

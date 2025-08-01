@@ -7,7 +7,7 @@
     />
     <q-infinite-scroll
       @load="onLoad"
-      :offset="600"
+      :offset="1000"
       ref="infiniteScroll"
       :disable="disableLoading"
     >
