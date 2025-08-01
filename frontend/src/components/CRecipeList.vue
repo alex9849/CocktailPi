@@ -93,12 +93,12 @@ watch(route, (newVal) => {
   setLastRecipeListRoute(newVal)
 }, { deep: true })
 
-watch(() => props.recipes, (newValue) => {
+watch(() => props.recipes.length, (newValue) => {
   const currLen = inView.value.length
-  if (newValue.length > currLen) {
-    inView.value.push(...Array(newValue.length - currLen).fill(false))
+  if (newValue > currLen) {
+    inView.value.push(...Array(newValue - currLen).fill(false))
   } else {
-    inView.value.splice(newValue.length, currLen - newValue.length)
+    inView.value.splice(newValue, currLen - newValue)
   }
 }, { immediate: true, deep: true })
 
@@ -108,13 +108,6 @@ function onIntersection (entry) {
   inView.value[index] = entry.isIntersecting
 }
 
-// (Optional) Sliding render window helper — not currently used
-/*
-function renderCard(index) {
-  const start = Math.max(0, index - 3)
-  const end = Math.min(inView.value.length - 1, index + 3)
-  return inView.value.slice(start, end + 1).some(Boolean)
-} */
 </script>
 
 <style scoped>
