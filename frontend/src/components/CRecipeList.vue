@@ -12,19 +12,19 @@
       </div>
 
       <div
-        v-for="index in inView.length"
-        :key="recipes[index - 1].id"
-        :data-id="index - 1"
+        v-for="(recipe, index) in recipes"
+        :key="recipe.id"
+        :data-id="index"
         class="col-recipe-list-card card-height"
         v-intersection="onIntersection"
       >
         <router-link
           class="no-link-format"
-          :to="{ name: 'recipedetails', params: { id: recipes[index - 1].id } }"
+          :to="{ name: 'recipedetails', params: { id: recipe.id } }"
         >
           <c-recipe-card
-            v-if="inView[index - 1]"
-            :recipe="recipes[index - 1]"
+            v-if="isInView(index)"
+            :recipe="recipe"
             show-ingredients
             class="q-card--bordered q-card--flat no-shadow"
             :background-color="color.cardBody"
@@ -32,14 +32,14 @@
             <template v-slot:headline>
               <slot
                 v-if="$slots.recipeHeadline"
-                :recipe="recipes[index - 1]"
+                :recipe="recipe"
                 name="recipeHeadline"
               />
             </template>
             <template v-slot:topRight>
               <slot
                 v-if="$slots.recipeTopRight"
-                :recipe="recipes[index - 1]"
+                :recipe="recipe"
                 name="recipeTopRight"
               />
             </template>
@@ -106,6 +106,17 @@ watch(() => props.recipes.length, (newValue) => {
 function onIntersection (entry) {
   const index = parseInt(entry.target.dataset.id, 10)
   inView.value[index] = entry.isIntersecting
+}
+
+function isInView (index) {
+  const minIdx = Math.min(0, index - 10)
+  const maxIdx = Math.max(inView.value.length - 1, index + 10)
+  for (let i = minIdx; i <= maxIdx; i++) {
+    if (inView.value[i]) {
+      return true
+    }
+  }
+  return false
 }
 
 </script>
