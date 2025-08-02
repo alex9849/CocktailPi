@@ -19,11 +19,11 @@
         v-intersection="onIntersection"
       >
         <router-link
+          v-if="isInView(index)"
           class="no-link-format"
           :to="{ name: 'recipedetails', params: { id: recipe.id } }"
         >
           <c-recipe-card
-            v-if="isInView(index)"
             :recipe="recipe"
             show-ingredients
             class="q-card--bordered q-card--flat no-shadow"
@@ -109,8 +109,8 @@ function onIntersection (entry) {
 }
 
 function isInView (index) {
-  const minIdx = Math.min(0, index - 10)
-  const maxIdx = Math.max(inView.value.length - 1, index + 10)
+  const minIdx = Math.max(0, index - 10)
+  const maxIdx = Math.min(inView.value.length - 1, index + 10)
   for (let i = minIdx; i <= maxIdx; i++) {
     if (inView.value[i]) {
       return true
