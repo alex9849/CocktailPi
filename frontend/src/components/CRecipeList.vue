@@ -100,7 +100,7 @@ watch(() => props.recipes.length, (newValue) => {
   } else {
     inView.value.splice(newValue, currLen - newValue)
   }
-}, { immediate: true, deep: true })
+}, { immediate: true })
 
 // Intersection handling
 function onIntersection (entry) {
