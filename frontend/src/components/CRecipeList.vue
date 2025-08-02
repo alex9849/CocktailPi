@@ -17,10 +17,10 @@
         :data-id="index"
         class="col-recipe-list-card card-height"
         v-intersection="onIntersection"
-        v-memo="[inView[index]]"
+        v-memo="[isInView(index)]"
       >
         <router-link
-          v-if="inView[index]"
+          v-if="isInView(index)"
           class="no-link-format"
           :to="{ name: 'recipedetails', params: { id: recipe.id } }"
         >
@@ -108,7 +108,7 @@ function onIntersection (entry) {
   const index = parseInt(entry.target.dataset.id, 10)
   inView.value[index] = entry.isIntersecting
 }
-/*
+
 function isInView (index) {
   const minIdx = Math.max(0, index - 10)
   const maxIdx = Math.min(inView.value.length - 1, index + 10)
@@ -119,7 +119,6 @@ function isInView (index) {
   }
   return false
 }
- */
 
 </script>
 
