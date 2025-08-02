@@ -17,6 +17,7 @@
         :data-id="index"
         class="col-recipe-list-card card-height"
         v-intersection="onIntersection"
+        v-memo="[isInView(index)]"
       >
         <router-link
           v-if="isInView(index)"
