@@ -1,7 +1,12 @@
 package net.alex9849.cocktailpi.model.recipe;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.alex9849.cocktailpi.model.Category;
 import net.alex9849.cocktailpi.model.Glass;
+import net.alex9849.cocktailpi.model.recipe.ingredient.AddableIngredient;
+import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
+import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
@@ -17,12 +22,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class Recipe {
+    @Setter @Getter
     private long id;
+    @Setter @Getter
     private String name;
+    @Setter @Getter
     private boolean hasImage;
     private User owner;
+    @Getter
     private Long ownerId;
+    @Setter @Getter
     private String description;
+    @Setter @Getter
     private Date lastUpdate;
 
     private Long defaultGlassId;
@@ -30,53 +41,47 @@ public class Recipe {
     private List<ProductionStep> productionSteps;
     private List<Category> categories;
 
-    public long getId() {
-        return id;
+    public int alcoholPercentageMin() {
+        int totalAmountMl = 0;
+        double totalAlcoholMinMl = 0;
+        for(ProductionStep productionStep : productionSteps) {
+            if (productionStep instanceof AddIngredientsProductionStep aiPs) {
+                for (ProductionStepIngredient psi : aiPs.getStepIngredients()) {
+                    totalAmountMl += psi.getAmount();
+                    Ingredient ingredient = psi.getIngredient();
+                    if(ingredient instanceof AddableIngredient addableIngredient) {
+                        totalAlcoholMinMl += (addableIngredient.getAlcoholContent() * psi.getAmount()) / 100d;
+                    } else if (ingredient instanceof IngredientGroup ingredientGroup) {
+                        totalAlcoholMinMl += (ingredientGroup.getMinAlcoholContent() * psi.getAmount()) / 100d;
+                    }
+                }
+            }
+        }
+        return (int) (totalAlcoholMinMl * 100) / totalAmountMl;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    public int alcoholPercentageMax() {
+        int totalAmountMl = 0;
+        double totalAlcoholMaxMl = 0;
+        for(ProductionStep productionStep : productionSteps) {
+            if (productionStep instanceof AddIngredientsProductionStep aiPs) {
+                for (ProductionStepIngredient psi : aiPs.getStepIngredients()) {
+                    totalAmountMl += psi.getAmount();
+                    Ingredient ingredient = psi.getIngredient();
+                    if(ingredient instanceof AddableIngredient addableIngredient) {
+                        totalAlcoholMaxMl += (addableIngredient.getAlcoholContent() * psi.getAmount()) / 100d;
+                    } else if (ingredient instanceof IngredientGroup ingredientGroup) {
+                        totalAlcoholMaxMl += (ingredientGroup.getMaxAlcoholContent() * psi.getAmount()) / 100d;
+                    }
+                }
+            }
+        }
+        return (int) (totalAlcoholMaxMl * 100) / totalAmountMl;
     }
 
     //
     // Lazy loading methods
     //
-
-    public Long getOwnerId() {
-        return ownerId;
-    }
 
     public void setOwnerId(Long ownerId) {
         if(!Objects.equals(this.ownerId, ownerId)) {

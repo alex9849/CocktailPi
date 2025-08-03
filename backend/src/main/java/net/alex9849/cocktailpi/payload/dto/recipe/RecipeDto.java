@@ -29,6 +29,8 @@ public class RecipeDto {
     private interface Categories { @NotNull Set<CategoryDto.Duplex.Detailed> getCategories(); }
     private interface CategoryIds { @NotNull Set<Long> getCategoryIds(); }
     private interface DefaultGlass { GlassDto.Duplex.Detailed getDefaultGlass(); }
+    private interface MinAlcoholContent { int getMinAlcoholContent(); }
+    private interface MaxAlcoholContent { int getMaxAlcoholContent(); }
 
     private interface DefaultGlassId { Long getDefaultGlassId(); }
 
@@ -72,7 +74,7 @@ public class RecipeDto {
 
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
-                HasImage, DefaultGlass, LastUpdate, Boostable {
+                HasImage, DefaultGlass, LastUpdate, Boostable, MinAlcoholContent, MaxAlcoholContent {
             long id;
             String name;
             long ownerId;
@@ -83,6 +85,8 @@ public class RecipeDto {
             boolean hasImage;
             GlassDto.Duplex.Detailed defaultGlass;
             Date lastUpdate;
+            int minAlcoholContent;
+            int maxAlcoholContent;
 
             public Detailed() {}
 
@@ -97,6 +101,8 @@ public class RecipeDto {
                 if(recipe.getDefaultGlass() != null) {
                     this.defaultGlass = new GlassDto.Duplex.Detailed(recipe.getDefaultGlass());
                 }
+                this.minAlcoholContent = recipe.alcoholPercentageMin();
+                this.maxAlcoholContent = recipe.alcoholPercentageMax();
             }
 
             public static RecipeDto.Response.Detailed toDto(Recipe recipe) {
@@ -113,7 +119,8 @@ public class RecipeDto {
         }
 
         @Getter @Setter @EqualsAndHashCode
-        public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients, LastUpdate {
+        public static class SearchResult implements Id, Name, OwnerName, Description, HasImage, UniqueIngredients,
+                LastUpdate, MinAlcoholContent, MaxAlcoholContent {
             long id;
             String name;
             String ownerName;
@@ -121,6 +128,8 @@ public class RecipeDto {
             boolean hasImage;
             Set<IngredientDto.Response.Reduced> ingredients;
             Date lastUpdate;
+            int minAlcoholContent;
+            int maxAlcoholContent;
 
             public SearchResult(Recipe recipe) {
                 this.id = recipe.getId();
@@ -132,6 +141,8 @@ public class RecipeDto {
                         .map(ProductionStepIngredient::getIngredient)
                         .map(IngredientDto.Response.Reduced::toDto)
                         .collect(Collectors.toSet());
+                this.minAlcoholContent = recipe.alcoholPercentageMin();
+                this.maxAlcoholContent = recipe.alcoholPercentageMax();
             }
 
             public static RecipeDto.Response.SearchResult toDto(Recipe recipe) {

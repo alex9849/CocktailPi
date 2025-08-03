@@ -8,20 +8,27 @@
       <div class="row full-height">
         <div class="col-12 row">
           <div class="col-12 col-xsm-4 col-sm-4 col-md-4 col-lg-3 flex">
-            <q-img
-              :src="imageUrl + '&width=500'"
-              v-if="recipe.hasImage"
-              placeholder-src="~assets/cocktail-solid.png"
-              :ratio="16 / 9"
-              class="rounded-borders"
-            />
-            <q-img
-              v-else
-              :ratio="16 / 9"
-              class="rounded-borders"
-              placeholder-src="~assets/cocktail-solid.png"
-              src="~assets/cocktail-solid.png"
-            />
+            <div class="relative-position full-height full-width">
+              <div class="absolute-bottom-right" style="z-index: 1">
+                <q-badge class="q-ma-xs">
+                  {{ alcoholPercentageDisplay }}
+                </q-badge>
+              </div>
+              <q-img
+                :src="imageUrl + '&width=500'"
+                v-if="recipe.hasImage"
+                placeholder-src="~assets/cocktail-solid.png"
+                :ratio="16 / 9"
+                class="rounded-borders full-height"
+              />
+              <q-img
+                v-else
+                :ratio="16 / 9"
+                class="rounded-borders full-height"
+                placeholder-src="~assets/cocktail-solid.png"
+                src="~assets/cocktail-solid.png"
+              />
+            </div>
           </div>
           <div class="col-12 col-xsm-8 col-sm-8 col-md-8 col-lg-9 q-pl-xsm-sm q-pt-xsm-none q-pt-sm flex column">
             <div class="row">
@@ -116,6 +123,16 @@ const imageUrl = computed(() => {
     url += '&isIngredient=true'
   }
   return url
+})
+
+const alcoholPercentageDisplay = computed(() => {
+  if (props.recipe.minAlcoholContent === props.recipe.maxAlcoholContent) {
+    if (props.recipe.maxAlcoholContent === 0) {
+      return 'No Alc.'
+    }
+    return String(props.recipe.maxAlcoholContent) + '% Alc.'
+  }
+  return String(props.recipe.minAlcoholContent) + '-' + String(props.recipe.maxAlcoholContent) + '% Alc.'
 })
 
 // Methods
