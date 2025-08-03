@@ -135,6 +135,18 @@ const alcoholPercentageDisplay = computed(() => {
   return String(props.recipe.minAlcoholContent) + '-' + String(props.recipe.maxAlcoholContent) + '% Alc.'
 })
 
+/*
+const alcoholPercentageColor = computed(() => {
+  const maxRed = 40
+  let percentage = Math.min(maxRed, props.recipe.maxAlcoholContent)
+  percentage = percentage / maxRed * 100
+  const colorModifier = (255 * percentage) / 100
+  const red = Math.round(colorModifier)
+  const green = Math.round(255 - colorModifier)
+  return `rgb(${red}, ${green}, 0)`
+})
+ */
+
 // Methods
 function ingredientChipColor (ingredient) {
   if (ingredient.onPump) {
