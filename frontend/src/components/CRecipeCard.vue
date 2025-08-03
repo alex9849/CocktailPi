@@ -9,7 +9,7 @@
         <div class="col-12 row">
           <div class="col-12 col-xsm-4 col-sm-4 col-md-4 col-lg-3 flex">
             <div class="relative-position full-height full-width">
-              <div class="absolute-bottom-right" style="z-index: 1">
+              <div class="absolute-top-left" style="z-index: 1">
                 <q-badge class="q-ma-xs">
                   {{ alcoholPercentageDisplay }}
                 </q-badge>
