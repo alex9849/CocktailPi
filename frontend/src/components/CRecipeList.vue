@@ -86,12 +86,27 @@ const inView = ref([])
 
 // Lifecycle
 onMounted(() => {
-  setLastRecipeListRoute(route)
+  setLastRecipeListRoute({
+    path: route.path,
+    name: route.name,
+    fullPath: route.fullPath,
+    params: { ...route.params },
+    query: { ...route.query }
+  })
 })
 
 // Watchers
-watch(route, (newVal) => {
-  setLastRecipeListRoute(newVal)
+watch(route, (oldVal, newVal) => {
+  if (oldVal.name !== newVal.name) {
+    return
+  }
+  setLastRecipeListRoute({
+    path: newVal.path,
+    name: newVal.name,
+    fullPath: newVal.fullPath,
+    params: { ...newVal.params },
+    query: { ...newVal.query }
+  })
 }, { deep: true })
 
 watch(() => props.recipes.length, (newValue) => {
