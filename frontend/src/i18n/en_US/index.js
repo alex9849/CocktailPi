@@ -689,7 +689,10 @@ export default {
     recipe_card: {
       owner_name: 'by {name}',
       ingredient_add_manually_tooltip: 'add manually',
-      ingredient_not_owned_tooltip: 'not owned'
+      ingredient_not_owned_tooltip: 'not owned',
+      no_alc: 'No Alc.',
+      percent_alc: '{percent}% Alc.',
+      percent_range_alc: '{min} - {max}% Alc.'
     },
     ingredient_list: {
       headline: 'Production-Steps',

@@ -632,7 +632,10 @@ export default {
     recipe_card: {
       owner_name: 'von {name}',
       ingredient_add_manually_tooltip: 'Manuell hinzufügen',
-      ingredient_not_owned_tooltip: 'Nicht im Besitz'
+      ingredient_not_owned_tooltip: 'Nicht im Besitz',
+      no_alc: 'Kein Alk.',
+      percent_alc: '{percent}% Alk.',
+      percent_range_alc: '{min} - {max}% Alk.'
     },
     ingredient_list: {
       headline: 'Produktionsschritte',

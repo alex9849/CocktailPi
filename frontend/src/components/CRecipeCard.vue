@@ -10,13 +10,15 @@
           <div class="col-12 col-xsm-4 col-sm-4 col-md-4 col-lg-3 flex">
             <div class="relative-position full-height full-width">
               <div class="absolute-top-left" style="z-index: 1">
-                <q-badge class="q-ma-xs">
+                <q-badge class="q-ma-xs" :color="alcoholPercentageColor">
                   {{ alcoholPercentageDisplay }}
                 </q-badge>
               </div>
               <q-img
                 :src="imageUrl + '&width=500'"
                 v-if="recipe.hasImage"
+                :no-spinner="imgNoSpinner"
+                :no-transition="imgNoSpinner"
                 placeholder-src="~assets/cocktail-solid.png"
                 :ratio="16 / 9"
                 class="rounded-borders full-height"
@@ -100,6 +102,10 @@ const props = defineProps({
     type: Object,
     required: true
   },
+  imgNoSpinner: {
+    type: Boolean,
+    default: false
+  },
   showIngredients: {
     type: Boolean,
     default: true
@@ -128,24 +134,20 @@ const imageUrl = computed(() => {
 const alcoholPercentageDisplay = computed(() => {
   if (props.recipe.minAlcoholContent === props.recipe.maxAlcoholContent) {
     if (props.recipe.maxAlcoholContent === 0) {
-      return 'No Alc.'
+      return t('component.recipe_card.no_alc')
     }
-    return String(props.recipe.maxAlcoholContent) + '% Alc.'
+    return t('component.recipe_card.percent_alc', { percent: props.recipe.maxAlcoholContent })
   }
-  return String(props.recipe.minAlcoholContent) + '-' + String(props.recipe.maxAlcoholContent) + '% Alc.'
+  return t('component.recipe_card.percent_range_alc', { min: props.recipe.minAlcoholContent, max: props.recipe.maxAlcoholContent })
 })
 
-/*
 const alcoholPercentageColor = computed(() => {
-  const maxRed = 40
-  let percentage = Math.min(maxRed, props.recipe.maxAlcoholContent)
-  percentage = percentage / maxRed * 100
-  const colorModifier = (255 * percentage) / 100
-  const red = Math.round(colorModifier)
-  const green = Math.round(255 - colorModifier)
-  return `rgb(${red}, ${green}, 0)`
+  if (props.recipe.maxAlcoholContent === 0) {
+    return 'positive'
+  } else {
+    return 'info'
+  }
 })
- */
 
 // Methods
 function ingredientChipColor (ingredient) {

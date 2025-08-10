@@ -27,6 +27,7 @@
           <c-recipe-card
             :recipe="recipe"
             show-ingredients
+            :img-no-spinner="!firstRender[index]"
             class="q-card--bordered q-card--flat no-shadow"
             :background-color="color.cardBody"
           >
@@ -83,6 +84,7 @@ const setLastRecipeListRoute = (route) => {
 
 // Reactive State
 const inView = ref([])
+const firstRender = ref([])
 
 // Lifecycle
 onMounted(() => {
@@ -113,14 +115,16 @@ watch(() => props.recipes.length, (newValue) => {
   const currLen = inView.value.length
   if (newValue > currLen) {
     inView.value.push(...Array(newValue - currLen).fill(false))
-  } else {
-    inView.value.splice(newValue, currLen - newValue)
+    firstRender.value.push(...Array(newValue - currLen).fill(true))
   }
 }, { immediate: true })
 
 // Intersection handling
 function onIntersection (entry) {
   const index = parseInt(entry.target.dataset.id, 10)
+  if (inView.value[index] && !entry.isIntersecting) {
+    firstRender.value[index] = false
+  }
   inView.value[index] = entry.isIntersecting
 }
 
