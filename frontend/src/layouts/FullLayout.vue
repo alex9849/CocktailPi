@@ -300,6 +300,11 @@ export default {
               reqLevel: 3,
               to: { name: 'systemmanagement' },
               exact: false
+            }, {
+              label: this.$t('layout.full_layout.sidebar.administration.import_export'),
+              reqLevel: 3,
+              to: { name: 'importexport' },
+              exact: false
             }
           ]
         }

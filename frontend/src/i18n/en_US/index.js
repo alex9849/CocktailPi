@@ -59,7 +59,8 @@ export default {
           pump_mgmt: 'Pumps',
           glass_mgmt: 'Glasses',
           event_mgmt: 'Events',
-          system_mgmt: 'System'
+          system_mgmt: 'System',
+          import_export: 'Transfer'
         }
       },
       donate_btn_label: 'Donate'
@@ -636,6 +637,9 @@ export default {
       recipe_added: 'Recipe added successfully',
       recipe_removed: 'Recipe removed successfully',
       collection_updated: 'Collection updated successfully'
+    },
+    transfer: {
+      headline: 'Transfer'
     }
   },
   component: {

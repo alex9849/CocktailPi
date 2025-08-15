@@ -142,11 +142,6 @@ function isInView (index) {
 </script>
 
 <style scoped>
-.no-link-format {
-  text-decoration: none;
-  color: inherit;
-}
-
 .card-height {
   height: unset;
   @media (min-width: 401px) {

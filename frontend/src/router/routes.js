@@ -160,6 +160,18 @@ const routes = [
             path: 'admin/glass',
             component: () => import('pages/GlassManagement'),
             name: 'glassmanagement'
+          }, {
+            path: 'admin/transfer',
+            component: () => import('pages/ImportExport'),
+            name: 'importexport'
+          }, {
+            path: 'admin/transfer/import',
+            component: () => import('pages/ImportExport'),
+            name: 'import'
+          }, {
+            path: 'admin/transfer/export',
+            component: () => import('pages/ImportExport'),
+            name: 'export'
           }
           ]
         }, {
