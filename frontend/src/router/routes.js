@@ -163,15 +163,18 @@ const routes = [
           }, {
             path: 'admin/transfer',
             component: () => import('pages/ImportExport'),
-            name: 'importexport'
-          }, {
-            path: 'admin/transfer/import',
-            component: () => import('pages/ImportExport'),
-            name: 'import'
-          }, {
-            path: 'admin/transfer/export',
-            component: () => import('pages/Export'),
-            name: 'export'
+            name: 'importexport',
+            children: [
+              {
+                path: 'import',
+                component: () => import('pages/ImportExport'),
+                name: 'import'
+              }, {
+                path: 'export',
+                component: () => import('pages/transfer/Export'),
+                name: 'export'
+              }
+            ]
           }
           ]
         }, {

@@ -1,35 +1,37 @@
 <template>
   <q-page class="page-content" padding>
-    <h5>{{ $t('page.transfer.headline') }}</h5>
-    <div class="row items-center justify-around q-col-gutter-md"
-    >
-      <div
-        v-for="(button, index) in data"
-        :key="index"
-        class="col-12 col-md-5 col-lg-4"
-      >
-        <router-link
-          :to="{name: button.routeName}"
-          class="no-link-format"
+    <h5 class="q-mb-md">{{ $t('page.transfer.headline') }}</h5>
+    <q-card flat bordered class="bg-card-body text-card-body q-pa-md q-mb-md">
+      <div class="row q-col-gutter-md">
+        <div
+          v-for="(button, index) in data"
+          :key="index"
+          class="col-12 col-md-6"
         >
-          <q-card class="q-pa-sm bg-card-body text-card-body">
-            <q-card-section
-              horizontal
-              class="items-center"
+          <router-link
+            :to="{name: button.routeName}"
+            class="no-link-format"
+          >
+            <q-card
+              flat
+              bordered
+              class="q-pa-md"
+              :class="{ 'bg-primary': $route.name === button.routeName, 'text-primary': $route.name === button.routeName }"
             >
-              <q-icon
-                :name="button.icon"
-                size="xl"
-                class="q-pl-md"
-              />
-              <q-card-section class="col-grow">
-                <p class="text-h4 text-center">{{ button.name }}</p>
-              </q-card-section>
-            </q-card-section>
-          </q-card>
-        </router-link>
+              <div class="row items-center">
+                <q-icon
+                  :name="button.icon"
+                  size="xl"
+                  class="q-mr-md"
+                />
+                <div class="text-h6">{{ button.name }}</div>
+              </div>
+            </q-card>
+          </router-link>
+        </div>
       </div>
-    </div>
+    </q-card>
+    <router-view />
   </q-page>
 </template>
 

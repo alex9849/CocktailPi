@@ -29,6 +29,7 @@ export const setAppearanceSettings = (state, payload) => {
 
   const style = document.documentElement.style
   style.setProperty('--q-primary', settings.colors.normal.btnPrimary)
+  style.setProperty('--q-primary-text', settings.colors.normal.btnPrimaryText)
   style.setProperty('--q-navigation-active', settings.colors.normal.btnNavigationActive)
   style.setProperty('--q-navigation-active-text', settings.colors.normal.btnNavigationActiveText)
   style.setProperty('--q-sidebar', settings.colors.normal.sidebar)
