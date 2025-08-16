@@ -1,6 +1,9 @@
 package net.alex9849.cocktailpi.endpoints;
 
+import net.alex9849.cocktailpi.model.recipe.Recipe;
+import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
+import net.alex9849.cocktailpi.service.RecipeService;
 import net.alex9849.cocktailpi.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,20 +17,24 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transfer/")
 public class TransferEndpoint {
 
     private final TransferService transferService;
+    private final RecipeService recipeService;
 
-    public TransferEndpoint(TransferService transferService) {
+    public TransferEndpoint(TransferService transferService, RecipeService recipeService) {
         this.transferService = transferService;
+        this.recipeService = recipeService;
     }
 
     @RequestMapping(value = {"import"}, method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> startImport(@RequestBody MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
+    public ResponseEntity<?> startImport(@RequestBody MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
         Path tempDir = transferService.newImport(importFile);
         UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(tempDir.getFileName());
         return ResponseEntity.created(uriComponents.toUri()).build();
@@ -36,7 +43,7 @@ public class TransferEndpoint {
 
     @RequestMapping(value = {"export"}, method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<byte[]> startExport(@RequestBody ExportRequest exportRequest) throws IOException {
+    public ResponseEntity<?> startExport(@RequestBody ExportRequest exportRequest) throws IOException {
         byte[] zipBytes = transferService.generateExport(exportRequest);
         String filename = "cocktailpi_export_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".zip";
         return ResponseEntity.ok()
@@ -45,4 +52,11 @@ public class TransferEndpoint {
                 .body(zipBytes);
     }
 
+    @RequestMapping(value = {"export/recipes"}, method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getRecipes() throws IOException {
+        List<RecipeDto.Response.Detailed> allRecipes = recipeService.getAll().stream().map(RecipeDto.Response.Detailed::toDto).collect(Collectors.toList());
+        String filename = "cocktailpi_export_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".zip";
+        return ResponseEntity.ok(allRecipes);
+    }
 }

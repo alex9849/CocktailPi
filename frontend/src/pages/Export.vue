@@ -36,6 +36,8 @@
             clearable
           />
           <q-table
+            :loading="recipeLoading"
+            loading-label="Lade Rezepte..."
             :rows="recipes"
             :columns="columns"
             row-key="id"
@@ -99,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import TransferService from 'src/services/transfer.service'
 
 const exportMode = ref('all')
@@ -107,70 +109,28 @@ const selected = ref([])
 const filter = ref('')
 const pagination = ref({ page: 1, rowsPerPage: 25 })
 const loading = ref(false)
+const recipeLoading = ref(false)
+const recipes = ref([])
+const recipesLoaded = ref(false)
 
-const recipesRaw = [
-  {
-    id: 122,
-    name: '20th Century',
-    categories: [{ id: 14, name: 'Classics' }, { id: 5, name: 'Gin' }],
-    minAlcoholContent: 28,
-    maxAlcoholContent: 28,
-    productionSteps: [
-      {
-        type: 'addIngredients',
-        stepIngredients: [
-          { ingredient: { name: 'Gin' }, amount: 45 },
-          { ingredient: { name: 'Lemon Juice' }, amount: 20 },
-          { ingredient: { name: 'Lillet Blanc' }, amount: 20 },
-          { ingredient: { name: 'Coffee Liqueur' }, amount: 15 }
-        ]
-      }
-    ]
-  },
-  {
-    id: 123,
-    name: 'Gin Tonic',
-    categories: [{ id: 5, name: 'Gin' }],
-    minAlcoholContent: 15,
-    maxAlcoholContent: 15,
-    productionSteps: [
-      {
-        type: 'addIngredients',
-        stepIngredients: [
-          { ingredient: { name: 'Gin' }, amount: 50 },
-          { ingredient: { name: 'Tonic Water' }, amount: 150 }
-        ]
-      }
-    ]
-  },
-  {
-    id: 124,
-    name: 'Virgin Colada',
-    categories: [{ id: 7, name: 'Alkoholfrei' }],
-    minAlcoholContent: 0,
-    maxAlcoholContent: 0,
-    productionSteps: [
-      {
-        type: 'addIngredients',
-        stepIngredients: [
-          { ingredient: { name: 'Ananassaft' }, amount: 100 },
-          { ingredient: { name: 'Kokosmilch' }, amount: 50 },
-          { ingredient: { name: 'Sahne' }, amount: 20 }
-        ]
-      }
-    ]
+watch(exportMode, async (val) => {
+  if (val === 'selection' && !recipesLoaded.value) {
+    recipeLoading.value = true
+    try {
+      const data = await TransferService.getRecipes()
+      recipes.value = data.map(r => ({
+        ...r,
+        ingredientCount: r.productionSteps
+          .filter(s => Array.isArray(s.stepIngredients))
+          .reduce((sum, s) => sum + s.stepIngredients.length, 0),
+        alcoholFree: r.minAlcoholContent === 0 && r.maxAlcoholContent === 0
+      }))
+      recipesLoaded.value = true
+    } finally {
+      recipeLoading.value = false
+    }
   }
-]
-
-const recipes = ref(
-  recipesRaw.map(r => ({
-    ...r,
-    ingredientCount: r.productionSteps
-      .filter(s => Array.isArray(s.stepIngredients))
-      .reduce((sum, s) => sum + s.stepIngredients.length, 0),
-    alcoholFree: r.minAlcoholContent === 0 && r.maxAlcoholContent === 0
-  }))
-)
+})
 
 const columns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },

@@ -22,6 +22,10 @@ class TransferService {
       window.URL.revokeObjectURL(url)
     })
   }
+
+  getRecipes () {
+    return axios.post(API_PATH + 'export/recipes').then(res => res.data)
+  }
 }
 
 export default new TransferService()
