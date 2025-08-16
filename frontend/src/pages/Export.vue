@@ -10,12 +10,14 @@
             class="bg-card-item-group text-card-item-group col-12"
           >
             <q-radio
+              :disable="loading"
               v-model="exportMode"
               val="all"
               label="Alle Rezepte exportieren"
               class="q-mr-md"
             />
             <q-radio
+              :disable="loading"
               v-model="exportMode"
               val="selection"
               label="Nur ausgewählte Rezepte exportieren"
@@ -24,6 +26,7 @@
         </div>
         <div v-if="exportMode === 'selection'" class="q-mb-md">
           <q-input
+            :disable="loading"
             filled
             dense
             debounce="300"
@@ -45,6 +48,13 @@
             title="Verfügbare Rezepte"
             :rows-per-page-options="[10, 25, 50, 100]"
           >
+            <template v-slot:body-selection="props">
+              <q-checkbox
+                v-model="props.selected"
+                dense
+                :disable="loading"
+              />
+            </template>
             <template v-slot:body-cell-categories="props">
               <q-td>
                 {{ props.row.categories.map(c => c.name).join(', ') }}
@@ -79,7 +89,8 @@
             color="primary"
             label="Export starten"
             @click="exportRecipes"
-            :disable="exportMode === 'selection' && selected.length === 0"
+            :disable="(exportMode === 'selection' && selected.length === 0) || loading"
+            :loading="loading"
           />
         </div>
       </q-form>
@@ -89,11 +100,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import TransferService from 'src/services/transfer.service'
 
 const exportMode = ref('all')
 const selected = ref([])
 const filter = ref('')
 const pagination = ref({ page: 1, rowsPerPage: 25 })
+const loading = ref(false)
 
 const recipesRaw = [
   {
@@ -199,11 +212,22 @@ function toggleSelectAllVisible () {
   }
 }
 
-function exportRecipes () {
-  if (exportMode.value === 'all') {
-    // Alle Rezepte exportieren
-  } else {
-    // Nur ausgewählte Rezepte exportieren
+async function exportRecipes () {
+  loading.value = true
+  try {
+    if (exportMode.value === 'all') {
+      await TransferService.exportRecipes({
+        exportAllRecipes: true,
+        exportRecipeIds: []
+      })
+    } else {
+      await TransferService.exportRecipes({
+        exportAllRecipes: false,
+        exportRecipeIds: selected.value.map(r => r.id)
+      })
+    }
+  } finally {
+    loading.value = false
   }
 }
 </script>
