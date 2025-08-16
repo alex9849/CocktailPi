@@ -53,6 +53,18 @@ public class RecipeRepository extends JdbcDaoSupport {
         return this.findByIds(offset, limit, sort, null);
     }
 
+    public List<Recipe> findAll() {
+        return getJdbcTemplate().execute((ConnectionCallback<List<Recipe>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, glass_id FROM recipes");
+            ResultSet rs = pstmt.executeQuery();
+            List<Recipe> results = new ArrayList<>();
+            while (rs.next()) {
+                results.add(parseRs(rs));
+            }
+            return results;
+        });
+    }
+
     public List<Recipe> findByIds(long offset, long limit, Sort sort, Long... ids) {
         return getJdbcTemplate().execute((ConnectionCallback<List<Recipe>>) con -> {
             StringBuilder sortSql = new StringBuilder();

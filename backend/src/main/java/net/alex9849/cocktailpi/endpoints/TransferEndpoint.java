@@ -1,0 +1,48 @@
+package net.alex9849.cocktailpi.endpoints;
+
+import net.alex9849.cocktailpi.payload.request.ExportRequest;
+import net.alex9849.cocktailpi.service.TransferService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+@RestController
+@RequestMapping("/api/transfer/")
+public class TransferEndpoint {
+
+    private final TransferService transferService;
+
+    public TransferEndpoint(TransferService transferService) {
+        this.transferService = transferService;
+    }
+
+    @RequestMapping(value = {"import"}, method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Object> startImport(@RequestBody MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
+        Path tempDir = transferService.newImport(importFile);
+        UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(tempDir.getFileName());
+        return ResponseEntity.created(uriComponents.toUri()).build();
+    }
+
+
+    @RequestMapping(value = {"export"}, method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> startExport(@RequestBody ExportRequest exportRequest) throws IOException {
+        byte[] zipBytes = transferService.generateExport(exportRequest);
+        String filename = "cocktailpi_export_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".zip";
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                .header("Content-Type", "application/zip")
+                .body(zipBytes);
+    }
+
+}

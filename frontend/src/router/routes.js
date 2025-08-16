@@ -170,7 +170,7 @@ const routes = [
             name: 'import'
           }, {
             path: 'admin/transfer/export',
-            component: () => import('pages/ImportExport'),
+            component: () => import('pages/Export'),
             name: 'export'
           }
           ]

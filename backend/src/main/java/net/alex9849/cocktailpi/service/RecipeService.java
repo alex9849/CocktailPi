@@ -170,6 +170,10 @@ public class RecipeService {
         return recipeRepository.findByIds(0, Long.MAX_VALUE, Sort.by(Sort.Direction.ASC, "name"), ids);
     }
 
+    public List<Recipe> getAll() {
+        return recipeRepository.findAll();
+    }
+
     public byte[] getImage(long recipeId) {
         return recipeRepository.getImage(recipeId).orElse(null);
     }
