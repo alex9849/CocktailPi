@@ -45,13 +45,30 @@
             title="Verfügbare Rezepte"
             :rows-per-page-options="[10, 25, 50, 100]"
           >
+            <template v-slot:body-cell-categories="props">
+              <q-td>
+                {{ props.row.categories.map(c => c.name).join(', ') }}
+              </q-td>
+            </template>
+            <template v-slot:body-cell-ingredientCount="props">
+              <q-td class="text-center">
+                {{ props.row.ingredientCount }}
+              </q-td>
+            </template>
+            <template v-slot:body-cell-alcoholFree="props">
+              <q-td class="text-center">
+                <q-badge :color="props.row.alcoholFree ? 'green' : 'grey'" align="middle">
+                  {{ props.row.alcoholFree ? 'Ja' : 'Nein' }}
+                </q-badge>
+              </q-td>
+            </template>
             <template v-slot:top-right>
               <q-btn
                 flat
                 dense
-                icon="select_all"
-                label="Alle auf Seite auswählen"
-                @click="selectAllVisible"
+                :icon="allVisibleSelected ? 'deselect' : 'select_all'"
+                :label="allVisibleSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
+                @click="toggleSelectAllVisible"
                 v-if="filteredRows.length > 0"
               />
             </template>
@@ -78,15 +95,75 @@ const selected = ref([])
 const filter = ref('')
 const pagination = ref({ page: 1, rowsPerPage: 25 })
 
-const recipes = ref([
-  { id: 1, name: 'Pizza Margherita', category: 'Italienisch' },
-  { id: 2, name: 'Sushi', category: 'Japanisch' },
-  { id: 3, name: 'Tacos', category: 'Mexikanisch' }
-])
+const recipesRaw = [
+  {
+    id: 122,
+    name: '20th Century',
+    categories: [{ id: 14, name: 'Classics' }, { id: 5, name: 'Gin' }],
+    minAlcoholContent: 28,
+    maxAlcoholContent: 28,
+    productionSteps: [
+      {
+        type: 'addIngredients',
+        stepIngredients: [
+          { ingredient: { name: 'Gin' }, amount: 45 },
+          { ingredient: { name: 'Lemon Juice' }, amount: 20 },
+          { ingredient: { name: 'Lillet Blanc' }, amount: 20 },
+          { ingredient: { name: 'Coffee Liqueur' }, amount: 15 }
+        ]
+      }
+    ]
+  },
+  {
+    id: 123,
+    name: 'Gin Tonic',
+    categories: [{ id: 5, name: 'Gin' }],
+    minAlcoholContent: 15,
+    maxAlcoholContent: 15,
+    productionSteps: [
+      {
+        type: 'addIngredients',
+        stepIngredients: [
+          { ingredient: { name: 'Gin' }, amount: 50 },
+          { ingredient: { name: 'Tonic Water' }, amount: 150 }
+        ]
+      }
+    ]
+  },
+  {
+    id: 124,
+    name: 'Virgin Colada',
+    categories: [{ id: 7, name: 'Alkoholfrei' }],
+    minAlcoholContent: 0,
+    maxAlcoholContent: 0,
+    productionSteps: [
+      {
+        type: 'addIngredients',
+        stepIngredients: [
+          { ingredient: { name: 'Ananassaft' }, amount: 100 },
+          { ingredient: { name: 'Kokosmilch' }, amount: 50 },
+          { ingredient: { name: 'Sahne' }, amount: 20 }
+        ]
+      }
+    ]
+  }
+]
+
+const recipes = ref(
+  recipesRaw.map(r => ({
+    ...r,
+    ingredientCount: r.productionSteps
+      .filter(s => Array.isArray(s.stepIngredients))
+      .reduce((sum, s) => sum + s.stepIngredients.length, 0),
+    alcoholFree: r.minAlcoholContent === 0 && r.maxAlcoholContent === 0
+  }))
+)
 
 const columns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
-  { name: 'category', label: 'Kategorie', field: 'category', align: 'left' }
+  { name: 'categories', label: 'Kategorien', field: 'categories', align: 'left' },
+  { name: 'ingredientCount', label: 'Zutaten', field: 'ingredientCount', align: 'center' },
+  { name: 'alcoholFree', label: 'Alkoholfrei', field: 'alcoholFree', align: 'center' }
 ]
 
 const filteredRows = computed(() => {
@@ -95,7 +172,7 @@ const filteredRows = computed(() => {
     const f = filter.value.toLowerCase()
     rows = rows.filter(r =>
       r.name.toLowerCase().includes(f) ||
-      r.category.toLowerCase().includes(f)
+      r.categories.some(c => c.name.toLowerCase().includes(f))
     )
   }
   const start = (pagination.value.page - 1) * pagination.value.rowsPerPage
@@ -103,12 +180,23 @@ const filteredRows = computed(() => {
   return rows.slice(start, end)
 })
 
-function selectAllVisible () {
-  const ids = filteredRows.value.map(r => r.id)
-  selected.value = [
-    ...selected.value,
-    ...recipes.value.filter(r => ids.includes(r.id) && !selected.value.includes(r))
-  ]
+const allVisibleSelected = computed(() => {
+  const visibleIds = filteredRows.value.map(r => r.id)
+  return visibleIds.every(id => selected.value.some(s => s.id === id)) && visibleIds.length > 0
+})
+
+function toggleSelectAllVisible () {
+  const visibleIds = filteredRows.value.map(r => r.id)
+  if (allVisibleSelected.value) {
+    // Abwählen
+    selected.value = selected.value.filter(r => !visibleIds.includes(r.id))
+  } else {
+    // Auswählen
+    selected.value = [
+      ...selected.value,
+      ...recipes.value.filter(r => visibleIds.includes(r.id) && !selected.value.includes(r))
+    ]
+  }
 }
 
 function exportRecipes () {
@@ -119,6 +207,3 @@ function exportRecipes () {
   }
 }
 </script>
-
-<style scoped>
-</style>
