@@ -11,4 +11,6 @@ import java.util.List;
 public class ExportRequest {
     private boolean exportAllRecipes;
     private List<Long> exportRecipeIds;
+    private boolean exportAllCollections;
+    private List<Long> exportCollectionIds;
 }
