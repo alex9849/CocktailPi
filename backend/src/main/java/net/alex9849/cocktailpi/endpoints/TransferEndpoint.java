@@ -56,7 +56,6 @@ public class TransferEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getRecipes() throws IOException {
         List<RecipeDto.Response.Detailed> allRecipes = recipeService.getAll().stream().map(RecipeDto.Response.Detailed::toDto).collect(Collectors.toList());
-        String filename = "cocktailpi_export_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".zip";
         return ResponseEntity.ok(allRecipes);
     }
 }
