@@ -20,6 +20,13 @@
             val="selection"
             label="Nur ausgewählte Rezepte exportieren"
           />
+          <q-radio
+            :disable="loading"
+            v-model="exportMode"
+            val="none"
+            label="Keine Rezepte exportieren"
+            class="q-mr-md"
+          />
         </q-card>
       </div>
       <div v-if="exportMode === 'selection'" class="q-mb-md">
@@ -103,6 +110,13 @@
             v-model="exportCollectionsMode"
             val="selection"
             label="Nur ausgewählte Collections exportieren"
+          />
+          <q-radio
+            :disable="loading"
+            v-model="exportCollectionsMode"
+            val="none"
+            label="Keine Collections exportieren"
+            class="q-mr-md"
           />
         </q-card>
       </div>
@@ -221,7 +235,7 @@ const columns = [
 const collectionColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
   { name: 'description', label: 'Beschreibung', field: 'description', align: 'left' },
-  { name: 'size', label: 'Rezepte', field: 'size', align: 'center' }
+  { name: 'size', label: 'Nr. Rezepte', field: 'size', align: 'center' }
 ]
 
 const filteredRows = computed(() => {
@@ -253,8 +267,9 @@ const filteredCollections = computed(() => {
 })
 
 const enableExportBtn = computed(() => {
-  return exportMode.value === 'all' || selected.value.length > 0 ||
-         exportCollectionsMode.value === 'all' || selectedCollections.value.length > 0
+  const recipesOk = exportMode.value !== 'none' && (exportMode.value === 'all' || selected.value.length > 0)
+  const collectionsOk = exportCollectionsMode.value !== 'none' && (exportCollectionsMode.value === 'all' || selectedCollections.value.length > 0)
+  return recipesOk || collectionsOk
 })
 
 const allVisibleSelected = computed(() => {
@@ -298,9 +313,9 @@ async function exportRecipes () {
   try {
     await TransferService.exportRecipes({
       exportAllRecipes: exportMode.value === 'all',
-      exportRecipeIds: selected.value.map(r => r.id),
+      exportRecipeIds: exportMode.value === 'selection' ? selected.value.map(r => r.id) : [],
       exportAllCollections: exportCollectionsMode.value === 'all',
-      exportCollectionIds: selectedCollections.value.map(c => c.id)
+      exportCollectionIds: exportCollectionsMode.value === 'selection' ? selectedCollections.value.map(c => c.id) : []
     })
   } finally {
     loading.value = false
