@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -30,11 +31,13 @@ public class TransferService {
     private final RecipeService recipeService;
     private final IngredientService ingredientService;
     private final CollectionService collectionService;
+    private final SystemService systemService;
 
-    public TransferService(RecipeService recipeService, IngredientService ingredientService, CollectionService collectionService) {
+    public TransferService(RecipeService recipeService, IngredientService ingredientService, CollectionService collectionService, SystemService systemService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.collectionService = collectionService;
+        this.systemService = systemService;
     }
 
     public Path newImport(MultipartFile zipFile) throws IOException {
@@ -217,6 +220,12 @@ public class TransferService {
                     }
                 }
             }
+
+            zos.putNextEntry(new ZipEntry("schema.json"));
+            String version = systemService.getVersion().getVersion();
+            String schemaJson = "{\"version\": \"" + version + "\"}";
+            zos.write(schemaJson.getBytes(StandardCharsets.UTF_8));
+            zos.closeEntry();
         }
         return baos.toByteArray();
     }

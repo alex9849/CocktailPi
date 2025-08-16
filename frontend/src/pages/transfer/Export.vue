@@ -153,7 +153,7 @@
       <div class="row justify-end">
         <q-btn
           color="primary"
-          label="Export starten"
+          label="Export herunterladen"
           @click="exportRecipes"
           :disable="!enableExportBtn"
           :loading="loading"
