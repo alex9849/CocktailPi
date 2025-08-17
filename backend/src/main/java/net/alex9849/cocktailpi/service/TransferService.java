@@ -371,12 +371,12 @@ public class TransferService {
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
                     oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    glass.setName(glass.getName() + " (imported)");
-                    glassesToImport.add(new GlassDto.Duplex.Detailed(glass));
+                    dto.setName(dto.getName() + " (imported)");
+                    glassesToImport.add(dto);
                 }
             } else {
                 Glass newGlass = glassService.createGlass(glass);
-                oldGlassedToNewGlassIdMap.put(glass.getId(), newGlass.getId());
+                oldGlassedToNewGlassIdMap.put(dto.getId(), newGlass.getId());
             }
         }
 
@@ -398,12 +398,12 @@ public class TransferService {
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
                     oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    category.setName(category.getName() + " (imported)");
-                    categoriesToImport.add(new CategoryDto.Duplex.Detailed(category));
+                    dto.setName(dto.getName() + " (imported)");
+                    categoriesToImport.add(dto);
                 }
             } else {
-                categoryService.createCategory(category);
-                oldCategoryToNewCategoryIdMap.put(dto.getId(), dto.getId());
+                Category newCategory = categoryService.createCategory(category);
+                oldCategoryToNewCategoryIdMap.put(dto.getId(), newCategory.getId());
             }
         }
         for (int i = 0; i < ingredientsToImport.size(); i++) {
@@ -427,8 +427,8 @@ public class TransferService {
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
                     oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    ingredient.setName(ingredient.getName() + " (imported)");
-                    ingredientsToImport.add(i + 1, IngredientDto.Response.Detailed.toDto(ingredient));
+                    dto.setName(dto.getName() + " (imported)");
+                    ingredientsToImport.add(i + 1, dto);
                 }
             } else {
                 Ingredient newIngredient = ingredientService.createIngredient(ingredient);
@@ -472,11 +472,10 @@ public class TransferService {
                     recipe.setId(existingRecipe.getId());
                     recipeService.updateRecipe(recipe);
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                    continue;
+                    // Do nothing, skip this recipe
                 } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    recipe.setName(recipe.getName() + " (imported)");
-                    recipesToImport.add(i + 1, RecipeDto.Response.Detailed.toDto(recipe));
-                    continue;
+                    dto.setName(dto.getName() + " (imported)");
+                    recipesToImport.add(i + 1, dto);
                 }
             } else {
                 recipeService.createRecipe(recipe);

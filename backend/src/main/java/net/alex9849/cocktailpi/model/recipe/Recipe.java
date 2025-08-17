@@ -52,10 +52,17 @@ public class Recipe {
                     if(ingredient instanceof AddableIngredient addableIngredient) {
                         totalAlcoholMinMl += (addableIngredient.getAlcoholContent() * psi.getAmount()) / 100d;
                     } else if (ingredient instanceof IngredientGroup ingredientGroup) {
-                        totalAlcoholMinMl += (ingredientGroup.getMinAlcoholContent() * psi.getAmount()) / 100d;
+                        Integer minGroup = ingredientGroup.getMinAlcoholContent();
+                        if (minGroup == null) {
+                            continue;
+                        }
+                        totalAlcoholMinMl += (minGroup * psi.getAmount()) / 100d;
                     }
                 }
             }
+        }
+        if (totalAmountMl == 0) {
+            return 0;
         }
         return (int) (totalAlcoholMinMl * 100) / totalAmountMl;
     }
@@ -71,10 +78,17 @@ public class Recipe {
                     if(ingredient instanceof AddableIngredient addableIngredient) {
                         totalAlcoholMaxMl += (addableIngredient.getAlcoholContent() * psi.getAmount()) / 100d;
                     } else if (ingredient instanceof IngredientGroup ingredientGroup) {
-                        totalAlcoholMaxMl += (ingredientGroup.getMaxAlcoholContent() * psi.getAmount()) / 100d;
+                        Integer maxGroup = ingredientGroup.getMaxAlcoholContent();
+                        if (maxGroup == null) {
+                            continue;
+                        }
+                        totalAlcoholMaxMl += (maxGroup * psi.getAmount()) / 100d;
                     }
                 }
             }
+        }
+        if (totalAmountMl == 0) {
+            return 0;
         }
         return (int) (totalAlcoholMaxMl * 100) / totalAmountMl;
     }
