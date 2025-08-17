@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.repository;
 import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailpi.model.Category;
 import net.alex9849.cocktailpi.model.recipe.Recipe;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -112,19 +113,20 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Recipe create(Recipe recipe) {
         return getJdbcTemplate().execute((ConnectionCallback<Recipe>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, description, last_update, " +
-                    "owner_id, glass_id) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO recipes (name, normal_name, description, " +
+                    "last_update, owner_id, glass_id) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, recipe.getName());
+            pstmt.setString(2, recipe.getNormalName());
             if(recipe.getDescription() != null) {
-                pstmt.setString(2, recipe.getDescription());
+                pstmt.setString(3, recipe.getDescription());
             } else {
-                pstmt.setNull(2, Types.VARCHAR);
+                pstmt.setNull(3, Types.VARCHAR);
             }
-            pstmt.setLong(3, recipe.getOwnerId());
+            pstmt.setLong(4, recipe.getOwnerId());
             if(recipe.getDefaultGlass() != null) {
-                pstmt.setLong(4, recipe.getDefaultGlass().getId());
+                pstmt.setLong(5, recipe.getDefaultGlass().getId());
             } else {
-                pstmt.setNull(4, Types.INTEGER);
+                pstmt.setNull(5, Types.INTEGER);
             }
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -141,23 +143,24 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     public boolean update(Recipe recipe) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE recipes SET name = ?, " +
-                    "description = ?, last_update = CURRENT_TIMESTAMP, owner_id = ?, " +
-                    "glass_id = ? WHERE id = ?");
+                    "normal_name = ?, description = ?, last_update = CURRENT_TIMESTAMP, " +
+                    "owner_id = ?, glass_id = ? WHERE id = ?");
             pstmt.setString(1, recipe.getName());
-            if(recipe.getDescription() != null) {
-                pstmt.setString(2, recipe.getDescription());
+            pstmt.setString(2, recipe.getNormalName());
+            if (recipe.getDescription() != null) {
+                pstmt.setString(3, recipe.getDescription());
             } else {
-                pstmt.setNull(2, Types.VARCHAR);
+                pstmt.setNull(3, Types.VARCHAR);
             }
-            pstmt.setLong(3, recipe.getOwnerId());
-            if(recipe.getDefaultGlass() != null) {
-                pstmt.setLong(4, recipe.getDefaultGlass().getId());
+            pstmt.setLong(4, recipe.getOwnerId());
+            if (recipe.getDefaultGlass() != null) {
+                pstmt.setLong(5, recipe.getDefaultGlass().getId());
             } else {
-                pstmt.setNull(4, Types.INTEGER);
+                pstmt.setNull(5, Types.INTEGER);
             }
-            pstmt.setLong(5, recipe.getId());
+            pstmt.setLong(6, recipe.getId());
             productionStepRepository.deleteByRecipe(recipe.getId());
             productionStepRepository.create(recipe.getProductionSteps(), recipe.getId());
             recipeCategoryRepository.removeFromAllCategories(recipe.getId());
@@ -165,7 +168,7 @@ public class RecipeRepository extends JdbcDaoSupport {
                 recipeCategoryRepository.addToCategory(recipe.getId(), category.getId());
             }
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public Set<Long> findIdsInCollection(long collectionId) {
@@ -180,11 +183,11 @@ public class RecipeRepository extends JdbcDaoSupport {
     }
 
     public boolean delete(long id) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE from recipes WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public Set<Long> getIdsInCategory(long categoryId) {
@@ -219,8 +222,8 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsContainingName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) LIKE ('%' || lower(?) || '%')");
-            pstmt.setString(1, name);
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) LIKE ('%' || lower(?) || '%')");
+            pstmt.setString(1, SpringUtility.normalize(name));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -235,8 +238,8 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsByName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) = lower(?)");
-            pstmt.setString(1, name);
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) = lower(?)");
+            pstmt.setString(1, SpringUtility.normalize(name));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }

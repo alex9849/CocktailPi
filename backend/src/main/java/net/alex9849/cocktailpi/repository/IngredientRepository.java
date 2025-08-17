@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.repository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.DiscriminatorValue;
 import net.alex9849.cocktailpi.model.recipe.ingredient.*;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -74,8 +75,8 @@ public class IngredientRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsAutocompleteName(String toAutocomplete) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(name) LIKE ('%' || lower(?) || '%')");
-            pstmt.setString(1, toAutocomplete);
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(normal_name) LIKE ('%' || lower(?) || '%')");
+            pstmt.setString(1, SpringUtility.normalize(toAutocomplete));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -83,31 +84,32 @@ public class IngredientRepository extends JdbcDaoSupport {
     private static void setParameters(Ingredient ingredient, PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, ingredient.getClass().getAnnotation(DiscriminatorValue.class).value());
         pstmt.setString(2, ingredient.getName());
+        pstmt.setString(3, ingredient.getNormalName());
         if(ingredient.getParentGroupId() != null) {
-            pstmt.setLong(7, ingredient.getParentGroupId());
+            pstmt.setLong(8, ingredient.getParentGroupId());
         } else {
-            pstmt.setNull(7, Types.BIGINT);
+            pstmt.setNull(8, Types.BIGINT);
         }
 
         if(ingredient instanceof AddableIngredient) {
             AddableIngredient aIngredient = (AddableIngredient) ingredient;
-            pstmt.setInt(3, aIngredient.getAlcoholContent());
-            pstmt.setBoolean(6, aIngredient.isInBar());
+            pstmt.setInt(4, aIngredient.getAlcoholContent());
+            pstmt.setBoolean(7, aIngredient.isInBar());
         } else {
-            pstmt.setNull(3, Types.INTEGER);
-            pstmt.setNull(6, Types.BOOLEAN);
+            pstmt.setNull(4, Types.INTEGER);
+            pstmt.setNull(7, Types.BOOLEAN);
         }
         if(ingredient instanceof ManualIngredient) {
-            pstmt.setString(4, ingredient.getUnit().toString());
+            pstmt.setString(5, ingredient.getUnit().toString());
         } else {
-            pstmt.setNull(4, Types.VARCHAR);
+            pstmt.setNull(5, Types.VARCHAR);
         }
         if(ingredient instanceof AutomatedIngredient automatedIngredient) {
-            pstmt.setDouble(5, automatedIngredient.getPumpTimeMultiplier());
-            pstmt.setInt(8, automatedIngredient.getBottleSize());
+            pstmt.setDouble(6, automatedIngredient.getPumpTimeMultiplier());
+            pstmt.setInt(9, automatedIngredient.getBottleSize());
         } else {
-            pstmt.setNull(5, Types.DOUBLE);
-            pstmt.setNull(8, Types.INTEGER);
+            pstmt.setNull(6, Types.DOUBLE);
+            pstmt.setNull(9, Types.INTEGER);
         }
     }
 
@@ -150,16 +152,16 @@ public class IngredientRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsByNameIgnoringCase(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients i WHERE lower(name) = lower(?) ORDER BY name");
-            pstmt.setString(1, name);
+            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients i WHERE lower(normal_name) = lower(?) ORDER BY name");
+            pstmt.setString(1, SpringUtility.normalize(name));
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
 
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, alcohol_content, " +
-                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size, last_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, normal_name, alcohol_content, " +
+                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size, last_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", Statement.RETURN_GENERATED_KEYS);
             setParameters(ingredient, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -171,21 +173,21 @@ public class IngredientRepository extends JdbcDaoSupport {
     }
 
     public boolean update(Ingredient ingredient) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, alcohol_content = ?, " +
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, normal_name = ?, alcohol_content = ?, " +
                     "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             setParameters(ingredient, pstmt);
             pstmt.setLong(9, ingredient.getId());
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public boolean delete(long id) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE from ingredients WHERE id = ?");
             pstmt.setLong(1, id);
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     private Ingredient parseRs(ResultSet resultSet) throws SQLException {

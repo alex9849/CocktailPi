@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.repository;
 
 import jakarta.annotation.PostConstruct;
 import net.alex9849.cocktailpi.model.Collection;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -33,11 +34,12 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public Collection create(Collection collection) {
         return getJdbcTemplate().execute((ConnectionCallback<Collection>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (name, description, owner_id) " +
-                    "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO collections (name, normal_name, description, owner_id) " +
+                    "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, collection.getName());
-            pstmt.setString(2, collection.getDescription());
-            pstmt.setLong(3, collection.getOwner().getId());
+            pstmt.setString(2, collection.getNormalName());
+            pstmt.setString(3, collection.getDescription());
+            pstmt.setLong(4, collection.getOwner().getId());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -49,35 +51,36 @@ public class CollectionRepository extends JdbcDaoSupport {
     }
 
     public boolean update(Collection collection) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("UPDATE collections SET name = ?, description = ?, " +
-                    "owner_id = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("UPDATE collections SET name = ?, normal_name = ?, " +
+                    "description = ?, owner_id = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             pstmt.setString(1, collection.getName());
-            pstmt.setString(2, collection.getDescription());
-            pstmt.setLong(3, collection.getOwner().getId());
-            pstmt.setLong(4, collection.getId());
+            pstmt.setString(2, collection.getNormalName());
+            pstmt.setString(3, collection.getDescription());
+            pstmt.setLong(4, collection.getOwner().getId());
+            pstmt.setLong(5, collection.getId());
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public boolean addRecipe(long collectionId, long recipeId) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO collection_recipes (recipe_id, collection_id) " +
                     "VALUES (?, ?)");
             pstmt.setLong(1, recipeId);
             pstmt.setLong(2, collectionId);
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public boolean removeRecipe(long collectionId, long recipeId) {
-        return getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
+        return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM collection_recipes WHERE " +
                     "recipe_id = ? AND collection_id = ?");
             pstmt.setLong(1, recipeId);
             pstmt.setLong(2, collectionId);
             return pstmt.executeUpdate() != 0;
-        });
+        }));
     }
 
     public boolean delete(long id) {
@@ -106,8 +109,8 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsByName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(name) = ?");
-            pstmt.setString(1, name);
+            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(normal_name) = ?");
+            pstmt.setString(1, SpringUtility.normalize(name));
             pstmt.executeQuery();
             return DbUtils.executeGetIdsPstmt(pstmt);
         });

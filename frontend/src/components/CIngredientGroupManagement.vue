@@ -40,6 +40,10 @@
           </template>
         </q-input>
       </template>
+      <template v-slot:body-cell-normalName>
+      </template>
+      <template v-slot:header-cell-normalName>
+      </template>
       <template v-slot:body-cell-alcoholContent="props">
         <q-td
           key="alcoholContent"
@@ -138,6 +142,12 @@ export default {
           name: 'name',
           label: this.$t('component.ingredient_group_mgmt.group_table.columns.group'),
           field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'normalName',
+          label: 'normalName',
+          field: 'normalName',
           align: 'center'
         },
         {

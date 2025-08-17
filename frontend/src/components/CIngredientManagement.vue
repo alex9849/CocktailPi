@@ -48,6 +48,10 @@
           {{ props.row.alcoholContent }}%
         </q-td>
       </template>
+      <template v-slot:body-cell-normalName>
+      </template>
+      <template v-slot:header-cell-normalName>
+      </template>
       <template v-slot:body-cell-bottleSize="props">
         <q-td
           key="bottleSize"
@@ -189,6 +193,12 @@ export default {
           name: 'name',
           label: this.$t('component.ingredient_mgmt.ingredient_table.columns.ingredient'),
           field: 'name',
+          align: 'center'
+        },
+        {
+          name: 'normalName',
+          label: 'normalName',
+          field: 'normalName',
           align: 'center'
         },
         {
