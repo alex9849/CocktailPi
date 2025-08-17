@@ -233,6 +233,14 @@ public class RecipeRepository extends JdbcDaoSupport {
         });
     }
 
+    public Set<Long> getIdsByName(String name) {
+        return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(name) = lower(?)");
+            pstmt.setString(1, name);
+            return DbUtils.executeGetIdsPstmt(pstmt);
+        });
+    }
+
     public Optional<byte[]> getImage(long recipeId) {
         return getJdbcTemplate().execute((ConnectionCallback<Optional<byte[]>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT image FROM recipes where id = ?");

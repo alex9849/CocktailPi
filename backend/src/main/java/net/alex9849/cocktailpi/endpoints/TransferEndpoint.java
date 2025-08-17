@@ -2,12 +2,14 @@ package net.alex9849.cocktailpi.endpoints;
 
 import net.alex9849.cocktailpi.model.transfer.ExportContents;
 import net.alex9849.cocktailpi.model.transfer.ImportConfirmRequest;
+import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
 import net.alex9849.cocktailpi.service.RecipeService;
 import net.alex9849.cocktailpi.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
@@ -43,7 +45,8 @@ public class TransferEndpoint {
     public ResponseEntity<?> confirmImport(
             @PathVariable("id") long importId,
             @RequestBody ImportConfirmRequest importRequest) throws IOException {
-        transferService.confirmImport(importId, importRequest);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        transferService.confirmImport(importId, user, importRequest);
         return ResponseEntity.ok().build();
     }
 

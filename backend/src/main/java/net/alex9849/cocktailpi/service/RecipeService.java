@@ -109,6 +109,14 @@ public class RecipeService {
         return new PageImpl<>(recipeRepository.findByIds(offset, pageSize, sort, retained.toArray(new Long[1])), pageable, retained.size());
     }
 
+    public List<Recipe> getRecipeByName(String name) {
+        if(name == null || name.isBlank()) {
+            return null;
+        }
+        Set<Long> idsByName = recipeRepository.getIdsByName(name);
+        return idsByName.stream().map(x -> recipeRepository.findById(x).orElse(null)).toList();
+    }
+
     public List<IngredientRecipe> getCurrentIngredientRecipes() {
         List<Ingredient> ingredients = ingredientService.getIngredientByFilter(null, true, false,
                 true, null, false, true, false, false);

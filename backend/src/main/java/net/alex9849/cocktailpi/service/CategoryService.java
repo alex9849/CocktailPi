@@ -60,4 +60,8 @@ public class CategoryService {
     public List<Category> getByRecipeId(long recipeId) {
         return categoryRepository.findByRecipeId(recipeId);
     }
+
+    public Category getCategoryByName(String name) {
+        return categoryRepository.findByNameIgnoringCase(name).orElse(null);
+    }
 }

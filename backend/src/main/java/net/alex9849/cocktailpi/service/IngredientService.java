@@ -199,4 +199,12 @@ public class IngredientService {
     public byte[] getImage(long id) {
         return ingredientRepository.getImage(id).orElse(null);
     }
+
+    public Ingredient getByName(String name) {
+        Set<Long> ids = ingredientRepository.findIdsByNameIgnoringCase(name);
+        if (ids.isEmpty()) {
+            return null;
+        }
+        return ingredientRepository.findById(ids.iterator().next()).orElse(null);
+    }
 }

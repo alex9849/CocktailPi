@@ -1,6 +1,8 @@
 package net.alex9849.cocktailpi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.alex9849.cocktailpi.model.Category;
+import net.alex9849.cocktailpi.model.Glass;
 import net.alex9849.cocktailpi.model.recipe.Recipe;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
@@ -9,6 +11,7 @@ import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailpi.model.transfer.ExportContents;
 import net.alex9849.cocktailpi.model.transfer.ImportConfirmRequest;
+import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailpi.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailpi.model.Collection;
@@ -16,6 +19,10 @@ import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientDto;
+import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientGroupDto;
+import net.alex9849.cocktailpi.payload.dto.recipe.productionstep.AddIngredientsProductionStepDto;
+import net.alex9849.cocktailpi.payload.dto.recipe.productionstep.ProductionStepDto;
+import net.alex9849.cocktailpi.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.data.domain.Page;
@@ -28,10 +35,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 import java.util.zip.*;
 
 @Service
 public class TransferService {
+    private final GlassService glassService;
+    private final CategoryService categoryService;
     private Map<Long, Path> exportPaths = new HashMap<>();
     private long lastExportId = 0;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -40,11 +50,13 @@ public class TransferService {
     private final CollectionService collectionService;
     private final SystemService systemService;
 
-    public TransferService(RecipeService recipeService, IngredientService ingredientService, CollectionService collectionService, SystemService systemService) {
+    public TransferService(RecipeService recipeService, IngredientService ingredientService, CollectionService collectionService, SystemService systemService, GlassService glassService, CategoryService categoryService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.collectionService = collectionService;
         this.systemService = systemService;
+        this.glassService = glassService;
+        this.categoryService = categoryService;
     }
 
     public long newImport(MultipartFile zipFile) throws IOException {
@@ -297,8 +309,191 @@ public class TransferService {
         return baos.toByteArray();
     }
 
-    public void confirmImport(long importId, ImportConfirmRequest importRequest) {
+    public void confirmImport(long importId, User importUser, ImportConfirmRequest importRequest) {
         ExportContents exportContents = readExport(importId);
+        List<RecipeDto.Response.Detailed> recipesToImport = exportContents.getRecipes();
+        if (!importRequest.isImportAllRecipes()) {
+            recipesToImport = recipesToImport.stream()
+                    .filter(recipe -> importRequest.getImportRecipeIds().contains(recipe.getId()))
+                    .toList();
+        }
+        List<CollectionDto.Response.Detailed> collectionsToImport = exportContents.getCollections();
+        if (!importRequest.isImportAllCollections()) {
+            collectionsToImport = collectionsToImport.stream()
+                    .filter(collection -> importRequest.getImportCollectionIds().contains(collection.getId()))
+                    .toList();
+        }
+        List<GlassDto.Duplex.Detailed> glassesToImport = exportContents.getGlasses();
+        List<CategoryDto.Duplex.Detailed> categoriesToImport = exportContents.getCategories();
 
+
+
+        List<IngredientDto.Response.Detailed> ingredientsToImport = new ArrayList<>();
+        Set<Long> seenIngredientIds = new HashSet<>();
+        Map<Long, IngredientDto.Response.Detailed> ingredientMap = exportContents.getIngredients()
+                .stream().collect(Collectors.toMap(IngredientDto.Response.Detailed::getId, v -> v));
+        Map<Long, List<IngredientDto.Response.Detailed>> ingredientGroupMap = exportContents.getIngredients()
+                .stream().filter(ing -> ing.getParentGroupId() != null)
+                .collect(Collectors.groupingBy(IngredientDto.Response.Detailed::getParentGroupId, Collectors.toList()));
+
+        for (RecipeDto.Response.Detailed recipeDto : recipesToImport) {
+            for(ProductionStepDto.Response.Detailed stepDto : recipeDto.getProductionSteps()) {
+                if (!(stepDto instanceof AddIngredientsProductionStepDto.Response.Detailed addStep)) {
+                    continue;
+                }
+                for (ProductionStepIngredientDto.Response.Detailed ingredientDto : addStep.getStepIngredients()) {
+                    IngredientDto.Response.Detailed root = ingredientDto.getIngredient();
+                    while (root.getParentGroupId() != null) {
+                        root = ingredientMap.get(root.getParentGroupId());
+                    }
+                    collectIngredientTree(root, seenIngredientIds, ingredientGroupMap, ingredientsToImport);
+                }
+            }
+        }
+
+        Map<Long, Long> oldGlassedToNewGlassIdMap = new HashMap<>();
+        Map<Long, Long> oldCategoryToNewCategoryIdMap = new HashMap<>();
+        Map<Long, Long> oldIngredientToNewIngredientIdMap = new HashMap<>();
+
+        for (int i = 0; i < glassesToImport.size(); i++) {
+            GlassDto.Duplex.Detailed dto = glassesToImport.get(i);
+            Glass glass = glassService.fromDto(dto);
+            Glass existingGlass = glassService.getByName(glass.getName());
+            if (!importRequest.isImportAllGlasses()) {
+                oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                continue;
+            }
+            if (existingGlass != null) {
+                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                    glass.setId(existingGlass.getId());
+                    glassService.updateGlass(glass);
+                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                    glass.setName(glass.getName() + " (imported)");
+                    glassesToImport.add(new GlassDto.Duplex.Detailed(glass));
+                }
+            } else {
+                Glass newGlass = glassService.createGlass(glass);
+                oldGlassedToNewGlassIdMap.put(glass.getId(), newGlass.getId());
+            }
+        }
+
+        for (int i = 0; i < categoriesToImport.size(); i++) {
+            CategoryDto.Duplex.Detailed dto = categoriesToImport.get(i);
+            CategoryDto.Request.Create dtoCreate = new CategoryDto.Request.Create(dto);
+            Category category = categoryService.fromDto(dtoCreate);
+            category.setId(dto.getId());
+            Category existingCategory = categoryService.getCategoryByName(dto.getName());
+            if (!importRequest.isImportAllCategories()) {
+                oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                continue;
+            }
+            if (existingCategory != null) {
+                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                    category.setId(existingCategory.getId());
+                    categoryService.updateCategory(category);
+                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                    category.setName(category.getName() + " (imported)");
+                    categoriesToImport.add(new CategoryDto.Duplex.Detailed(category));
+                }
+            } else {
+                categoryService.createCategory(category);
+                oldCategoryToNewCategoryIdMap.put(dto.getId(), dto.getId());
+            }
+        }
+        for (int i = 0; i < ingredientsToImport.size(); i++) {
+            IngredientDto.Response.Detailed dto = ingredientsToImport.get(i);
+            IngredientDto.Request.Create dtoCreate = IngredientDto.Request.Create.fromDetailedDto(dto);
+            Ingredient ingredient = ingredientService.fromDto(dtoCreate);
+            Ingredient existingIngredient = ingredientService.getByName(ingredient.getName());
+            if (existingIngredient != null) {
+                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                    // We cannot change the type of an ingredient from group to non-group or vice versa.
+                    if (existingIngredient instanceof IngredientGroup || ingredient instanceof IngredientGroup) {
+                        if (!(existingIngredient instanceof IngredientGroup) || !(ingredient instanceof IngredientGroup)) {
+                            ingredient.setName(ingredient.getName() + " (imported)");
+                            ingredientsToImport.add(i + 1, IngredientDto.Response.Detailed.toDto(ingredient));
+                            continue;
+                        }
+                    }
+                    ingredient.setId(existingIngredient.getId());
+                    ingredientService.updateIngredient(ingredient);
+                    oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                    oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                    ingredient.setName(ingredient.getName() + " (imported)");
+                    ingredientsToImport.add(i + 1, IngredientDto.Response.Detailed.toDto(ingredient));
+                }
+            } else {
+                Ingredient newIngredient = ingredientService.createIngredient(ingredient);
+                oldIngredientToNewIngredientIdMap.put(dto.getId(), newIngredient.getId());
+            }
+        }
+
+        for (int i = 0; i < recipesToImport.size(); i++) {
+            RecipeDto.Response.Detailed dto = recipesToImport.get(i);
+            RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(dto);
+
+            if (dto.getDefaultGlass() != null) {
+                Long newGlassId = oldGlassedToNewGlassIdMap.get(dto.getDefaultGlass().getId());
+                createDto.setDefaultGlassId(newGlassId);
+            }
+            Set<Long> newCategoryIds = new HashSet<>();
+
+            for (CategoryDto.Duplex.Detailed category : dto.getCategories()) {
+                Long newCategoryId = oldCategoryToNewCategoryIdMap.get(category.getId());
+                if (newCategoryId != null) {
+                    newCategoryIds.add(newCategoryId);
+                }
+            }
+            createDto.setCategoryIds(newCategoryIds);
+
+            for (ProductionStepDto.Request.Create ps : createDto.getProductionSteps()) {
+                if (!(ps instanceof AddIngredientsProductionStepDto.Request.Create aiPs)) {
+                    continue;
+                }
+                for (ProductionStepIngredientDto.Request.Create psi : aiPs.getStepIngredients()) {
+                    Long newIngredientId = oldIngredientToNewIngredientIdMap.get(psi.getIngredientId());
+                    psi.setIngredientId(newIngredientId);
+                }
+            }
+            createDto.setOwnerId(importUser.getId());
+            Recipe recipe = recipeService.fromDto(createDto);
+            List<Recipe> existingRecipes = recipeService.getRecipeByName(createDto.getName());
+            if (!existingRecipes.isEmpty()) {
+                Recipe existingRecipe = existingRecipes.get(0);
+                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                    recipe.setId(existingRecipe.getId());
+                    recipeService.updateRecipe(recipe);
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                    continue;
+                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                    recipe.setName(recipe.getName() + " (imported)");
+                    recipesToImport.add(i + 1, RecipeDto.Response.Detailed.toDto(recipe));
+                    continue;
+                }
+            } else {
+                recipeService.createRecipe(recipe);
+            }
+        }
+
+    }
+
+    private void collectIngredientTree(IngredientDto.Response.Detailed ingredient, Set<Long> visited, Map<Long, List<IngredientDto.Response.Detailed>> ingredientGroupMap, List<IngredientDto.Response.Detailed> result) {
+        if (!visited.add(ingredient.getId())) {
+            return;
+        }
+        result.add(ingredient);
+        if (ingredient instanceof IngredientGroupDto.Response.Detailed group) {
+            for (IngredientDto.Response.Detailed child : ingredientGroupMap.get(group.getId())) {
+                collectIngredientTree(child, visited, ingredientGroupMap, result);
+            }
+        }
     }
 }

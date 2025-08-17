@@ -108,6 +108,14 @@ public class GlassService {
         return glassRepository.findById(id).orElse(null);
     }
 
+    public Glass getByName(String name) {
+        Set<Long> idsWithName = glassRepository.findIdsByName(name);
+        if (idsWithName.isEmpty()) {
+            return null;
+        }
+        return glassRepository.findById(idsWithName.iterator().next()).orElse(null);
+    }
+
     public Glass createGlass(Glass glass) {
         if(!glassRepository.findIdsByName(glass.getName()).isEmpty()) {
             throw new IllegalArgumentException("A glass with the name " + glass.getName() + " already exists!");
