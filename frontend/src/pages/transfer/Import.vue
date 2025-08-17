@@ -130,6 +130,27 @@
                 </div>
               </div>
             </div>
+            <div class="row q-mb-md">
+              <div class="col-12">
+                <div class="q-gutter-y-sm">
+                  <q-radio
+                    v-model="duplicateMode"
+                    val="overwrite"
+                    label="Duplikate überschreiben"
+                  />
+                  <q-radio
+                    v-model="duplicateMode"
+                    val="skip"
+                    label="Duplikate überspringen"
+                  />
+                  <q-radio
+                    v-model="duplicateMode"
+                    val="keep_both"
+                    label="Beide behalten"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div class="row justify-end">
             <q-btn
@@ -160,6 +181,7 @@ import CollectionSelectionTable from 'components/transfer/CollectionSelectionTab
 const step = ref(1)
 const file = ref(null)
 const loading = ref(false)
+const duplicateMode = ref('overwrite')
 const importData = ref(null)
 
 const importRecipesMode = ref('all')
@@ -202,9 +224,10 @@ async function startImport () {
       importAllRecipes: importRecipesMode.value === 'all',
       importRecipeIds: importRecipesMode.value === 'selection' ? selectedRecipes.value.map(r => r.id) : [],
       importAllCollections: importCollectionsMode.value === 'all',
-      importCollectionIds: importCollectionsMode.value === 'selection' ? selectedCollections.value.map(c => c.id) : []
+      importCollectionIds: importCollectionsMode.value === 'selection' ? selectedCollections.value.map(c => c.id) : [],
       importAllGlasses: importGlassesMode.value === 'all',
       importAllCategories: importCategoriesMode.value === 'all',
+      duplicateMode: duplicateMode.value
     }) */
     // Nach dem Import ggf. Feedback/Navigation
   } finally {
