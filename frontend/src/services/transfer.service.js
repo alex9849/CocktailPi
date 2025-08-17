@@ -26,6 +26,11 @@ class TransferService {
   getRecipes () {
     return axios.post(API_PATH + 'export/recipes').then(res => res.data)
   }
+
+  uploadImportFile (formData) {
+    return axios.post(API_PATH + 'import', formData)
+      .then(res => res.data)
+  }
 }
 
 export default new TransferService()

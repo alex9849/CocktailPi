@@ -1,5 +1,8 @@
 package net.alex9849.cocktailpi.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.SneakyThrows;
 import net.alex9849.cocktailpi.config.seed.SeedDataInserter;
 import net.alex9849.cocktailpi.service.PowerLimitService;
@@ -15,7 +18,9 @@ import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -86,6 +91,18 @@ public class SpringUtility implements ApplicationContextAware {
             }
         }
 
+    }
+
+    public static <T> List<T> loadFromStream(InputStream stream, Class<T> typeClass) throws IOException {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, typeClass);
+        return mapper.readValue(stream, collectionType);
+    }
+
+    public static <T> List<T> loadFromFile(String path, Class<T> typeClass) throws IOException {
+        InputStream recipeStream = SpringUtility.class.getResourceAsStream(path);
+        return loadFromStream(recipeStream, typeClass);
     }
 
 }

@@ -1,22 +1,19 @@
 package net.alex9849.cocktailpi.endpoints;
 
 import net.alex9849.cocktailpi.model.recipe.Recipe;
+import net.alex9849.cocktailpi.model.transfer.ImportContents;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
 import net.alex9849.cocktailpi.service.RecipeService;
 import net.alex9849.cocktailpi.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,10 +31,11 @@ public class TransferEndpoint {
 
     @RequestMapping(value = {"import"}, method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> startImport(@RequestBody MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
-        Path tempDir = transferService.newImport(importFile);
-        UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(tempDir.getFileName());
-        return ResponseEntity.created(uriComponents.toUri()).build();
+    public ResponseEntity<?> startImport(@RequestPart(value = "file", required = false) MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
+        long id = transferService.newImport(importFile);
+        ImportContents importContents = transferService.readImport(id);
+        UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(importContents.getImportId());
+        return ResponseEntity.created(uriComponents.toUri()).body(importContents);
     }
 
 

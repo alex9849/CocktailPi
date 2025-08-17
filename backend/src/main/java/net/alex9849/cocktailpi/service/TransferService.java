@@ -7,12 +7,16 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
+import net.alex9849.cocktailpi.model.transfer.ImportContents;
+import net.alex9849.cocktailpi.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailpi.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailpi.model.Collection;
+import net.alex9849.cocktailpi.payload.dto.glass.GlassDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.AddableIngredientDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,8 @@ import java.util.zip.*;
 
 @Service
 public class TransferService {
+    private Map<Long, Path> importPaths = new HashMap<>();
+    private long lastImportId = 0;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final RecipeService recipeService;
     private final IngredientService ingredientService;
@@ -40,8 +46,11 @@ public class TransferService {
         this.systemService = systemService;
     }
 
-    public Path newImport(MultipartFile zipFile) throws IOException {
+    public long newImport(MultipartFile zipFile) throws IOException {
         Path tempDir = Files.createTempDirectory("import_");
+        lastImportId++;
+        long importId = lastImportId;
+        importPaths.put(importId, tempDir);
 
         try (InputStream is = zipFile.getInputStream();
              ZipInputStream zis = new ZipInputStream(is)) {
@@ -59,17 +68,74 @@ public class TransferService {
                 }
             }
         } catch (Exception e) {
-            deleteDirectory(tempDir);
+            deleteImport(importId);
             throw new IOException("Error unpacking ZIP file.", e);
         }
+        scheduler.schedule(() -> deleteImport(importId), 10, TimeUnit.MINUTES);
 
-        if (!Files.exists(tempDir.resolve("recipes.json")) ||
-                !Files.exists(tempDir.resolve("ingredients.json"))) {
-            deleteDirectory(tempDir);
-            throw new IOException("Incorrect format.");
+        return importId;
+    }
+
+    public ImportContents readImport(long importId) {
+        Path importPath = importPaths.get(importId);
+        if (importPath == null) {
+            throw new IllegalArgumentException("Import with ID " + importId + " does not exist.");
         }
-        scheduler.schedule(() -> deleteDirectory(tempDir), 10, TimeUnit.MINUTES);
-        return tempDir;
+        List<RecipeDto.Response.Detailed> recipes = new ArrayList<>();
+        Map<Long, CategoryDto.Duplex.Detailed> categories = new HashMap<>();
+        Map<Long, GlassDto.Duplex.Detailed> glasses = new HashMap<>();
+        List<IngredientDto.Response.Detailed> ingredients = new ArrayList<>();
+        List<CollectionDto.Response.Detailed> collections = new ArrayList<>();
+
+        Path recipesFile = importPath.resolve("recipes.json");
+        if (Files.exists(recipesFile)) {
+            try (InputStream is = Files.newInputStream(recipesFile)) {
+                recipes = SpringUtility.loadFromStream(is, RecipeDto.Response.Detailed.class);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading recipes from import file.", e);
+            }
+            for (RecipeDto.Response.Detailed detailedDto : recipes) {
+                for (CategoryDto.Duplex.Detailed detailedCategory : detailedDto.getCategories()) {
+                    categories.put(detailedCategory.getId(), detailedCategory);
+                }
+                GlassDto.Duplex.Detailed detailedGlass = detailedDto.getDefaultGlass();
+                if (detailedGlass != null) {
+                    glasses.put(detailedGlass.getId(), detailedGlass);
+                }
+            }
+        }
+        Path ingredientsFile = importPath.resolve("ingredients.json");
+        if (Files.exists(ingredientsFile)) {
+            try (InputStream is = Files.newInputStream(ingredientsFile)) {
+                ingredients = SpringUtility.loadFromStream(is, IngredientDto.Response.Detailed.class);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading ingredients from import file.", e);
+            }
+        }
+        Path collectionsFile = importPath.resolve("collections.json");
+        if (Files.exists(collectionsFile)) {
+            try (InputStream is = Files.newInputStream(collectionsFile)) {
+                collections = SpringUtility.loadFromStream(is, CollectionDto.Response.Detailed.class);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading ingredients from import file.", e);
+            }
+        }
+        ImportContents importContents = new ImportContents();
+        importContents.setRecipeDtos(recipes);
+        importContents.setCategoryDtos(new ArrayList<>(categories.values()));
+        importContents.setGlassDtos(new ArrayList<>(glasses.values()));
+        importContents.setIngredientDtos(ingredients);
+        importContents.setCollectionDtos(collections);
+        importContents.setImportId(importId);
+        return importContents;
+
+    }
+
+    private void deleteImport(long importId) {
+        Path path = importPaths.remove(importId);
+        if (path != null) {
+            deleteDirectory(path);
+        }
     }
 
     private void deleteDirectory(Path path) {

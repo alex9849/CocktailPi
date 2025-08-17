@@ -167,7 +167,7 @@ const routes = [
             children: [
               {
                 path: 'import',
-                component: () => import('pages/ImportExport'),
+                component: () => import('pages/transfer/Import'),
                 name: 'import'
               }, {
                 path: 'export',
