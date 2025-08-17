@@ -402,6 +402,10 @@ public class TransferService {
                         .filter(collection -> importRequest.getImportCollectionIds().contains(collection.getId()))
                         .toList();
             }
+            for (CollectionDto.Response.Detailed collection : collectionsToImport) {
+                List<Long> recipeIds = exportContents.getCollectionRecipes().getOrDefault(collection.getId(), List.of());
+                recipeIdsToImport.addAll(recipeIds);
+            }
             List<GlassDto.Duplex.Detailed> glassesToImport = exportContents.getGlasses();
             List<CategoryDto.Duplex.Detailed> categoriesToImport = exportContents.getCategories();
 
