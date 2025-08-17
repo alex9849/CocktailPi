@@ -29,17 +29,21 @@
           />
         </q-card>
       </div>
-      <div v-if="exportMode === 'selection'" class="q-mb-md">
-        <RecipeSelectionTable
-          v-if="exportMode === 'selection'"
-          :recipes="recipes"
-          :selected="selected"
-          :disable="loading"
-          :recipeLoading="recipeLoading"
-          @update:selected="val => selected = val"
-        />
-      </div>
-
+      <transition
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+      >
+        <div v-if="exportMode === 'selection'" class="q-mb-md">
+          <RecipeSelectionTable
+            v-if="exportMode === 'selection'"
+            :recipes="recipes"
+            :selected="selected"
+            :disable="loading"
+            :recipeLoading="recipeLoading"
+            @update:selected="val => selected = val"
+          />
+        </div>
+      </transition>
       <div class="row q-mb-md">
         <q-card
           flat
@@ -68,17 +72,21 @@
           />
         </q-card>
       </div>
-      <div v-if="exportCollectionsMode === 'selection'" class="q-mb-md">
-        <CollectionSelectionTable
-          v-if="exportCollectionsMode === 'selection'"
-          :collections="collections"
-          :selected="selectedCollections"
-          :disable="loading"
-          :collectionsLoading="collectionsLoading"
-          @update:selected="val => selectedCollections = val"
-        />
-      </div>
-
+      <transition
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+      >
+        <div v-if="exportCollectionsMode === 'selection'" class="q-mb-md">
+          <CollectionSelectionTable
+            v-if="exportCollectionsMode === 'selection'"
+            :collections="collections"
+            :selected="selectedCollections"
+            :disable="loading"
+            :collectionsLoading="collectionsLoading"
+            @update:selected="val => selectedCollections = val"
+          />
+        </div>
+      </transition>
       <div class="row justify-end">
         <q-btn
           color="primary"

@@ -1,15 +1,6 @@
 <template>
-  <q-card
-    flat
-    bordered
-    class="bg-card-body text-card-body q-pa-md"
-  >
-    <q-stepper
-      v-model="step"
-      flat
-      animated
-      vertical
-    >
+  <q-card flat bordered class="bg-card-body text-card-body q-pa-md">
+    <q-stepper v-model="step" flat animated vertical>
       <q-step :name="1" title="Datei auswählen" icon="upload" :done="step > 1">
         <q-form @submit.prevent="uploadFile">
           <q-file
@@ -31,128 +22,79 @@
       </q-step>
       <q-step :name="2" title="Import-Auswahl" icon="list_alt" :done="false">
         <div v-if="importData">
-          <div v-if="importData.recipes && importData.recipes.length">
-            <div class="row q-mb-md">
-              <div class="col-12">
-                <div class="q-gutter-y-sm">
-                  <q-radio
-                    v-model="importRecipesMode"
-                    val="all"
-                    label="Alle Rezepte importieren"
-                  />
-                  <q-radio
-                    v-model="importRecipesMode"
-                    val="selection"
-                    label="Nur ausgewählte Rezepte importieren"
-                  />
-                  <q-radio
-                    v-model="importRecipesMode"
-                    val="none"
-                    label="Keine Rezepte importieren"
+          <div class="q-gutter-md">
+            <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
+              <div class="text-h6 q-mb-sm">Rezepte</div>
+              <div class="q-gutter-y-sm">
+                <q-radio v-model="importRecipesMode" val="all" label="Alle Rezepte importieren" />
+                <q-radio v-model="importRecipesMode" val="selection" label="Nur ausgewählte Rezepte importieren" />
+                <q-radio v-model="importRecipesMode" val="none" label="Keine Rezepte importieren" />
+              </div>
+              <transition
+                enter-active-class="animated fadeIn"
+                leave-active-class="animated fadeOut"
+              >
+                <div v-if="importRecipesMode === 'selection'" class="q-mt-md">
+                  <RecipeSelectionTable
+                    :recipes="importData.recipes"
+                    :selected="selectedRecipes"
+                    :disable="loading"
+                    :recipeLoading="false"
+                    @update:selected="val => selectedRecipes = val"
                   />
                 </div>
+              </transition>
+            </q-card>
+
+            <q-card flat bordered class="q-pa-md" v-if="importData.collections && importData.collections.length">
+              <div class="text-h6 q-mb-sm">Collections</div>
+              <div class="q-gutter-y-sm">
+                <q-radio v-model="importCollectionsMode" val="all" label="Alle Collections importieren" />
+                <q-radio v-model="importCollectionsMode" val="selection" label="Nur ausgewählte Collections importieren" />
+                <q-radio v-model="importCollectionsMode" val="none" label="Keine Collections importieren" />
               </div>
-            </div>
-            <div v-if="importRecipesMode === 'selection'" class="q-mb-md">
-              <RecipeSelectionTable
-                :recipes="importData.recipes"
-                :selected="selectedRecipes"
-                :disable="loading"
-                :recipeLoading="false"
-                @update:selected="val => selectedRecipes = val"
-              />
-            </div>
+              <transition
+                enter-active-class="animated fadeIn"
+                leave-active-class="animated fadeOut"
+              >
+                <div v-if="importCollectionsMode === 'selection'" class="q-mt-md">
+                  <CollectionSelectionTable
+                    :collections="importData.collections"
+                    :selected="selectedCollections"
+                    :disable="loading"
+                    :collectionsLoading="false"
+                    @update:selected="val => selectedCollections = val"
+                  />
+                </div>
+              </transition>
+            </q-card>
+
+            <q-card flat bordered class="q-pa-md" v-if="importData.glasses && importData.glasses.length">
+              <div class="text-h6 q-mb-sm">Gläser</div>
+              <div class="q-gutter-y-sm">
+                <q-radio v-model="importGlassesMode" val="all" label="Gläser importieren" />
+                <q-radio v-model="importGlassesMode" val="none" label="Keine Gläser importieren" />
+              </div>
+            </q-card>
+
+            <q-card flat bordered class="q-pa-md" v-if="importData.categories && importData.categories.length">
+              <div class="text-h6 q-mb-sm">Kategorien</div>
+              <div class="q-gutter-y-sm">
+                <q-radio v-model="importCategoriesMode" val="all" label="Kategorien importieren" />
+                <q-radio v-model="importCategoriesMode" val="none" label="Keine Kategorien importieren" />
+              </div>
+            </q-card>
+
+            <q-card flat bordered class="q-pa-md">
+              <div class="text-h6 q-mb-sm">Duplikat-Strategie</div>
+              <div class="q-gutter-y-sm">
+                <q-radio v-model="duplicateMode" val="overwrite" label="Duplikate überschreiben" />
+                <q-radio v-model="duplicateMode" val="skip" label="Duplikate überspringen" />
+                <q-radio v-model="duplicateMode" val="keep_both" label="Beide behalten" />
+              </div>
+            </q-card>
           </div>
-          <div v-if="importData.collections && importData.collections.length">
-            <div class="row q-mb-md">
-              <div class="col-12">
-                <div class="q-gutter-y-sm">
-                  <q-radio
-                    v-model="importCollectionsMode"
-                    val="all"
-                    label="Alle Collections importieren"
-                  />
-                  <q-radio
-                    v-model="importCollectionsMode"
-                    val="selection"
-                    label="Nur ausgewählte Collections importieren"
-                  />
-                  <q-radio
-                    v-model="importCollectionsMode"
-                    val="none"
-                    label="Keine Collections importieren"
-                  />
-                </div>
-              </div>
-            </div>
-            <div v-if="importCollectionsMode === 'selection'" class="q-mb-md">
-              <CollectionSelectionTable
-                :collections="importData.collections"
-                :selected="selectedCollections"
-                :disable="loading"
-                :collectionsLoading="false"
-                @update:selected="val => selectedCollections = val"
-              />
-            </div>
-          </div>
-          <div v-if="importData.glasses && importData.glasses.length">
-            <div class="row q-mb-md">
-              <div class="col-12">
-                <div class="q-gutter-y-sm">
-                  <q-radio
-                    v-model="importGlassesMode"
-                    val="all"
-                    label="Gläser importieren"
-                  />
-                  <q-radio
-                    v-model="importGlassesMode"
-                    val="none"
-                    label="Keine Gläser importieren"
-                  />
-                </div>
-              </div>
-            </div>
-            <div v-if="importData.categories && importData.categories.length">
-              <div class="row q-mb-md">
-                <div class="col-12">
-                  <div class="q-gutter-y-sm">
-                    <q-radio
-                      v-model="importCategoriesMode"
-                      val="all"
-                      label="Kategorien importieren"
-                    />
-                    <q-radio
-                      v-model="importCategoriesMode"
-                      val="none"
-                      label="Keine Kategorien importieren"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row q-mb-md">
-              <div class="col-12">
-                <div class="q-gutter-y-sm">
-                  <q-radio
-                    v-model="duplicateMode"
-                    val="overwrite"
-                    label="Duplikate überschreiben"
-                  />
-                  <q-radio
-                    v-model="duplicateMode"
-                    val="skip"
-                    label="Duplikate überspringen"
-                  />
-                  <q-radio
-                    v-model="duplicateMode"
-                    val="keep_both"
-                    label="Beide behalten"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row justify-end">
+          <div class="row justify-end q-mt-lg">
             <q-btn
               color="primary"
               label="Import starten"
