@@ -30,16 +30,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 
 @Service
 public class TransferService {
+    private ReadWriteLock runningImportLock = new ReentrantReadWriteLock();
     private final GlassService glassService;
     private final CategoryService categoryService;
     private Map<Long, Path> exportPaths = new HashMap<>();
@@ -90,64 +96,75 @@ public class TransferService {
     }
 
     public ExportContents readExport(long importId) {
-        Path importPath = exportPaths.get(importId);
-        if (importPath == null) {
-            throw new IllegalArgumentException("Import with ID " + importId + " does not exist.");
-        }
-        List<RecipeDto.Response.Detailed> recipes = new ArrayList<>();
-        Map<Long, CategoryDto.Duplex.Detailed> categories = new HashMap<>();
-        Map<Long, GlassDto.Duplex.Detailed> glasses = new HashMap<>();
-        List<IngredientDto.Response.Detailed> ingredients = new ArrayList<>();
-        List<CollectionDto.Response.Detailed> collections = new ArrayList<>();
+        Lock readLock = runningImportLock.readLock();
+        try {
+            readLock.lock();
+            Path importPath = exportPaths.get(importId);
+            if (importPath == null) {
+                throw new IllegalArgumentException("Import with ID " + importId + " does not exist.");
+            }
+            List<RecipeDto.Response.Detailed> recipes = new ArrayList<>();
+            Map<Long, CategoryDto.Duplex.Detailed> categories = new HashMap<>();
+            Map<Long, GlassDto.Duplex.Detailed> glasses = new HashMap<>();
+            List<IngredientDto.Response.Detailed> ingredients = new ArrayList<>();
+            List<CollectionDto.Response.Detailed> collections = new ArrayList<>();
 
-        Path recipesFile = importPath.resolve("recipes.json");
-        if (Files.exists(recipesFile)) {
-            try (InputStream is = Files.newInputStream(recipesFile)) {
-                recipes = SpringUtility.loadFromStream(is, RecipeDto.Response.Detailed.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Error reading recipes from import file.", e);
-            }
-            for (RecipeDto.Response.Detailed detailedDto : recipes) {
-                for (CategoryDto.Duplex.Detailed detailedCategory : detailedDto.getCategories()) {
-                    categories.put(detailedCategory.getId(), detailedCategory);
+            Path recipesFile = importPath.resolve("recipes.json");
+            if (Files.exists(recipesFile)) {
+                try (InputStream is = Files.newInputStream(recipesFile)) {
+                    recipes = SpringUtility.loadFromStream(is, RecipeDto.Response.Detailed.class);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error reading recipes from import file.", e);
                 }
-                GlassDto.Duplex.Detailed detailedGlass = detailedDto.getDefaultGlass();
-                if (detailedGlass != null) {
-                    glasses.put(detailedGlass.getId(), detailedGlass);
+                for (RecipeDto.Response.Detailed detailedDto : recipes) {
+                    for (CategoryDto.Duplex.Detailed detailedCategory : detailedDto.getCategories()) {
+                        categories.put(detailedCategory.getId(), detailedCategory);
+                    }
+                    GlassDto.Duplex.Detailed detailedGlass = detailedDto.getDefaultGlass();
+                    if (detailedGlass != null) {
+                        glasses.put(detailedGlass.getId(), detailedGlass);
+                    }
                 }
             }
-        }
-        Path ingredientsFile = importPath.resolve("ingredients.json");
-        if (Files.exists(ingredientsFile)) {
-            try (InputStream is = Files.newInputStream(ingredientsFile)) {
-                ingredients = SpringUtility.loadFromStream(is, IngredientDto.Response.Detailed.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Error reading ingredients from import file.", e);
+            Path ingredientsFile = importPath.resolve("ingredients.json");
+            if (Files.exists(ingredientsFile)) {
+                try (InputStream is = Files.newInputStream(ingredientsFile)) {
+                    ingredients = SpringUtility.loadFromStream(is, IngredientDto.Response.Detailed.class);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error reading ingredients from import file.", e);
+                }
             }
-        }
-        Path collectionsFile = importPath.resolve("collections.json");
-        if (Files.exists(collectionsFile)) {
-            try (InputStream is = Files.newInputStream(collectionsFile)) {
-                collections = SpringUtility.loadFromStream(is, CollectionDto.Response.Detailed.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Error reading collections from import file.", e);
+            Path collectionsFile = importPath.resolve("collections.json");
+            if (Files.exists(collectionsFile)) {
+                try (InputStream is = Files.newInputStream(collectionsFile)) {
+                    collections = SpringUtility.loadFromStream(is, CollectionDto.Response.Detailed.class);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error reading collections from import file.", e);
+                }
             }
+            ExportContents exportContents = new ExportContents();
+            exportContents.setRecipes(recipes);
+            exportContents.setCategories(new ArrayList<>(categories.values()));
+            exportContents.setGlasses(new ArrayList<>(glasses.values()));
+            exportContents.setIngredients(ingredients);
+            exportContents.setCollections(collections);
+            exportContents.setImportId(importId);
+            return exportContents;
+        } finally {
+            readLock.unlock();
         }
-        ExportContents exportContents = new ExportContents();
-        exportContents.setRecipes(recipes);
-        exportContents.setCategories(new ArrayList<>(categories.values()));
-        exportContents.setGlasses(new ArrayList<>(glasses.values()));
-        exportContents.setIngredients(ingredients);
-        exportContents.setCollections(collections);
-        exportContents.setImportId(importId);
-        return exportContents;
-
     }
 
     private void deleteImport(long importId) {
-        Path path = exportPaths.remove(importId);
-        if (path != null) {
-            deleteDirectory(path);
+        Lock writeLock = runningImportLock.writeLock();
+        try {
+            writeLock.lock();
+            Path path = exportPaths.remove(importId);
+            if (path != null) {
+                deleteDirectory(path);
+            }
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -309,179 +326,216 @@ public class TransferService {
         return baos.toByteArray();
     }
 
+    public byte[] readImageFromExport(long importId, String subFolder, long entryId) {
+        Path importPath = exportPaths.get(importId);
+        if (importPath == null) {
+            throw new IllegalArgumentException("Import with ID " + importId + " does not exist.");
+        }
+        Path imagePath = importPath.resolve(subFolder + "/" + entryId + ".jpg");
+        if (!Files.exists(imagePath)) {
+            return null;
+        }
+        try {
+            byte[] imgBytes = Files.readAllBytes(imagePath);
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(imgBytes)) {
+                BufferedImage image = ImageIO.read(bais);
+                if (image == null) {
+                    return null;
+                }
+                return imgBytes;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+
+
+    }
+
     public void confirmImport(long importId, User importUser, ImportConfirmRequest importRequest) {
-        ExportContents exportContents = readExport(importId);
-        List<RecipeDto.Response.Detailed> recipesToImport = exportContents.getRecipes();
-        if (!importRequest.isImportAllRecipes()) {
-            recipesToImport = recipesToImport.stream()
-                    .filter(recipe -> importRequest.getImportRecipeIds().contains(recipe.getId()))
-                    .toList();
-        }
-        List<CollectionDto.Response.Detailed> collectionsToImport = exportContents.getCollections();
-        if (!importRequest.isImportAllCollections()) {
-            collectionsToImport = collectionsToImport.stream()
-                    .filter(collection -> importRequest.getImportCollectionIds().contains(collection.getId()))
-                    .toList();
-        }
-        List<GlassDto.Duplex.Detailed> glassesToImport = exportContents.getGlasses();
-        List<CategoryDto.Duplex.Detailed> categoriesToImport = exportContents.getCategories();
+        Lock readLock = runningImportLock.readLock();
+        try {
+            readLock.lock();
+            ExportContents exportContents = readExport(importId);
+            Map<Long, byte[]> recipeImages = new HashMap<>();
+            List<RecipeDto.Response.Detailed> recipesToImport = exportContents.getRecipes();
+            if (!importRequest.isImportAllRecipes()) {
+                recipesToImport = recipesToImport.stream()
+                        .filter(recipe -> importRequest.getImportRecipeIds().contains(recipe.getId()))
+                        .toList();
+            }
+            List<CollectionDto.Response.Detailed> collectionsToImport = exportContents.getCollections();
+            if (!importRequest.isImportAllCollections()) {
+                collectionsToImport = collectionsToImport.stream()
+                        .filter(collection -> importRequest.getImportCollectionIds().contains(collection.getId()))
+                        .toList();
+            }
+            List<GlassDto.Duplex.Detailed> glassesToImport = exportContents.getGlasses();
+            List<CategoryDto.Duplex.Detailed> categoriesToImport = exportContents.getCategories();
 
 
 
-        List<IngredientDto.Response.Detailed> ingredientsToImport = new ArrayList<>();
-        Set<Long> seenIngredientIds = new HashSet<>();
-        Map<Long, IngredientDto.Response.Detailed> ingredientMap = exportContents.getIngredients()
-                .stream().collect(Collectors.toMap(IngredientDto.Response.Detailed::getId, v -> v));
-        Map<Long, List<IngredientDto.Response.Detailed>> ingredientGroupMap = exportContents.getIngredients()
-                .stream().filter(ing -> ing.getParentGroupId() != null)
-                .collect(Collectors.groupingBy(IngredientDto.Response.Detailed::getParentGroupId, Collectors.toList()));
+            List<IngredientDto.Response.Detailed> ingredientsToImport = new ArrayList<>();
+            Set<Long> seenIngredientIds = new HashSet<>();
+            Map<Long, IngredientDto.Response.Detailed> ingredientMap = exportContents.getIngredients()
+                    .stream().collect(Collectors.toMap(IngredientDto.Response.Detailed::getId, v -> v));
+            Map<Long, List<IngredientDto.Response.Detailed>> ingredientGroupMap = exportContents.getIngredients()
+                    .stream().filter(ing -> ing.getParentGroupId() != null)
+                    .collect(Collectors.groupingBy(IngredientDto.Response.Detailed::getParentGroupId, Collectors.toList()));
 
-        for (RecipeDto.Response.Detailed recipeDto : recipesToImport) {
-            for(ProductionStepDto.Response.Detailed stepDto : recipeDto.getProductionSteps()) {
-                if (!(stepDto instanceof AddIngredientsProductionStepDto.Response.Detailed addStep)) {
-                    continue;
-                }
-                for (ProductionStepIngredientDto.Response.Detailed ingredientDto : addStep.getStepIngredients()) {
-                    IngredientDto.Response.Detailed root = ingredientDto.getIngredient();
-                    while (root.getParentGroupId() != null) {
-                        root = ingredientMap.get(root.getParentGroupId());
+            for (RecipeDto.Response.Detailed recipeDto : recipesToImport) {
+                for(ProductionStepDto.Response.Detailed stepDto : recipeDto.getProductionSteps()) {
+                    if (!(stepDto instanceof AddIngredientsProductionStepDto.Response.Detailed addStep)) {
+                        continue;
                     }
-                    collectIngredientTree(root, seenIngredientIds, ingredientGroupMap, ingredientsToImport);
-                }
-            }
-        }
-
-        Map<Long, Long> oldGlassedToNewGlassIdMap = new HashMap<>();
-        Map<Long, Long> oldCategoryToNewCategoryIdMap = new HashMap<>();
-        Map<Long, Long> oldIngredientToNewIngredientIdMap = new HashMap<>();
-
-        for (int i = 0; i < glassesToImport.size(); i++) {
-            GlassDto.Duplex.Detailed dto = glassesToImport.get(i);
-            Glass glass = glassService.fromDto(dto);
-            Glass existingGlass = glassService.getByName(glass.getName());
-            if (!importRequest.isImportAllGlasses()) {
-                oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
-                continue;
-            }
-            if (existingGlass != null) {
-                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
-                    glass.setId(existingGlass.getId());
-                    glassService.updateGlass(glass);
-                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    dto.setName(dto.getName() + " (imported)");
-                    glassesToImport.add(dto);
-                }
-            } else {
-                Glass newGlass = glassService.createGlass(glass);
-                oldGlassedToNewGlassIdMap.put(dto.getId(), newGlass.getId());
-            }
-        }
-
-        for (int i = 0; i < categoriesToImport.size(); i++) {
-            CategoryDto.Duplex.Detailed dto = categoriesToImport.get(i);
-            CategoryDto.Request.Create dtoCreate = new CategoryDto.Request.Create(dto);
-            Category category = categoryService.fromDto(dtoCreate);
-            category.setId(dto.getId());
-            Category existingCategory = categoryService.getCategoryByName(dto.getName());
-            if (!importRequest.isImportAllCategories()) {
-                oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
-                continue;
-            }
-            if (existingCategory != null) {
-                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
-                    category.setId(existingCategory.getId());
-                    categoryService.updateCategory(category);
-                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    dto.setName(dto.getName() + " (imported)");
-                    categoriesToImport.add(dto);
-                }
-            } else {
-                Category newCategory = categoryService.createCategory(category);
-                oldCategoryToNewCategoryIdMap.put(dto.getId(), newCategory.getId());
-            }
-        }
-        for (int i = 0; i < ingredientsToImport.size(); i++) {
-            IngredientDto.Response.Detailed dto = ingredientsToImport.get(i);
-            IngredientDto.Request.Create dtoCreate = IngredientDto.Request.Create.fromDetailedDto(dto);
-            Ingredient ingredient = ingredientService.fromDto(dtoCreate);
-            Ingredient existingIngredient = ingredientService.getByName(ingredient.getName());
-            if (existingIngredient != null) {
-                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
-                    // We cannot change the type of an ingredient from group to non-group or vice versa.
-                    if (existingIngredient instanceof IngredientGroup || ingredient instanceof IngredientGroup) {
-                        if (!(existingIngredient instanceof IngredientGroup) || !(ingredient instanceof IngredientGroup)) {
-                            ingredient.setName(ingredient.getName() + " (imported)");
-                            ingredientsToImport.add(i + 1, IngredientDto.Response.Detailed.toDto(ingredient));
-                            continue;
+                    for (ProductionStepIngredientDto.Response.Detailed ingredientDto : addStep.getStepIngredients()) {
+                        IngredientDto.Response.Detailed root = ingredientDto.getIngredient();
+                        while (root.getParentGroupId() != null) {
+                            root = ingredientMap.get(root.getParentGroupId());
                         }
+                        collectIngredientTree(root, seenIngredientIds, ingredientGroupMap, ingredientsToImport);
                     }
-                    ingredient.setId(existingIngredient.getId());
-                    ingredientService.updateIngredient(ingredient);
-                    oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                    oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    dto.setName(dto.getName() + " (imported)");
-                    ingredientsToImport.add(i + 1, dto);
-                }
-            } else {
-                Ingredient newIngredient = ingredientService.createIngredient(ingredient);
-                oldIngredientToNewIngredientIdMap.put(dto.getId(), newIngredient.getId());
-            }
-        }
-
-        for (int i = 0; i < recipesToImport.size(); i++) {
-            RecipeDto.Response.Detailed dto = recipesToImport.get(i);
-            RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(dto);
-
-            if (dto.getDefaultGlass() != null) {
-                Long newGlassId = oldGlassedToNewGlassIdMap.get(dto.getDefaultGlass().getId());
-                createDto.setDefaultGlassId(newGlassId);
-            }
-            Set<Long> newCategoryIds = new HashSet<>();
-
-            for (CategoryDto.Duplex.Detailed category : dto.getCategories()) {
-                Long newCategoryId = oldCategoryToNewCategoryIdMap.get(category.getId());
-                if (newCategoryId != null) {
-                    newCategoryIds.add(newCategoryId);
                 }
             }
-            createDto.setCategoryIds(newCategoryIds);
 
-            for (ProductionStepDto.Request.Create ps : createDto.getProductionSteps()) {
-                if (!(ps instanceof AddIngredientsProductionStepDto.Request.Create aiPs)) {
+            Map<Long, Long> oldGlassedToNewGlassIdMap = new HashMap<>();
+            Map<Long, Long> oldCategoryToNewCategoryIdMap = new HashMap<>();
+            Map<Long, Long> oldIngredientToNewIngredientIdMap = new HashMap<>();
+
+            for (int i = 0; i < glassesToImport.size(); i++) {
+                GlassDto.Duplex.Detailed dto = glassesToImport.get(i);
+                Glass glass = glassService.fromDto(dto);
+                Glass existingGlass = glassService.getByName(glass.getName());
+                if (!importRequest.isImportAllGlasses()) {
+                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
                     continue;
                 }
-                for (ProductionStepIngredientDto.Request.Create psi : aiPs.getStepIngredients()) {
-                    Long newIngredientId = oldIngredientToNewIngredientIdMap.get(psi.getIngredientId());
-                    psi.setIngredientId(newIngredientId);
+                if (existingGlass != null) {
+                    if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                        glass.setId(existingGlass.getId());
+                        glassService.updateGlass(glass);
+                        oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                        oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                        dto.setName(dto.getName() + " (imported)");
+                        glassesToImport.add(dto);
+                    }
+                } else {
+                    Glass newGlass = glassService.createGlass(glass);
+                    oldGlassedToNewGlassIdMap.put(dto.getId(), newGlass.getId());
                 }
             }
-            createDto.setOwnerId(importUser.getId());
-            Recipe recipe = recipeService.fromDto(createDto);
-            List<Recipe> existingRecipes = recipeService.getRecipeByName(createDto.getName());
-            if (!existingRecipes.isEmpty()) {
-                Recipe existingRecipe = existingRecipes.get(0);
-                if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
-                    recipe.setId(existingRecipe.getId());
-                    recipeService.updateRecipe(recipe);
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                    // Do nothing, skip this recipe
-                } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
-                    dto.setName(dto.getName() + " (imported)");
-                    recipesToImport.add(i + 1, dto);
-                }
-            } else {
-                recipeService.createRecipe(recipe);
-            }
-        }
 
+            for (int i = 0; i < categoriesToImport.size(); i++) {
+                CategoryDto.Duplex.Detailed dto = categoriesToImport.get(i);
+                CategoryDto.Request.Create dtoCreate = new CategoryDto.Request.Create(dto);
+                Category category = categoryService.fromDto(dtoCreate);
+                category.setId(dto.getId());
+                Category existingCategory = categoryService.getCategoryByName(dto.getName());
+                if (!importRequest.isImportAllCategories()) {
+                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                    continue;
+                }
+                if (existingCategory != null) {
+                    if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                        category.setId(existingCategory.getId());
+                        categoryService.updateCategory(category);
+                        oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                        oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                        dto.setName(dto.getName() + " (imported)");
+                        categoriesToImport.add(dto);
+                    }
+                } else {
+                    Category newCategory = categoryService.createCategory(category);
+                    oldCategoryToNewCategoryIdMap.put(dto.getId(), newCategory.getId());
+                }
+            }
+            for (int i = 0; i < ingredientsToImport.size(); i++) {
+                IngredientDto.Response.Detailed dto = ingredientsToImport.get(i);
+                byte[] image = readImageFromExport(importId, "ingredient_images", dto.getId());
+                IngredientDto.Request.Create dtoCreate = IngredientDto.Request.Create.fromDetailedDto(dto);
+                Ingredient ingredient = ingredientService.fromDto(dtoCreate);
+                Ingredient existingIngredient = ingredientService.getByName(ingredient.getName());
+                if (existingIngredient != null) {
+                    if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                        // We cannot change the type of an ingredient from group to non-group or vice versa.
+                        if (existingIngredient instanceof IngredientGroup || ingredient instanceof IngredientGroup) {
+                            if (!(existingIngredient instanceof IngredientGroup) || !(ingredient instanceof IngredientGroup)) {
+                                ingredient.setName(ingredient.getName() + " (imported)");
+                                ingredientsToImport.add(i + 1, IngredientDto.Response.Detailed.toDto(ingredient));
+                                continue;
+                            }
+                        }
+                        ingredient.setId(existingIngredient.getId());
+                        ingredientService.updateIngredient(ingredient);
+                        ingredientService.setImage(ingredient.getId(), image);
+                        oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                        oldIngredientToNewIngredientIdMap.put(dto.getId(), existingIngredient.getId());
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                        dto.setName(dto.getName() + " (imported)");
+                        ingredientsToImport.add(i + 1, dto);
+                    }
+                } else {
+                    Ingredient newIngredient = ingredientService.createIngredient(ingredient);
+                    ingredientService.setImage(newIngredient.getId(), image);
+                    oldIngredientToNewIngredientIdMap.put(dto.getId(), newIngredient.getId());
+                }
+            }
+
+            for (int i = 0; i < recipesToImport.size(); i++) {
+                RecipeDto.Response.Detailed dto = recipesToImport.get(i);
+                byte[] image = readImageFromExport(importId, "recipe_images", dto.getId());
+                RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(dto);
+
+                if (dto.getDefaultGlass() != null) {
+                    Long newGlassId = oldGlassedToNewGlassIdMap.get(dto.getDefaultGlass().getId());
+                    createDto.setDefaultGlassId(newGlassId);
+                }
+                Set<Long> newCategoryIds = new HashSet<>();
+
+                for (CategoryDto.Duplex.Detailed category : dto.getCategories()) {
+                    Long newCategoryId = oldCategoryToNewCategoryIdMap.get(category.getId());
+                    if (newCategoryId != null) {
+                        newCategoryIds.add(newCategoryId);
+                    }
+                }
+                createDto.setCategoryIds(newCategoryIds);
+
+                for (ProductionStepDto.Request.Create ps : createDto.getProductionSteps()) {
+                    if (!(ps instanceof AddIngredientsProductionStepDto.Request.Create aiPs)) {
+                        continue;
+                    }
+                    for (ProductionStepIngredientDto.Request.Create psi : aiPs.getStepIngredients()) {
+                        Long newIngredientId = oldIngredientToNewIngredientIdMap.get(psi.getIngredientId());
+                        psi.setIngredientId(newIngredientId);
+                    }
+                }
+                createDto.setOwnerId(importUser.getId());
+                Recipe recipe = recipeService.fromDto(createDto);
+                List<Recipe> existingRecipes = recipeService.getRecipeByName(createDto.getName());
+                if (!existingRecipes.isEmpty()) {
+                    Recipe existingRecipe = existingRecipes.get(0);
+                    if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                        recipe.setId(existingRecipe.getId());
+                        recipeService.updateRecipe(recipe);
+                        recipeService.setImage(recipe.getId(), image);
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                        // Do nothing, skip this recipe
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                        dto.setName(dto.getName() + " (imported)");
+                        recipesToImport.add(i + 1, dto);
+                    }
+                } else {
+                    recipeService.createRecipe(recipe);
+                    recipeService.setImage(recipe.getId(), image);
+                }
+            }
+        } finally {
+            readLock.unlock();
+        }
     }
 
     private void collectIngredientTree(IngredientDto.Response.Detailed ingredient, Set<Long> visited, Map<Long, List<IngredientDto.Response.Detailed>> ingredientGroupMap, List<IngredientDto.Response.Detailed> result) {
