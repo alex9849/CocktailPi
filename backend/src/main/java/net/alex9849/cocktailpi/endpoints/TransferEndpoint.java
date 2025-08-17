@@ -1,7 +1,7 @@
 package net.alex9849.cocktailpi.endpoints;
 
-import net.alex9849.cocktailpi.model.recipe.Recipe;
-import net.alex9849.cocktailpi.model.transfer.ImportContents;
+import net.alex9849.cocktailpi.model.transfer.ExportContents;
+import net.alex9849.cocktailpi.model.transfer.ImportConfirmRequest;
 import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
 import net.alex9849.cocktailpi.service.RecipeService;
@@ -31,11 +31,20 @@ public class TransferEndpoint {
 
     @RequestMapping(value = {"import"}, method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> startImport(@RequestPart(value = "file", required = false) MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
+    public ResponseEntity<?> uploadImport(@RequestPart(value = "file", required = false) MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
         long id = transferService.newImport(importFile);
-        ImportContents importContents = transferService.readImport(id);
-        UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(importContents.getImportId());
-        return ResponseEntity.created(uriComponents.toUri()).body(importContents);
+        ExportContents exportContents = transferService.readExport(id);
+        UriComponents uriComponents = uriBuilder.path("/api/transfer/import/{id}").buildAndExpand(exportContents.getImportId());
+        return ResponseEntity.created(uriComponents.toUri()).body(exportContents);
+    }
+
+    @RequestMapping(value = {"import/{id}"}, method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> confirmImport(
+            @PathVariable("id") long importId,
+            @RequestBody ImportConfirmRequest importRequest) throws IOException {
+        transferService.confirmImport(importId, importRequest);
+        return ResponseEntity.ok().build();
     }
 
 

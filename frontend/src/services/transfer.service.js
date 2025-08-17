@@ -31,6 +31,11 @@ class TransferService {
     return axios.post(API_PATH + 'import', formData)
       .then(res => res.data)
   }
+
+  confirmImport (id, importRequest) {
+    return axios.post(API_PATH + 'import/' + String(id), importRequest)
+      .then(res => res.data)
+  }
 }
 
 export default new TransferService()

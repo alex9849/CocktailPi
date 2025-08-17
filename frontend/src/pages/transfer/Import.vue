@@ -20,7 +20,7 @@
           />
         </q-form>
       </q-step>
-      <q-step :name="2" title="Import-Auswahl" icon="list_alt" :done="false">
+      <q-step :name="2" title="Import-Auswahl" icon="list_alt" :done="step > 2">
         <div v-if="importData">
           <div class="q-gutter-md">
             <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
@@ -110,6 +110,14 @@
           </q-banner>
         </div>
       </q-step>
+      <q-step :name="3" title="Fertig" icon="check_circle" :done="false">
+        <q-banner class="bg-green-2 text-green-10 q-mb-md" rounded>
+          <div class="row items-center">
+            <q-icon name="check_circle" size="xl" color="green" class="q-mr-sm" />
+            <p class="text-h6">Der Import war erfolgreich!</p>
+          </div>
+        </q-banner>
+      </q-step>
     </q-stepper>
   </q-card>
 </template>
@@ -162,7 +170,7 @@ async function uploadFile () {
 async function startImport () {
   loading.value = true
   try {
-    /* await ImportService.startImport({
+    await TransferService.confirmImport(importData.value.importId, {
       importAllRecipes: importRecipesMode.value === 'all',
       importRecipeIds: importRecipesMode.value === 'selection' ? selectedRecipes.value.map(r => r.id) : [],
       importAllCollections: importCollectionsMode.value === 'all',
@@ -170,8 +178,8 @@ async function startImport () {
       importAllGlasses: importGlassesMode.value === 'all',
       importAllCategories: importCategoriesMode.value === 'all',
       duplicateMode: duplicateMode.value
-    }) */
-    // Nach dem Import ggf. Feedback/Navigation
+    })
+    step.value = 3
   } finally {
     loading.value = false
   }

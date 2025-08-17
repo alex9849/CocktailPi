@@ -12,7 +12,7 @@ import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientDto;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
-public class ImportContents {
+public class ExportContents {
     private long importId;
     private List<RecipeDto.Response.Detailed> recipes;
     private List<CategoryDto.Duplex.Detailed> categories;

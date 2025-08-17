@@ -7,7 +7,8 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
 import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
-import net.alex9849.cocktailpi.model.transfer.ImportContents;
+import net.alex9849.cocktailpi.model.transfer.ExportContents;
+import net.alex9849.cocktailpi.model.transfer.ImportConfirmRequest;
 import net.alex9849.cocktailpi.payload.dto.category.CategoryDto;
 import net.alex9849.cocktailpi.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailpi.model.Collection;
@@ -31,8 +32,8 @@ import java.util.zip.*;
 
 @Service
 public class TransferService {
-    private Map<Long, Path> importPaths = new HashMap<>();
-    private long lastImportId = 0;
+    private Map<Long, Path> exportPaths = new HashMap<>();
+    private long lastExportId = 0;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final RecipeService recipeService;
     private final IngredientService ingredientService;
@@ -48,9 +49,9 @@ public class TransferService {
 
     public long newImport(MultipartFile zipFile) throws IOException {
         Path tempDir = Files.createTempDirectory("import_");
-        lastImportId++;
-        long importId = lastImportId;
-        importPaths.put(importId, tempDir);
+        lastExportId++;
+        long importId = lastExportId;
+        exportPaths.put(importId, tempDir);
 
         try (InputStream is = zipFile.getInputStream();
              ZipInputStream zis = new ZipInputStream(is)) {
@@ -76,8 +77,8 @@ public class TransferService {
         return importId;
     }
 
-    public ImportContents readImport(long importId) {
-        Path importPath = importPaths.get(importId);
+    public ExportContents readExport(long importId) {
+        Path importPath = exportPaths.get(importId);
         if (importPath == null) {
             throw new IllegalArgumentException("Import with ID " + importId + " does not exist.");
         }
@@ -117,22 +118,22 @@ public class TransferService {
             try (InputStream is = Files.newInputStream(collectionsFile)) {
                 collections = SpringUtility.loadFromStream(is, CollectionDto.Response.Detailed.class);
             } catch (IOException e) {
-                throw new RuntimeException("Error reading ingredients from import file.", e);
+                throw new RuntimeException("Error reading collections from import file.", e);
             }
         }
-        ImportContents importContents = new ImportContents();
-        importContents.setRecipes(recipes);
-        importContents.setCategories(new ArrayList<>(categories.values()));
-        importContents.setGlasses(new ArrayList<>(glasses.values()));
-        importContents.setIngredients(ingredients);
-        importContents.setCollections(collections);
-        importContents.setImportId(importId);
-        return importContents;
+        ExportContents exportContents = new ExportContents();
+        exportContents.setRecipes(recipes);
+        exportContents.setCategories(new ArrayList<>(categories.values()));
+        exportContents.setGlasses(new ArrayList<>(glasses.values()));
+        exportContents.setIngredients(ingredients);
+        exportContents.setCollections(collections);
+        exportContents.setImportId(importId);
+        return exportContents;
 
     }
 
     private void deleteImport(long importId) {
-        Path path = importPaths.remove(importId);
+        Path path = exportPaths.remove(importId);
         if (path != null) {
             deleteDirectory(path);
         }
@@ -294,5 +295,10 @@ public class TransferService {
             zos.closeEntry();
         }
         return baos.toByteArray();
+    }
+
+    public void confirmImport(long importId, ImportConfirmRequest importRequest) {
+        ExportContents exportContents = readExport(importId);
+
     }
 }
