@@ -34,6 +34,7 @@
         <c-recipe-search-list
           ref="recipeSearchList"
           v-if="collectionLoaded"
+          card-class="collection-recipe-list-card recipe-card-height"
           :collection-id="collection.id"
         >
           <template v-slot:firstItem>
@@ -53,19 +54,21 @@
             </div>
           </template>
           <template v-slot:recipeHeadline="{recipe}" >
-            <div class="flex content-center">
-              <b>{{ recipe.name }}</b>
-              <q-btn
-                round
-                flat
-                dense
-                v-if="editRecipeMode.active"
-                :loading="editRecipeMode.deletingRecipIds.some(x => x === recipe.id)"
-                @click.prevent="onClickDeleteRecipe(recipe.id)"
-                class="text-red"
-                :icon="mdiDelete"
-              >
-              </q-btn>
+            <div class="row content-center no-wrap">
+              <b class="col-shrink dotted-overflow-1">{{ recipe.name }}</b>
+              <div class="col-auto">
+                <q-btn
+                  round
+                  flat
+                  dense
+                  v-if="editRecipeMode.active"
+                  :loading="editRecipeMode.deletingRecipIds.some(x => x === recipe.id)"
+                  @click.prevent="onClickDeleteRecipe(recipe.id)"
+                  class="text-red"
+                  :icon="mdiDelete"
+                >
+                </q-btn>
+              </div>
             </div>
           </template>
         </c-recipe-search-list>
@@ -392,5 +395,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

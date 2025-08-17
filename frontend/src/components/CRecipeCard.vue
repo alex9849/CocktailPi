@@ -36,7 +36,7 @@
             <div class="row">
               <div class="col-12 row justify-around">
                 <div class="col">
-                  <p class="text-h5 dotted-overflow-1">
+                  <p class="text-h5">
                     <slot name="headline">
                       <b>{{ recipe.name }}</b>
                     </slot>

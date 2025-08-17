@@ -39,6 +39,7 @@
         <c-recipe-list
           :recipes="recipes"
           :showNoData="recipes.length === 0 && !loading"
+          :card-class="cardClass"
         >
           <template v-slot:firstItem>
             <div class="col-12 q-col-gutter-y-md"
@@ -84,7 +85,11 @@ export default {
   props: {
     collectionId: Number,
     onlyOwnRecipes: Boolean,
-    categoryId: Number
+    categoryId: Number,
+    cardClass: {
+      type: String,
+      default: undefined
+    }
   },
   data () {
     return {

@@ -15,7 +15,7 @@
         v-for="(recipe, index) in recipes"
         :key="recipe.id"
         :data-id="index"
-        class="col-recipe-list-card card-height"
+        :class="cardClass"
         v-intersection="onIntersection"
         v-memo="[isInView(index)]"
       >
@@ -69,6 +69,10 @@ const props = defineProps({
   showNoData: {
     type: Boolean,
     default: false
+  },
+  cardClass: {
+    type: String,
+    default: () => 'col-recipe-list-card recipe-card-height'
   }
 })
 
@@ -142,10 +146,4 @@ function isInView (index) {
 </script>
 
 <style scoped>
-.card-height {
-  height: unset;
-  @media (min-width: 401px) {
-    height: 200px;
-  }
-}
 </style>

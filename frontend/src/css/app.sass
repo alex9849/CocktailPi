@@ -27,12 +27,27 @@ tbody tr:nth-child(odd)
   width: 100%
   @media (min-width: 850px)
     width: 50%
-  @media (min-width: 1025px)
+  @media (min-width: 1023px)
     width: 100%
   @media (min-width: 1100px)
     width: 50%
   @media (min-width: 1600px)
     width: 33.3%
+
+.collection-recipe-list-card
+  height: auto
+  width: 100%
+  @media (min-width: 851px)
+    width: 50%
+  @media (min-width: 1023px)
+    width: 100%
+  @media (min-width: 1450px)
+    width: 50%
+
+.recipe-card-height
+  height: unset
+  @media (min-width: 401px)
+    height: 200px
 
 .col-xsm-4
   flex: 0 0 100%
@@ -86,10 +101,11 @@ p
   cursor: pointer
 
 .dotted-overflow-1
-  display: -webkit-box
-  -webkit-line-clamp: 1
-  -webkit-box-orient: vertical
   overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  display: block
+  max-width: 100%
 
 .dotted-overflow-2
   display: -webkit-box
