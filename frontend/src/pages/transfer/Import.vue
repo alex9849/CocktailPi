@@ -33,7 +33,7 @@
         <div v-if="importData">
           <div v-if="importData.recipes && importData.recipes.length">
             <div class="row q-mb-md">
-              <div class="col-6">
+              <div class="col-12">
                 <div class="q-gutter-y-sm">
                   <q-radio
                     v-model="importRecipesMode"
@@ -63,12 +63,13 @@
                 v-model:selected="selectedRecipes"
                 title="Gefundene Rezepte"
                 :rows-per-page-options="[10, 25, 50, 100]"
-              />
+              >
+              </q-table>
             </div>
           </div>
           <div v-if="importData.collections && importData.collections.length">
             <div class="row q-mb-md">
-              <div class="col-6">
+              <div class="col-12">
                 <div class="q-gutter-y-sm">
                   <q-radio
                     v-model="importCollectionsMode"
@@ -101,7 +102,42 @@
               />
             </div>
           </div>
-
+          <div v-if="importData.glasses && importData.glasses.length">
+            <div class="row q-mb-md">
+              <div class="col-12">
+                <div class="q-gutter-y-sm">
+                  <q-radio
+                    v-model="importGlassesMode"
+                    val="all"
+                    label="Alle Gläser importieren"
+                  />
+                  <q-radio
+                    v-model="importGlassesMode"
+                    val="none"
+                    label="Keine Gläser importieren"
+                  />
+                </div>
+              </div>
+            </div>
+            <div v-if="importData.categories && importData.categories.length">
+              <div class="row q-mb-md">
+                <div class="col-12">
+                  <div class="q-gutter-y-sm">
+                    <q-radio
+                      v-model="importCategoriesMode"
+                      val="all"
+                      label="Alle Kategorien importieren"
+                    />
+                    <q-radio
+                      v-model="importCategoriesMode"
+                      val="none"
+                      label="Keine Kategorien importieren"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row justify-end">
             <q-btn
               color="primary"
@@ -135,6 +171,8 @@ const importRecipesMode = ref('all')
 const importCollectionsMode = ref('all')
 const selectedRecipes = ref([])
 const selectedCollections = ref([])
+const importGlassesMode = ref('all')
+const importCategoriesMode = ref('all')
 
 const recipeColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
@@ -148,8 +186,11 @@ const collectionColumns = [
 const enableImportBtn = computed(() => {
   const recipesOk = importRecipesMode.value !== 'none' && (importRecipesMode.value === 'all' || selectedRecipes.value.length > 0)
   const collectionsOk = importCollectionsMode.value !== 'none' && (importCollectionsMode.value === 'all' || selectedCollections.value.length > 0)
+  const glassesOk = importGlassesMode.value !== 'none'
+  const categoriesOk = importCategoriesMode.value !== 'none'
+
   // Mindestens eins muss importiert werden
-  return recipesOk || collectionsOk
+  return recipesOk || collectionsOk || glassesOk || categoriesOk
 })
 
 async function uploadFile () {
@@ -162,6 +203,8 @@ async function uploadFile () {
     step.value = 2
     importRecipesMode.value = importData.value.recipes?.length ? 'all' : 'none'
     importCollectionsMode.value = importData.value.collections?.length ? 'all' : 'none'
+    importGlassesMode.value = importData.value.glasses?.length ? 'all' : 'none'
+    importCategoriesMode.value = importData.value.categories?.length ? 'all' : 'none'
     selectedRecipes.value = []
     selectedCollections.value = []
   } finally {
@@ -177,6 +220,8 @@ async function startImport () {
       importRecipeIds: importRecipesMode.value === 'selection' ? selectedRecipes.value.map(r => r.id) : [],
       importAllCollections: importCollectionsMode.value === 'all',
       importCollectionIds: importCollectionsMode.value === 'selection' ? selectedCollections.value.map(c => c.id) : []
+      importAllGlasses: importGlassesMode.value === 'all',
+      importAllCategories: importCategoriesMode.value === 'all',
     }) */
     // Nach dem Import ggf. Feedback/Navigation
   } finally {

@@ -30,68 +30,14 @@
         </q-card>
       </div>
       <div v-if="exportMode === 'selection'" class="q-mb-md">
-        <q-input
+        <RecipeSelectionTable
+          v-if="exportMode === 'selection'"
+          :recipes="recipes"
+          :selected="selected"
           :disable="loading"
-          filled
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Rezepte suchen..."
-          class="q-mb-sm"
-          clearable
+          :recipeLoading="recipeLoading"
+          @update:selected="val => selected = val"
         />
-        <q-table
-          :loading="recipeLoading"
-          loading-label="Lade Rezepte..."
-          :rows="recipes"
-          :columns="recipeColumns"
-          row-key="id"
-          dense
-          selection="multiple"
-          v-model:selected="selected"
-          :filter="filter"
-          :pagination="pagination"
-          @update:pagination="val => pagination = val"
-          title="Verfügbare Rezepte"
-          no-data-label="No recipes found"
-          no-results-label="No recipes found"
-          :rows-per-page-options="[10, 25, 50, 100]"
-        >
-          <template v-slot:body-selection="props">
-            <q-checkbox
-              v-model="props.selected"
-              dense
-              :disable="loading"
-            />
-          </template>
-          <template v-slot:body-cell-categories="props">
-            <q-td>
-              {{ props.row.categories.map(c => c.name).join(', ') }}
-            </q-td>
-          </template>
-          <template v-slot:body-cell-ingredientCount="props">
-            <q-td class="text-center">
-              {{ props.row.ingredientCount }}
-            </q-td>
-          </template>
-          <template v-slot:body-cell-alcoholFree="props">
-            <q-td class="text-center">
-              <q-badge :color="props.row.alcoholFree ? 'green' : 'grey'" align="middle">
-                {{ props.row.alcoholFree ? 'Ja' : 'Nein' }}
-              </q-badge>
-            </q-td>
-          </template>
-          <template v-slot:top-right>
-            <q-btn
-              flat
-              dense
-              :icon="allVisibleRecipesSelected ? 'deselect' : 'select_all'"
-              :label="allVisibleRecipesSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
-              @click="toggleSelectAllVisibleRecipes"
-              v-if="filteredRecipes.length > 0"
-            />
-          </template>
-        </q-table>
       </div>
 
       <div class="row q-mb-md">
@@ -123,49 +69,14 @@
         </q-card>
       </div>
       <div v-if="exportCollectionsMode === 'selection'" class="q-mb-md">
-        <q-input
+        <CollectionSelectionTable
+          v-if="exportCollectionsMode === 'selection'"
+          :collections="collections"
+          :selected="selectedCollections"
           :disable="loading"
-          filled
-          dense
-          debounce="300"
-          v-model="collectionFilter"
-          placeholder="Collections suchen..."
-          class="q-mb-sm"
-          clearable
+          :collectionsLoading="collectionsLoading"
+          @update:selected="val => selectedCollections = val"
         />
-        <q-table
-          :rows="collections"
-          :columns="collectionColumns"
-          row-key="id"
-          dense
-          selection="multiple"
-          v-model:selected="selectedCollections"
-          :filter="collectionFilter"
-          :pagination="collectionPagination"
-          @update:pagination="val => collectionPagination = val"
-          title="Verfügbare Collections"
-          no-data-label="No Collections found"
-          no-results-label="No Collections found"
-          :rows-per-page-options="[10, 25, 50, 100]"
-        >
-          <template v-slot:body-selection="props">
-            <q-checkbox
-              v-model="props.selected"
-              dense
-              :disable="loading"
-            />
-          </template>
-          <template v-slot:top-right>
-            <q-btn
-              flat
-              dense
-              :icon="allVisibleCollectionsSelected ? 'deselect' : 'select_all'"
-              :label="allVisibleCollectionsSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
-              @click="toggleSelectAllVisibleCollections"
-              v-if="filteredCollections.length > 0"
-            />
-          </template>
-        </q-table>
       </div>
 
       <div class="row justify-end">
@@ -185,11 +96,11 @@
 import { ref, computed, watch } from 'vue'
 import TransferService from 'src/services/transfer.service'
 import CollectionService from 'src/services/collection.service'
+import RecipeSelectionTable from 'components/transfer/RecipeSelectionTable.vue'
+import CollectionSelectionTable from 'components/transfer/CollectionSelectionTable.vue'
 
 const exportMode = ref('all')
 const selected = ref([])
-const filter = ref('')
-const pagination = ref({ page: 1, rowsPerPage: 25 })
 const loading = ref(false)
 const recipeLoading = ref(false)
 const recipes = ref([])
@@ -198,9 +109,8 @@ const recipesLoaded = ref(false)
 const exportCollectionsMode = ref('all')
 const selectedCollections = ref([])
 const collections = ref([])
+const collectionsLoading = ref(false)
 const collectionsLoaded = ref(false)
-const collectionFilter = ref('')
-const collectionPagination = ref({ page: 1, rowsPerPage: 25 })
 
 watch(exportMode, async (val) => {
   if (val === 'selection' && !recipesLoaded.value) {
@@ -223,51 +133,15 @@ watch(exportMode, async (val) => {
 
 watch(exportCollectionsMode, async (val) => {
   if (val === 'selection' && !collectionsLoaded.value) {
-    const data = await CollectionService.getCollections()
-    collections.value = data
-    collectionsLoaded.value = true
+    collectionsLoading.value = true
+    try {
+      const data = await CollectionService.getCollections()
+      collections.value = data
+      collectionsLoaded.value = true
+    } finally {
+      collectionsLoading.value = false
+    }
   }
-})
-
-const recipeColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
-  { name: 'categories', label: 'Kategorien', field: 'categories', align: 'left' },
-  { name: 'ingredientCount', label: 'Zutaten', field: 'ingredientCount', align: 'center' },
-  { name: 'alcoholFree', label: 'Alkoholfrei', field: 'alcoholFree', align: 'center' }
-]
-
-const collectionColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
-  { name: 'description', label: 'Beschreibung', field: 'description', align: 'left' },
-  { name: 'size', label: 'Nr. Rezepte', field: 'size', align: 'center' }
-]
-
-const filteredRecipes = computed(() => {
-  let rows = recipes.value
-  if (filter.value) {
-    const f = filter.value.toLowerCase()
-    rows = rows.filter(r =>
-      r.name.toLowerCase().includes(f) ||
-      r.categories.some(c => c.name.toLowerCase().includes(f))
-    )
-  }
-  const start = (pagination.value.page - 1) * pagination.value.rowsPerPage
-  const end = start + pagination.value.rowsPerPage
-  return rows.slice(start, end)
-})
-
-const filteredCollections = computed(() => {
-  let rows = collections.value
-  if (collectionFilter.value) {
-    const f = collectionFilter.value.toLowerCase()
-    rows = rows.filter(c =>
-      c.name.toLowerCase().includes(f) ||
-      (c.description && c.description.toLowerCase().includes(f))
-    )
-  }
-  const start = (collectionPagination.value.page - 1) * collectionPagination.value.rowsPerPage
-  const end = start + collectionPagination.value.rowsPerPage
-  return rows.slice(start, end)
 })
 
 const enableExportBtn = computed(() => {
@@ -275,42 +149,6 @@ const enableExportBtn = computed(() => {
   const collectionsOk = exportCollectionsMode.value !== 'none' && (exportCollectionsMode.value === 'all' || selectedCollections.value.length > 0)
   return recipesOk || collectionsOk
 })
-
-const allVisibleRecipesSelected = computed(() => {
-  const visibleIds = filteredRecipes.value.map(r => r.id)
-  return visibleIds.every(id => selected.value.some(s => s.id === id)) && visibleIds.length > 0
-})
-
-const allVisibleCollectionsSelected = computed(() => {
-  const visibleIds = filteredCollections.value.map(c => c.id)
-  return visibleIds.every(id => selectedCollections.value.some(s => s.id === id)) && visibleIds.length > 0
-})
-
-function toggleSelectAllVisibleRecipes () {
-  const visibleIds = filteredRecipes.value.map(r => r.id)
-  if (allVisibleRecipesSelected.value) {
-    // Abwählen
-    selected.value = selected.value.filter(r => !visibleIds.includes(r.id))
-  } else {
-    // Auswählen
-    selected.value = [
-      ...selected.value,
-      ...recipes.value.filter(r => visibleIds.includes(r.id) && !selected.value.includes(r))
-    ]
-  }
-}
-
-function toggleSelectAllVisibleCollections () {
-  const visibleIds = filteredCollections.value.map(c => c.id)
-  if (allVisibleCollectionsSelected.value) {
-    selectedCollections.value = selectedCollections.value.filter(c => !visibleIds.includes(c.id))
-  } else {
-    selectedCollections.value = [
-      ...selectedCollections.value,
-      ...collections.value.filter(c => visibleIds.includes(c.id) && !selectedCollections.value.includes(c))
-    ]
-  }
-}
 
 async function exportRecipes () {
   loading.value = true
