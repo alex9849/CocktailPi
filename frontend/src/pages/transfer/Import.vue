@@ -54,17 +54,13 @@
               </div>
             </div>
             <div v-if="importRecipesMode === 'selection'" class="q-mb-md">
-              <q-table
-                :rows="importData.recipes"
-                :columns="recipeColumns"
-                row-key="id"
-                dense
-                selection="multiple"
-                v-model:selected="selectedRecipes"
-                title="Gefundene Rezepte"
-                :rows-per-page-options="[10, 25, 50, 100]"
-              >
-              </q-table>
+              <RecipeSelectionTable
+                :recipes="importData.recipes"
+                :selected="selectedRecipes"
+                :disable="loading"
+                :recipeLoading="false"
+                @update:selected="val => selectedRecipes = val"
+              />
             </div>
           </div>
           <div v-if="importData.collections && importData.collections.length">
@@ -90,15 +86,12 @@
               </div>
             </div>
             <div v-if="importCollectionsMode === 'selection'" class="q-mb-md">
-              <q-table
-                :rows="importData.collections"
-                :columns="collectionColumns"
-                row-key="id"
-                dense
-                selection="multiple"
-                v-model:selected="selectedCollections"
-                title="Gefundene Collections"
-                :rows-per-page-options="[10, 25, 50, 100]"
+              <CollectionSelectionTable
+                :collections="importData.collections"
+                :selected="selectedCollections"
+                :disable="loading"
+                :collectionsLoading="false"
+                @update:selected="val => selectedCollections = val"
               />
             </div>
           </div>
@@ -109,7 +102,7 @@
                   <q-radio
                     v-model="importGlassesMode"
                     val="all"
-                    label="Alle Gläser importieren"
+                    label="Gläser importieren"
                   />
                   <q-radio
                     v-model="importGlassesMode"
@@ -126,7 +119,7 @@
                     <q-radio
                       v-model="importCategoriesMode"
                       val="all"
-                      label="Alle Kategorien importieren"
+                      label="Kategorien importieren"
                     />
                     <q-radio
                       v-model="importCategoriesMode"
@@ -161,6 +154,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import TransferService from 'src/services/transfer.service'
+import RecipeSelectionTable from 'components/transfer/RecipeSelectionTable.vue'
+import CollectionSelectionTable from 'components/transfer/CollectionSelectionTable.vue'
 
 const step = ref(1)
 const file = ref(null)
@@ -174,22 +169,11 @@ const selectedCollections = ref([])
 const importGlassesMode = ref('all')
 const importCategoriesMode = ref('all')
 
-const recipeColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
-  { name: 'categories', label: 'Kategorien', field: row => row.categories?.join(', '), align: 'left' }
-]
-const collectionColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
-  { name: 'description', label: 'Beschreibung', field: 'description', align: 'left' }
-]
-
 const enableImportBtn = computed(() => {
   const recipesOk = importRecipesMode.value !== 'none' && (importRecipesMode.value === 'all' || selectedRecipes.value.length > 0)
   const collectionsOk = importCollectionsMode.value !== 'none' && (importCollectionsMode.value === 'all' || selectedCollections.value.length > 0)
   const glassesOk = importGlassesMode.value !== 'none'
   const categoriesOk = importCategoriesMode.value !== 'none'
-
-  // Mindestens eins muss importiert werden
   return recipesOk || collectionsOk || glassesOk || categoriesOk
 })
 
@@ -199,7 +183,6 @@ async function uploadFile () {
     const formData = new FormData()
     formData.append('file', file.value)
     importData.value = await TransferService.uploadImportFile(formData)
-    // Server gibt z.B. { recipes: [...], collections: [...] } zurück
     step.value = 2
     importRecipesMode.value = importData.value.recipes?.length ? 'all' : 'none'
     importCollectionsMode.value = importData.value.collections?.length ? 'all' : 'none'
