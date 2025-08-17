@@ -44,7 +44,7 @@ public class TransferEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> confirmImport(
             @PathVariable("id") long importId,
-            @RequestBody ImportConfirmRequest importRequest) throws IOException {
+            @RequestBody ImportConfirmRequest importRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         transferService.confirmImport(importId, user, importRequest);
         return ResponseEntity.ok().build();
