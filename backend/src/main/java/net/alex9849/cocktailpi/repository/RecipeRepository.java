@@ -32,7 +32,7 @@ public class RecipeRepository extends JdbcDaoSupport {
     private RecipeCategoryRepository recipeCategoryRepository;
 
     public long count() {
-        return getJdbcTemplate().execute((ConnectionCallback<Long>) con -> {
+        Long ret = getJdbcTemplate().execute((ConnectionCallback<Long>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT count(*) as number FROM recipes");
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -40,6 +40,7 @@ public class RecipeRepository extends JdbcDaoSupport {
             }
             throw new IllegalStateException("Error counting recipes");
         });
+        return ret;
     }
 
     public Optional<Recipe> findById(long id) {
@@ -222,8 +223,9 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsContainingName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) LIKE ('%' || lower(?) || '%')");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) LIKE ('%' || lower(?) || '%') or lower(name) LIKE ('%' || lower(?) || '%')");
             pstmt.setString(1, SpringUtility.normalize(name));
+            pstmt.setString(2, name);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -238,8 +240,9 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public Set<Long> getIdsByName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) = lower(?)");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id AS id FROM recipes where lower(normal_name) = lower(?) or lower(name) = lower(?)");
             pstmt.setString(1, SpringUtility.normalize(name));
+            pstmt.setString(2, name);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }

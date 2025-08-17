@@ -22,9 +22,6 @@ public class CollectionRepository extends JdbcDaoSupport {
     private DataSource dataSource;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private RecipeRepository recipeRepository;
 
     @PostConstruct
@@ -109,8 +106,9 @@ public class CollectionRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsByName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(normal_name) = ?");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(normal_name) = ? or lower(name) = ?");
             pstmt.setString(1, SpringUtility.normalize(name));
+            pstmt.setString(2, name);
             pstmt.executeQuery();
             return DbUtils.executeGetIdsPstmt(pstmt);
         });

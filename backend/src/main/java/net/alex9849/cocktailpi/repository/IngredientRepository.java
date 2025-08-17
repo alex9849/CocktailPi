@@ -75,8 +75,10 @@ public class IngredientRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsAutocompleteName(String toAutocomplete) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE lower(normal_name) LIKE ('%' || lower(?) || '%')");
+            PreparedStatement pstmt = con.prepareStatement("SELECT i.id FROM ingredients i WHERE " +
+                    "lower(normal_name) LIKE ('%' || lower(?) || '%') or lower(name) LIKE ('%' || lower(?) || '%')");
             pstmt.setString(1, SpringUtility.normalize(toAutocomplete));
+            pstmt.setString(2, toAutocomplete);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
@@ -152,8 +154,9 @@ public class IngredientRepository extends JdbcDaoSupport {
 
     public Set<Long> findIdsByNameIgnoringCase(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients i WHERE lower(normal_name) = lower(?) ORDER BY name");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id FROM ingredients i WHERE lower(normal_name) = lower(?) or lower(name) = lower(?) ORDER BY name");
             pstmt.setString(1, SpringUtility.normalize(name));
+            pstmt.setString(2, name);
             return DbUtils.executeGetIdsPstmt(pstmt);
         });
     }
