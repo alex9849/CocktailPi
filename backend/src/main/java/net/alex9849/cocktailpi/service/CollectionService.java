@@ -26,22 +26,19 @@ public class CollectionService {
     @Autowired
     private RecipeService recipeService;
 
-    @Autowired
-    private UserService userService;
-
     public Collection createCollection(Collection collection) {
-        Set<Long> idsWithName = collectionRepository.findIdsContainingName(collection.getName());
+        Set<Long> idsWithName = collectionRepository.findIdsByName(collection.getName());
         if(!idsWithName.isEmpty()) {
             throw new IllegalArgumentException("A collection with that name already exists!");
         }
         return collectionRepository.create(collection);
     }
 
-    public Collection updateCollection(Collection collection, BufferedImage image, boolean removeImage) throws IOException {
+    public Collection updateCollection(Collection collection, byte[] image, boolean removeImage) {
         if(collectionRepository.findByIds(collection.getId()).isEmpty()) {
             throw new IllegalArgumentException("Collection doesn't exist!");
         }
-        Set<Long> idsWithName = collectionRepository.findIdsContainingName(collection.getName());
+        Set<Long> idsWithName = collectionRepository.findIdsByName(collection.getName());
         if(idsWithName.stream().anyMatch(x -> x != collection.getId())) {
             throw new IllegalArgumentException("A collection with that name already exists!");
         }
@@ -51,9 +48,7 @@ public class CollectionService {
             collectionRepository.setImage(collection.getId(), null);
         }
         if(image != null) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(image, "jpg", out);
-            collectionRepository.setImage(collection.getId(), out.toByteArray());
+            collectionRepository.setImage(collection.getId(), image);
         }
 
         return collectionRepository.findByIds(collection.getId()).get(0);
@@ -117,4 +112,12 @@ public class CollectionService {
             return new ArrayList<>();
         }
         return collectionRepository.findByIds(ids.toArray(new Long[1]));    }
+
+    public List<Collection> getCollectionsByName(String name) {
+        Set<Long> collectionsWithName = collectionRepository.findIdsByName(name);
+        if (collectionsWithName.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return collectionRepository.findByIds(collectionsWithName.toArray(new Long[1]));
+    }
 }

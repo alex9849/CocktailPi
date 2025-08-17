@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -84,14 +85,17 @@ public class CollectionEndpoint {
         }
         Collection updateCollection = collectionService.fromDto(collectionDto, existingCollection.getOwnerId());
         updateCollection.setId(id);
-        BufferedImage image = null;
+        byte[] image = null;
         if(file != null) {
             try {
-                image = ImageIO.read(file.getInputStream());
+                BufferedImage bImage = ImageIO.read(file.getInputStream());
+                bImage = ImageUtils.resizeImage(bImage, 2000, 16d / 9);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(bImage, "jpg", out);
+                image = out.toByteArray();
             } catch (IOException e) {
                 throw new IllegalArgumentException("Invalid image format!");
             }
-            image = ImageUtils.resizeImage(image, 2000, 16d / 9);
         }
         collectionService.updateCollection(updateCollection, image, removeImage);
         return ResponseEntity.ok().build();

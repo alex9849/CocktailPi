@@ -104,7 +104,7 @@ public class CollectionRepository extends JdbcDaoSupport {
         });
     }
 
-    public Set<Long> findIdsContainingName(String name) {
+    public Set<Long> findIdsByName(String name) {
         return getJdbcTemplate().execute((ConnectionCallback<Set<Long>>) con -> {
             PreparedStatement pstmt = con.prepareStatement("SELECT id as id FROM collections WHERE lower(name) = ?");
             pstmt.setString(1, name);

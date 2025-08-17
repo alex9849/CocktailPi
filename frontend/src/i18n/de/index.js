@@ -136,6 +136,11 @@ export default {
         edit_btn_label: 'Bearbeiten',
         save_btn_label: 'Speichern',
         abort_btn_label: 'Abbrechen'
+      },
+      notifications: {
+        recipe_added: 'Rezept erfolgreich hinzugefügt',
+        recipe_removed: 'Rezept erfolgreich entfernt',
+        collection_updated: 'Liste erfolgreich aktualisiert'
       }
     },
     recipes: {

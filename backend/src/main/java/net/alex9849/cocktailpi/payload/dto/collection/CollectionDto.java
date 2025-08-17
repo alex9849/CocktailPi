@@ -25,6 +25,12 @@ public class CollectionDto {
         public static class Create implements Name, Description {
             String name;
             String description;
+
+            public Create () {}
+
+            public Create(Response.Detailed collection) {
+                BeanUtils.copyProperties(collection, this);
+            }
         }
     }
 

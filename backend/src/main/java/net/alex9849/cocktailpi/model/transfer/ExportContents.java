@@ -10,6 +10,7 @@ import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter @Setter @NoArgsConstructor
 public class ExportContents {
@@ -19,4 +20,5 @@ public class ExportContents {
     private List<GlassDto.Duplex.Detailed> glasses;
     private List<IngredientDto.Response.Detailed> ingredients;
     private List<CollectionDto.Response.Detailed> collections;
+    private Map<Long, List<Long>> collectionRecipes;
 }

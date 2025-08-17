@@ -631,12 +631,12 @@ export default {
         edit_btn_label: 'Edit',
         save_btn_label: 'Save',
         abort_btn_label: 'Abort'
+      },
+      notifications: {
+        recipe_added: 'Recipe added successfully',
+        recipe_removed: 'Recipe removed successfully',
+        collection_updated: 'Collection updated successfully'
       }
-    },
-    notifications: {
-      recipe_added: 'Recipe added successfully',
-      recipe_removed: 'Recipe removed successfully',
-      collection_updated: 'Collection updated successfully'
     },
     transfer: {
       headline: 'Transfer'

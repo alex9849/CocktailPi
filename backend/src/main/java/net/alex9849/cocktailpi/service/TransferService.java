@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.alex9849.cocktailpi.model.Category;
 import net.alex9849.cocktailpi.model.Glass;
@@ -142,6 +143,17 @@ public class TransferService {
                     throw new RuntimeException("Error reading collections from import file.", e);
                 }
             }
+
+            Path collectionsRecipesFile = importPath.resolve("collections_recipes.json");
+            Map<Long, List<Long>> collectionRecipes = new HashMap<>();
+            if (Files.exists(collectionsRecipesFile)) {
+                try (InputStream is = Files.newInputStream(collectionsRecipesFile)) {
+                    collectionRecipes = new ObjectMapper().readValue(is, new TypeReference<>() {});
+                } catch (IOException e) {
+                    throw new RuntimeException("Error reading collections from import file.", e);
+                }
+            }
+
             recipes.sort(Comparator.comparing(RecipeDto.Response.Detailed::getName));
             collections.sort(Comparator.comparing(CollectionDto.Response.Detailed::getName));
             ExportContents exportContents = new ExportContents();
@@ -150,6 +162,7 @@ public class TransferService {
             exportContents.setGlasses(new ArrayList<>(glasses.values()));
             exportContents.setIngredients(ingredients);
             exportContents.setCollections(collections);
+            exportContents.setCollectionRecipes(collectionRecipes);
             exportContents.setImportId(importId);
             return exportContents;
         } finally {
@@ -198,17 +211,25 @@ public class TransferService {
             }
         }
         List<Recipe> recipesToExportAll = new ArrayList<>();
+        Map<Long, List<Long>> collectionRecipeMap = new HashMap<>();
         for (Collection collection : collectionsToExport) {
+            collectionRecipeMap.put(collection.getId(), new ArrayList<>());
             Sort sort = Sort.by(Sort.Direction.ASC, "lower(name)");
             int pageNr = 0;
             Page<Recipe> collectionPage = recipeService.getRecipesByFilter(null, collection.getId(), null,null,
                     null, RecipeService.FabricableFilter.ALL, pageNr, 16, sort);
             recipesToExportAll.addAll(collectionPage.getContent());
+            collectionRecipeMap.get(collection.getId())
+                    .addAll(collectionPage.getContent().stream()
+                            .mapToLong(Recipe::getId).boxed().toList());
             while (!collectionPage.isLast()) {
                 pageNr++;
                 collectionPage = recipeService.getRecipesByFilter(null, collection.getId(), null, null,
                         null, RecipeService.FabricableFilter.ALL, pageNr, 16, sort);
                 recipesToExportAll.addAll(collectionPage.getContent());
+                collectionRecipeMap.get(collection.getId())
+                        .addAll(collectionPage.getContent().stream()
+                                .mapToLong(Recipe::getId).boxed().toList());
             }
         }
         List<CollectionDto.Response.Detailed> collectionDtos = collectionsToExport.stream()
@@ -319,6 +340,11 @@ public class TransferService {
                 }
             }
 
+            zos.putNextEntry(new ZipEntry("collections_recipes.json"));
+            jsonBytes = mapper.writeValueAsBytes(collectionRecipeMap);
+            zos.write(jsonBytes);
+            zos.closeEntry();
+
             zos.putNextEntry(new ZipEntry("schema.json"));
             String version = systemService.getVersion().getVersion();
             String schemaJson = "{\"version\": \"" + version + "\"}";
@@ -358,12 +384,15 @@ public class TransferService {
         try {
             readLock.lock();
             ExportContents exportContents = readExport(importId);
-            Map<Long, byte[]> recipeImages = new HashMap<>();
-            List<RecipeDto.Response.Detailed> recipesToImport = exportContents.getRecipes();
+            List<RecipeDto.Response.Detailed> recipesInExport = exportContents.getRecipes();
+            Set<Long> recipeIdsToImport = recipesInExport.stream()
+                    .map(RecipeDto.Response.Detailed::getId)
+                    .collect(Collectors.toSet());
             if (!importRequest.isImportAllRecipes()) {
-                recipesToImport = recipesToImport.stream()
-                        .filter(recipe -> importRequest.getImportRecipeIds().contains(recipe.getId()))
-                        .toList();
+                recipeIdsToImport = recipesInExport.stream()
+                        .map(RecipeDto.Response.Detailed::getId)
+                        .filter(id -> importRequest.getImportRecipeIds().contains(id))
+                        .collect(Collectors.toSet());
             }
             List<CollectionDto.Response.Detailed> collectionsToImport = exportContents.getCollections();
             if (!importRequest.isImportAllCollections()) {
@@ -384,7 +413,10 @@ public class TransferService {
                     .stream().filter(ing -> ing.getParentGroupId() != null)
                     .collect(Collectors.groupingBy(IngredientDto.Response.Detailed::getParentGroupId, Collectors.toList()));
 
-            for (RecipeDto.Response.Detailed recipeDto : recipesToImport) {
+            for (RecipeDto.Response.Detailed recipeDto : recipesInExport) {
+                if (!recipeIdsToImport.contains(recipeDto.getId())) {
+                    continue;
+                }
                 for(ProductionStepDto.Response.Detailed stepDto : recipeDto.getProductionSteps()) {
                     if (!(stepDto instanceof AddIngredientsProductionStepDto.Response.Detailed addStep)) {
                         continue;
@@ -402,6 +434,7 @@ public class TransferService {
             Map<Long, Long> oldGlassedToNewGlassIdMap = new HashMap<>();
             Map<Long, Long> oldCategoryToNewCategoryIdMap = new HashMap<>();
             Map<Long, Long> oldIngredientToNewIngredientIdMap = new HashMap<>();
+            Map<Long, Long> oldRecipeToNewRecipeIdMap = new HashMap<>();
 
             for (int i = 0; i < glassesToImport.size(); i++) {
                 GlassDto.Duplex.Detailed dto = glassesToImport.get(i);
@@ -491,10 +524,18 @@ public class TransferService {
                 }
             }
 
-            for (int i = 0; i < recipesToImport.size(); i++) {
-                RecipeDto.Response.Detailed dto = recipesToImport.get(i);
-                byte[] image = readImageFromExport(importId, "recipe_images", dto.getId());
+            for (int i = 0; i < recipesInExport.size(); i++) {
+                RecipeDto.Response.Detailed dto = recipesInExport.get(i);
                 RecipeDto.Request.Create createDto = new RecipeDto.Request.Create(dto);
+
+                List<Recipe> existingRecipes = recipeService.getRecipeByName(createDto.getName());
+                if (!recipeIdsToImport.contains(dto.getId())) {
+                    if (!existingRecipes.isEmpty()) {
+                        Recipe existingRecipe = existingRecipes.get(0);
+                        oldRecipeToNewRecipeIdMap.put(dto.getId(), existingRecipe.getId());
+                    }
+                    continue;
+                }
 
                 if (dto.getDefaultGlass() != null) {
                     Long newGlassId = oldGlassedToNewGlassIdMap.get(dto.getDefaultGlass().getId());
@@ -521,22 +562,54 @@ public class TransferService {
                 }
                 createDto.setOwnerId(importUser.getId());
                 Recipe recipe = recipeService.fromDto(createDto);
-                List<Recipe> existingRecipes = recipeService.getRecipeByName(createDto.getName());
                 if (!existingRecipes.isEmpty()) {
                     Recipe existingRecipe = existingRecipes.get(0);
                     if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
                         recipe.setId(existingRecipe.getId());
                         recipeService.updateRecipe(recipe);
+                        byte[] image = readImageFromExport(importId, "recipe_images", dto.getId());
                         recipeService.setImage(recipe.getId(), image);
+                        oldRecipeToNewRecipeIdMap.put(dto.getId(), existingRecipe.getId());
                     } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
-                        // Do nothing, skip this recipe
+                        oldRecipeToNewRecipeIdMap.put(dto.getId(), existingRecipe.getId());
                     } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
                         dto.setName(dto.getName() + " (imported)");
-                        recipesToImport.add(i + 1, dto);
+                        recipesInExport.add(i + 1, dto);
                     }
                 } else {
-                    recipeService.createRecipe(recipe);
+                    recipe = recipeService.createRecipe(recipe);
+                    byte[] image = readImageFromExport(importId, "recipe_images", dto.getId());
                     recipeService.setImage(recipe.getId(), image);
+                    oldRecipeToNewRecipeIdMap.put(dto.getId(), recipe.getId());
+                }
+            }
+
+            for (int i = 0; i < collectionsToImport.size(); i++) {
+                CollectionDto.Response.Detailed dto = collectionsToImport.get(i);
+                byte[] image = readImageFromExport(importId, "collection_images", dto.getId());
+                CollectionDto.Request.Create createDto = new CollectionDto.Request.Create(dto);
+                Collection collection = collectionService.fromDto(createDto, importUser.getId());
+                List<Collection> collectionsWithName = collectionService.getCollectionsByName(collection.getName());
+                if (!collectionsWithName.isEmpty()) {
+                    Collection existingCollection = collectionsWithName.get(0);
+                    if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.OVERWRITE) {
+                        collection.setId(existingCollection.getId());
+                        collectionService.updateCollection(collection, image, image == null);
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.SKIP) {
+                        continue;
+                    } else if (importRequest.getDuplicateMode() == ImportConfirmRequest.DuplicateMode.KEEP_BOTH) {
+                        dto.setName(dto.getName() + " (imported)");
+                        collectionsToImport.add(i + 1, dto);
+                    }
+                } else {
+                    collection = collectionService.createCollection(collection);
+                    collectionService.updateCollection(collection, image, image == null);
+                }
+                for (Long recipeId : exportContents.getCollectionRecipes().getOrDefault(dto.getId(), List.of())) {
+                    Long newRecipeId = oldRecipeToNewRecipeIdMap.get(recipeId);
+                    if (newRecipeId != null) {
+                        collectionService.addRecipe(newRecipeId, collection.getId());
+                    }
                 }
             }
         } finally {
