@@ -16,7 +16,8 @@
       row-key="id"
       dense
       selection="multiple"
-      v-model:selected="selected"
+      :selected="selected"
+      @update:selected="$emit('update:selected', $event)"
       :filter="filter"
       :pagination="pagination"
       @update:pagination="val => pagination = val"
@@ -26,9 +27,18 @@
       :rows-per-page-options="[10, 25, 50, 100]"
       :loading="collectionsLoading"
     >
+      <template v-slot:header-selection>
+        <q-checkbox
+          :model-value="allCollectionsSelected"
+          @update:model-value="toggleSelectAllCollections"
+          :disable="disable"
+          dense
+        />
+      </template>
       <template v-slot:body-selection="props">
         <q-checkbox
-          v-model="props.selected"
+          :model-value="props.selected"
+          @update:modelValue="onSelect(props.row, $event)"
           dense
           :disable="disable"
         />
@@ -100,6 +110,27 @@ function toggleSelectAllVisibleCollections () {
       ...selected.value,
       ...collections.value.filter(c => visibleIds.includes(c.id) && !selected.value.includes(c))
     ])
+  }
+}
+
+function onSelect (collection, newValue) {
+  if (newValue) {
+    emit('update:selected', [...selected.value, collection])
+  } else {
+    emit('update:selected', selected.value.filter(c => c.id !== collection.id))
+  }
+}
+
+const allCollectionsSelected = computed(() =>
+  collections.value.length > 0 &&
+  collections.value.every(c => selected.value.some(s => s.id === c.id))
+)
+
+function toggleSelectAllCollections () {
+  if (allCollectionsSelected.value) {
+    emit('update:selected', [])
+  } else {
+    emit('update:selected', [...collections.value])
   }
 }
 

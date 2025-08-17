@@ -26,9 +26,9 @@
             <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
               <div class="text-h6 q-mb-sm">Rezepte</div>
               <div class="q-gutter-y-sm">
-                <q-radio v-model="importRecipesMode" val="all" label="Alle Rezepte importieren" />
-                <q-radio v-model="importRecipesMode" val="selection" label="Nur ausgewählte Rezepte importieren" />
-                <q-radio v-model="importRecipesMode" val="none" label="Keine Rezepte importieren" />
+                <q-radio :disable="loading" v-model="importRecipesMode" val="all" label="Alle Rezepte importieren" />
+                <q-radio :disable="loading" v-model="importRecipesMode" val="selection" label="Nur ausgewählte Rezepte importieren" />
+                <q-radio :disable="loading" v-model="importRecipesMode" val="none" label="Keine Rezepte importieren" />
               </div>
               <transition
                 enter-active-class="animated fadeIn"
@@ -49,9 +49,9 @@
             <q-card flat bordered class="q-pa-md" v-if="importData.collections && importData.collections.length">
               <div class="text-h6 q-mb-sm">Collections</div>
               <div class="q-gutter-y-sm">
-                <q-radio v-model="importCollectionsMode" val="all" label="Alle Collections importieren" />
-                <q-radio v-model="importCollectionsMode" val="selection" label="Nur ausgewählte Collections importieren" />
-                <q-radio v-model="importCollectionsMode" val="none" label="Keine Collections importieren" />
+                <q-radio :disable="loading" v-model="importCollectionsMode" val="all" label="Alle Collections importieren" />
+                <q-radio :disable="loading" v-model="importCollectionsMode" val="selection" label="Nur ausgewählte Collections importieren" />
+                <q-radio :disable="loading" v-model="importCollectionsMode" val="none" label="Keine Collections importieren" />
               </div>
               <transition
                 enter-active-class="animated fadeIn"
@@ -72,25 +72,25 @@
             <q-card flat bordered class="q-pa-md" v-if="importData.glasses && importData.glasses.length">
               <div class="text-h6 q-mb-sm">Gläser</div>
               <div class="q-gutter-y-sm">
-                <q-radio v-model="importGlassesMode" val="all" label="Gläser importieren" />
-                <q-radio v-model="importGlassesMode" val="none" label="Keine Gläser importieren" />
+                <q-radio :disable="loading" v-model="importGlassesMode" val="all" label="Gläser importieren" />
+                <q-radio :disable="loading" v-model="importGlassesMode" val="none" label="Keine Gläser importieren" />
               </div>
             </q-card>
 
             <q-card flat bordered class="q-pa-md" v-if="importData.categories && importData.categories.length">
               <div class="text-h6 q-mb-sm">Kategorien</div>
               <div class="q-gutter-y-sm">
-                <q-radio v-model="importCategoriesMode" val="all" label="Kategorien importieren" />
-                <q-radio v-model="importCategoriesMode" val="none" label="Keine Kategorien importieren" />
+                <q-radio :disable="loading" v-model="importCategoriesMode" val="all" label="Kategorien importieren" />
+                <q-radio :disable="loading" v-model="importCategoriesMode" val="none" label="Keine Kategorien importieren" />
               </div>
             </q-card>
 
             <q-card flat bordered class="q-pa-md">
               <div class="text-h6 q-mb-sm">Duplikat-Strategie</div>
               <div class="q-gutter-y-sm">
-                <q-radio v-model="duplicateMode" val="overwrite" label="Duplikate überschreiben" />
-                <q-radio v-model="duplicateMode" val="skip" label="Duplikate überspringen" />
-                <q-radio v-model="duplicateMode" val="keep_both" label="Beide behalten" />
+                <q-radio :disable="loading" v-model="duplicateMode" val="overwrite" label="Duplikate überschreiben" />
+                <q-radio :disable="loading" v-model="duplicateMode" val="skip" label="Duplikate überspringen" />
+                <q-radio :disable="loading" v-model="duplicateMode" val="keep_both" label="Beide behalten" />
               </div>
             </q-card>
           </div>

@@ -18,7 +18,8 @@
       row-key="id"
       dense
       selection="multiple"
-      v-model:selected="selected"
+      :selected="selected"
+      @update:selected="$emit('update:selected', $event)"
       :filter="filter"
       :pagination="pagination"
       @update:pagination="val => pagination = val"
@@ -27,9 +28,18 @@
       no-results-label="No recipes found"
       :rows-per-page-options="[10, 25, 50, 100]"
     >
+      <template v-slot:header-selection>
+        <q-checkbox
+          :model-value="allRecipesSelected"
+          @update:model-value="toggleSelectAllRecipes"
+          :disable="disable"
+          dense
+        />
+      </template>
       <template v-slot:body-selection="props">
         <q-checkbox
-          v-model="props.selected"
+          :model-value="props.selected"
+          @update:modelValue="onSelect(props.row, $event)"
           dense
           :disable="disable"
         />
@@ -119,6 +129,27 @@ function toggleSelectAllVisibleRecipes () {
       ...selected.value,
       ...recipes.value.filter(r => visibleIds.includes(r.id) && !selected.value.includes(r))
     ])
+  }
+}
+
+function onSelect (recipe, newValue) {
+  if (newValue) {
+    emit('update:selected', [...selected.value, recipe])
+  } else {
+    emit('update:selected', selected.value.filter(c => c.id !== recipe.id))
+  }
+}
+
+const allRecipesSelected = computed(() =>
+  recipes.value.length > 0 &&
+  recipes.value.every(r => selected.value.some(s => s.id === r.id))
+)
+
+function toggleSelectAllRecipes () {
+  if (allRecipesSelected.value) {
+    emit('update:selected', [])
+  } else {
+    emit('update:selected', [...recipes.value])
   }
 }
 
