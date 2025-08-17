@@ -51,13 +51,13 @@
       </template>
       <template v-slot:body-cell-ingredientCount="props">
         <q-td class="text-center">
-          {{ props.row.ingredientCount }}
+          {{ numberIngredients(props.row) }}
         </q-td>
       </template>
       <template v-slot:body-cell-alcoholFree="props">
         <q-td class="text-center">
-          <q-badge :color="props.row.alcoholFree ? 'green' : 'grey'" align="middle">
-            {{ props.row.alcoholFree ? 'Ja' : 'Nein' }}
+          <q-badge :color="isAlcoholFree(props.row) ? 'green' : 'grey'" align="middle">
+            {{ isAlcoholFree(props.row) ? 'Ja' : 'Nein' }}
           </q-badge>
         </q-td>
       </template>
@@ -130,6 +130,16 @@ function toggleSelectAllVisibleRecipes () {
       ...recipes.value.filter(r => visibleIds.includes(r.id) && !selected.value.includes(r))
     ])
   }
+}
+
+function isAlcoholFree (recipe) {
+  return recipe.minAlcoholContent === 0 && recipe.maxAlcoholContent === 0
+}
+
+function numberIngredients (recipe) {
+  return recipe.productionSteps
+    .filter(s => Array.isArray(s.stepIngredients))
+    .reduce((sum, s) => sum + s.stepIngredients.length, 0)
 }
 
 function onSelect (recipe, newValue) {

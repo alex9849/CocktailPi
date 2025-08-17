@@ -124,14 +124,7 @@ watch(exportMode, async (val) => {
   if (val === 'selection' && !recipesLoaded.value) {
     recipeLoading.value = true
     try {
-      const data = await TransferService.getRecipes()
-      recipes.value = data.map(r => ({
-        ...r,
-        ingredientCount: r.productionSteps
-          .filter(s => Array.isArray(s.stepIngredients))
-          .reduce((sum, s) => sum + s.stepIngredients.length, 0),
-        alcoholFree: r.minAlcoholContent === 0 && r.maxAlcoholContent === 0
-      }))
+      recipes.value = await TransferService.getRecipes()
       recipesLoaded.value = true
     } finally {
       recipeLoading.value = false
