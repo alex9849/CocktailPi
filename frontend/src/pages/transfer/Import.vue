@@ -157,7 +157,7 @@ async function uploadFile () {
   try {
     const formData = new FormData()
     formData.append('file', file.value)
-    importData.value = TransferService.uploadImportFile(formData)
+    importData.value = await TransferService.uploadImportFile(formData)
     // Server gibt z.B. { recipes: [...], collections: [...] } zurück
     step.value = 2
     importRecipesMode.value = importData.value.recipes?.length ? 'all' : 'none'

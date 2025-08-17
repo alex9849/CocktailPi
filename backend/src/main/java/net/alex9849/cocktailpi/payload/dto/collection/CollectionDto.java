@@ -42,6 +42,8 @@ public class CollectionDto {
             int size;
             Date lastUpdate;
 
+            public Detailed () {}
+
             public Detailed(Collection collection) {
                 BeanUtils.copyProperties(collection, this);
                 ownerName = collection.getOwner().getUsername();

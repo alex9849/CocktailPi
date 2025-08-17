@@ -121,11 +121,11 @@ public class TransferService {
             }
         }
         ImportContents importContents = new ImportContents();
-        importContents.setRecipeDtos(recipes);
-        importContents.setCategoryDtos(new ArrayList<>(categories.values()));
-        importContents.setGlassDtos(new ArrayList<>(glasses.values()));
-        importContents.setIngredientDtos(ingredients);
-        importContents.setCollectionDtos(collections);
+        importContents.setRecipes(recipes);
+        importContents.setCategories(new ArrayList<>(categories.values()));
+        importContents.setGlasses(new ArrayList<>(glasses.values()));
+        importContents.setIngredients(ingredients);
+        importContents.setCollections(collections);
         importContents.setImportId(importId);
         return importContents;
 

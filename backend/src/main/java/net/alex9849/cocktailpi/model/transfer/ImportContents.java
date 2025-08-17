@@ -14,9 +14,9 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor
 public class ImportContents {
     private long importId;
-    private List<RecipeDto.Response.Detailed> recipeDtos;
-    private List<CategoryDto.Duplex.Detailed> categoryDtos;
-    private List<GlassDto.Duplex.Detailed> glassDtos;
-    private List<IngredientDto.Response.Detailed> ingredientDtos;
-    private List<CollectionDto.Response.Detailed> collectionDtos;
+    private List<RecipeDto.Response.Detailed> recipes;
+    private List<CategoryDto.Duplex.Detailed> categories;
+    private List<GlassDto.Duplex.Detailed> glasses;
+    private List<IngredientDto.Response.Detailed> ingredients;
+    private List<CollectionDto.Response.Detailed> collections;
 }
