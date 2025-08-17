@@ -55,7 +55,7 @@ public class RecipeRepository extends JdbcDaoSupport {
 
     public List<Recipe> findAll() {
         return getJdbcTemplate().execute((ConnectionCallback<List<Recipe>>) con -> {
-            PreparedStatement pstmt = con.prepareStatement("SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, glass_id FROM recipes");
+            PreparedStatement pstmt = con.prepareStatement("SELECT id, description, image IS NOT NULL AS has_image, name, owner_id, last_update, glass_id FROM recipes order by lower(name)");
             ResultSet rs = pstmt.executeQuery();
             List<Recipe> results = new ArrayList<>();
             while (rs.next()) {

@@ -144,9 +144,7 @@ const importCategoriesMode = ref('all')
 const enableImportBtn = computed(() => {
   const recipesOk = importRecipesMode.value !== 'none' && (importRecipesMode.value === 'all' || selectedRecipes.value.length > 0)
   const collectionsOk = importCollectionsMode.value !== 'none' && (importCollectionsMode.value === 'all' || selectedCollections.value.length > 0)
-  const glassesOk = importGlassesMode.value !== 'none'
-  const categoriesOk = importCategoriesMode.value !== 'none'
-  return recipesOk || collectionsOk || glassesOk || categoriesOk
+  return recipesOk || collectionsOk
 })
 
 async function uploadFile () {

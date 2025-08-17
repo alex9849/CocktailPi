@@ -107,14 +107,14 @@ import CollectionService from 'src/services/collection.service'
 import RecipeSelectionTable from 'components/transfer/RecipeSelectionTable.vue'
 import CollectionSelectionTable from 'components/transfer/CollectionSelectionTable.vue'
 
-const exportMode = ref('all')
+const exportMode = ref('none')
 const selected = ref([])
 const loading = ref(false)
 const recipeLoading = ref(false)
 const recipes = ref([])
 const recipesLoaded = ref(false)
 
-const exportCollectionsMode = ref('all')
+const exportCollectionsMode = ref('none')
 const selectedCollections = ref([])
 const collections = ref([])
 const collectionsLoading = ref(false)

@@ -142,6 +142,8 @@ public class TransferService {
                     throw new RuntimeException("Error reading collections from import file.", e);
                 }
             }
+            recipes.sort(Comparator.comparing(RecipeDto.Response.Detailed::getName));
+            collections.sort(Comparator.comparing(CollectionDto.Response.Detailed::getName));
             ExportContents exportContents = new ExportContents();
             exportContents.setRecipes(recipes);
             exportContents.setCategories(new ArrayList<>(categories.values()));
