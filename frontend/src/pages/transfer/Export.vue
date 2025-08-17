@@ -44,7 +44,7 @@
           :loading="recipeLoading"
           loading-label="Lade Rezepte..."
           :rows="recipes"
-          :columns="columns"
+          :columns="recipeColumns"
           row-key="id"
           dense
           selection="multiple"
@@ -53,6 +53,8 @@
           :pagination="pagination"
           @update:pagination="val => pagination = val"
           title="Verfügbare Rezepte"
+          no-data-label="No recipes found"
+          no-results-label="No recipes found"
           :rows-per-page-options="[10, 25, 50, 100]"
         >
           <template v-slot:body-selection="props">
@@ -83,10 +85,10 @@
             <q-btn
               flat
               dense
-              :icon="allVisibleSelected ? 'deselect' : 'select_all'"
-              :label="allVisibleSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
-              @click="toggleSelectAllVisible"
-              v-if="filteredRows.length > 0"
+              :icon="allVisibleRecipesSelected ? 'deselect' : 'select_all'"
+              :label="allVisibleRecipesSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
+              @click="toggleSelectAllVisibleRecipes"
+              v-if="filteredRecipes.length > 0"
             />
           </template>
         </q-table>
@@ -142,6 +144,8 @@
           :pagination="collectionPagination"
           @update:pagination="val => collectionPagination = val"
           title="Verfügbare Collections"
+          no-data-label="No Collections found"
+          no-results-label="No Collections found"
           :rows-per-page-options="[10, 25, 50, 100]"
         >
           <template v-slot:body-selection="props">
@@ -225,7 +229,7 @@ watch(exportCollectionsMode, async (val) => {
   }
 })
 
-const columns = [
+const recipeColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
   { name: 'categories', label: 'Kategorien', field: 'categories', align: 'left' },
   { name: 'ingredientCount', label: 'Zutaten', field: 'ingredientCount', align: 'center' },
@@ -238,7 +242,7 @@ const collectionColumns = [
   { name: 'size', label: 'Nr. Rezepte', field: 'size', align: 'center' }
 ]
 
-const filteredRows = computed(() => {
+const filteredRecipes = computed(() => {
   let rows = recipes.value
   if (filter.value) {
     const f = filter.value.toLowerCase()
@@ -272,8 +276,8 @@ const enableExportBtn = computed(() => {
   return recipesOk || collectionsOk
 })
 
-const allVisibleSelected = computed(() => {
-  const visibleIds = filteredRows.value.map(r => r.id)
+const allVisibleRecipesSelected = computed(() => {
+  const visibleIds = filteredRecipes.value.map(r => r.id)
   return visibleIds.every(id => selected.value.some(s => s.id === id)) && visibleIds.length > 0
 })
 
@@ -282,9 +286,9 @@ const allVisibleCollectionsSelected = computed(() => {
   return visibleIds.every(id => selectedCollections.value.some(s => s.id === id)) && visibleIds.length > 0
 })
 
-function toggleSelectAllVisible () {
-  const visibleIds = filteredRows.value.map(r => r.id)
-  if (allVisibleSelected.value) {
+function toggleSelectAllVisibleRecipes () {
+  const visibleIds = filteredRecipes.value.map(r => r.id)
+  if (allVisibleRecipesSelected.value) {
     // Abwählen
     selected.value = selected.value.filter(r => !visibleIds.includes(r.id))
   } else {
