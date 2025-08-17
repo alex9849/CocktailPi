@@ -406,7 +406,9 @@ public class TransferService {
                 Glass glass = glassService.fromDto(dto);
                 Glass existingGlass = glassService.getByName(glass.getName());
                 if (!importRequest.isImportAllGlasses()) {
-                    oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                    if (existingGlass != null) {
+                        oldGlassedToNewGlassIdMap.put(dto.getId(), existingGlass.getId());
+                    }
                     continue;
                 }
                 if (existingGlass != null) {
@@ -433,7 +435,9 @@ public class TransferService {
                 category.setId(dto.getId());
                 Category existingCategory = categoryService.getCategoryByName(dto.getName());
                 if (!importRequest.isImportAllCategories()) {
-                    oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                    if (existingCategory != null) {
+                        oldCategoryToNewCategoryIdMap.put(dto.getId(), existingCategory.getId());
+                    }
                     continue;
                 }
                 if (existingCategory != null) {
