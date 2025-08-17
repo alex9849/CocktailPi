@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class RecipeDto {
     private interface Id { long getId(); }
     private interface Name { @NotNull @Size(min = 1, max = 50) String getName(); }
+    private interface NormalName { String getNormalName(); }
     private interface Description { @Size(max = 3000) String getDescription(); }
     private interface ProductionStepsCreated { @NotNull @NotEmpty List<ProductionStepDto.Request.Create> getProductionSteps(); }
     private interface ProductionStepsDetailed { @NotNull @NotEmpty List<ProductionStepDto.Response.Detailed> getProductionSteps(); }
@@ -73,10 +74,11 @@ public class RecipeDto {
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Name, OwnerId, Description, ProductionStepsDetailed, Categories,
+        public static class Detailed implements Name, NormalName, OwnerId, Description, ProductionStepsDetailed, Categories,
                 HasImage, DefaultGlass, LastUpdate, Boostable, MinAlcoholContent, MaxAlcoholContent {
             long id;
             String name;
+            String normalName;
             long ownerId;
             boolean boostable;
             String description;
@@ -93,6 +95,7 @@ public class RecipeDto {
             public Detailed(Recipe recipe) {
                 this.id = recipe.getId();
                 this.boostable = recipe.isBoostable();
+                this.normalName = recipe.getNormalName();
                 BeanUtils.copyProperties(recipe, this);
                 this.productionSteps = recipe.getProductionSteps().stream()
                         .map(ProductionStepDto.Response.Detailed::toDto).collect(Collectors.toList());

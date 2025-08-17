@@ -35,6 +35,10 @@
           dense
         />
       </template>
+      <template v-slot:header-cell-normalName>
+      </template>
+      <template v-slot:body-cell-normalName>
+      </template>
       <template v-slot:body-selection="props">
         <q-checkbox
           :model-value="props.selected"
@@ -78,6 +82,7 @@ const pagination = ref({ page: 1, rowsPerPage: 25 })
 
 const collectionColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
+  { name: 'normalName', label: 'normalName', field: 'normalName', align: 'left' },
   { name: 'description', label: 'Beschreibung', field: 'description', align: 'left' },
   { name: 'size', label: 'Nr. Rezepte', field: 'size', align: 'center' }
 ]
@@ -88,6 +93,7 @@ const filteredCollections = computed(() => {
     const f = filter.value.toLowerCase()
     rows = rows.filter(c =>
       c.name.toLowerCase().includes(f) ||
+      c.normalName.toLowerCase().includes(f) ||
       (c.description && c.description.toLowerCase().includes(f))
     )
   }

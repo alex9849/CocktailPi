@@ -172,6 +172,10 @@ public class Recipe {
         return this.productionSteps;
     }
 
+    public String getNormalName() {
+        return SpringUtility.normalize(getName());
+    }
+
     public void setProductionSteps(List<ProductionStep> productionSteps) {
         this.productionSteps = productionSteps;
     }

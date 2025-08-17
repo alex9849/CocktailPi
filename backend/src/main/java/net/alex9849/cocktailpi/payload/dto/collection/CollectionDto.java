@@ -11,6 +11,7 @@ import java.util.Date;
 public class CollectionDto {
     private interface Id { long getId(); }
     private interface Name { @NotNull @jakarta.validation.constraints.Size(min = 3, max = 20) String getName(); }
+    private interface NormalName { String getNormalName(); }
     private interface Description { @NotNull @jakarta.validation.constraints.Size(max = 2000) String getDescription(); }
     private interface HasImage { boolean isHasImage(); }
     private interface Size { int getSize(); }
@@ -37,10 +38,11 @@ public class CollectionDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Id, Name, Description, HasImage, CollectionDto.Size, LastUpdate,
+        public static class Detailed implements Id, Name, NormalName, Description, HasImage, CollectionDto.Size, LastUpdate,
                 OwnerId, OwnerName {
             long id;
             String name;
+            String normalName;
             String description;
             String ownerName;
             long ownerId;
@@ -52,6 +54,7 @@ public class CollectionDto {
 
             public Detailed(Collection collection) {
                 BeanUtils.copyProperties(collection, this);
+                normalName = collection.getNormalName();
                 ownerName = collection.getOwner().getUsername();
                 ownerId = collection.getOwnerId();
             }

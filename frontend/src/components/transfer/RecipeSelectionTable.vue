@@ -36,6 +36,10 @@
           dense
         />
       </template>
+      <template v-slot:header-cell-normalName>
+      </template>
+      <template v-slot:body-cell-normalName>
+      </template>
       <template v-slot:body-selection="props">
         <q-checkbox
           :model-value="props.selected"
@@ -91,6 +95,7 @@ const emit = defineEmits([
 
 const recipeColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left' },
+  { name: 'normalName', label: 'normalName', field: 'normalName', align: 'left' },
   { name: 'categories', label: 'Kategorien', field: 'categories', align: 'left' },
   { name: 'ingredientCount', label: 'Zutaten', field: 'ingredientCount', align: 'center' },
   { name: 'alcoholFree', label: 'Alkoholfrei', field: 'alcoholFree', align: 'center' }
@@ -107,6 +112,7 @@ const filteredRecipes = computed(() => {
     const f = filter.value.toLowerCase()
     rows = rows.filter(r =>
       r.name.toLowerCase().includes(f) ||
+      r.normalName.toLowerCase().includes(f) ||
       r.categories.some(c => c.name.toLowerCase().includes(f))
     )
   }

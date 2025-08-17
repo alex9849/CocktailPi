@@ -27,6 +27,10 @@ public abstract class Ingredient {
         return name;
     }
 
+    public String getNormalName() {
+        return SpringUtility.normalize(getName());
+    }
+
     public void setName(String name) {
         this.name = name;
     }

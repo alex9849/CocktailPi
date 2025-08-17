@@ -19,6 +19,7 @@ import org.springframework.util.FileSystemUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -103,6 +104,13 @@ public class SpringUtility implements ApplicationContextAware {
     public static <T> List<T> loadFromFile(String path, Class<T> typeClass) throws IOException {
         InputStream recipeStream = SpringUtility.class.getResourceAsStream(path);
         return loadFromStream(recipeStream, typeClass);
+    }
+
+    public static String normalize(String input) {
+        if (input == null) return null;
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase();
     }
 
 }

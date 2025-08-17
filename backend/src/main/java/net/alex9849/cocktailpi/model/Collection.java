@@ -20,6 +20,10 @@ public class Collection {
         return lastUpdate;
     }
 
+    public String getNormalName() {
+        return SpringUtility.normalize(getName());
+    }
+
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }

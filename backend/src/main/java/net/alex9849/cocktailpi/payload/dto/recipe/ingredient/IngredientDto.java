@@ -16,6 +16,7 @@ import java.util.Date;
 public class IngredientDto {
     protected interface Id { long getId(); }
     protected interface Name { @NotNull @Size(min = 1, max = 30) String getName(); }
+    protected interface NormalName { String getNormalName(); }
     protected interface ParentGroupId { Long getParentGroupId(); }
     protected interface ParentGroupName { String getParentGroupName(); }
     protected interface Type { String getType(); }
@@ -68,9 +69,10 @@ public class IngredientDto {
                 @JsonSubTypes.Type(value = AutomatedIngredientDto.Response.Detailed.class, name = "automated"),
                 @JsonSubTypes.Type(value = IngredientGroupDto.Response.Detailed.class, name = "group")
         })
-        public abstract static class Detailed implements Id, Name, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump, LastUpdate {
+        public abstract static class Detailed implements Id, Name, NormalName, ParentGroupId, ParentGroupName, Type, Unit, InBar, OnPump, LastUpdate {
             long id;
             String name;
+            String normalName;
             Long parentGroupId;
             String parentGroupName;
             Date lastUpdate;
@@ -80,6 +82,7 @@ public class IngredientDto {
             protected Detailed(Ingredient ingredient) {
                 this.id = ingredient.getId();
                 BeanUtils.copyProperties(ingredient, this);
+                this.normalName = ingredient.getNormalName();
                 if (ingredient.getParentGroup() != null) {
                     this.parentGroupId = ingredient.getParentGroupId();
                     this.parentGroupName = ingredient.getParentGroup().getName();
