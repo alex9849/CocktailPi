@@ -2,7 +2,7 @@
   <q-page class="page-content" padding>
     <div class="row q-col-gutter-xl">
       <!-- Linke Spalte: Bild, Zutaten, Glas -->
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-img
             v-if="recipe.hasImage"
@@ -18,32 +18,66 @@
             class="rounded-borders"
           />
         </q-card>
-        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
-          <q-card-section>
-            <div class="text-h6 q-mb-sm">
-              <q-icon name="restaurant_menu" class="q-mr-xs" /> Zutaten
-            </div>
-            <ingredient-list
-              big
-              alternateRowColors
-              :background-color="color.cardBody"
-              v-model:model-value="recipe.productionSteps"
-            />
-          </q-card-section>
-        </q-card>
-        <q-card class="shadow-2 bg-card-body text-card-body">
-          <q-card-section>
-            <div class="text-h6 q-mb-xs">
-              <q-icon name="wine_bar" class="q-mr-xs" /> Glas
-            </div>
-            <div>
-              {{ printGlass }}
-            </div>
-          </q-card-section>
-        </q-card>
+        <div class="row q-col-gutter-md q-mb-md">
+          <div class="col-12 col-sm-6 col-md-4">
+            <q-card class="shadow-1 bg-card-body text-card-body">
+              <q-card-section>
+                <div class="text-caption text-grey-7 q-mb-xs">
+                  <q-icon name="wine_bar" class="q-mr-xs" /> Glas
+                </div>
+                <div class="flex items-center" style="min-height: 32px;">
+                  <span class="text-h6" v-if="recipe.defaultGlass">{{ printGlass }}</span>
+                  <span class="text-h6 text-grey-6" v-else>Kein Glas</span>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <q-card class="shadow-1 bg-card-body text-card-body">
+              <q-card-section>
+                <div class="text-caption text-grey-7 q-mb-xs">
+                  <q-icon name="local_bar" class="q-mr-xs" /> Alkoholgehalt
+                </div>
+                <div class="flex items-center" style="min-height: 32px;">
+                  <q-icon name="local_bar" color="teal" size="32px" v-if="recipe.minAlcoholContent" />
+                  <span class="text-h6 text-teal" v-if="recipe.minAlcoholContent">{{ recipe.minAlcoholContent }}% Vol.</span>
+                  <span class="text-h6 text-grey-6" v-else>Kein Alkohol</span>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <q-card class="shadow-1 bg-card-body text-card-body">
+              <q-card-section>
+                <div class="text-caption text-grey-7 q-mb-xs">
+                  <q-icon name="bolt" class="q-mr-xs" /> Boostbar
+                </div>
+                <div class="flex items-center" style="min-height: 32px;">
+                  <q-icon name="bolt" color="orange" size="32px" v-if="recipe.boostable" />
+                  <span class="text-h6 text-orange" v-if="recipe.boostable">Boostbar verfügbar</span>
+                  <span class="text-h6 text-grey-6" v-else>Keine Boostbar</span>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12">
+            <q-card class="shadow-1 bg-card-body text-card-body">
+              <q-card-section>
+                <div class="text-caption text-grey-7 q-mb-xs">
+                  <q-icon name="category" class="q-mr-xs" /> Kategorien
+                </div>
+                <div>
+                  <q-badge v-for="cat in recipe.categories" :key="cat.id" color="secondary" class="q-mr-xs q-mb-xs">
+                    {{ cat.name }}
+                  </q-badge>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
       </div>
       <!-- Rechte Spalte: Name, Info-Card, Beschreibung, Aktionen -->
-      <div class="col-12 col-md-7">
+      <div class="col-12 col-md-5">
         <div class="row items-center q-mb-md">
           <div class="col">
             <div class="text-h4">{{ recipe.name }}</div>
@@ -85,57 +119,25 @@
         </div>
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
+            <div class="text-h6 q-mb-sm">
+              <q-icon name="restaurant_menu" class="q-mr-xs" /> Zutaten
+            </div>
+            <ingredient-list
+              big
+              alternateRowColors
+              :background-color="color.cardBody"
+              v-model:model-value="recipe.productionSteps"
+            />
+          </q-card-section>
+        </q-card>
+        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
+          <q-card-section>
             <div class="text-h6 q-mb-xs">
               <q-icon name="description" class="q-mr-xs" /> {{ $t('page.recipe_details.description_headline') }}
             </div>
             <div style="white-space: pre-line">{{ recipe.description }}</div>
           </q-card-section>
         </q-card>
-
-        <div class="row q-col-gutter-md q-mb-md">
-          <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
-              <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="bolt" class="q-mr-xs" /> Boostbar
-                </div>
-                <div class="flex items-center" style="min-height: 32px;">
-                  <q-icon name="bolt" color="orange" size="32px" v-if="recipe.boostable" />
-                  <span class="text-h6 text-orange" v-if="recipe.boostable">Boostbar verfügbar</span>
-                  <span class="text-h6 text-grey-6" v-else>Keine Boostbar</span>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
-              <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="local_bar" class="q-mr-xs" /> Alkoholgehalt
-                </div>
-                <div class="flex items-center" style="min-height: 32px;">
-                  <q-icon name="local_bar" color="teal" size="32px" v-if="recipe.minAlcoholContent" />
-                  <span class="text-h6 text-teal" v-if="recipe.minAlcoholContent">{{ recipe.minAlcoholContent }}% Vol.</span>
-                  <span class="text-h6 text-grey-6" v-else>Kein Alkohol</span>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-          <div class="col-12 col-sm-12 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
-              <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="category" class="q-mr-xs" /> Kategorien
-                </div>
-                <div>
-                  <q-badge v-for="cat in recipe.categories" :key="cat.id" color="secondary" class="q-mr-xs q-mb-xs">
-                    {{ cat.name }}
-                  </q-badge>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-        </div>
 
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
