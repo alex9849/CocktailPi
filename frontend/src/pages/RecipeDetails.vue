@@ -1,8 +1,7 @@
 <template>
   <q-page class="page-content" padding>
     <div class="row q-col-gutter-xl">
-      <!-- Linke Spalte: Bild, Zutaten, Glas -->
-      <div class="col-12 col-md-7">
+      <div class="col-12 col-md-5 col-lg-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-img
             v-if="recipe.hasImage"
@@ -18,11 +17,11 @@
             class="rounded-borders"
           />
         </q-card>
-        <div class="row q-col-gutter-md q-mb-md">
+        <div class="row q-col-gutter-md q-mb-md items-stretch">
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
+            <q-card class="shadow-1 bg-card-body text-card-body full-height">
               <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
+                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
                   <q-icon name="wine_bar" class="q-mr-xs" /> Glas
                 </div>
                 <div class="flex items-center" style="min-height: 32px;">
@@ -33,29 +32,29 @@
             </q-card>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
+            <q-card class="shadow-1 bg-card-body text-card-body full-height">
               <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
+                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
                   <q-icon name="local_bar" class="q-mr-xs" /> Alkoholgehalt
                 </div>
                 <div class="flex items-center" style="min-height: 32px;">
-                  <q-icon name="local_bar" color="teal" size="32px" v-if="recipe.minAlcoholContent" />
-                  <span class="text-h6 text-teal" v-if="recipe.minAlcoholContent">{{ recipe.minAlcoholContent }}% Vol.</span>
+                  <q-icon name="local_bar" color="teal" size="32px" v-if="printAlcoholContent" />
+                  <span class="text-h6 text-teal" v-if="printAlcoholContent">{{ printAlcoholContent }}% Vol.</span>
                   <span class="text-h6 text-grey-6" v-else>Kein Alkohol</span>
                 </div>
               </q-card-section>
             </q-card>
           </div>
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body">
+            <q-card class="shadow-1 bg-card-body text-card-body full-height">
               <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
+                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
                   <q-icon name="bolt" class="q-mr-xs" /> Boostbar
                 </div>
                 <div class="flex items-center" style="min-height: 32px;">
                   <q-icon name="bolt" color="orange" size="32px" v-if="recipe.boostable" />
-                  <span class="text-h6 text-orange" v-if="recipe.boostable">Boostbar verfügbar</span>
-                  <span class="text-h6 text-grey-6" v-else>Keine Boostbar</span>
+                  <span class="text-h6 text-orange" v-if="recipe.boostable">Boostbar</span>
+                  <span class="text-h6 text-grey-6" v-else>Nicht Boostbar</span>
                 </div>
               </q-card-section>
             </q-card>
@@ -63,21 +62,31 @@
           <div class="col-12">
             <q-card class="shadow-1 bg-card-body text-card-body">
               <q-card-section>
-                <div class="text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="category" class="q-mr-xs" /> Kategorien
+                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
+                  <q-icon name="category" class="q-mr-sm" color="secondary" />
+                  {{ $t('page.recipe_details.categories_headline') }}
                 </div>
-                <div>
-                  <q-badge v-for="cat in recipe.categories" :key="cat.id" color="secondary" class="q-mr-xs q-mb-xs">
-                    {{ cat.name }}
-                  </q-badge>
+                <div class="q-gutter-sm">
+                  <q-chip
+                    v-for="cat in recipe.categories"
+                    :key="cat.id"
+                    color="secondary"
+                    text-color="white"
+                    size="md"
+                    class="q-mb-xs"
+                  >
+                    <div class="flex items-center">
+                      <q-icon name="label" class="q-mr-xs" size="16px" />
+                      <span>{{ cat.name }}</span>
+                    </div>
+                  </q-chip>
                 </div>
               </q-card-section>
             </q-card>
           </div>
         </div>
       </div>
-      <!-- Rechte Spalte: Name, Info-Card, Beschreibung, Aktionen -->
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-7 col-lg-5">
         <div class="row items-center q-mb-md">
           <div class="col">
             <div class="text-h4">{{ recipe.name }}</div>
@@ -163,7 +172,6 @@
         </q-card>
       </div>
     </div>
-    <!-- Dialoge -->
     <c-question
       v-model:show="deleteDialog"
       :loading="deleting"
@@ -297,6 +305,16 @@ export default {
             name: 'recipedetails', params
           })
         }
+      }
+    },
+    printAlcoholContent () {
+      if (this.recipe.maxAlcoholContent === 0) {
+        return null
+      }
+      if (this.recipe.minAlcoholContent === this.recipe.maxAlcoholContent) {
+        return this.recipe.maxAlcoholContent
+      } else {
+        return this.recipe.minAlcoholContent + ' - ' + this.recipe.maxAlcoholContent
       }
     },
     printGlass () {
