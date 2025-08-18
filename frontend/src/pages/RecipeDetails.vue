@@ -1,5 +1,45 @@
 <template>
   <q-page class="page-content" padding>
+    <div class="row items-center q-mb-md">
+      <div class="col-12 col-sm">
+        <dic class="text-h5">{{ recipe.name }}</dic>
+        <q-breadcrumbs separator="/" class="text-orange q-pb-md" active-color="secondary">
+          <q-breadcrumbs-el label="Recipes" :to="lastRecipeListRoute" :disable="!lastRecipeListRoute"/>
+          <q-breadcrumbs-el :label="recipe.name" />
+        </q-breadcrumbs>
+      </div>
+      <div class="col-12 col-sm-auto">
+        <div class="row q-gutter-sm justify-center justify-sm-end">
+          <q-btn
+            color="grey"
+            :to="{name: 'recipeedit', params: {id: recipe.id}}"
+            v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
+            icon="edit"
+            flat
+          >
+            {{ $t('page.recipe_details.edit_btn_label') }}
+          </q-btn>
+          <q-btn
+            color="positive"
+            @click="showMakeCocktailDialog = true"
+            icon="play_arrow"
+            flat
+          >
+            {{ $t('page.recipe_details.produce_btn_label') }}
+          </q-btn>
+          <q-btn
+            color="red"
+            @click="deleteDialog = true"
+            :loading="deleting"
+            v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
+            icon="delete"
+            flat
+          >
+            {{ $t('page.recipe_details.delete_btn_label') }}
+          </q-btn>
+        </div>
+      </div>
+    </div>
     <div class="row q-col-gutter-xl">
       <div class="col-12 col-md-5 col-lg-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
@@ -87,45 +127,6 @@
         </div>
       </div>
       <div class="col-12 col-md-7 col-lg-5">
-        <div class="row items-center q-mb-md">
-          <div class="col">
-            <div class="text-h4">{{ recipe.name }}</div>
-            <div class="text-subtitle2 text-grey">
-              {{ $t('page.recipe_details.by') }} {{ recipe.owner?.username || 'Unbekannt' }}
-            </div>
-          </div>
-          <div class="col-auto">
-            <TopButtonArranger>
-              <q-btn
-                color="grey"
-                :to="{name: 'recipeedit', params: {id: recipe.id}}"
-                v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
-                icon="edit"
-                flat
-              >
-                {{ $t('page.recipe_details.edit_btn_label') }}
-              </q-btn>
-              <q-btn
-                color="positive"
-                @click="showMakeCocktailDialog = true"
-                icon="play_arrow"
-                flat
-              >
-                {{ $t('page.recipe_details.produce_btn_label') }}
-              </q-btn>
-              <q-btn
-                color="red"
-                @click="deleteDialog = true"
-                :loading="deleting"
-                v-if="isAdminRole || (user?.id === recipe.ownerId && isRecipeCreatorRole)"
-                icon="delete"
-                flat
-              >
-                {{ $t('page.recipe_details.delete_btn_label') }}
-              </q-btn>
-            </TopButtonArranger>
-          </div>
-        </div>
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
@@ -198,12 +199,11 @@ import IngredientList from '../components/IngredientList'
 import CQuestion from '../components/CQuestion'
 import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
-import TopButtonArranger from 'components/TopButtonArranger'
 import category from 'src/store/modules/category'
 
 export default {
   name: 'RecipeDetails',
-  components: { TopButtonArranger, CMakeCocktailDialog, CQuestion, IngredientList },
+  components: { CMakeCocktailDialog, CQuestion, IngredientList },
   data () {
     return {
       recipe: {
