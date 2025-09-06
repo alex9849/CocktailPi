@@ -11,6 +11,7 @@ import net.alex9849.cocktailpi.model.pump.Valve;
 import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.AutomatedIngredientDto;
 import org.springframework.beans.BeanUtils;
 
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -49,6 +50,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Request.Create.class, name = "stepper")
         })
+        @NoArgsConstructor(access = AccessLevel.PUBLIC)
         public static class Create implements TubeCapacityInMl, PatchFillingLevelInMl, CurrentIngredientId, PatchIsPumpedUp, Name, IRemoveFields, PatchPowerConsumption {
             Double tubeCapacityInMl;
             Integer fillingLevelInMl;
@@ -57,6 +59,32 @@ public class PumpDto {
             String name;
             Set<String> removeFields;
             Integer powerConsumption;
+
+            public Create(Pump pump) {
+                this.tubeCapacityInMl = pump.getTubeCapacityInMl();
+                this.fillingLevelInMl = pump.getFillingLevelInMl();
+                this.isPumpedUp = pump.isPumpedUp();
+                this.currentIngredientId = pump.getCurrentIngredientId();
+                this.name = pump.getName();
+                this.removeFields = new HashSet<>();
+                this.powerConsumption = pump.getPowerConsumption();
+            }
+
+            public static Request.Create toDto(Pump pump) {
+                if(pump == null) {
+                    return null;
+                }
+                if(pump instanceof StepperPump) {
+                    return new StepperPumpDto.Request.Create((StepperPump) pump);
+                }
+                if(pump instanceof DcPump) {
+                    return new DcPumpDto.Request.Create((DcPump) pump);
+                }
+                if(pump instanceof Valve) {
+                    return new ValveDto.Request.Create((Valve) pump);
+                }
+                throw new IllegalStateException("Unknown pump type: " + pump.getClass().getName());
+            }
         }
     }
 

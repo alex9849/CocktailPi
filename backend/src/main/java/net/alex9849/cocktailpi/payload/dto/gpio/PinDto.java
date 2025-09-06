@@ -22,6 +22,11 @@ public class PinDto {
         public static class Select implements Nr, BoardId {
             int nr;
             long boardId;
+
+            public Select(HardwarePin pin) {
+                this.nr = pin.getPinNr();
+                this.boardId = pin.getBoardId();
+            }
         }
 
     }
