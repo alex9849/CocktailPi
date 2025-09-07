@@ -75,11 +75,12 @@ public class RecipeDto {
 
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements Name, NormalName, OwnerId, Description, ProductionStepsDetailed, Categories,
-                HasImage, DefaultGlass, LastUpdate, Boostable, MinAlcoholContent, MaxAlcoholContent {
+                HasImage, DefaultGlass, LastUpdate, Boostable, MinAlcoholContent, MaxAlcoholContent, OwnerName {
             long id;
             String name;
             String normalName;
             long ownerId;
+            String ownerName;
             boolean boostable;
             String description;
             List<ProductionStepDto.Response.Detailed> productionSteps;
@@ -104,6 +105,7 @@ public class RecipeDto {
                 if(recipe.getDefaultGlass() != null) {
                     this.defaultGlass = new GlassDto.Duplex.Detailed(recipe.getDefaultGlass());
                 }
+                this.ownerName = recipe.getOwner().getUsername();
                 this.minAlcoholContent = recipe.alcoholPercentageMin();
                 this.maxAlcoholContent = recipe.alcoholPercentageMax();
             }

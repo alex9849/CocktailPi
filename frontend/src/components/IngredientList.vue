@@ -167,6 +167,7 @@
     </template>
     <template #header>
       <q-item
+        v-if="!hideHeader"
         :dark="compColors.dark"
       >
         <q-item-section>
@@ -243,6 +244,10 @@ export default {
   name: 'IngredientList',
   components: { ProductionStepListEditor, CEditDialog, draggable },
   props: {
+    hideHeader: {
+      type: Boolean,
+      default: false
+    },
     modelValue: {
       type: Array,
       required: true,

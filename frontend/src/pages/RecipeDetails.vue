@@ -59,47 +59,36 @@
         </q-card>
         <div class="row q-col-gutter-md q-mb-md items-stretch">
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body full-height">
-              <q-card-section>
-                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="wine_bar" class="q-mr-xs" /> Glas
-                </div>
-                <div class="flex items-center" style="min-height: 32px;">
-                  <span class="text-h6" v-if="recipe.defaultGlass">{{ printGlass }}</span>
-                  <span class="text-h6 text-grey-6" v-else>Kein Glas</span>
-                </div>
-              </q-card-section>
-            </q-card>
+            <property-card
+              class="shadow-1 bg-card-body text-card-body full-height"
+              icon="wine_bar"
+              dense
+              text-color="grey-6"
+              :value="recipe.defaultGlass ? printGlass : 'Kein Glas'"
+              headline="Glas"
+            />
           </div>
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body full-height">
-              <q-card-section>
-                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="local_bar" class="q-mr-xs" /> Alkoholgehalt
-                </div>
-                <div class="flex items-center" style="min-height: 32px;">
-                  <q-icon name="local_bar" color="teal" size="32px" v-if="printAlcoholContent" />
-                  <span class="text-h6 text-teal" v-if="printAlcoholContent">{{ printAlcoholContent }}% Vol.</span>
-                  <span class="text-h6 text-grey-6" v-else>Kein Alkohol</span>
-                </div>
-              </q-card-section>
-            </q-card>
+            <property-card
+              class="shadow-1 bg-card-body text-card-body full-height"
+              icon="local_bar"
+              text-color="teal"
+              dense
+              :value="printAlcoholContent ? (printAlcoholContent + '% Vol.') : 'Kein Alkohol'"
+              headline="Alkoholgehalt"
+            />
           </div>
           <div class="col-12 col-sm-6 col-md-4">
-            <q-card class="shadow-1 bg-card-body text-card-body full-height">
-              <q-card-section>
-                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="bolt" class="q-mr-xs" /> Boostbar
-                </div>
-                <div class="flex items-center" style="min-height: 32px;">
-                  <q-icon name="bolt" color="orange" size="32px" v-if="recipe.boostable" />
-                  <span class="text-h6 text-orange" v-if="recipe.boostable">Boostbar</span>
-                  <span class="text-h6 text-grey-6" v-else>Nicht Boostbar</span>
-                </div>
-              </q-card-section>
-            </q-card>
+            <property-card
+              class="shadow-1 bg-card-body text-card-body full-height"
+              icon="bolt"
+              text-color="orange"
+              dense
+              :value="recipe.boostable ? 'Boostbar' : 'Nicht Boostbar'"
+              headline="Boostbar"
+            />
           </div>
-          <div class="col-12">
+          <div class="col-12" v-if="recipe.categories.length !== 0">
             <q-card class="shadow-1 bg-card-body text-card-body">
               <q-card-section>
                 <div class="flex items-center text-caption text-grey-7 q-mb-xs">
@@ -130,9 +119,11 @@
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
-              <q-icon name="restaurant_menu" class="q-mr-xs" /> Zutaten
+              <q-icon name="restaurant_menu" class="q-mr-xs" />
+              Zutaten
             </div>
             <ingredient-list
+              hide-header
               big
               alternateRowColors
               :background-color="color.cardBody"
@@ -140,7 +131,10 @@
             />
           </q-card-section>
         </q-card>
-        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
+        <q-card
+          v-if="recipe.description"
+          class="shadow-2 bg-card-body text-card-body q-mb-md"
+        >
           <q-card-section>
             <div class="text-h6 q-mb-xs">
               <q-icon name="description" class="q-mr-xs" /> {{ $t('page.recipe_details.description_headline') }}
@@ -151,16 +145,17 @@
 
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
-            <div class="row q-col-gutter-md">
+            <div class="row q-col-gutter-md justify-between">
               <div class="col-auto">
-                <div class="text-caption text-grey-7">
-                  <q-icon name="update" class="q-mr-xs" /> {{ $t('page.recipe_details.last_update') || 'Letzte Änderung' }}:
+                <div class="text-caption text-grey-7 items-center">
+                  <q-icon name="update" class="q-mr-xs" />
+                  Letzte Änderung:
                   {{ new Date(recipe.lastUpdate).toLocaleDateString() }}
                 </div>
               </div>
               <div class="col-auto">
                 <div class="text-caption text-grey-7">
-                  <q-icon name="person" class="q-mr-xs" /> {{ $t('page.recipe_details.by') }} {{ recipe.owner?.username || 'Unbekannt' }}
+                  <q-icon name="person" class="q-mr-xs" />Erstellt von: {{ recipe.ownerName }}
                 </div>
               </div>
               <div class="col-auto">
@@ -200,10 +195,11 @@ import CQuestion from '../components/CQuestion'
 import { mapGetters } from 'vuex'
 import CMakeCocktailDialog from '../components/CMakeCocktailDialog'
 import category from 'src/store/modules/category'
+import PropertyCard from 'components/PropertyCard.vue'
 
 export default {
   name: 'RecipeDetails',
-  components: { CMakeCocktailDialog, CQuestion, IngredientList },
+  components: { PropertyCard, CMakeCocktailDialog, CQuestion, IngredientList },
   data () {
     return {
       recipe: {
