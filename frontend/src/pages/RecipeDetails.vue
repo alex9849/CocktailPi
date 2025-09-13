@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="row q-col-gutter-xl">
-      <div class="col-12 col-md-5 col-lg-7">
+      <div class="col-12 col-md-6 col-lg-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-img
             v-if="recipe.hasImage"
@@ -57,38 +57,59 @@
             class="rounded-borders"
           />
         </q-card>
+        <q-card
+          v-if="recipe.description"
+          class="shadow-2 bg-card-body text-card-body q-mb-md"
+        >
+          <q-card-section>
+            <div class="text-h6 q-mb-xs">
+              <q-icon name="description" class="q-mr-xs" /> {{ $t('page.recipe_details.description_headline') }}
+            </div>
+            <div style="white-space: pre-line">{{ recipe.description }}</div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-12 col-md-6 col-lg-5">
+        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
+          <q-card-section>
+            <div class="text-h6 q-mb-sm">
+              <q-icon name="restaurant_menu" class="q-mr-xs" />
+              Zutaten
+            </div>
+            <ingredient-list
+              hide-header
+              big
+              alternateRowColors
+              :background-color="color.cardBody"
+              v-model:model-value="recipe.productionSteps"
+            />
+          </q-card-section>
+        </q-card>
         <div class="row q-col-gutter-md q-mb-md items-stretch">
-          <div class="col-12 col-sm-6 col-md-4">
+          <div class="col-12 col-sm-6">
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="wine_bar"
-              dense
               text-color="grey-6"
               :value="recipe.defaultGlass ? printGlass : 'Kein Glas'"
               headline="Glas"
             />
           </div>
-          <div class="col-12 col-sm-6 col-md-4">
+          <div class="col-12 col-sm-6">
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="local_bar"
               text-color="teal"
-              dense
               :value="printAlcoholContent ? (printAlcoholContent + '% Vol.') : 'Kein Alkohol'"
               headline="Alkoholgehalt"
             />
           </div>
-          <div class="col-12 col-sm-6 col-md-4">
-            <property-card
-              class="shadow-1 bg-card-body text-card-body full-height"
-              icon="bolt"
-              text-color="orange"
-              dense
-              :value="recipe.boostable ? 'Boostbar' : 'Nicht Boostbar'"
-              headline="Boostbar"
-            />
-          </div>
-          <div class="col-12" v-if="recipe.categories.length !== 0">
+        </div>
+        <div
+          class="row q-col-gutter-md q-mb-md items-stretch"
+          v-if="recipe.categories.length !== 0"
+        >
+          <div class="col-12">
             <q-card class="shadow-1 bg-card-body text-card-body">
               <q-card-section>
                 <div class="flex items-center text-caption text-grey-7 q-mb-xs">
@@ -114,35 +135,6 @@
             </q-card>
           </div>
         </div>
-      </div>
-      <div class="col-12 col-md-7 col-lg-5">
-        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
-          <q-card-section>
-            <div class="text-h6 q-mb-sm">
-              <q-icon name="restaurant_menu" class="q-mr-xs" />
-              Zutaten
-            </div>
-            <ingredient-list
-              hide-header
-              big
-              alternateRowColors
-              :background-color="color.cardBody"
-              v-model:model-value="recipe.productionSteps"
-            />
-          </q-card-section>
-        </q-card>
-        <q-card
-          v-if="recipe.description"
-          class="shadow-2 bg-card-body text-card-body q-mb-md"
-        >
-          <q-card-section>
-            <div class="text-h6 q-mb-xs">
-              <q-icon name="description" class="q-mr-xs" /> {{ $t('page.recipe_details.description_headline') }}
-            </div>
-            <div style="white-space: pre-line">{{ recipe.description }}</div>
-          </q-card-section>
-        </q-card>
-
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
             <div class="row q-col-gutter-md justify-between">

@@ -3,10 +3,6 @@
     <q-card-section
       v-if="!dense"
     >
-      <div class="flex items-center text-caption text-grey-7 q-mb-xs">
-        <q-icon :name="icon" class="q-mr-xs" />
-        {{ headline }}
-      </div>
       <div class="flex items-center" style="min-height: 32px;">
         <q-icon :name="icon" :color="textColor" size="32px" />
         <span class="text-h6" :class="textColorClass">
