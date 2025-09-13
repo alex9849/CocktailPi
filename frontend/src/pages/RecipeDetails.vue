@@ -40,8 +40,8 @@
         </div>
       </div>
     </div>
-    <div class="row q-col-gutter-xl">
-      <div class="col-12 col-md-6 col-lg-7">
+    <div class="row q-col-gutter-sm-xl">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-img
             v-if="recipe.hasImage"
@@ -57,6 +57,21 @@
             class="rounded-borders"
           />
         </q-card>
+        <q-card class="md-hide lg-hide xl-hide shadow-2 bg-card-body text-card-body q-mb-md">
+          <q-card-section>
+            <div class="text-h6 q-mb-sm">
+              <q-icon name="restaurant_menu" class="q-mr-xs" />
+              Zutaten
+            </div>
+            <ingredient-list
+              hide-header
+              big
+              alternateRowColors
+              :background-color="color.cardBody"
+              v-model:model-value="recipe.productionSteps"
+            />
+          </q-card-section>
+        </q-card>
         <q-card
           v-if="recipe.description"
           class="shadow-2 bg-card-body text-card-body q-mb-md"
@@ -69,8 +84,8 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-12 col-md-6 col-lg-5">
-        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
+      <div class="col-12 col-sm-4 col-md-6 col-lg-5">
+        <q-card class="shadow-2 bg-card-body text-card-body q-mb-md sm-hide xs-hide">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
               <q-icon name="restaurant_menu" class="q-mr-xs" />
@@ -86,7 +101,7 @@
           </q-card-section>
         </q-card>
         <div class="row q-col-gutter-md q-mb-md items-stretch">
-          <div class="col-12 col-sm-6">
+          <div class="col-12 col-md-6">
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="wine_bar"
@@ -95,7 +110,7 @@
               headline="Glas"
             />
           </div>
-          <div class="col-12 col-sm-6">
+          <div class="col-12 col-md-6">
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="local_bar"
