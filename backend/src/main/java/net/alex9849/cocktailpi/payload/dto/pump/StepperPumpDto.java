@@ -21,7 +21,9 @@ public class StepperPumpDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
 
-        @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @Getter @Setter
+        @EqualsAndHashCode(callSuper = true)
+        @NoArgsConstructor(access = AccessLevel.PUBLIC)
         public static class Create extends PumpDto.Request.Create implements EnablePinRequest, StepPinRequest, StepsPerCl,
                 MaxStepsPerSecond, Acceleration {
             PinDto.Request.Select enablePin;
@@ -29,6 +31,19 @@ public class StepperPumpDto {
             Integer stepsPerCl;
             Integer maxStepsPerSecond;
             Integer acceleration;
+
+            public Create(StepperPump pump) {
+                super(pump);
+                if(pump.getEnablePin() != null) {
+                    enablePin = new PinDto.Request.Select(pump.getEnablePin());
+                }
+                if(pump.getStepPin() != null) {
+                    stepPin = new PinDto.Request.Select(pump.getStepPin());
+                }
+                this.stepsPerCl = pump.getStepsPerCl();
+                this.maxStepsPerSecond = pump.getMaxStepsPerSecond();
+                this.acceleration = pump.getAcceleration();
+            }
         }
     }
 

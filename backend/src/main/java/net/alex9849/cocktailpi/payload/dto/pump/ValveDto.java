@@ -10,10 +10,14 @@ public class ValveDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
 
-        @Getter
-        @Setter
+        @Getter @Setter
         @EqualsAndHashCode(callSuper = true)
+        @NoArgsConstructor(access = AccessLevel.PUBLIC)
         public static class Create extends OnOffPumpDto.Request.Create  {
+
+            public Create(Valve pump) {
+                super(pump);
+            }
 
             @JsonIgnore
             public Double getTubeCapacityInMl() {

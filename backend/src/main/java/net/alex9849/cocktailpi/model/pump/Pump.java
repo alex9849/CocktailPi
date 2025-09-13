@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public abstract class Pump {
-    protected static Map<Long, IMotor> motorDrivers = new HashMap<>();
+    protected static final Map<Long, IMotor> motorDrivers = new HashMap<>();
 
     private long id;
     private Double tubeCapacityInMl;

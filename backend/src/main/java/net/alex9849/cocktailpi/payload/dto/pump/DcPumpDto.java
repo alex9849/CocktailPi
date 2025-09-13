@@ -14,8 +14,14 @@ public class DcPumpDto {
     public static class Request {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
+        @NoArgsConstructor(access = AccessLevel.PUBLIC)
         public static class Create extends OnOffPumpDto.Request.Create implements TimePerClInMs {
             Integer timePerClInMs;
+
+            public Create(DcPump pump) {
+                super(pump);
+                this.timePerClInMs = pump.getTimePerClInMs();
+            }
         }
     }
 

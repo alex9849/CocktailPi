@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.payload.dto.pump;
 
 import lombok.*;
 import net.alex9849.cocktailpi.model.pump.OnOffPump;
+import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.payload.dto.gpio.PinDto;
 
 public class OnOffPumpDto {
@@ -16,9 +17,18 @@ public class OnOffPumpDto {
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = true)
+        @NoArgsConstructor(access = AccessLevel.PUBLIC)
         public static class Create extends PumpDto.Request.Create implements PinRequest, IsPowerStateHigh {
             PinDto.Request.Select pin;
             Boolean isPowerStateHigh;
+
+            public Create(OnOffPump pump) {
+                super(pump);
+                if (pump.getPin() != null) {
+                    this.pin  = new PinDto.Request.Select(pump.getPin());
+                }
+                this.isPowerStateHigh = pump.isPowerStateHigh();
+            }
         }
     }
 

@@ -79,7 +79,7 @@ public class PumpEndpoint {
         }
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
-            PumpDto.Request.Create newPatchDto = new DcPumpDto.Request.Create();
+            PumpDto.Request.Create newPatchDto = PumpDto.Request.Create.toDto(toUpdate);
             newPatchDto.setIsPumpedUp(patchPumpDto.getIsPumpedUp());
             newPatchDto.setFillingLevelInMl(patchPumpDto.getFillingLevelInMl());
             newPatchDto.setCurrentIngredientId(patchPumpDto.getCurrentIngredientId());
