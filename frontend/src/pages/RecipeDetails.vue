@@ -309,7 +309,7 @@ export default {
       if (!this.recipe.defaultGlass) {
         return 'None'
       }
-      return this.recipe.defaultGlass.name + ' (' + this.recipe.defaultGlass.size + ' ml)'
+      return '(' + this.recipe.defaultGlass.size + ' ml) ' + this.recipe.defaultGlass.name
     }
   }
 }

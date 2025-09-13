@@ -180,7 +180,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, normal_name = ?, alcohol_content = ?, " +
                     "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             setParameters(ingredient, pstmt);
-            pstmt.setLong(9, ingredient.getId());
+            pstmt.setLong(10, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         }));
     }
