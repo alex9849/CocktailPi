@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="row q-col-gutter-sm-xl">
+    <div class="row q-col-gutter-sm-md">
       <div class="col-12 col-sm-8 col-md-6 col-lg-7">
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-img
@@ -61,7 +61,7 @@
           <q-card-section>
             <div class="text-h6 q-mb-sm">
               <q-icon name="restaurant_menu" class="q-mr-xs" />
-              Zutaten
+              {{ $t('page.recipe_details.ingredients_headline') }}
             </div>
             <ingredient-list
               hide-header
@@ -89,7 +89,7 @@
           <q-card-section>
             <div class="text-h6 q-mb-sm">
               <q-icon name="restaurant_menu" class="q-mr-xs" />
-              Zutaten
+              {{ $t('page.recipe_details.ingredients_headline') }}
             </div>
             <ingredient-list
               hide-header
@@ -105,8 +105,8 @@
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="wine_bar"
-              text-color="grey-6"
-              :value="recipe.defaultGlass ? printGlass : 'Kein Glas'"
+              :text-color="this.recipe.defaultGlass ? 'teal' : 'grey-6'"
+              :value="printGlass"
               headline="Glas"
             />
           </div>
@@ -114,8 +114,8 @@
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="local_bar"
-              text-color="teal"
-              :value="printAlcoholContent ? (printAlcoholContent + '% Vol.') : 'Kein Alkohol'"
+              :text-color="this.recipe.minAlcoholContent ? 'teal' : 'grey-6'"
+              :value="printAlcoholContent"
               headline="Alkoholgehalt"
             />
           </div>
@@ -129,7 +129,7 @@
               <q-card-section>
                 <div class="flex items-center text-caption text-grey-7 q-mb-xs">
                   <q-icon name="category" class="q-mr-sm" color="secondary" />
-                  {{ $t('page.recipe_details.categories_headline') }}
+                  {{ $t('page.recipe_details.category_headline') }}
                 </div>
                 <div class="q-gutter-sm">
                   <q-chip
@@ -156,18 +156,22 @@
               <div class="col-12 col-md-auto">
                 <div class="text-caption text-grey-7 items-center">
                   <q-icon name="update" class="q-mr-xs" />
-                  Letzte Änderung:
+                  {{ $t('page.recipe_details.property_last_change') }}
                   {{ new Date(recipe.lastUpdate).toLocaleDateString() }}
                 </div>
               </div>
               <div class="col-12 col-md-auto">
                 <div class="text-caption text-grey-7 dotted-overflow-1">
-                  <q-icon name="person" class="q-mr-xs" />Erstellt von: {{ recipe.ownerName }}
+                  <q-icon name="person" class="q-mr-xs" />
+                  {{ $t('page.recipe_details.property_recipe_owner') }}
+                  {{ recipe.ownerName }}
                 </div>
               </div>
               <div class="col-12 col-md-auto">
                 <div class="text-caption text-grey-7">
-                  <q-icon name="info" class="q-mr-xs" /> ID: {{ recipe.id }}
+                  <q-icon name="info" class="q-mr-xs" />
+                  {{ $t('page.recipe_details.property_id') }}
+                  {{ recipe.id }}
                 </div>
               </div>
             </div>
@@ -312,19 +316,19 @@ export default {
     },
     printAlcoholContent () {
       if (this.recipe.maxAlcoholContent === 0) {
-        return null
+        return this.$t('page.recipe_details.no_alc_label')
       }
       if (this.recipe.minAlcoholContent === this.recipe.maxAlcoholContent) {
-        return this.recipe.maxAlcoholContent
+        return this.$t('page.recipe_details.alc_label', { val: this.recipe.maxAlcoholContent })
       } else {
-        return this.recipe.minAlcoholContent + ' - ' + this.recipe.maxAlcoholContent
+        return this.$t('page.recipe_details.alc_label', { min_val: this.recipe.minAlcoholContent, max_val: this.recipe.maxAlcoholContent })
       }
     },
     printGlass () {
       if (!this.recipe.defaultGlass) {
-        return 'None'
+        return this.$t('page.recipe_details.no_glass_label')
       }
-      return '(' + this.recipe.defaultGlass.size + ' ml) ' + this.recipe.defaultGlass.name
+      return this.$t('page.recipe_details.glass_label', { ml: this.recipe.defaultGlass.size, glass: this.recipe.defaultGlass.name })
     }
   }
 }

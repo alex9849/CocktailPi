@@ -2,8 +2,12 @@
   <q-card>
     <q-card-section
       v-if="!dense"
+      style="display: flex"
     >
-      <div class="flex items-center dotted-overflow-1" style="min-height: 32px;">
+      <div
+        class="items-center dotted-overflow-1"
+        style="min-height: 32px; display: flex"
+      >
         <q-icon :name="icon" :color="textColor" size="32px" />
         <span class="text-h6" :class="textColorClass">
           {{ value }}
@@ -14,7 +18,10 @@
       v-else
       class="q-pa-sm"
     >
-      <div class="flex items-center text-caption text-grey-7 dotted-overflow-1">
+      <div
+        class="items-center text-caption text-grey-7 dotted-overflow-1"
+        style="display: flex"
+      >
         <q-icon :name="icon" class="q-mr-xs" />
         {{ value }}
       </div>
