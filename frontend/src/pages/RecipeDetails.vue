@@ -153,19 +153,19 @@
         <q-card class="shadow-2 bg-card-body text-card-body q-mb-md">
           <q-card-section>
             <div class="row q-col-gutter-md justify-between">
-              <div class="col-auto">
+              <div class="col-12 col-md-auto">
                 <div class="text-caption text-grey-7 items-center">
                   <q-icon name="update" class="q-mr-xs" />
                   Letzte Änderung:
                   {{ new Date(recipe.lastUpdate).toLocaleDateString() }}
                 </div>
               </div>
-              <div class="col-auto">
-                <div class="text-caption text-grey-7">
+              <div class="col-12 col-md-auto">
+                <div class="text-caption text-grey-7 dotted-overflow-1">
                   <q-icon name="person" class="q-mr-xs" />Erstellt von: {{ recipe.ownerName }}
                 </div>
               </div>
-              <div class="col-auto">
+              <div class="col-12 col-md-auto">
                 <div class="text-caption text-grey-7">
                   <q-icon name="info" class="q-mr-xs" /> ID: {{ recipe.id }}
                 </div>
