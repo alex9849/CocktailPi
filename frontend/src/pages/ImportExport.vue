@@ -37,14 +37,16 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const data = ref([{
   icon: 'download',
-  name: 'Export',
+  name: t('page.transfer.export_btn_label'),
   routeName: 'export'
 }, {
   icon: 'upload',
-  name: 'Import',
+  name: t('page.transfer.import_btn_label'),
   routeName: 'import'
 }])
 </script>

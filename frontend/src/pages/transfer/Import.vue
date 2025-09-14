@@ -1,11 +1,16 @@
 <template>
   <q-card flat bordered class="bg-card-body text-card-body q-pa-md">
     <q-stepper v-model="step" flat animated vertical>
-      <q-step :name="1" title="Datei auswählen" icon="upload" :done="step > 1">
+      <q-step
+        :name="1"
+        :title="$t('page.transfer.import.stepper.select_file.label')"
+        icon="upload"
+        :done="step > 1"
+      >
         <q-form @submit.prevent="uploadFile">
           <q-file
             v-model="file"
-            label="Import-Datei auswählen (.zip)"
+            :label="$t('page.transfer.import.stepper.select_file.select_file_btn_label')"
             accept=".zip"
             :disable="loading"
             filled
@@ -13,18 +18,23 @@
           />
           <q-btn
             color="primary"
-            label="Hochladen"
+            :label="$t('page.transfer.import.stepper.select_file.upload_btn_label')"
             type="submit"
             :loading="loading"
             :disable="!file"
           />
         </q-form>
       </q-step>
-      <q-step :name="2" title="Import-Auswahl" icon="list_alt" :done="step > 2">
+      <q-step
+        :name="2"
+        :title="$t('page.transfer.import.stepper.import_selection.label')"
+        icon="list_alt"
+        :done="step > 2"
+      >
         <div v-if="importData">
           <div class="q-gutter-md">
             <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
-              <div class="text-h6 q-mb-sm">Rezepte</div>
+              <div class="text-h6 q-mb-sm">{{ $t('page.transfer.import.stepper.import_selection.recipes_headline') }}</div>
               <div class="q-gutter-y-sm">
                 <q-radio :disable="loading" v-model="importRecipesMode" val="all" label="Alle Rezepte importieren" />
                 <q-radio :disable="loading" v-model="importRecipesMode" val="selection" label="Nur ausgewählte Rezepte importieren" />

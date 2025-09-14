@@ -646,7 +646,22 @@ export default {
       }
     },
     transfer: {
-      headline: 'Transfer'
+      headline: 'Transfer',
+      export_btn_label: 'Export',
+      import_btn_label: 'Import',
+      import: {
+        stepper: {
+          select_file: {
+            label: 'Select file',
+            select_file_btn_label: 'Select import file (.zip)',
+            upload_btn_label: 'Upload'
+          },
+          import_selection: {
+            label: 'Import selection',
+            recipes_headline: 'Recipes'
+          }
+        }
+      }
     }
   },
   component: {
