@@ -458,8 +458,8 @@ export default {
       no_glass_label: 'No glass:',
       glass_label: '({ml}ml) {glass}',
       no_alc_label: 'No alcohol',
-      alc_label: '{val}% Vol.',
-      alc_label_range: '{min_val}-{max_val} % Vol.',
+      alc_label: '{val}% vol.',
+      alc_label_range: '{min_val}-{max_val}% vol.',
       description_headline: 'Description',
       ingredients_headline: 'Ingredients',
       category_headline: 'Categories',
@@ -658,7 +658,40 @@ export default {
           },
           import_selection: {
             label: 'Import selection',
-            recipes_headline: 'Recipes'
+            recipes: {
+              headline: 'Recipes',
+              selection_all: 'Import all',
+              selection_selected: 'Import selected',
+              selection_none: 'Import none'
+            },
+            collections: {
+              headline: 'Collections',
+              selection_all: 'Import all',
+              selection_selected: 'Import selected',
+              selection_none: 'Import none'
+            },
+            glasses: {
+              headline: 'Glasses',
+              selection_all: 'Import all',
+              selection_none: 'Import none'
+            },
+            categories: {
+              headline: 'Categories',
+              selection_all: 'Import all',
+              selection_none: 'Import none'
+            },
+            duplicates: {
+              headline: 'Duplicate strategy',
+              overwrite: 'Overwrite',
+              skip: 'Skip',
+              keep: 'Keep both'
+            },
+            start_import_btn_label: 'Start import',
+            error_upload_file_first: 'Please upload an import file first.'
+          },
+          complete: {
+            label: 'Done',
+            successful: 'Import successful'
           }
         }
       }

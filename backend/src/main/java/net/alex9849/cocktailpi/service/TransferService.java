@@ -629,7 +629,7 @@ public class TransferService {
         }
         result.add(ingredient);
         if (ingredient instanceof IngredientGroupDto.Response.Detailed group) {
-            for (IngredientDto.Response.Detailed child : ingredientGroupMap.get(group.getId())) {
+            for (IngredientDto.Response.Detailed child : ingredientGroupMap.getOrDefault(group.getId(), new ArrayList<>())) {
                 collectIngredientTree(child, visited, ingredientGroupMap, result);
             }
         }

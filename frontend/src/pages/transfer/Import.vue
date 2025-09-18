@@ -34,11 +34,28 @@
         <div v-if="importData">
           <div class="q-gutter-md">
             <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
-              <div class="text-h6 q-mb-sm">{{ $t('page.transfer.import.stepper.import_selection.recipes_headline') }}</div>
+              <div class="text-h6 q-mb-sm">
+                {{ $t('page.transfer.import.stepper.import_selection.recipes.headline') }}
+              </div>
               <div class="q-gutter-y-sm">
-                <q-radio :disable="loading" v-model="importRecipesMode" val="all" label="Alle Rezepte importieren" />
-                <q-radio :disable="loading" v-model="importRecipesMode" val="selection" label="Nur ausgewählte Rezepte importieren" />
-                <q-radio :disable="loading" v-model="importRecipesMode" val="none" label="Keine Rezepte importieren" />
+                <q-radio
+                  :disable="loading"
+                  v-model="importRecipesMode"
+                  val="all"
+                  :label="$t('page.transfer.import.stepper.import_selection.recipes.selection_all')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importRecipesMode"
+                  val="selection"
+                  :label="$t('page.transfer.import.stepper.import_selection.recipes.selection_selected')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importRecipesMode"
+                  val="none"
+                  :label="$t('page.transfer.import.stepper.import_selection.recipes.selection_none')"
+                />
               </div>
               <transition
                 enter-active-class="animated fadeIn"
@@ -57,11 +74,28 @@
             </q-card>
 
             <q-card flat bordered class="q-pa-md" v-if="importData.collections && importData.collections.length">
-              <div class="text-h6 q-mb-sm">Collections</div>
+              <div class="text-h6 q-mb-sm">
+                {{ $t('page.transfer.import.stepper.import_selection.collections.headline') }}
+              </div>
               <div class="q-gutter-y-sm">
-                <q-radio :disable="loading" v-model="importCollectionsMode" val="all" label="Alle Collections importieren" />
-                <q-radio :disable="loading" v-model="importCollectionsMode" val="selection" label="Nur ausgewählte Collections importieren" />
-                <q-radio :disable="loading" v-model="importCollectionsMode" val="none" label="Keine Collections importieren" />
+                <q-radio
+                  :disable="loading"
+                  v-model="importCollectionsMode"
+                  val="all"
+                  :label="$t('page.transfer.import.stepper.import_selection.collections.selection_all')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importCollectionsMode"
+                  val="selection"
+                  :label="$t('page.transfer.import.stepper.import_selection.collections.selection_selected')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importCollectionsMode"
+                  val="none"
+                  :label="$t('page.transfer.import.stepper.import_selection.collections.selection_none')"
+                />
               </div>
               <transition
                 enter-active-class="animated fadeIn"
@@ -80,34 +114,75 @@
             </q-card>
 
             <q-card flat bordered class="q-pa-md" v-if="importData.glasses && importData.glasses.length">
-              <div class="text-h6 q-mb-sm">Gläser</div>
+              <div class="text-h6 q-mb-sm">
+                {{ $t('page.transfer.import.stepper.import_selection.glasses.headline') }}
+              </div>
               <div class="q-gutter-y-sm">
-                <q-radio :disable="loading" v-model="importGlassesMode" val="all" label="Gläser importieren" />
-                <q-radio :disable="loading" v-model="importGlassesMode" val="none" label="Keine Gläser importieren" />
+                <q-radio
+                  :disable="loading"
+                  v-model="importGlassesMode"
+                  val="all"
+                  :label="$t('page.transfer.import.stepper.import_selection.glasses.selection_all')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importGlassesMode"
+                  val="none"
+                  :label="$t('page.transfer.import.stepper.import_selection.glasses.selection_none')"
+                />
               </div>
             </q-card>
 
             <q-card flat bordered class="q-pa-md" v-if="importData.categories && importData.categories.length">
-              <div class="text-h6 q-mb-sm">Kategorien</div>
+              <div class="text-h6 q-mb-sm">
+                {{ $t('page.transfer.import.stepper.import_selection.categories.headline') }}
+              </div>
               <div class="q-gutter-y-sm">
-                <q-radio :disable="loading" v-model="importCategoriesMode" val="all" label="Kategorien importieren" />
-                <q-radio :disable="loading" v-model="importCategoriesMode" val="none" label="Keine Kategorien importieren" />
+                <q-radio
+                  :disable="loading"
+                  v-model="importCategoriesMode"
+                  val="all"
+                  :label="$t('page.transfer.import.stepper.import_selection.categories.selection_all')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="importCategoriesMode"
+                  val="none"
+                  :label="$t('page.transfer.import.stepper.import_selection.categories.selection_none')"
+                />
               </div>
             </q-card>
 
             <q-card flat bordered class="q-pa-md">
-              <div class="text-h6 q-mb-sm">Duplikat-Strategie</div>
+              <div class="text-h6 q-mb-sm">
+                {{ $t('page.transfer.import.stepper.import_selection.duplicates.headline') }}
+              </div>
               <div class="q-gutter-y-sm">
-                <q-radio :disable="loading" v-model="duplicateMode" val="overwrite" label="Duplikate überschreiben" />
-                <q-radio :disable="loading" v-model="duplicateMode" val="skip" label="Duplikate überspringen" />
-                <q-radio :disable="loading" v-model="duplicateMode" val="keep_both" label="Beide behalten" />
+                <q-radio
+                  :disable="loading"
+                  v-model="duplicateMode"
+                  val="overwrite"
+                  :label="$t('page.transfer.import.stepper.import_selection.duplicates.overwrite')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="duplicateMode"
+                  val="skip"
+                  :label="$t('page.transfer.import.stepper.import_selection.duplicates.skip')"
+                />
+                <q-radio
+                  :disable="loading"
+                  v-model="duplicateMode"
+                  val="keep_both"
+                  :label="$t('page.transfer.import.stepper.import_selection.duplicates.keep')"
+                />
               </div>
             </q-card>
           </div>
           <div class="row justify-end q-mt-lg">
             <q-btn
               color="primary"
-              label="Import starten"
+              :label="$t('page.transfer.import.stepper.import_selection.start_import_btn_label')"
               @click="startImport"
               :loading="loading"
               :disable="!enableImportBtn"
@@ -116,15 +191,22 @@
         </div>
         <div v-else>
           <q-banner dense class="bg-grey-2 text-grey-8">
-            Bitte zuerst eine Import-Datei hochladen.
+            {{ $t('page.transfer.import.stepper.import_selection.error_upload_file_first') }}
           </q-banner>
         </div>
       </q-step>
-      <q-step :name="3" title="Fertig" icon="check_circle" :done="false">
+      <q-step
+        :name="3"
+        :title="$t('page.transfer.import.stepper.complete.label')"
+        icon="check_circle"
+        :done="false"
+      >
         <q-banner class="bg-green-2 text-green-10 q-mb-md" rounded>
           <div class="row items-center">
             <q-icon name="check_circle" size="xl" color="green" class="q-mr-sm" />
-            <p class="text-h6">Der Import war erfolgreich!</p>
+            <p class="text-h6">
+              {{ $t('page.transfer.import.stepper.complete.successful') }}
+            </p>
           </div>
         </q-banner>
       </q-step>

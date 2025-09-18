@@ -321,7 +321,7 @@ export default {
       if (this.recipe.minAlcoholContent === this.recipe.maxAlcoholContent) {
         return this.$t('page.recipe_details.alc_label', { val: this.recipe.maxAlcoholContent })
       } else {
-        return this.$t('page.recipe_details.alc_label', { min_val: this.recipe.minAlcoholContent, max_val: this.recipe.maxAlcoholContent })
+        return this.$t('page.recipe_details.alc_label_range', { min_val: this.recipe.minAlcoholContent, max_val: this.recipe.maxAlcoholContent })
       }
     },
     printGlass () {
