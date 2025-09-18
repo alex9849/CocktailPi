@@ -1335,6 +1335,34 @@ export default {
           card: 'Card'
         }
       }
+    },
+    collection_selection_table: {
+      col: {
+        name: 'Name',
+        description: 'Description',
+        size: 'Nr. recipes'
+      },
+      page_select_all: 'Select all on page',
+      page_deselect_all: 'Deselect all on page',
+      search_label: 'Search collections...',
+      no_collections_found: 'No collections found',
+      available_collections: 'Available collections'
+    },
+    recipe_selection_table: {
+      col: {
+        name: 'Name',
+        categories: 'Categories',
+        ingredient_count: 'Ingredients',
+        alcohol_free: 'Alcohol free',
+        alcohol_free_yes: 'Yes',
+        alcohol_free_no: 'No'
+      },
+      page_select_all: 'Select all on page',
+      page_deselect_all: 'Deselect all on page',
+      search_label: 'Search recipes...',
+      no_recipes_found: 'No recipes found',
+      available_recipes: 'Available recipes',
+      loading_recipes: 'Loading recipes...'
     }
   },
   constants: {

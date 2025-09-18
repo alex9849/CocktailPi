@@ -6,13 +6,13 @@
       dense
       debounce="300"
       v-model="filter"
-      placeholder="Rezepte suchen..."
+      :placeholder="$t('component.recipe_selection_table.search_label')"
       class="q-mb-sm"
       clearable
     />
     <q-table
       :loading="recipeLoading"
-      loading-label="Lade Rezepte..."
+      :loading-label="$t('component.recipe_selection_table.loading_recipes')"
       :rows="recipes"
       :columns="recipeColumns"
       row-key="id"
@@ -23,9 +23,9 @@
       :filter="filter"
       :pagination="pagination"
       @update:pagination="val => pagination = val"
-      title="Verfügbare Rezepte"
-      no-data-label="No recipes found"
-      no-results-label="No recipes found"
+      :title="$t('component.recipe_selection_table.available_recipes')"
+      :no-data-label="$t('component.recipe_selection_table.no_recipes_found')"
+      :no-results-label="$t('component.recipe_selection_table.no_recipes_found')"
       :rows-per-page-options="[10, 25, 50, 100]"
     >
       <template v-slot:header-selection>
@@ -61,7 +61,7 @@
       <template v-slot:body-cell-alcoholFree="props">
         <q-td class="text-center">
           <q-badge :color="isAlcoholFree(props.row) ? 'green' : 'grey'" align="middle">
-            {{ isAlcoholFree(props.row) ? 'Ja' : 'Nein' }}
+            {{ isAlcoholFree(props.row) ? $t('component.recipe_selection_table.col.alcohol_free_yes') : $t('component.recipe_selection_table.col.alcohol_free_no') }}
           </q-badge>
         </q-td>
       </template>
@@ -70,7 +70,7 @@
           flat
           dense
           :icon="allVisibleRecipesSelected ? 'deselect' : 'select_all'"
-          :label="allVisibleRecipesSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
+          :label="allVisibleRecipesSelected ? $t('component.recipe_selection_table.page_select_all') : $t('component.recipe_selection_table.page_deselect_all')"
           @click="toggleSelectAllVisibleRecipes"
           v-if="filteredRecipes.length > 0"
         />
@@ -81,6 +81,8 @@
 
 <script setup>
 import { ref, computed, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const props = defineProps({
   recipes: Array,
@@ -94,11 +96,11 @@ const emit = defineEmits([
 ])
 
 const recipeColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
+  { name: 'name', label: t('component.recipe_selection_table.col.name'), field: 'name', align: 'left' },
   { name: 'normalName', label: 'normalName', field: 'normalName', align: 'left' },
-  { name: 'categories', label: 'Kategorien', field: 'categories', align: 'left' },
-  { name: 'ingredientCount', label: 'Zutaten', field: 'ingredientCount', align: 'center' },
-  { name: 'alcoholFree', label: 'Alkoholfrei', field: 'alcoholFree', align: 'center' }
+  { name: 'categories', label: t('component.recipe_selection_table.col.categories'), field: 'categories', align: 'left' },
+  { name: 'ingredientCount', label: t('component.recipe_selection_table.col.ingredient_count'), field: 'ingredientCount', align: 'center' },
+  { name: 'alcoholFree', label: t('component.recipe_selection_table.col.alcohol_free'), field: 'alcoholFree', align: 'center' }
 ]
 
 const { recipes, selected, disable, recipeLoading } = toRefs(props)

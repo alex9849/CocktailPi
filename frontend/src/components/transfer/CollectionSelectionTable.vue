@@ -6,7 +6,7 @@
       dense
       debounce="300"
       v-model="filter"
-      placeholder="Collections suchen..."
+      :placeholder="$t('component.collection_selection_table.search_label')"
       class="q-mb-sm"
       clearable
     />
@@ -21,9 +21,9 @@
       :filter="filter"
       :pagination="pagination"
       @update:pagination="val => pagination = val"
-      title="Verfügbare Collections"
-      no-data-label="No Collections found"
-      no-results-label="No Collections found"
+      :title="$t('component.collection_selection_table.available_collections')"
+      :no-data-label="$t('component.collection_selection_table.no_collections_found')"
+      :no-results-label="$t('component.collection_selection_table.no_collections_found')"
       :rows-per-page-options="[10, 25, 50, 100]"
       :loading="collectionsLoading"
     >
@@ -52,7 +52,7 @@
           flat
           dense
           :icon="allVisibleCollectionsSelected ? 'deselect' : 'select_all'"
-          :label="allVisibleCollectionsSelected ? 'Alle auf Seite abwählen' : 'Alle auf Seite auswählen'"
+          :label="allVisibleCollectionsSelected ? $t('component.collection_selection_table.page_select_all') : $t('component.collection_selection_table.page_deselect_all')"
           @click="toggleSelectAllVisibleCollections"
           v-if="filteredCollections.length > 0"
         />
@@ -63,6 +63,8 @@
 
 <script setup>
 import { ref, computed, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const props = defineProps({
   collections: Array,
@@ -81,10 +83,10 @@ const filter = ref('')
 const pagination = ref({ page: 1, rowsPerPage: 25 })
 
 const collectionColumns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' },
+  { name: 'name', label: t('component.collection_selection_table.col.name'), field: 'name', align: 'left' },
   { name: 'normalName', label: 'normalName', field: 'normalName', align: 'left' },
-  { name: 'description', label: 'Beschreibung', field: 'description', align: 'left' },
-  { name: 'size', label: 'Nr. Rezepte', field: 'size', align: 'center' }
+  { name: 'description', label: t('component.collection_selection_table.col.description'), field: 'description', align: 'left' },
+  { name: 'size', label: t('component.collection_selection_table.col.size'), field: 'size', align: 'center' }
 ]
 
 const filteredCollections = computed(() => {
