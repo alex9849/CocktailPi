@@ -11,20 +11,20 @@
             :disable="loading"
             v-model="exportMode"
             val="all"
-            label="Alle Rezepte exportieren"
+            :label="$t('page.transfer.export.recipes.export_all')"
             class="q-mr-md"
           />
           <q-radio
             :disable="loading"
             v-model="exportMode"
             val="selection"
-            label="Nur ausgewählte Rezepte exportieren"
+            :label="$t('page.transfer.export.recipes.export_selection')"
           />
           <q-radio
             :disable="loading"
             v-model="exportMode"
             val="none"
-            label="Keine Rezepte exportieren"
+            :label="$t('page.transfer.export.recipes.export_none')"
             class="q-mr-md"
           />
         </q-card>
@@ -54,20 +54,20 @@
             :disable="loading"
             v-model="exportCollectionsMode"
             val="all"
-            label="Alle Collections exportieren"
+            :label="$t('page.transfer.export.collections.export_all')"
             class="q-mr-md"
           />
           <q-radio
             :disable="loading"
             v-model="exportCollectionsMode"
             val="selection"
-            label="Nur ausgewählte Collections exportieren"
+            :label="$t('page.transfer.export.collections.export_selection')"
           />
           <q-radio
             :disable="loading"
             v-model="exportCollectionsMode"
             val="none"
-            label="Keine Collections exportieren"
+            :label="$t('page.transfer.export.collections.export_none')"
             class="q-mr-md"
           />
         </q-card>
@@ -90,7 +90,7 @@
       <div class="row justify-end">
         <q-btn
           color="primary"
-          label="Export herunterladen"
+          :label="$t('page.transfer.export.download_btn_label')"
           @click="exportRecipes"
           :disable="!enableExportBtn"
           :loading="loading"

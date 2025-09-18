@@ -694,6 +694,19 @@ export default {
             successful: 'Import successful'
           }
         }
+      },
+      export: {
+        recipes: {
+          export_all: 'Export all recipes',
+          export_selection: 'Export selected recipes',
+          export_none: 'Export no recipes'
+        },
+        collections: {
+          export_all: 'Export all collections',
+          export_selection: 'Export selected collections',
+          export_none: 'Export no collections'
+        },
+        download_btn_label: 'Download export'
       }
     }
   },
