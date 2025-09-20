@@ -52,7 +52,7 @@
           flat
           dense
           :icon="allVisibleCollectionsSelected ? 'deselect' : 'select_all'"
-          :label="allVisibleCollectionsSelected ? $t('component.collection_selection_table.page_select_all') : $t('component.collection_selection_table.page_deselect_all')"
+          :label="allVisibleCollectionsSelected ? $t('component.collection_selection_table.page_deselect_all') : $t('component.collection_selection_table.page_select_all')"
           @click="toggleSelectAllVisibleCollections"
           v-if="filteredCollections.length > 0"
         />

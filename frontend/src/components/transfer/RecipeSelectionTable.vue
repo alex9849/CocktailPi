@@ -70,7 +70,7 @@
           flat
           dense
           :icon="allVisibleRecipesSelected ? 'deselect' : 'select_all'"
-          :label="allVisibleRecipesSelected ? $t('component.recipe_selection_table.page_select_all') : $t('component.recipe_selection_table.page_deselect_all')"
+          :label="allVisibleRecipesSelected ? $t('component.recipe_selection_table.page_deselect_all') : $t('component.recipe_selection_table.page_select_all')"
           @click="toggleSelectAllVisibleRecipes"
           v-if="filteredRecipes.length > 0"
         />
