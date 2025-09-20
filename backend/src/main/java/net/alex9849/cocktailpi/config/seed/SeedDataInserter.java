@@ -220,7 +220,7 @@ public class SeedDataInserter {
             }
             Recipe recipe = recipeService.createRecipe(recipeService.fromDto(createDto));
 
-            InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/recipes/" + recipeDto.getName() + ".jpg");
+            InputStream recipeImageStream = this.getClass().getResourceAsStream("/db/defaultdata/images/recipes/" + recipeDto.getNormalName() + ".jpg");
             if (recipeImageStream != null) {
                 BufferedImage image = ImageIO.read(recipeImageStream);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();

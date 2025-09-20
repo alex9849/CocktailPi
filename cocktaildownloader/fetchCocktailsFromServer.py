@@ -45,7 +45,7 @@ def fetchRecipesFromServer():
     for recipe in recipes:
         if recipe['hasImage']:
             urllib.request.urlretrieve(cocktailPiUrl + "/api/recipe/" + str(recipe['id']) + "/image",
-                                       "data/images/recipes/" + str(recipe['name']) + ".jpg")
+                                       "data/images/recipes/" + str(recipe['normalName']) + ".jpg")
 
 
 def fetchIngredientsFromServer():
