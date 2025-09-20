@@ -20,14 +20,6 @@
             {{ $t('page.recipe_details.edit_btn_label') }}
           </q-btn>
           <q-btn
-            color="positive"
-            @click="showMakeCocktailDialog = true"
-            icon="play_arrow"
-            flat
-          >
-            {{ $t('page.recipe_details.produce_btn_label') }}
-          </q-btn>
-          <q-btn
             color="red"
             @click="deleteDialog = true"
             :loading="deleting"
@@ -36,6 +28,13 @@
             flat
           >
             {{ $t('page.recipe_details.delete_btn_label') }}
+          </q-btn>
+          <q-btn
+            color="positive"
+            @click="showMakeCocktailDialog = true"
+            icon="play_arrow"
+          >
+            {{ $t('page.recipe_details.produce_btn_label') }}
           </q-btn>
         </div>
       </div>
@@ -105,7 +104,7 @@
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="wine_bar"
-              :text-color="this.recipe.defaultGlass ? 'teal' : 'grey-6'"
+              :text-color="this.recipe.defaultGlass ? color.cardBodyText : 'grey-6'"
               :value="printGlass"
               headline="Glas"
             />
@@ -114,7 +113,7 @@
             <property-card
               class="shadow-1 bg-card-body text-card-body full-height"
               icon="local_bar"
-              :text-color="this.recipe.minAlcoholContent ? 'teal' : 'grey-6'"
+              :text-color="this.recipe.minAlcoholContent ? color.cardBodyText : 'grey-6'"
               :value="printAlcoholContent"
               headline="Alkoholgehalt"
             />
@@ -127,8 +126,8 @@
           <div class="col-12">
             <q-card class="shadow-1 bg-card-body text-card-body">
               <q-card-section>
-                <div class="flex items-center text-caption text-grey-7 q-mb-xs">
-                  <q-icon name="category" class="q-mr-sm" color="secondary" />
+                <div class="flex items-center text-h6 q-mb-xs">
+                  <q-icon name="category" class="q-mr-sm" />
                   {{ $t('page.recipe_details.category_headline') }}
                 </div>
                 <div class="q-gutter-sm">

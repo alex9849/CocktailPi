@@ -3,13 +3,14 @@
     <q-card-section
       v-if="!dense"
       style="display: flex"
+      class="q-pa-sm"
     >
       <div
-        class="items-center dotted-overflow-1"
+        class="items-center dotted-overflow-1 text-h6"
         style="min-height: 32px; display: flex"
       >
-        <q-icon :name="icon" :color="textColor" size="32px" />
-        <span class="text-h6" :class="textColorClass">
+        <q-icon :name="icon" :color="textColor" />
+        <span class="text-weight-medium" :class="textColorClass">
           {{ value }}
         </span>
       </div>

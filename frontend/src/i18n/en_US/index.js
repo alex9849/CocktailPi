@@ -455,7 +455,7 @@ export default {
       edit_btn_label: 'Edit',
       produce_btn_label: 'Make cocktail',
       delete_btn_label: 'Delete',
-      no_glass_label: 'No glass:',
+      no_glass_label: 'No glass',
       glass_label: '({ml}ml) {glass}',
       no_alc_label: 'No alcohol',
       alc_label: '{val}% vol.',
