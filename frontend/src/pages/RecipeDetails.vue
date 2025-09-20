@@ -57,7 +57,7 @@
           />
         </q-card>
         <q-card class="md-hide lg-hide xl-hide shadow-2 bg-card-body text-card-body q-mb-md">
-          <q-card-section>
+          <q-card-section class="">
             <div class="text-h6 q-mb-sm">
               <q-icon name="restaurant_menu" class="q-mr-xs" />
               {{ $t('page.recipe_details.ingredients_headline') }}

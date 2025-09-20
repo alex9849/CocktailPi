@@ -3,7 +3,7 @@
     <q-card-section
       v-if="!dense"
       style="display: flex"
-      class="q-pa-sm"
+      class="justify-center"
     >
       <div
         class="items-center dotted-overflow-1 text-h6"
