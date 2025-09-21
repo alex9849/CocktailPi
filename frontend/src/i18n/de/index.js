@@ -151,7 +151,7 @@ export default {
     },
     ingredient_recipes: {
       headline: 'Pumpbare Zutaten',
-      no_ingredients_available: 'Keine Zutaten angeschlossene!',
+      no_ingredients_available: 'Keine Zutaten angeschlossen!',
       recipe: {
         ml_left: '{nr} ml übrig',
         alc_content: '{nr}% Alkohol'

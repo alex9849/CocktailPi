@@ -18,13 +18,13 @@
               <q-icon :name="mdiChevronDoubleDown"/>
             </p>
           </q-toolbar-title>
-          <q-btn flat
+          <!--q-btn flat
                  round
                  size="xl"
                  dense
                  icon="close"
                  @click="closeDialog"
-          />
+          /-->
         </q-toolbar>
       </q-card-section>
       <q-separator
