@@ -3,12 +3,11 @@
     <q-card
       class="overflow-hidden bg-transparent"
       flat
-      bordered
     >
-      <div class="row">
+      <q-card-section class="q-pa-xs row">
         <q-select
           :dark="dark"
-          class="col-6"
+          class="col-6 field-left"
           label="Board"
           :model-value="selection.board"
           @update:modelValue="onSelectBoard"
@@ -17,8 +16,7 @@
           option-value="id"
           :error="error"
           :disable="loading || disable"
-          square
-          filled
+          outlined
           no-error-icon
           hide-bottom-space
         >
@@ -42,7 +40,7 @@
         <q-select
           style="border-left: solid #D5D5D5FF 1px"
           :dark="dark"
-          class="col-6"
+          class="col-6 field-right"
           :label="label ? label : 'SCL-Pin'"
           :model-value="selection.pin"
           ref="pinSelect"
@@ -52,9 +50,8 @@
           :error="error"
           :disable="loading || disable"
           :loading="loading"
-          square
           :options="pins"
-          filled
+          outlined
           hide-bottom-space
         >
           <template
@@ -116,7 +113,7 @@
             </q-item>
           </template>
         </q-select>
-      </div>
+      </q-card-section>
     </q-card>
     <div
       v-if="errorMessage"
@@ -284,5 +281,15 @@ export default {
 </script>
 
 <style scoped>
+:deep(.field-left .q-field__control::before) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+:deep(.field-right .q-field__control::before) {
+  border-left: none !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
 
 </style>

@@ -137,7 +137,6 @@
             >
               <div class="col-12 col-lg">
                 <q-input
-                  filled
                   dense
                   outlined
                   type="number"
@@ -158,7 +157,6 @@
               </div>
               <div class="col-12 col-lg">
                 <q-input
-                  filled
                   dense
                   readonly
                   outlined

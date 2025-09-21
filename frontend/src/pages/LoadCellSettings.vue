@@ -189,7 +189,6 @@
                 :disable="!currentLoadCell.enable || loadingCalibration"
                 :label="$t('page.load_cell_mgmt.calibration.known_weight.ref_weight_field_label')"
                 type="number"
-                filled
                 :dark="color.cardItemGroupDark"
                 outlined
               />
@@ -218,7 +217,6 @@
                 :disable="!currentLoadCell.enable"
                 style="padding-inline: 12px"
                 square
-                filled
                 hide-bottom-space
                 readonly
                 borderless

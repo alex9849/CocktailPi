@@ -38,7 +38,6 @@
                 :error="v.form.$errors.length > 0"
                 :label="$t('page.power_limit_mgmt.hardware_settings.power_limit_label')"
                 clearable
-                filled
               >
                 <template v-slot:append>
                   mW

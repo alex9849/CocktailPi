@@ -11,7 +11,6 @@
       :rules="[
                 val => !v.modelValue.comment.maxLength.$invalid || $t('errors.max_letters', {nr: 40})
               ]"
-      filled
       hide-bottom-space
       :label="$t('component.event_action_editor_form.comment_label')"
       outlined
@@ -43,7 +42,7 @@
       :disable="disable || initializing"
       :model-value="modelValue.executionGroups"
       :options="executionGroupOptions"
-      filled
+      outlined
       hide-bottom-space
       input-debounce="0"
       :label="$t('component.event_action_editor_form.execution_groups.label')"
@@ -115,7 +114,7 @@
       :options="eventActionTriggerDisplayNames"
       emit-value
       hide-bottom-space
-      filled
+      outlined
       :label="$t('component.event_action_editor_form.trigger_label')"
       map-options
       @update:model-value="setValue('trigger', $event)"
@@ -129,7 +128,7 @@
       :options="existingActions"
       emit-value
       hide-bottom-space
-      filled
+      outlined
       :label="$t('component.event_action_editor_form.action.label')"
       map-options
       @update:model-value="setAction($event)"
@@ -163,7 +162,7 @@
             <q-select
               :model-value="modelValue.requestMethod"
               :options="urlRequestMethods"
-              filled
+              outlined
               hide-bottom-space
               :label="$t('component.event_action_editor_form.action.call_url.request_method_label')"
               @update:model-value="setValue('requestMethod', $event)"
@@ -173,7 +172,7 @@
             />
             <q-input
               :model-value="modelValue.url"
-              filled
+              outlined
               hide-bottom-space
               :label="$t('component.event_action_editor_form.action.call_url.url_label')"
               placeholder="https://google.com"
@@ -192,7 +191,7 @@
             <q-file :model-value="selectedFile"
                     accept=".wav"
                     bottom-slots
-                    filled
+                    outlined
                     :clearable="!!previousFileName"
                     :display-value="fileName"
                     hide-bottom-space
@@ -233,7 +232,7 @@
               :rules="[
                 val => !v.modelValue.soundDevice.required.$invalid || $t('errors.field_required')
               ]"
-              filled
+              outlined
               hide-bottom-space
               :label="$t('component.event_action_editor_form.action.audio.output_device_label')"
               @update:model-value="setValue('soundDevice', $event)"
@@ -305,7 +304,7 @@
             <q-file :model-value="selectedFile"
                     accept=".py"
                     bottom-slots
-                    filled
+                    outlined
                     :clearable="!!previousFileName"
                     :display-value="fileName"
                     hide-bottom-space

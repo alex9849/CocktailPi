@@ -16,7 +16,6 @@
         debounce="600"
         outlined
         type="number"
-        filled
         :label="$t('component.pump_setup_stepper_calibration.acceleration_label')"
       >
         <template v-slot:append>
@@ -44,7 +43,6 @@
         debounce="600"
         outlined
         type="number"
-        filled
         :label="$t('component.pump_setup_stepper_calibration.max_steps_per_second_label')"
       >
         <template v-slot:append>
@@ -72,7 +70,6 @@
         debounce="600"
         outlined
         type="number"
-        filled
         :label="$t('component.pump_setup_stepper_calibration.steps_per_cl_label')"
       >
         <template v-slot:append>

@@ -34,7 +34,6 @@
       <template v-slot:append>
         <q-btn
           :label="$t('component.glass_form.load_cell_measure_btn_label')"
-          color="primary"
           outline
           no-caps
           size="md"

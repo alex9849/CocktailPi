@@ -1,6 +1,5 @@
 <template>
   <q-select
-    outlined
     :loading="loading"
     :dense="dense"
     :model-value="selected"
@@ -10,6 +9,7 @@
     :color="color"
     :dark="dark"
     :rounded="rounded"
+    :outlined="outlined"
     :clearable="clearable"
     :disable="disable"
     hide-dropdown-icon
@@ -87,6 +87,10 @@ export default {
       default: false
     },
     filled: {
+      type: Boolean,
+      default: false
+    },
+    outlined: {
       type: Boolean,
       default: false
     },

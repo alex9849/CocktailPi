@@ -45,7 +45,6 @@
                 debounce="600"
                 :placeholder="$t('common.pump_fallback_name', {id: pump.id})"
                 outlined
-                filled
                 :label="$t('page.pump_setup.name.pump_identifier_label')"
               />
             </div>
@@ -235,7 +234,6 @@
                 debounce="600"
                 outlined
                 type="number"
-                filled
                 :label="$t('page.pump_setup.calibration.tube_capacity_label')"
               >
                 <template v-slot:append>
@@ -275,7 +273,6 @@
                 debounce="600"
                 outlined
                 type="number"
-                filled
                 :label="$t('page.pump_setup.calibration.power_consumption_label')"
               >
                 <template v-slot:append>
@@ -324,6 +321,7 @@
           <c-assistant-container>
             <template v-slot:fields>
               <c-ingredient-selector
+                outlined
                 :dark="color.cardBodyDark"
                 :model-value="pump.currentIngredient"
                 @update:model-value="setPumpAttr('currentIngredient', pump.currentIngredient, $event, !$event)"
@@ -332,7 +330,6 @@
                 :loading="attrState.currentIngredient.loading"
                 :label="$t('page.pump_setup.state.ingredient_label')"
                 clearable
-                filled
                 filter-manual-ingredients
                 filter-ingredient-groups
                 hide-bottom-space
@@ -359,7 +356,6 @@
                 :label="$t('page.pump_setup.state.filling_level_label')"
                 type="number"
                 outlined
-                filled
                 hide-bottom-space
               >
                 <template v-slot:append>

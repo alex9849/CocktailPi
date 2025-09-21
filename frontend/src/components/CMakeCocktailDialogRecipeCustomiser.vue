@@ -78,6 +78,7 @@
                       {{ $t('component.make_cocktail_customizer.add_new_ingredient_headline') }}
                     </p>
                     <c-ingredient-selector
+                      outlined
                       rounded
                       :dark="color.cardBodyDark"
                       filter-manual-ingredients

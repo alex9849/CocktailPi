@@ -16,7 +16,6 @@
         debounce="600"
         outlined
         type="number"
-        filled
         :label="$t('component.pump_setup_dc_calibration.time_per_cl_pin_label')"
       >
         <template v-slot:append>

@@ -144,7 +144,6 @@
         outlined
         :disable="editOptions.editCategorySaving"
         v-model:model-value="v.editOptions.editCategory.name.$model"
-        filled
         :rules="[
                 val => !v.editOptions.editCategory.name.required.$invalid || $t('errors.field_required'),
                 val => !v.editOptions.editCategory.name.maxLength.$invalid || $t('errors.max_letters', {nr: 15})

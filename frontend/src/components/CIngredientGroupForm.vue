@@ -9,7 +9,6 @@
                 val => !v.modelValue.name.required.$invalid || $t('errors.field_required'),
                 val => !v.modelValue.name.maxLength.$invalid || $t('errors.max_letters', {nr: 30})
               ]"
-      filled
       :label="$t('component.ingredientGroupForm.name')"
       outlined
       hide-bottom-space
@@ -18,7 +17,7 @@
     <c-ingredient-selector
       :selected="parentGroup"
       clearable
-      filled
+      outlined
       hide-bottom-space
       filter-automatic-ingredients
       filter-manual-ingredients

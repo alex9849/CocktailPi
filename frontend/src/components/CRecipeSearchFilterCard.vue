@@ -52,6 +52,7 @@
                     </q-card>
                   </div>
                   <c-ingredient-selector
+                    outlined
                     :dark="color.cardItemGroupDark"
                     :model-value="filter.containsIngredients"
                     @update:model-value="$emit('update:filter', {...filter, containsIngredients: $event})"

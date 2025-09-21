@@ -13,7 +13,7 @@
             :label="$t('page.transfer.import.stepper.select_file.select_file_btn_label')"
             accept=".zip"
             :disable="loading"
-            filled
+            outlined
             class="q-mb-md"
           />
           <q-btn

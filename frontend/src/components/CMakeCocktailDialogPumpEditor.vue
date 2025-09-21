@@ -68,6 +68,7 @@
               :props="props"
             >
               <c-ingredient-selector
+                outlined
                 :dark="markPump(props.row) ? false : color.cardBodyDark"
                 :selected="props.row.currentIngredient"
                 @update:selected="setPumpAttr('currentIngredient', props.row.id, props.row.type, $event, attrState.currentIngredient, !$event)"

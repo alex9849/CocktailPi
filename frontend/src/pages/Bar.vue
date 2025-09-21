@@ -89,6 +89,7 @@
       @clickSave="onAddOwnedIngredient"
     >
       <c-ingredient-selector
+        outlined
         :label="$t('page.bar.add_dialog.ingredient_selector_label')"
         :disable="editOptions.saving"
         filter-ingredient-groups

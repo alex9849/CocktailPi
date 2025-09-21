@@ -1,6 +1,7 @@
 <template>
   <div>
     <c-ingredient-selector
+      outlined
       :rules="[val => !v.modelValue.ingredient.required.$invalid || $t('errors.field_required')]"
       :selected="modelValue.ingredient"
       @update:selected="onIngredientSelect($event)"

@@ -12,14 +12,12 @@
                 val => !v.modelValue.name.required.$invalid || $t('errors.field_required'),
                 val => !v.modelValue.name.maxLength.$invalid || $t('errors.max_letters', {nr: 30}),
               ]"
-      filled
       @update:model-value="e => setValue('name', e)"
     />
     <q-input
       :label="$t('component.ingredient_form.alc_content')"
       outlined
       :disable="disable"
-      filled
       hide-bottom-space
       type="number"
       :model-value="modelValue.alcoholContent"
@@ -52,7 +50,6 @@
                 max-file-size="20971520"
                 accept="image/*"
                 clearable
-                filled
                 hide-bottom-space
         >
           <template v-slot:prepend>
@@ -92,10 +89,10 @@
         class="q-gutter-y-sm q-pa-none"
       >
         <c-ingredient-selector
+          outlined
           :selected="parentGroup"
           hide-bottom-space
           clearable
-          filled
           filter-automatic-ingredients
           filter-manual-ingredients
           :label="$t('component.ingredient_form.parent_group')"
@@ -106,7 +103,6 @@
           outlined
           hide-bottom-space
           :disable="disable"
-          filled
           type="number"
           :model-value="modelValue.bottleSize"
           :rules="[
@@ -126,7 +122,6 @@
                 val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
                 val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
               ]"
-          filled
           mask="#.##"
           @update:model-value="e => setValue('pumpTimeMultiplier', e)"
         />
@@ -136,10 +131,10 @@
         class="q-gutter-y-sm q-pa-none"
       >
         <c-ingredient-selector
+          outlined
           :selected="parentGroup"
           clearable
           hide-bottom-space
-          filled
           filter-automatic-ingredients
           filter-manual-ingredients
           :label="$t('component.ingredient_form.parent_group')"
@@ -147,8 +142,8 @@
           @update:selected="e => setParentGroup(e)"
         />
         <q-select
-          filled
           clearable
+          outlined
           hide-bottom-space
           :model-value="modelValue.unit"
           @update:model-value="e => setValue('unit', e)"
