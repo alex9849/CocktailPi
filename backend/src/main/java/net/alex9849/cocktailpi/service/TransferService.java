@@ -26,6 +26,7 @@ import net.alex9849.cocktailpi.payload.dto.recipe.productionstep.ProductionStepD
 import net.alex9849.cocktailpi.payload.dto.recipe.productionstep.ProductionStepIngredientDto;
 import net.alex9849.cocktailpi.payload.request.ExportRequest;
 import net.alex9849.cocktailpi.utils.SpringUtility;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,10 @@ public class TransferService {
     private final CollectionService collectionService;
     private final SystemService systemService;
 
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
+
     public TransferService(RecipeService recipeService, IngredientService ingredientService, CollectionService collectionService, SystemService systemService, GlassService glassService, CategoryService categoryService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
@@ -69,6 +74,10 @@ public class TransferService {
     }
 
     public long newImport(MultipartFile zipFile) throws IOException {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Can't perform import in demomode!");
+        }
+
         Path tempDir = Files.createTempDirectory("import_");
         lastExportId++;
         long importId = lastExportId;
@@ -200,6 +209,10 @@ public class TransferService {
     }
 
     public byte[] generateExport(ExportRequest exportRequest) throws IOException {
+        if(isDemoMode) {
+            throw new IllegalArgumentException("Can't perform export in demomode!");
+        }
+
         List<Collection> collectionsToExport;
         if (exportRequest.isExportAllCollections()) {
             collectionsToExport = collectionService.getAll();
