@@ -455,10 +455,17 @@ export default {
       edit_btn_label: 'Bearbeiten',
       produce_btn_label: 'Cocktail zubereiten',
       delete_btn_label: 'Löschen',
-      categories_headline: 'Kategorien:',
-      none: 'Keine',
-      default_glass_headline: 'Standardglas:',
-      description_headline: 'Beschreibung:',
+      no_glass_label: 'Kein Glas',
+      glass_label: '({ml}ml) {glass}',
+      no_alc_label: 'Alkoholfrei',
+      alc_label: '{val}% vol.',
+      alc_label_range: '{min_val}-{max_val}% vol.',
+      description_headline: 'Beschreibung',
+      ingredients_headline: 'Zutaten',
+      category_headline: 'Kategorien',
+      property_last_change: 'Letzte Änderung:',
+      property_recipe_owner: 'Rezeptinhaber:',
+      property_id: 'ID:',
       notifications: {
         recipe_deleted: 'Rezept erfolgreich gelöscht'
       },
@@ -583,8 +590,71 @@ export default {
       notifications: {
         pump_deleted: '{name} gelöscht!'
       }
+    },
+    transfer: {
+      headline: 'Transfer',
+      export_btn_label: 'Exportieren',
+      import_btn_label: 'Importieren',
+      import: {
+        stepper: {
+          select_file: {
+            label: 'Datei auswählen',
+            select_file_btn_label: 'Importdatei auswählen (.zip)',
+            upload_btn_label: 'Hochladen'
+          },
+          import_selection: {
+            label: 'Importauswahl',
+            recipes: {
+              headline: 'Rezepte',
+              selection_all: 'Alle importieren',
+              selection_selected: 'Auswahl importieren',
+              selection_none: 'Keine importieren'
+            },
+            collections: {
+              headline: 'Listen',
+              selection_all: 'Alle importieren',
+              selection_selected: 'Auswahl importieren',
+              selection_none: 'Keine importieren'
+            },
+            glasses: {
+              headline: 'Gläser',
+              selection_all: 'Alle importieren',
+              selection_none: 'Keine importieren'
+            },
+            categories: {
+              headline: 'Kategorien',
+              selection_all: 'Alle importieren',
+              selection_none: 'Keine importieren'
+            },
+            duplicates: {
+              headline: 'Strategie bei Duplikaten',
+              overwrite: 'Überschreiben',
+              skip: 'Überspringen',
+              keep: 'Beide behalten'
+            },
+            start_import_btn_label: 'Import starten',
+            error_upload_file_first: 'Bitte zuerst eine Importdatei hochladen.'
+          },
+          complete: {
+            label: 'Fertig',
+            successful: 'Import erfolgreich'
+          }
+        }
+      },
+      export: {
+        recipes: {
+          export_all: 'Alle Rezepte exportieren',
+          export_selection: 'Ausgewählte Rezepte exportieren',
+          export_none: 'Keine Rezepte exportieren'
+        },
+        collections: {
+          export_all: 'Alle Listen exportieren',
+          export_selection: 'Ausgewählte Listen exportieren',
+          export_none: 'Keine Listen exportieren'
+        },
+        download_btn_label: 'Export herunterladen'
+      }
     }
-
   },
   component: {
     show_img_dialog: {
@@ -1194,6 +1264,34 @@ export default {
           card: 'Karte'
         }
       }
+    },
+    collection_selection_table: {
+      col: {
+        name: 'Name',
+        description: 'Beschreibung',
+        size: 'Anzahl Rezepte'
+      },
+      page_select_all: 'Alle auf der Seite auswählen',
+      page_deselect_all: 'Alle auf der Seite abwählen',
+      search_label: 'Listen durchsuchen...',
+      no_collections_found: 'Keine Listen gefunden',
+      available_collections: 'Verfügbare Listen'
+    },
+    recipe_selection_table: {
+      col: {
+        name: 'Name',
+        categories: 'Kategorien',
+        ingredient_count: 'Zutaten',
+        alcohol_free: 'Alkoholfrei',
+        alcohol_free_yes: 'Ja',
+        alcohol_free_no: 'Nein'
+      },
+      page_select_all: 'Alle auf der Seite auswählen',
+      page_deselect_all: 'Alle auf der Seite abwählen',
+      search_label: 'Rezepte durchsuchen...',
+      no_recipes_found: 'Keine Rezepte gefunden',
+      available_recipes: 'Verfügbare Rezepte',
+      loading_recipes: 'Rezepte werden geladen...'
     }
   },
   constants: {
