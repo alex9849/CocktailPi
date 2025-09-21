@@ -32,7 +32,7 @@
             val => v.serverAddress.required || $t('errors.field_required'),
             val => v.serverAddress.isURL || $t('errors.not_valid_url')
             ]"
-            filled
+            outlined
             lazy-rules
             @input="v.serverAddress.$touch()"
           >
@@ -42,7 +42,7 @@
           </q-input>
           <q-input
             :disable="loading"
-            filled
+            outlined
             :label="$t('page.login.username_field_label')"
             v-model="v.loginRequest.username.$model"
             lazy-rules
@@ -56,7 +56,7 @@
           </q-input>
           <q-input
             :disable="loading"
-            filled
+            outlined
             :label="$t('page.login.password_field_label')"
             type="password"
             v-model="v.loginRequest.password.$model"
