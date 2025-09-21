@@ -3,7 +3,7 @@ import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
 import { colors } from 'quasar'
 
 export const setAppearanceSettings = (state, payload) => {
-  i18n.global.locale = payload.language.name
+  i18n.global.locale.value = payload.language.name
   const settings = {
     language: payload.language,
     recipePageSize: payload.recipePageSize,
