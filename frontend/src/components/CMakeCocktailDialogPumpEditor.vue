@@ -174,7 +174,7 @@
                 :pump-up-direction-reversed="false"
               />
               <c-pump-turn-on-off-button
-                :pump-id="props.row.id"
+                :pump="props.row"
                 :running="getPumpState(props.row.id).occupied"
               />
             </q-td>

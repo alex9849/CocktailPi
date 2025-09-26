@@ -23,8 +23,8 @@ import PumpService from 'src/services/pump.service'
 export default {
   name: 'CPumpTurnOnOffButton',
   props: {
-    pumpId: {
-      type: Number,
+    pump: {
+      type: Object,
       required: true
     },
     running: {
@@ -40,17 +40,17 @@ export default {
     onClickTurnOnOrOffPump () {
       const vm = this
       if (this.running) {
-        PumpService.stopPump(this.pumpId).then(() => {
+        PumpService.stopPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: 'Pump #' + String(this.pumpId) + ' stopped!'
+            message: this.pump.printName + ' stopped!'
           })
         })
       } else {
-        PumpService.startPump(this.pumpId).then(() => {
+        PumpService.startPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: 'Pump #' + String(this.pumpId) + ' started!'
+            message: this.pump.printName + ' started!'
           })
         })
       }
