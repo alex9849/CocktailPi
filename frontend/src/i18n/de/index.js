@@ -678,6 +678,11 @@ export default {
       search_btn_label: 'Suchen',
       reset_btn_label: 'Zurücksetzen'
     },
+    simple_recipe_card: {
+      no_alc: 'Kein Alc.',
+      percent_alc: '{percent}% Alc.',
+      percent_range_alc: '{min} - {max}% Alc.'
+    },
     simple_collection_card: {
       name: '{name}',
       nr_cocktails: '{nr} Cocktail(s)',

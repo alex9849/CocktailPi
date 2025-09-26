@@ -714,6 +714,11 @@ export default {
     show_img_dialog: {
       close_btn_label: 'Close'
     },
+    simple_recipe_card: {
+      no_alc: 'No Alc.',
+      percent_alc: '{percent}% Alc.',
+      percent_range_alc: '{min} - {max}% Alc.'
+    },
     simple_recipes_filter_drawer: {
       headline: 'Filter',
       open_btn_label: 'Filter',

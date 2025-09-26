@@ -15,7 +15,12 @@
     <q-card-section class="q-pa-none col-12">
       <div class="text-h6 text-center text-black dotted-overflow-2">{{ recipe.name }}</div>
     </q-card-section>
-    <q-card-section class="q-pa-none col-12">
+    <q-card-section class="q-pa-none col-12 relative-position">
+      <div class="absolute-bottom-left" style="z-index: 1">
+        <q-badge class="q-ma-xs" :color="alcoholPercentageColor">
+          {{ alcoholPercentageDisplay }}
+        </q-badge>
+      </div>
       <q-img
         :src="imageLink + '&width=500'"
         v-if="recipe.hasImage"
@@ -56,6 +61,22 @@ export default {
     }
   },
   computed: {
+    alcoholPercentageDisplay () {
+      if (this.recipe.minAlcoholContent === this.recipe.maxAlcoholContent) {
+        if (this.recipe.maxAlcoholContent === 0) {
+          return this.$t('component.simple_recipe_card.no_alc')
+        }
+        return this.$t('component.simple_recipe_card.percent_alc', { percent: this.recipe.maxAlcoholContent })
+      }
+      return this.$t('component.simple_recipe_card.percent_range_alc', { min: this.recipe.minAlcoholContent, max: this.recipe.maxAlcoholContent })
+    },
+    alcoholPercentageColor () {
+      if (this.recipe.maxAlcoholContent === 0) {
+        return 'positive'
+      } else {
+        return 'info'
+      }
+    },
     bgColor () {
       if (this.allIngredientsOnPump) {
         return 'bg-green'
