@@ -3,6 +3,7 @@
     class="text-center full-height bg-card-body text-card-body"
     flat
     bordered
+    :dark="color.cardBodyDark"
   >
     <q-card-section class="q-gutter-sm">
       <p class="text-subtitle2">{{ ingredientName }}</p>

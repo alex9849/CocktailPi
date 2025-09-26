@@ -29,6 +29,7 @@
             </p>
             <q-slider v-model:model-value="customisationsCopy.boost"
                       @change="onUpdateBoost($event)"
+                      :dark="color.cardItemGroupDark"
                       color="orange"
                       label
                       :disable="disableBoosting"
@@ -66,6 +67,7 @@
               </div>
               <div class="col-12 col-sm-6 col-md-3">
                 <q-card
+                  :dark="color.cardBodyDark"
                   class="text-center full-height row items-center content-center bg-card-body text-card-body"
                   flat
                   bordered

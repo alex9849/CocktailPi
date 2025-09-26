@@ -16,7 +16,7 @@
       <div class="text-h6 text-center text-black dotted-overflow-2">{{ recipe.name }}</div>
     </q-card-section>
     <q-card-section class="q-pa-none col-12 relative-position">
-      <div class="absolute-bottom-left" style="z-index: 1">
+      <div class="absolute-top-right" style="z-index: 1">
         <q-badge class="q-ma-xs" :color="alcoholPercentageColor">
           {{ alcoholPercentageDisplay }}
         </q-badge>
