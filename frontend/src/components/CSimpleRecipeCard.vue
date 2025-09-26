@@ -17,7 +17,7 @@
     </q-card-section>
     <q-card-section class="q-pa-none col-12 relative-position">
       <div class="absolute-top-right" style="z-index: 1">
-        <q-badge class="q-ma-xs" :color="alcoholPercentageColor">
+        <q-badge class="q-ma-xs text-caption" :color="alcoholPercentageColor">
           {{ alcoholPercentageDisplay }}
         </q-badge>
       </div>
