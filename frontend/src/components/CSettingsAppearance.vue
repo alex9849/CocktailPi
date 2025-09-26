@@ -241,7 +241,7 @@ export default {
             btnPrimary: '#2a7f85',
             btnNavigationActive: '#3273dc',
             cardHeader: '#c9eaf5',
-            cardBody: '#f3f3fa',
+            cardBody: '#e8f8fc',
             cardItemGroup: '#fafaff'
           },
           simpleView: {
@@ -289,7 +289,7 @@ export default {
         this.form.colors.normal.btnPrimary = '#2a7f85'
         this.form.colors.normal.btnNavigationActive = '#3273dc'
         this.form.colors.normal.cardHeader = '#c7e8f2'
-        this.form.colors.normal.cardBody = '#f3f3fa'
+        this.form.colors.normal.cardBody = '#e8f8fc'
         this.form.colors.normal.cardItemGroup = '#fafaff'
       }
     },
