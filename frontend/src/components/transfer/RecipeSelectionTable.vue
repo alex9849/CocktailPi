@@ -2,6 +2,7 @@
   <div>
     <q-input
       :disable="disable"
+      :dark="colors.cardItemGroupDark"
       filled
       dense
       debounce="300"
@@ -11,6 +12,7 @@
       clearable
     />
     <q-table
+      :dark="colors.cardItemGroupDark"
       :loading="recipeLoading"
       :loading-label="$t('component.recipe_selection_table.loading_recipes')"
       :rows="recipes"
@@ -30,6 +32,7 @@
     >
       <template v-slot:header-selection>
         <q-checkbox
+          :dark="colors.cardItemGroupDark"
           :model-value="allRecipesSelected"
           @update:model-value="toggleSelectAllRecipes"
           :disable="disable"
@@ -42,6 +45,7 @@
       </template>
       <template v-slot:body-selection="props">
         <q-checkbox
+          :dark="colors.cardItemGroupDark"
           :model-value="props.selected"
           @update:modelValue="onSelect(props.row, $event)"
           dense
@@ -83,7 +87,10 @@
 import { ref, computed, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
+import { useStore } from 'vuex'
+const store = useStore()
 
+const colors = computed(() => store.getters['appearance/getNormalColors'])
 const props = defineProps({
   recipes: Array,
   selected: Array,

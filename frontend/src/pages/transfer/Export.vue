@@ -4,11 +4,13 @@
       <div class="row q-mb-md">
         <q-card
           flat
+          :dark="colors.cardItemGroupDark"
           bordered
           class="bg-card-item-group text-card-item-group col-12"
         >
           <q-radio
             :disable="loading"
+            :dark="colors.cardItemGroupDark"
             v-model="exportMode"
             val="all"
             :label="$t('page.transfer.export.recipes.export_all')"
@@ -16,12 +18,14 @@
           />
           <q-radio
             :disable="loading"
+            :dark="colors.cardItemGroupDark"
             v-model="exportMode"
             val="selection"
             :label="$t('page.transfer.export.recipes.export_selection')"
           />
           <q-radio
             :disable="loading"
+            :dark="colors.cardItemGroupDark"
             v-model="exportMode"
             val="none"
             :label="$t('page.transfer.export.recipes.export_none')"
@@ -53,6 +57,7 @@
           <q-radio
             :disable="loading"
             v-model="exportCollectionsMode"
+            :dark="colors.cardItemGroupDark"
             val="all"
             :label="$t('page.transfer.export.collections.export_all')"
             class="q-mr-md"
@@ -60,12 +65,14 @@
           <q-radio
             :disable="loading"
             v-model="exportCollectionsMode"
+            :dark="colors.cardItemGroupDark"
             val="selection"
             :label="$t('page.transfer.export.collections.export_selection')"
           />
           <q-radio
             :disable="loading"
             v-model="exportCollectionsMode"
+            :dark="colors.cardItemGroupDark"
             val="none"
             :label="$t('page.transfer.export.collections.export_none')"
             class="q-mr-md"
@@ -106,7 +113,10 @@ import TransferService from 'src/services/transfer.service'
 import CollectionService from 'src/services/collection.service'
 import RecipeSelectionTable from 'components/transfer/RecipeSelectionTable.vue'
 import CollectionSelectionTable from 'components/transfer/CollectionSelectionTable.vue'
+import { useStore } from 'vuex'
+const store = useStore()
 
+const colors = computed(() => store.getters['appearance/getNormalColors'])
 const exportMode = ref('none')
 const selected = ref([])
 const loading = ref(false)

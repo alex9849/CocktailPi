@@ -1,6 +1,8 @@
 <template>
   <q-card flat bordered class="bg-card-body text-card-body q-pa-md">
-    <q-stepper v-model="step" flat animated vertical>
+    <q-stepper
+      :dark="colors.cardItemGroupDark"
+      v-model="step" flat animated vertical>
       <q-step
         :name="1"
         :title="$t('page.transfer.import.stepper.select_file.label')"
@@ -9,6 +11,7 @@
       >
         <q-form @submit.prevent="uploadFile">
           <q-file
+            :dark="colors.cardItemGroupDark"
             v-model="file"
             :label="$t('page.transfer.import.stepper.select_file.select_file_btn_label')"
             accept=".zip"
@@ -33,24 +36,33 @@
       >
         <div v-if="importData">
           <div class="q-gutter-md">
-            <q-card flat bordered class="q-pa-md" v-if="importData.recipes && importData.recipes.length">
+            <q-card
+              :dark="colors.cardItemGroupDark"
+              flat
+              bordered
+              class="q-pa-md"
+              v-if="importData.recipes && importData.recipes.length"
+            >
               <div class="text-h6 q-mb-sm">
                 {{ $t('page.transfer.import.stepper.import_selection.recipes.headline') }}
               </div>
               <div class="q-gutter-y-sm">
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importRecipesMode"
                   val="all"
                   :label="$t('page.transfer.import.stepper.import_selection.recipes.selection_all')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importRecipesMode"
                   val="selection"
                   :label="$t('page.transfer.import.stepper.import_selection.recipes.selection_selected')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importRecipesMode"
                   val="none"
@@ -73,24 +85,33 @@
               </transition>
             </q-card>
 
-            <q-card flat bordered class="q-pa-md" v-if="importData.collections && importData.collections.length">
+            <q-card
+              :dark="colors.cardItemGroupDark"
+              flat
+              bordered
+              class="q-pa-md"
+              v-if="importData.collections && importData.collections.length"
+            >
               <div class="text-h6 q-mb-sm">
                 {{ $t('page.transfer.import.stepper.import_selection.collections.headline') }}
               </div>
               <div class="q-gutter-y-sm">
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importCollectionsMode"
                   val="all"
                   :label="$t('page.transfer.import.stepper.import_selection.collections.selection_all')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importCollectionsMode"
                   val="selection"
                   :label="$t('page.transfer.import.stepper.import_selection.collections.selection_selected')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importCollectionsMode"
                   val="none"
@@ -113,18 +134,26 @@
               </transition>
             </q-card>
 
-            <q-card flat bordered class="q-pa-md" v-if="importData.glasses && importData.glasses.length">
+            <q-card
+              :dark="colors.cardItemGroupDark"
+              flat
+              bordered
+              class="q-pa-md"
+              v-if="importData.glasses && importData.glasses.length"
+            >
               <div class="text-h6 q-mb-sm">
                 {{ $t('page.transfer.import.stepper.import_selection.glasses.headline') }}
               </div>
               <div class="q-gutter-y-sm">
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importGlassesMode"
                   val="all"
                   :label="$t('page.transfer.import.stepper.import_selection.glasses.selection_all')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importGlassesMode"
                   val="none"
@@ -132,19 +161,26 @@
                 />
               </div>
             </q-card>
-
-            <q-card flat bordered class="q-pa-md" v-if="importData.categories && importData.categories.length">
+            <q-card
+              :dark="colors.cardItemGroupDark"
+              flat
+              bordered
+              class="q-pa-md"
+              v-if="importData.categories && importData.categories.length"
+            >
               <div class="text-h6 q-mb-sm">
                 {{ $t('page.transfer.import.stepper.import_selection.categories.headline') }}
               </div>
               <div class="q-gutter-y-sm">
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importCategoriesMode"
                   val="all"
                   :label="$t('page.transfer.import.stepper.import_selection.categories.selection_all')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="importCategoriesMode"
                   val="none"
@@ -153,24 +189,32 @@
               </div>
             </q-card>
 
-            <q-card flat bordered class="q-pa-md">
+            <q-card
+              :dark="colors.cardItemGroupDark"
+              flat
+              bordered
+              class="q-pa-md"
+            >
               <div class="text-h6 q-mb-sm">
                 {{ $t('page.transfer.import.stepper.import_selection.duplicates.headline') }}
               </div>
               <div class="q-gutter-y-sm">
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="duplicateMode"
                   val="overwrite"
                   :label="$t('page.transfer.import.stepper.import_selection.duplicates.overwrite')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="duplicateMode"
                   val="skip"
                   :label="$t('page.transfer.import.stepper.import_selection.duplicates.skip')"
                 />
                 <q-radio
+                  :dark="colors.cardItemGroupDark"
                   :disable="loading"
                   v-model="duplicateMode"
                   val="keep_both"
@@ -219,6 +263,10 @@ import { ref, computed } from 'vue'
 import TransferService from 'src/services/transfer.service'
 import RecipeSelectionTable from 'components/transfer/RecipeSelectionTable.vue'
 import CollectionSelectionTable from 'components/transfer/CollectionSelectionTable.vue'
+import { useStore } from 'vuex'
+const store = useStore()
+
+const colors = computed(() => store.getters['appearance/getNormalColors'])
 
 const step = ref(1)
 const file = ref(null)

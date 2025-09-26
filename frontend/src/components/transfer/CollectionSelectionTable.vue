@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-input
+      :dark="colors.cardItemGroupDark"
       :disable="disable"
       filled
       dense
@@ -11,6 +12,7 @@
       clearable
     />
     <q-table
+      :dark="colors.cardItemGroupDark"
       :rows="collections"
       :columns="collectionColumns"
       row-key="id"
@@ -29,6 +31,7 @@
     >
       <template v-slot:header-selection>
         <q-checkbox
+          :dark="colors.cardItemGroupDark"
           :model-value="allCollectionsSelected"
           @update:model-value="toggleSelectAllCollections"
           :disable="disable"
@@ -41,6 +44,7 @@
       </template>
       <template v-slot:body-selection="props">
         <q-checkbox
+          :dark="colors.cardItemGroupDark"
           :model-value="props.selected"
           @update:modelValue="onSelect(props.row, $event)"
           dense
@@ -65,6 +69,10 @@
 import { ref, computed, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
+import { useStore } from 'vuex'
+const store = useStore()
+
+const colors = computed(() => store.getters['appearance/getNormalColors'])
 
 const props = defineProps({
   collections: Array,

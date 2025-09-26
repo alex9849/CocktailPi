@@ -13,10 +13,16 @@
             class="no-link-format"
           >
             <q-card
+              :dark="colors.itemGroupDark"
               flat
               bordered
               class="q-pa-md"
-              :class="{ 'bg-primary': $route.name === button.routeName, 'text-primary': $route.name === button.routeName }"
+              :class="{
+                'bg-primary': $route.name === button.routeName,
+                'text-primary': $route.name === button.routeName,
+                'bg-card-item-group': $route.name !== button.routeName,
+                'text-card-item-group': $route.name !== button.routeName
+              }"
             >
               <div class="row items-center">
                 <q-icon
@@ -36,9 +42,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
 const { t } = useI18n()
+const store = useStore()
+
+const colors = computed(() => store.getters['appearance/getNormalColors'])
 
 const data = ref([{
   icon: 'download',
