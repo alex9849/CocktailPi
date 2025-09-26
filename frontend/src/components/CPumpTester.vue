@@ -18,14 +18,17 @@
         </div>
       </div>
     </div>
-    <q-card :class="{disabled: disable || isUnknownJobRunning}">
+    <q-card
+      :dark="color.cardItemGroupDark"
+      :class="{disabled: disable || isUnknownJobRunning}"
+    >
       <div class="row items-center justify-center bg-teal-3">
         <div class="col-shrink">
-          <p class="text-subtitle2 q-pa-sm">{{ $t('component.pump_tester.ref_metric') }}</p>
+          <p class="text-subtitle2 text-black q-pa-sm">{{ $t('component.pump_tester.ref_metric') }}</p>
         </div>
         <div class="col-grow">
           <q-tabs
-            class="rounded-borders bg-teal-3"
+            class="rounded-borders bg-teal-3 text-black"
             no-caps
             stretch
             active-bg-color="teal-4"
@@ -57,10 +60,11 @@
       </div>
       <q-form
         @submit="onClickRun"
-        class="row justify-center bg-grey-3 items-center"
+        class="row justify-center bg-grey-3 items-center bg-card-item-group"
       >
         <div class="col-grow">
           <q-input
+            :dark="color.cardItemGroupDark"
             v-model:model-value="advice.amount"
             style="padding-inline: 12px"
             type="number"
@@ -137,6 +141,7 @@
             >
               <div class="col-12 col-lg">
                 <q-input
+                  :dark="color.cardItemGroupDark"
                   dense
                   outlined
                   type="number"
@@ -157,6 +162,7 @@
               </div>
               <div class="col-12 col-lg">
                 <q-input
+                  :dark="color.cardItemGroupDark"
                   dense
                   readonly
                   outlined
@@ -192,6 +198,7 @@
 import { mdiCheck, mdiEqual, mdiPlay, mdiStop, mdiSync } from '@quasar/extras/mdi-v5'
 import WebSocketService from 'src/services/websocket.service'
 import PumpService from 'src/services/pump.service'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CPumpTester',
@@ -308,6 +315,9 @@ export default {
     WebSocketService.unsubscribe(this, '/user/topic/pump/runningstate/' + String(this.pump.id))
   },
   computed: {
+    ...mapGetters({
+      color: 'appearance/getNormalColors'
+    }),
     isRunning () {
       return !!this.jobState.runningState?.jobId && this.jobState.runningState.jobId === this.runningJobId
     },

@@ -2,6 +2,7 @@
   <q-page class="page-content q-gutter-y-lg" padding>
     <h5>{{ $t('page.load_cell_mgmt.headline') }}</h5>
     <q-card
+      :dark="color.cardItemGroupDark"
       class="q-pa-md bg-card-body text-card-body"
       flat
       bordered
@@ -28,13 +29,16 @@
         >
           <q-card class="col bg-card-item-group text-card-item-group"
                   flat
+                  :dark="color.cardItemGroupDark"
                   bordered>
             <q-card-section>
               <div class="text-subtitle2">
                 {{ $t('page.load_cell_mgmt.hardware_settings.clk_pin_label') }}
               </div>
             </q-card-section>
-            <q-separator/>
+            <q-separator
+              :dark="color.cardItemGroupDark"
+            />
             <q-card-section>
               <c-gpio-selector
                 :dark="color.cardItemGroupDark"
@@ -52,13 +56,16 @@
         >
           <q-card class="col bg-card-item-group text-card-item-group"
                   flat
+                  :dark="color.cardItemGroupDark"
                   bordered>
             <q-card-section>
               <div class="text-subtitle2">
                 {{ $t('page.load_cell_mgmt.hardware_settings.dt_pin_label') }}
               </div>
             </q-card-section>
-            <q-separator/>
+            <q-separator
+              :dark="color.cardItemGroupDark"
+            />
             <q-card-section>
               <c-gpio-selector
                 disallow-expander-pins
@@ -77,6 +84,7 @@
         >
           <q-card
             class="col bg-card-item-group text-card-item-group"
+            :dark="color.cardItemGroupDark"
             flat
             bordered
           >
@@ -85,16 +93,20 @@
                 Cocktail production
               </div>
             </q-card-section>
-            <q-separator/>
+            <q-separator
+              :dark="color.cardItemGroupDark"
+            />
             <q-card-section>
               <div>
                 <q-toggle
+                  :dark="color.cardItemGroupDark"
                   label="Check if glass placed in dispensing area"
                   v-model:model-value="v.form.dispensingArea.checkGlassPlaced.$model"
                 />
               </div>
               <div>
                 <q-toggle
+                  :dark="color.cardItemGroupDark"
                   label="Use measured weight to detect glass type"
                   v-model:model-value="v.form.dispensingArea.matchGlass.$model"
                 />
@@ -121,6 +133,7 @@
       </q-form>
     </q-card>
     <q-card
+      :dark="color.cardItemGroupDark"
       class="q-pa-md bg-card-body text-card-body"
       :class="{disabled: !currentLoadCell.enable}"
       flat
@@ -145,6 +158,7 @@
       </div>
       <div class="row">
         <q-card
+          :dark="color.cardItemGroupDark"
           class="col bg-card-item-group text-card-item-group"
           flat
           bordered

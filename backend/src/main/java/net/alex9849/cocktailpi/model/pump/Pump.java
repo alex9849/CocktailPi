@@ -113,6 +113,14 @@ public abstract class Pump {
         this.name = name;
     }
 
+    public String getPrintName () {
+        if (getName() == null || getName().isEmpty()) {
+            return "Pump #" + this.id;
+        } else {
+            return getName();
+        }
+    }
+
     public abstract boolean isCanPump();
 
     public void shutdownDriver(boolean createNonExistent) {

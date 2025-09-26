@@ -45,7 +45,9 @@ public class PumpDataService {
     // CRUD actions
     //
     public List<Pump> getAllPumps() {
-        return pumpRepository.findAll();
+        List<Pump> pumps = pumpRepository.findAll();
+        pumps.sort((a, b) -> a.getPrintName().compareToIgnoreCase(b.getPrintName()));
+        return pumps;
     }
 
     public List<Pump> getAllCompletedPumps() {

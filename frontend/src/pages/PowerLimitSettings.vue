@@ -2,6 +2,7 @@
   <q-page class="page-content q-gutter-y-lg" padding>
     <h5>{{ $t('page.power_limit_mgmt.headline') }}</h5>
     <q-card
+      :dark="color.cardBodyDark"
       class="q-pa-md bg-card-body text-card-body"
       flat
       bordered
@@ -12,11 +13,13 @@
       <q-form class="q-col-gutter-md">
         <div class="row">
           <q-card
+            :dark="color.cardItemGroupDark"
             class="col bg-card-item-group text-card-item-group"
             flat
             bordered
           >
             <q-toggle
+              :dark="color.cardItemGroupDark"
               :label="$t('page.power_limit_mgmt.hardware_settings.enable_btn_label')"
               color="green"
               v-model:model-value="v.form.enable.$model"
@@ -28,9 +31,12 @@
         >
           <q-card class="col bg-card-item-group text-card-item-group"
                   flat
-                  bordered>
+                  :dark="color.cardItemGroupDark"
+                  bordered
+          >
             <q-card-section>
               <q-input
+                outlined
                 type="number"
                 :dark="color.cardItemGroupDark"
                 v-model:model-value.number="v.form.limit.$model"

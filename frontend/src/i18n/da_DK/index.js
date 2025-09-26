@@ -443,7 +443,7 @@ export default {
       configuration_warning: '<b><u>ADVARSEL!!!:</b></u> Aktivering og deaktivering af I2C-bussen vil udløse unix-kommandoer, der konfigurerer I2C-bussen. Sørg for, at SDA og SCL er valgt korrekt. Ellers kan det ske, at pins er i brug som normale pins og I2C-pins på samme tid. Dette vil få applikationen til at gå ned!'
     },
     pump_setup: {
-      headline: 'Pumpeopsætningsassistent',
+      headline: 'Pumpeopsætningsassistent ({pumpName})',
       delete_btn_label: 'Slet pumpe',
       name: {
         handle: 'Håndtag',

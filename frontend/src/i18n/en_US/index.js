@@ -540,7 +540,7 @@ export default {
         'bus. Make sure that SDA and SCL are selected correctly. Otherwise it can happen, that pins are in use as normal pins and I2C pins at the same time. This will crash the application!'
     },
     pump_setup: {
-      headline: 'Pump Setup Assistant',
+      headline: 'Pump Setup Assistant ({pumpName})',
       delete_btn_label: 'Delete Pump',
       name: {
         handle: 'Handle',

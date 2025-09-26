@@ -9,7 +9,7 @@
     >
       <div class="col q-px-sm">
         <p class="text-h5 q-ma-none dotted-overflow-1" style="line-height: 1.5rem">
-          {{ displayName }}</p>
+          {{ pump.printName }}</p>
         <p
           class="q-ma-none dotted-overflow-1"
           style="line-height: 1rem; font-family: 'Courier New',sans-serif"
@@ -463,14 +463,14 @@ export default {
         PumpService.stopPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: vm.$t('component.pump_card.notifications.pump_stopped', { name: vm.displayName })
+            message: vm.$t('component.pump_card.notifications.pump_stopped', { name: vm.pump.printName })
           })
         }).finally(this.runningBtnLoading = false)
       } else {
         PumpService.startPump(this.pump.id).then(() => {
           vm.$q.notify({
             type: 'positive',
-            message: vm.$t('component.pump_card.notifications.pump_started', { name: vm.displayName })
+            message: vm.$t('component.pump_card.notifications.pump_started', { name: vm.pump.printName })
           })
         }).finally(this.runningBtnLoading = false)
       }

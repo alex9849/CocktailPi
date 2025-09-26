@@ -29,6 +29,7 @@ public class PumpDto {
     private interface IsPumpedUp { boolean isPumpedUp(); }
     private interface PatchIsPumpedUp { Boolean getIsPumpedUp(); }
     private interface Name { String getName(); }
+    private interface PrintName { String getPrintName(); }
     private interface CanControlDirection { boolean isCanControlDirection(); }
 
     private interface IRemoveFields { Set<String> getRemoveFields(); }
@@ -98,7 +99,7 @@ public class PumpDto {
                 @JsonSubTypes.Type(value = ValveDto.Request.Create.class, name = "valve"),
                 @JsonSubTypes.Type(value = StepperPumpDto.Response.Detailed.class, name = "stepper")
         })
-        public abstract static class Detailed implements Id, FillingLevelInMl, PowerConsumption, TubeCapacityInMl,
+        public abstract static class Detailed implements PrintName, Id, FillingLevelInMl, PowerConsumption, TubeCapacityInMl,
                 CurrentIngredient, IsPumpedUp, IState, ISetupStage, Name, CanControlDirection {
             long id;
             Double tubeCapacityInMl;
@@ -107,6 +108,7 @@ public class PumpDto {
             boolean pumpedUp;
             AutomatedIngredientDto.Response.Detailed currentIngredient;
             String name;
+            String printName;
             PumpDto.State state;
             int setupStage;
             boolean canControlDirection;
@@ -122,6 +124,7 @@ public class PumpDto {
                 } else {
                     this.state = State.READY;
                 }
+                this.printName = pump.getPrintName();
                 this.setupStage = pump.getSetupStage().level;
                 this.powerConsumption = pump.getPowerConsumption();
                 this.canControlDirection = pump.isCanControlDirection();

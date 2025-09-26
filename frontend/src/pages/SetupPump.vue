@@ -1,7 +1,7 @@
 <template>
   <q-page padding class="page-content">
     <div class="row q-gutter-sm justify-around items-center q-ma-sm">
-      <p class="col-grow text-h5">{{ $t('page.pump_setup.headline') }}</p>
+      <p class="col-grow text-h5">{{ $t('page.pump_setup.headline', { pumpName: pump.printName }) }}</p>
       <q-btn
         color="negative"
         class="col-auto"
@@ -43,7 +43,7 @@
                 :error="!!attrState.name.errorMsg"
                 :loading="attrState.name.loading"
                 debounce="600"
-                :placeholder="$t('common.pump_fallback_name', {id: pump.id})"
+                :placeholder="pump.printName"
                 outlined
                 :label="$t('page.pump_setup.name.pump_identifier_label')"
               />

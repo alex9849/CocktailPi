@@ -530,7 +530,7 @@ export default {
       configuration_warning: '<b><u>WARNUNG!!!:</b></u> Das Aktivieren und Deaktivieren des I2C-Busses löst Unix-Befehle aus, die den I2C-Bus konfigurieren. Stellen Sie sicher, dass SDA und SCL richtig ausgewählt sind. Andernfalls kann es passieren, dass Pins gleichzeitig als normale Pins und I2C-Pins verwendet werden. Dies führt zum Absturz der Anwendung!'
     },
     pump_setup: {
-      headline: 'Pumpen-Setup-Assistent',
+      headline: 'Pumpen-Setup-Assistent ({pumpName})',
       delete_btn_label: 'Pumpe löschen',
       name: {
         handle: 'Bezeichnung',

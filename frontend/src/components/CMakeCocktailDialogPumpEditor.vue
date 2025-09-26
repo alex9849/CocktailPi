@@ -18,7 +18,7 @@
         </template>
         <q-table
           :columns="columns"
-          :rows="sortedPumpLayout"
+          :rows="getPumpLayout"
           :pagination="{rowsPerPage: 0}"
           hide-bottom
           flat
@@ -43,7 +43,7 @@
                   v-else
                   :name="stepperMotor"
                 />
-                {{ props.row.name ? props.row.name : ('#' + String(props.row.id)) }}
+                {{ props.row.name ? props.row.printName : ('#' + String(props.row.id)) }}
               </p>
             </q-td>
           </template>
@@ -271,7 +271,7 @@ export default {
       if (!pump.currentIngredient || !this.isIngredientNeeded(pump.currentIngredient.id)) {
         return false
       }
-      return this.sortedPumpLayout.find(x => {
+      return this.getPumpLayout.find(x => {
         return !!x.currentIngredient &&
           pump.currentIngredient.id === x.currentIngredient.id && x.state === 'READY'
       }) === pump
@@ -351,11 +351,6 @@ export default {
     }),
     allPumpIds () {
       return this.getPumpLayout.map(x => x.id)
-    },
-    sortedPumpLayout () {
-      const sorted = []
-      sorted.push(...this.getPumpLayout)
-      return sorted.sort((a, b) => a.id - b.id)
     },
     unassignedIngredients () {
       return this.neededIngredients.filter(x => !this.getReadyPumpIngredients.some(y => x.id === y.id))
