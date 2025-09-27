@@ -600,7 +600,7 @@ export default {
     ingredient_selector: {
       default_label: 'Ingrediens',
       alc_content: '{nr}% alkoholindhold',
-      alc_content_range: '{min} - {min}% alkoholindhold'
+      alc_content_range: '{min} - {max}% alkoholindhold'
     },
     make_cocktail_dialog: {
       headline: 'Bestil Cocktail',

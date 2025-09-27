@@ -646,7 +646,7 @@ export default {
       headline: 'Produktionsschritte',
       no_steps_added: 'Keine Produktionsschritte hinzugefügt!',
       alc_content: '{nr}% Alkoholgehalt',
-      alc_content_range: '{min} - {min}% Alkoholgehalt',
+      alc_content_range: '{min} - {max}% Alkoholgehalt',
       manual_instruction: 'Manueller Schritt:',
       tag_boostable: 'Boostbar',
       tag_unscaled: 'Unskaliert',
@@ -673,7 +673,7 @@ export default {
     ingredient_selector: {
       default_label: 'Zutat',
       alc_content: '{nr}% Alkoholgehalt',
-      alc_content_range: '{min} - {min}% Alkoholgehalt'
+      alc_content_range: '{min} - {max}% Alkoholgehalt'
     },
     make_cocktail_dialog: {
       headline: 'Cocktail bestellen',
