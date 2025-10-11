@@ -802,7 +802,7 @@ export default {
     ingredient_selector: {
       default_label: 'Ingredient',
       alc_content: '{nr}% alcohol content',
-      alc_content_range: '{min} - {min}% alcohol content'
+      alc_content_range: '{min} - {max}% alcohol content'
     },
     make_cocktail_dialog: {
       headline: 'Order Cocktail',

@@ -229,18 +229,15 @@
               <q-input
                 :model-value="formattedMeasurementWeight"
                 :disable="!currentLoadCell.enable"
-                style="padding-inline: 12px"
-                square
+                outlined
                 hide-bottom-space
                 readonly
-                borderless
                 :label="$t('page.load_cell_mgmt.calibration.validation.measure_field_label')"
                 :dark="color.cardItemGroupDark"
               >
                 <template v-slot:append>
                   <q-btn
                     :label="$t('page.load_cell_mgmt.calibration.validation.measure_btn_label')"
-                    color="primary"
                     outline
                     no-caps
                     size="md"
