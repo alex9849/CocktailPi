@@ -403,7 +403,7 @@ if [ "$langsel" = "1" ]; then
         echo "Installing dependencies..."
     fi
 sleep 2
-apt install --no-install-recommends -y openjdk-17-jdk i2c-tools python3-full python3-dev python3-pip pigpio wget libjna-java alsa-utils nano curl
+apt install --no-install-recommends -y default-jdk i2c-tools python3-full python3-dev python3-pip pigpio wget libjna-java alsa-utils nano curl
 
 clear
 if [ "$langsel" = "1" ]; then
@@ -472,7 +472,7 @@ else
 fi
 raspi-config nonint do_boot_behaviour B2
 
-apt install --no-install-recommends -y chromium-browser rpi-chromium-mods
+apt install --no-install-recommends -y chromium rpi-chromium-mods
 apt install --no-install-recommends -y wayfire seatd xdg-user-dirs jq
 
 raspi-config nonint do_wayland W2
@@ -510,7 +510,7 @@ if [ "$modsel" = "3" ]; then
     echo "        autostart" >> /home/pi/.config/wayfire.ini
     echo "" >> /home/pi/.config/wayfire.ini
     echo "[autostart]" >> /home/pi/.config/wayfire.ini
-    echo "chromium = chromium-browser https://chromewebstore.google.com/detail/chrome-simple-keyboard-a/cjabmkimbcmhhepelfhjhbhonnapiipj --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
+    echo "chromium = chromium https://chromewebstore.google.com/detail/chrome-simple-keyboard-a/cjabmkimbcmhhepelfhjhbhonnapiipj --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
     echo "screensaver = false" >> /home/pi/.config/wayfire.ini
     echo "dpms = false" >> /home/pi/.config/wayfire.ini
 
@@ -547,7 +547,7 @@ echo "plugins = \\" >> /home/pi/.config/wayfire.ini
 echo "        autostart" >> /home/pi/.config/wayfire.ini
 echo "" >> /home/pi/.config/wayfire.ini
 echo "[autostart]" >> /home/pi/.config/wayfire.ini
-echo "chromium = chromium-browser /home/pi/wait-for-app-html/index.html --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
+echo "chromium = chromium /home/pi/wait-for-app-html/index.html --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
 echo "screensaver = false" >> /home/pi/.config/wayfire.ini
 echo "dpms = false" >> /home/pi/.config/wayfire.ini
 
