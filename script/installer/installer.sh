@@ -339,7 +339,7 @@ if [ "$modsel" = "3" ]; then
 fi
 
 is_ssh=""
-if [[ $(who am i) =~ \([0-9a-z\:\.]+\)$ ]]; then
+if [[ $(tty) =~ ^/dev/pts/ ]]; then
     is_ssh=1
 else
     is_ssh=0;
