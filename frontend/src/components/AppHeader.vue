@@ -11,7 +11,7 @@
           size="md"
           :name="mdiGlassCocktail"
         />
-        {{ $t('header.machine_name') }}
+        {{ getProjectName }}
       </q-toolbar-title>
 
       <div>
@@ -102,7 +102,8 @@ export default {
     ...mapGetters({
       user: 'auth/getUser',
       isLoggedIn: 'auth/isLoggedIn',
-      colors: 'appearance/getNormalColors'
+      colors: 'appearance/getNormalColors',
+      getProjectName: 'common/getProjectName'
     }),
     username () {
       if (this.isLoggedIn) {

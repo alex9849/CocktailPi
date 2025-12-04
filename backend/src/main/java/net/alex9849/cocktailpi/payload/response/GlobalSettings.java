@@ -7,6 +7,10 @@ import lombok.Setter;
 public class GlobalSettings {
     private boolean allowReversePumping;
     private Donation donation;
+    private String projectName;
+    private boolean isDisableUpdater;
+    private boolean isHideProjectLinks;
+    private boolean isHideDonationButton;
 
     @Getter @Setter
     public static class Donation {

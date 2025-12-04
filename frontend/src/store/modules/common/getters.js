@@ -1,6 +1,10 @@
 export const getLastRecipeListRoute = state => state.lastRecipeListRoute
 export const isAllowReversePumping = state => state.globalSettings.allowReversePumping
 export const getDonationSettings = state => state.globalSettings.donation
+export const isHideProjectLinks = state => state.globalSettings.hideProjectLinks
+export const isHideDonationButton = state => state.globalSettings.hideDonationButton
+export const isDisableUpdater = state => state.globalSettings.disableUpdater
+export const getProjectName = state => state.globalSettings.projectName
 export const isShowDonateDialog = state => state.showDonateDialog
 export const showExternalLinksAsQrCode = state => state.externalLink.asQrCode
 export const getExternalLink = state => state.externalLink.destination

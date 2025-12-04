@@ -59,6 +59,18 @@ public class SystemService {
     @Value("${alex9849.app.isRaspberryPi}")
     private boolean isRaspberryPi;
 
+    @Value("${alex9849.app.disableDonation}")
+    private boolean isDisableDonation;
+
+    @Value("${alex9849.app.projectName}")
+    private String projectName;
+
+    @Value("${alex9849.app.hideProjectLinks}")
+    private boolean isHideProjectLinks;
+
+    @Value("${alex9849.app.disableUpdater}")
+    private boolean isDisableUpdater;
+
     @Value("${alex9849.app.build.version}")
     private String appVersion; // = "1.0.0";
 
@@ -129,6 +141,10 @@ public class SystemService {
 
     public GlobalSettings getGlobalSettings() {
         GlobalSettings globalSettings = new GlobalSettings();
+        globalSettings.setProjectName(this.projectName);
+        globalSettings.setDisableUpdater(isDisableUpdater);
+        globalSettings.setHideProjectLinks(isHideProjectLinks);
+        globalSettings.setHideDonationButton(isDisableDonation);
         globalSettings.setAllowReversePumping(pumpUpService.getReversePumpingSettings().isEnable());
         GlobalSettings.Donation donationSettings = new GlobalSettings.Donation();
         donationSettings.setDonated(Boolean.parseBoolean(optionsRepository.getOption("Donated").orElse(null)));
@@ -136,7 +152,7 @@ public class SystemService {
         long timeDonationDisclaimerSeen = Long.parseLong(stringTimeDonationDisclaimerSeen);
         long timeElapsedDonationDisclaimer = System.currentTimeMillis() - timeDonationDisclaimerSeen;
         boolean showDonationDisclaimer = timeElapsedDonationDisclaimer > (1000 * 60 * 60 * 2);
-        showDonationDisclaimer &= !donationSettings.isDonated() && !isDemoMode && !isDevMode;
+        showDonationDisclaimer &= !donationSettings.isDonated() && !isDemoMode && !isDevMode && !isDisableDonation;
         donationSettings.setShowDisclaimer(showDonationDisclaimer);
         donationSettings.setDisclaimerDelay(60000);
         globalSettings.setDonation(donationSettings);

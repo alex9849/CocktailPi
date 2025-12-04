@@ -13,7 +13,11 @@ export default function () {
         donated: false,
         showDisclaimer: false,
         disclaimerDelay: 30000
-      }
+      },
+      projectName: 'CocktailPi',
+      hideProjectLinks: false,
+      hideDonationButton: false,
+      disableUpdater: false
     },
     defaultFilter: {
       enable: false,

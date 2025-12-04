@@ -66,13 +66,16 @@
               size="md"
               :name="mdiGlassCocktail"
             />
-            CocktailPi
+            {{ getProjectName }}
           </div>
           <div class="row justify-center text-subtitle1">
             v%MAVEN_PROJECT_VERSION%
           </div>
           <div class="row justify-center text-subtitle2">©%CURRENT_YEAR% Alexander Liggesmeyer</div>
-          <div class="row justify-center">
+          <div
+            class="row justify-center"
+            v-if="!isHideProjectLinks"
+          >
             <q-btn
               v-for="link in projectLinks"
               :key="link.link"
@@ -83,7 +86,10 @@
               :icon="link.icon"
             />
           </div>
-          <div class="row justify-center">
+          <div
+            v-if="!isHideDonationButton"
+            class="row justify-center"
+          >
             <q-btn
               :label="$t('layout.full_layout.donate_btn_label')"
               :icon="mdiPiggyBank"
@@ -182,7 +188,10 @@ export default {
       getUser: 'auth/getUser',
       getAdminLevel: 'auth/getAdminLevel',
       recipeCategories: 'category/getCategories',
-      colors: 'appearance/getNormalColors'
+      colors: 'appearance/getNormalColors',
+      isHideDonationButton: 'common/isHideDonationButton',
+      isHideProjectLinks: 'common/isHideProjectLinks',
+      getProjectName: 'common/getProjectName'
     }),
     sidebarStyle () {
       return {
