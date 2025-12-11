@@ -36,6 +36,7 @@
               <div class="col-12 col-md-3 col-lg-12">
                 <status-card
                   class="full-height"
+                  v-if="showReversePumpStatus"
                   :headline="$t('component.pump_status.reverse_pumping.headline')"
                   :headline-button-label="$t('component.pump_status.configure_btn')"
                   :headline-button-destination="{name: 'reversepumpsettings'}"
@@ -43,7 +44,7 @@
                 >
                   <table class="table-no-stripes">
                     <tbody>
-                    <tr>
+                    <tr v-if="getUser.adminLevel >= 4">
                       <td>{{ $t('component.pump_status.reverse_pumping.status') }}</td>
                       <td>
                         <q-badge
@@ -72,6 +73,7 @@
               <div class="col-12 col-md-3 col-lg-12">
                 <status-card
                   class="full-height"
+                  v-if="showLoadCellStatus"
                   :headline="$t('component.pump_status.load_cell.headline')"
                   :headline-button-label="$t('component.pump_status.configure_btn')"
                   :headline-button-destination="{name: 'loadcellsettings'}"
@@ -79,7 +81,9 @@
                 >
                   <table class="table-no-stripes">
                     <tbody>
-                    <tr>
+                    <tr
+                      v-if="getUser.adminLevel >= 4"
+                    >
                       <td>{{ $t('component.pump_status.load_cell.status') }}</td>
                       <td>
                         <q-badge
@@ -292,6 +296,12 @@ export default {
         return this.$t('component.pump_status.load_cell.match_glass_yes')
       }
       return this.$t('component.pump_status.load_cell.match_glass_no')
+    },
+    showLoadCellStatus () {
+      return this.loadCellSettings?.enable || this.getUser.adminLevel >= 4
+    },
+    showReversePumpStatus () {
+      return this.reversePumpSettings?.enable || this.getUser.adminLevel >= 4
     }
   }
 }
