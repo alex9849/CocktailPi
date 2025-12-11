@@ -20,8 +20,7 @@
               :label="$t('component.reverse_pump_settings.form.enable_label')"
               color="green"
               :disable="disableForm"
-              :model-value="v.form.enable.$model"
-              @update:model-value="onToggleEnable($event)"
+              v-model:model-value="v.form.enable.$model"
             />
           </q-card>
         </div>
@@ -54,7 +53,6 @@
                 map-options
                 emit-value
                 outlined
-                clearable
                 hide-bottom-space
                 :label="$t('component.reverse_pump_settings.form.forward_state_high_label')"
                 :error-message="v.form.settings.forwardStateHigh.$errors[0]?.$message"
@@ -175,10 +173,6 @@ export default {
     ...mapActions({
       fetchGlobalSettings: 'common/fetchGlobalSettings'
     }),
-    onToggleEnable (newValue) {
-      this.v.form.enable.$model = newValue
-      this.v.$touch()
-    },
     onClickSave () {
       this.saving = true
       PumpSettingsService.setReversePumpSettings(this.form)

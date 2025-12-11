@@ -26,7 +26,9 @@
           no-caps
         />
       </TopButtonArranger>
-      <TopButtonArranger>
+      <TopButtonArranger
+        v-if="getUser.adminLevel >= 4"
+      >
         <q-btn
           color="info"
           :label="showPumpDetails ? $t('component.pump_mgmt.hide_pump_details_btn_label'):$t('component.pump_mgmt.show_pump_details_btn_label')"

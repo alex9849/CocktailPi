@@ -4,7 +4,7 @@
       class="overflow-hidden bg-transparent"
       flat
     >
-      <q-card-section class="q-pa-xs row">
+      <q-card-section class="q-px-none q-py-xs row">
         <q-select
           :dark="dark"
           class="col-6 field-left"

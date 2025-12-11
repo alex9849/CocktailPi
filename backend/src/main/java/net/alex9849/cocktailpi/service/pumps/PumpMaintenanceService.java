@@ -383,6 +383,7 @@ public class PumpMaintenanceService {
         }
         this.reversePumpSettings = null;
         configureReversePumpSettings(true);
+        this.webSocketService.broadcastPumpLayout(pumpDataService.getAllPumps());
     }
 
     public synchronized ReversePumpSettings getReversePumpingSettings() {

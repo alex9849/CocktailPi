@@ -159,7 +159,7 @@
               :props="props"
             >
               <c-pump-up-button
-                v-if="isAllowReversePumping && props.row.canControlDirection"
+                v-if="props.row.canControlDirection"
                 :pump-id="props.row.id"
                 :current-pump-direction-reversed="!getPumpState(props.row.id).forward"
                 :running="getPumpState(props.row.id).inPumpUp"

@@ -18,11 +18,6 @@ public class DcPump extends OnOffPump {
         this.timePerClInMs = timePerClInMs;
     }
 
-    @Override
-    public boolean isCanControlDirection() {
-        return true;
-    }
-
     public DCMotor getMotorDriver() {
         return (DCMotor) super.getMotorDriver();
     }

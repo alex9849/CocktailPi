@@ -3,6 +3,7 @@ package net.alex9849.cocktailpi.model.pump;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.service.IngredientService;
+import net.alex9849.cocktailpi.service.pumps.PumpMaintenanceService;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.motor.IMotor;
 
@@ -68,7 +69,10 @@ public abstract class Pump {
         return isPumpedUp;
     }
 
-    public abstract boolean isCanControlDirection();
+    public boolean isCanControlDirection() {
+        PumpMaintenanceService service = SpringUtility.getBean(PumpMaintenanceService.class);
+        return service.getReversePumpingSettings().isEnable();
+    }
 
     public void setPumpedUp(boolean pumpedUp) {
         isPumpedUp = pumpedUp;
