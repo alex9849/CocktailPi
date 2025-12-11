@@ -153,6 +153,9 @@ export default {
         }, {
           value: 3,
           label: 'Admin'
+        }, {
+          value: 4,
+          label: 'Super-Admin'
         }
       ]
     }

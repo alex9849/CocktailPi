@@ -508,7 +508,8 @@ export default {
           user: 'Benutzer',
           recipe_creator: 'Rezept-Ersteller',
           pump_ingredient_editor: 'Pumpen-Zutaten-Bearbeiter',
-          admin: 'Admin'
+          admin: 'Admin',
+          super_admin: 'Super-Admin'
         }
       },
       notifications: {

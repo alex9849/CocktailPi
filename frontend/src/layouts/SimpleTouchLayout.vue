@@ -8,7 +8,7 @@
               size="md"
               :name="mdiGlassCocktail"
             />
-            {{ $t('simple_header.machine_name') }}
+            {{ getProjectName }}
           </q-toolbar-title>
         </div>
         <transition
@@ -100,7 +100,8 @@ export default {
   computed: {
     ...mapGetters({
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
-      color: 'appearance/getSvColors'
+      color: 'appearance/getSvColors',
+      getProjectName: 'common/getProjectName'
     }),
     progressDetailsColor () {
       if (this.color.cocktailProgressDark) {

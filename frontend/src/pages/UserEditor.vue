@@ -153,6 +153,9 @@ export default {
           }, {
             value: 3,
             label: this.$t('page.user_editor.form.roles.admin')
+          }, {
+            value: 4,
+            label: this.$t('page.user_editor.form.roles.super_admin')
           }
         ]
       }

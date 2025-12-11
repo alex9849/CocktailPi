@@ -15,6 +15,7 @@
             ©%CURRENT_YEAR% Alexander Liggesmeyer
           </p>
           <q-btn
+            v-if="!isHideDonationButton"
             outline
             dense
             :icon="mdiPiggyBank"
@@ -100,7 +101,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      color: 'appearance/getSvColors'
+      color: 'appearance/getSvColors',
+      isHideDonationButton: 'common/isHideDonationButton'
     }),
     donateBtnTextColor () {
       if (this.color.headerDark) {

@@ -106,7 +106,7 @@ public class SeedDataInserter {
         defaultUser.setUsername("Admin");
         defaultUser.setPassword("123456");
         defaultUser.setAccountNonLocked(true);
-        defaultUser.setAuthority(ERole.ROLE_ADMIN);
+        defaultUser.setAuthority(ERole.ROLE_SUPER_ADMIN);
         return userService.createUser(defaultUser);
     }
 
