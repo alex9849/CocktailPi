@@ -10,7 +10,9 @@
           <q-separator/>
           <q-card-section>
             <div class="row q-col-gutter-sm justify-center">
-              <div class="col-12 col-md-3 col-lg-12">
+              <div
+                :class="statusCardClass"
+              >
                 <status-card
                   class="full-height"
                   :headline="$t('component.pump_status.pumps.headline')"
@@ -33,10 +35,12 @@
                   </table>
                 </status-card>
               </div>
-              <div class="col-12 col-md-3 col-lg-12">
+              <div
+                v-if="showReversePumpStatus"
+                :class="statusCardClass"
+              >
                 <status-card
                   class="full-height"
-                  v-if="showReversePumpStatus"
                   :headline="$t('component.pump_status.reverse_pumping.headline')"
                   :headline-button-label="$t('component.pump_status.configure_btn')"
                   :headline-button-destination="{name: 'reversepumpsettings'}"
@@ -70,10 +74,12 @@
                   </table>
                 </status-card>
               </div>
-              <div class="col-12 col-md-3 col-lg-12">
+              <div
+                v-if="showLoadCellStatus"
+                :class="statusCardClass"
+              >
                 <status-card
                   class="full-height"
-                  v-if="showLoadCellStatus"
                   :headline="$t('component.pump_status.load_cell.headline')"
                   :headline-button-label="$t('component.pump_status.configure_btn')"
                   :headline-button-destination="{name: 'loadcellsettings'}"
@@ -128,8 +134,8 @@
                 </status-card>
               </div>
               <div
-                v-if="getUser.adminLevel >= 4"
-                class="col-12 col-md-3 col-lg-12"
+                v-if="showPowerLimitStatus"
+                :class="statusCardClass"
               >
                 <status-card
                   class="full-height"
@@ -181,12 +187,6 @@ import StatusCard from 'components/StatusCard.vue'
 export default {
   name: 'CPumpStatus',
   components: { StatusCard },
-  props: {
-    classed: {
-      type: String,
-      default: ''
-    }
-  },
   data: () => {
     return {
       reversePumpSettings: {},
@@ -302,6 +302,28 @@ export default {
     },
     showReversePumpStatus () {
       return this.reversePumpSettings?.enable || this.getUser.adminLevel >= 4
+    },
+    showPowerLimitStatus () {
+      return this.getUser.adminLevel >= 4
+    },
+    statusCardsShown () {
+      let count = 1
+      if (this.showLoadCellStatus) { count += 1 }
+      if (this.showReversePumpStatus) { count += 1 }
+      if (this.showPowerLimitStatus) { count += 1 }
+      return count
+    },
+    statusCardClass () {
+      switch (this.statusCardsShown) {
+        case 1:
+          return 'col-12'
+        case 2:
+          return 'col-12 col-md-6 col-lg-12'
+        case 3:
+          return 'col-12 col-md-4 col-lg-12'
+        default:
+          return 'col-12 col-md-3 col-lg-12'
+      }
     }
   }
 }
