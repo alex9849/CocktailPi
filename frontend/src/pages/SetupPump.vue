@@ -130,8 +130,8 @@
             <q-btn
               flat
               @click="prevStep"
-              color="primary"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
+              textColor="card-body"
             />
           </q-stepper-navigation>
         </div>
@@ -302,8 +302,8 @@
             />
             <q-btn
               flat @click="prevStep"
-              color="primary"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
+              textColor="card-body"
               class="q-ml-sm"
             />
           </q-stepper-navigation>
@@ -413,6 +413,7 @@
               flat @click="prevStep"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
               class="q-ml-sm"
+              textColor="card-body"
             />
           </q-stepper-navigation>
         </div>

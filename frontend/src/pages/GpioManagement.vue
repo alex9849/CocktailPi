@@ -12,26 +12,17 @@
           <q-card-section class="q-py-md">
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 col-md-12">
-                <q-card
-                  :dark="color.cardHeaderDark"
-                  flat
-                  bordered
-                  class="bg-card-item-group text-card-item-group"
+                <status-card
+                  :headline="$t('page.gpio_mgmt.status_box.pin_box.headline')"
                 >
-                  <q-card-section class="q-py-xs bg-card-header text-card-header">
-                    <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.pin_box.headline') }}</p>
-                  </q-card-section>
-                  <q-separator />
-                  <q-card-section
+                  <div
                     v-if="gpioStatus.loading"
-                    class="row q-py-sm q-col-gutter-xs"
                   >
                     <q-skeleton class="col-12 col-sm-6 col-md-12" type="text" />
                     <q-skeleton class="col-12 col-sm-6 col-md-12" type="text" />
-                  </q-card-section>
-                  <q-card-section
+                  </div>
+                  <div
                     v-else
-                    class="row q-py-sm q-col-gutter-xs"
                   >
                     <p class="col-12 col-sm-6 col-md-12">
                       {{ $t('page.gpio_mgmt.status_box.pin_box.pin_usage') }}
@@ -45,79 +36,63 @@
                         {{ gpioStatus.data.boardsAvailable}}
                       </q-badge>
                     </p>
-                  </q-card-section>
-                </q-card>
+                  </div>
+                </status-card>
               </div>
               <div class="col-12 col-sm-6 col-md-12">
-                <q-card
-                  flat
-                  bordered
-                  :dark="color.cardHeaderDark"
-                  class="bg-card-item-group text-card-item-group"
+                <status-card
+                  :headline="$t('page.gpio_mgmt.status_box.i2c_box.headline')"
+                  :headline-button-icon="mdiPencilOutline"
+                  :headline-button-label="$t('page.gpio_mgmt.status_box.i2c_box.configure_btn_label')"
+                  :headline-button-destination="{name: 'i2cmanagement'}"
                 >
-                  <q-card-section
-                    class="q-py-xs q-pr-xs bg-cyan-1 row items-center bg-card-header text-card-header"
-                  >
-                    <div class="col">
-                      <p class="text-weight-medium">{{ $t('page.gpio_mgmt.status_box.i2c_box.headline') }}</p>
-                    </div>
-                    <div class="col-shrink">
-                      <q-btn
-                        color="info"
-                        :label="$t('page.gpio_mgmt.status_box.i2c_box.configure_btn_label')"
-                        :icon="mdiPencilOutline"
-                        @click="$router.push({name: 'i2cmanagement'})"
-                        dense
-                        no-caps
-                        size="sm"
+                  <template v-slot:cardBody>
+                    <q-separator />
+                    <q-card-section class="row q-py-sm q-col-gutter-xs">
+                      <q-skeleton
+                        v-if="i2cStatus.loading"
+                        class="col-12 col-sm-6 col-md-12" type="text"
                       />
-                    </div>
-                  </q-card-section>
-                  <q-separator />
-                  <q-card-section class="row q-py-sm q-col-gutter-xs">
-                    <q-skeleton
-                      v-if="i2cStatus.loading"
-                      class="col-12 col-sm-6 col-md-12" type="text"
-                    />
-                    <p
-                      v-else
-                      class="col-12 col-sm-6 col-md-12"
-                    >
-                      {{ $t('page.gpio_mgmt.status_box.i2c_box.status') }}
-                      <q-badge
-                        :class="{'bg-negative': !i2cStatus.data.enable , 'bg-positive': i2cStatus.data.enable}"
+                      <p
+                        v-else
+                        class="col-12 col-sm-6 col-md-12"
                       >
-                        {{i2cStatus.data.enable ? 'enabled' : 'disabled'}}
-                      </q-badge>
-                    </p>
-                  </q-card-section>
-                  <q-separator
-                    v-if="i2cStatus.data.enable"
-                  />
-                  <q-card-section
-                    v-if="i2cStatus.data.enable"
-                    class="row q-py-sm q-col-gutter-xs"
-                  >
-                    <div class="col-12">
-                      <p>
-                        {{ $t('page.gpio_mgmt.status_box.i2c_box.sda_pin') }}
+                        {{ $t('page.gpio_mgmt.status_box.i2c_box.status') }}
                         <q-badge
-                          class="bg-info"
+                          :class="{'bg-negative': !i2cStatus.data.enable , 'bg-positive': i2cStatus.data.enable}"
                         >
-                          {{ i2cStatus.data.sdaPin.boardName + ' / ' + i2cStatus.data.sdaPin.pinName }}
+                          {{i2cStatus.data.enable ? 'enabled' : 'disabled'}}
                         </q-badge>
                       </p>
-                      <p>
-                        {{ $t('page.gpio_mgmt.status_box.i2c_box.scl_pin') }}
-                        <q-badge
-                          class="bg-info"
-                        >
-                          {{i2cStatus.data.sclPin.boardName + ' / ' + i2cStatus.data.sclPin.pinName}}
-                        </q-badge>
-                      </p>
-                    </div>
-                  </q-card-section>
-                </q-card>
+                    </q-card-section>
+                    <q-separator
+                      v-if="i2cStatus.data.enable"
+                    />
+                    <q-card-section
+                      v-if="i2cStatus.data.enable"
+                      class="row q-py-sm q-col-gutter-xs"
+                    >
+                      <div class="col-12">
+                        <p>
+                          {{ $t('page.gpio_mgmt.status_box.i2c_box.sda_pin') }}
+                          <q-badge
+                            class="bg-info"
+                          >
+                            {{ i2cStatus.data.sdaPin.boardName + ' / ' + i2cStatus.data.sdaPin.pinName }}
+                          </q-badge>
+                        </p>
+                        <p>
+                          {{ $t('page.gpio_mgmt.status_box.i2c_box.scl_pin') }}
+                          <q-badge
+                            class="bg-info"
+                          >
+                            {{i2cStatus.data.sclPin.boardName + ' / ' + i2cStatus.data.sclPin.pinName}}
+                          </q-badge>
+                        </p>
+                      </div>
+                    </q-card-section>
+                  </template>
+                </status-card>
               </div>
             </div>
           </q-card-section>
@@ -289,6 +264,7 @@ import GpioService from 'src/services/gpio.service'
 import SystemService from 'src/services/system.service'
 import CQuestion from 'components/CQuestion.vue'
 import { mapGetters } from 'vuex'
+import StatusCard from 'components/StatusCard.vue'
 export default {
   name: 'GpioManagement',
   data: () => {
@@ -324,7 +300,7 @@ export default {
       }
     }
   },
-  components: { CQuestion, CGpioExpanderExpansionItem },
+  components: { StatusCard, CQuestion, CGpioExpanderExpansionItem },
   created () {
     this.mdiAlert = mdiAlert
     this.mdiDelete = mdiDelete
