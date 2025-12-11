@@ -3,7 +3,10 @@
     v-model:filter="filter"
     @clickSearch="updateRecipes"
   />
-  <div class="row q-col-gutter-lg">
+  <div
+    v-touch-swipe.horizontal="handlePageSwipe"
+    class="row q-col-gutter-lg"
+  >
     <q-pagination
       v-if="pagination.totalPages > 1"
       class="col-12 flex justify-center"
@@ -58,6 +61,15 @@ export default {
   components: { CSimpleRecipesFilterDrawer, CSimpleRecipeList },
   mixins: [recipeSearchListLogic],
   emits: ['empty'],
+  methods: {
+    handlePageSwipe ({ evt, ...newInfo }) {
+      if (newInfo.direction === 'left' && this.pagination.page !== 0) {
+        this.onPageClick(this.pagination.page + 1)
+      } else if (newInfo.direction === 'right' && this.pagination.page !== this.pagination.totalPages) {
+        this.onPageClick(this.pagination.page - 1)
+      }
+    }
+  },
   watch: {
     recipes (newVal) {
       if (this.loading) {
