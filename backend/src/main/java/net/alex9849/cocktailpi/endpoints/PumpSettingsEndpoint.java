@@ -40,13 +40,13 @@ public class PumpSettingsEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.GET)
     public ResponseEntity<?> getReversePumpSettings() {;
         return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(reversePumpSettingsService.getReversePumpingSettings()));
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "loadcell", method = RequestMethod.GET)
     public ResponseEntity<?> getLoadCell() {
         LoadCell loadCell = loadCellService.getLoadCell();
@@ -74,13 +74,13 @@ public class PumpSettingsEndpoint {
         }
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "loadcell/read", method = RequestMethod.GET)
     public ResponseEntity<?> readLoadCell() {
         return ResponseEntity.ok(loadCellService.readLoadCell());
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "loadcell/calibratezero", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellZero() {
         return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
@@ -88,7 +88,7 @@ public class PumpSettingsEndpoint {
         ));
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "loadcell/calibratereference", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellRefWeight(@RequestBody @NotNull Long referenceWeight) {
         return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
@@ -97,7 +97,7 @@ public class PumpSettingsEndpoint {
         ));
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "powerlimit", method = RequestMethod.GET)
     public ResponseEntity<?> getPowerLimit() {
         PowerLimitSettingsDto.Duplex.Detailed powerLimitSaved = powerLimitService.getPowerLimit();

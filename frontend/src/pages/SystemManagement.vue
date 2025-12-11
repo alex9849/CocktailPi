@@ -22,8 +22,14 @@
         </div>
       </q-card-section>
     </q-card>
-    <h5>Update</h5>
-    <c-settings-updater/>
+    <h5
+      v-if="getUser.adminLevel >= 4"
+    >
+      Update
+    </h5>
+    <c-settings-updater
+      v-if="getUser.adminLevel >= 4"
+    />
     <h5>{{ $t('page.system_mgmt.default_filter.headline') }}</h5>
     <q-card
       bordered
@@ -188,7 +194,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      getUser: 'auth/getUser'
     })
   },
   methods: {

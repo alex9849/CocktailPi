@@ -284,7 +284,9 @@ export default {
     this.mdiPencilOutline = mdiPencilOutline
     this.fetchLoadCell()
     this.fetchReversePumpSettings()
-    this.fetchPowerLimitSettings()
+    if (this.getUser.adminLevel >= 4) {
+      this.fetchPowerLimitSettings()
+    }
   },
   methods: {
     fetchLoadCell () {

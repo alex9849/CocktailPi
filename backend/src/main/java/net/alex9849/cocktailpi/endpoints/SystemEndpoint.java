@@ -84,7 +84,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "settings/i2c", method = RequestMethod.GET)
     public ResponseEntity<?> getI2C() throws IOException {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
@@ -114,13 +114,13 @@ public class SystemEndpoint {
         return ResponseEntity.ok(systemService.getVersion());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "checkupdate", method = RequestMethod.GET)
     public ResponseEntity<?> checkUpdate() {
         return ResponseEntity.ok(systemService.checkUpdate());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "performupdate", method = RequestMethod.POST)
     public ResponseEntity<?> performUpdate() {
         systemService.performUpdate();
