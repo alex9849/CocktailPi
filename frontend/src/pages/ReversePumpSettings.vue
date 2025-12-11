@@ -7,7 +7,10 @@
       bordered
     >
       <q-form class="q-col-gutter-md">
-        <div class="row">
+        <div
+          v-if="getUser.adminLevel >= 4"
+          class="row"
+        >
           <q-card
             class="col bg-card-item-group text-card-item-group"
             flat
@@ -23,7 +26,7 @@
           </q-card>
         </div>
         <div class="row"
-             v-if="v.form.enable.$model"
+             v-if="v.form.enable.$model && getUser.adminLevel >= 4"
         >
           <q-card class="col bg-card-item-group text-card-item-group"
                   flat
@@ -204,7 +207,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      getUser: 'auth/getUser'
     }),
     disableForm () {
       return this.saving
