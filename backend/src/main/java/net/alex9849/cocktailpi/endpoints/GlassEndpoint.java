@@ -35,7 +35,7 @@ public class GlassEndpoint {
         return ResponseEntity.ok(new GlassDto.Duplex.Detailed(glass));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createGlass(@Valid @RequestBody GlassDto.Duplex.Detailed glassDto, UriComponentsBuilder uriBuilder) {
         Glass glass = glassService.createGlass(glassService.fromDto(glassDto));
@@ -43,7 +43,7 @@ public class GlassEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new GlassDto.Duplex.Detailed(glass));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateGlass(@PathVariable(value = "id") long id, @Valid @RequestBody GlassDto.Duplex.Detailed glassDto) {
         Glass oldGlass = glassService.getById(id);
@@ -56,7 +56,7 @@ public class GlassEndpoint {
         return ResponseEntity.ok(new GlassDto.Duplex.Detailed(glass));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteGlass(@PathVariable(value = "id") long id) {
         glassService.deleteGlass(id);

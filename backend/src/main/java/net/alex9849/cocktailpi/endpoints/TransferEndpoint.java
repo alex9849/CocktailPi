@@ -32,7 +32,7 @@ public class TransferEndpoint {
     }
 
     @RequestMapping(value = {"import"}, method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> uploadImport(@RequestPart(value = "file", required = false) MultipartFile importFile, UriComponentsBuilder uriBuilder) throws IOException {
         long id = transferService.newImport(importFile);
         ExportContents exportContents = transferService.readExport(id);
@@ -41,7 +41,7 @@ public class TransferEndpoint {
     }
 
     @RequestMapping(value = {"import/{id}"}, method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> confirmImport(
             @PathVariable("id") long importId,
             @RequestBody ImportConfirmRequest importRequest) {
@@ -52,7 +52,7 @@ public class TransferEndpoint {
 
 
     @RequestMapping(value = {"export"}, method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> startExport(@RequestBody ExportRequest exportRequest) throws IOException {
         byte[] zipBytes = transferService.generateExport(exportRequest);
         String filename = "cocktailpi_export_" + java.time.LocalDateTime.now().toString().replace(":", "-") + ".zip";
@@ -63,7 +63,7 @@ public class TransferEndpoint {
     }
 
     @RequestMapping(value = {"export/recipes"}, method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getRecipes() throws IOException {
         List<RecipeDto.Response.Detailed> allRecipes = recipeService.getAll().stream().map(RecipeDto.Response.Detailed::toDto).collect(Collectors.toList());
         return ResponseEntity.ok(allRecipes);

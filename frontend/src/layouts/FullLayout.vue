@@ -286,7 +286,7 @@ export default {
               exact: false
             }, {
               label: this.$t('layout.full_layout.sidebar.administration.gpio_mgmt'),
-              reqLevel: 3,
+              reqLevel: 4,
               to: { name: 'gpiomanagement' },
               exact: false
             }, {
@@ -301,7 +301,7 @@ export default {
               exact: false
             }, {
               label: this.$t('layout.full_layout.sidebar.administration.event_mgmt'),
-              reqLevel: 3,
+              reqLevel: 4,
               to: { name: 'eventmanagement' },
               exact: false
             }, {

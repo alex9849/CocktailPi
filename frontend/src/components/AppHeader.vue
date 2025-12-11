@@ -69,7 +69,9 @@ export default {
     }),
     logout () {
       this.$router.push({ name: 'login' })
-      this.storeLogout()
+      this.$nextTick(() => {
+        this.storeLogout()
+      })
     },
     reload () {
       let search = location.search

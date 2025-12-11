@@ -26,7 +26,7 @@ public class UserEndpoint {
     @Autowired
     UserService userService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto.Request.Create createUser, UriComponentsBuilder uriBuilder) {
         User user = userService.fromDto(createUser);
@@ -86,7 +86,7 @@ public class UserEndpoint {
 
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable("id") long userId) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -121,7 +121,7 @@ public class UserEndpoint {
         return ResponseEntity.ok(new UserDto.Response.Detailed(user));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getUsers() {
         List<UserDto.Response.Detailed> userDtoList = userService.getUsers()

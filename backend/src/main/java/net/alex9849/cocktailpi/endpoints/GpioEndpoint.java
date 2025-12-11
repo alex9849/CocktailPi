@@ -21,9 +21,9 @@ public class GpioEndpoint {
     @Autowired
     private GpioService gpioService;
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.GET)
-    private ResponseEntity<?> getGpioBoards(@RequestParam(value = "dType", required = false) String dType) {
+    public ResponseEntity<?> getGpioBoards(@RequestParam(value = "dType", required = false) String dType) {
         List<GpioBoard> boards;
         if(dType == null) {
             boards = gpioService.getGpioBoards();
@@ -33,9 +33,9 @@ public class GpioEndpoint {
         return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    private ResponseEntity<?> getGpioBoard(@PathVariable("id") long id) {
+    public ResponseEntity<?> getGpioBoard(@PathVariable("id") long id) {
         GpioBoard board = gpioService.getGpioBoard(id);
         if(board == null) {
             return ResponseEntity.notFound().build();
@@ -43,18 +43,18 @@ public class GpioEndpoint {
         return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(board));
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    private ResponseEntity<?> createGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> createGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, UriComponentsBuilder uriBuilder) {
         GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
         gpioBoard = gpioService.createGpioBoard(gpioBoard);
         UriComponents uriComponents = uriBuilder.path("/api/gpio/{id}").buildAndExpand(gpioBoard.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
-    private ResponseEntity<?> updateGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, @PathVariable("id") long id) {
+    public ResponseEntity<?> updateGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, @PathVariable("id") long id) {
         GpioBoard oldGpioBoard = gpioService.getGpioBoard(id);
         if(oldGpioBoard == null) {
             return ResponseEntity.notFound().build();
@@ -65,9 +65,9 @@ public class GpioEndpoint {
         return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(gpioBoard));
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    private ResponseEntity<?> deleteGpioBoard(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteGpioBoard(@PathVariable("id") long id) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(id);
         if(gpioBoard == null) {
             return ResponseEntity.notFound().build();
@@ -76,15 +76,15 @@ public class GpioEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "status", method = RequestMethod.GET)
-    private ResponseEntity<?> getStatus() {
+    public ResponseEntity<?> getStatus() {
         return ResponseEntity.ok(gpioService.getGpioStatus());
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "{id}/pin", method = RequestMethod.GET)
-    private ResponseEntity<?> getGpioPins(@PathVariable(value = "id") long boardId) {
+    public ResponseEntity<?> getGpioPins(@PathVariable(value = "id") long boardId) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);
         if(gpioBoard == null) {
             return ResponseEntity.notFound().build();
@@ -92,9 +92,9 @@ public class GpioEndpoint {
         return ResponseEntity.ok(gpioBoard.getPins().stream().map(PinDto.Response.Detailed::new).toList());
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(path = "{id}/restart", method = RequestMethod.POST)
-    private ResponseEntity<?> restartBoard(@PathVariable(value = "id") long boardId) {
+    public ResponseEntity<?> restartBoard(@PathVariable(value = "id") long boardId) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);
         if(gpioBoard == null) {
             return ResponseEntity.notFound().build();

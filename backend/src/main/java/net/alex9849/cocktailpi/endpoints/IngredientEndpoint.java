@@ -32,7 +32,7 @@ public class IngredientEndpoint {
     IngredientService ingredientService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
+    public ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
                                      @RequestParam(value = "filterManualIngredients", defaultValue = "false") boolean filterManualIngredients,
                                      @RequestParam(value = "filterAutomaticIngredients", defaultValue = "false") boolean filterAutomaticIngredients,
                                      @RequestParam(value = "filterIngredientGroups", defaultValue = "false") boolean filterIngredientGroups,
@@ -62,9 +62,9 @@ public class IngredientEndpoint {
                 .stream().map(IngredientDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    ResponseEntity<?> createIngredient(@Valid @RequestPart("ingredient") IngredientDto.Request.Create ingredientDto,
+    public ResponseEntity<?> createIngredient(@Valid @RequestPart("ingredient") IngredientDto.Request.Create ingredientDto,
                                        @RequestPart(value = "image", required = false) MultipartFile file,
                                        UriComponentsBuilder uriBuilder) throws IOException {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
@@ -85,9 +85,9 @@ public class IngredientEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(IngredientDto.Response.Detailed.toDto(ingredient));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateIngredient(@PathVariable("id") long id,
+    public ResponseEntity<?> updateIngredient(@PathVariable("id") long id,
                                        @Valid @RequestPart("ingredient") IngredientDto.Request.Create ingredientDto,
                                        @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
                                        @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
@@ -115,7 +115,7 @@ public class IngredientEndpoint {
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
+    public ResponseEntity<?> getRecipeImage(@PathVariable("id") long id) {
         byte[] image = ingredientService.getImage(id);
         if(image == null) {
             return ResponseEntity.notFound().build();
@@ -123,33 +123,33 @@ public class IngredientEndpoint {
         return ResponseEntity.ok(image);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    ResponseEntity<?> deleteIngredient(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteIngredient(@PathVariable("id") long id) {
         if(!ingredientService.deleteIngredient(id)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "export", method = RequestMethod.GET)
-    ResponseEntity<?> getIngredientExport() {
+    public ResponseEntity<?> getIngredientExport() {
         List<Ingredient> ingredients = ingredientService.getIngredientsInExportOrder();
         return ResponseEntity.ok(ingredients.stream().map(IngredientDto.Response.Detailed::toDto)
                 .collect(Collectors.toList()));
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/bar", method = RequestMethod.PUT)
-    ResponseEntity<?> addToBar(@PathVariable("id") long id) {
+    public ResponseEntity<?> addToBar(@PathVariable("id") long id) {
         ingredientService.setInBar(id, true);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/bar", method = RequestMethod.DELETE)
-    ResponseEntity<?> removeFromBar(@PathVariable("id") long id) {
+    public ResponseEntity<?> removeFromBar(@PathVariable("id") long id) {
         ingredientService.setInBar(id, false);
         return ResponseEntity.ok().build();
     }

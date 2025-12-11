@@ -35,7 +35,7 @@ public class CategoryEndpoint {
         return ResponseEntity.ok(new CategoryDto.Duplex.Detailed(category));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto.Request.Create categoryDto, UriComponentsBuilder uriBuilder) {
         Category category = categoryService.createCategory(categoryService.fromDto(categoryDto));
@@ -43,7 +43,7 @@ public class CategoryEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(new CategoryDto.Duplex.Detailed(category));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCategory(@PathVariable(value = "id") long id, @Valid @RequestBody CategoryDto.Request.Create categoryDto) {
         Category oldCategory = categoryService.getCategory(id);
@@ -56,7 +56,7 @@ public class CategoryEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCategory(@PathVariable(value = "id") long id) {
         categoryService.deleteCategory(id);

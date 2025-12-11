@@ -49,7 +49,7 @@ public class RecipeEndpoint {
 
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
+    public ResponseEntity<?> getRecipesByFilter(@RequestParam(value = "ownerId", required = false) Long ownerId,
                                          @RequestParam(value = "inCollection", required = false) Long inCollectionId,
                                          @RequestParam(value = "fabricable", defaultValue = "all") String fabricable,
                                          @RequestParam(value = "containsIngredients", required = false) Long[] containsIngredients,
@@ -87,7 +87,7 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    ResponseEntity<?> getRecipe(@PathVariable("id") long id,
+    public ResponseEntity<?> getRecipe(@PathVariable("id") long id,
                                 @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {
         Recipe recipe;
         if(isIngredient) {
@@ -102,7 +102,7 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "ingredient/{id}", method = RequestMethod.GET)
-    ResponseEntity<?> getIngredientRecipe(@PathVariable("id") long id) {
+    public ResponseEntity<?> getIngredientRecipe(@PathVariable("id") long id) {
         IngredientRecipe recipe = recipeService.getIngredientRecipe(id);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
@@ -111,14 +111,14 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "ingredient", method = RequestMethod.GET)
-    ResponseEntity<?> getIngredientRecipes() {
+    public ResponseEntity<?> getIngredientRecipes() {
         List<IngredientRecipe> recipes = recipeService.getCurrentIngredientRecipes();
         return ResponseEntity.ok(recipes.stream().map(IngredientRecipeDto.Response.SearchResult::toDto).toList());
     }
 
-    @PreAuthorize("hasRole('RECIPE_CREATOR')")
+    @PreAuthorize("hasAuthority('RECIPE_CREATOR')")
     @RequestMapping(path = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
+    public ResponseEntity<?> createRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
@@ -140,9 +140,9 @@ public class RecipeEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(RecipeDto.Response.Detailed.toDto(recipe));
     }
 
-    @PreAuthorize("hasRole('RECIPE_CREATOR')")
+    @PreAuthorize("hasAuthority('RECIPE_CREATOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
+    public ResponseEntity<?> updateRecipe(@Valid @RequestPart("recipe") RecipeDto.Request.Create recipeDto,
                                    @RequestPart(value = "image", required = false) MultipartFile file,
                                    @RequestParam(value = "removeImage", defaultValue = "false") boolean removeImage,
                                    @PathVariable("id") long id) throws IOException {
@@ -177,7 +177,7 @@ public class RecipeEndpoint {
     }
 
     @RequestMapping(path = "{id}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-    ResponseEntity<?> getRecipeImage(@PathVariable("id") long id,
+    public ResponseEntity<?> getRecipeImage(@PathVariable("id") long id,
                                      @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient,
                                      @RequestParam(value = "width", defaultValue = "-1") int width) throws IOException {
         byte[] image;
@@ -201,7 +201,7 @@ public class RecipeEndpoint {
 
     @PreAuthorize("hasAnyRole('RECIPE_CREATOR')")
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    ResponseEntity<?> deleteRecipe(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteRecipe(@PathVariable("id") long id) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.getById(id);
         if (recipe == null) {

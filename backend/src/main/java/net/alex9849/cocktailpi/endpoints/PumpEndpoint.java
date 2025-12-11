@@ -57,7 +57,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pump));
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
         Pump pump = pumpService.getPump(id);
@@ -68,7 +68,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
@@ -76,7 +76,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create patchPumpDto) {
         Pump toUpdate = pumpService.getPump(id);
@@ -119,7 +119,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(updatePump));
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpup", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpUp(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -132,7 +132,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpback", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpBack(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -145,7 +145,7 @@ public class PumpEndpoint {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "{id}/runjob", method = RequestMethod.PUT)
     public ResponseEntity<?> dispatchPumpAdvice(@PathVariable(value = "id") Long id, @Valid @RequestBody PumpAdvice advice, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -157,7 +157,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "start", method = RequestMethod.PUT)
     public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id, UriComponentsBuilder uriBuilder) {
         if(id == null) {
@@ -173,7 +173,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "stop", method = RequestMethod.PUT)
     public ResponseEntity<?> stopPump(@RequestParam(value = "id", required = false) Long id) {
         if(id == null) {
@@ -188,7 +188,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasAuthority('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "jobmetrics/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getJobMetrics(@PathVariable("id") long id) {
         JobMetrics jobMetrics = pumpService.getJobMetrics(id);

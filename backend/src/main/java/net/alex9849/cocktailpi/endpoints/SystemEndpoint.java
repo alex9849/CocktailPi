@@ -23,13 +23,13 @@ public class SystemEndpoint {
     @Autowired
     private SystemService systemService;
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)
     public ResponseEntity<?> getPythonLibraries() throws IOException {
         return ResponseEntity.ok(systemService.getInstalledPythonLibraries());
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "/audiodevices", method = RequestMethod.GET)
     public ResponseEntity<?> getAudioDevices() throws IOException {
         return ResponseEntity.ok(systemService.getAudioDevices());
@@ -41,7 +41,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "settings/appearance", method = RequestMethod.PUT)
     public ResponseEntity<?> setAppearance(@RequestBody @Valid AppearanceSettingsDto.Duplex.Detailed settingsDto) {
         systemService.setAppearance(settingsDto);
@@ -64,7 +64,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/shutdown", method = RequestMethod.PUT)
     public ResponseEntity<?> shutdown(@RequestParam(value = "isReboot", defaultValue = "false") boolean isReboot) throws IOException {
         systemService.shutdown(isReboot);
@@ -76,7 +76,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok(systemService.getGlobalSettings());
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "settings/i2c", method = RequestMethod.PUT)
     public ResponseEntity<?> setI2C(@RequestBody @Valid I2cSettingsDto.Request dto) throws IOException {
         I2CSettings i2CSettings = systemService.fromDto(dto);
@@ -84,13 +84,13 @@ public class SystemEndpoint {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "settings/i2c", method = RequestMethod.GET)
     public ResponseEntity<?> getI2C() throws IOException {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @RequestMapping(value = "i2cprobe", method = RequestMethod.GET)
     public ResponseEntity<?> getI2CProbe() throws IOException {
         return ResponseEntity.ok(systemService.probeI2c().stream().map(I2cAddressDto.Response::new).toList());
@@ -101,7 +101,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok(new DefaultFilterDto.Duplex.Detailed(systemService.getDefaultFilterSettings()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "settings/defaultfilter", method = RequestMethod.PUT)
     public ResponseEntity<?> getDefaultFilter(@Valid @RequestBody DefaultFilterDto.Duplex.Detailed filter) {
         DefaultFilterSettings dfs = systemService.fromDto(filter);
@@ -114,13 +114,13 @@ public class SystemEndpoint {
         return ResponseEntity.ok(systemService.getVersion());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "checkupdate", method = RequestMethod.GET)
     public ResponseEntity<?> checkUpdate() {
         return ResponseEntity.ok(systemService.checkUpdate());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "performupdate", method = RequestMethod.POST)
     public ResponseEntity<?> performUpdate() {
         systemService.performUpdate();
