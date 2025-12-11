@@ -785,7 +785,7 @@ export default {
         ingredients_installed: 'Zutaten zugewiesen:'
       },
       reverse_pumping: {
-        headline: 'Rückwärtspumpen',
+        headline: 'Rückpumpen',
         status: 'Status:',
         status_enabled: 'Aktiviert',
         status_disabled: 'Deaktiviert',
