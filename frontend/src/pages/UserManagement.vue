@@ -61,6 +61,7 @@
             :props="props"
           >
             <q-btn
+              v-if="props.row.adminLevel <= getUser.adminLevel"
               :icon="mdiPencilOutline"
               text-color="white"
               :style="{backgroundColor: '#31ccec'}"
@@ -76,7 +77,7 @@
             </q-btn>
             <q-btn
               :icon="mdiDelete"
-              v-if="getUser.id !== props.row.id"
+              v-if="getUser.id !== props.row.id && props.row.adminLevel <= getUser.adminLevel"
               @click="() => $refs.deleteDialog.openForItems([props.row])"
               color="red"
               dense

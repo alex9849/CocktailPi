@@ -53,7 +53,7 @@
                   emit-value
                   hide-bottom-space
                   v-if="!isSelfUser"
-                  :options="form.roles"
+                  :options="availableRoles"
                   :disable="form.loading || form.disable"
                   :label="$t('page.user_editor.form.columns.role')"
                 />
@@ -139,25 +139,7 @@ export default {
         profileEdit: false,
         showPassword: false,
         loading: false,
-        error: '',
-        roles: [
-          {
-            value: 0,
-            label: this.$t('page.user_editor.form.roles.user')
-          }, {
-            value: 1,
-            label: this.$t('page.user_editor.form.roles.recipe_creator')
-          }, {
-            value: 2,
-            label: this.$t('page.user_editor.form.roles.pump_ingredient_editor')
-          }, {
-            value: 3,
-            label: this.$t('page.user_editor.form.roles.admin')
-          }, {
-            value: 4,
-            label: this.$t('page.user_editor.form.roles.super_admin')
-          }
-        ]
+        error: ''
       }
     }
   },
@@ -201,6 +183,30 @@ export default {
       getUser: 'auth/getUser',
       color: 'appearance/getNormalColors'
     }),
+    availableRoles () {
+      const roles = [
+        {
+          value: 0,
+          label: this.$t('page.user_editor.form.roles.user')
+        }, {
+          value: 1,
+          label: this.$t('page.user_editor.form.roles.recipe_creator')
+        }, {
+          value: 2,
+          label: this.$t('page.user_editor.form.roles.pump_ingredient_editor')
+        }, {
+          value: 3,
+          label: this.$t('page.user_editor.form.roles.admin')
+        }
+      ]
+      if (this.getUser.adminLevel >= 4) {
+        roles.push({
+          value: 4,
+          label: this.$t('page.user_editor.form.roles.super_admin')
+        })
+      }
+      return roles
+    },
     isNewUser () {
       return this.$route.name === 'usercreator'
     },
