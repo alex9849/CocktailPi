@@ -9,6 +9,7 @@
           @click="showAddDialog = true"
           :icon="mdiPlusCircleOutline"
           no-caps
+          v-if="getUser.adminLevel >= 4"
         />
         <q-btn
           color="positive"
@@ -124,7 +125,8 @@ export default {
   computed: {
     ...mapGetters({
       pumps: 'pumpLayout/getLayout',
-      isAllowReversePumping: 'common/isAllowReversePumping'
+      isAllowReversePumping: 'common/isAllowReversePumping',
+      getUser: 'auth/getUser'
     })
   }
 }

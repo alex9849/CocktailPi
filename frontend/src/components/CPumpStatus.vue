@@ -180,7 +180,10 @@
                   </q-card-section>
                 </q-card>
               </div>
-              <div class="col-12 col-md-3 col-lg-12">
+              <div
+                v-if="getUser.adminLevel >= 4"
+                class="col-12 col-md-3 col-lg-12"
+              >
                 <q-card
                   flat
                   bordered
@@ -305,7 +308,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      pumps: 'pumpLayout/getLayout'
+      pumps: 'pumpLayout/getLayout',
+      getUser: 'auth/getUser'
     }),
     nrPumps () {
       return this.pumps.length

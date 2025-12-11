@@ -91,7 +91,7 @@ public class PumpEndpoint {
             newPatchDto.setIsPumpedUp(patchPumpDto.getIsPumpedUp());
             newPatchDto.setFillingLevelInMl(patchPumpDto.getFillingLevelInMl());
             newPatchDto.setCurrentIngredientId(patchPumpDto.getCurrentIngredientId());
-            if (authority.getLevel() > ERole.ROLE_ADMIN.getLevel()) {
+            if (authority.getLevel() >= ERole.ROLE_ADMIN.getLevel()) {
                 allowedFieldsToRemove.addAll(adminAllowedFields);
                 newPatchDto.setName(patchPumpDto.getName());
                 if (

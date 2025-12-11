@@ -6,6 +6,7 @@
         color="negative"
         class="col-auto"
         @click="deleteDialog.show = true"
+        v-if="getUser.adminLevel >= 4"
       >
         {{ $t('page.pump_setup.delete_btn_label') }}
       </q-btn>
@@ -58,7 +59,7 @@
               :label="$t('page.pump_setup.finish_setup_btn_label')"
             />
             <q-btn
-              @click="stepper++"
+              @click="nextStep"
               color="primary"
               :label="$t('page.pump_setup.continue_step_btn_label')"
             />
@@ -66,6 +67,7 @@
         </div>
       </q-step>
       <q-step
+        v-if="getUser.adminLevel >= 4"
         :caption="hardwarePinsComplete ? $t('page.pump_setup.caption_complete') : null"
         :title="$t('page.pump_setup.hw_pins.handle')"
         :name="1"
@@ -120,14 +122,14 @@
               :label="$t('page.pump_setup.finish_setup_btn_label')"
             />
             <q-btn
-              @click="stepper++"
+              @click="nextStep"
               :disable="!hardwarePinsComplete"
               color="primary"
               :label="$t('page.pump_setup.continue_step_btn_label')"
             />
             <q-btn
               flat
-              @click="stepper--"
+              @click="prevStep"
               color="primary"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
             />
@@ -218,7 +220,7 @@
             v-if="pump.type !== 'valve'"
           />
           <c-assistant-container
-            v-if="pump.type !== 'valve'"
+            v-if="pump.type !== 'valve' && getUser.adminLevel >= 4"
           >
             <template v-slot:explanations>
               {{ $t('page.pump_setup.calibration.tube_capacity_desc') }}
@@ -245,8 +247,11 @@
           <q-separator
             class="q-my-md"
             :dark="color.cardBodyDark"
+            v-if="getUser.adminLevel >= 4"
           />
-          <c-assistant-container>
+          <c-assistant-container
+            v-if="getUser.adminLevel >= 4"
+          >
             <template v-slot:explanations>
               <p>{{ $t('page.pump_setup.calibration.power_consumption_desc') }}</p>
               <div class="row justify-center q-py-md">
@@ -290,13 +295,13 @@
               :label="$t('page.pump_setup.finish_setup_btn_label')"
             />
             <q-btn
-              @click="stepper++"
+              @click="nextStep"
               :disable="!calibrationComplete"
               color="primary"
               :label="$t('page.pump_setup.continue_step_btn_label')"
             />
             <q-btn
-              flat @click="stepper--"
+              flat @click="prevStep"
               color="primary"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
               class="q-ml-sm"
@@ -405,8 +410,7 @@
               :label="$t('page.pump_setup.finish_setup_btn_label')"
             />
             <q-btn
-              flat @click="stepper--"
-              color="primary"
+              flat @click="prevStep"
               :label="$t('page.pump_setup.go_back_step_btn_label')"
               class="q-ml-sm"
             />
@@ -592,6 +596,9 @@ export default {
     }
     next(vm => {
       vm.pump = pump
+      if (vm.getUser.adminLevel < 4 && stepper === 1) {
+        stepper = 2
+      }
       vm.stepper = stepper
     })
   },
@@ -608,6 +615,22 @@ export default {
     this.mdiEqual = mdiEqual
   },
   methods: {
+    nextStep () {
+      this.modifyStep(+1)
+    },
+    prevStep () {
+      this.modifyStep(-1)
+    },
+    modifyStep (delta) {
+      if ((this.stepper + delta) === 1 && this.getUser.adminLevel < 4) {
+        if (delta > 0) {
+          delta += 1
+        } else {
+          delta -= 1
+        }
+      }
+      this.stepper += delta
+    },
     onClickFinish () {
       this.$router.push({ name: 'pumpmanagement' })
     },
@@ -668,7 +691,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      getUser: 'auth/getUser'
     }),
     pumpName () {
       if (this.pump.name) {
