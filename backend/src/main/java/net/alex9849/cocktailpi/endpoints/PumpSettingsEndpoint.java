@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.system.settings.ReversePumpSettings;
+import net.alex9849.cocktailpi.model.user.ERole;
+import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.system.settings.LoadCellSettingsDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.PowerLimitSettingsDto;
 import net.alex9849.cocktailpi.payload.dto.system.settings.ReversePumpSettingsDto;
@@ -13,6 +15,7 @@ import net.alex9849.cocktailpi.service.ReversePumpSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,13 +32,26 @@ public class PumpSettingsEndpoint {
     @Autowired
     private PowerLimitService powerLimitService;
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.PUT)
     public ResponseEntity<?> setReversePumpSettings(@RequestBody @Valid ReversePumpSettingsDto.Request.Create settings) {
         if(settings.isEnable() && settings.getSettings() == null) {
             throw new IllegalStateException("Settings-Details are null!");
         }
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ReversePumpSettings reversePumpSettings = reversePumpSettingsService.fromDto(settings);
+        if (principal.getAuthority().getLevel() < ERole.ROLE_SUPER_ADMIN.getLevel()) {
+            ReversePumpSettings existingSettings = reversePumpSettingsService.getReversePumpingSettings();
+            reversePumpSettings.setEnable(existingSettings.isEnable());
+            if (reversePumpSettings.getSettings() == null) {
+                reversePumpSettings.setSettings(existingSettings.getSettings());
+            }
+            if (reversePumpSettings.getSettings() != null) {
+                reversePumpSettings.getSettings().setDirectorPin(existingSettings.getSettings().getDirectorPin());
+                reversePumpSettings.getSettings().setForwardStateHigh(existingSettings.getSettings().isForwardStateHigh());
+            }
+        }
+
         reversePumpSettingsService.setReversePumpingSettings(reversePumpSettings);
         return ResponseEntity.ok().build();
     }
@@ -57,10 +73,17 @@ public class PumpSettingsEndpoint {
         }
     }
 
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "loadcell", method = RequestMethod.PUT)
     public ResponseEntity<?> setLoadCell(@RequestBody(required = false) @Valid LoadCellSettingsDto.Request.Create settings) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LoadCell loadCell = loadCellService.fromDto(settings);
+        if (principal.getAuthority().getLevel() < ERole.ROLE_SUPER_ADMIN.getLevel()) {
+            LoadCell existingLoadCell = loadCellService.getLoadCell();
+            loadCell.setClkHwPin(existingLoadCell.getClkHwPin());
+            loadCell.setDtHwPin(existingLoadCell.getDtHwPin());
+        }
+        //loadCellService.getLoadCell()
         LoadCellSettingsDto.Duplex.DispensingArea daSettings = null;
         if (settings != null) {
             daSettings = settings.getDispensingArea();
