@@ -37,7 +37,13 @@ public class User implements UserDetails {
 
     @Override
     public Set<ERole> getAuthorities() {
-        return new HashSet<>(Arrays.asList(this.role));
+        Set<ERole> roles = new HashSet<>();
+        for (ERole role : ERole.values()) {
+            if (this.role.getLevel() >= role.getLevel()) {
+                roles.add(role);
+            }
+        }
+        return roles;
     }
 
     public ERole getAuthority() {

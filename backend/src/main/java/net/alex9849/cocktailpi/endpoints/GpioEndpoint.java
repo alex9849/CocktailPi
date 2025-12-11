@@ -21,7 +21,7 @@ public class GpioEndpoint {
     @Autowired
     private GpioService gpioService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.GET)
     private ResponseEntity<?> getGpioBoards(@RequestParam(value = "dType", required = false) String dType) {
         List<GpioBoard> boards;
@@ -33,7 +33,7 @@ public class GpioEndpoint {
         return ResponseEntity.ok(boards.stream().map(GpioBoardDto.Response.Detailed::toDto).toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     private ResponseEntity<?> getGpioBoard(@PathVariable("id") long id) {
         GpioBoard board = gpioService.getGpioBoard(id);
@@ -43,7 +43,7 @@ public class GpioEndpoint {
         return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(board));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.POST)
     private ResponseEntity<?> createGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, UriComponentsBuilder uriBuilder) {
         GpioBoard gpioBoard = gpioService.fromDto(gpioBoardDto);
@@ -52,7 +52,7 @@ public class GpioEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
     private ResponseEntity<?> updateGpioBoard(@RequestBody GpioBoardDto.Request.Create gpioBoardDto, @PathVariable("id") long id) {
         GpioBoard oldGpioBoard = gpioService.getGpioBoard(id);
@@ -65,7 +65,7 @@ public class GpioEndpoint {
         return ResponseEntity.ok(GpioBoardDto.Response.Detailed.toDto(gpioBoard));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteGpioBoard(@PathVariable("id") long id) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(id);
@@ -76,13 +76,13 @@ public class GpioEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "status", method = RequestMethod.GET)
     private ResponseEntity<?> getStatus() {
         return ResponseEntity.ok(gpioService.getGpioStatus());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "{id}/pin", method = RequestMethod.GET)
     private ResponseEntity<?> getGpioPins(@PathVariable(value = "id") long boardId) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);
@@ -92,7 +92,7 @@ public class GpioEndpoint {
         return ResponseEntity.ok(gpioBoard.getPins().stream().map(PinDto.Response.Detailed::new).toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "{id}/restart", method = RequestMethod.POST)
     private ResponseEntity<?> restartBoard(@PathVariable(value = "id") long boardId) {
         GpioBoard gpioBoard = gpioService.getGpioBoard(boardId);

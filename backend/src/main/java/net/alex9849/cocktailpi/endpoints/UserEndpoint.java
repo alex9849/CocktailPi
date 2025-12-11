@@ -26,14 +26,19 @@ public class UserEndpoint {
     @Autowired
     UserService userService;
 
-    @Autowired
-    IngredientService ingredientService;
-
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto.Request.Create createUser, UriComponentsBuilder uriBuilder) {
         User user = userService.fromDto(createUser);
         user.setAuthority(userService.toRole(createUser.getAdminLevel()));
+
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ERole authority = principal.getAuthority();
+
+        if (authority.getLevel() < user.getAuthority().getLevel()) {
+            throw new IllegalArgumentException("You can't create a user with a higher role than yourself!");
+        }
+
         user = userService.createUser(user);
         UriComponents uriComponents = uriBuilder.path("/api/user/{id}").buildAndExpand(user.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();
@@ -42,6 +47,7 @@ public class UserEndpoint {
     @RequestMapping(value = {"{id}", "current"}, method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable(value = "id", required = false) Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ERole authority = principal.getAuthority();
         User updateUser = userService.fromDto(updateUserRequest.getUserDto());
         if(userId == null) {
             userId = principal.getId();
@@ -54,6 +60,9 @@ public class UserEndpoint {
         User beforeUpdate = userService.getUser(userId);
         if(beforeUpdate == null) {
             return ResponseEntity.notFound().build();
+        }
+        if(beforeUpdate.getAuthority().getLevel() > authority.getLevel()) {
+            throw new IllegalArgumentException("You can't edit a user with a higher role than yourself!");
         }
         if(principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             if(principal.getId() == userId) {
@@ -84,8 +93,12 @@ public class UserEndpoint {
         if(principal.getId() == userId) {
             throw new IllegalArgumentException("You can't delete yourself!");
         }
-        if(userService.getUser(userId) == null) {
+        User beforeDelete = userService.getUser(userId);
+        if(beforeDelete == null) {
             return ResponseEntity.notFound().build();
+        }
+        if (beforeDelete.getAuthority().getLevel() > principal.getAuthority().getLevel()) {
+            throw new IllegalArgumentException("You can't delete a user with a higher role than yourself!");
         }
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();

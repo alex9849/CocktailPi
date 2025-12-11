@@ -8,6 +8,7 @@ import net.alex9849.cocktailpi.model.user.ERole;
 import net.alex9849.cocktailpi.model.user.User;
 import net.alex9849.cocktailpi.payload.dto.pump.DcPumpDto;
 import net.alex9849.cocktailpi.payload.dto.pump.PumpDto;
+import net.alex9849.cocktailpi.payload.dto.pump.StepperPumpDto;
 import net.alex9849.cocktailpi.service.PumpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,17 @@ public class PumpEndpoint {
     private PumpService pumpService;
 
     private final Set<String> pumpIngEditorAllowedFields;
+    private final Set<String> adminAllowedFields;
 
     public PumpEndpoint() {
         pumpIngEditorAllowedFields = new HashSet<>();
         pumpIngEditorAllowedFields.add("isPumpedUp");
         pumpIngEditorAllowedFields.add("currentIngredient");
         pumpIngEditorAllowedFields.add("fillingLevelInMl");
+        adminAllowedFields = new HashSet<>(pumpIngEditorAllowedFields);
+        adminAllowedFields.add("name");
+        adminAllowedFields.add("maxStepsPerSecond");
+        adminAllowedFields.add("timePerClInMs");
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -51,7 +57,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(pump));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deletePump(@PathVariable("id") long id) {
         Pump pump = pumpService.getPump(id);
@@ -62,7 +68,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createPump(@Valid @RequestBody PumpDto.Request.Create pumpDto, UriComponentsBuilder uriBuilder) {
         Pump createdPump = pumpService.createPump(pumpService.fromDto(pumpDto));
@@ -70,7 +76,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(PumpDto.Response.Detailed.toDto(createdPump));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public ResponseEntity<?> patchPump(@PathVariable("id") long id, @Valid @RequestBody PumpDto.Request.Create patchPumpDto) {
         Pump toUpdate = pumpService.getPump(id);
@@ -78,15 +84,32 @@ public class PumpEndpoint {
             return ResponseEntity.notFound().build();
         }
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getAuthority().getLevel() < ERole.ROLE_ADMIN.getLevel()) {
+        ERole authority = principal.getAuthority();
+        if(authority.getLevel() < ERole.ROLE_SUPER_ADMIN.getLevel()) {
+            Set<String> allowedFieldsToRemove = new HashSet<>(pumpIngEditorAllowedFields);
             PumpDto.Request.Create newPatchDto = PumpDto.Request.Create.toDto(toUpdate);
             newPatchDto.setIsPumpedUp(patchPumpDto.getIsPumpedUp());
             newPatchDto.setFillingLevelInMl(patchPumpDto.getFillingLevelInMl());
             newPatchDto.setCurrentIngredientId(patchPumpDto.getCurrentIngredientId());
+            if (authority.getLevel() > ERole.ROLE_ADMIN.getLevel()) {
+                allowedFieldsToRemove.addAll(adminAllowedFields);
+                newPatchDto.setName(patchPumpDto.getName());
+                if (
+                        newPatchDto instanceof DcPumpDto.Request.Create newPatchDtoDc
+                        && patchPumpDto instanceof DcPumpDto.Request.Create patchPumpDtoDc
+                ) {
+                    newPatchDtoDc.setTimePerClInMs(patchPumpDtoDc.getTimePerClInMs());
+                } else if (
+                        newPatchDto instanceof StepperPumpDto.Request.Create newPatchDtoCreate
+                        && patchPumpDto instanceof StepperPumpDto.Request.Create patchPumpDtoCreate
+                ) {
+                    newPatchDtoCreate.setStepsPerCl(patchPumpDtoCreate.getStepsPerCl());
+                }
+            }
             Set<String> removeFields = patchPumpDto.getRemoveFields();
             if(removeFields != null) {
                 newPatchDto.setRemoveFields(new HashSet<>(removeFields.stream()
-                        .filter(pumpIngEditorAllowedFields::contains)
+                        .filter(allowedFieldsToRemove::contains)
                         .toList()));
             }
             patchPumpDto = newPatchDto;
@@ -96,7 +119,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok(PumpDto.Response.Detailed.toDto(updatePump));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpup", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpUp(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -109,7 +132,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "{id}/pumpback", method = RequestMethod.PUT)
     public ResponseEntity<?> pumpBack(@PathVariable("id") long id, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -122,7 +145,7 @@ public class PumpEndpoint {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "{id}/runjob", method = RequestMethod.PUT)
     public ResponseEntity<?> dispatchPumpAdvice(@PathVariable(value = "id") Long id, @Valid @RequestBody PumpAdvice advice, UriComponentsBuilder uriBuilder) {
         Pump pump = pumpService.getPump(id);
@@ -134,7 +157,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "start", method = RequestMethod.PUT)
     public ResponseEntity<?> startPump(@RequestParam(value = "id", required = false) Long id, UriComponentsBuilder uriBuilder) {
         if(id == null) {
@@ -150,7 +173,7 @@ public class PumpEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(jobId);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "stop", method = RequestMethod.PUT)
     public ResponseEntity<?> stopPump(@RequestParam(value = "id", required = false) Long id) {
         if(id == null) {
@@ -165,7 +188,7 @@ public class PumpEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PUMP_INGREDIENT_EDITOR')")
+    @PreAuthorize("hasRole('PUMP_INGREDIENT_EDITOR')")
     @RequestMapping(value = "jobmetrics/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getJobMetrics(@PathVariable("id") long id) {
         JobMetrics jobMetrics = pumpService.getJobMetrics(id);

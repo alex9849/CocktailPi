@@ -23,20 +23,20 @@ public class EventActionEndpoint {
     @Autowired
     private EventService eventService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getActions() {
         return ResponseEntity.ok(eventService.getEventActions().stream()
                 .map(EventActionDto.Response.Detailed::toDto).collect(Collectors.toList()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/executiongroup", method = RequestMethod.GET)
     public ResponseEntity<?> getExecutionGroups() {
         return ResponseEntity.ok(eventService.getExecutionGroups());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/process/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> killProcess(@PathVariable long id) {
         if (eventService.cancelRunningAction(id)) {
@@ -45,7 +45,7 @@ public class EventActionEndpoint {
         return ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);
@@ -55,7 +55,7 @@ public class EventActionEndpoint {
         return ResponseEntity.ok(eventAction);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/{id}/start", method = RequestMethod.POST)
     public ResponseEntity<?> runAction(@PathVariable long id) {
         EventAction eventAction = eventService.getEventAction(id);
@@ -66,7 +66,7 @@ public class EventActionEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
@@ -79,7 +79,7 @@ public class EventActionEndpoint {
         return ResponseEntity.created(uriComponents.toUri()).body(EventActionDto.Response.Detailed.toDto(createdAction));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateAction(@Valid @RequestPart("eventAction") EventActionDto.Request.Create eventActionDto,
                                           @RequestPart(value = "file", required = false) MultipartFile file,
@@ -90,7 +90,7 @@ public class EventActionEndpoint {
         return ResponseEntity.ok(EventActionDto.Response.Detailed.toDto(updatedAction));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAction(@PathVariable long id) {
         if (!eventService.deleteEventAction(id)) {

@@ -23,13 +23,13 @@ public class SystemEndpoint {
     @Autowired
     private SystemService systemService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/pythonlibraries", method = RequestMethod.GET)
     public ResponseEntity<?> getPythonLibraries() throws IOException {
         return ResponseEntity.ok(systemService.getInstalledPythonLibraries());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "/audiodevices", method = RequestMethod.GET)
     public ResponseEntity<?> getAudioDevices() throws IOException {
         return ResponseEntity.ok(systemService.getAudioDevices());
@@ -76,7 +76,7 @@ public class SystemEndpoint {
         return ResponseEntity.ok(systemService.getGlobalSettings());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "settings/i2c", method = RequestMethod.PUT)
     public ResponseEntity<?> setI2C(@RequestBody @Valid I2cSettingsDto.Request dto) throws IOException {
         I2CSettings i2CSettings = systemService.fromDto(dto);
@@ -84,13 +84,13 @@ public class SystemEndpoint {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "settings/i2c", method = RequestMethod.GET)
     public ResponseEntity<?> getI2C() throws IOException {
         return ResponseEntity.ok(new I2cSettingsDto.Response(systemService.getI2cSettings()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "i2cprobe", method = RequestMethod.GET)
     public ResponseEntity<?> getI2CProbe() throws IOException {
         return ResponseEntity.ok(systemService.probeI2c().stream().map(I2cAddressDto.Response::new).toList());

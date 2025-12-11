@@ -29,7 +29,7 @@ public class PumpSettingsEndpoint {
     @Autowired
     private PowerLimitService powerLimitService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.PUT)
     public ResponseEntity<?> setReversePumpSettings(@RequestBody @Valid ReversePumpSettingsDto.Request.Create settings) {
         if(settings.isEnable() && settings.getSettings() == null) {
@@ -40,13 +40,13 @@ public class PumpSettingsEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "reversepumping", method = RequestMethod.GET)
     public ResponseEntity<?> getReversePumpSettings() {;
         return ResponseEntity.ok(new ReversePumpSettingsDto.Response.Detailed(reversePumpSettingsService.getReversePumpingSettings()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "loadcell", method = RequestMethod.GET)
     public ResponseEntity<?> getLoadCell() {
         LoadCell loadCell = loadCellService.getLoadCell();
@@ -57,7 +57,7 @@ public class PumpSettingsEndpoint {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "loadcell", method = RequestMethod.PUT)
     public ResponseEntity<?> setLoadCell(@RequestBody(required = false) @Valid LoadCellSettingsDto.Request.Create settings) {
         LoadCell loadCell = loadCellService.fromDto(settings);
@@ -74,13 +74,13 @@ public class PumpSettingsEndpoint {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "loadcell/read", method = RequestMethod.GET)
     public ResponseEntity<?> readLoadCell() {
         return ResponseEntity.ok(loadCellService.readLoadCell());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "loadcell/calibratezero", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellZero() {
         return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
@@ -88,7 +88,7 @@ public class PumpSettingsEndpoint {
         ));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "loadcell/calibratereference", method = RequestMethod.PUT)
     public ResponseEntity<?> calibrateLoadCellRefWeight(@RequestBody @NotNull Long referenceWeight) {
         return ResponseEntity.ok(new LoadCellSettingsDto.Response.Detailed(
@@ -97,7 +97,7 @@ public class PumpSettingsEndpoint {
         ));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "powerlimit", method = RequestMethod.GET)
     public ResponseEntity<?> getPowerLimit() {
         PowerLimitSettingsDto.Duplex.Detailed powerLimitSaved = powerLimitService.getPowerLimit();
@@ -108,7 +108,7 @@ public class PumpSettingsEndpoint {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(value = "powerlimit", method = RequestMethod.PUT)
     public ResponseEntity<?> setPowerLimit(@RequestBody(required = false) @Valid PowerLimitSettingsDto.Duplex.Detailed settings) {
         PowerLimitSettingsDto.Duplex.Detailed powerLimitSaved = powerLimitService.setPowerLimit(settings);

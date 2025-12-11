@@ -20,12 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthEndpoint {
 
     @Autowired
-    UserService userService;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
     AuthService authService;
 
     @Autowired
