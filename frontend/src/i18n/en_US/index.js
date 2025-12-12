@@ -390,6 +390,9 @@ export default {
         clk_pin_label: 'CLK-Pin',
         dt_pin_label: 'DT-Pin',
         save_btn_label: 'Save',
+        cocktail_production_label: 'Cocktail production',
+        glass_detection_label: 'Check if glass placed in dispensing area',
+        glass_matching_label: 'Use measured weight to detect glass type',
         save_and_return_btn_label: 'Save & Return',
         update_success_message: 'Loadcell updated'
       },

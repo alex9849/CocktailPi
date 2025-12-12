@@ -27,7 +27,9 @@
         />
       </div>
     </q-card-section>
-    <q-separator/>
+    <q-separator
+      :dark="color.cardItemGroupDark"
+    />
     <slot name="cardBody">
       <q-card-section
         class="q-py-sm"
@@ -39,7 +41,8 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
+import { useStore } from 'vuex'
 
 defineProps({
   headline: {
@@ -58,6 +61,9 @@ defineProps({
     default: null
   }
 })
+
+const store = useStore()
+const color = computed(() => store.getters['appearance/getNormalColors'])
 
 </script>
 

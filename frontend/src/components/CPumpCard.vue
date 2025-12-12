@@ -96,6 +96,10 @@
         </div>
       </div>
     </q-card-section>
+    <div
+      v-if="!showDetailed"
+      style="flex-grow: 1"
+    />
     <hr
       v-if="showDetailed"
       class="text-grey-2 q-ma-none"

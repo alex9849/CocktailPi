@@ -67,6 +67,7 @@
                     </q-card-section>
                     <q-separator
                       v-if="i2cStatus.data.enable"
+                      :dark="color.cardItemGroupDark"
                     />
                     <q-card-section
                       v-if="i2cStatus.data.enable"

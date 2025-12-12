@@ -388,6 +388,9 @@ export default {
         enable_btn_label: 'Wägezelle aktivieren',
         clk_pin_label: 'CLK-Pin',
         dt_pin_label: 'DT-Pin',
+        cocktail_production_label: 'Cocktailproduktion',
+        glass_detection_label: 'Prüfe ob sich ein Glas im Ausgabebereich befindet',
+        glass_matching_label: 'Gemessenes Gewicht nutzen um Glastyp zu identifizieren',
         save_btn_label: 'Speichern',
         save_and_return_btn_label: 'Speichern & Zurück',
         update_success_message: 'Wägezelle gespeichert'
@@ -802,7 +805,7 @@ export default {
         calibrated: 'Kalibriert',
         calibrated_yes: 'Ja',
         calibrated_no: 'Nein',
-        check_glass_placed: 'Glas erkennung:',
+        check_glass_placed: 'Glas erkennen:',
         check_glass_placed_yes: 'Ja',
         check_glass_placed_no: 'Nein',
         match_glass: 'Glas abgleichen:',

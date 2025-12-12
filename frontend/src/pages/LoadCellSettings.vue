@@ -93,7 +93,7 @@
           >
             <q-card-section>
               <div class="text-subtitle2">
-                Cocktail production
+                {{ $t('page.load_cell_mgmt.hardware_settings.cocktail_production_label') }}
               </div>
             </q-card-section>
             <q-separator
@@ -103,14 +103,14 @@
               <div>
                 <q-toggle
                   :dark="color.cardItemGroupDark"
-                  label="Check if glass placed in dispensing area"
+                  :label="$t('page.load_cell_mgmt.hardware_settings.glass_detection_label')"
                   v-model:model-value="v.form.dispensingArea.checkGlassPlaced.$model"
                 />
               </div>
               <div>
                 <q-toggle
                   :dark="color.cardItemGroupDark"
-                  label="Use measured weight to detect glass type"
+                  :label="$t('page.load_cell_mgmt.hardware_settings.glass_matching_label')"
                   v-model:model-value="v.form.dispensingArea.matchGlass.$model"
                 />
               </div>
