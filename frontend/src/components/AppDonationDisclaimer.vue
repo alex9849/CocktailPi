@@ -262,7 +262,7 @@ export default {
       this.setShowDonateDialog(false)
     },
     clickDonatePaypal () {
-      this.openExternalLink('https://www.paypal.com/ncp/payment/8WV5S3QVYL8N2')
+      this.openExternalLink('https://www.paypal.com/donate/?hosted_button_id=FQUPSE8DCXFMC')
     },
     clickConfirmDonate () {
       this.setDonated(true)
