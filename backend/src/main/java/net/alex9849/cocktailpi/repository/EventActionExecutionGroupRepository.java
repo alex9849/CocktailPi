@@ -69,8 +69,8 @@ public class EventActionExecutionGroupRepository extends JdbcDaoSupport {
             ResultSet rs = pstmt.getResultSet();
             Map<Long, Set<String>> groups = new HashMap<>();
             while (rs.next()) {
-                Set<String> set = groups.putIfAbsent(rs.getLong("id"), new HashSet<>());
-                set.add(rs.getString("group"));
+                long id = rs.getLong("id");
+                groups.computeIfAbsent(id, key -> new HashSet<>()).add(rs.getString("group"));
             }
             return groups;
         });
