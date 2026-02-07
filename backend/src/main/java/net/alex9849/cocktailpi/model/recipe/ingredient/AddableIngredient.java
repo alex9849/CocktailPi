@@ -5,6 +5,7 @@ public abstract class AddableIngredient extends Ingredient {
     private boolean inBar;
 
     private boolean hasImage;
+    private Double bottlePrice;
 
     public int getAlcoholContent() {
         return alcoholContent;
@@ -29,5 +30,13 @@ public abstract class AddableIngredient extends Ingredient {
 
     public void setHasImage(boolean hasImage) {
         this.hasImage = hasImage;
+    }
+
+    public Double getBottlePrice() {
+        return bottlePrice;
+    }
+
+    public void setBottlePrice(Double bottlePrice) {
+        this.bottlePrice = bottlePrice;
     }
 }

@@ -57,8 +57,18 @@
           key="bottleSize"
           :props="props"
         >
-          <p v-if="props.row.type === 'automated'">
+          <p v-if="props.row.bottleSize">
             {{ props.row.bottleSize }} {{ props.row.unit }}
+          </p>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-bottlePrice="props">
+        <q-td
+          key="bottlePrice"
+          :props="props"
+        >
+          <p v-if="props.row.bottlePrice !== null && props.row.bottlePrice !== undefined">
+            {{ Number(props.row.bottlePrice).toFixed(2) }}
           </p>
         </q-td>
       </template>
@@ -220,6 +230,12 @@ export default {
           align: 'center'
         },
         {
+          name: 'bottlePrice',
+          label: this.$t('component.ingredient_mgmt.ingredient_table.columns.bottle_price'),
+          field: 'bottlePrice',
+          align: 'center'
+        },
+        {
           name: 'unit',
           label: this.$t('component.ingredient_mgmt.ingredient_table.columns.unit'),
           field: 'unit',
@@ -271,6 +287,8 @@ export default {
           name: '',
           pumpTimeMultiplier: 1.0,
           alcoholContent: 0,
+          bottlePrice: null,
+          bottleSize: null,
           hasImage: false,
           type: 'automated',
           unit: null
@@ -280,6 +298,8 @@ export default {
           name: '',
           pumpTimeMultiplier: 1.0,
           alcoholContent: 0,
+          bottlePrice: null,
+          bottleSize: null,
           hasImage: false,
           type: 'automated',
           unit: null

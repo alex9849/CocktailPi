@@ -28,6 +28,18 @@
               ]"
       @update:model-value="e => setValue('alcoholContent', e)"
     />
+    <q-input
+      :label="$t('component.ingredient_form.bottle_price')"
+      outlined
+      :disable="disable"
+      hide-bottom-space
+      type="number"
+      :model-value="modelValue.bottlePrice"
+      :rules="[
+                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
+              ]"
+      @update:model-value="e => setValue('bottlePrice', e)"
+    />
     <div class="row"
          :style="{borderColor: 'grey'}"
          :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.hasImage && !newImage && !removeImage}"
@@ -153,6 +165,18 @@
           :label="$t('component.ingredient_form.unit')"
           :disable="disable"
         />
+        <q-input
+          :label="$t('component.ingredient_form.bottle_size')"
+          outlined
+          hide-bottom-space
+          :disable="disable"
+          type="number"
+          :model-value="modelValue.bottleSize"
+          :rules="[
+                val => !v.modelValue.bottleSize.minValue.$invalid || $t('errors.positive')
+              ]"
+          @update:model-value="e => setValue('bottleSize', e)"
+        />
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -250,6 +274,9 @@ export default {
         },
         bottleSize: {
           required: requiredIf(() => this.modelValue.type === 'automated'),
+          minValue: minValue(0)
+        },
+        bottlePrice: {
           minValue: minValue(0)
         },
         unit: {

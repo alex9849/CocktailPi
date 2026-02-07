@@ -17,6 +17,7 @@ public class FeasibilityReportDto {
     private interface IngredientGroupReplacements { List<IngredientGroupReplacementDto.Response.Detailed> getIngredientGroupReplacements(); }
     private interface IsFeasible { boolean isFeasible(); }
     private interface TotalAmountInMl { int getTotalAmountInMl(); }
+    private interface TotalPrice { Double getTotalPrice(); }
     private interface FailNoGlass { boolean isFailNoGlass(); }
     private interface IsAllIngredientGroupsReplaced { boolean isAllIngredientGroupsReplaced(); }
 
@@ -24,7 +25,7 @@ public class FeasibilityReportDto {
     public static class Response {
         @Getter @Setter @EqualsAndHashCode
         public static class Detailed implements IngredientGroupReplacements, IsFeasible,
-                IsAllIngredientGroupsReplaced, RequiredIngredients, FailNoGlass, TotalAmountInMl {
+                IsAllIngredientGroupsReplaced, RequiredIngredients, FailNoGlass, TotalAmountInMl, TotalPrice {
 
             List<IngredientGroupReplacementDto.Response.Detailed> ingredientGroupReplacements;
             List<RequiredIngredientDto.Response.Detailed> requiredIngredients;
@@ -32,6 +33,7 @@ public class FeasibilityReportDto {
             boolean isFeasible;
             boolean failNoGlass;
             int totalAmountInMl;
+            Double totalPrice;
 
             public Detailed(FeasibilityReport report) {
                 this.ingredientGroupReplacements = report.getIngredientGroupReplacements()
@@ -45,6 +47,7 @@ public class FeasibilityReportDto {
                 this.failNoGlass = report.isFailNoGlass();
                 this.isFeasible = report.isFeasible();
                 this.totalAmountInMl = report.getTotalAmountInMl();
+                this.totalPrice = report.getTotalPrice();
             }
         }
     }

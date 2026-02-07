@@ -192,6 +192,7 @@ export default {
             type: 'Type',
             alc_content: 'Alkoholindhold',
             bottle_size: 'Flaskestørrelse',
+            bottle_price: 'Flaskepris',
             unit: 'Enhed',
             pump_time_multiplier: 'Tidsmultiplikator for pumpe',
             parent_group: 'Hovedgruppe',
@@ -604,7 +605,9 @@ export default {
     },
     make_cocktail_dialog: {
       headline: 'Bestil Cocktail',
-      order_btn_label: 'LAV COCKTAIL ({nr} ml)'
+      order_btn_label: 'LAV COCKTAIL ({nr} ml)',
+      price_value: 'Pris: {price}',
+      price_unavailable: 'Pris: utilgængelig'
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glas',
@@ -725,6 +728,7 @@ export default {
           type: 'Type',
           alc_content: 'Alkoholindhold',
           bottle_size: 'Flaskestørrelse',
+          bottle_price: 'Flaskepris',
           unit: 'Enhed',
           pump_time_multiplier: 'Tidsmultiplikator for pumpe',
           parent_group: 'Hovedgruppe',
@@ -760,6 +764,7 @@ export default {
       image: 'Billede',
       remove_img: 'Fjern eksisterende billede',
       bottle_size: 'Flaskestørrelse',
+      bottle_price: 'Flaskepris',
       pump_time_multiplier: 'Tidsmultiplikator for pumpe',
       unit: 'Enhed',
       units: {

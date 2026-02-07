@@ -208,6 +208,7 @@ export default {
             type: 'Type',
             alc_content: 'Alcohol content',
             bottle_size: 'Bottle size',
+            bottle_price: 'Bottle price',
             unit: 'Unit',
             pump_time_multiplier: 'Pump time multiplier',
             parent_group: 'Parent Group',
@@ -810,7 +811,9 @@ export default {
     },
     make_cocktail_dialog: {
       headline: 'Order Cocktail',
-      order_btn_label: 'MAKE COCKTAIL ({nr} ml)'
+      order_btn_label: 'MAKE COCKTAIL ({nr} ml)',
+      price_value: 'Price: {price}',
+      price_unavailable: 'Price: unavailable'
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glass',
@@ -980,6 +983,7 @@ export default {
           type: 'Type',
           alc_content: 'Alcohol content',
           bottle_size: 'Bottle size',
+          bottle_price: 'Bottle price',
           unit: 'Unit',
           pump_time_multiplier: 'Pump time multiplier',
           parent_group: 'Parent Group',
@@ -1015,6 +1019,7 @@ export default {
       image: 'Image',
       remove_img: 'Remove existing image',
       bottle_size: 'Bottle size',
+      bottle_price: 'Bottle price',
       pump_time_multiplier: 'Pump time multiplier',
       unit: 'Unit',
       units: {
