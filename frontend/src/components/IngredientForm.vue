@@ -28,18 +28,6 @@
               ]"
       @update:model-value="e => setValue('alcoholContent', e)"
     />
-    <q-input
-      :label="$t('component.ingredient_form.bottle_price')"
-      outlined
-      :disable="disable"
-      hide-bottom-space
-      type="number"
-      :model-value="modelValue.bottlePrice"
-      :rules="[
-                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
-              ]"
-      @update:model-value="e => setValue('bottlePrice', e)"
-    />
     <div class="row"
          :style="{borderColor: 'grey'}"
          :class="{'rounded-borders q-card--bordered q-card--flat no-shadow q-pa-xs': modelValue.hasImage && !newImage && !removeImage}"
@@ -111,6 +99,20 @@
           @update:selected="e => setParentGroup(e)"
         />
         <q-input
+          :label="$t('component.ingredient_form.pump_time_multiplier')"
+          outlined
+          hide-bottom-space
+          :disable="disable"
+          :model-value="currentIngredientMultiplierString"
+          :rules="[
+                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
+                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
+              ]"
+          mask="#.##"
+          @update:model-value="e => setValue('pumpTimeMultiplier', e)"
+        />
+        <q-input
           :label="$t('component.ingredient_form.bottle_size')"
           outlined
           hide-bottom-space
@@ -124,18 +126,17 @@
           @update:model-value="e => setValue('bottleSize', e)"
         />
         <q-input
-          :label="$t('component.ingredient_form.pump_time_multiplier')"
+          :label="$t('component.ingredient_form.bottle_price')"
           outlined
-          hide-bottom-space
           :disable="disable"
-          :model-value="currentIngredientMultiplierString"
+          hide-bottom-space
+          type="number"
+          step="0.01"
+          :model-value="modelValue.bottlePrice"
           :rules="[
-                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || $t('errors.field_required'),
-                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
-                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
+                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
               ]"
-          mask="#.##"
-          @update:model-value="e => setValue('pumpTimeMultiplier', e)"
+          @update:model-value="e => setValue('bottlePrice', e)"
         />
       </q-tab-panel>
       <q-tab-panel
@@ -177,6 +178,19 @@
                 val => !v.modelValue.bottleSize.minValue.$invalid || $t('errors.positive')
               ]"
           @update:model-value="e => setValue('bottleSize', e)"
+        />
+        <q-input
+          :label="$t('component.ingredient_form.bottle_price')"
+          outlined
+          :disable="disable"
+          hide-bottom-space
+          type="number"
+          step="0.01"
+          :model-value="modelValue.bottlePrice"
+          :rules="[
+                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
+              ]"
+          @update:model-value="e => setValue('bottlePrice', e)"
         />
       </q-tab-panel>
     </q-tab-panels>

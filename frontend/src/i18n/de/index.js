@@ -215,8 +215,8 @@ export default {
             ingredient: 'Zutat',
             type: 'Typ',
             alc_content: 'Alkoholgehalt',
-            bottle_size: 'Flaschengröße',
-            bottle_price: 'Flaschenpreis',
+            bottle_size: 'Behältergröße',
+            bottle_price: 'Behälterpreis',
             unit: 'Einheit',
             pump_time_multiplier: 'Pumpenzeitmultiplikator',
             parent_group: 'Übergeordnete Gruppe',
@@ -758,8 +758,8 @@ export default {
     make_cocktail_dialog: {
       headline: 'Cocktail bestellen',
       order_btn_label: 'COCKTAIL HERSTELLEN ({nr} ml)',
-      price_value: 'Preis: {price}',
-      price_unavailable: 'Preis: nicht verfügbar'
+      price_value: 'Herstellungspreis: {price}',
+      price_unavailable: 'Herstellungspreis: nicht verfügbar'
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glas',
@@ -925,7 +925,7 @@ export default {
           type: 'Typ',
           alc_content: 'Alkoholgehalt',
           bottle_size: 'Behältergröße',
-          bottle_price: 'Flaschenpreis',
+          bottle_price: 'Behälterpreis',
           unit: 'Einheit',
           pump_time_multiplier: 'Pumpenzeitmultiplikator',
           parent_group: 'Übergeordnete Gruppe',
@@ -958,8 +958,8 @@ export default {
       tab_automated: 'Automatisch',
       tab_manual: 'Manuell',
       parent_group: 'Übergeordnete Gruppe',
-      bottle_size: 'Flaschengröße',
-      bottle_price: 'Flaschenpreis',
+      bottle_size: 'Behältergröße',
+      bottle_price: 'Behälterpreis',
       image: 'Bild',
       remove_img: 'Vorhandenes Bild entfernen',
       pump_time_multiplier: 'Pumpenzeitmultiplikator',

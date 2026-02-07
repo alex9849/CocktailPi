@@ -812,8 +812,8 @@ export default {
     make_cocktail_dialog: {
       headline: 'Order Cocktail',
       order_btn_label: 'MAKE COCKTAIL ({nr} ml)',
-      price_value: 'Price: {price}',
-      price_unavailable: 'Price: unavailable'
+      price_value: 'Production costs: {price}',
+      price_unavailable: 'Production costs: unavailable'
     },
     make_cocktail_amount_to_produce: {
       glass_selector_label: 'Glass',
