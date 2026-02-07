@@ -197,6 +197,19 @@ public class FeasibilityFactory {
                 continue;
             }
 
+            if (addableIngredient instanceof ManualIngredient manualIngredient
+                    && manualIngredient.getUnit() != Ingredient.Unit.MILLILITER) {
+                Double bottlePrice = addableIngredient.getBottlePrice();
+                if (bottlePrice == null || bottlePrice <= 0) {
+                    missingPriceData = true;
+                    continue;
+                }
+                BigDecimal ingredientPrice = BigDecimal.valueOf(bottlePrice)
+                        .multiply(BigDecimal.valueOf(amountRequired));
+                totalPrice = totalPrice.add(ingredientPrice);
+                continue;
+            }
+
             Double bottlePrice = addableIngredient.getBottlePrice();
             Integer bottleSize = getBottleSize(addableIngredient);
             if (bottlePrice == null || bottlePrice <= 0 || bottleSize == null || bottleSize <= 0) {

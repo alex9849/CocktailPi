@@ -166,6 +166,7 @@
           :disable="disable"
         />
         <q-input
+          v-if="modelValue.unit === 'ml'"
           :label="$t('component.ingredient_form.bottle_size')"
           outlined
           hide-bottom-space
@@ -273,7 +274,8 @@ export default {
           maxValue: maxValue(10)
         },
         bottleSize: {
-          required: requiredIf(() => this.modelValue.type === 'automated'),
+          required: requiredIf(() => this.modelValue.type === 'automated' ||
+            (this.modelValue.type === 'manual' && this.modelValue.unit === 'ml')),
           minValue: minValue(0)
         },
         bottlePrice: {
@@ -319,6 +321,13 @@ export default {
     }
   },
   watch: {
+    'modelValue.unit': {
+      handler (value) {
+        if (this.modelValue.type === 'manual' && value && value !== 'ml') {
+          this.setValue('bottleSize', null)
+        }
+      }
+    },
     'v.modelValue.$invalid': {
       immediate: true,
       handler (value) {

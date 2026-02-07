@@ -107,8 +107,8 @@ public class IngredientRepository extends JdbcDaoSupport {
             pstmt.setNull(7, Types.BOOLEAN);
             pstmt.setNull(10, Types.DOUBLE);
         }
-        if(ingredient instanceof ManualIngredient) {
-            pstmt.setString(5, ingredient.getUnit().toString());
+        if(ingredient instanceof ManualIngredient manualIngredient) {
+            pstmt.setString(5, manualIngredient.getUnit().toString());
         } else {
             pstmt.setNull(5, Types.VARCHAR);
         }
@@ -117,7 +117,9 @@ public class IngredientRepository extends JdbcDaoSupport {
             pstmt.setDouble(6, automatedIngredient.getPumpTimeMultiplier());
             bottleSize = automatedIngredient.getBottleSize();
         } else if(ingredient instanceof ManualIngredient manualIngredient) {
-            bottleSize = manualIngredient.getBottleSize();
+            if (manualIngredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                bottleSize = manualIngredient.getBottleSize();
+            }
         } else {
             pstmt.setNull(6, Types.DOUBLE);
         }
@@ -216,7 +218,11 @@ public class IngredientRepository extends JdbcDaoSupport {
             mIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             mIngredient.setInBar(resultSet.getBoolean("in_bar"));
             mIngredient.setHasImage(resultSet.getBoolean("has_image"));
-            mIngredient.setBottleSize((Integer) resultSet.getObject("bottle_size"));
+            if (mIngredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                mIngredient.setBottleSize((Integer) resultSet.getObject("bottle_size"));
+            } else {
+                mIngredient.setBottleSize(null);
+            }
             mIngredient.setBottlePrice((Double) resultSet.getObject("bottle_price"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
