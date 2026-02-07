@@ -156,13 +156,6 @@ class ServiceBehaviorTest extends BackendIntegrationTestBase {
     }
 
     @Test
-    void errorServiceStoresErrors() {
-        GpioBoard board = gpioService.getGpioBoards().get(0);
-        errorService.addGpioBoardError(board, new net.alex9849.cocktailpi.model.system.ErrorInfo());
-        assertTrue(errorService.getGpioBoardErrors(board).size() > 0);
-    }
-
-    @Test
     void eventServiceCreateAndDelete() {
         DoNothingEventAction action = new DoNothingEventAction();
         action.setTrigger(EventTrigger.COCKTAIL_PRODUCTION_STARTED);

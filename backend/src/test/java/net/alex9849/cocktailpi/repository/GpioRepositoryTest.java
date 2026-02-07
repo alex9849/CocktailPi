@@ -34,7 +34,7 @@ class GpioRepositoryTest extends BackendIntegrationTestBase {
     void createAndFindI2cBoard() {
         I2CGpioBoard board = I2CBoardModel.genInstance(I2CBoardModel.MCP23017);
         board.setName("RepoI2C");
-        board.setI2cAddress(0x21);
+        board.setI2cAddress((byte) 0x21);
 
         GpioBoard created = gpioRepository.createBoard(board);
         assertNotNull(created);

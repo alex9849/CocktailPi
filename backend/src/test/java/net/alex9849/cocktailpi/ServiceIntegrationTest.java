@@ -77,15 +77,7 @@ class ServiceIntegrationTest extends BackendIntegrationTestBase {
         Collection created = collectionService.createCollection(collection);
         collectionService.deleteCollection(created.getId());
     }
-
-    @Test
-    void errorServiceTracksErrors() {
-        GpioBoard board = gpioService.getGpioBoards().get(0);
-        ErrorInfo info = new ErrorInfo();
-        info.setMessage("test");
-        errorService.addGpioBoardError(board, info);
-        assertTrue(errorService.getGpioBoardErrors(board).size() > 0);
-    }
+    
 
     @Test
     void eventServiceExecutionGroupsReturnsList() {

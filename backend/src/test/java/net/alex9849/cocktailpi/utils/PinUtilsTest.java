@@ -1,12 +1,7 @@
 package net.alex9849.cocktailpi.utils;
 
-import com.pi4j.io.gpio.digital.InputPin;
-import com.pi4j.io.gpio.digital.OutputPin;
 import com.pi4j.io.gpio.digital.PullResistance;
-import net.alex9849.cocktailpi.model.gpio.GpioBoard;
-import net.alex9849.cocktailpi.model.gpio.GpioBoardType;
-import net.alex9849.cocktailpi.model.gpio.HardwarePin;
-import net.alex9849.cocktailpi.model.gpio.PinResource;
+import net.alex9849.cocktailpi.model.gpio.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
