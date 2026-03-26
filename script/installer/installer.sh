@@ -338,12 +338,18 @@ if [ "$modsel" = "3" ]; then
 	fi
 fi
 
-is_ssh=""
-if [[ $(tty) =~ ^/dev/pts/ ]]; then
-    is_ssh=1
-else
-    is_ssh=0;
-fi
+is_ssh=0
+pid=$$
+while [ "$pid" -ne 1 ]; do
+    cmd=$(ps -o comm= -p "$pid" 2>/dev/null)
+
+    if [[ "$cmd" == "sshd" ]]; then
+        is_ssh=1
+        break
+    fi
+
+    pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+done
 
 users=($(cat /etc/passwd | grep "/bin/bash" | sed 's/:.*//'))
 pi_user_found=0
