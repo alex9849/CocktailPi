@@ -86,6 +86,12 @@ public class RecipeEndpoint {
         return ResponseEntity.ok().body(new PageImpl<>(recipeDtos, recipePage.getPageable(), recipePage.getTotalElements()));
     }
 
+    @RequestMapping(path = "feasible", method = RequestMethod.GET)
+    public ResponseEntity<List<Long>> getFeasibleRecipes() {
+        List<Long> feasibleIds = recipeService.getFeasibleRecipeIds();
+        return ResponseEntity.ok(feasibleIds);
+    }
+
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getRecipe(@PathVariable("id") long id,
                                 @RequestParam(value = "isIngredient", defaultValue = "false") boolean isIngredient) {

@@ -45,6 +45,10 @@ public class PumpService {
         return dataService.getAllPumps();
     }
 
+    public List<Pump> getAllCompletedPumps() {
+        return dataService.getAllCompletedPumps();
+    }
+
     public Pump getPump(long id) {
         return dataService.getPump(id);
     }

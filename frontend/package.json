@@ -28,7 +28,7 @@
     "npm": "^11.1.0",
     "pinia": "^2.3.1",
     "qrcode": "^1.5.3",
-    "quasar": "^2.14.2",
+    "quasar": "^2.19.2",
     "querystring": "^0.2.1",
     "sockjs-client": "1.5.2",
     "vue": "^3.3.4",

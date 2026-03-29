@@ -2,7 +2,10 @@ package net.alex9849.cocktailpi.service;
 
 import net.alex9849.cocktailpi.model.Category;
 import net.alex9849.cocktailpi.model.Glass;
+import net.alex9849.cocktailpi.model.FeasibilityReport;
 import net.alex9849.cocktailpi.model.pump.Pump;
+import net.alex9849.cocktailpi.model.recipe.CocktailOrderConfiguration;
+import net.alex9849.cocktailpi.model.recipe.FeasibilityFactory;
 import net.alex9849.cocktailpi.model.recipe.IngredientRecipe;
 import net.alex9849.cocktailpi.model.recipe.Recipe;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AddableIngredient;
@@ -180,6 +183,40 @@ public class RecipeService {
 
     public List<Recipe> getAll() {
         return recipeRepository.findAll();
+    }
+
+    public List<Long> getFeasibleRecipeIds() {
+        Set<Long> candidateIds = recipeRepository.getIdsOfRecipesWithAllIngredientsInBarOrOnPumps();
+        if (candidateIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Recipe> candidates = recipeRepository.findByIds(0, candidateIds.size(),
+                Sort.by(Sort.Direction.ASC, "name"), candidateIds.toArray(new Long[0]));
+
+        List<Pump> pumps = pumpService.getAllCompletedPumps();
+
+        List<Long> feasibleIds = new ArrayList<>();
+        for (Recipe recipe : candidates) {
+            CocktailOrderConfiguration orderConfig = new CocktailOrderConfiguration();
+            int amount = (recipe.getDefaultGlass() == null) ? 0 : (int) recipe.getDefaultGlass().getSize();
+            orderConfig.setAmountOrderedInMl(amount);
+            CocktailOrderConfiguration.Customisations customisations = new CocktailOrderConfiguration.Customisations();
+            customisations.setBoost(100);
+            customisations.setAdditionalIngredients(Collections.emptyList());
+            orderConfig.setCustomisations(customisations);
+
+            FeasibilityFactory factory = new FeasibilityFactory(recipe, orderConfig, pumps);
+            FeasibilityReport report = factory.getFeasibilityReport();
+
+            // Feasible if all ingredient groups resolved and all pumped ingredients have enough liquid.
+            // Glass check intentionally skipped - this is a planning/browsing endpoint.
+            if (report.isAllIngredientGroupsReplaced()
+                    && report.getRequiredIngredients().stream().allMatch(r -> r.getAmountMissing() == 0)) {
+                feasibleIds.add(recipe.getId());
+            }
+        }
+        return feasibleIds;
     }
 
     public byte[] getImage(long recipeId) {
