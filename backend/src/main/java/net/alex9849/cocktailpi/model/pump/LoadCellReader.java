@@ -5,16 +5,14 @@ import net.alex9849.motorlib.sensor.HX711;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-public class LoadCellReader extends Thread {
+public class LoadCellReader extends Thread implements ILoadCellReader {
     private static class Request {
         CompletableFuture<Long> future;
         int rounds;
     }
 
-    private final Map<Integer, List<Request>> taskMap = new HashMap();
+    private final Map<Integer, List<Request>> taskMap = new HashMap<>();
     private final HX711 hx711;
     private final long[] dataPoints;
     private int dataPointIdx = 0;
@@ -94,11 +92,11 @@ public class LoadCellReader extends Thread {
             return dataCopy[dataCopy.length/2];
     }
 
-    public Future<Long> readCurrent() {
+    public CompletableFuture<Long> readCurrent() {
         return readCurrent(dataPoints.length);
     }
 
-    public Future<Long> readCurrent(int rounds) {
+    public CompletableFuture<Long> readCurrent(int rounds) {
         synchronized (taskMap) {
             if(!running) {
                 throw new HX711Exception("Load cell shut down");
@@ -118,11 +116,11 @@ public class LoadCellReader extends Thread {
         }
     }
 
-    public Future<Long> readFromNow() {
+    public CompletableFuture<Long> readFromNow() {
         return readFromNow(dataPoints.length);
     }
 
-    public Future<Long> readFromNow(int readRounds) {
+    public CompletableFuture<Long> readFromNow(int readRounds) {
         if(readRounds > dataPoints.length) {
             throw new IllegalArgumentException("readRounds > dataPoints.length");
         }

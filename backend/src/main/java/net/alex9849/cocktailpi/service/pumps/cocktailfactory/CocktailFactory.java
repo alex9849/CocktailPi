@@ -1,7 +1,9 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory;
 
+import net.alex9849.cocktailpi.model.LoadCell;
 import net.alex9849.cocktailpi.model.cocktail.CocktailProgress;
 import net.alex9849.cocktailpi.model.pump.Pump;
+import net.alex9849.cocktailpi.model.pump.RelativeLoadCellReader;
 import net.alex9849.cocktailpi.model.recipe.FeasibleRecipe;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
@@ -11,9 +13,12 @@ import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailpi.model.recipe.productionstep.WrittenInstructionProductionStep;
 import net.alex9849.cocktailpi.model.user.User;
+import net.alex9849.cocktailpi.service.LoadCellService;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker.*;
+import net.alex9849.cocktailpi.utils.SpringUtility;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -30,6 +35,7 @@ public class CocktailFactory {
     private final FeasibleRecipe feasibleRecipe;
     private final User user;
     private final Integer powerLimit;
+    private RelativeLoadCellReader relativeLoadCellReader;
 
     private CocktailProgress.State previousState = null;
     private CocktailProgress.State state = null;
@@ -44,6 +50,12 @@ public class CocktailFactory {
         this.feasibleRecipe = feasibleRecipe;
         this.user = user;
         this.powerLimit = powerLimit;
+        LoadCellService lcs = SpringUtility.getBean(LoadCellService.class);
+        LoadCell loadCell = lcs.getLoadCell();
+        if (loadCell != null) {
+            loadCell.getLoadCellReader().readCurrent();
+            this.relativeLoadCellReader = new RelativeLoadCellReader(loadCell.getLoadCellReader());
+        }
         Map<Long, List<Pump>> pumpsByIngredientId = pumps.stream()
                 .filter(x -> x.getCurrentIngredient() != null)
                 .collect(Collectors.groupingBy(x -> x.getCurrentIngredient().getId()));
@@ -144,7 +156,7 @@ public class CocktailFactory {
             }
         }
         if(!manualProductionSteps.isEmpty()) {
-            workers.add(new ManualProductionStepWorker(this, manualProductionSteps));
+            workers.add(new ManualProductionStepWorker(this, relativeLoadCellReader, manualProductionSteps));
         }
         if(!automaticProductionSteps.isEmpty()) {
             List<PumpTimingStepCalculator> stepCalculators = AutomaticProductionStepWorker.splitStepByPowerLimit(pumps,
@@ -232,6 +244,15 @@ public class CocktailFactory {
         this.notifySubscribers();
     }
 
+    public void tareLoadCellValue() {
+        try {
+            relativeLoadCellReader.tare(true);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            cancelCocktail(true);
+        }
+    }
+
     public void cancelCocktail(boolean exceptional) {
         if(isFinished() || isCanceled()) {
             throw new IllegalStateException("Cocktail already completed!");
@@ -306,7 +327,10 @@ public class CocktailFactory {
         cocktailprogress.setProgress(getProgressInPercent());
 
         if(this.currentProductionStepWorker instanceof ManualProductionStepWorker worker) {
-            cocktailprogress.setCurrentIngredientsToAddManually(worker.getProgress().getIngredientsToBeAdded());
+            ManualStepProgress manualStepProgress = worker.getProgress();
+            cocktailprogress.setCurrentIngredientsToAddManually(manualStepProgress.getIngredientsToBeAdded());
+            cocktailprogress.setShowLoadCellValue(manualStepProgress.isShowLoadCellValue());
+            cocktailprogress.setLoadCellValue(manualStepProgress.getLoadCellValue());
         }
         if(this.currentProductionStepWorker instanceof WrittenInstructionProductionStepWorker worker) {
             cocktailprogress.setWrittenInstruction(worker.getProgress().getMessage());

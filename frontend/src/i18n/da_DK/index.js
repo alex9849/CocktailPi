@@ -973,7 +973,8 @@ export default {
     },
     cocktail_production_manual_step_card: {
       continue_btn_label: 'Fortsæt',
-      add_ingredient_headline: 'Tilføj venligst følgende ingredienser manuelt og klik på "fortsæt":'
+      add_ingredient_headline: 'Tilføj venligst følgende ingredienser manuelt og klik på "fortsæt":',
+      tare_btn_label: 'Tarér'
     },
     donation_disclaimer: {
       headline: 'Din støtte er nødvendig!',

@@ -1181,7 +1181,8 @@ export default {
     },
     cocktail_production_manual_step_card: {
       continue_btn_label: 'Fortsetzen',
-      add_ingredient_headline: "Bitte fügen Sie die folgenden Zutaten manuell hinzu und klicken Sie auf 'Fortsetzen':"
+      add_ingredient_headline: "Bitte fügen Sie die folgenden Zutaten manuell hinzu und klicken Sie auf 'Fortsetzen':",
+      tare_btn_label: 'Tarieren'
     },
     donation_disclaimer: {
       headline: 'Deine Unterstützung wird benötigt!',

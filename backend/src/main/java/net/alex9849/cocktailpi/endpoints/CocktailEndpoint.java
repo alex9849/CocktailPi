@@ -54,6 +54,14 @@ public class CocktailEndpoint {
         return ResponseEntity.accepted().build();
     }
 
+    @RequestMapping(value = "tare", method = RequestMethod.PUT)
+    public ResponseEntity<?> tareLoadCell() {
+        if(!cocktailOrderService.tareLoadCellValue()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @RequestMapping(value = "{recipeId}/feasibility", method = RequestMethod.PUT)
     public ResponseEntity<?> checkFeasibility(@PathVariable("recipeId") long recipeId,
                                               @Valid @RequestBody CocktailOrderConfigurationDto.Request.Create orderConfigDto,

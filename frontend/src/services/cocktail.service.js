@@ -28,6 +28,10 @@ class CocktailService {
   continueProduction () {
     return axios.post(API_PATH + 'continueproduction')
   }
+
+  tareLoadCell () {
+    return axios.put(API_PATH + 'tare')
+  }
 }
 
 export default new CocktailService()

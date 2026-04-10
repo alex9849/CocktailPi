@@ -1263,7 +1263,8 @@ export default {
     },
     cocktail_production_manual_step_card: {
       continue_btn_label: 'Continue',
-      add_ingredient_headline: 'Please manually add the following ingredients and click "continue":'
+      add_ingredient_headline: 'Please manually add the following ingredients and click "continue":',
+      tare_btn_label: 'Tare'
     },
     donation_disclaimer: {
       headline: 'Your support is needed!',

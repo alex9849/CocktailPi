@@ -20,6 +20,26 @@
               </li>
             </ul>
           </div>
+          <div
+            v-if="cocktailProgress.showLoadCellValue"
+            class="flex col-12 col-sm justify-center"
+            style="align-self: center;"
+          >
+            <div class="column items-center">
+              <div class="text-h4">
+                {{ cocktailProgress.loadCellValue }} g
+              </div>
+              <q-btn
+                flat
+                dense
+                color="blue"
+                @click="onClickTare"
+                :loading="tareClicked"
+              >
+                {{ $t('component.cocktail_production_manual_step_card.tare_btn_label') }}
+              </q-btn>
+            </div>
+          </div>
           <div class="flex col-12 col-sm-auto justify-center" style="align-self: end;" >
             <q-btn color="green"
                    :loading="continueProductionClicked"
@@ -60,7 +80,8 @@ export default {
   name: 'CCocktailProductionManualStepCard',
   data () {
     return {
-      continueProductionClicked: false
+      continueProductionClicked: false,
+      tareClicked: false
     }
   },
   props: {
@@ -84,6 +105,13 @@ export default {
       CocktailService.continueProduction()
         .finally(() => {
           this.continueProductionClicked = false
+        })
+    },
+    onClickTare () {
+      this.tareClicked = true
+      CocktailService.tareLoadCell()
+        .finally(() => {
+          this.tareClicked = false
         })
     }
   }

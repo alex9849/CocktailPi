@@ -223,4 +223,11 @@ public class CocktailOrderService {
         return orderConfig;
     }
 
+    public boolean tareLoadCellValue() {
+        if(cocktailFactory != null && cocktailFactory.isRunning()) {
+            cocktailFactory.tareLoadCellValue();
+            return true;
+        }
+        return false;
+    }
 }

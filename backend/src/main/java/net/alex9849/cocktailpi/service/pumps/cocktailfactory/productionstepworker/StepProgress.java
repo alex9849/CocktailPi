@@ -1,22 +1,10 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class StepProgress {
     private boolean finished;
     private int percentCompleted;
-
-    public int getPercentCompleted() {
-        return percentCompleted;
-    }
-
-    public void setPercentCompleted(int percentCompleted) {
-        this.percentCompleted = percentCompleted;
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
 }

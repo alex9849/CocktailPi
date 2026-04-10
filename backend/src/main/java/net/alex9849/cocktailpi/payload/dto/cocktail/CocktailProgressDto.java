@@ -15,23 +15,30 @@ public class CocktailProgressDto {
     public interface State { CocktailProgress.State getState(); }
     public interface CurrentIngredientsToAddManually { List<ProductionStepIngredientDto.Response.Detailed> getCurrentIngredientsToAddManually(); }
     public interface WrittenInstruction { String getWrittenInstruction(); }
+    public interface LoadCellValue { long getLoadCellValue(); }
+    public interface ShowLoadCellValue { boolean isShowLoadCellValue(); }
 
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode
-        public static class Detailed implements Recipe, Progress, State, CurrentIngredientsToAddManually, WrittenInstruction {
+        public static class Detailed implements Recipe, Progress, State, CurrentIngredientsToAddManually, WrittenInstruction,
+                LoadCellValue, ShowLoadCellValue {
             RecipeDto.Response.SearchResult recipe;
             int progress;
             long userId;
             CocktailProgress.State state;
             List<ProductionStepIngredientDto.Response.Detailed> currentIngredientsToAddManually;
             String writtenInstruction;
+            long loadCellValue;
+            boolean showLoadCellValue;
 
             public Detailed(CocktailProgress cocktailprogress) {
                 this.progress = cocktailprogress.getProgress();
                 this.state = cocktailprogress.getState();
+                this.loadCellValue = cocktailprogress.getLoadCellValue();
+                this.showLoadCellValue = cocktailprogress.isShowLoadCellValue();
                 if(cocktailprogress.getCurrentIngredientsToAddManually() != null) {
                     this.currentIngredientsToAddManually = cocktailprogress.getCurrentIngredientsToAddManually()
                             .stream()

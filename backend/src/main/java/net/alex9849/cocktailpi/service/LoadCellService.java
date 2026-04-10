@@ -17,6 +17,7 @@ public class LoadCellService {
     private LoadCell loadCell = null;
     private LoadCellSettingsDto.Duplex.DispensingArea dispensingAreaSettings = null;
     private boolean checkedIfLoadCellPersisted = false;
+    private long currentTare = 0;
     private static final String REPO_KEY_LOAD_CELL_ENABLED = "LC_Enabled";
     public static final String REPO_KEY_LOAD_CELL_DT_PIN = "LC_DT";
     public static final String REPO_KEY_LOAD_CELL_CLK_PIN = "LC_SCK";
@@ -78,10 +79,26 @@ public class LoadCellService {
             throw new IllegalStateException("Load cell not calibrated!");
         }
         try {
-            return loadCell.getHX711().read(7);
+            return loadCell.getHX711().read(7) - currentTare;
         } catch (InterruptedException e) {
             throw new RuntimeException("Reading load cell has been interrupted!", e);
         }
+    }
+
+    public void tare() {
+        LoadCell loadCell = getLoadCell();
+        if (loadCell == null) {
+            throw new IllegalStateException("Load cell not configured!");
+        }
+        try {
+            currentTare = loadCell.getHX711().read(7) + currentTare;
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Reading load cell has been interrupted!", e);
+        }
+    }
+
+    public void resetTare() {
+        currentTare = 0;
     }
 
     public LoadCellSettingsDto.Duplex.DispensingArea getDispensingAreaSettings() {
