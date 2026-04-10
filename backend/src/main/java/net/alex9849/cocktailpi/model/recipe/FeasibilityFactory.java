@@ -212,7 +212,7 @@ public class FeasibilityFactory {
 
             Double bottlePrice = addableIngredient.getBottlePrice();
             Integer bottleSize = getBottleSize(addableIngredient);
-            if (bottlePrice == null || bottlePrice <= 0 || bottleSize == null || bottleSize <= 0) {
+            if (bottlePrice == null || bottleSize == null) {
                 missingPriceData = true;
                 continue;
             }
