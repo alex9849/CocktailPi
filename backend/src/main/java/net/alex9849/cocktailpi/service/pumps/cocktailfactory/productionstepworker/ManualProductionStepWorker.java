@@ -26,11 +26,13 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
 
         this.showLoadCellValue = false;
-        for (ProductionStepIngredient ps : this.productionStepInstructions) {
-            Ingredient.Unit unit = ps.getIngredient().getUnit();
-            if (unit == Ingredient.Unit.GRAM || unit == Ingredient.Unit.MILLILITER) {
-                this.showLoadCellValue = true;
-                break;
+        if (this.relativeLoadCellReader != null) {
+            for (ProductionStepIngredient ps : this.productionStepInstructions) {
+                Ingredient.Unit unit = ps.getIngredient().getUnit();
+                if (unit == Ingredient.Unit.GRAM || unit == Ingredient.Unit.MILLILITER) {
+                    this.showLoadCellValue = true;
+                    break;
+                }
             }
         }
 
