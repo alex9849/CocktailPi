@@ -47,6 +47,12 @@
           >
             {{ $t('component.make_cocktail_dialog.order_btn_label', {nr: feasibilityReport.totalAmountInMl}) }}
           </q-btn>
+          <div
+            v-if="feasibilityReportValid"
+            class="text-subtitle2"
+          >
+            {{ totalPriceLabel }}
+          </div>
           <c-make-cocktail-dialog-ingredient-group-replacements
             v-if="feasibilityReportValid"
             :ingredient-group-replacements="feasibilityReport.ingredientGroupReplacements"
@@ -86,6 +92,12 @@
         >
           {{ $t('component.make_cocktail_dialog.order_btn_label', {nr: feasibilityReport.totalAmountInMl}) }}
         </q-btn>
+        <div
+          v-if="feasibilityReportValid"
+          class="text-subtitle2 full-width text-center"
+        >
+          {{ totalPriceLabel }}
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -137,7 +149,8 @@ export default {
         ingredientGroupReplacements: [],
         requiredIngredients: [],
         feasible: false,
-        totalAmountInMl: 0
+        totalAmountInMl: 0,
+        totalPrice: null
       },
       checkingFeasibility: true,
       pumpEditorExpanded: false,
@@ -337,6 +350,14 @@ export default {
         !this.anyPumpOccupied &&
         !this.hasCocktailProgress &&
         !this.v.amountToProduce.$invalid
+    },
+    totalPriceLabel () {
+      if (this.feasibilityReport.totalPrice === null || this.feasibilityReport.totalPrice === undefined) {
+        return this.$t('component.make_cocktail_dialog.price_unavailable')
+      }
+      return this.$t('component.make_cocktail_dialog.price_value', {
+        price: Number(this.feasibilityReport.totalPrice).toFixed(2)
+      })
     }
   },
   validations () {

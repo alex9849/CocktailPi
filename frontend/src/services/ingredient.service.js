@@ -90,7 +90,9 @@ class IngredientDtoMapper {
         parentGroupId: ingredient.parentGroupId,
         type: ingredient.type,
         unit: ingredient.unit,
-        alcoholContent: ingredient.alcoholContent
+        alcoholContent: ingredient.alcoholContent,
+        bottleSize: ingredient.bottleSize,
+        bottlePrice: ingredient.bottlePrice
       }
     } else if (ingredient.type === 'automated') {
       return {
@@ -98,6 +100,7 @@ class IngredientDtoMapper {
         alcoholContent: ingredient.alcoholContent,
         name: ingredient.name,
         bottleSize: ingredient.bottleSize,
+        bottlePrice: ingredient.bottlePrice,
         parentGroupId: ingredient.parentGroupId,
         pumpTimeMultiplier: ingredient.pumpTimeMultiplier
       }

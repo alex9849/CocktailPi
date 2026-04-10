@@ -62,6 +62,11 @@ public class IngredientService {
         }
         BeanUtils.copyProperties(ingredientDto, ingredient);
         ingredient.setParentGroup(parentGroup);
+        if (ingredient instanceof ManualIngredient manualIngredient) {
+            if (manualIngredient.getUnit() != Ingredient.Unit.MILLILITER) {
+                manualIngredient.setBottleSize(null);
+            }
+        }
         return ingredient;
     }
 

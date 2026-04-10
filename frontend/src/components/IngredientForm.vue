@@ -99,6 +99,20 @@
           @update:selected="e => setParentGroup(e)"
         />
         <q-input
+          :label="$t('component.ingredient_form.pump_time_multiplier')"
+          outlined
+          hide-bottom-space
+          :disable="disable"
+          :model-value="currentIngredientMultiplierString"
+          :rules="[
+                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || $t('errors.field_required'),
+                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
+                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
+              ]"
+          mask="#.##"
+          @update:model-value="e => setValue('pumpTimeMultiplier', e)"
+        />
+        <q-input
           :label="$t('component.ingredient_form.bottle_size')"
           outlined
           hide-bottom-space
@@ -112,18 +126,17 @@
           @update:model-value="e => setValue('bottleSize', e)"
         />
         <q-input
-          :label="$t('component.ingredient_form.pump_time_multiplier')"
+          :label="$t('component.ingredient_form.bottle_price')"
           outlined
-          hide-bottom-space
           :disable="disable"
-          :model-value="currentIngredientMultiplierString"
+          hide-bottom-space
+          type="number"
+          step="0.01"
+          :model-value="modelValue.bottlePrice"
           :rules="[
-                val => !v.modelValue.pumpTimeMultiplier.required.$invalid || $t('errors.field_required'),
-                val => !v.modelValue.pumpTimeMultiplier.minValue.$invalid || $t('errors.positive'),
-                val => !v.modelValue.pumpTimeMultiplier.maxValue.$invalid || $t('errors.max_metric', {nr: 10, metric: ''})
+                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
               ]"
-          mask="#.##"
-          @update:model-value="e => setValue('pumpTimeMultiplier', e)"
+          @update:model-value="e => setValue('bottlePrice', e)"
         />
       </q-tab-panel>
       <q-tab-panel
@@ -152,6 +165,32 @@
           map-options
           :label="$t('component.ingredient_form.unit')"
           :disable="disable"
+        />
+        <q-input
+          v-if="modelValue.unit === 'ml'"
+          :label="$t('component.ingredient_form.bottle_size')"
+          outlined
+          hide-bottom-space
+          :disable="disable"
+          type="number"
+          :model-value="modelValue.bottleSize"
+          :rules="[
+                val => !v.modelValue.bottleSize.minValue.$invalid || $t('errors.positive')
+              ]"
+          @update:model-value="e => setValue('bottleSize', e)"
+        />
+        <q-input
+          :label="$t('component.ingredient_form.bottle_price')"
+          outlined
+          :disable="disable"
+          hide-bottom-space
+          type="number"
+          step="0.01"
+          :model-value="modelValue.bottlePrice"
+          :rules="[
+                val => !v.modelValue.bottlePrice.minValue.$invalid || $t('errors.positive')
+              ]"
+          @update:model-value="e => setValue('bottlePrice', e)"
         />
       </q-tab-panel>
     </q-tab-panels>
@@ -249,7 +288,11 @@ export default {
           maxValue: maxValue(10)
         },
         bottleSize: {
-          required: requiredIf(() => this.modelValue.type === 'automated'),
+          required: requiredIf(() => this.modelValue.type === 'automated' ||
+            (this.modelValue.type === 'manual' && this.modelValue.unit === 'ml')),
+          minValue: minValue(0)
+        },
+        bottlePrice: {
           minValue: minValue(0)
         },
         unit: {
@@ -292,6 +335,13 @@ export default {
     }
   },
   watch: {
+    'modelValue.unit': {
+      handler (value) {
+        if (this.modelValue.type === 'manual' && value && value !== 'ml') {
+          this.setValue('bottleSize', null)
+        }
+      }
+    },
     'v.modelValue.$invalid': {
       immediate: true,
       handler (value) {

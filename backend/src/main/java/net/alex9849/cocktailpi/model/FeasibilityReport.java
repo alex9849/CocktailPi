@@ -22,6 +22,8 @@ public class FeasibilityReport {
     private boolean allIngredientGroupsReplaced;
     @Getter @Setter
     private int totalAmountInMl;
+    @Getter @Setter
+    private Double totalPrice;
 
     public boolean isFeasible() {
         return !failNoGlass && allIngredientGroupsReplaced && requiredIngredients.stream().allMatch(x -> x.amountMissing == 0);

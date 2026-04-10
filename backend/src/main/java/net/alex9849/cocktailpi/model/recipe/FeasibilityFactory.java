@@ -3,8 +3,10 @@ package net.alex9849.cocktailpi.model.recipe;
 import net.alex9849.cocktailpi.model.FeasibilityReport;
 import net.alex9849.cocktailpi.model.pump.Pump;
 import net.alex9849.cocktailpi.model.recipe.ingredient.AddableIngredient;
+import net.alex9849.cocktailpi.model.recipe.ingredient.AutomatedIngredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.model.recipe.ingredient.IngredientGroup;
+import net.alex9849.cocktailpi.model.recipe.ingredient.ManualIngredient;
 import net.alex9849.cocktailpi.model.recipe.productionstep.AddIngredientsProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStep;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
@@ -12,6 +14,8 @@ import net.alex9849.cocktailpi.service.GlassService;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.utils.SpringUtility;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,7 @@ public class FeasibilityFactory {
         this.computeIngredientGroupReplacementsAndFeasibleRecipe();
         this.computeRequiredIngredients();
         this.computeTotalAmountOfMl();
+        this.computeTotalPrice();
         GlassService gService = SpringUtility.getBean(GlassService.class);
         this.feasibilityReport.setFailNoGlass(gService.getDispensingAreaState().isAreaEmpty());
     }
@@ -177,6 +182,62 @@ public class FeasibilityFactory {
             }
         }
         this.feasibilityReport.setRequiredIngredients(new HashSet<>(requiredIngredients.values()));
+    }
+
+    private void computeTotalPrice() {
+        Map<Ingredient, Integer> neededAmountPerIngredientId = CocktailFactory.getNeededAmountNeededPerIngredient(this.feasibleRecipe);
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        boolean missingPriceData = false;
+
+        for (Map.Entry<Ingredient, Integer> ingredientAmountPair : neededAmountPerIngredientId.entrySet()) {
+            Ingredient ingredient = ingredientAmountPair.getKey();
+            int amountRequired = ingredientAmountPair.getValue();
+
+            if (amountRequired <= 0 || !(ingredient instanceof AddableIngredient addableIngredient)) {
+                continue;
+            }
+
+            if (addableIngredient instanceof ManualIngredient manualIngredient
+                    && manualIngredient.getUnit() != Ingredient.Unit.MILLILITER) {
+                Double bottlePrice = addableIngredient.getBottlePrice();
+                if (bottlePrice == null || bottlePrice <= 0) {
+                    missingPriceData = true;
+                    continue;
+                }
+                BigDecimal ingredientPrice = BigDecimal.valueOf(bottlePrice)
+                        .multiply(BigDecimal.valueOf(amountRequired));
+                totalPrice = totalPrice.add(ingredientPrice);
+                continue;
+            }
+
+            Double bottlePrice = addableIngredient.getBottlePrice();
+            Integer bottleSize = getBottleSize(addableIngredient);
+            if (bottlePrice == null || bottlePrice <= 0 || bottleSize == null || bottleSize <= 0) {
+                missingPriceData = true;
+                continue;
+            }
+
+            BigDecimal ingredientPrice = BigDecimal.valueOf(bottlePrice)
+                    .multiply(BigDecimal.valueOf(amountRequired))
+                    .divide(BigDecimal.valueOf(bottleSize), 2, RoundingMode.HALF_UP);
+            totalPrice = totalPrice.add(ingredientPrice);
+        }
+
+        if (missingPriceData) {
+            this.feasibilityReport.setTotalPrice(null);
+        } else {
+            this.feasibilityReport.setTotalPrice(totalPrice.doubleValue());
+        }
+    }
+
+    private Integer getBottleSize(AddableIngredient ingredient) {
+        if (ingredient instanceof AutomatedIngredient automatedIngredient) {
+            return automatedIngredient.getBottleSize();
+        }
+        if (ingredient instanceof ManualIngredient manualIngredient) {
+            return manualIngredient.getBottleSize();
+        }
+        return null;
     }
 
     /**

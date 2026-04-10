@@ -31,7 +31,7 @@ public class IngredientRepository extends JdbcDaoSupport {
 
         return getJdbcTemplate().execute((ConnectionCallback<List<Ingredient>>) con -> {
             String stmt = "SELECT id, name, dType, unit, alcohol_content, in_bar, pump_time_multiplier, bottle_size, " +
-                    "parent_group_id, last_update, image IS NOT NULL AS has_image FROM ingredients i WHERE i.id IN (";
+                    "bottle_price, parent_group_id, last_update, image IS NOT NULL AS has_image FROM ingredients i WHERE i.id IN (";
             stmt += String.join(",", Arrays.stream(ids).map(x -> "?").collect(Collectors.toList()));
             stmt += ") order by i.name";
 
@@ -97,20 +97,35 @@ public class IngredientRepository extends JdbcDaoSupport {
             AddableIngredient aIngredient = (AddableIngredient) ingredient;
             pstmt.setInt(4, aIngredient.getAlcoholContent());
             pstmt.setBoolean(7, aIngredient.isInBar());
+            if(aIngredient.getBottlePrice() != null) {
+                pstmt.setDouble(10, aIngredient.getBottlePrice());
+            } else {
+                pstmt.setNull(10, Types.DOUBLE);
+            }
         } else {
             pstmt.setNull(4, Types.INTEGER);
             pstmt.setNull(7, Types.BOOLEAN);
+            pstmt.setNull(10, Types.DOUBLE);
         }
-        if(ingredient instanceof ManualIngredient) {
-            pstmt.setString(5, ingredient.getUnit().toString());
+        if(ingredient instanceof ManualIngredient manualIngredient) {
+            pstmt.setString(5, manualIngredient.getUnit().toString());
         } else {
             pstmt.setNull(5, Types.VARCHAR);
         }
+        Integer bottleSize = null;
         if(ingredient instanceof AutomatedIngredient automatedIngredient) {
             pstmt.setDouble(6, automatedIngredient.getPumpTimeMultiplier());
-            pstmt.setInt(9, automatedIngredient.getBottleSize());
+            bottleSize = automatedIngredient.getBottleSize();
+        } else if(ingredient instanceof ManualIngredient manualIngredient) {
+            if (manualIngredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                bottleSize = manualIngredient.getBottleSize();
+            }
         } else {
             pstmt.setNull(6, Types.DOUBLE);
+        }
+        if(bottleSize != null) {
+            pstmt.setInt(9, bottleSize);
+        } else {
             pstmt.setNull(9, Types.INTEGER);
         }
     }
@@ -164,7 +179,7 @@ public class IngredientRepository extends JdbcDaoSupport {
     public Ingredient create(Ingredient ingredient) {
         return getJdbcTemplate().execute((ConnectionCallback<Ingredient>) con -> {
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO ingredients (dtype, name, normal_name, alcohol_content, " +
-                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size, last_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", Statement.RETURN_GENERATED_KEYS);
+                    "unit, pump_time_multiplier, in_bar, parent_group_id, bottle_size, bottle_price, last_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", Statement.RETURN_GENERATED_KEYS);
             setParameters(ingredient, pstmt);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -178,9 +193,9 @@ public class IngredientRepository extends JdbcDaoSupport {
     public boolean update(Ingredient ingredient) {
         return Boolean.TRUE.equals(getJdbcTemplate().execute((ConnectionCallback<Boolean>) con -> {
             PreparedStatement pstmt = con.prepareStatement("UPDATE ingredients SET dtype = ?, name = ?, normal_name = ?, alcohol_content = ?, " +
-                    "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
+                    "unit = ?, pump_time_multiplier = ?, in_bar = ?, parent_group_id = ?, bottle_size = ?, bottle_price = ?, last_update = CURRENT_TIMESTAMP WHERE id = ?");
             setParameters(ingredient, pstmt);
-            pstmt.setLong(10, ingredient.getId());
+            pstmt.setLong(11, ingredient.getId());
             return pstmt.executeUpdate() != 0;
         }));
     }
@@ -203,6 +218,12 @@ public class IngredientRepository extends JdbcDaoSupport {
             mIngredient.setAlcoholContent(resultSet.getInt("alcohol_content"));
             mIngredient.setInBar(resultSet.getBoolean("in_bar"));
             mIngredient.setHasImage(resultSet.getBoolean("has_image"));
+            if (mIngredient.getUnit() == Ingredient.Unit.MILLILITER) {
+                mIngredient.setBottleSize((Integer) resultSet.getObject("bottle_size"));
+            } else {
+                mIngredient.setBottleSize(null);
+            }
+            mIngredient.setBottlePrice((Double) resultSet.getObject("bottle_price"));
             ingredient = mIngredient;
         } else if(Objects.equals(dType, "AutomatedIngredient")) {
             AutomatedIngredient aIngredient = new AutomatedIngredient();
@@ -211,6 +232,7 @@ public class IngredientRepository extends JdbcDaoSupport {
             aIngredient.setInBar(resultSet.getBoolean("in_bar"));
             aIngredient.setBottleSize(resultSet.getInt("bottle_size"));
             aIngredient.setHasImage(resultSet.getBoolean("has_image"));
+            aIngredient.setBottlePrice((Double) resultSet.getObject("bottle_price"));
             ingredient = aIngredient;
         } else if (Objects.equals(dType, "IngredientGroup")) {
             ingredient = new IngredientGroup();

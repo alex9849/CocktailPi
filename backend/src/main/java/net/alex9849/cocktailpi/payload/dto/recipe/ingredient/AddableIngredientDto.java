@@ -12,12 +12,14 @@ import net.alex9849.cocktailpi.model.recipe.ingredient.ManualIngredient;
 public abstract class AddableIngredientDto {
     private interface AlcoholContent { @Min(0) @Max(100) int getAlcoholContent(); }
     private interface HasImage { boolean isHasImage(); }
+    private interface BottlePrice { @Min(0) Double getBottlePrice(); }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent {
+        public abstract static class Create extends IngredientDto.Request.Create implements AlcoholContent, BottlePrice {
             int alcoholContent;
+            Double bottlePrice;
 
             protected Create() {}
 
@@ -45,10 +47,11 @@ public abstract class AddableIngredientDto {
     public static class Response {
 
         @Getter @Setter @EqualsAndHashCode(callSuper = true)
-        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent, HasImage {
+        public abstract static class Detailed extends IngredientDto.Response.Detailed implements AlcoholContent, HasImage, BottlePrice {
             int alcoholContent;
             boolean inBar;
             boolean hasImage;
+            Double bottlePrice;
 
             protected Detailed() {}
 
@@ -74,6 +77,7 @@ public abstract class AddableIngredientDto {
         public abstract static class Reduced extends IngredientDto.Response.Reduced {
             int alcoholContent;
             boolean inBar;
+            Double bottlePrice;
 
             protected Reduced(AddableIngredient ingredient) {
                 super(ingredient);
