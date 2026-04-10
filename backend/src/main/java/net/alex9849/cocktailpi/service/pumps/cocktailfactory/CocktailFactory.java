@@ -52,7 +52,7 @@ public class CocktailFactory {
         this.powerLimit = powerLimit;
         LoadCellService lcs = SpringUtility.getBean(LoadCellService.class);
         LoadCell loadCell = lcs.getLoadCell();
-        if (loadCell != null) {
+        if (loadCell != null && loadCell.isCalibrated()) {
             loadCell.getLoadCellReader().readCurrent();
             this.relativeLoadCellReader = new RelativeLoadCellReader(loadCell.getLoadCellReader());
         }
@@ -245,6 +245,9 @@ public class CocktailFactory {
     }
 
     public void tareLoadCellValue() {
+        if(this.relativeLoadCellReader == null) {
+            return;
+        }
         try {
             relativeLoadCellReader.tare(true);
         } catch (ExecutionException | InterruptedException e) {
