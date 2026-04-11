@@ -51,7 +51,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         }
         this.notifySubscribers();
         if(this.showLoadCellValue) {
-            this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
+            this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 100, 200, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -63,7 +63,23 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         if(!this.isStarted()) {
             return;
         }
+        if(notifierTask != null) {
+            this.notifierTask.cancel(false);
+        }
+        if (!this.scheduler.isShutdown()) {
+            this.scheduler.shutdown();
+        }
+        this.shutdown();
         this.setFinished();
+    }
+
+    protected void shutdown() {
+        if(notifierTask != null) {
+            this.notifierTask.cancel(false);
+        }
+        if (!this.scheduler.isShutdown()) {
+            this.scheduler.shutdown();
+        }
     }
 
     @Override
@@ -71,12 +87,7 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         if(!super.cancel()) {
             return false;
         }
-        if(notifierTask != null) {
-            this.notifierTask.cancel(false);
-        }
-        if (!this.scheduler.isShutdown()) {
-            this.scheduler.shutdown();
-        }
+        this.shutdown();
         return true;
     }
 

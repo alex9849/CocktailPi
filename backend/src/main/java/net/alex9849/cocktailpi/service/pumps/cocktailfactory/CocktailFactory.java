@@ -307,7 +307,8 @@ public class CocktailFactory {
     }
 
     public boolean isRunning() {
-        return this.state == CocktailProgress.State.RUNNING;
+        return this.state == CocktailProgress.State.RUNNING || this.state == CocktailProgress.State.MANUAL_ACTION_REQUIRED
+                || this.state == CocktailProgress.State.MANUAL_INGREDIENT_ADD;
     }
 
     public CocktailFactory subscribeProgress(Consumer<CocktailProgress> consumer) {

@@ -34,6 +34,7 @@ public class LoadCellReader extends Thread implements ILoadCellReader {
                 startTime = System.currentTimeMillis();
                 try {
                     dataPoints[dataPointIdx] = hx711.read_once();
+                    dataPoints[dataPointIdx] = 1500;
                     synchronized (taskMap) {
                         if(arrayFilled && taskMap.containsKey(dataPointIdx)) {
                             for(Request request : taskMap.get(dataPointIdx)) {
