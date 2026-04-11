@@ -63,9 +63,9 @@ export default {
   emits: ['empty'],
   methods: {
     handlePageSwipe ({ evt, ...newInfo }) {
-      if (newInfo.direction === 'left' && this.pagination.page !== 0) {
+      if (newInfo.direction === 'left' && this.pagination.page !== this.pagination.totalPages) {
         this.onPageClick(this.pagination.page + 1)
-      } else if (newInfo.direction === 'right' && this.pagination.page !== this.pagination.totalPages) {
+      } else if (newInfo.direction === 'right' && this.pagination.page !== 1) {
         this.onPageClick(this.pagination.page - 1)
       }
     }
