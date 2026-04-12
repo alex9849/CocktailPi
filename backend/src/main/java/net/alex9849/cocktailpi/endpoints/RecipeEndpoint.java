@@ -126,12 +126,12 @@ public class RecipeEndpoint {
                                    @RequestPart(value = "image", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.fromDto(recipeDto);
+        if(isDemoMode && file != null) {
+            throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+        }
         recipe.setOwner(userService.getUser(principal.getId()));
         recipe = recipeService.createRecipe(recipe);
         if (file != null) {
-            if(isDemoMode) {
-                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
-            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -164,14 +164,14 @@ public class RecipeEndpoint {
         if (recipe.getOwner().getId() != principal.getId() && !principal.getAuthorities().contains(ERole.ROLE_ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        if(isDemoMode && file != null) {
+            throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+        }
 
         recipeService.updateRecipe(recipe);
         if (removeImage) {
             recipeService.setImage(recipe.getId(), null);
         } else if (file != null) {
-            if(isDemoMode) {
-                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
-            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());

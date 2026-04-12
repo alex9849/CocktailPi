@@ -72,11 +72,11 @@ public class IngredientEndpoint {
                                        @RequestPart(value = "image", required = false) MultipartFile file,
                                        UriComponentsBuilder uriBuilder) throws IOException {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
+        if(isDemoMode && file != null) {
+            throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+        }
         ingredient = ingredientService.createIngredient(ingredient);
         if (file != null) {
-            if(isDemoMode) {
-                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
-            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -101,15 +101,15 @@ public class IngredientEndpoint {
         if(ingredientService.getIngredient(id) == null) {
             return ResponseEntity.notFound().build();
         }
+        if(isDemoMode && file != null) {
+            throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+        }
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
         ingredient.setId(id);
         ingredientService.updateIngredient(ingredient);
         if (removeImage) {
             ingredientService.setImage(ingredient.getId(), null);
         } else if (file != null) {
-            if(isDemoMode) {
-                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
-            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
