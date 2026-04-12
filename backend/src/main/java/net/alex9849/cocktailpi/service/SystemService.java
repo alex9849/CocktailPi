@@ -24,6 +24,7 @@ import net.alex9849.cocktailpi.utils.SpringUtility;
 import net.alex9849.motorlib.pin.PinState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -503,13 +504,10 @@ public class SystemService {
         if(isDemoMode) {
             throw new IllegalArgumentException("Can't update in demo-mode!");
         }
-        String stringPath = SystemService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        stringPath = URLDecoder.decode(stringPath, StandardCharsets.UTF_8);
-        stringPath = stringPath.substring(0, stringPath.lastIndexOf(".jar") + 4);
-        stringPath = stringPath.replaceAll("^.*file:", "");
-        File ownFile = new File(stringPath);
-        File parentFile = ownFile.getParentFile();
-        File updaterFile = new File(parentFile.getAbsolutePath() + File.separator + "updater.py");
+        ApplicationHome home = new ApplicationHome(SystemService.class);
+        File jarFile = home.getSource();
+        File parentDir = home.getDir();
+        File updaterFile = new File(parentDir.getAbsolutePath() + File.separator + "updater.py");
         Files.copy(SystemService.class.getResourceAsStream("/updater/updater.py"), updaterFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         Set<PosixFilePermission> filePermissions = new HashSet<>();
@@ -517,7 +515,7 @@ public class SystemService {
         filePermissions.add(PosixFilePermission.OWNER_WRITE);
         filePermissions.add(PosixFilePermission.OWNER_EXECUTE);
         Files.setPosixFilePermissions(updaterFile.toPath(), filePermissions);
-        Process process = Runtime.getRuntime().exec("python3 updater.py -c " + this.appVersion + " -f " + ownFile.getName());
+        Process process = Runtime.getRuntime().exec("python3 updater.py -c " + this.appVersion + " -f " + jarFile.getName());
 
     }
 }
