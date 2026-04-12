@@ -75,7 +75,7 @@ public class TransferService {
 
     public long newImport(MultipartFile zipFile) throws IOException {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Can't perform import in demomode!");
+            throw new IllegalArgumentException("Can't perform import in demo-mode!");
         }
 
         Path tempDir = Files.createTempDirectory("import_");
@@ -210,7 +210,7 @@ public class TransferService {
 
     public byte[] generateExport(ExportRequest exportRequest) throws IOException {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Can't perform export in demomode!");
+            throw new IllegalArgumentException("Can't perform export in demo-mode!");
         }
 
         List<Collection> collectionsToExport;

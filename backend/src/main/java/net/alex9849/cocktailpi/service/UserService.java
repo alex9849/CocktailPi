@@ -69,7 +69,7 @@ public class UserService {
             throw new IllegalArgumentException("User doesn't exist!");
         }
         if(isDemoMode && user.getId() == 1) {
-            throw new IllegalArgumentException("The admin-user can't be edited in demomode!");
+            throw new IllegalArgumentException("The admin-user can't be edited in demo-mode!");
         }
         Optional<User> userWithUsername = userRepository.findByUsernameIgnoringCase(user.getUsername());
         if(userWithUsername.isPresent() && !Objects.equals(userWithUsername.get().getId(), user.getId())) {
@@ -84,7 +84,7 @@ public class UserService {
 
     public void deleteUser(long id) {
         if(isDemoMode && id == 1) {
-            throw new IllegalArgumentException("The admin-user can't be deleted in demomode!");
+            throw new IllegalArgumentException("The admin-user can't be deleted in demo-mode!");
         }
         userRepository.delete(id);
     }

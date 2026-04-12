@@ -8,6 +8,7 @@ import net.alex9849.cocktailpi.payload.dto.collection.CollectionDto;
 import net.alex9849.cocktailpi.service.CollectionService;
 import net.alex9849.cocktailpi.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class CollectionEndpoint {
 
     @Autowired
     private CollectionService collectionService;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createCollection(@Valid @RequestBody CollectionDto.Request.Create collectionDto, UriComponentsBuilder uriBuilder) {
@@ -87,6 +91,9 @@ public class CollectionEndpoint {
         updateCollection.setId(id);
         byte[] image = null;
         if(file != null) {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+            }
             try {
                 BufferedImage bImage = ImageIO.read(file.getInputStream());
                 bImage = ImageUtils.resizeImage(bImage, 2000, 16d / 9);

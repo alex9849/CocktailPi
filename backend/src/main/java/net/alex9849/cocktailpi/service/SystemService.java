@@ -91,7 +91,7 @@ public class SystemService {
 
     public void shutdown(boolean isRestart) throws IOException {
         if(isDemoMode) {
-            throw new IllegalArgumentException("System can't be shutdown in demomode!");
+            throw new IllegalArgumentException("System can't be shutdown in demo-mode!");
         }
         if(isRestart) {
             Process process = Runtime.getRuntime().exec("sudo reboot");
@@ -232,7 +232,7 @@ public class SystemService {
 
     public void setI2cSettings(I2CSettings i2CSettings) throws IOException {
         if(isDemoMode) {
-            throw new IllegalArgumentException("I2C can't be configured in demomode!");
+            throw new IllegalArgumentException("I2C can't be configured in demo-mode!");
         }
         if(i2CSettings.isEnable()) {
             PinUtils.failIfPinOccupiedOrDoubled(PinResource.Type.I2C, null, i2CSettings.getSclPin(), i2CSettings.getSdaPin());
@@ -284,7 +284,7 @@ public class SystemService {
 
     public List<I2cAddress> probeI2c() throws IOException {
         if(isDemoMode) {
-            throw new IllegalArgumentException("I2C can't be probed in demomode!");
+            throw new IllegalArgumentException("I2C can't be probed in demo-mode!");
         }
         if(!getI2cSettings().isEnable()) {
             throw new IllegalArgumentException("I2C is disabled!");
@@ -373,7 +373,7 @@ public class SystemService {
 
     public void setAppearance(AppearanceSettingsDto.Duplex.Detailed settingsDto) {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Appearance can't be updated in demomode!");
+            throw new IllegalArgumentException("Appearance can't be updated in demo-mode!");
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
         optionsRepository.setOption("RECIPES_PAGE_SIZE", String.valueOf(settingsDto.getRecipePageSize()));
@@ -501,7 +501,7 @@ public class SystemService {
             throw new IllegalStateException("No update available!");
         }
         if(isDemoMode) {
-            throw new IllegalArgumentException("Can't update in demomode!");
+            throw new IllegalArgumentException("Can't update in demo-mode!");
         }
         String stringPath = SystemService.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         stringPath = URLDecoder.decode(stringPath, StandardCharsets.UTF_8);

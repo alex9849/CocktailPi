@@ -7,6 +7,7 @@ import net.alex9849.cocktailpi.payload.dto.recipe.ingredient.IngredientDto;
 import net.alex9849.cocktailpi.service.IngredientService;
 import net.alex9849.cocktailpi.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,9 @@ public class IngredientEndpoint {
 
     @Autowired
     IngredientService ingredientService;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getIngredients(@RequestParam(value = "autocomplete", required = false) String autocomplete,
@@ -70,6 +74,9 @@ public class IngredientEndpoint {
         Ingredient ingredient = ingredientService.fromDto(ingredientDto);
         ingredient = ingredientService.createIngredient(ingredient);
         if (file != null) {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -100,6 +107,9 @@ public class IngredientEndpoint {
         if (removeImage) {
             ingredientService.setImage(ingredient.getId(), null);
         } else if (file != null) {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());

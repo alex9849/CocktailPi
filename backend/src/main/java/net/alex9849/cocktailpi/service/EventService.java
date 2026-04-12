@@ -199,7 +199,7 @@ public class EventService {
 
     public boolean deleteEventAction(long id) {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Deleting Event-Actions isn't allowed in demomode!");
+            throw new IllegalArgumentException("Deleting Event-Actions isn't allowed in demo-mode!");
         }
         cancelRunningWithSameActionId(id);
         return eventActionRepository.delete(id);
@@ -207,14 +207,14 @@ public class EventService {
 
     public EventAction createEventAction(EventAction eventAction) {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Creating Event-Actions isn't allowed in demomode!");
+            throw new IllegalArgumentException("Creating Event-Actions isn't allowed in demo-mode!");
         }
         return eventActionRepository.create(eventAction);
     }
 
     public EventAction updateEventAction(EventAction toUpdateEventAction) {
         if(isDemoMode) {
-            throw new IllegalArgumentException("Updating Event-Actions isn't allowed in demomode!");
+            throw new IllegalArgumentException("Updating Event-Actions isn't allowed in demo-mode!");
         }
         Optional<EventAction> oOldEventAction = eventActionRepository.getById(toUpdateEventAction.getId());
         if(oOldEventAction.isEmpty()) {

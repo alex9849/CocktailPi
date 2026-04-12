@@ -10,6 +10,7 @@ import net.alex9849.cocktailpi.payload.dto.recipe.RecipeDto;
 import net.alex9849.cocktailpi.service.*;
 import net.alex9849.cocktailpi.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
@@ -46,6 +47,9 @@ public class RecipeEndpoint {
 
     @Autowired
     SystemService systemService;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
 
     @RequestMapping(path = "", method = RequestMethod.GET)
@@ -125,6 +129,9 @@ public class RecipeEndpoint {
         recipe.setOwner(userService.getUser(principal.getId()));
         recipe = recipeService.createRecipe(recipe);
         if (file != null) {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
@@ -162,6 +169,9 @@ public class RecipeEndpoint {
         if (removeImage) {
             recipeService.setImage(recipe.getId(), null);
         } else if (file != null) {
+            if(isDemoMode) {
+                throw new IllegalArgumentException("Uploading images is not allowed in demo-mode!");
+            }
             BufferedImage image;
             try {
                 image = ImageIO.read(file.getInputStream());
