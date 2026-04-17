@@ -7,3 +7,4 @@
 .eslintrc.js
 babel.config.js
 /quasar.config.*.temporary.compiled*
+src/services/keyboard

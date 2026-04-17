@@ -9,6 +9,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import store from '../store'
+import { setupKeyboard } from '../services/keyboard/content/keyboard/keyboardScript.js'
 
 export default {
   name: 'RootLayout',
@@ -26,6 +27,9 @@ export default {
     this.setShowExternalLinksAsQrCode(!!isKiosk)
     if (isMobile) {
       this.$q.platform.is.mobile = true
+    }
+    if (isKiosk) {
+      setupKeyboard()
     }
   },
   methods: {
