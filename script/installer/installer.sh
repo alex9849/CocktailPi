@@ -12,7 +12,7 @@ modsel=$2
 function color {
     if [ "$1" = "c" ]; then
         txt_color=6
-    fi  
+    fi
     if [ "$1" = "g" ]; then
         txt_color=2
     fi
@@ -25,7 +25,7 @@ function color {
     if [ "$2" = "n" ]; then
         echo -n "$(tput setaf $txt_color)$3"
     else
-        echo "$(tput setaf $txt_color)$3"   
+        echo "$(tput setaf $txt_color)$3"
     fi
     tput sgr0
 }
@@ -48,7 +48,7 @@ function select_lang {
     fi
 
     read -n 1 langsel
-	langselsize=${#langsel} 
+	langselsize=${#langsel}
 	if [ "$langselsize" = "0" ]; then
 	    langsel=99
         clear
@@ -85,9 +85,8 @@ function select_mode {
         echo "Wählen sie 1, 2 oder 3 um die entsprechende Installation durchzuführen."
         echo ""
         echo "(1) CocktailPi"
-        echo "(2) CocktailPi + Touchscreen ohne Bildschirmtastatur"
-        echo "(3) CocktailPi + Touchscreen mit Bildschirmtastatur"
-        echo "(4) Konfiguration: Größe der Touchscreen UI ändern"
+        echo "(2) CocktailPi + Touchscreen UI"
+        echo "(3) Konfiguration: Größe der Touchscreen UI ändern"
         echo ""
         echo "(0) Exit"
     else
@@ -96,9 +95,8 @@ function select_mode {
         echo "Choose 1 or 2 or 3 to carry out the corresponding installation."
         echo ""
         echo "(1) CocktailPi"
-        echo "(2) CocktailPi + Touchscreen without on-screen keyboard"
-        echo "(3) CocktailPi + Touchscreen with on-screen keyboard"
-        echo "(4) Configuration: Change size of Touchscreen UI"
+        echo "(2) CocktailPi + Touchscreen UI"
+        echo "(3) Configuration: Change size of Touchscreen UI"
         echo ""
         echo "(0) Exit"
     fi
@@ -108,13 +106,13 @@ function select_mode {
         if [ "$modsel" = "" ]; then
             echo -n "Bitte geben Sie ihre Auswahl an: "
         else
-            color r n "Bitte geben Sie entweder 1,2,3,4 oder 0 ein: "
+            color r n "Bitte geben Sie entweder 1,2,3 oder 0 ein: "
         fi
     else
         if [ "$modsel" = "" ]; then
             echo -n "Please enter your selection: "
         else
-            color r n "Please enter either 1,2,3,4 or 0: "
+            color r n "Please enter either 1,2,3 or 0: "
         fi
     fi
 
@@ -135,9 +133,6 @@ function select_mode {
             clear
         ;;
         '3')
-            clear
-        ;;
-        '4')
             clear
         ;;
         '0')
@@ -228,7 +223,7 @@ function select_confirm_exit {
     fi
 
     read -n 1 confirmsel
-	confirmselsize=${#confirmsel} 
+	confirmselsize=${#confirmsel}
 	if [ "$confirmselsize" = "0" ]; then
 	    confirmsel=99
         clear
@@ -273,7 +268,7 @@ if [ ! -n "$modsel" ]; then
     select_mode
 fi
 
-if [ "$modsel" = "4" ]; then
+if [ "$modsel" = "3" ]; then
   if ! [ -d "/home/pi/.config/chromium-profile/" ]; then
     if [ "$langsel" = "1" ]; then
         color r x "Touchscreen UI ist nicht installiert. Bitte installieren Sie diese zuerst und starten Sie dann das Skript neu!"
@@ -326,16 +321,6 @@ if [ "$modsel" = "4" ]; then
     nohup wayfire -c /home/pi/.config/wayfire.ini > /dev/null 2>&1 < /dev/null & disown
 
   exit 0
-fi
-
-if [ "$modsel" = "3" ]; then
-    clear
-	confirmsel=""
-	if [ "$langsel" = "1" ]; then
-        select_confirm_exit "Sie haben ausgewählt, dass der Touchscreen mit Bildschirmtastatur installiert werden soll. Hierzu muss zwingend bereits während der Installation ein Bildschirm an dem Raspberry Pi angeschlossen sein. Bitte bestätigen Sie, dass ein Bildschirm an den Raspberry Pi angeschlossen ist."
-	else
-        select_confirm_exit "You have selected that the touchscreen and an on-screen keyboard should be installed. To do this, a screen must be connected to the Raspberry Pi during installation. Please confirm that a screen is connected to the Raspberry Pi."
-	fi
 fi
 
 is_ssh=0
@@ -491,58 +476,6 @@ fi
 
 sudo -u pi mkdir -p /home/pi/.config
 
-if [ "$modsel" = "3" ]; then
-    pkill -f wayfire
-    confirmsel=""
-    if [ "$is_ssh" = "1" ]; then
-        if [ "$langsel" = "1" ]; then
-            select_confirm "Um fortfahren zu können muss ein Bildschirm an dem Raspberry Pi angeschlossen sein. Stellen Sie sicher, dass ein Bildschirm angeschlossen ist."
-        else
-            select_confirm "To continue, a screen must be connected to the Raspberry Pi. Make sure that a screen is connected."
-        fi
-    else
-        if [ "$langsel" = "1" ]; then
-            select_confirm "Im nächsten Schritt wird sich ein Browser auf ihrem Bildschirm öffnen und eine Chrome-Erweiterung anzeigen (Bildschirmtastatur), welche Sie installieren müssen. Sobald Sie auf \"Bestätigen\" drücken haben Sie 100 Sekunden Zeit um die Erweiterung zu installieren, bevor das setup den Browser schließt und die Installation fortsetzt."
-        else
-            select_confirm "In the next step, a browser will open on your screen and display a Chrome extension (on-screen keyboard), which you must install (Add to chrome). As soon as you press \"Confirm\", you have 100 seconds to install the extension before the setup closes the browser and continues the installation."
-        fi
-    fi
-    if [ -f /home/pi/.config/wayfire.ini ]; then
-        rm -r /home/pi/.config/wayfire.ini
-    fi
-    sudo -u pi touch /home/pi/.config/wayfire.ini
-    echo "[core]" >> /home/pi/.config/wayfire.ini
-    echo "plugins = \\" >> /home/pi/.config/wayfire.ini
-    echo "        autostart" >> /home/pi/.config/wayfire.ini
-    echo "" >> /home/pi/.config/wayfire.ini
-    echo "[autostart]" >> /home/pi/.config/wayfire.ini
-    echo "chromium = chromium https://chromewebstore.google.com/detail/chrome-simple-keyboard-a/cjabmkimbcmhhepelfhjhbhonnapiipj --kiosk --noerrdialogs --enable-extensions --disable-component-update --check-for-update-interval=31536000 --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --disable-features=OverscrollHistoryNavigation --start-maximized --user-data-dir=/home/pi/.config/chromium-profile" >> /home/pi/.config/wayfire.ini
-    echo "screensaver = false" >> /home/pi/.config/wayfire.ini
-    echo "dpms = false" >> /home/pi/.config/wayfire.ini
-
-    confirmsel=""
-    PI_ID=$(id -u pi)
-    sudo -u pi XDG_RUNTIME_DIR=/run/user/$PI_ID \
-      nohup wayfire -c /home/pi/.config/wayfire.ini > /dev/null 2>&1 < /dev/null & disown
-    if [ "$is_ssh" = "1" ]; then
-        if [ "$langsel" = "1" ]; then
-            select_confirm "Auf dem Bildschirm sollte sich jetzt der Chrome Webstore öffnen. Fügen Sie die angezeigte Erweiterung zu Chrome hinzu. Kehren Sie nach dem hinzufügen hierher zurück und setzen Sie das Skript mit 1 fort."
-        else
-            select_confirm "The Chrome Webstore should now open on the screen. Add the displayed extension to Chrome. After adding, return here and continue the script with 1."
-        fi
-        for i in {1..20}
-        do
-            echo "Waiting $((20-$i)) seconds..."
-            sleep 1
-        done
-    else
-        sleep 100
-    fi
-
-    pkill -f wayfire
-
-fi
-
 if [ -f /home/pi/.config/wayfire.ini ]; then
     rm -r /home/pi/.config/wayfire.ini
 fi
@@ -560,7 +493,7 @@ echo "dpms = false" >> /home/pi/.config/wayfire.ini
 
 clear
 service cocktailpi start
-if [ "$modsel" = "3" ] || [ "$modsel" = "2" ]; then
+if [ "$modsel" = "2" ]; then
   PI_ID=$(id -u pi)
   sudo -u pi XDG_RUNTIME_DIR=/run/user/$PI_ID \
     nohup wayfire -c /home/pi/.config/wayfire.ini > /dev/null 2>&1 < /dev/null & disown
