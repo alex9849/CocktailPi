@@ -1,7 +1,7 @@
 import { i18n } from 'boot/i18n'
 import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
 import { colors } from 'quasar'
-import { setEnableKeyboard, setLanguageLayout } from '../../../services/keyboard/content/keyboard/keyboardScript.js'
+import { setEnableKeyboard, setLanguageLayout } from 'src/services/keyboard/content/keyboard/keyboardScript'
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale.value = payload.language.name
@@ -74,11 +74,12 @@ export const setIsKiosk = (state, payload) => {
   syncKeyboard(state)
 }
 
-export const syncKeyboard = (state) => {
+const syncKeyboard = (state) => {
   if (!state.isKiosk) {
     setEnableKeyboard(false)
     return
   }
   setEnableKeyboard(state.appearance.kioskKeyboard.enable)
-  setLanguageLayout(state.appearance.kioskKeyboard.layout)
+  setLanguageLayout(state.appearance.kioskKeyboard.language)
 }
+export default syncKeyboard
