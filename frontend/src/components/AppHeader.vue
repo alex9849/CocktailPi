@@ -39,12 +39,27 @@
                 {{ $t('header.profile.reload_btn_label') }}
               </q-item-section>
             </q-item>
+            <q-item
+              v-if="getUserCount === 1"
+              clickable
+              @click="clickSwitchUser()"
+            >
+              <q-item-section avatar>
+                <q-icon :name="mdiAccountSwitchOutline"/>
+              </q-item-section>
+              <q-item-section>
+                Switch User
+              </q-item-section>
+            </q-item>
             <q-item clickable @click="logout()">
               <q-item-section avatar>
                 <q-icon :name="mdiPower"/>
               </q-item-section>
-              <q-item-section>
+              <q-item-section v-if="getUserCount === 1">
                 {{ $t('header.profile.logout_btn_label') }}
+              </q-item-section>
+              <q-item-section v-else>
+                Logback
               </q-item-section>
             </q-item>
           </q-list>
@@ -52,17 +67,30 @@
         </q-btn-dropdown>
       </div>
     </q-toolbar>
+    <q-dialog
+      v-model:model-value="showSwitchUserDialog"
+    >
+      <CLoginCard
+        @login-success="handleLoginSuccess"
+      />
+    </q-dialog>
   </q-header>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { mdiAccountBox, mdiReload, mdiAlert, mdiPower, mdiGlassCocktail } from '@quasar/extras/mdi-v5'
+import { mdiAccountBox, mdiReload, mdiAlert, mdiPower, mdiGlassCocktail, mdiAccountSwitchOutline } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
+import CLoginCard from 'components/CLoginCard.vue'
 
 export default {
   name: 'AppHeader',
-  components: { CircularCocktailProgress },
+  components: { CLoginCard, CircularCocktailProgress },
+  data: () => {
+    return {
+      showSwitchUserDialog: false
+    }
+  },
   methods: {
     ...mapActions({
       storeLogout: 'auth/logout'
@@ -72,6 +100,12 @@ export default {
       this.$nextTick(() => {
         this.storeLogout()
       })
+    },
+    clickSwitchUser () {
+      this.showSwitchUserDialog = true
+    },
+    handleLoginSuccess () {
+      this.showSwitchUserDialog = false
     },
     reload () {
       let search = location.search
@@ -100,12 +134,23 @@ export default {
       window.open(location.origin + location.pathname + search, '_self')
     }
   },
+  watch: {
+    getAdminLevel: {
+      handler (newVal, oldVal) {
+        if (oldVal > newVal && this.$route.name !== 'dashboard') {
+          this.$router.push({ name: 'dashboard' })
+        }
+      }
+    }
+  },
   computed: {
     ...mapGetters({
+      getAdminLevel: 'auth/getAdminLevel',
       user: 'auth/getUser',
       isLoggedIn: 'auth/isLoggedIn',
       colors: 'appearance/getNormalColors',
-      getProjectName: 'common/getProjectName'
+      getProjectName: 'common/getProjectName',
+      getUserCount: 'auth/getUserCount'
     }),
     username () {
       if (this.isLoggedIn) {
@@ -120,7 +165,8 @@ export default {
       mdiPower,
       mdiAlert,
       mdiGlassCocktail,
-      mdiReload
+      mdiReload,
+      mdiAccountSwitchOutline
     }
   }
 }

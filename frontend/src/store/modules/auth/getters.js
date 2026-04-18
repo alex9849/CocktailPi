@@ -1,9 +1,10 @@
 import { Platform } from 'quasar'
 
-export const isLoggedIn = state => state.status.loggedIn
-export const getUser = state => state.status.user
-export const getAuthToken = state => state.status.authToken
+export const isLoggedIn = state => state.status.history.length > 0
+export const getUser = state => isLoggedIn(state) ? state.status.history[state.status.history.length - 1].user : null
+export const getAuthToken = state => isLoggedIn(state) ? state.status.history[state.status.history.length - 1].authToken : null
 export const getServerAddress = state => state.status.serverAddress
+export const getUserCount = state => state.status.history.length
 export const getFormattedServerAddress = state => {
   if (!Platform.is.cordova) {
     return ''
@@ -16,23 +17,23 @@ export const getFormattedServerAddress = state => {
 }
 export const getAdminLevel = state => {
   if (!getUser(state)) { return 0 }
-  return state.status.user.adminLevel
+  return getUser(state).adminLevel
 }
 
 export const isUser = state => {
   if (!getUser(state)) { return false }
-  return state.status.user.adminLevel >= 1
+  return getUser(state).adminLevel >= 1
 }
 
 export const isRecipeCreator = state => {
   if (!getUser(state)) { return false }
-  return state.status.user.adminLevel >= 1
+  return getUser(state).adminLevel >= 1
 }
 export const isPumpIngredientEditor = state => {
   if (!getUser(state)) { return false }
-  return state.status.user.adminLevel >= 2
+  return getUser(state).adminLevel >= 2
 }
 export const isAdmin = state => {
   if (!getUser(state)) { return false }
-  return state.status.user.adminLevel >= 3
+  return getUser(state).adminLevel >= 3
 }

@@ -1,4 +1,5 @@
 const authToken = JSON.parse(localStorage.getItem('authToken'))
+const user = JSON.parse(localStorage.getItem('user'))
 let serverAddress = localStorage.getItem('serverAddress')
 
 if (serverAddress === null || serverAddress === undefined) {
@@ -18,16 +19,17 @@ const initialAuthToken = (function () {
   return authToken
 }())
 
-const initialLoggedIn = (function () {
-  return !!initialAuthToken
-}())
-
 export default function () {
+  const history = []
+  if (initialAuthToken) {
+    history.push({
+      user,
+      authToken: initialAuthToken
+    })
+  }
   return {
     status: {
-      user: null,
-      authToken: initialAuthToken,
-      loggedIn: initialLoggedIn,
+      history,
       serverAddress
     }
   }

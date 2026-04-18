@@ -1,7 +1,7 @@
 import AuthService from 'src/services/auth.service'
 import UserService from 'src/services/user.service'
 
-export const login = ({ commit }, loginRequest) => {
+export const login = ({ commit, getters }, loginRequest) => {
   return AuthService.login(loginRequest).then(
     jwtResponse => {
       commit('loginSuccess', jwtResponse)
@@ -16,11 +16,11 @@ export const login = ({ commit }, loginRequest) => {
 export const refreshToken = ({ commit }) => {
   return AuthService.refreshToken()
     .then(jwtResponse => {
-      commit('loginSuccess', jwtResponse)
+      commit('updateToken', jwtResponse)
       return Promise.resolve(jwtResponse)
     },
     error => {
-      commit('loginFailure')
+      commit('onTokenInvalid')
       return Promise.reject(error)
     })
 }

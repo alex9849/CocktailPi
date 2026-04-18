@@ -206,10 +206,12 @@ export default {
       const sidebarItems = []
       for (const item of this.sidebarItems) {
         if (item.reqLevel <= this.getAdminLevel) {
-          sidebarItems.push(item)
+          sidebarItems.push({
+            ...item,
+            subSections: item.subSections
+              .filter(x => x.reqLevel <= this.getAdminLevel)
+          })
         }
-        item.subSections = item.subSections
-          .filter(x => x.reqLevel <= this.getAdminLevel)
       }
       return sidebarItems
     },

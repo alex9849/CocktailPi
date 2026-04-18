@@ -9,7 +9,9 @@ import net.alex9849.cocktailpi.payload.response.JwtResponse;
 import net.alex9849.cocktailpi.service.AuthService;
 import net.alex9849.cocktailpi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,11 +30,15 @@ public class AuthEndpoint {
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword(),
-                loginRequest.isRemember());
+        try {
+            String token = authService.authUser(loginRequest.getUsername(), loginRequest.getPassword(),
+                    loginRequest.isRemember());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(new JwtResponse(token,
                 jwtUtils.getExpirationDateFromJwtToken(token), new UserDto.Response.Detailed(user)));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
     }
 
     @RequestMapping(value = "refreshToken", method = RequestMethod.GET)
