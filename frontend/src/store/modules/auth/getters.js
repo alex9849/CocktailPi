@@ -3,8 +3,12 @@ import { Platform } from 'quasar'
 export const isLoggedIn = state => state.status.history.length > 0
 export const getUser = state => isLoggedIn(state) ? state.status.history[state.status.history.length - 1].user : null
 export const getAuthToken = state => isLoggedIn(state) ? state.status.history[state.status.history.length - 1].authToken : null
+export const getLastRoute = state => isLoggedIn(state) ? state.status.history[state.status.history.length - 1].lastRoute : null
 export const getServerAddress = state => state.status.serverAddress
-export const getUserCount = state => state.status.history.length
+export const allowLogback = state => state.status.history.length > 1
+export const getLogbackUser = state => allowLogback(state) ? state.status.history[state.status.history.length - 2].user : null
+export const getLogbackAuthToken = state => allowLogback(state) ? state.status.history[state.status.history.length - 2].authToken : null
+export const getLogbackLastRoute = state => allowLogback(state) ? state.status.history[state.status.history.length - 2].lastRoute : null
 export const getFormattedServerAddress = state => {
   if (!Platform.is.cordova) {
     return ''

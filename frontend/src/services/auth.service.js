@@ -13,9 +13,17 @@ class AuthService {
       })
   }
 
-  refreshToken () {
+  refreshToken (currentToken = null) {
+    let config = null
+    if (currentToken != null) {
+      config = {
+        headers: {
+          Authorization: currentToken.tokenType + ' ' + currentToken.accessToken
+        }
+      }
+    }
     return axios
-      .get(API_PATH + 'refreshToken')
+      .get(API_PATH + 'refreshToken', config)
       .then(response => {
         // JwtResponse
         response.data.tokenExpiration = new Date(response.data.tokenExpiration)

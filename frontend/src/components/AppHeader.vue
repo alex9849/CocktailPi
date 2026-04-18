@@ -40,7 +40,7 @@
               </q-item-section>
             </q-item>
             <q-item
-              v-if="getUserCount === 1"
+              v-if="!allowLogback"
               clickable
               @click="clickSwitchUser()"
             >
@@ -51,15 +51,28 @@
                 Switch User
               </q-item-section>
             </q-item>
-            <q-item clickable @click="logout()">
+            <q-item
+              clickable
+              @click="logback()"
+              v-if="allowLogback"
+            >
               <q-item-section avatar>
                 <q-icon :name="mdiPower"/>
               </q-item-section>
-              <q-item-section v-if="getUserCount === 1">
-                {{ $t('header.profile.logout_btn_label') }}
-              </q-item-section>
-              <q-item-section v-else>
+              <q-item-section>
                 Logback
+              </q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              @click="logout()"
+              v-else
+            >
+              <q-item-section avatar>
+                <q-icon :name="mdiPower"/>
+              </q-item-section>
+              <q-item-section>
+                {{ $t('header.profile.logout_btn_label') }}
               </q-item-section>
             </q-item>
           </q-list>
@@ -78,10 +91,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { mdiAccountBox, mdiReload, mdiAlert, mdiPower, mdiGlassCocktail, mdiAccountSwitchOutline } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
 import CLoginCard from 'components/CLoginCard.vue'
+import AuthService from 'src/services/auth.service'
 
 export default {
   name: 'AppHeader',
@@ -93,13 +107,33 @@ export default {
   },
   methods: {
     ...mapActions({
-      storeLogout: 'auth/logout'
+      storeLogout: 'auth/logout',
+      storeLogBack: 'auth/logback'
+    }),
+    ...mapMutations({
+      setAuthToken: 'auth/updateToken',
+      setCurrentUser: 'auth/setCurrentUser'
     }),
     logout () {
+      this.storeLogout()
       this.$router.push({ name: 'login' })
-      this.$nextTick(() => {
-        this.storeLogout()
-      })
+    },
+    logback () {
+      if (!this.allowLogback) {
+        return
+      }
+      const oldAdminLevel = this.logbackUser.adminLevel
+      AuthService.refreshToken(this.logbackAuthToken)
+        .then((tokenResponse) => {
+          this.storeLogBack()
+          this.setAuthToken(tokenResponse)
+          this.setCurrentUser(tokenResponse.user)
+          if (tokenResponse.user.adminLevel >= oldAdminLevel) {
+            this.$router.push(this.lastUserRoute)
+          } else {
+            this.$router.push({ name: 'dashboard' })
+          }
+        })
     },
     clickSwitchUser () {
       this.showSwitchUserDialog = true
@@ -150,7 +184,10 @@ export default {
       isLoggedIn: 'auth/isLoggedIn',
       colors: 'appearance/getNormalColors',
       getProjectName: 'common/getProjectName',
-      getUserCount: 'auth/getUserCount'
+      allowLogback: 'auth/allowLogback',
+      lastUserRoute: 'auth/getLastRoute',
+      logbackUser: 'auth/getLogbackUser',
+      logbackAuthToken: 'auth/getLogbackAuthToken'
     }),
     username () {
       if (this.isLoggedIn) {

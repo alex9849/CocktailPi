@@ -7,7 +7,9 @@ export default boot(({ app }) => {
   axios.defaults.baseURL = window.location.origin
   axios.defaults.onErrorNotify = true
   axios.interceptors.request.use(cfg => {
-    cfg.headers.Authorization = authHeader()
+    if (!cfg.headers.Authorization) {
+      cfg.headers.Authorization = authHeader()
+    }
     cfg.baseURL = store().getters['auth/getFormattedServerAddress']
     return cfg
   })

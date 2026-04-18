@@ -24,13 +24,15 @@ export default function () {
   if (initialAuthToken) {
     history.push({
       user,
-      authToken: initialAuthToken
+      authToken: initialAuthToken,
+      lastRoute: null
     })
   }
   return {
     status: {
       history,
-      serverAddress
+      serverAddress,
+      lastRoute: null
     }
   }
 }

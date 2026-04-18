@@ -27,6 +27,9 @@ export const refreshToken = ({ commit }) => {
 export const logout = ({ commit }) => {
   commit('logout')
 }
+export const logback = ({ commit }) => {
+  commit('logback')
+}
 
 export const fetchCurrentUser = ({ commit }) => {
   return UserService.getMe()
