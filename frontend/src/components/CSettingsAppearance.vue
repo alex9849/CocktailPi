@@ -14,6 +14,42 @@
           bordered
           :dark="color.cardItemGroupDark"
         >
+          <q-card-section class="q-gutter-y-sm">
+            <p class="text-subtitle2 col-auto">
+              {{ $t('component.settings_appearance.kioskKeyboard.headline') }}
+            </p>
+            <q-card
+              class="col bg-card-item-group text-card-item-group"
+              :dark="color.cardItemGroupDark"
+              bordered
+              flat
+            >
+              <q-toggle
+                :dark="color.cardItemGroupDark"
+                :label="$t('component.settings_appearance.kioskKeyboard.enable_label')"
+                color="green"
+                v-model:model-value="v.form.kioskKeyboard.enable.$model"
+              />
+            </q-card>
+            <q-select
+              :label="$t('component.settings_appearance.kioskKeyboard.layout_label')"
+              v-if="v.form.kioskKeyboard.enable.$model"
+              v-model:model-value="v.form.kioskKeyboard.language.$model"
+              :options="keyboardLayouts"
+              :dark="color.cardItemGroupDark"
+              outlined
+              hide-bottom-space
+            />
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="row">
+        <q-card
+          class="col bg-card-item-group text-card-item-group"
+          flat
+          bordered
+          :dark="color.cardItemGroupDark"
+        >
           <q-card-section>
             <q-select
               :label="$t('component.settings_appearance.language')"
@@ -223,6 +259,7 @@ import { required, minValue } from '@vuelidate/validators'
 import SystemService from 'src/services/system.service'
 import { mapGetters, mapMutations } from 'vuex'
 import CColorSelectorField from 'components/CColorSelectorField.vue'
+import { languageLayouts as keyboardLayouts } from 'src/services/keyboard/content/keyboard/keyboardScript'
 
 export default {
   name: 'CSettingsAppearance',
@@ -231,6 +268,10 @@ export default {
     return {
       saving: false,
       form: {
+        kioskKeyboard: {
+          enable: true,
+          language: 'english'
+        },
         language: '',
         recipePageSize: 8,
         colors: {
@@ -331,7 +372,10 @@ export default {
     ...mapGetters({
       getAppearanceSettings: 'appearance/getAppearanceSettings',
       color: 'appearance/getNormalColors'
-    })
+    }),
+    keyboardLayouts () {
+      return Object.keys(keyboardLayouts)
+    }
   },
   watch: {
     getAppearanceSettings: {
@@ -345,6 +389,14 @@ export default {
   validations () {
     return {
       form: {
+        kioskKeyboard: {
+          enable: {
+            required
+          },
+          language: {
+            required
+          }
+        },
         language: {
           required
         },

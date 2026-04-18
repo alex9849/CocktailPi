@@ -1248,12 +1248,17 @@ export default {
       }
     },
     settings_appearance: {
-      language: 'Sprache',
+      language: 'Systemsprache',
       recipe_page_size: 'Rezepte pro Seite',
       recipe_page_size_option: '{nr} Rezepte',
       save_btn_label: 'Speichern',
       notifications: {
         settings_updated: 'Einstellungen aktualisiert!'
+      },
+      kioskKeyboard: {
+        headline: 'Kiosk-Bildschirmtastatur',
+        enable_label: 'Aktivieren',
+        layout_label: 'Keyboard layout'
       },
       colors: {
         interface: {

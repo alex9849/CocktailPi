@@ -18,6 +18,7 @@ export default {
       .then(x => next())
   },
   created () {
+    setupKeyboard()
     let isKiosk = Object.hasOwn(this.$route.query, 'isKiosk')
     let isMobile = Object.hasOwn(this.$route.query, 'isMobile')
     if (this.$route.redirectedFrom) {
@@ -28,13 +29,12 @@ export default {
     if (isMobile) {
       this.$q.platform.is.mobile = true
     }
-    if (isKiosk) {
-      setupKeyboard()
-    }
+    this.setIsKiosk(isKiosk)
   },
   methods: {
     ...mapMutations({
-      setShowExternalLinksAsQrCode: 'common/setShowExternalLinksAsQrCode'
+      setShowExternalLinksAsQrCode: 'common/setShowExternalLinksAsQrCode',
+      setIsKiosk: 'appearance/setIsKiosk'
     })
   }
 }

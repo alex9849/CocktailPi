@@ -378,6 +378,8 @@ public class SystemService {
         }
         optionsRepository.setOption("LANGUAGE", settingsDto.getLanguage().name());
         optionsRepository.setOption("RECIPES_PAGE_SIZE", String.valueOf(settingsDto.getRecipePageSize()));
+        optionsRepository.setOption("KIOSK_KEYBOARD_ENABLE", String.valueOf(settingsDto.getKioskKeyboard().isEnable()));
+        optionsRepository.setOption("KIOSK_KEYBOARD_LANGUAGE", String.valueOf(settingsDto.getKioskKeyboard().getLanguage()));
 
         AppearanceSettingsDto.Duplex.NormalColors nc = settingsDto.getColors().getNormal();
         AppearanceSettingsDto.Duplex.SvColors scv = settingsDto.getColors().getSimpleView();
@@ -414,6 +416,10 @@ public class SystemService {
                         .getOption("RECIPES_PAGE_SIZE")
                         .orElse(String.valueOf(24))
                 ));
+        AppearanceSettingsDto.Duplex.KioskKeyboard kioskKeyboard = new AppearanceSettingsDto.Duplex.KioskKeyboard();
+        kioskKeyboard.setEnable(Boolean.parseBoolean(optionsRepository.getOption("KIOSK_KEYBOARD_ENABLE").orElse("true")));
+        kioskKeyboard.setLanguage(optionsRepository.getOption("KIOSK_KEYBOARD_LANGUAGE").orElse("english"));
+        settingsDto.setKioskKeyboard(kioskKeyboard);
 
         AppearanceSettingsDto.Duplex.Colors colors = new AppearanceSettingsDto.Duplex.Colors();
         AppearanceSettingsDto.Duplex.NormalColors normalColors = new AppearanceSettingsDto.Duplex.NormalColors();

@@ -1332,12 +1332,17 @@ export default {
       }
     },
     settings_appearance: {
-      language: 'Language',
+      language: 'System language',
       recipe_page_size: 'Recipes per page',
       recipe_page_size_option: '{nr} Recipes',
       save_btn_label: 'Save',
       notifications: {
         settings_updated: 'Settings updated!'
+      },
+      kioskKeyboard: {
+        headline: 'On-screen kiosk-keyboard',
+        enable_label: 'Enable',
+        layout_label: 'Keyboard layout'
       },
       colors: {
         interface: {

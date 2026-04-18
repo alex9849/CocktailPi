@@ -25,6 +25,16 @@ public class AppearanceSettingsDto {
             int recipePageSize;
             @NotNull
             Colors colors;
+            @NotNull
+            KioskKeyboard kioskKeyboard;
+        }
+
+        @NoArgsConstructor()
+        @Getter @Setter
+        public static class KioskKeyboard {
+            @NotNull
+            boolean enable;
+            String language;
         }
 
         @NoArgsConstructor()
@@ -34,7 +44,6 @@ public class AppearanceSettingsDto {
             NormalColors normal;
             @NotNull
             SvColors simpleView;
-
         }
 
         @NoArgsConstructor()

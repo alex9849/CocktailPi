@@ -1,12 +1,14 @@
 import { i18n } from 'boot/i18n'
 import { calcTextColor, isDark, complementColor } from 'src/mixins/utils'
 import { colors } from 'quasar'
+import { setEnableKeyboard, setLanguageLayout } from '../../../services/keyboard/content/keyboard/keyboardScript.js'
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale.value = payload.language.name
   const settings = {
     language: payload.language,
     recipePageSize: payload.recipePageSize,
+    kioskKeyboard: payload.kioskKeyboard,
     colors: {}
   }
   if (colors.brightness(payload.colors.normal.cardBody) > 240) {
@@ -63,4 +65,19 @@ export const setAppearanceSettings = (state, payload) => {
   style.setProperty('--q-sv-card-primary', settings.colors.simpleView.cardPrimary)
   style.setProperty('--q-sv-card-primary-text', settings.colors.simpleView.cardPrimaryText)
   state.appearance = settings
+  syncKeyboard(state)
+}
+
+export const setIsKiosk = (state, payload) => {
+  state.isKiosk = payload
+  syncKeyboard(state)
+}
+
+export const syncKeyboard = (state) => {
+  if (!state.isKiosk) {
+    setEnableKeyboard(false)
+    return
+  }
+  setEnableKeyboard(state.appearance.kioskKeyboard.enable)
+  setLanguageLayout(state.appearance.kioskKeyboard.layout)
 }

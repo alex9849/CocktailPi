@@ -1,8 +1,13 @@
 export default function () {
   return {
+    isKiosk: false,
     appearance: {
       language: 'en_US',
       recipePageSize: 12,
+      kioskKeyboard: {
+        enable: false,
+        layout: 'english'
+      },
       colors: {
         normal: {
           header: '#85452b',
