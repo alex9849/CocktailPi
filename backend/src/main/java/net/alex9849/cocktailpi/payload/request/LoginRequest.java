@@ -3,7 +3,6 @@ package net.alex9849.cocktailpi.payload.request;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
-    @NotBlank
     private String username;
 
     @NotBlank

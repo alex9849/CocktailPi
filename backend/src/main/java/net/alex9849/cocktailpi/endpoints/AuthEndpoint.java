@@ -37,7 +37,7 @@ public class AuthEndpoint {
         return ResponseEntity.ok(new JwtResponse(token,
                 jwtUtils.getExpirationDateFromJwtToken(token), new UserDto.Response.Detailed(user)));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid login data");
         }
     }
 

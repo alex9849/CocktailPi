@@ -127,7 +127,6 @@ export default {
     const validations = {
       loginRequest: {
         username: {
-          required
         },
         password: {
           required
