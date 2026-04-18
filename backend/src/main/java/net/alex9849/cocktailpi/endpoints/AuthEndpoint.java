@@ -11,6 +11,7 @@ import net.alex9849.cocktailpi.service.AuthService;
 import net.alex9849.cocktailpi.service.SystemService;
 import net.alex9849.cocktailpi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,9 @@ public class AuthEndpoint {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Value("${alex9849.app.demoMode}")
+    private boolean isDemoMode;
 
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
@@ -58,6 +62,9 @@ public class AuthEndpoint {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "passwordOnly", method = RequestMethod.PUT)
     public ResponseEntity<?> setPasswordOnly(@RequestBody ObjectNode passwordOnlyNode) {
+        if(isDemoMode) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not allowed in demo-mode!");
+        }
         authService.setPasswordOnly(passwordOnlyNode.get("passwordOnly").asBoolean());
         return ResponseEntity.ok(authService.isPasswordOnly());
     }
