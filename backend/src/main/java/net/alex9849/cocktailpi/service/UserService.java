@@ -29,9 +29,6 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
-    IngredientService ingredientService;
-
-    @Autowired
     PasswordEncoder encoder;
 
     @PostConstruct
