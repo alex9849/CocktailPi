@@ -1,0 +1,6 @@
+[submodule "frontend/frontend/src/services/keyboard"]
+	path = frontend/frontend/src/services/keyboard
+	url = git@github.com:alex9849/chrome-simple-keyboard.git
+[submodule "frontend/src/services/keyboard"]
+	path = frontend/src/services/keyboard
+	url = git@github.com:alex9849/chrome-simple-keyboard.git
