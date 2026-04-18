@@ -40,6 +40,7 @@
           </template>
         </q-input>
         <q-input
+          v-if="!passwordOnlyLogin"
           :disable="loading"
           outlined
           :label="$t('page.login.username_field_label')"
@@ -96,6 +97,7 @@ import LoginRequest from '../models/LoginRequest'
 import { mdiAlert, mdiEmail, mdiOnepassword, mdiServer } from '@quasar/extras/mdi-v5'
 import { helpers, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CLoginCard',
@@ -127,6 +129,7 @@ export default {
     const validations = {
       loginRequest: {
         username: {
+          requiredIf: () => !this.passwordOnlyLogin
         },
         password: {
           required
@@ -165,6 +168,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      passwordOnlyLogin: 'appearance/getPasswordOnlyLogin'
+    }),
     serverAddress: {
       get () {
         return this.$store.getters['auth/getServerAddress']

@@ -30,6 +30,14 @@ class AuthService {
         return response.data
       })
   }
+
+  setPasswordOnly (passwordOnly) {
+    return axios
+      .put(API_PATH + 'passwordOnly', { passwordOnly })
+      .then(response => {
+        return response.data
+      })
+  }
 }
 
 export default new AuthService()

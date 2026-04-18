@@ -8,6 +8,7 @@ export const setAppearanceSettings = (state, payload) => {
   const settings = {
     language: payload.language,
     recipePageSize: payload.recipePageSize,
+    passwordOnlyLogin: payload.passwordOnlyLogin,
     kioskKeyboard: payload.kioskKeyboard,
     colors: {}
   }

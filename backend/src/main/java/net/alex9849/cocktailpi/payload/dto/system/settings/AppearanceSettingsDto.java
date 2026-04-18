@@ -23,6 +23,7 @@ public class AppearanceSettingsDto {
         public static class Detailed implements ILanguage, IRecipePageSize {
             Language language;
             int recipePageSize;
+            boolean passwordOnlyLogin;
             @NotNull
             Colors colors;
             @NotNull

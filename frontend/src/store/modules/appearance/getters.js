@@ -5,3 +5,5 @@ export const getNormalColors = (state) => state.appearance.colors.normal
 export const getSvColors = (state) => state.appearance.colors.simpleView
 
 export const getIsKiosk = (state) => state.isKiosk
+
+export const getPasswordOnlyLogin = (state) => state.passwordOnlyLogin

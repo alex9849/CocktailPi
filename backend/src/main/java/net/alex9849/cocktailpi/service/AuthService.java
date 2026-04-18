@@ -2,6 +2,7 @@ package net.alex9849.cocktailpi.service;
 
 import net.alex9849.cocktailpi.config.JwtUtils;
 import net.alex9849.cocktailpi.model.user.User;
+import net.alex9849.cocktailpi.repository.OptionsRepository;
 import net.alex9849.cocktailpi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,22 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    private boolean onlyPasswordAuth = false;
+    private Boolean onlyPasswordAuth = false;
+
+    @Autowired
+    private OptionsRepository optionsRepository;
+
+    public void setPasswordOnly(boolean passwordOnly) {
+        optionsRepository.setOption("ENABLE_PASSWORD_ONLY_LOGIN", String.valueOf(passwordOnly));
+        onlyPasswordAuth = passwordOnly;
+    }
+
+    public boolean isPasswordOnly() {
+        if(onlyPasswordAuth == null) {
+            onlyPasswordAuth = Boolean.parseBoolean(optionsRepository.getOption("ENABLE_PASSWORD_ONLY_LOGIN").orElse("false"));
+        }
+        return onlyPasswordAuth;
+    }
 
     /**
      * Genereates a JSON-Web-Token if the username and the password are corrent.
@@ -40,7 +56,7 @@ public class AuthService {
      */
     public String authUser(String username, String password, boolean remember) {
         String authUsername = username;
-        if (onlyPasswordAuth) {
+        if (isPasswordOnly()) {
             authUsername = userRepository.findAll().stream()
                     .filter(u -> encoder.matches(password, u.getPassword()))
                     .max(Comparator.comparingInt(u -> u.getAuthority().getLevel()))

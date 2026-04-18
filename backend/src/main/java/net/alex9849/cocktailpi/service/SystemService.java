@@ -89,6 +89,8 @@ public class SystemService {
 
     @Autowired
     private WebSocketService webSocketService;
+    @Autowired
+    private AuthService authService;
 
     public void shutdown(boolean isRestart) throws IOException {
         if(isDemoMode) {
@@ -416,6 +418,7 @@ public class SystemService {
                         .getOption("RECIPES_PAGE_SIZE")
                         .orElse(String.valueOf(24))
                 ));
+        settingsDto.setPasswordOnlyLogin(authService.isPasswordOnly());
         AppearanceSettingsDto.Duplex.KioskKeyboard kioskKeyboard = new AppearanceSettingsDto.Duplex.KioskKeyboard();
         kioskKeyboard.setEnable(Boolean.parseBoolean(optionsRepository.getOption("KIOSK_KEYBOARD_ENABLE").orElse("true")));
         kioskKeyboard.setLanguage(optionsRepository.getOption("KIOSK_KEYBOARD_LANGUAGE").orElse("english"));

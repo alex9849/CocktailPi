@@ -1,6 +1,7 @@
 export default function () {
   return {
     isKiosk: false,
+    passwordOnlyLogin: false,
     appearance: {
       language: 'en_US',
       recipePageSize: 12,

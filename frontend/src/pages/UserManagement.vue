@@ -123,10 +123,11 @@
 
 <script>
 import { mdiCheckboxBlankCircleOutline, mdiCheckCircle, mdiDelete, mdiPencilOutline } from '@quasar/extras/mdi-v5'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import UserService from '../services/user.service'
 import TopButtonArranger from 'components/TopButtonArranger'
 import CDeleteWarning from 'components/CDeleteWarning'
+import AuthService from 'src/services/auth.service'
 
 export default {
   name: 'UserManagement',
@@ -171,10 +172,20 @@ export default {
   computed: {
     ...mapGetters({
       getUser: 'auth/getUser',
-      color: 'appearance/getNormalColors'
+      color: 'appearance/getNormalColors',
+      isLoginWithPasswordOnly: 'appearance/getPasswordOnlyLogin'
     })
   },
   methods: {
+    ...mapActions({
+      updateAppearance: 'appearance/fetchAppearanceSettings'
+    }),
+    toggleLoginWithPasswordOnly () {
+      AuthService.setPasswordOnly(!this.isLoginWithPasswordOnly)
+        .then(() => {
+          this.updateAppearance()
+        })
+    },
     fetchAll () {
       this.isLoading = true
       UserService.getAllUsers()

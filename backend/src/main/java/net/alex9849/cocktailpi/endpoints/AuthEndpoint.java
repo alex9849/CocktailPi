@@ -7,10 +7,12 @@ import net.alex9849.cocktailpi.payload.dto.user.UserDto;
 import net.alex9849.cocktailpi.payload.request.LoginRequest;
 import net.alex9849.cocktailpi.payload.response.JwtResponse;
 import net.alex9849.cocktailpi.service.AuthService;
+import net.alex9849.cocktailpi.service.SystemService;
 import net.alex9849.cocktailpi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,5 +52,12 @@ public class AuthEndpoint {
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 jwtUtils.getExpirationDateFromJwtToken(jwt), new UserDto.Response.Detailed(user)));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(value = "passwordonly", method = RequestMethod.PUT)
+    public ResponseEntity<?> authenticateUser(@RequestHeader("Authorization") boolean passwordOnly) {
+        authService.setPasswordOnly(passwordOnly);
+        return ResponseEntity.ok(passwordOnly);
     }
 }
