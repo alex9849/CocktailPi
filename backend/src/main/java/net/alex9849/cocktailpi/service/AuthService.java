@@ -30,7 +30,7 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    private Boolean onlyPasswordAuth = false;
+    private Boolean onlyPasswordAuth = null;
 
     @Autowired
     private OptionsRepository optionsRepository;
