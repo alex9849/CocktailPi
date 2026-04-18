@@ -49,9 +49,55 @@
           </div>
         </transition>
         <div class="col-shrink flex items-center">
-          <q-btn no-caps dense color="red" class="q-ma-sm" @click="showLeaveDialog = true">
-            {{ $t('simple_header.leave_sv_btn_label') }}
-          </q-btn>
+          <q-btn-dropdown
+            noCaps
+            label="Options"
+            color="red"
+          >
+            <q-list
+              separator
+              bordered
+              style="border-radius: 0px"
+            >
+              <q-item
+                clickable
+                @click="logback()"
+                v-if="allowLogback"
+              >
+                <q-item-section
+                  avatar
+                >
+                  <q-icon :name="mdiPower"/>
+                </q-item-section>
+                <q-item-section>
+                  Logback
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-else
+                clickable
+                @click="clickSwitchUser()"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="mdiAccountSwitchOutline"/>
+                </q-item-section>
+                <q-item-section>
+                  Switch User
+                </q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                @click="() => showLeaveDialog = true"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="mdiExitToApp"/>
+                </q-item-section>
+                <q-item-section>
+                  {{ $t('simple_header.leave_sv_btn_label') }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </div>
     </q-header>
@@ -67,6 +113,13 @@
     <q-page-container class="bg-sv-background text-sv-background">
       <router-view />
     </q-page-container>
+    <q-dialog
+      v-model:model-value="showSwitchUserDialog"
+    >
+      <CLoginCard
+        @login-success="handleLoginSuccess"
+      />
+    </q-dialog>
     <simple-footer />
   </q-layout>
 </template>
@@ -80,28 +133,70 @@
 <script>
 
 import SimpleFooter from 'pages/SimpleFooter'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
 import CQuestion from 'components/CQuestion'
 import { colors } from 'quasar'
-import { mdiGlassCocktail } from '@quasar/extras/mdi-v5'
+import { mdiGlassCocktail, mdiAccountSwitchOutline, mdiPower, mdiExitToApp } from '@quasar/extras/mdi-v5'
+import CLoginCard from 'components/CLoginCard.vue'
+import AuthService from 'src/services/auth.service'
 
 export default {
   name: 'SimpleTouchLayout',
-  components: { CQuestion, CCocktailProgressBar, SimpleFooter },
+  components: { CLoginCard, CQuestion, CCocktailProgressBar, SimpleFooter },
   data: () => {
     return {
-      showLeaveDialog: false
+      showLeaveDialog: false,
+      showSwitchUserDialog: false
     }
   },
   created () {
     this.mdiGlassCocktail = mdiGlassCocktail
+    this.mdiAccountSwitchOutline = mdiAccountSwitchOutline
+    this.mdiPower = mdiPower
+    this.mdiExitToApp = mdiExitToApp
+  },
+  methods: {
+    ...mapActions({
+      storeLogback: 'auth/logback'
+    }),
+    ...mapMutations({
+      setAuthToken: 'auth/updateToken',
+      setCurrentUser: 'auth/setCurrentUser'
+    }),
+    clickSwitchUser () {
+      this.showSwitchUserDialog = true
+    },
+    handleLoginSuccess () {
+      this.showSwitchUserDialog = false
+    },
+    logback () {
+      if (!this.allowLogback) {
+        return
+      }
+      const oldAdminLevel = this.logbackUser.adminLevel
+      AuthService.refreshToken(this.logbackAuthToken)
+        .then((tokenResponse) => {
+          this.storeLogback()
+          this.setAuthToken(tokenResponse)
+          this.setCurrentUser(tokenResponse.user)
+          if (tokenResponse.user.adminLevel >= oldAdminLevel) {
+            this.$router.push(this.lastUserRoute)
+          } else {
+            this.$router.push({ name: 'dashboard' })
+          }
+        })
+    }
   },
   computed: {
     ...mapGetters({
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       color: 'appearance/getSvColors',
-      getProjectName: 'common/getProjectName'
+      getProjectName: 'common/getProjectName',
+      allowLogback: 'auth/allowLogback',
+      logbackUser: 'auth/getLogbackUser',
+      logbackAuthToken: 'auth/getLogbackAuthToken',
+      lastUserRoute: 'auth/getLastRoute'
     }),
     progressDetailsColor () {
       if (this.color.cocktailProgressDark) {
