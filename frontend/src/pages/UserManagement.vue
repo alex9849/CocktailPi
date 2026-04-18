@@ -2,6 +2,13 @@
   <q-page class="page-content" padding>
     <h5>{{ $t('page.user_mgmt.headline') }}</h5>
     <TopButtonArranger>
+      <q-toggle
+        :label="$t('page.user_mgmt.login_with_password_only_label')"
+        :model-value="isLoginWithPasswordOnly"
+        @update:model-value="toggleLoginWithPasswordOnly"
+        :disable="isUpdatingPasswordOnlyLogin"
+        label-left
+      />
       <q-btn
         color="positive"
         :label="$t('page.user_mgmt.create_user_btn_label')"
@@ -134,6 +141,7 @@ export default {
   components: { CDeleteWarning, TopButtonArranger },
   data () {
     return {
+      isUpdatingPasswordOnlyLogin: false,
       isLoading: false,
       data: [],
       colums: [
@@ -181,9 +189,13 @@ export default {
       updateAppearance: 'appearance/fetchAppearanceSettings'
     }),
     toggleLoginWithPasswordOnly () {
+      this.isUpdatingPasswordOnlyLogin = true
       AuthService.setPasswordOnly(!this.isLoginWithPasswordOnly)
         .then(() => {
           this.updateAppearance()
+        })
+        .finally(() => {
+          this.isUpdatingPasswordOnlyLogin = false
         })
     },
     fetchAll () {

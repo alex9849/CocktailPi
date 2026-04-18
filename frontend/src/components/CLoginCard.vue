@@ -95,7 +95,7 @@
 <script>
 import LoginRequest from '../models/LoginRequest'
 import { mdiAlert, mdiEmail, mdiOnepassword, mdiServer } from '@quasar/extras/mdi-v5'
-import { helpers, required } from '@vuelidate/validators'
+import { helpers, required, requiredIf } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import { mapGetters } from 'vuex'
 
@@ -129,7 +129,7 @@ export default {
     const validations = {
       loginRequest: {
         username: {
-          requiredIf: () => !this.passwordOnlyLogin
+          requiredIf: requiredIf(() => !this.passwordOnlyLogin)
         },
         password: {
           required

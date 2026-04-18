@@ -136,6 +136,7 @@ export default {
     user_mgmt: {
       headline: 'Brugerstyring',
       create_user_btn_label: 'Opret bruger',
+      login_with_password_only_label: 'Log ind med adgangskode kun',
       refresh_users_btn_label: 'Opdater',
       edit_user_btn_tooltip: 'Rediger',
       delete_user_btn_tooltip: 'Slet',

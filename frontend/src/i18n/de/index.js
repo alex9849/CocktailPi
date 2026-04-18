@@ -160,6 +160,7 @@ export default {
     user_mgmt: {
       headline: 'Benutzerverwaltung',
       create_user_btn_label: 'Benutzer erstellen',
+      login_with_password_only_label: 'Login nur mit Passwort',
       refresh_users_btn_label: 'Aktualisieren',
       edit_user_btn_tooltip: 'Bearbeiten',
       delete_user_btn_tooltip: 'Löschen',

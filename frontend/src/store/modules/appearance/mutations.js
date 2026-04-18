@@ -5,10 +5,10 @@ import { setEnableKeyboard, setLanguageLayout } from '../../../services/keyboard
 
 export const setAppearanceSettings = (state, payload) => {
   i18n.global.locale.value = payload.language.name
+  state.passwordOnlyLogin = payload.passwordOnlyLogin
   const settings = {
     language: payload.language,
     recipePageSize: payload.recipePageSize,
-    passwordOnlyLogin: payload.passwordOnlyLogin,
     kioskKeyboard: payload.kioskKeyboard,
     colors: {}
   }

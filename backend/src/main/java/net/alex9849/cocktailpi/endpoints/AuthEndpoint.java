@@ -1,5 +1,6 @@
 package net.alex9849.cocktailpi.endpoints;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
 import net.alex9849.cocktailpi.config.JwtUtils;
 import net.alex9849.cocktailpi.model.user.User;
@@ -55,9 +56,9 @@ public class AuthEndpoint {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "passwordonly", method = RequestMethod.PUT)
-    public ResponseEntity<?> authenticateUser(@RequestHeader("Authorization") boolean passwordOnly) {
-        authService.setPasswordOnly(passwordOnly);
-        return ResponseEntity.ok(passwordOnly);
+    @RequestMapping(value = "passwordOnly", method = RequestMethod.PUT)
+    public ResponseEntity<?> setPasswordOnly(@RequestBody ObjectNode passwordOnlyNode) {
+        authService.setPasswordOnly(passwordOnlyNode.get("passwordOnly").asBoolean());
+        return ResponseEntity.ok(authService.isPasswordOnly());
     }
 }
