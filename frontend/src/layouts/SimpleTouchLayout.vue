@@ -70,7 +70,7 @@
                   <q-icon :name="mdiPower"/>
                 </q-item-section>
                 <q-item-section>
-                  Logback
+                  {{ $t('simple_header.logback_btn_label') }}
                 </q-item-section>
               </q-item>
               <q-item
@@ -82,7 +82,7 @@
                   <q-icon :name="mdiAccountSwitchOutline"/>
                 </q-item-section>
                 <q-item-section>
-                  Switch User
+                  {{ $t('simple_header.switch_user_btn_label') }}
                 </q-item-section>
               </q-item>
               <q-item
@@ -133,17 +133,18 @@
 <script>
 
 import SimpleFooter from 'pages/SimpleFooter'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import CCocktailProgressBar from 'components/CCocktailProgressBar'
 import CQuestion from 'components/CQuestion'
 import { colors } from 'quasar'
 import { mdiGlassCocktail, mdiAccountSwitchOutline, mdiPower, mdiExitToApp } from '@quasar/extras/mdi-v5'
 import CLoginCard from 'components/CLoginCard.vue'
-import AuthService from 'src/services/auth.service'
+import { logback } from 'src/mixins/logback'
 
 export default {
   name: 'SimpleTouchLayout',
   components: { CLoginCard, CQuestion, CCocktailProgressBar, SimpleFooter },
+  mixins: [logback],
   data: () => {
     return {
       showLeaveDialog: false,
@@ -157,46 +158,18 @@ export default {
     this.mdiExitToApp = mdiExitToApp
   },
   methods: {
-    ...mapActions({
-      storeLogback: 'auth/logback'
-    }),
-    ...mapMutations({
-      setAuthToken: 'auth/updateToken',
-      setCurrentUser: 'auth/setCurrentUser'
-    }),
     clickSwitchUser () {
       this.showSwitchUserDialog = true
     },
     handleLoginSuccess () {
       this.showSwitchUserDialog = false
-    },
-    logback () {
-      if (!this.allowLogback) {
-        return
-      }
-      const oldAdminLevel = this.logbackUser.adminLevel
-      AuthService.refreshToken(this.logbackAuthToken)
-        .then((tokenResponse) => {
-          this.storeLogback()
-          this.setAuthToken(tokenResponse)
-          this.setCurrentUser(tokenResponse.user)
-          if (tokenResponse.user.adminLevel >= oldAdminLevel) {
-            this.$router.push(this.lastUserRoute)
-          } else {
-            this.$router.push({ name: 'dashboard' })
-          }
-        })
     }
   },
   computed: {
     ...mapGetters({
       hasCocktailProgress: 'cocktailProgress/hasCocktailProgress',
       color: 'appearance/getSvColors',
-      getProjectName: 'common/getProjectName',
-      allowLogback: 'auth/allowLogback',
-      logbackUser: 'auth/getLogbackUser',
-      logbackAuthToken: 'auth/getLogbackAuthToken',
-      lastUserRoute: 'auth/getLastRoute'
+      getProjectName: 'common/getProjectName'
     }),
     progressDetailsColor () {
       if (this.color.cocktailProgressDark) {

@@ -148,6 +148,14 @@ export default {
         .then(() => {
           this.$emit('loginSuccess')
           this.loading = false
+          if (this.getLogbackUser) {
+            this.$q.notify({
+              type: 'positive',
+              message: this.$t('page.login.notifications.switched_to_user', {
+                username: this.getUser.username
+              })
+            })
+          }
         }).catch(err => {
           this.loading = false
           if (!!err.response && err.response.status === 401) {
@@ -169,6 +177,8 @@ export default {
   },
   computed: {
     ...mapGetters({
+      getLogbackUser: 'auth/getLogbackUser',
+      getUser: 'auth/getUser',
       passwordOnlyLogin: 'appearance/getPasswordOnlyLogin'
     }),
     serverAddress: {

@@ -13,6 +13,8 @@ export default {
     profile: {
       profile_btn_label: 'Profil',
       reload_btn_label: 'Genindlæs',
+      switch_user_btn_label: 'Skift bruger',
+      logback_btn_label: 'Log tilbage',
       logout_btn_label: 'Log ud'
     }
   },
@@ -20,6 +22,8 @@ export default {
     machine_name: 'CocktailPi',
     leave_sv_btn_label: 'Forlad simpel-visning',
     go_to_cocktail_progress_btn_label: 'Gå til detaljer >>',
+    switch_user_btn_label: 'Skift bruger',
+    logback_btn_label: 'Log tilbage',
     leave_sv_dialog: {
       headline: 'Forlad simpel visning?',
       yes_btn_label: 'Ja',
@@ -72,6 +76,10 @@ export default {
       password_field_label: 'Adgangskode',
       username_field_label: 'Brugernavn',
       remember_me_label: 'Husk mig',
+      notifications: {
+        switched_to_user: 'Skiftet til bruger: {username}',
+        switched_back_to_user: 'Skiftet tilbage til bruger: {username}'
+      },
       errors: {
         credentials_invalid: 'Brugernavn eller adgangskode forkert!',
         server_unreachable: 'Kunne ikke kontakte serveren!'

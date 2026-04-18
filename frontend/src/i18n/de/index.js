@@ -13,6 +13,8 @@ export default {
     profile: {
       profile_btn_label: 'Profil',
       reload_btn_label: 'Neu laden',
+      switch_user_btn_label: 'Benutzer wechseln',
+      logback_btn_label: 'Zurückwechseln',
       logout_btn_label: 'Abmelden'
     }
   },
@@ -20,6 +22,8 @@ export default {
     machine_name: 'CocktailPi',
     leave_sv_btn_label: 'Touchansicht verlassen',
     go_to_cocktail_progress_btn_label: 'Details >>',
+    switch_user_btn_label: 'Benutzer wechseln',
+    logback_btn_label: 'Zurückwechseln',
     leave_sv_dialog: {
       headline: 'Touchansicht verlassen?',
       yes_btn_label: 'Ja',
@@ -72,6 +76,10 @@ export default {
       password_field_label: 'Passwort',
       username_field_label: 'Benutzername',
       remember_me_label: 'Angemeldet bleiben',
+      notifications: {
+        switched_to_user: 'Zu Benutzer gewechselt: {username}',
+        switched_back_to_user: 'Zurück zu Benutzer gewechselt: {username}'
+      },
       errors: {
         credentials_invalid: 'Benutzername oder Passwort falsch!',
         server_unreachable: 'Server nicht erreichbar!'

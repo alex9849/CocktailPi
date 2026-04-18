@@ -48,7 +48,7 @@
                 <q-icon :name="mdiAccountSwitchOutline"/>
               </q-item-section>
               <q-item-section>
-                Switch User
+                {{ $t('header.profile.switch_user_btn_label') }}
               </q-item-section>
             </q-item>
             <q-item
@@ -60,7 +60,7 @@
                 <q-icon :name="mdiPower"/>
               </q-item-section>
               <q-item-section>
-                Logback
+                {{ $t('header.profile.logback_btn_label') }}
               </q-item-section>
             </q-item>
             <q-item
@@ -95,11 +95,12 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { mdiAccountBox, mdiReload, mdiAlert, mdiPower, mdiGlassCocktail, mdiAccountSwitchOutline } from '@quasar/extras/mdi-v5'
 import CircularCocktailProgress from './Circular-Cocktail-Progress'
 import CLoginCard from 'components/CLoginCard.vue'
-import AuthService from 'src/services/auth.service'
+import { logback } from 'src/mixins/logback'
 
 export default {
   name: 'AppHeader',
   components: { CLoginCard, CircularCocktailProgress },
+  mixins: [logback],
   data: () => {
     return {
       showSwitchUserDialog: false
@@ -107,33 +108,15 @@ export default {
   },
   methods: {
     ...mapActions({
-      storeLogout: 'auth/logout',
-      storeLogBack: 'auth/logback'
+      storeLogout: 'auth/logout'
     }),
     ...mapMutations({
       setAuthToken: 'auth/updateToken',
       setCurrentUser: 'auth/setCurrentUser'
     }),
     logout () {
-      this.storeLogout()
       this.$router.push({ name: 'login' })
-    },
-    logback () {
-      if (!this.allowLogback) {
-        return
-      }
-      const oldAdminLevel = this.logbackUser.adminLevel
-      AuthService.refreshToken(this.logbackAuthToken)
-        .then((tokenResponse) => {
-          this.storeLogBack()
-          this.setAuthToken(tokenResponse)
-          this.setCurrentUser(tokenResponse.user)
-          if (tokenResponse.user.adminLevel >= oldAdminLevel) {
-            this.$router.push(this.lastUserRoute)
-          } else {
-            this.$router.push({ name: 'dashboard' })
-          }
-        })
+      this.storeLogout()
     },
     clickSwitchUser () {
       this.showSwitchUserDialog = true
@@ -183,11 +166,7 @@ export default {
       user: 'auth/getUser',
       isLoggedIn: 'auth/isLoggedIn',
       colors: 'appearance/getNormalColors',
-      getProjectName: 'common/getProjectName',
-      allowLogback: 'auth/allowLogback',
-      lastUserRoute: 'auth/getLastRoute',
-      logbackUser: 'auth/getLogbackUser',
-      logbackAuthToken: 'auth/getLogbackAuthToken'
+      getProjectName: 'common/getProjectName'
     }),
     username () {
       if (this.isLoggedIn) {

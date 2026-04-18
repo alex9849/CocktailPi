@@ -13,6 +13,8 @@ export default {
     profile: {
       profile_btn_label: 'Profile',
       reload_btn_label: 'Reload',
+      switch_user_btn_label: 'Switch User',
+      logback_btn_label: 'Logback',
       logout_btn_label: 'Logout'
     }
   },
@@ -20,6 +22,8 @@ export default {
     machine_name: 'CocktailPi',
     leave_sv_btn_label: 'Leave simple-view',
     go_to_cocktail_progress_btn_label: 'Go to details >>',
+    switch_user_btn_label: 'Switch User',
+    logback_btn_label: 'Logback',
     leave_sv_dialog: {
       headline: 'Leave simple view?',
       yes_btn_label: 'Yes',
@@ -73,6 +77,10 @@ export default {
       password_field_label: 'Password',
       username_field_label: 'Username',
       remember_me_label: 'Remember me',
+      notifications: {
+        switched_to_user: 'Switched to user: {username}',
+        switched_back_to_user: 'Switched back to user: {username}'
+      },
       errors: {
         credentials_invalid: 'Username or password wrong!',
         server_unreachable: 'Couldn\'t contact server!'
