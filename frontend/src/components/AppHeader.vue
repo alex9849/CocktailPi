@@ -114,9 +114,10 @@ export default {
       setAuthToken: 'auth/updateToken',
       setCurrentUser: 'auth/setCurrentUser'
     }),
-    logout () {
-      this.$router.push({ name: 'login' })
+    async logout () {
+      await this.$router.push({ name: 'login', query: { logout: 'true' } })
       this.storeLogout()
+      this.$router.replace({ name: 'login' })
     },
     clickSwitchUser () {
       this.showSwitchUserDialog = true

@@ -18,6 +18,10 @@ function redirectIfNotAuthenticated (to, from, next) {
 }
 
 function redirectIfAuthenticated (to, from, next) {
+  if (to.query.logout === 'true') {
+    next()
+    return
+  }
   if (store().getters['auth/isLoggedIn']) {
     next({ name: 'dashboard' })
     return
