@@ -13,11 +13,21 @@ export default boot(({ app }) => {
     cfg.baseURL = store().getters['auth/getFormattedServerAddress']
     return cfg
   })
-  axios.interceptors.response.use(cfg => cfg, error => {
-    if (error?.config?.onErrorNotify && error?.response?.data?.message) {
+  axios.interceptors.response.use(cfg => cfg, async error => {
+    if (!error?.config?.onErrorNotify) {
+      throw error
+    }
+    let data = error?.response?.data
+    if (!data) {
+      throw error
+    }
+    if (data instanceof Blob && data.type === 'application/json') {
+      data = JSON.parse(await data.text())
+    }
+    if (data?.message) {
       app.config.globalProperties.$q.notify({
         type: 'negative',
-        message: error.response.data.message
+        message: data.message
       })
     }
     throw error

@@ -63,7 +63,7 @@ public class AuthEndpoint {
     @RequestMapping(value = "passwordOnly", method = RequestMethod.PUT)
     public ResponseEntity<?> setPasswordOnly(@RequestBody ObjectNode passwordOnlyNode) {
         if(isDemoMode) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not allowed in demo-mode!");
+            throw new RuntimeException("Not allowed in demo-mode!");
         }
         authService.setPasswordOnly(passwordOnlyNode.get("passwordOnly").asBoolean());
         return ResponseEntity.ok(authService.isPasswordOnly());
