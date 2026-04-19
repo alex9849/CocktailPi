@@ -64,7 +64,7 @@ export default {
   },
   watch: {
     trigger: {
-      immediate: true,
+      immediate: false,
       handler () {
         if (!this.destination) {
           return
