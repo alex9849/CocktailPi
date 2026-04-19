@@ -12,7 +12,7 @@
         <div
           v-for="(row, idx) in tableRows"
           :key="idx"
-          class="q-pa-xs col-xs-12 col-sm-9 col-md-6 col-lg-3 grid-style-transition"
+          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
         >
           <c-make-cocktail-dialog-ingredient-group-replacements-card
             :class="{'bg-green-4': !!row.replacement, 'bg-deep-orange-3': !row.replacement }"
