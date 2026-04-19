@@ -174,6 +174,9 @@ export default {
       this.editOptions.addIngredient = null
     },
     onAddOwnedIngredient () {
+      if (!this.editOptions.valid || this.editOptions.saving) {
+        return
+      }
       const vm = this
       const onSuccess = function () {
         vm.onRefresh()

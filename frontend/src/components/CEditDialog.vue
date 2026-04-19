@@ -22,7 +22,7 @@
           {{ errorMessage }}
         </q-banner>
         <q-form
-          @submit.prevent="$emit('clickSave')"
+          @submit.prevent="onFormSubmit"
         >
           <slot/>
           <div class="q-pa-md q-gutter-sm">
@@ -78,6 +78,14 @@ export default {
     errorMessage: {
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    onFormSubmit () {
+      if (!this.valid || this.saving) {
+        return
+      }
+      this.$emit('clickSave')
     }
   },
   emits: ['update:show', 'clickAbort', 'clickSave'],
