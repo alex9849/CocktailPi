@@ -10,7 +10,10 @@
       <div class="row">
         <p class="text-weight-medium q-pb-md">{{ $t('page.load_cell_mgmt.hardware_settings.headline') }}</p>
       </div>
-      <q-form class="q-col-gutter-md">
+      <q-form
+        class="q-col-gutter-md"
+        @submit.prevent="onClickSave(true)"
+      >
         <div
           v-if="getUser.adminLevel >= 4"
           class="row"
@@ -344,6 +347,9 @@ export default {
         })
     },
     onClickSave (pushBack = false) {
+      if (this.v.form.$invalid || this.saving) {
+        return
+      }
       this.saving = true
       PumpSettingsService.setLoadCell(this.form.enable ? this.form : null)
         .then(loadcell => {

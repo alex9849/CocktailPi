@@ -6,7 +6,10 @@
       flat
       bordered
     >
-      <q-form class="q-col-gutter-md">
+      <q-form
+        class="q-col-gutter-md"
+        @submit.prevent="onClickSave"
+      >
         <div
           v-if="getUser.adminLevel >= 4"
           class="row"
@@ -174,6 +177,9 @@ export default {
       fetchGlobalSettings: 'common/fetchGlobalSettings'
     }),
     onClickSave () {
+      if (this.v.form.$invalid || this.saving) {
+        return
+      }
       this.saving = true
       PumpSettingsService.setReversePumpSettings(this.form)
         .then(() => {

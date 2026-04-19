@@ -5,7 +5,7 @@
   >
     <q-form
       class="q-col-gutter-md"
-      @submit="onSubmit"
+      @submit.prevent="onSubmit"
     >
       <div class="row">
         <q-card

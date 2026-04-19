@@ -37,6 +37,7 @@
     >
       <q-form
         class="q-col-gutter-md"
+        @submit.prevent="onClickSaveDefaultFilter"
       >
         <div class="row">
           <q-card
@@ -212,6 +213,9 @@ export default {
         })
     },
     onClickSaveDefaultFilter () {
+      if (this.v.defaultFilter.data.$invalid || this.defaultFilter.saving) {
+        return
+      }
       this.defaultFilter.saving = true
       SystemService.setDefaultFilter(this.defaultFilter.data)
         .then((x) => {

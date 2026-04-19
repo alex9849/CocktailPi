@@ -10,7 +10,10 @@
       <div class="row">
         <p class="text-weight-medium q-pb-md">{{ $t('page.power_limit_mgmt.hardware_settings.headline') }}</p>
       </div>
-      <q-form class="q-col-gutter-md">
+      <q-form
+        class="q-col-gutter-md"
+        @submit.prevent="onClickSave(true)"
+      >
         <div class="row">
           <q-card
             :dark="color.cardItemGroupDark"
@@ -110,6 +113,9 @@ export default {
         })
     },
     onClickSave (pushBack = false) {
+      if (this.v.form.$invalid || this.saving) {
+        return
+      }
       this.saving = true
       PumpSettingsService.setPowerLimit(this.form.enable ? this.form : null)
         .then(powerLimit => {

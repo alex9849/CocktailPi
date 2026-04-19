@@ -1,6 +1,9 @@
 <template>
   <q-card flat bordered class="bg-card-body text-card-body q-pa-md">
-    <q-form class="q-col-gutter-md">
+    <q-form
+      class="q-col-gutter-md"
+      @submit.prevent="exportRecipes"
+    >
       <div class="row q-mb-md">
         <q-card
           flat
@@ -162,6 +165,9 @@ const enableExportBtn = computed(() => {
 })
 
 async function exportRecipes () {
+  if (!enableExportBtn.value || loading.value) {
+    return
+  }
   loading.value = true
   try {
     await TransferService.exportRecipes({

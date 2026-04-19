@@ -9,7 +9,9 @@
         icon="upload"
         :done="step > 1"
       >
-        <q-form @submit.prevent="uploadFile">
+        <q-form
+          @submit.prevent="uploadFile"
+        >
           <q-file
             :dark="colors.cardItemGroupDark"
             v-model="file"

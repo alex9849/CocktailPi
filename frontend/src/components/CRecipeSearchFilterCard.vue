@@ -3,7 +3,10 @@
     class="bg-card-body text-card-body"
   >
     <q-card-section>
-      <div class="q-gutter-md">
+      <q-form
+        class="q-gutter-md"
+        @submit.prevent="onSearch"
+      >
         <div>
           <b>{{ $t('component.recipe_search_filter_card.headline') }}</b>
         </div>
@@ -112,7 +115,7 @@
             </template>
           </q-input>
         </div>
-      </div>
+      </q-form>
     </q-card-section>
   </q-card>
 
