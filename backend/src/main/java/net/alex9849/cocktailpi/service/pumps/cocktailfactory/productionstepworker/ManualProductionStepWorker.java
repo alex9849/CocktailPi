@@ -4,6 +4,7 @@ import net.alex9849.cocktailpi.model.pump.RelativeLoadCellReader;
 import net.alex9849.cocktailpi.model.recipe.ingredient.Ingredient;
 import net.alex9849.cocktailpi.model.recipe.productionstep.ProductionStepIngredient;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -63,22 +64,18 @@ public class ManualProductionStepWorker extends AbstractProductionStepWorker
         if(!this.isStarted()) {
             return;
         }
-        if(notifierTask != null) {
-            this.notifierTask.cancel(false);
-        }
-        if (!this.scheduler.isShutdown()) {
-            this.scheduler.shutdown();
-        }
         this.shutdown();
         this.setFinished();
     }
 
     protected void shutdown() {
-        if(notifierTask != null) {
-            this.notifierTask.cancel(false);
-        }
-        if (!this.scheduler.isShutdown()) {
-            this.scheduler.shutdown();
+        this.scheduler.shutdownNow();
+        try {
+            if(!this.scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                LoggerFactory.getLogger(this.getClass()).error("ManualProductionStepWorker scheduler didn't terminate in 5 seconds!");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

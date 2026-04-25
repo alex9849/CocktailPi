@@ -1,6 +1,7 @@
 package net.alex9849.cocktailpi.service.pumps.cocktailfactory.productionstepworker;
 
 import com.pi4j.exception.Pi4JException;
+import net.alex9849.cocktailpi.config.seed.SeedDataInserter;
 import net.alex9849.cocktailpi.model.pump.*;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.CocktailFactory;
 import net.alex9849.cocktailpi.service.pumps.cocktailfactory.PumpPhase;
@@ -8,6 +9,8 @@ import net.alex9849.motorlib.motor.AcceleratingStepper;
 import net.alex9849.motorlib.motor.MultiStepper;
 import net.alex9849.motorlib.sensor.HX711;
 import net.openhft.affinity.AffinityLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -22,7 +25,6 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
     private Map<Pump, Integer> notUsedLiquid;
     private Set<Pump> usedPumps;
     private final Set<ScheduledFuture<?>> scheduledPumpFutures;
-    private ScheduledFuture<?> notifierTask;
 
     private int requiredWorkTime;
     private long startTime;
@@ -118,7 +120,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
                 }, pumpPhase.getStopTime(), TimeUnit.MILLISECONDS));
             }
 
-            this.notifierTask = this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
+            this.scheduler.scheduleAtFixedRate(this::notifySubscribers, 1, 1, TimeUnit.SECONDS);
             Runnable runTask = () -> {
                 MultiStepper multiStepper = new MultiStepper();
                 for(Map.Entry<StepperPump, Long> entry : steppersToSteps.entrySet()) {
@@ -203,20 +205,7 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         if(!super.cancel()) {
             return false;
         }
-        for (ScheduledFuture<?> future : this.scheduledPumpFutures) {
-            future.cancel(true);
-        }
-        if(this.runner != null) {
-            try {
-                this.runner.interrupt();
-                this.runner.join();
-            } catch (InterruptedException e) {
-                //Ignore
-            }
-        }
-        if(this.notifierTask != null) {
-            this.notifierTask.cancel(false);
-        }
+        this.shutdown();
 
         Map<Pump, Double> notUsedLiquidByPumpPrecise = new HashMap<>();
         for(PumpPhase pumpPhase : this.getDcPumpPhases()) {
@@ -247,9 +236,6 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         notUsedLiquidByPumpPrecise.forEach((key, value) -> notUsedLiquid.put(key, (int) Math.round(value)));
 
         this.stopAllPumps();
-        if (!this.scheduler.isShutdown()) {
-            this.scheduler.shutdown();
-        }
 
         return true;
     }
@@ -270,15 +256,34 @@ public abstract class AbstractPumpingProductionStepWorker extends AbstractProduc
         for(Pump pump : this.usedPumps) {
             try {
                 pump.shutdownDriver(false);
-            } catch (Pi4JException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    private void shutdown() {
+        this.scheduler.shutdownNow();
+        try {
+            if(!this.scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                LoggerFactory.getLogger(this.getClass()).warn("PumpingProductionStepWorker scheduler didn't terminate in 5 seconds!");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(this.runner != null) {
+            try {
+                this.runner.interrupt();
+                this.runner.join();
+                this.runner = null;
+            } catch (InterruptedException e) {
+                //Ignore
+            }
+        }
+    }
+
     protected void onFinish() {
-        this.scheduledPumpFutures.forEach(x -> x.cancel(true));
-        this.notifierTask.cancel(false);
+        this.shutdown();
         this.stopAllPumps();
         this.setFinished();
     }

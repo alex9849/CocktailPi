@@ -13,10 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 @Service
 @Transactional
@@ -40,6 +37,13 @@ public class EventService {
     public void cancelAllRunningActions() {
         synchronized (runningActionsByRunId) {
             runningActionsByRunId.values().forEach(x -> x.getFuture().cancel(true));
+            runningActionsByRunId.values().forEach(x -> {
+                try {
+                    x.getFuture().get();
+                } catch (Exception e) {
+                    // Ignore exception during cancellation
+                }
+            });
             runningActionsByRunId.clear();
             webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
         }
@@ -113,6 +117,13 @@ public class EventService {
             RunningAction runningAction = runningActionsByRunId.remove(runId);
             if(runningAction != null) {
                 runningAction.getFuture().cancel(true);
+                runningActionsByRunId.values().forEach(x -> {
+                    try {
+                        x.getFuture().get();
+                    } catch (Exception e) {
+                        // Ignore exception during cancellation
+                    }
+                });
                 webSocketService.broadcastRunningEventActionsStatus(getRunningActionsInformation());
                 return true;
             }

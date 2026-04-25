@@ -62,9 +62,21 @@ public abstract class PumpTask implements Runnable {
         this.future = taskFuture;
         this.startTime = System.currentTimeMillis();
         if(cancelled) {
-            future.cancel(true);
+            this.cancelFuture();
         }
         cdl.countDown();
+    }
+
+    private void cancelFuture() {
+        if(future == null) {
+            return;
+        }
+        future.cancel(true);
+        try {
+            future.get();
+        } catch (Exception e) {
+            // Ignore exception during cancellation
+        }
     }
 
     protected abstract void runPump();
@@ -197,9 +209,7 @@ public abstract class PumpTask implements Runnable {
 
     public void cancel() {
         cancelled = true;
-        if(future != null) {
-            future.cancel(true);
-        }
+        this.cancelFuture();
     }
 
     protected boolean isCancelledExecutionThread() {

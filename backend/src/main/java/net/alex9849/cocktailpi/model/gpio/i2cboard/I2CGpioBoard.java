@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public abstract class I2CGpioBoard extends GpioBoard {
     private static final Map<Byte, I2CPinExpander> boardMap = new HashMap<>();
+    private static final Object boardMapLock = new Object();
     private byte i2cAddress;
 
     public byte getI2cAddress() {
@@ -28,20 +29,22 @@ public abstract class I2CGpioBoard extends GpioBoard {
     public abstract I2CBoardModel getBoardModel();
 
     public I2CPinExpander getBoardDriver() {
-        PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-        if(boardMap.containsKey(getI2cAddress())) {
-            I2CPinExpander expander = boardMap.get(getI2cAddress());
-            if (!expander.isOpen() || !isExpanderInstance(expander)) {
-                if (expander.isOpen()) {
-                    pinUtils.shutdownI2CAddress(getI2cAddress());
+        synchronized (boardMapLock) {
+            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+            if (boardMap.containsKey(getI2cAddress())) {
+                I2CPinExpander expander = boardMap.get(getI2cAddress());
+                if (!expander.isOpen() || !isExpanderInstance(expander)) {
+                    if (expander.isOpen()) {
+                        pinUtils.shutdownI2CAddress(getI2cAddress());
+                    }
+                    boardMap.remove(getI2cAddress());
                 }
-                boardMap.remove(getI2cAddress());
             }
+            if (!boardMap.containsKey(getI2cAddress())) {
+                boardMap.put(getI2cAddress(), genExpanderInstance(pinUtils.getI2c(getI2cAddress())));
+            }
+            return boardMap.get(getI2cAddress());
         }
-        if(!boardMap.containsKey(getI2cAddress())) {
-            boardMap.put(getI2cAddress(), genExpanderInstance(pinUtils.getI2c(getI2cAddress())));
-        }
-        return boardMap.get(getI2cAddress());
     }
 
     protected abstract boolean isExpanderInstance(I2CPinExpander expander);
@@ -77,18 +80,22 @@ public abstract class I2CGpioBoard extends GpioBoard {
     }
 
     public void restart() {
-        PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-        pinUtils.shutdownI2CAddress(getI2cAddress());
-        this.getBoardDriver().updateI2c(pinUtils.getI2c(getI2cAddress()), false);
+        synchronized (boardMapLock) {
+            PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+            pinUtils.shutdownI2CAddress(getI2cAddress());
+            this.getBoardDriver().updateI2c(pinUtils.getI2c(getI2cAddress()), false);
+        }
     }
 
     public void shutdownDriver() {
-        if(boardMap.containsKey(getI2cAddress())) {
-            I2CPinExpander expander = boardMap.get(getI2cAddress());
-            if (expander.isOpen()) {
-                PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
-                pinUtils.shutdownI2CAddress(getI2cAddress());
-                boardMap.remove(getI2cAddress());
+        synchronized (boardMapLock) {
+            if (boardMap.containsKey(getI2cAddress())) {
+                I2CPinExpander expander = boardMap.get(getI2cAddress());
+                if (expander.isOpen()) {
+                    PinUtils pinUtils = SpringUtility.getBean(PinUtils.class);
+                    pinUtils.shutdownI2CAddress(getI2cAddress());
+                    boardMap.remove(getI2cAddress());
+                }
             }
         }
     }
