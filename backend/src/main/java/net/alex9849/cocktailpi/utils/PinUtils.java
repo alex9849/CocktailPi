@@ -15,6 +15,7 @@ import net.alex9849.motorlib.pin.Pi4JOutputPin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 @Component
@@ -25,6 +26,7 @@ public class PinUtils {
     private final Map<Integer, DigitalOutput> outputPinMap = new HashMap<>();
     private final Map<Integer, DigitalInput> inputPinMap = new HashMap<>();
     private final Map<Integer, I2C> i2CMap = new HashMap<>();
+    private static final Object i2cBusLock = new Object();
 
     public synchronized IOutputPin getBoardOutputPin(int address) {
         if(inputPinMap.containsKey(address)) {
@@ -78,7 +80,8 @@ public class PinUtils {
             I2CProvider provider = pi4J.getI2CProvider();
             I2CConfig i2CConfig = I2CConfigBuilder.newInstance(pi4J).bus(1).device(address).build();
             if(!pi4J.registry().exists(i2CConfig.id())) {
-                i2CMap.put(address, provider.create(i2CConfig));
+                I2C i2c = provider.create(i2CConfig);
+                i2CMap.put(address, new SynchronizedI2C(i2c, i2cBusLock));
             }
         }
         return i2CMap.get(address);

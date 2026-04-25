@@ -175,23 +175,43 @@ public abstract class PumpTask implements Runnable {
             PumpJobState.RunningState runningState = getRunningState();
             this.finishedJobMetrics = getJobMetrics();
             this.finishedRunningState = runningState;
-            pump.shutdownDriver(false);
-            synchronized (stateLock) {
-                this.state = State.FINISHED;
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
             this.stopTime = System.currentTimeMillis();
             stopRunTimeTrack();
             this.finishedJobMetrics = genJobMetrics();
             this.finishedRunningState = genRunningState();
-            this.finishedJobMetrics.setException(e);
-            synchronized (stateLock) {
-                this.state = State.ERROR;
+            if(!(e instanceof InterruptedException)) {
+                e.printStackTrace();
+                this.finishedJobMetrics.setException(e);
+                synchronized (stateLock) {
+                    this.state = State.ERROR;
+                }
             }
         } finally {
+            // Clear interrupt flag if set
+            Thread.interrupted();
+            int maxRetries = 10;
+            for(int i = 0; i < maxRetries; i++) {
+                try {
+                    pump.shutdownDriver(false);
+                    break;
+                } catch (RuntimeException e) {
+                    if (e.getCause() instanceof InterruptedException) {
+                        // If it was an interrupt, clear the flag again for the next retry
+                        Thread.interrupted();
+                        if(i+1 == maxRetries) {
+                            e.printStackTrace();
+                        }
+                        continue;
+                    }
+                    break;
+                }
+            }
+            synchronized (stateLock) {
+                if(this.state != State.ERROR) {
+                    this.state = State.FINISHED;
+                }
+            }
             triggerCallbacks();
         }
     }
